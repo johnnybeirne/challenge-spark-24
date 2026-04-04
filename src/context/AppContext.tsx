@@ -1,0 +1,64 @@
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+export interface AppState {
+  user: any;
+  assessment: any;
+  challenge: {
+    currentDay: number;
+    tasks: Record<string, boolean>;
+    aiOutputs: Record<string, string>;
+  };
+  referrals: {
+    count: number;
+  };
+  unlocks: any[];
+}
+
+const defaultState: AppState = {
+  user: null,
+  assessment: null,
+  challenge: {
+    currentDay: 1,
+    tasks: {},
+    aiOutputs: {},
+  },
+  referrals: { count: 0 },
+  unlocks: [],
+};
+
+const STORAGE_KEY = "challenge-os-state";
+
+function loadState(): AppState {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...defaultState, ...JSON.parse(raw) };
+  } catch {}
+  return defaultState;
+}
+
+interface AppContextValue {
+  state: AppState;
+  setState: React.Dispatch<React.SetStateAction<AppState>>;
+}
+
+const AppContext = createContext<AppContextValue | undefined>(undefined);
+
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [state, setState] = useState<AppState>(loadState);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state]);
+
+  return (
+    <AppContext.Provider value={{ state, setState }}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useAppState = () => {
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error("useAppState must be used within AppProvider");
+  return ctx;
+};

@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Bot, Users } from "lucide-react";
+import { Share2, Users } from "lucide-react";
+import AiCopilotChat from "@/components/AiCopilotChat";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -120,16 +121,8 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* AI Preview */}
-      <Card className="border-primary/20 bg-primary/5">
-        <CardContent className="p-5 flex items-center gap-3">
-          <Bot className="w-6 h-6 text-primary" />
-          <div>
-            <p className="text-sm font-medium text-foreground">Your AI co-pilot is ready</p>
-            <p className="text-xs text-muted-foreground">Unlock on Day 2</p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* AI Co-pilot */}
+      <AiCopilotChat />
     </div>
   );
 };

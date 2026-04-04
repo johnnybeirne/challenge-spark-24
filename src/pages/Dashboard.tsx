@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Bot, Users } from "lucide-react";
+import { Share2, Users } from "lucide-react";
+import AiCopilotChat from "@/components/AiCopilotChat";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [

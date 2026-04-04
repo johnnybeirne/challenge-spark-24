@@ -121,16 +121,8 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* AI Preview */}
-      <Card className="border-primary/20 bg-primary/5">
-        <CardContent className="p-5 flex items-center gap-3">
-          <Bot className="w-6 h-6 text-primary" />
-          <div>
-            <p className="text-sm font-medium text-foreground">Your AI co-pilot is ready</p>
-            <p className="text-xs text-muted-foreground">Unlock on Day 2</p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* AI Co-pilot */}
+      <AiCopilotChat />
     </div>
   );
 };

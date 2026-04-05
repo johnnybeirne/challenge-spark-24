@@ -16,9 +16,16 @@ interface ChatEntry {
 const AiCopilotChat = () => {
   const { state, setState } = useAppState();
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(() => !!sessionStorage.getItem("chat_opened"));
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<ChatEntry[]>([]);
+
+  const handleOpen = () => {
+    setOpen(true);
+    setHasOpened(true);
+    sessionStorage.setItem("chat_opened", "1");
+  };
 
   const askCopilot = async () => {
     const prompt = input.trim();
@@ -60,11 +67,13 @@ const AiCopilotChat = () => {
       {/* Floating bubble */}
       {!open && (
         <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
+          onClick={handleOpen}
+          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors ${
+            !hasOpened ? "animate-bounce-in" : ""
+          }`}
           aria-label="Open chat"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className={`h-6 w-6 ${!hasOpened ? "animate-subtle-bounce" : ""}`} style={!hasOpened ? { animationDelay: "0.6s" } : {}} />
         </button>
       )}
 

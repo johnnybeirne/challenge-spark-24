@@ -62,13 +62,23 @@ const Referrals = () => {
     { count: 10, label: "Full system", value: "$297" },
   ];
 
+  const hasActivity = (state.referrals.shares + state.referrals.invites) > 0 || direct > 0;
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-8">
+      <div className="max-w-[480px] mx-auto px-4 py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
           This only works if people go through it.
         </p>
+
+        {!hasActivity && (
+          <EmptyState
+            icon={Users}
+            title="No referrals yet"
+            description="Share your link below and start building your network. Every builder you invite earns you rewards."
+          />
+        )}
 
         {/* Stats */}
         <Card className="border-border mb-4">

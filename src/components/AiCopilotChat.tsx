@@ -16,9 +16,16 @@ interface ChatEntry {
 const AiCopilotChat = () => {
   const { state, setState } = useAppState();
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(() => !!sessionStorage.getItem("chat_opened"));
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<ChatEntry[]>([]);
+
+  const handleOpen = () => {
+    setOpen(true);
+    setHasOpened(true);
+    sessionStorage.setItem("chat_opened", "1");
+  };
 
   const askCopilot = async () => {
     const prompt = input.trim();

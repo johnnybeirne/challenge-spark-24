@@ -91,6 +91,14 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Invite nudge */}
+      <div className="mb-4">
+        <InviteNudgeCard />
+      </div>
+
+      {/* Milestone modal */}
+      <InviteMilestoneModal />
+
       {/* Today's Challenge */}
       <Card className="mb-4">
         <CardContent className="p-5">

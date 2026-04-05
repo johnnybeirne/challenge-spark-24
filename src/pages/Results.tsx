@@ -125,6 +125,29 @@ const Results = () => {
         </CardContent>
       </Card>
 
+      {/* Compare & Unlock */}
+      <Card className="border-primary/20 bg-primary/5 mb-6">
+        <CardContent className="p-5 text-center">
+          <h3 className="text-sm font-semibold text-foreground mb-1">
+            See how you compare
+          </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            You've got your score — now see how you stack up against other builders.
+          </p>
+          <Button
+            variant="outline"
+            className="w-full rounded-xl gap-2 mb-2"
+            onClick={handleShare}
+          >
+            <Share2 className="w-4 h-4" />
+            Invite 3 builders to unlock comparison insights
+          </Button>
+          <p className="text-[11px] text-muted-foreground">
+            Builders who invite others move faster through the challenge.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Share */}
       <Button
         variant="outline"

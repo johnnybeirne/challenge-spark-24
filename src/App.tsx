@@ -45,6 +45,7 @@ const App = () => (
 
             {/* Auth routes */}
             <Route element={<AppShell showNav />}>
+              <Route path="/invite-builders" element={<AuthGuard><InviteBuilders /></AuthGuard>} />
               <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
               <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
               <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />

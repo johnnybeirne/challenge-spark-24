@@ -239,6 +239,9 @@ const DayChallenge = () => {
         )}
       </div>
 
+      {/* Day 2 soft gate */}
+      {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
+
       <div className="space-y-4">
         {config.tasks.map((task, i) => (
           <Card key={task.key}>

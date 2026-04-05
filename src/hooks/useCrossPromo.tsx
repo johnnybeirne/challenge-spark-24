@@ -53,11 +53,11 @@ export function useCrossPromo(slots = 3) {
           .in("user_id", userIds);
 
         const profileMap = new Map((profiles || []).map((p) => [p.user_id, p]));
-        const promoterMap = new Map(promoters.map((p: any) => [p.id, p]));
+        const promoterMap = new Map(promoters.map((p: any) => [p.id as string, p]));
 
         // Score and sort
         const scored: CrossPromoEntry[] = cpRows.map((cp: any) => {
-          const promoter = promoterMap.get(cp.promoter_id);
+          const promoter: any = promoterMap.get(cp.promoter_id);
           const profile = promoter ? profileMap.get(promoter.user_id) : null;
           const direct = profile?.direct_referral_count || 0;
           const indirect = profile?.indirect_referral_count || 0;

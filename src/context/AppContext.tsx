@@ -44,8 +44,19 @@ const STORAGE_KEY = "challenge-os-state";
 function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...defaultState, ...JSON.parse(raw) };
-  } catch {}
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        ...defaultState,
+        ...parsed,
+        challenge: { ...defaultState.challenge, ...(parsed.challenge || {}) },
+        referrals: { ...defaultState.referrals, ...(parsed.referrals || {}) },
+        network: { ...defaultState.network, ...(parsed.network || {}) },
+      };
+    }
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+  }
   return defaultState;
 }
 

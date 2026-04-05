@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import ActivityFeed from "@/components/ActivityFeed";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,15 +23,8 @@ const FEATURED_BUILDERS = [
   { name: "Tara Nguyen", app: "PodCast AI", desc: "AI summaries for podcast episodes", status: "Featured" as const, score: 134 },
 ];
 
-const ACTIVITY_FEED = [
-  { actor: "Sarah", action: "supported James's launch", time: "2m ago" },
-  { actor: "Alex", action: "invited 3 builders", time: "8m ago" },
-  { actor: "Maria", action: "launched her challenge", time: "15m ago" },
-  { actor: "Tara", action: "moved into the top 10", time: "32m ago" },
-  { actor: "Owen", action: "had their build featured", time: "1h ago" },
-  { actor: "Priya", action: "supported 5 builders today", time: "2h ago" },
-  { actor: "Jake", action: "completed the 3-day challenge", time: "3h ago" },
-];
+
+
 
 function generateLeaderboard(userScore: number, userName: string) {
   const entries = [
@@ -150,7 +144,6 @@ const UnlockedCommunity = () => {
   const { state, setState } = useAppState();
   const navigate = useNavigate();
   const [boostedBuilders, setBoostedBuilders] = useState<Set<string>>(new Set());
-  const [feedItems, setFeedItems] = useState(ACTIVITY_FEED);
 
   const direct = state.network.direct;
   const indirect = state.network.indirect;
@@ -159,13 +152,6 @@ const UnlockedCommunity = () => {
     indirect * 1 +
     state.community.boostsGiven * 2 +
     state.community.boostsReceived * 4;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFeedItems((prev) => [...prev].sort(() => Math.random() - 0.5));
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const boostBuilder = useCallback((name: string) => {
     if (boostedBuilders.has(name)) return;
@@ -421,22 +407,7 @@ const UnlockedCommunity = () => {
 
         {/* 7. Activity Feed */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Builder activity</h3>
-          <Card className="border-border">
-            <CardContent className="p-0">
-              {feedItems.map((item, i) => (
-                <div key={i} className={`flex items-center gap-3 px-4 py-3 ${i < feedItems.length - 1 ? "border-b border-border" : ""}`}>
-                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                    {item.actor[0]}
-                  </div>
-                  <p className="text-xs text-muted-foreground flex-1">
-                    <span className="text-foreground font-medium">{item.actor}</span> {item.action}
-                  </p>
-                  <span className="text-[10px] text-muted-foreground/60 shrink-0">{item.time}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <ActivityFeed limit={5} refresh title="Builder activity" />
         </div>
 
         {/* 8. Your Impact */}

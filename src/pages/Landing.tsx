@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Users, Share2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import ActivityFeed from "@/components/ActivityFeed";
 
 function getNextMonday() {
   const now = new Date();
@@ -26,12 +27,6 @@ function useCountdown(target: Date) {
   const s = Math.floor((diff % 60000) / 1000);
   return { d, h, m, s };
 }
-
-const socialProof = [
-  { icon: Zap, text: "Sarah launched her app", time: "2h ago" },
-  { icon: Users, text: "James completed Day 2", time: "4h ago" },
-  { icon: Share2, text: "Maria shared her score", time: "6h ago" },
-];
 
 const Landing = () => {
   const nextMonday = getNextMonday();
@@ -91,19 +86,8 @@ const Landing = () => {
       </section>
 
       {/* Social Proof */}
-      <section className="mb-8 space-y-3">
-        {socialProof.map((item) => (
-          <div
-            key={item.text}
-            className="flex items-center gap-3 bg-card rounded-lg px-4 py-3 border border-border"
-          >
-            <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center shrink-0">
-              <item.icon className="h-4 w-4 text-success" />
-            </div>
-            <span className="text-sm text-foreground flex-1">{item.text}</span>
-            <span className="text-xs text-muted-foreground">{item.time}</span>
-          </div>
-        ))}
+      <section className="mb-8">
+        <ActivityFeed limit={3} title="Recent activity" />
       </section>
 
       {/* Bottom CTA */}

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Share2, Users, TrendingUp } from "lucide-react";
 import AiCopilotChat from "@/components/AiCopilotChat";
+import ActivityFeed from "@/components/ActivityFeed";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -135,6 +136,11 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Activity */}
+      <div className="mb-4">
+        <ActivityFeed limit={3} title="Builder activity" />
+      </div>
 
       {/* AI Co-pilot */}
       <AiCopilotChat />

@@ -21,6 +21,7 @@ import Features from "@/pages/Features";
 import Leaderboard from "@/pages/Leaderboard";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminPromoters from "@/pages/AdminPromoters";
+import InviteBuilders from "@/pages/InviteBuilders";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
 
             {/* Auth routes */}
             <Route element={<AppShell showNav />}>
+              <Route path="/invite-builders" element={<AuthGuard><InviteBuilders /></AuthGuard>} />
               <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
               <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
               <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />

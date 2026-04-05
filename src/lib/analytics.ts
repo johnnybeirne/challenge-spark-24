@@ -8,7 +8,11 @@ export type AnalyticsEvent =
   | "challenge_completed"
   | "share_clicked"
   | "referral_sent"
-  | "community_unlocked";
+  | "community_unlocked"
+  | "onboarding_viewed"
+  | "onboarding_invite_started"
+  | "onboarding_invite_completed"
+  | "onboarding_skipped";
 
 export async function trackEvent(
   event: AnalyticsEvent,

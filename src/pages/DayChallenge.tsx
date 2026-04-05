@@ -10,6 +10,7 @@ import { CheckCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
+import Day2InviteNudge from "@/components/Day2InviteNudge";
 import { trackEvent } from "@/lib/analytics";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
@@ -237,6 +238,9 @@ const DayChallenge = () => {
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>
+
+      {/* Day 2 soft gate */}
+      {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
         {config.tasks.map((task, i) => (

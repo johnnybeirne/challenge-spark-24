@@ -14,7 +14,7 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-card border-t border-border z-50 safe-area-bottom">
-      <div className="flex justify-around py-2">
+      <div className="flex justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {tabs.map(({ to, label, icon: Icon }) => {
           const active = pathname.startsWith(to);
           return (

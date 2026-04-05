@@ -255,6 +255,10 @@ const unlockDefs: UnlockDef[] = [
       return day3Done && hasUrl && promoted;
     },
   },
+  // Partner-specific unlocks
+  { id: "partner_10_kit", name: "Partner Growth Kit", value: 197, reason: "10 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 10 },
+  { id: "partner_25_accel", name: "Partner Accelerator Pack", value: 397, reason: "25 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 25 },
+  { id: "partner_50_elite", name: "Elite Partner System", value: 997, reason: "50 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 50 },
 ];
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {

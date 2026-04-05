@@ -33,7 +33,7 @@ const identityLabels: Record<string, string> = {
 };
 
 const Dashboard = () => {
-  const { state, setState } = useAppState();
+  const { state, setState, authUser, signOut } = useAppState();
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
   const identityType = state.assessment?.identityType;

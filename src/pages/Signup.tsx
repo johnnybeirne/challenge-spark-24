@@ -29,8 +29,10 @@ const Signup = () => {
 
     // Gather referral metadata
     let referredBy: string | null = null;
+    let partnerRef: string | null = null;
     try {
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
+      partnerRef = sessionStorage.getItem(PARTNER_REF_KEY);
     } catch {}
 
     const { error } = await signInWithMagicLink(email.trim().toLowerCase(), {

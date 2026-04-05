@@ -25,6 +25,11 @@ function scanFeatures(): Feature[] {
     { icon: <Calendar className="h-5 w-5 text-primary" />, title: "Calendar View", description: "Visual calendar to track challenge days and milestones.", category: "Core", addedAt: "2026-04-04" },
     { icon: <Shield className="h-5 w-5 text-primary" />, title: "Auth Guard", description: "Protected routes ensure only signed-up users access challenges.", category: "Security", addedAt: "2026-03-29" },
     { icon: <Zap className="h-5 w-5 text-primary" />, title: "Assessment Quiz", description: "Pre-challenge assessment to tailor your experience.", category: "Onboarding", addedAt: "2026-03-28" },
+    { icon: <Users className="h-5 w-5 text-primary" />, title: "JV Partner Dashboard", description: "Track conversions, earn tiered rewards, and grow as a partner.", category: "Growth", addedAt: "2026-04-04" },
+    { icon: <Rocket className="h-5 w-5 text-primary" />, title: "Loading Spinners", description: "Polished loading states with spinners and AI typing dots.", category: "Polish", addedAt: "2026-04-05" },
+    { icon: <Gift className="h-5 w-5 text-primary" />, title: "Empty States", description: "Friendly illustrations when referrals or unlocks are empty.", category: "Polish", addedAt: "2026-04-05" },
+    { icon: <Flame className="h-5 w-5 text-primary" />, title: "Celebration Animations", description: "Confetti bursts and checkmark pops on task & challenge completion.", category: "Polish", addedAt: "2026-04-05" },
+    { icon: <Calendar className="h-5 w-5 text-primary" />, title: "Activity Feed", description: "Real-time feed showing community activity and milestones.", category: "Community", addedAt: "2026-04-04" },
   ];
 }
 

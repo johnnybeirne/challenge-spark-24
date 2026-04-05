@@ -133,6 +133,21 @@ export function generateInviteCode(): string {
   return code;
 }
 
+export function generatePartnerCode(): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let code = "jv_";
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+export function getPartnerTier(conversions: number): PartnerTier {
+  if (conversions >= 50) return "gold";
+  if (conversions >= 25) return "silver";
+  return "bronze";
+}
+
 /* ───── Persistence helpers ───── */
 
 function safeParse<T>(key: string, fallback: T): T {

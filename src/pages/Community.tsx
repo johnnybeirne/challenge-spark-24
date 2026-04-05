@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { generatePartnerCode } from "@/context/AppContext";
 import ActivityFeed from "@/components/ActivityFeed";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
+import { usePromoter } from "@/hooks/usePromoter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

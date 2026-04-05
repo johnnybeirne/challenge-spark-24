@@ -47,6 +47,11 @@ const Signup = () => {
       return;
     }
 
+    // Track partner conversion
+    if (partnerRef) {
+      (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
+    }
+
     trackEvent("signup_completed");
     setSent(true);
     toast.success("Check your email for the magic link!");

@@ -6,7 +6,8 @@ import { Bot, Send, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import TypingDots from "@/components/TypingDots";
 
 interface ChatEntry {
   prompt: string;
@@ -49,11 +50,7 @@ const AiCopilotChat = () => {
         },
       }));
     } catch (err: any) {
-      toast({
-        title: "AI Co-pilot Error",
-        description: err?.message || "Something went wrong.",
-        variant: "destructive",
-      });
+      toast.error(err?.message || "Something went wrong with the AI co-pilot.");
     } finally {
       setLoading(false);
     }
@@ -86,6 +83,14 @@ const AiCopilotChat = () => {
           </ScrollArea>
         )}
 
+        {loading && (
+          <div className="flex items-center gap-2">
+            <Bot className="w-4 h-4 text-primary shrink-0" />
+            <div className="bg-primary/5 rounded-md">
+              <TypingDots />
+            </div>
+          </div>
+        )}
         <div className="flex gap-2">
           <Textarea
             placeholder="Ask your co-pilot anything…"

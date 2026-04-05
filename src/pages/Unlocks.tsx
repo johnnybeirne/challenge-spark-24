@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Lock, CheckCircle, Gift, Flame, Rocket, Crown, Users, Zap, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import EmptyState from "@/components/EmptyState";
 
 interface UnlockItem {
   id: string;
@@ -45,6 +46,16 @@ const Unlocks = () => {
             <p className="text-xs text-muted-foreground">of ${totalPossible} total value earned</p>
           </CardContent>
         </Card>
+
+        {state.unlocks.length === 0 && (
+          <EmptyState
+            icon={Gift}
+            title="No unlocks yet"
+            description="Complete challenge days and invite builders to start earning rewards worth up to $297."
+            actionLabel="Start Day 1"
+            actionPath="/day/1"
+          />
+        )}
 
         <div className="space-y-3">
           {allUnlocks.map((item) => {

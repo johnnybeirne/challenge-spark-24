@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import Confetti from "@/components/Confetti";
+import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -44,6 +46,7 @@ const DayChallenge = () => {
   const dayNum = Number(day) || 1;
   const config = dayConfig[dayNum] || dayConfig[1];
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showTaskAnim, setShowTaskAnim] = useState(false);
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];
@@ -59,6 +62,7 @@ const DayChallenge = () => {
     (state.referrals.shares + state.referrals.invites) >= 3;
 
   const toggleTask = (key: string) => {
+    const wasChecked = isChecked(key);
     setState((prev) => ({
       ...prev,
       challenge: {
@@ -66,6 +70,10 @@ const DayChallenge = () => {
         tasks: { ...prev.challenge.tasks, [taskKey(key)]: !prev.challenge.tasks[taskKey(key)] },
       },
     }));
+    if (!wasChecked) {
+      setShowTaskAnim(true);
+      setTimeout(() => setShowTaskAnim(false), 100);
+    }
   };
 
   const setOutput = (key: string, value: string) => {
@@ -90,7 +98,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, shares: (prev.referrals.shares || 0) + 1 },
     }));
-    toast({ title: "Shared!", description: "Thanks for spreading the word." });
+    toast.success("Thanks for spreading the word!");
   };
 
   const handleInvite = () => {
@@ -98,12 +106,12 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, invites: (prev.referrals.invites || 0) + 1 },
     }));
-    toast({ title: "Invite sent!", description: "One step closer to Builder Circle." });
+    toast.success("Invite sent — one step closer to Builder Circle.");
   };
 
   const unlockCommunity = () => {
     setState((prev) => ({ ...prev, communityUnlocked: true }));
-    toast({ title: "Builder Circle unlocked! 🎉", description: "Welcome to the community." });
+    toast.success("Builder Circle unlocked! 🎉");
     navigate("/community");
   };
 
@@ -113,7 +121,7 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
-      toast({ title: `Day ${dayNum} complete!`, description: `Day ${dayNum + 1} is now unlocked.` });
+      toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
       setState((prev) => ({
@@ -128,6 +136,7 @@ const DayChallenge = () => {
   if (showCelebration && dayNum === 3) {
     return (
       <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+        <Confetti />
         {/* Celebration */}
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
@@ -211,6 +220,7 @@ const DayChallenge = () => {
 
   return (
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+      <TaskCompleteAnim show={showTaskAnim} />
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3

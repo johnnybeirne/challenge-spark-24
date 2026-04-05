@@ -15,13 +15,13 @@ interface StatusUpdate {
 }
 
 const UPDATES: StatusUpdate[] = [
-  { name: "Sarah", action: "completed Day 1", avatar: avatarSarah, timeAgo: "2 minutes ago" },
-  { name: "James", action: "launched his challenge", avatar: avatarJames, timeAgo: "5 minutes ago" },
-  { name: "Maria", action: "invited 3 promoters", avatar: avatarMaria, timeAgo: "12 minutes ago" },
-  { name: "Alex", action: "completed Day 2", avatar: avatarAlex, timeAgo: "18 minutes ago" },
-  { name: "Tara", action: "completed Day 3", avatar: avatarTara, timeAgo: "25 minutes ago" },
-  { name: "Owen", action: "launched his challenge", avatar: avatarOwen, timeAgo: "31 minutes ago" },
-  { name: "Lily", action: "invited 5 builders", avatar: avatarLily, timeAgo: "44 minutes ago" },
+  { name: "Sarah", action: "completed Day 1", avatar: avatarSarah, timeAgo: "Jan 12, 2026" },
+  { name: "James", action: "launched his challenge", avatar: avatarJames, timeAgo: "Feb 3, 2026" },
+  { name: "Maria", action: "invited 3 promoters", avatar: avatarMaria, timeAgo: "Feb 18, 2026" },
+  { name: "Alex", action: "completed Day 2", avatar: avatarAlex, timeAgo: "Mar 5, 2026" },
+  { name: "Tara", action: "completed Day 3", avatar: avatarTara, timeAgo: "Mar 21, 2026" },
+  { name: "Owen", action: "launched his challenge", avatar: avatarOwen, timeAgo: "Mar 29, 2026" },
+  { name: "Lily", action: "invited 5 builders", avatar: avatarLily, timeAgo: "Apr 4, 2026" },
 ];
 
 const StatusPopup = () => {

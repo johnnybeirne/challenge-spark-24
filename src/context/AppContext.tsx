@@ -29,6 +29,17 @@ export interface UnlockEntry {
   timestamp: string;
 }
 
+export type PartnerTier = "bronze" | "silver" | "gold";
+
+export interface PartnerState {
+  isPartner: boolean;
+  partnerCode: string | null;
+  partnerSince: string | null;
+  conversions: number;
+  assessmentStarts: number;
+  tier: PartnerTier;
+}
+
 export interface AppState {
   user: any;
   assessment: any;
@@ -52,6 +63,7 @@ export interface AppState {
   community: CommunityState;
   communityUnlocked: boolean;
   unlocks: UnlockEntry[];
+  partner: PartnerState;
 }
 
 /* ───── Defaults ───── */

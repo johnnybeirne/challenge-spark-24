@@ -216,6 +216,7 @@ function saveState(state: AppState): void {
   safeWrite(STORAGE_KEYS.unlocks, state.unlocks);
   safeWrite(STORAGE_KEYS.network, state.network);
   safeWrite(STORAGE_KEYS.community, state.community);
+  safeWrite(STORAGE_KEYS.partner, state.partner);
 }
 
 export function clearState(): void {

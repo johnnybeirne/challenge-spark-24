@@ -60,8 +60,8 @@ const StatusPopup = () => {
     <div
       className={`fixed bottom-6 left-6 z-40 transition-all duration-500 ease-out ${
         visible
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-3 pointer-events-none"
+          ? "animate-fade-in"
+          : "animate-fade-out pointer-events-none"
       }`}
     >
       <div className="flex items-center gap-3 bg-card border border-border rounded-lg px-4 py-3 shadow-lg max-w-[280px]">

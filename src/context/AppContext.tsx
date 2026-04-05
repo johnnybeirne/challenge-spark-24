@@ -7,10 +7,15 @@ export interface AppState {
     currentDay: number;
     tasks: Record<string, boolean>;
     aiOutputs: Record<string, string>;
+    launchUrl: string;
+    completed: boolean;
   };
   referrals: {
     count: number;
+    shares: number;
+    invites: number;
   };
+  communityUnlocked: boolean;
   unlocks: any[];
 }
 

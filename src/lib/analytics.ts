@@ -15,7 +15,7 @@ export async function trackEvent(
   metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    await supabase.from("analytics_events").insert({
+    await (supabase.from("analytics_events") as any).insert({
       event_name: event,
       metadata: metadata ?? {},
     });

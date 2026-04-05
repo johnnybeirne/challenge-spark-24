@@ -8,6 +8,7 @@ import AppShell from "@/components/AppShell";
 import AuthGuard from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
 import Assessment from "@/pages/Assessment";
+import PartnerDashboard from "@/pages/PartnerDashboard";
 import Results from "@/pages/Results";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";

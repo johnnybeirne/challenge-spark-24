@@ -47,6 +47,7 @@ const App = () => (
               <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
               <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
               <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
+              <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

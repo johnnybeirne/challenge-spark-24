@@ -145,7 +145,13 @@ const UnlockedCommunity = () => {
   const navigate = useNavigate();
   const [boostedBuilders, setBoostedBuilders] = useState<Set<string>>(new Set());
 
-
+  const direct = state.network.direct;
+  const indirect = state.network.indirect;
+  const score =
+    direct * 3 +
+    indirect * 1 +
+    state.community.boostsGiven * 2 +
+    state.community.boostsReceived * 4;
 
   const boostBuilder = useCallback((name: string) => {
     if (boostedBuilders.has(name)) return;

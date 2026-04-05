@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
 const REF_SESSION_KEY = "challengeos_ref";
+const PARTNER_REF_KEY = "challengeos_partner_ref";
 
 const Signup = () => {
   const { signInWithMagicLink } = useAuth();

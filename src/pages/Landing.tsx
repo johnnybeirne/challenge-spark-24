@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Users, Share2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import ActivityFeed from "@/components/ActivityFeed";
 
 function getNextMonday() {
   const now = new Date();

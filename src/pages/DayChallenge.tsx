@@ -99,6 +99,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, shares: (prev.referrals.shares || 0) + 1 },
     }));
+    trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
   };
 

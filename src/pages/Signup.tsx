@@ -85,6 +85,17 @@ const Signup = () => {
         toast("A builder joined through your link!");
       }
 
+      // Partner attribution
+      if (partnerRef && prev.partner.isPartner && prev.partner.partnerCode === partnerRef) {
+        const newConversions = prev.partner.conversions + 1;
+        next.partner = {
+          ...next.partner,
+          conversions: newConversions,
+          tier: getPartnerTier(newConversions),
+        };
+        toast("Partner conversion recorded!");
+      }
+
       return next;
     });
 

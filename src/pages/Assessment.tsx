@@ -134,10 +134,33 @@ const Assessment = () => {
     const ref = searchParams.get("ref");
     if (ref && ref.length > 0) {
       try {
-        sessionStorage.setItem(REF_SESSION_KEY, ref);
+        if (ref.startsWith("jv_")) {
+          sessionStorage.setItem("challengeos_partner_ref", ref);
+        } else {
+          sessionStorage.setItem(REF_SESSION_KEY, ref);
+        }
       } catch {}
     }
   }, [searchParams]);
+
+  // Track partner assessment start
+  useEffect(() => {
+    try {
+      const partnerRef = sessionStorage.getItem("challengeos_partner_ref");
+      if (partnerRef) {
+        setState((prev) => {
+          if (prev.partner.isPartner && prev.partner.partnerCode === partnerRef) {
+            return {
+              ...prev,
+              partner: { ...prev.partner, assessmentStarts: prev.partner.assessmentStarts + 1 },
+            };
+          }
+          return prev;
+        });
+      }
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const q = questions[current];
   const progress = ((current + 1) / questions.length) * 100;

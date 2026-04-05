@@ -35,6 +35,7 @@ const App = () => (
               <Route path="/assess" element={<Assessment />} />
               <Route path="/results" element={<Results />} />
               <Route path="/join" element={<Signup />} />
+              <Route path="/features" element={<Features />} />
             </Route>
 
             {/* Auth routes */}

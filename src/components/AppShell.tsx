@@ -15,7 +15,7 @@ const AppShell = ({ showNav = false }: { showNav?: boolean }) => {
         {showNav && authenticated && <BottomNav />}
       </div>
       {authenticated && <AiCopilotChat />}
-      <StatusPopup />
+      
     </div>
   );
 };

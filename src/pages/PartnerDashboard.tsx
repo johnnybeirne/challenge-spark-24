@@ -4,6 +4,7 @@ import { usePromoter } from "@/hooks/usePromoter";
 import { useAppState } from "@/context/AppContext";
 import { useBadges } from "@/hooks/useBadges";
 import { supabase } from "@/integrations/supabase/client";
+import CrossPromoSlots from "@/components/CrossPromoSlots";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -220,6 +221,31 @@ const PartnerDashboard = () => {
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
               The more you contribute, the more your challenge is shown to other partners' audiences.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* ─── YOUR EXPOSURE (Cross-promo stats) ─── */}
+        <Card className="border-border mb-6">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Your exposure</h3>
+            </div>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              {[
+                { label: "Impressions", value: promoter.assessment_starts || 0 },
+                { label: "Clicks", value: promoter.conversions || 0 },
+                { label: "CTR", value: promoter.assessment_starts > 0 ? `${Math.round((promoter.conversions / promoter.assessment_starts) * 100)}%` : "0%" },
+              ].map(({ label, value }) => (
+                <div key={label} className="text-center p-2 bg-muted/50 rounded-lg">
+                  <p className="text-lg font-bold text-foreground">{value}</p>
+                  <p className="text-[10px] text-muted-foreground">{label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              The more you contribute, the more your challenge is shown across the network.
             </p>
           </CardContent>
         </Card>

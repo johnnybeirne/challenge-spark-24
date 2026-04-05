@@ -16,7 +16,10 @@ export type AnalyticsEvent =
   | "promoter_dashboard_viewed"
   | "promoter_link_copied"
   | "promoter_shared"
-  | "promoter_cta_clicked";
+  | "promoter_cta_clicked"
+  | "crosspromo_impression"
+  | "crosspromo_click"
+  | "crosspromo_featured";
 
 export async function trackEvent(
   event: AnalyticsEvent,

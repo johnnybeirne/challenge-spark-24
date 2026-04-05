@@ -9,6 +9,7 @@ import AiCopilotChat from "@/components/AiCopilotChat";
 import ActivityFeed from "@/components/ActivityFeed";
 import InviteNudgeCard from "@/components/InviteNudgeCard";
 import InviteMilestoneModal from "@/components/InviteMilestoneModal";
+import CrossPromoSlots from "@/components/CrossPromoSlots";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -162,6 +163,11 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Cross-promotion */}
+      <div className="mb-4">
+        <CrossPromoSlots slots={2} title="From the network" />
+      </div>
 
       {/* Activity */}
       <div className="mb-4">

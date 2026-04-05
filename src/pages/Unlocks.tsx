@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, CheckCircle, Gift, Flame, Rocket, Crown, Users, Zap, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EmptyState from "@/components/EmptyState";
+import CrossPromoSlots from "@/components/CrossPromoSlots";
 
 interface UnlockItem {
   id: string;
@@ -56,6 +57,12 @@ const Unlocks = () => {
             actionPath="/day/1"
           />
         )}
+
+        {/* Cross-promotion between sections */}
+        <div className="mb-4">
+          <CrossPromoSlots slots={2} title="Featured builders" />
+        </div>
+
 
         <div className="space-y-3">
           {allUnlocks.map((item) => {

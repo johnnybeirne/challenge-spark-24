@@ -37,7 +37,8 @@ export function useCrossPromo(slots = 3) {
         // Get promoter details
         const promoterIds = [...new Set(cpRows.map((r: any) => r.promoter_id))];
         const { data: promoters } = await (supabase.from("promoters") as any)
-          .select("id, user_id, conversions, tier")
+          .select("id, user_id, conversions, tier, is_founding_partner, is_eligible_for_promotion, quality_score")
+          .eq("is_eligible_for_promotion", true)
           .in("id", promoterIds);
 
         if (!promoters?.length) {

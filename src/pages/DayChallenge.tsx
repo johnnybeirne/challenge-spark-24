@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-const dayConfig: Record<number, { title: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
+const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
     title: "Foundation",
     tasks: [

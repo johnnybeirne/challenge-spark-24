@@ -80,6 +80,15 @@ const defaultCommunity: CommunityState = {
   leaderboardTab: "supportive",
 };
 
+const defaultPartner: PartnerState = {
+  isPartner: false,
+  partnerCode: null,
+  partnerSince: null,
+  conversions: 0,
+  assessmentStarts: 0,
+  tier: "bronze",
+};
+
 const defaultState: AppState = {
   user: null,
   assessment: null,
@@ -95,6 +104,7 @@ const defaultState: AppState = {
   community: defaultCommunity,
   communityUnlocked: false,
   unlocks: [],
+  partner: defaultPartner,
 };
 
 /* ───── Storage keys ───── */

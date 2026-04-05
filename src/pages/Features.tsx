@@ -30,6 +30,7 @@ function scanFeatures(): Feature[] {
     { icon: <Gift className="h-5 w-5 text-primary" />, title: "Empty States", description: "Friendly illustrations when referrals or unlocks are empty.", category: "Polish", addedAt: "2026-04-05" },
     { icon: <Flame className="h-5 w-5 text-primary" />, title: "Celebration Animations", description: "Confetti bursts and checkmark pops on task & challenge completion.", category: "Polish", addedAt: "2026-04-05" },
     { icon: <Calendar className="h-5 w-5 text-primary" />, title: "Activity Feed", description: "Real-time feed showing community activity and milestones.", category: "Community", addedAt: "2026-04-04" },
+    { icon: <LayoutDashboard className="h-5 w-5 text-primary" />, title: "Analytics System", description: "Event tracking, conversion funnel, and admin dashboard.", category: "Admin", addedAt: "2026-04-05" },
   ];
 }
 

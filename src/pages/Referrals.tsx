@@ -182,7 +182,14 @@ const Referrals = () => {
 
         {/* Buttons */}
         <div className="space-y-3">
-          <Button className="w-full gap-2" onClick={copyLink}>
+          <Button className="w-full gap-2" onClick={() => {
+            shareOrCopy({ text: DEFAULT_SHARE_TEXT, url: referralLink });
+            setState((prev) => ({ ...prev, referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 } }));
+          }}>
+            <Share2 className="h-4 w-4" />
+            Share my link
+          </Button>
+          <Button variant="outline" className="w-full gap-2" onClick={copyLink}>
             <Copy className="h-4 w-4" />
             Copy Link
           </Button>

@@ -117,6 +117,7 @@ const STORAGE_KEYS = {
   unlocks: "challengeos_unlocks",
   network: "challengeos_network",
   community: "challengeos_community",
+  partner: "challengeos_partner",
 } as const;
 
 const LEGACY_KEY = "challenge-os-state";

@@ -6,7 +6,7 @@ import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } fro
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 
-const DEFAULT_DEFAULT_SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
+const SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
 
 const Referrals = () => {
   const { state, setState } = useAppState();
@@ -31,7 +31,7 @@ const Referrals = () => {
   };
 
   const shareWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(DEFAULT_SHARE_TEXT + "\n\n" + referralLink)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink)}`;
     window.open(url, "_blank");
     setState((prev) => ({
       ...prev,
@@ -41,7 +41,7 @@ const Referrals = () => {
 
   const shareEmail = () => {
     const subject = encodeURIComponent("Quick assessment on audience growth");
-    const body = encodeURIComponent(DEFAULT_SHARE_TEXT + "\n\n" + referralLink);
+    const body = encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink);
     window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
     setState((prev) => ({
       ...prev,
@@ -176,14 +176,14 @@ const Referrals = () => {
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <p className="text-xs font-medium text-muted-foreground mb-2">Share message</p>
-            <p className="text-sm text-foreground italic">"{DEFAULT_SHARE_TEXT}"</p>
+            <p className="text-sm text-foreground italic">"{SHARE_TEXT}"</p>
           </CardContent>
         </Card>
 
         {/* Buttons */}
         <div className="space-y-3">
           <Button className="w-full gap-2" onClick={() => {
-            shareOrCopy({ text: DEFAULT_SHARE_TEXT, url: referralLink });
+            shareOrCopy({ text: SHARE_TEXT, url: referralLink });
             setState((prev) => ({ ...prev, referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 } }));
           }}>
             <Share2 className="h-4 w-4" />

@@ -121,7 +121,7 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
-      toast({ title: `Day ${dayNum} complete!`, description: `Day ${dayNum + 1} is now unlocked.` });
+      toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
       setState((prev) => ({

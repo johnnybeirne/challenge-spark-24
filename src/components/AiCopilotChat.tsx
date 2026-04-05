@@ -83,6 +83,14 @@ const AiCopilotChat = () => {
           </ScrollArea>
         )}
 
+        {loading && (
+          <div className="flex items-center gap-2">
+            <Bot className="w-4 h-4 text-primary shrink-0" />
+            <div className="bg-primary/5 rounded-md">
+              <TypingDots />
+            </div>
+          </div>
+        )}
         <div className="flex gap-2">
           <Textarea
             placeholder="Ask your co-pilot anything…"

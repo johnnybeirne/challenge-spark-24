@@ -37,7 +37,8 @@ export function useCrossPromo(slots = 3) {
         // Get promoter details
         const promoterIds = [...new Set(cpRows.map((r: any) => r.promoter_id))];
         const { data: promoters } = await (supabase.from("promoters") as any)
-          .select("id, user_id, conversions, tier")
+          .select("id, user_id, conversions, tier, is_founding_partner, is_eligible_for_promotion, quality_score")
+          .eq("is_eligible_for_promotion", true)
           .in("id", promoterIds);
 
         if (!promoters?.length) {
@@ -61,11 +62,20 @@ export function useCrossPromo(slots = 3) {
           const profile = promoter ? profileMap.get(promoter.user_id) : null;
           const direct = profile?.direct_referral_count || 0;
           const indirect = profile?.indirect_referral_count || 0;
-          const promotionScore =
+          let promotionScore =
             direct * 3 +
             indirect * 1 +
             (cp.priority || 0) +
             (promoter?.conversions || 0) * 2;
+
+          // Founding partner boost (1.5x)
+          if (promoter?.is_founding_partner) {
+            promotionScore *= 1.5;
+          }
+
+          // Quality score multiplier
+          const qs = promoter?.quality_score || 0;
+          promotionScore *= (1 + qs);
 
           // Light randomness to avoid same users always showing
           const jitter = Math.random() * 5;

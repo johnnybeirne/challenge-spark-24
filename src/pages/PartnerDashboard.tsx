@@ -5,6 +5,7 @@ import { useAppState } from "@/context/AppContext";
 import { useBadges } from "@/hooks/useBadges";
 import { supabase } from "@/integrations/supabase/client";
 import CrossPromoSlots from "@/components/CrossPromoSlots";
+import FoundingPartnerPanel from "@/components/FoundingPartnerPanel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -384,21 +385,8 @@ const PartnerDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* ─── SECTION 8: FOUNDING PARTNER ADVANTAGE ─── */}
-        {promoter.is_founding_partner && (
-          <Card className="border-primary/30 bg-primary/5 mb-6">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Founding Partner Advantage</h3>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                You joined early. You receive higher visibility across the network and priority positioning
-                inside the challenge ecosystem.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {/* ─── SECTION 8: FOUNDING PARTNER PANEL ─── */}
+        <FoundingPartnerPanel promoter={promoter} />
 
         {/* ─── SECTION 9: PERFORMANCE NUDGE ─── */}
         {direct < 3 && (

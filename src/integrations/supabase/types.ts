@@ -151,6 +151,30 @@ export type Database = {
           },
         ]
       }
+      founding_config: {
+        Row: {
+          created_at: string
+          cutoff_date: string | null
+          id: string
+          max_founders: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cutoff_date?: string | null
+          id?: string
+          max_founders?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cutoff_date?: string | null
+          id?: string
+          max_founders?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leaderboard_overrides: {
         Row: {
           created_at: string
@@ -241,10 +265,14 @@ export type Database = {
           assessment_starts: number
           conversions: number
           created_at: string
+          founding_joined_at: string | null
+          founding_rank: number | null
           id: string
           is_approved: boolean
+          is_eligible_for_promotion: boolean
           is_founding_partner: boolean
           partner_code: string
+          quality_score: number
           tier: string
           updated_at: string
           user_id: string
@@ -254,10 +282,14 @@ export type Database = {
           assessment_starts?: number
           conversions?: number
           created_at?: string
+          founding_joined_at?: string | null
+          founding_rank?: number | null
           id?: string
           is_approved?: boolean
+          is_eligible_for_promotion?: boolean
           is_founding_partner?: boolean
           partner_code: string
+          quality_score?: number
           tier?: string
           updated_at?: string
           user_id: string
@@ -267,10 +299,14 @@ export type Database = {
           assessment_starts?: number
           conversions?: number
           created_at?: string
+          founding_joined_at?: string | null
+          founding_rank?: number | null
           id?: string
           is_approved?: boolean
+          is_eligible_for_promotion?: boolean
           is_founding_partner?: boolean
           partner_code?: string
+          quality_score?: number
           tier?: string
           updated_at?: string
           user_id?: string

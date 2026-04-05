@@ -19,7 +19,11 @@ export type AnalyticsEvent =
   | "promoter_cta_clicked"
   | "crosspromo_impression"
   | "crosspromo_click"
-  | "crosspromo_featured";
+  | "crosspromo_featured"
+  | "founder_unlocked"
+  | "founder_viewed"
+  | "founder_slots_remaining"
+  | "founder_visibility_boost_applied";
 
 export async function trackEvent(
   event: AnalyticsEvent,

@@ -15,6 +15,10 @@ export interface AppState {
     shares: number;
     invites: number;
   };
+  network: {
+    direct: number;
+    indirect: number;
+  };
   communityUnlocked: boolean;
   unlocks: any[];
 }

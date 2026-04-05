@@ -10,6 +10,7 @@ import { CheckCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
+import { trackEvent } from "@/lib/analytics";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -98,6 +99,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, shares: (prev.referrals.shares || 0) + 1 },
     }));
+    trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
   };
 
@@ -106,11 +108,13 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, invites: (prev.referrals.invites || 0) + 1 },
     }));
+    trackEvent("referral_sent");
     toast.success("Invite sent — one step closer to Builder Circle.");
   };
 
   const unlockCommunity = () => {
     setState((prev) => ({ ...prev, communityUnlocked: true }));
+    trackEvent("community_unlocked");
     toast.success("Builder Circle unlocked! 🎉");
     navigate("/community");
   };
@@ -121,6 +125,7 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
+      trackEvent("day_completed", { day: dayNum });
       toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
@@ -128,6 +133,8 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, completed: true },
       }));
+      trackEvent("day_completed", { day: 3 });
+      trackEvent("challenge_completed");
       setShowCelebration(true);
     }
   };

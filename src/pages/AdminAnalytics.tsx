@@ -1,0 +1,234 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Lock, TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import Spinner from "@/components/Spinner";
+
+interface AnalyticsData {
+  counts: Record<string, number>;
+  daily: Record<string, Record<string, number>>;
+  total_events: number;
+}
+
+const FUNNEL_STEPS = [
+  { event: "assessment_started", label: "Assessment Started" },
+  { event: "assessment_completed", label: "Assessment Completed" },
+  { event: "signup_completed", label: "Signup" },
+  { event: "day_completed", label: "Day 1+" },
+  { event: "challenge_completed", label: "Challenge Complete" },
+];
+
+const AdminAnalytics = () => {
+  const [password, setPassword] = useState("");
+  const [authed, setAuthed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [data, setData] = useState<AnalyticsData | null>(null);
+
+  const login = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { data: res, error: err } = await supabase.functions.invoke(
+        "analytics-admin",
+        { body: { password } }
+      );
+      if (err) throw err;
+      if (res?.error) {
+        setError(res.error);
+        return;
+      }
+      setData(res);
+      setAuthed(true);
+    } catch (e: any) {
+      setError(e.message || "Failed to authenticate");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const { data: res } = await supabase.functions.invoke(
+        "analytics-admin",
+        { body: { password } }
+      );
+      if (res && !res.error) setData(res);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!authed) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen px-4">
+        <Card className="w-full max-w-sm">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Lock className="h-5 w-5 text-muted-foreground" />
+              <h1 className="text-lg font-bold text-foreground">Admin Analytics</h1>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                login();
+              }}
+              className="space-y-3"
+            >
+              <Input
+                type="password"
+                placeholder="Enter admin password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="min-h-[44px]"
+              />
+              {error && <p className="text-xs text-destructive">{error}</p>}
+              <Button className="w-full min-h-[44px]" disabled={!password || loading}>
+                {loading ? <Spinner size="sm" /> : "Access Dashboard"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const counts = data?.counts ?? {};
+  const totalUsers = counts["signup_completed"] ?? 0;
+  const totalReferrals = counts["referral_sent"] ?? 0;
+  const completions = counts["challenge_completed"] ?? 0;
+  const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
+
+  // Funnel data
+  const funnelData = FUNNEL_STEPS.map((step) => ({
+    ...step,
+    count: counts[step.event] ?? 0,
+  }));
+  const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-[600px] mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
+          <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>
+            {loading ? <Spinner size="sm" /> : "Refresh"}
+          </Button>
+        </div>
+
+        {/* Totals */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          <Card>
+            <CardContent className="p-4 text-center">
+              <Users className="h-5 w-5 text-primary mx-auto mb-1" />
+              <p className="text-2xl font-bold text-foreground">{totalUsers}</p>
+              <p className="text-xs text-muted-foreground">Users</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <TrendingUp className="h-5 w-5 text-primary mx-auto mb-1" />
+              <p className="text-2xl font-bold text-foreground">{totalReferrals}</p>
+              <p className="text-xs text-muted-foreground">Referrals</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <BarChart3 className="h-5 w-5 text-primary mx-auto mb-1" />
+              <p className="text-2xl font-bold text-foreground">{completionRate}%</p>
+              <p className="text-xs text-muted-foreground">Completion</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Funnel */}
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          Conversion Funnel
+        </h2>
+        <Card className="mb-8">
+          <CardContent className="p-4 space-y-3">
+            {funnelData.map((step, i) => {
+              const pct = maxFunnel > 0 ? (step.count / maxFunnel) * 100 : 0;
+              const prevCount = i > 0 ? funnelData[i - 1].count : null;
+              const dropoff =
+                prevCount && prevCount > 0
+                  ? Math.round((step.count / prevCount) * 100)
+                  : null;
+
+              return (
+                <div key={step.event}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      {i > 0 && (
+                        <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      )}
+                      <span className="text-sm font-medium text-foreground">
+                        {step.label}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-foreground">
+                        {step.count}
+                      </span>
+                      {dropoff !== null && (
+                        <span className="text-xs text-muted-foreground">
+                          ({dropoff}%)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(pct, 2)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* All Events */}
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          All Events
+        </h2>
+        <Card>
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              {Object.entries(counts)
+                .sort(([, a], [, b]) => b - a)
+                .map(([event, count]) => (
+                  <div
+                    key={event}
+                    className="flex items-center justify-between py-1.5 border-b border-border last:border-0"
+                  >
+                    <span className="text-sm text-foreground font-mono">
+                      {event}
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      {count}
+                    </span>
+                  </div>
+                ))}
+              {Object.keys(counts).length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No events tracked yet
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <p className="text-xs text-muted-foreground text-center mt-6">
+          Total events: {data?.total_events ?? 0}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default AdminAnalytics;

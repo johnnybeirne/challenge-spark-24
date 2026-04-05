@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
@@ -128,7 +129,15 @@ const Assessment = () => {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<string | undefined>(undefined);
+  const trackedStart = useRef(false);
 
+  // Track assessment_started once
+  useEffect(() => {
+    if (!trackedStart.current) {
+      trackedStart.current = true;
+      trackEvent("assessment_started");
+    }
+  }, []);
   // Capture referral code from URL
   useEffect(() => {
     const ref = searchParams.get("ref");
@@ -184,6 +193,7 @@ const Assessment = () => {
 
       const assessment = { scores: dims, total, percentage, identityType, completedAt: Date.now() };
       setState((prev) => ({ ...prev, assessment }));
+      trackEvent("assessment_completed", { identityType, percentage });
       navigate("/results");
     }
   };

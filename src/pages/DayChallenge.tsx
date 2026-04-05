@@ -106,7 +106,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, invites: (prev.referrals.invites || 0) + 1 },
     }));
-    toast({ title: "Invite sent!", description: "One step closer to Builder Circle." });
+    toast.success("Invite sent — one step closer to Builder Circle.");
   };
 
   const unlockCommunity = () => {

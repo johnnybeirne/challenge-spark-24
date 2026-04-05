@@ -11,16 +11,17 @@ interface StatusUpdate {
   name: string;
   action: string;
   avatar: string;
+  timeAgo: string;
 }
 
 const UPDATES: StatusUpdate[] = [
-  { name: "Sarah", action: "completed Day 1", avatar: avatarSarah },
-  { name: "James", action: "launched his challenge", avatar: avatarJames },
-  { name: "Maria", action: "invited 3 promoters", avatar: avatarMaria },
-  { name: "Alex", action: "completed Day 2", avatar: avatarAlex },
-  { name: "Tara", action: "completed Day 3", avatar: avatarTara },
-  { name: "Owen", action: "launched his challenge", avatar: avatarOwen },
-  { name: "Lily", action: "invited 5 builders", avatar: avatarLily },
+  { name: "Sarah", action: "completed Day 1", avatar: avatarSarah, timeAgo: "2 minutes ago" },
+  { name: "James", action: "launched his challenge", avatar: avatarJames, timeAgo: "5 minutes ago" },
+  { name: "Maria", action: "invited 3 promoters", avatar: avatarMaria, timeAgo: "12 minutes ago" },
+  { name: "Alex", action: "completed Day 2", avatar: avatarAlex, timeAgo: "18 minutes ago" },
+  { name: "Tara", action: "completed Day 3", avatar: avatarTara, timeAgo: "25 minutes ago" },
+  { name: "Owen", action: "launched his challenge", avatar: avatarOwen, timeAgo: "31 minutes ago" },
+  { name: "Lily", action: "invited 5 builders", avatar: avatarLily, timeAgo: "44 minutes ago" },
 ];
 
 const StatusPopup = () => {
@@ -69,10 +70,13 @@ const StatusPopup = () => {
           alt={current.name}
           className="h-8 w-8 rounded-full object-cover shrink-0"
         />
-        <p className="text-sm text-foreground">
-          <span className="font-semibold">{current.name}</span>{" "}
-          <span className="text-muted-foreground">{current.action}</span>
-        </p>
+        <div>
+          <p className="text-sm text-foreground">
+            <span className="font-semibold">{current.name}</span>{" "}
+            <span className="text-muted-foreground">{current.action}</span>
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">{current.timeAgo}</p>
+        </div>
       </div>
     </div>
   );

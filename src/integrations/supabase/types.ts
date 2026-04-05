@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          direct_referral_count: number
+          email: string | null
+          id: string
+          indirect_referral_count: number
+          invite_code: string
+          referred_by: string | null
+          referred_by_parent: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          direct_referral_count?: number
+          email?: string | null
+          id?: string
+          indirect_referral_count?: number
+          invite_code: string
+          referred_by?: string | null
+          referred_by_parent?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          direct_referral_count?: number
+          email?: string | null
+          id?: string
+          indirect_referral_count?: number
+          invite_code?: string
+          referred_by?: string | null
+          referred_by_parent?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["invite_code"]
+          },
+          {
+            foreignKeyName: "profiles_referred_by_parent_fkey"
+            columns: ["referred_by_parent"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["invite_code"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

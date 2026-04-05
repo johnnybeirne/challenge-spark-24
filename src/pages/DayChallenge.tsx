@@ -220,6 +220,7 @@ const DayChallenge = () => {
 
   return (
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+      <TaskCompleteAnim show={showTaskAnim} />
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3

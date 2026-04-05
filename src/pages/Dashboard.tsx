@@ -121,6 +121,21 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
+      {/* Network Growth */}
+      {(state.network.direct > 0 || state.network.indirect > 0) && (
+        <Card className="mb-4 bg-primary/5">
+          <CardContent className="p-5 flex items-center gap-3">
+            <TrendingUp className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Your network is growing</p>
+              <p className="text-xs text-muted-foreground">
+                {state.network.direct} direct · {state.network.indirect} indirect builders
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* AI Co-pilot */}
       <AiCopilotChat />
     </div>

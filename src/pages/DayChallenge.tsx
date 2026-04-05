@@ -136,6 +136,7 @@ const DayChallenge = () => {
   if (showCelebration && dayNum === 3) {
     return (
       <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+        <Confetti />
         {/* Celebration */}
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">

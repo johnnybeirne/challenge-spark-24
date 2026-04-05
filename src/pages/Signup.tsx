@@ -100,6 +100,7 @@ const Signup = () => {
       return next;
     });
 
+    trackEvent("signup_completed");
     navigate("/dashboard");
   };
 

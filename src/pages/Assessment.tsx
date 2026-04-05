@@ -193,6 +193,7 @@ const Assessment = () => {
 
       const assessment = { scores: dims, total, percentage, identityType, completedAt: Date.now() };
       setState((prev) => ({ ...prev, assessment }));
+      trackEvent("assessment_completed", { identityType, percentage });
       navigate("/results");
     }
   };

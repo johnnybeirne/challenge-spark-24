@@ -114,6 +114,7 @@ const DayChallenge = () => {
 
   const unlockCommunity = () => {
     setState((prev) => ({ ...prev, communityUnlocked: true }));
+    trackEvent("community_unlocked");
     toast.success("Builder Circle unlocked! 🎉");
     navigate("/community");
   };

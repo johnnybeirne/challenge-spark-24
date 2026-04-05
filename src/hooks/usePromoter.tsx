@@ -9,6 +9,10 @@ export interface PromoterRecord {
   tier: string;
   is_approved: boolean;
   is_founding_partner: boolean;
+  is_eligible_for_promotion: boolean;
+  quality_score: number;
+  founding_rank: number | null;
+  founding_joined_at: string | null;
   conversions: number;
   assessment_starts: number;
   approved_at: string | null;

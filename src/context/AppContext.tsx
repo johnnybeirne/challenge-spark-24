@@ -7,10 +7,15 @@ export interface AppState {
     currentDay: number;
     tasks: Record<string, boolean>;
     aiOutputs: Record<string, string>;
+    launchUrl: string;
+    completed: boolean;
   };
   referrals: {
     count: number;
+    shares: number;
+    invites: number;
   };
+  communityUnlocked: boolean;
   unlocks: any[];
 }
 
@@ -21,8 +26,11 @@ const defaultState: AppState = {
     currentDay: 1,
     tasks: {},
     aiOutputs: {},
+    launchUrl: "",
+    completed: false,
   },
-  referrals: { count: 0 },
+  referrals: { count: 0, shares: 0, invites: 0 },
+  communityUnlocked: false,
   unlocks: [],
 };
 

@@ -62,6 +62,7 @@ const DayChallenge = () => {
     (state.referrals.shares + state.referrals.invites) >= 3;
 
   const toggleTask = (key: string) => {
+    const wasChecked = isChecked(key);
     setState((prev) => ({
       ...prev,
       challenge: {
@@ -69,6 +70,10 @@ const DayChallenge = () => {
         tasks: { ...prev.challenge.tasks, [taskKey(key)]: !prev.challenge.tasks[taskKey(key)] },
       },
     }));
+    if (!wasChecked) {
+      setShowTaskAnim(true);
+      setTimeout(() => setShowTaskAnim(false), 100);
+    }
   };
 
   const setOutput = (key: string, value: string) => {

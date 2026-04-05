@@ -98,7 +98,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, shares: (prev.referrals.shares || 0) + 1 },
     }));
-    toast({ title: "Shared!", description: "Thanks for spreading the word." });
+    toast.success("Thanks for spreading the word!");
   };
 
   const handleInvite = () => {

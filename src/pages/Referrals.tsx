@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, MessageCircle, Mail, Users, CheckCircle } from "lucide-react";
+import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const SHARE_TEXT =
@@ -55,7 +55,10 @@ const Referrals = () => {
     }));
   };
 
-  const totalReferrals = state.referrals.shares + state.referrals.invites;
+  const direct = state.network.direct;
+  const indirect = state.network.indirect;
+  const totalNetwork = direct + indirect;
+  const score = direct * 3 + indirect * 1;
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,15 +69,41 @@ const Referrals = () => {
         </p>
 
         {/* Stats */}
-        <Card className="border-border mb-6">
+        <Card className="border-border mb-4">
           <CardContent className="flex items-center gap-4 p-5">
             <div className="rounded-full bg-primary/10 p-3">
               <Users className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground">{totalReferrals}</p>
+              <p className="text-3xl font-bold text-foreground">
+                {state.referrals.shares + state.referrals.invites}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {state.referrals.shares} shares · {state.referrals.invites} invites
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Your Impact */}
+        <Card className="border-border mb-6 bg-primary/5">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Your impact</h2>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              You invited <strong className="text-primary">{direct}</strong> builder{direct !== 1 ? "s" : ""}.
+              {" "}They invited <strong className="text-primary">{indirect}</strong> more.
+            </p>
+            <p className="text-sm text-foreground mt-1">
+              You've helped grow the network by{" "}
+              <strong className="text-primary">{totalNetwork}</strong> builder{totalNetwork !== 1 ? "s" : ""}.
+            </p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">
+                Network score: <strong className="text-foreground">{score}</strong>{" "}
+                <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
               </p>
             </div>
           </CardContent>

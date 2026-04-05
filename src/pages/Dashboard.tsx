@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Users } from "lucide-react";
+import { Share2, Users, TrendingUp } from "lucide-react";
 import AiCopilotChat from "@/components/AiCopilotChat";
 
 const dayTasks: Record<number, { label: string }[]> = {
@@ -120,6 +120,21 @@ const Dashboard = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Network Growth */}
+      {(state.network.direct > 0 || state.network.indirect > 0) && (
+        <Card className="mb-4 bg-primary/5">
+          <CardContent className="p-5 flex items-center gap-3">
+            <TrendingUp className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Your network is growing</p>
+              <p className="text-xs text-muted-foreground">
+                {state.network.direct} direct · {state.network.indirect} indirect builders
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* AI Co-pilot */}
       <AiCopilotChat />

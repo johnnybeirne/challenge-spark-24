@@ -15,6 +15,10 @@ export interface AppState {
     shares: number;
     invites: number;
   };
+  network: {
+    direct: number;
+    indirect: number;
+  };
   communityUnlocked: boolean;
   unlocks: any[];
 }
@@ -30,6 +34,7 @@ const defaultState: AppState = {
     completed: false,
   },
   referrals: { count: 0, shares: 0, invites: 0 },
+  network: { direct: 0, indirect: 0 },
   communityUnlocked: false,
   unlocks: [],
 };

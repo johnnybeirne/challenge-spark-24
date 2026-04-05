@@ -89,17 +89,11 @@ export function useCrossPromo(slots = 3) {
   }, [slots]);
 
   const trackImpression = async (promoId: string) => {
-    try {
-      trackEvent("crosspromo_impression" as any, { promo_id: promoId });
-      // Increment impressions counter
-      await (supabase.from("cross_promotions") as any)
-        .update({ impressions: supabase.rpc ? undefined : 0 }) // fallback
-        .eq("id", promoId);
-    } catch {}
+    trackEvent("crosspromo_impression", { promo_id: promoId });
   };
 
   const trackClick = async (promoId: string) => {
-    trackEvent("crosspromo_click" as any, { promo_id: promoId });
+    trackEvent("crosspromo_click", { promo_id: promoId });
   };
 
   return { promos, loading, trackImpression, trackClick };

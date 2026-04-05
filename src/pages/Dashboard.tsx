@@ -137,6 +137,11 @@ const Dashboard = () => {
         </Card>
       )}
 
+      {/* Activity */}
+      <div className="mb-4">
+        <ActivityFeed limit={3} title="Builder activity" />
+      </div>
+
       {/* AI Co-pilot */}
       <AiCopilotChat />
     </div>

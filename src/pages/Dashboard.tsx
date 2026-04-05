@@ -173,8 +173,6 @@ const Dashboard = () => {
         <ActivityFeed limit={3} title="Builder activity" />
       </div>
 
-      {/* AI Co-pilot */}
-      <AiCopilotChat />
     </div>
   );
 };

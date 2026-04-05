@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Flame, Gift, Users, Crown } from "lucide-react";
+import { LayoutDashboard, Flame, Gift, Users, Crown, Handshake } from "lucide-react";
+import { useAppState } from "@/context/AppContext";
 
-const tabs = [
+const baseTabs = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/day/1", label: "Challenge", icon: Flame },
   { to: "/unlocks", label: "Unlocks", icon: Gift },

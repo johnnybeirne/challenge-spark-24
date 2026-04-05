@@ -153,23 +153,14 @@ const Assessment = () => {
     }
   }, [searchParams]);
 
-  // Track partner assessment start
+  // Track partner assessment start via DB
   useEffect(() => {
     try {
       const partnerRef = sessionStorage.getItem("challengeos_partner_ref");
       if (partnerRef) {
-        setState((prev) => {
-          if (prev.partner.isPartner && prev.partner.partnerCode === partnerRef) {
-            return {
-              ...prev,
-              partner: { ...prev.partner, assessmentStarts: prev.partner.assessmentStarts + 1 },
-            };
-          }
-          return prev;
-        });
+        (supabase.rpc as any)("track_partner_assessment", { p_partner_code: partnerRef }).then(() => {});
       }
     } catch {}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const q = questions[current];

@@ -7,6 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Share2, Users, TrendingUp } from "lucide-react";
 import AiCopilotChat from "@/components/AiCopilotChat";
 import ActivityFeed from "@/components/ActivityFeed";
+import InviteNudgeCard from "@/components/InviteNudgeCard";
+import InviteMilestoneModal from "@/components/InviteMilestoneModal";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [

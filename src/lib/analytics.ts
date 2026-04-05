@@ -12,7 +12,11 @@ export type AnalyticsEvent =
   | "onboarding_viewed"
   | "onboarding_invite_started"
   | "onboarding_invite_completed"
-  | "onboarding_skipped";
+  | "onboarding_skipped"
+  | "promoter_dashboard_viewed"
+  | "promoter_link_copied"
+  | "promoter_shared"
+  | "promoter_cta_clicked";
 
 export async function trackEvent(
   event: AnalyticsEvent,

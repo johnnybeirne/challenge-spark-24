@@ -31,6 +31,16 @@ function scanFeatures(): Feature[] {
     { icon: <Flame className="h-5 w-5 text-primary" />, title: "Celebration Animations", description: "Confetti bursts and checkmark pops on task & challenge completion.", category: "Polish", addedAt: "2026-04-05" },
     { icon: <Calendar className="h-5 w-5 text-primary" />, title: "Activity Feed", description: "Real-time feed showing community activity and milestones.", category: "Community", addedAt: "2026-04-04" },
     { icon: <LayoutDashboard className="h-5 w-5 text-primary" />, title: "Analytics System", description: "Event tracking, conversion funnel, and admin dashboard.", category: "Admin", addedAt: "2026-04-05" },
+    { icon: <Users className="h-5 w-5 text-primary" />, title: "Two-Layer Referral Engine", description: "Promoters and participants tracked with dual-layer attribution.", category: "Growth", addedAt: "2026-04-05" },
+    { icon: <Shield className="h-5 w-5 text-primary" />, title: "Promoter Admin Panel", description: "Approve promoters, adjust conversions, tag founding partners.", category: "Admin", addedAt: "2026-04-05" },
+    { icon: <Flame className="h-5 w-5 text-primary" />, title: "Global Leaderboard", description: "Ranked participants and promoters with live scores.", category: "Community", addedAt: "2026-04-05" },
+    { icon: <Gift className="h-5 w-5 text-primary" />, title: "Badge System", description: "Auto-awarded badges for milestones like Early Adopter and Networker.", category: "Growth", addedAt: "2026-04-05" },
+    { icon: <Rocket className="h-5 w-5 text-primary" />, title: "Viral Onboarding Flow", description: "Post-signup interstitial and nudges to turn users into promoters.", category: "Onboarding", addedAt: "2026-04-05" },
+    { icon: <Share2 className="h-5 w-5 text-primary" />, title: "Invite Milestone Modal", description: "Celebratory feedback when users hit 3 invites.", category: "Growth", addedAt: "2026-04-05" },
+    { icon: <Zap className="h-5 w-5 text-primary" />, title: "Day 2 Invite Nudge", description: "Soft gate encouraging invites before Day 2 unlocks.", category: "Onboarding", addedAt: "2026-04-05" },
+    { icon: <LayoutDashboard className="h-5 w-5 text-primary" />, title: "Promoter Dashboard", description: "Premium JV dashboard with metrics, visibility, rewards, and impact.", category: "Growth", addedAt: "2026-04-05" },
+    { icon: <Globe className="h-5 w-5 text-primary" />, title: "Cross-Promotion System", description: "Promoters featured to each other's audiences based on performance.", category: "Community", addedAt: "2026-04-05" },
+    { icon: <Brain className="h-5 w-5 text-primary" />, title: "Supabase Auth + Sync", description: "Magic link auth with real-time state sync to the database.", category: "Security", addedAt: "2026-04-05" },
   ];
 }
 

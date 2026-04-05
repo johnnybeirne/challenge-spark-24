@@ -16,6 +16,7 @@ import Unlocks from "@/pages/Unlocks";
 import Referrals from "@/pages/Referrals";
 import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
+import Features from "@/pages/Features";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

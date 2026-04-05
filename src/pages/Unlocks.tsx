@@ -1,79 +1,57 @@
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, CheckCircle, Gift, Flame, Rocket, Crown } from "lucide-react";
+import { Lock, CheckCircle, Gift, Flame, Rocket, Crown, Users, Zap, Package } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UnlockItem {
-  key: string;
+  id: string;
   icon: React.ReactNode;
   title: string;
   description: string;
-  unlockedAt: number; // day needed to unlock (0 = paid)
-  isPaid?: boolean;
-  price?: string;
-  paidLabel?: string;
+  value: number;
 }
 
-const unlocks: UnlockItem[] = [
-  {
-    key: "day1",
-    icon: <Gift className="h-6 w-6" />,
-    title: "Day 1 Reward",
-    description: "Foundation blueprint — your app structure mapped and ready.",
-    unlockedAt: 1,
-  },
-  {
-    key: "day2",
-    icon: <Flame className="h-6 w-6" />,
-    title: "Day 2 Reward",
-    description: "Core feature built — your app is functional and connected.",
-    unlockedAt: 2,
-  },
-  {
-    key: "day3",
-    icon: <Rocket className="h-6 w-6" />,
-    title: "Day 3 Reward",
-    description: "Launch badge — you shipped a live app in 3 days.",
-    unlockedAt: 3,
-  },
-  {
-    key: "builder_circle",
-    icon: <Crown className="h-6 w-6" />,
-    title: "Builder Circle Access",
-    description: "Launch + promote. Join a network where builders promote each other.",
-    unlockedAt: 0,
-    isPaid: true,
-    price: "$197",
-    paidLabel: "Launch + promote",
-  },
+const allUnlocks: UnlockItem[] = [
+  { id: "day1_blueprint", icon: <Gift className="h-6 w-6" />, title: "App blueprint", description: "Your app structure mapped and ready.", value: 97 },
+  { id: "day2_playbook", icon: <Flame className="h-6 w-6" />, title: "Challenge playbook", description: "Core feature built — your app is functional.", value: 147 },
+  { id: "day3_checklist", icon: <Rocket className="h-6 w-6" />, title: "Launch checklist", description: "You shipped a live app in 3 days.", value: 97 },
+  { id: "referral_3_trust", icon: <Users className="h-6 w-6" />, title: "Trust growth playbook", description: "Invited 3 builders to the ecosystem.", value: 147 },
+  { id: "referral_5_prompts", icon: <Zap className="h-6 w-6" />, title: "AI prompt pack", description: "Invited 5 builders — advanced prompts unlocked.", value: 97 },
+  { id: "referral_10_system", icon: <Package className="h-6 w-6" />, title: "Full system", description: "Invited 10 builders — complete system access.", value: 297 },
+  { id: "builder_circle", icon: <Crown className="h-6 w-6" />, title: "Builder Circle access", description: "Launched and promoted — join the builder network.", value: 197 },
 ];
 
 const Unlocks = () => {
   const { state } = useAppState();
-  const currentDay = state.challenge.currentDay;
-  const completed = state.challenge.completed;
+  const navigate = useNavigate();
+  const earnedIds = new Set(state.unlocks.map((u) => u.id));
 
-  const isUnlocked = (item: UnlockItem) => {
-    if (item.isPaid) return state.communityUnlocked;
-    if (item.unlockedAt <= currentDay - 1) return true;
-    if (item.unlockedAt === 3 && completed) return true;
-    return false;
-  };
+  const totalEarned = state.unlocks.reduce((sum, u) => sum + u.value, 0);
+  const totalPossible = allUnlocks.reduce((sum, u) => sum + u.value, 0);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[480px] mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-foreground mb-1">Unlocks</h1>
-        <p className="text-sm text-muted-foreground mb-6">
-          Complete challenge days to earn rewards.
+        <p className="text-sm text-muted-foreground mb-2">
+          Complete challenges and grow your network to earn rewards.
         </p>
 
+        {/* Total value */}
+        <Card className="border-border mb-6 bg-primary/5">
+          <CardContent className="p-5 text-center">
+            <p className="text-3xl font-bold text-primary">${totalEarned}</p>
+            <p className="text-xs text-muted-foreground">of ${totalPossible} total value earned</p>
+          </CardContent>
+        </Card>
+
         <div className="space-y-3">
-          {unlocks.map((item) => {
-            const unlocked = isUnlocked(item);
+          {allUnlocks.map((item) => {
+            const unlocked = earnedIds.has(item.id);
             return (
               <Card
-                key={item.key}
+                key={item.id}
                 className={`border-border transition-all ${
                   unlocked ? "bg-card" : "bg-muted/40 opacity-70"
                 }`}
@@ -91,31 +69,30 @@ const Unlocks = () => {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold text-foreground text-sm">
-                        {item.title}
-                      </p>
-                      {item.isPaid && (
-                        <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                          {item.price}
-                        </span>
-                      )}
+                      <p className="font-semibold text-foreground text-sm">{item.title}</p>
+                      <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        ${item.value}
+                      </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {item.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                   </div>
 
                   <div className="shrink-0">
                     {unlocked ? (
                       <CheckCircle className="h-5 w-5 text-primary" />
-                    ) : item.isPaid ? (
-                      <Button size="sm" className="text-xs">
-                        Unlock
-                      </Button>
                     ) : (
-                      <span className="text-xs text-muted-foreground">
-                        Day {item.unlockedAt}
-                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs"
+                        onClick={() => {
+                          if (item.id.startsWith("day")) navigate("/day/1");
+                          else if (item.id.startsWith("referral")) navigate("/referrals");
+                          else navigate("/community");
+                        }}
+                      >
+                        Earn
+                      </Button>
                     )}
                   </div>
                 </CardContent>

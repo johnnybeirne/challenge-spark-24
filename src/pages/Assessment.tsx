@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -119,12 +119,25 @@ function getIdentityType(scores: Record<Dimension, number>): string {
   return "unactivated_audience";
 }
 
+const REF_SESSION_KEY = "challengeos_ref";
+
 const Assessment = () => {
   const navigate = useNavigate();
   const { setState } = useAppState();
+  const [searchParams] = useSearchParams();
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<string | undefined>(undefined);
+
+  // Capture referral code from URL
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref && ref.length > 0) {
+      try {
+        sessionStorage.setItem(REF_SESSION_KEY, ref);
+      } catch {}
+    }
+  }, [searchParams]);
 
   const q = questions[current];
   const progress = ((current + 1) / questions.length) * 100;
@@ -138,7 +151,6 @@ const Assessment = () => {
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
-      // Calculate scores
       const dims: Record<Dimension, number> = { trust: 0, activation: 0, ownership: 0, clarity: 0 };
       questions.forEach((question) => {
         dims[question.dimension] += updated[question.id] || 0;

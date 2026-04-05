@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

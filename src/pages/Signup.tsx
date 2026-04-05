@@ -34,9 +34,12 @@ const Signup = () => {
     // Check for referral attribution
     let referredBy: string | null = null;
     let referredByParent: string | null = null;
+    let partnerRef: string | null = null;
     try {
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
+      partnerRef = sessionStorage.getItem("challengeos_partner_ref");
       sessionStorage.removeItem(REF_SESSION_KEY);
+      sessionStorage.removeItem("challengeos_partner_ref");
     } catch {}
 
     const user = {

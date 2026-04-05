@@ -13,9 +13,9 @@ const baseTabs = [
 
 const BottomNav = () => {
   const { pathname } = useLocation();
-  const { state } = useAppState();
+  const { promoter } = usePromoter();
 
-  const tabs = state.partner.isPartner
+  const tabs = promoter
     ? [...baseTabs, { to: "/partner", label: "Partner", icon: Handshake }]
     : baseTabs;
   return (

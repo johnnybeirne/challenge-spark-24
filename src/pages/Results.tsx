@@ -3,7 +3,10 @@ import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Shield, Zap, Key, Eye, Share2, ArrowRight } from "lucide-react";
+import { Shield, Zap, Key, Eye, Share2, ArrowRight, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
+import { shareOrCopy } from "@/lib/share";
 
 const identityMap: Record<string, { label: string; icon: React.ReactNode; description: string }> = {
   hidden_authority: {
@@ -55,11 +58,18 @@ const Results = () => {
 
   const { scores, percentage, identityType } = assessment;
   const identity = identityMap[identityType] || identityMap.unactivated_audience;
-  const maxDim = 8; // 2 questions × 4 max each
+  const maxDim = 8;
 
-  const shareText = encodeURIComponent(
-    `I scored ${percentage}/100 on the Trust Leverage Assessment — what would you get?`
-  );
+  const inviteCode = state.user?.inviteCode ?? "";
+  const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+  const resultShareText = `I scored ${percentage}/100 on the Trust Leverage Assessment — what would you get?`;
+
+  const handleShare = () => {
+    shareOrCopy({
+      text: resultShareText,
+      url: referralLink,
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
@@ -119,9 +129,7 @@ const Results = () => {
       <Button
         variant="outline"
         className="w-full h-12 rounded-xl mb-3 gap-2"
-        onClick={() =>
-          window.open(`https://twitter.com/intent/tweet?text=${shareText}`, "_blank")
-        }
+        onClick={handleShare}
       >
         <Share2 className="w-4 h-4" />
         I scored {percentage}/100 — what would you get?

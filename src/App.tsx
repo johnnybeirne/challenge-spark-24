@@ -51,6 +51,9 @@ const App = () => (
               <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
             </Route>
 
+            {/* Admin */}
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

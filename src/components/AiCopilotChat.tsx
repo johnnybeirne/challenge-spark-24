@@ -50,11 +50,7 @@ const AiCopilotChat = () => {
         },
       }));
     } catch (err: any) {
-      toast({
-        title: "AI Co-pilot Error",
-        description: err?.message || "Something went wrong.",
-        variant: "destructive",
-      });
+      toast.error(err?.message || "Something went wrong with the AI co-pilot.");
     } finally {
       setLoading(false);
     }

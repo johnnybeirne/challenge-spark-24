@@ -89,7 +89,9 @@ const DayChallenge = () => {
           Day {dayNum} of 3
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
-      </div>
+        {config.nudge && (
+          <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
+        )}
 
       <div className="space-y-4">
         {config.tasks.map((task, i) => (

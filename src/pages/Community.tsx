@@ -451,7 +451,7 @@ const UnlockedCommunity = () => {
         </div>
 
         {/* Become a Partner CTA */}
-        {!state.partner.isPartner && (
+        {!promoter && (
           <Card className="border-primary/20 bg-primary/5 mb-6">
             <CardContent className="p-5">
               <div className="flex items-center gap-2 mb-2">
@@ -463,19 +463,14 @@ const UnlockedCommunity = () => {
               </p>
               <Button
                 className="w-full min-h-[44px] gap-1"
-                onClick={() => {
-                  const code = generatePartnerCode();
-                  setState((prev) => ({
-                    ...prev,
-                    partner: {
-                      ...prev.partner,
-                      isPartner: true,
-                      partnerCode: code,
-                      partnerSince: new Date().toISOString(),
-                    },
-                  }));
-                  navigate("/partner");
-                  toast.success("Welcome, Partner! Your JV dashboard is ready.");
+                onClick={async () => {
+                  const result = await becomePromoter();
+                  if (result) {
+                    navigate("/partner");
+                    toast.success("Welcome, Partner! Your JV dashboard is ready.");
+                  } else {
+                    toast.error("Failed to activate partner account");
+                  }
                 }}
               >
                 <Handshake className="h-4 w-4" /> Activate Partner Account

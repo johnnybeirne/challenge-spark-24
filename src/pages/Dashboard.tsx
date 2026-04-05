@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Share2, Users, TrendingUp } from "lucide-react";
-import AiCopilotChat from "@/components/AiCopilotChat";
 import ActivityFeed from "@/components/ActivityFeed";
 import InviteNudgeCard from "@/components/InviteNudgeCard";
 import InviteMilestoneModal from "@/components/InviteMilestoneModal";
@@ -174,8 +173,6 @@ const Dashboard = () => {
         <ActivityFeed limit={3} title="Builder activity" />
       </div>
 
-      {/* AI Co-pilot */}
-      <AiCopilotChat />
     </div>
   );
 };

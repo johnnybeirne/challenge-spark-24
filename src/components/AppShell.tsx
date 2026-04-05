@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import BottomNav from "./BottomNav";
 import AiCopilotChat from "./AiCopilotChat";
+import StatusPopup from "./StatusPopup";
 import { useAppState } from "@/context/AppContext";
 
 const AppShell = ({ showNav = false }: { showNav?: boolean }) => {
@@ -14,6 +15,7 @@ const AppShell = ({ showNav = false }: { showNav?: boolean }) => {
         {showNav && authenticated && <BottomNav />}
       </div>
       {authenticated && <AiCopilotChat />}
+      <StatusPopup />
     </div>
   );
 };

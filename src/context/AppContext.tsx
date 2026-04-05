@@ -165,6 +165,7 @@ function loadState(): AppState {
       community: { ...defaultCommunity, ...safeParse(STORAGE_KEYS.community, {}) },
       communityUnlocked: safeParse(STORAGE_KEYS.community, defaultCommunity).unlocked ?? false,
       unlocks: safeParse(STORAGE_KEYS.unlocks, []),
+      partner: { ...defaultPartner, ...safeParse(STORAGE_KEYS.partner, {}) },
     };
   }
 

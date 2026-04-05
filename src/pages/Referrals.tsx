@@ -1,7 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } from "lucide-react";
+import { toast } from "sonner";
+import { shareOrCopy } from "@/lib/share";
 import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 

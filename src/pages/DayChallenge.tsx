@@ -122,6 +122,7 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
+      trackEvent("day_completed", { day: dayNum });
       toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
@@ -129,6 +130,8 @@ const DayChallenge = () => {
         ...prev,
         challenge: { ...prev.challenge, completed: true },
       }));
+      trackEvent("day_completed", { day: 3 });
+      trackEvent("challenge_completed");
       setShowCelebration(true);
     }
   };

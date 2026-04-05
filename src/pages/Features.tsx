@@ -8,6 +8,7 @@ interface Feature {
   title: string;
   description: string;
   category: string;
+  addedAt: string;
 }
 
 function scanFeatures(): Feature[] {

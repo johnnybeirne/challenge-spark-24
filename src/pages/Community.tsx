@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Lock, CheckCircle, Star, TrendingUp, Users, Share2, Rocket,
   Crown, Heart, Globe, Copy, Award, Zap, ArrowRight, Shield,
-  UserPlus, Eye
+  UserPlus, Eye, Handshake
 } from "lucide-react";
 import { toast } from "sonner";
 

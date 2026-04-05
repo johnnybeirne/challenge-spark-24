@@ -537,6 +537,7 @@ const Community = () => {
             name: "Builder Circle access",
             value: 197,
             reason: "Launched and promoted challenge",
+            timestamp: new Date().toISOString(),
           },
         ],
       }));

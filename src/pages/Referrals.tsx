@@ -3,7 +3,7 @@ import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const SHARE_TEXT =
   "I took this 90-second assessment on audience growth — curious what you'd get?";
@@ -12,14 +12,8 @@ const Referrals = () => {
   const { state, setState } = useAppState();
   const [copied, setCopied] = useState(false);
 
-  const refCode = useMemo(() => {
-    if (state.user?.email) {
-      return btoa(state.user.email).slice(0, 8).toUpperCase();
-    }
-    return "BUILDER" + Math.random().toString(36).slice(2, 6).toUpperCase();
-  }, [state.user]);
-
-  const referralLink = `${window.location.origin}/assess?ref=${refCode}`;
+  const inviteCode = state.user?.inviteCode ?? "builder";
+  const referralLink = `${window.location.origin}/assess?ref=${inviteCode}`;
 
   const copyLink = async () => {
     try {
@@ -29,10 +23,10 @@ const Referrals = () => {
         ...prev,
         referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 },
       }));
-      toast({ title: "Link copied!", description: "Share it with your network." });
+      toast("Link copied! Share it with your network.");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Failed to copy", variant: "destructive" });
+      toast.error("Failed to copy");
     }
   };
 
@@ -60,6 +54,13 @@ const Referrals = () => {
   const totalNetwork = direct + indirect;
   const score = direct * 3 + indirect * 1;
 
+  // Unlock thresholds
+  const unlockThresholds = [
+    { count: 3, label: "Trust growth playbook", value: "$147" },
+    { count: 5, label: "AI prompt pack", value: "$97" },
+    { count: 10, label: "Full system", value: "$297" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[480px] mx-auto px-4 py-8">
@@ -86,7 +87,7 @@ const Referrals = () => {
         </Card>
 
         {/* Your Impact */}
-        <Card className="border-border mb-6 bg-primary/5">
+        <Card className="border-border mb-4 bg-primary/5">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="h-5 w-5 text-primary" />
@@ -97,8 +98,11 @@ const Referrals = () => {
               {" "}They invited <strong className="text-primary">{indirect}</strong> more.
             </p>
             <p className="text-sm text-foreground mt-1">
-              You've helped grow the network by{" "}
+              You've helped grow the ecosystem by{" "}
               <strong className="text-primary">{totalNetwork}</strong> builder{totalNetwork !== 1 ? "s" : ""}.
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              This is what network-based growth looks like when builders help builders.
             </p>
             <div className="mt-3 pt-3 border-t border-border">
               <p className="text-xs text-muted-foreground">
@@ -108,6 +112,48 @@ const Referrals = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Referral milestones */}
+        <Card className="border-border mb-6">
+          <CardContent className="p-5">
+            <p className="text-xs font-medium text-muted-foreground mb-3">Builder milestones</p>
+            <div className="space-y-2">
+              {unlockThresholds.map((t) => {
+                const reached = direct >= t.count;
+                return (
+                  <div key={t.count} className="flex items-center gap-2 text-sm">
+                    {reached ? (
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                    ) : (
+                      <div className="h-4 w-4 rounded-full border border-muted-foreground/30 shrink-0" />
+                    )}
+                    <span className={reached ? "text-foreground" : "text-muted-foreground"}>
+                      {t.count} builders → {t.label}
+                    </span>
+                    <span className="ml-auto text-xs text-primary font-medium">{t.value}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Referral records */}
+        {state.referrals.records.length > 0 && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <p className="text-xs font-medium text-muted-foreground mb-3">Recent builders</p>
+              <div className="space-y-2">
+                {state.referrals.records.slice(-5).reverse().map((r, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm">
+                    <span className="text-foreground">{r.invited_email}</span>
+                    <span className="text-xs text-primary">joined</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Link */}
         <Card className="border-border mb-6">

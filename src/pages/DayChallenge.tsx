@@ -18,6 +18,7 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
   },
   2: {
     title: "Build",
+    nudge: "This is the hardest day — push through.",
     tasks: [
       { key: "build_core", label: "Build core feature", hasTextarea: false },
       { key: "connect_flow", label: "Connect flow", hasTextarea: false },

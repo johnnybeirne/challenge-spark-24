@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-const dayConfig: Record<number, { title: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
+const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
     title: "Foundation",
     tasks: [
@@ -18,6 +18,7 @@ const dayConfig: Record<number, { title: string; tasks: { key: string; label: st
   },
   2: {
     title: "Build",
+    nudge: "This is the hardest day — push through.",
     tasks: [
       { key: "build_core", label: "Build core feature", hasTextarea: false },
       { key: "connect_flow", label: "Connect flow", hasTextarea: false },
@@ -88,6 +89,9 @@ const DayChallenge = () => {
           Day {dayNum} of 3
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
+        {config.nudge && (
+          <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
+        )}
       </div>
 
       <div className="space-y-4">

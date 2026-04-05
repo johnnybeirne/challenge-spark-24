@@ -18,6 +18,7 @@ import Referrals from "@/pages/Referrals";
 import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
 import Features from "@/pages/Features";
+import AdminAnalytics from "@/pages/AdminAnalytics";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

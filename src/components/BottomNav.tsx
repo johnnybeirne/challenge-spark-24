@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Flame, Gift, Users } from "lucide-react";
+import { LayoutDashboard, Flame, Gift, Users, Crown } from "lucide-react";
 
 const tabs = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/day/1", label: "Challenge", icon: Flame },
   { to: "/unlocks", label: "Unlocks", icon: Gift },
   { to: "/referrals", label: "Referrals", icon: Users },
+  { to: "/community", label: "Circle", icon: Crown },
 ];
 
 const BottomNav = () => {
@@ -20,7 +21,7 @@ const BottomNav = () => {
             <Link
               key={to}
               to={to}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1 text-xs transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] transition-colors ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
             >

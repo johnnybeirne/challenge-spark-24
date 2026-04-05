@@ -1,5 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+export interface CommunityState {
+  unlocked: boolean;
+  unlockedAt: string | null;
+  entryReason: string | null;
+  boostsGiven: number;
+  boostsReceived: number;
+  leaderboardScore: number;
+  featuredStatus: "none" | "eligible" | "featured";
+  submittedUrl: string | null;
+  leaderboardTab: "supportive" | "network" | "active" | "launched";
+}
+
 export interface AppState {
   user: any;
   assessment: any;
@@ -19,9 +31,22 @@ export interface AppState {
     direct: number;
     indirect: number;
   };
+  community: CommunityState;
   communityUnlocked: boolean;
   unlocks: any[];
 }
+
+const defaultCommunity: CommunityState = {
+  unlocked: false,
+  unlockedAt: null,
+  entryReason: null,
+  boostsGiven: 0,
+  boostsReceived: 0,
+  leaderboardScore: 0,
+  featuredStatus: "none",
+  submittedUrl: null,
+  leaderboardTab: "supportive",
+};
 
 const defaultState: AppState = {
   user: null,
@@ -35,6 +60,7 @@ const defaultState: AppState = {
   },
   referrals: { count: 0, shares: 0, invites: 0 },
   network: { direct: 0, indirect: 0 },
+  community: defaultCommunity,
   communityUnlocked: false,
   unlocks: [],
 };
@@ -52,6 +78,7 @@ function loadState(): AppState {
         challenge: { ...defaultState.challenge, ...(parsed.challenge || {}) },
         referrals: { ...defaultState.referrals, ...(parsed.referrals || {}) },
         network: { ...defaultState.network, ...(parsed.network || {}) },
+        community: { ...defaultCommunity, ...(parsed.community || {}) },
       };
     }
   } catch {

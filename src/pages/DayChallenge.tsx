@@ -111,7 +111,7 @@ const DayChallenge = () => {
 
   const unlockCommunity = () => {
     setState((prev) => ({ ...prev, communityUnlocked: true }));
-    toast({ title: "Builder Circle unlocked! 🎉", description: "Welcome to the community." });
+    toast.success("Builder Circle unlocked! 🎉");
     navigate("/community");
   };
 

@@ -9,6 +9,7 @@ import AiCopilotChat from "@/components/AiCopilotChat";
 import ActivityFeed from "@/components/ActivityFeed";
 import InviteNudgeCard from "@/components/InviteNudgeCard";
 import InviteMilestoneModal from "@/components/InviteMilestoneModal";
+import CrossPromoSlots from "@/components/CrossPromoSlots";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [

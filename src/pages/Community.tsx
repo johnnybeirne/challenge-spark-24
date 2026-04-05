@@ -23,15 +23,8 @@ const FEATURED_BUILDERS = [
   { name: "Tara Nguyen", app: "PodCast AI", desc: "AI summaries for podcast episodes", status: "Featured" as const, score: 134 },
 ];
 
-const ACTIVITY_FEED = [
-  { actor: "Sarah", action: "supported James's launch", time: "2m ago" },
-  { actor: "Alex", action: "invited 3 builders", time: "8m ago" },
-  { actor: "Maria", action: "launched her challenge", time: "15m ago" },
-  { actor: "Tara", action: "moved into the top 10", time: "32m ago" },
-  { actor: "Owen", action: "had their build featured", time: "1h ago" },
-  { actor: "Priya", action: "supported 5 builders today", time: "2h ago" },
-  { actor: "Jake", action: "completed the 3-day challenge", time: "3h ago" },
-];
+
+
 
 function generateLeaderboard(userScore: number, userName: string) {
   const entries = [

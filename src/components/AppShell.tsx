@@ -7,12 +7,9 @@ const AppShell = ({ showNav = false }: { showNav?: boolean }) => {
   const authenticated = !!state.user;
 
   return (
-    <div className="min-h-screen flex justify-center bg-background">
-      <div className="w-full max-w-[480px] relative pb-16">
+    <div className="min-h-screen flex justify-center bg-background overflow-x-hidden">
+      <div className="w-full max-w-[480px] relative pb-20">
         <Outlet />
-        {showNav && authenticated && <BottomNav />}
-      </div>
-    </div>
         {showNav && authenticated && <BottomNav />}
       </div>
     </div>

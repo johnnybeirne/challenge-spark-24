@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
 
 /* ───── Types ───── */
 
@@ -89,7 +91,7 @@ const defaultPartner: PartnerState = {
   tier: "bronze",
 };
 
-const defaultState: AppState = {
+export const defaultState: AppState = {
   user: null,
   assessment: null,
   challenge: {
@@ -107,38 +109,19 @@ const defaultState: AppState = {
   partner: defaultPartner,
 };
 
-/* ───── Storage keys ───── */
-
-const STORAGE_KEYS = {
-  user: "challengeos_user",
-  assessment: "challengeos_assessment",
-  challenge: "challengeos_challenge",
-  referrals: "challengeos_referrals",
-  unlocks: "challengeos_unlocks",
-  network: "challengeos_network",
-  community: "challengeos_community",
-  partner: "challengeos_partner",
-} as const;
-
-const LEGACY_KEY = "challenge-os-state";
-
-/* ───── Invite code generator ───── */
+/* ───── Helpers ───── */
 
 export function generateInviteCode(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let code = "";
-  for (let i = 0; i < 8; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
 }
 
 export function generatePartnerCode(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let code = "jv_";
-  for (let i = 0; i < 6; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
 }
 
@@ -146,84 +129,6 @@ export function getPartnerTier(conversions: number): PartnerTier {
   if (conversions >= 50) return "gold";
   if (conversions >= 25) return "silver";
   return "bronze";
-}
-
-/* ───── Persistence helpers ───── */
-
-function safeParse<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw) as T;
-  } catch {
-    try { localStorage.removeItem(key); } catch {}
-  }
-  return fallback;
-}
-
-function safeWrite(key: string, value: unknown): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
-}
-
-function loadState(): AppState {
-  // Try new split keys first
-  const user = safeParse(STORAGE_KEYS.user, defaultState.user);
-
-  if (user) {
-    return {
-      user,
-      assessment: safeParse(STORAGE_KEYS.assessment, defaultState.assessment),
-      challenge: { ...defaultState.challenge, ...safeParse(STORAGE_KEYS.challenge, {}) },
-      referrals: { ...defaultState.referrals, ...safeParse(STORAGE_KEYS.referrals, {}) },
-      network: { ...defaultState.network, ...safeParse(STORAGE_KEYS.network, {}) },
-      community: { ...defaultCommunity, ...safeParse(STORAGE_KEYS.community, {}) },
-      communityUnlocked: safeParse(STORAGE_KEYS.community, defaultCommunity).unlocked ?? false,
-      unlocks: safeParse(STORAGE_KEYS.unlocks, []),
-      partner: { ...defaultPartner, ...safeParse(STORAGE_KEYS.partner, {}) },
-    };
-  }
-
-  // Fallback to legacy single key
-  try {
-    const raw = localStorage.getItem(LEGACY_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const state: AppState = {
-        ...defaultState,
-        ...parsed,
-        challenge: { ...defaultState.challenge, ...(parsed.challenge || {}) },
-        referrals: { ...defaultState.referrals, ...(parsed.referrals || {}), records: parsed.referrals?.records || [] },
-        network: { ...defaultState.network, ...(parsed.network || {}) },
-        community: { ...defaultCommunity, ...(parsed.community || {}) },
-        unlocks: parsed.unlocks || [],
-      };
-      state.communityUnlocked = state.community.unlocked;
-      return state;
-    }
-  } catch {
-    try { localStorage.removeItem(LEGACY_KEY); } catch {}
-  }
-
-  return defaultState;
-}
-
-function saveState(state: AppState): void {
-  safeWrite(STORAGE_KEYS.user, state.user);
-  safeWrite(STORAGE_KEYS.assessment, state.assessment);
-  safeWrite(STORAGE_KEYS.challenge, state.challenge);
-  safeWrite(STORAGE_KEYS.referrals, state.referrals);
-  safeWrite(STORAGE_KEYS.unlocks, state.unlocks);
-  safeWrite(STORAGE_KEYS.network, state.network);
-  safeWrite(STORAGE_KEYS.community, state.community);
-  safeWrite(STORAGE_KEYS.partner, state.partner);
-}
-
-export function clearState(): void {
-  Object.values(STORAGE_KEYS).forEach((k) => {
-    try { localStorage.removeItem(k); } catch {}
-  });
-  try { localStorage.removeItem(LEGACY_KEY); } catch {}
 }
 
 /* ───── Unlock engine ───── */
@@ -255,7 +160,6 @@ const unlockDefs: UnlockDef[] = [
       return day3Done && hasUrl && promoted;
     },
   },
-  // Partner-specific unlocks
   { id: "partner_10_kit", name: "Partner Growth Kit", value: 197, reason: "10 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 10 },
   { id: "partner_25_accel", name: "Partner Accelerator Pack", value: 397, reason: "25 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 25 },
   { id: "partner_50_elite", name: "Elite Partner System", value: 997, reason: "50 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 50 },
@@ -278,12 +182,8 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
       timestamp: new Date().toISOString(),
     };
 
-    updated = {
-      ...updated,
-      unlocks: [...updated.unlocks, entry],
-    };
+    updated = { ...updated, unlocks: [...updated.unlocks, entry] };
 
-    // Builder circle special handling
     if (def.id === "builder_circle") {
       const entryReason =
         updated.referrals.shares > 0 && updated.network.direct >= 3
@@ -294,12 +194,7 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
 
       updated = {
         ...updated,
-        community: {
-          ...updated.community,
-          unlocked: true,
-          unlockedAt: new Date().toISOString(),
-          entryReason,
-        },
+        community: { ...updated.community, unlocked: true, unlockedAt: new Date().toISOString(), entryReason },
         communityUnlocked: true,
       };
     }
@@ -308,7 +203,6 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
     changed = true;
   }
 
-  // Recalculate leaderboard score
   if (changed) {
     updated = {
       ...updated,
@@ -326,8 +220,6 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
-/* ───── Leaderboard scoring ───── */
-
 export function calculateLeaderboardScore(state: AppState): number {
   return (
     state.network.direct * 3 +
@@ -337,25 +229,80 @@ export function calculateLeaderboardScore(state: AppState): number {
   );
 }
 
+export function clearState(): void {
+  const keys = [
+    "challengeos_user", "challengeos_assessment", "challengeos_challenge",
+    "challengeos_referrals", "challengeos_unlocks", "challengeos_network",
+    "challengeos_community", "challengeos_partner", "challenge-os-state",
+  ];
+  keys.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
+}
+
 /* ───── Context ───── */
 
 interface AppContextValue {
   state: AppState;
   setState: React.Dispatch<React.SetStateAction<AppState>>;
+  authUser: any;
+  authLoading: boolean;
+  signOut: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setStateRaw] = useState<AppState>(loadState);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const { user: authUser, loading: authLoading, signOut } = useAuth();
+  const [state, setStateRaw] = useState<AppState>(defaultState);
+  const [hydrated, setHydrated] = useState(false);
+  const prevUnlocksRef = useRef<string[]>([]);
 
-  // Debounced save on state change
+  // Hydrate state from Supabase when user authenticates
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => saveState(state), 300);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [state]);
+    if (authLoading) return;
+
+    if (authUser) {
+      (async () => {
+        // Try migrating localStorage first
+        await migrateLocalToSupabase(authUser.id);
+
+        // Load from Supabase
+        const remote = await loadFromSupabase(authUser.id);
+        if (remote) {
+          setStateRaw((prev) => ({
+            ...prev,
+            ...remote,
+            community: prev.community,
+            communityUnlocked: prev.communityUnlocked,
+            partner: prev.partner,
+            referrals: prev.referrals,
+          }));
+          prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
+        }
+        setHydrated(true);
+      })();
+    } else {
+      // Load assessment from localStorage for unauthenticated flow
+      try {
+        const raw = localStorage.getItem("challengeos_assessment");
+        if (raw) {
+          setStateRaw((prev) => ({ ...prev, assessment: JSON.parse(raw) }));
+        }
+      } catch {}
+      setHydrated(true);
+    }
+  }, [authUser, authLoading]);
+
+  // Save assessment to localStorage (works pre-auth)
+  useEffect(() => {
+    if (state.assessment) {
+      try {
+        localStorage.setItem("challengeos_assessment", JSON.stringify(state.assessment));
+      } catch {}
+    }
+  }, [state.assessment]);
+
+  // Supabase sync hook
+  useSupabaseSync(authUser ?? null, state, prevUnlocksRef);
 
   // Wrap setState to auto-run unlock checks
   const setState: React.Dispatch<React.SetStateAction<AppState>> = (action) => {
@@ -366,7 +313,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ state, setState }}>
+    <AppContext.Provider value={{ state, setState, authUser, authLoading, signOut }}>
       {children}
     </AppContext.Provider>
   );

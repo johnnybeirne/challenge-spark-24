@@ -422,22 +422,7 @@ const UnlockedCommunity = () => {
 
         {/* 7. Activity Feed */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Builder activity</h3>
-          <Card className="border-border">
-            <CardContent className="p-0">
-              {feedItems.map((item, i) => (
-                <div key={i} className={`flex items-center gap-3 px-4 py-3 ${i < feedItems.length - 1 ? "border-b border-border" : ""}`}>
-                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                    {item.actor[0]}
-                  </div>
-                  <p className="text-xs text-muted-foreground flex-1">
-                    <span className="text-foreground font-medium">{item.actor}</span> {item.action}
-                  </p>
-                  <span className="text-[10px] text-muted-foreground/60 shrink-0">{item.time}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <ActivityFeed limit={5} refresh title="Builder activity" />
         </div>
 
         {/* 8. Your Impact */}

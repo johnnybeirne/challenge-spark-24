@@ -1,21 +1,30 @@
 import { useState, useEffect } from "react";
 import { Zap, Rocket, Users, Heart } from "lucide-react";
 
+import avatarSarah from "@/assets/avatars/sarah.jpg";
+import avatarJames from "@/assets/avatars/james.jpg";
+import avatarMaria from "@/assets/avatars/maria.jpg";
+import avatarAlex from "@/assets/avatars/alex.jpg";
+import avatarTara from "@/assets/avatars/tara.jpg";
+import avatarOwen from "@/assets/avatars/owen.jpg";
+import avatarLily from "@/assets/avatars/lily.jpg";
+
 interface ActivityItem {
   name: string;
   action: string;
   time: string;
   icon: React.ReactNode;
+  avatar: string;
 }
 
 const ACTIVITIES: ActivityItem[] = [
-  { name: "Sarah", action: "completed Day 1", time: "2m ago", icon: <Zap className="h-3.5 w-3.5" /> },
-  { name: "James", action: "launched his app", time: "8m ago", icon: <Rocket className="h-3.5 w-3.5" /> },
-  { name: "Maria", action: "invited 3 builders", time: "15m ago", icon: <Users className="h-3.5 w-3.5" /> },
-  { name: "Alex", action: "supported another builder", time: "32m ago", icon: <Heart className="h-3.5 w-3.5" /> },
-  { name: "Tara", action: "completed Day 3", time: "1h ago", icon: <Zap className="h-3.5 w-3.5" /> },
-  { name: "Owen", action: "launched his app", time: "1h ago", icon: <Rocket className="h-3.5 w-3.5" /> },
-  { name: "Lily", action: "invited 5 builders", time: "2h ago", icon: <Users className="h-3.5 w-3.5" /> },
+  { name: "Sarah", action: "completed Day 1", time: "2m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarSarah },
+  { name: "James", action: "launched his app", time: "8m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Maria", action: "invited 3 builders", time: "15m ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarMaria },
+  { name: "Alex", action: "supported another builder", time: "32m ago", icon: <Heart className="h-3.5 w-3.5" />, avatar: avatarAlex },
+  { name: "Tara", action: "completed Day 3", time: "1h ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarTara },
+  { name: "Owen", action: "launched his app", time: "1h ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarOwen },
+  { name: "Lily", action: "invited 5 builders", time: "2h ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarLily },
 ];
 
 function shuffleTime(): string {
@@ -58,9 +67,12 @@ const ActivityFeed = ({ limit = 4, refresh = false, title }: ActivityFeedProps) 
             key={`${item.name}-${i}`}
             className="flex items-center gap-3 rounded-lg bg-card border border-border px-3 py-2.5"
           >
-            <div className="h-7 w-7 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">
-              {item.name[0]}
-            </div>
+            <img
+              src={item.avatar}
+              alt={item.name}
+              loading="lazy"
+              className="h-7 w-7 rounded-full object-cover shrink-0"
+            />
             <p className="text-sm text-foreground flex-1">
               <span className="font-medium">{item.name}</span>{" "}
               <span className="text-muted-foreground">{item.action}</span>

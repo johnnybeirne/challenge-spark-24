@@ -43,10 +43,10 @@ const StatusPopup = () => {
     setCurrent(update);
     setVisible(true);
 
-    // Hide after 4s
+    // Hide after 5s
     setTimeout(() => {
       setVisible(false);
-    }, 4000);
+    }, 5000);
 
     // Schedule next after 8s
     setTimeout(() => {

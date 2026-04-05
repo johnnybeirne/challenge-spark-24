@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,7 @@ const identityLabels: Record<string, string> = {
 };
 
 const Dashboard = () => {
-  const { state, setState } = useAppState();
+  const { state, setState, authUser, signOut } = useAppState();
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
   const identityType = state.assessment?.identityType;
@@ -63,14 +64,29 @@ const Dashboard = () => {
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-foreground">
-          Day {currentDay} of 3
-        </h1>
-        {identityType && (
-          <Badge variant="secondary" className="text-xs">
-            {identityLabels[identityType] || identityType}
-          </Badge>
-        )}
+        <div>
+          <p className="text-sm text-muted-foreground">
+            {state.user?.name ? `Hey, ${state.user.name}` : "Welcome back"}
+          </p>
+          <h1 className="text-xl font-bold text-foreground">
+            Day {currentDay} of 3
+          </h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {identityType && (
+            <Badge variant="secondary" className="text-xs">
+              {identityLabels[identityType] || identityType}
+            </Badge>
+          )}
+          {authUser && (
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={async () => {
+              await signOut();
+              window.location.href = "/";
+            }}>
+              Sign out
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Today's Challenge */}

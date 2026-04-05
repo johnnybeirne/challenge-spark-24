@@ -1,108 +1,71 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppState, generateInviteCode, getPartnerTier } from "@/context/AppContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
 const REF_SESSION_KEY = "challengeos_ref";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const { state, setState } = useAppState();
+  const { signInWithMagicLink } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const isValid = name.trim().length > 0 && email.trim().includes("@");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValid) return;
-
-    // Prevent self-referral
-    const trimmedEmail = email.trim().toLowerCase();
-    if (state.user?.email?.toLowerCase() === trimmedEmail) return;
+    if (!isValid || loading) return;
 
     setLoading(true);
 
-    const inviteCode = generateInviteCode();
-
-    // Check for referral attribution
+    // Gather referral metadata
     let referredBy: string | null = null;
-    let referredByParent: string | null = null;
-    let partnerRef: string | null = null;
     try {
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
-      partnerRef = sessionStorage.getItem("challengeos_partner_ref");
-      sessionStorage.removeItem(REF_SESSION_KEY);
-      sessionStorage.removeItem("challengeos_partner_ref");
     } catch {}
 
-    const user = {
+    const { error } = await signInWithMagicLink(email.trim().toLowerCase(), {
       name: name.trim(),
-      email: trimmedEmail,
-      inviteCode,
-      referredBy,
-      referredByParent,
-      createdAt: Date.now(),
-    };
-
-    setState((prev) => {
-      const next = {
-        ...prev,
-        user,
-        challenge: { ...prev.challenge, currentDay: 1 },
-        referrals: {
-          ...prev.referrals,
-          records: [...prev.referrals.records],
-        },
-      };
-
-      // Attribution: update inviter's network counts (localStorage-only for MVP)
-      // In a real system this would be a server-side operation.
-      // For same-browser testing, we simulate by incrementing counts if the ref matches current user's code.
-      if (referredBy && prev.user?.inviteCode === referredBy) {
-        next.network = {
-          ...prev.network,
-          direct: prev.network.direct + 1,
-        };
-        next.referrals = {
-          ...next.referrals,
-          count: prev.referrals.count + 1,
-          records: [
-            ...prev.referrals.records,
-            {
-              invited_email: trimmedEmail,
-              status: "joined" as const,
-              created_at: new Date().toISOString(),
-            },
-          ],
-        };
-        toast("A builder joined through your link!");
-      }
-
-      // Partner attribution
-      if (partnerRef && prev.partner.isPartner && prev.partner.partnerCode === partnerRef) {
-        const newConversions = prev.partner.conversions + 1;
-        next.partner = {
-          ...next.partner,
-          conversions: newConversions,
-          tier: getPartnerTier(newConversions),
-        };
-        toast("Partner conversion recorded!");
-      }
-
-      return next;
+      ...(referredBy ? { referred_by: referredBy } : {}),
     });
 
+    setLoading(false);
+
+    if (error) {
+      toast.error(error.message || "Failed to send magic link");
+      return;
+    }
+
     trackEvent("signup_completed");
-    navigate("/dashboard");
+    setSent(true);
+    toast.success("Check your email for the magic link!");
   };
+
+  if (sent) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <div className="w-full max-w-sm text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+            <CheckCircle className="w-8 h-8 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Check your email</h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            We sent a magic link to <strong>{email}</strong>. Click it to join the challenge.
+          </p>
+          <Button variant="outline" onClick={() => setSent(false)}>
+            Use a different email
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -147,9 +110,14 @@ const Signup = () => {
                 disabled={!isValid || loading}
                 className="w-full h-12 text-base rounded-xl gap-2"
               >
-                {loading ? "Setting up…" : "Join the challenge"}
+                <Mail className="w-4 h-4" />
+                {loading ? "Sending…" : "Send magic link"}
                 <ArrowRight className="w-4 h-4" />
               </Button>
+
+              <p className="text-xs text-muted-foreground text-center">
+                No password needed — we'll email you a secure login link.
+              </p>
             </form>
           </CardContent>
         </Card>

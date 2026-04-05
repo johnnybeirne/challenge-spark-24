@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      challenge_progress: {
+        Row: {
+          ai_outputs: Json
+          completed: boolean
+          created_at: string
+          current_day: number
+          id: string
+          launch_url: string | null
+          tasks: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_outputs?: Json
+          completed?: boolean
+          created_at?: string
+          current_day?: number
+          id?: string
+          launch_url?: string | null
+          tasks?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_outputs?: Json
+          completed?: boolean
+          created_at?: string
+          current_day?: number
+          id?: string
+          launch_url?: string | null
+          tasks?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -46,6 +82,7 @@ export type Database = {
           id: string
           indirect_referral_count: number
           invite_code: string
+          name: string | null
           referred_by: string | null
           referred_by_parent: string | null
           updated_at: string
@@ -58,6 +95,7 @@ export type Database = {
           id?: string
           indirect_referral_count?: number
           invite_code: string
+          name?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
           updated_at?: string
@@ -70,6 +108,7 @@ export type Database = {
           id?: string
           indirect_referral_count?: number
           invite_code?: string
+          name?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
           updated_at?: string
@@ -91,6 +130,36 @@ export type Database = {
             referencedColumns: ["invite_code"]
           },
         ]
+      }
+      unlocks: {
+        Row: {
+          id: string
+          name: string
+          reason: string | null
+          unlock_id: string
+          unlocked_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          id?: string
+          name: string
+          reason?: string | null
+          unlock_id: string
+          unlocked_at?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          reason?: string | null
+          unlock_id?: string
+          unlocked_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
       }
     }
     Views: {

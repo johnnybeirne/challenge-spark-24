@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import ActivityFeed from "@/components/ActivityFeed";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";

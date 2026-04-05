@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp } from "lucide-react";
+import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import { shareOrCopy } from "@/lib/share";
 
-const SHARE_TEXT =
-  "I took this 90-second assessment on audience growth — curious what you'd get?";
+const SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
 
 const Referrals = () => {
   const { state, setState } = useAppState();
@@ -182,7 +182,14 @@ const Referrals = () => {
 
         {/* Buttons */}
         <div className="space-y-3">
-          <Button className="w-full gap-2" onClick={copyLink}>
+          <Button className="w-full gap-2" onClick={() => {
+            shareOrCopy({ text: SHARE_TEXT, url: referralLink });
+            setState((prev) => ({ ...prev, referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 } }));
+          }}>
+            <Share2 className="h-4 w-4" />
+            Share my link
+          </Button>
+          <Button variant="outline" className="w-full gap-2" onClick={copyLink}>
             <Copy className="h-4 w-4" />
             Copy Link
           </Button>

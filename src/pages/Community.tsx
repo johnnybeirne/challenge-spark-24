@@ -144,6 +144,7 @@ const LockedCommunity = () => {
 const UnlockedCommunity = () => {
   const { state, setState } = useAppState();
   const navigate = useNavigate();
+  const { promoter, becomePromoter } = usePromoter();
   const [boostedBuilders, setBoostedBuilders] = useState<Set<string>>(new Set());
 
   const direct = state.network.direct;

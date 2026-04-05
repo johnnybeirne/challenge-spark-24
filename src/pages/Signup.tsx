@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppState, generateInviteCode } from "@/context/AppContext";
+import { useAppState, generateInviteCode, getPartnerTier } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,9 +34,12 @@ const Signup = () => {
     // Check for referral attribution
     let referredBy: string | null = null;
     let referredByParent: string | null = null;
+    let partnerRef: string | null = null;
     try {
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
+      partnerRef = sessionStorage.getItem("challengeos_partner_ref");
       sessionStorage.removeItem(REF_SESSION_KEY);
+      sessionStorage.removeItem("challengeos_partner_ref");
     } catch {}
 
     const user = {
@@ -80,6 +83,17 @@ const Signup = () => {
           ],
         };
         toast("A builder joined through your link!");
+      }
+
+      // Partner attribution
+      if (partnerRef && prev.partner.isPartner && prev.partner.partnerCode === partnerRef) {
+        const newConversions = prev.partner.conversions + 1;
+        next.partner = {
+          ...next.partner,
+          conversions: newConversions,
+          tier: getPartnerTier(newConversions),
+        };
+        toast("Partner conversion recorded!");
       }
 
       return next;

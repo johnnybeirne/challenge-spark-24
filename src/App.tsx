@@ -8,6 +8,7 @@ import AppShell from "@/components/AppShell";
 import AuthGuard from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
 import Assessment from "@/pages/Assessment";
+import PartnerDashboard from "@/pages/PartnerDashboard";
 import Results from "@/pages/Results";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
               <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
               <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
+              <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

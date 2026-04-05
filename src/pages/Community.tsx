@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { generatePartnerCode } from "@/context/AppContext";
 import ActivityFeed from "@/components/ActivityFeed";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
@@ -9,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Lock, CheckCircle, Star, TrendingUp, Users, Share2, Rocket,
   Crown, Heart, Globe, Copy, Award, Zap, ArrowRight, Shield,
-  UserPlus, Eye
+  UserPlus, Eye, Handshake
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -447,6 +448,40 @@ const UnlockedCommunity = () => {
             </Card>
           ))}
         </div>
+
+        {/* Become a Partner CTA */}
+        {!state.partner.isPartner && (
+          <Card className="border-primary/20 bg-primary/5 mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Handshake className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold text-foreground text-sm">Become a JV Partner</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                Drive volume into the challenge ecosystem with a dedicated partner code, analytics dashboard, and premium reward tiers worth up to $997.
+              </p>
+              <Button
+                className="w-full min-h-[44px] gap-1"
+                onClick={() => {
+                  const code = generatePartnerCode();
+                  setState((prev) => ({
+                    ...prev,
+                    partner: {
+                      ...prev.partner,
+                      isPartner: true,
+                      partnerCode: code,
+                      partnerSince: new Date().toISOString(),
+                    },
+                  }));
+                  navigate("/partner");
+                  toast.success("Welcome, Partner! Your JV dashboard is ready.");
+                }}
+              >
+                <Handshake className="h-4 w-4" /> Activate Partner Account
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* 10. Bottom CTA */}
         <Card className="border-border">

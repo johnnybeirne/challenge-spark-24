@@ -29,6 +29,17 @@ export interface UnlockEntry {
   timestamp: string;
 }
 
+export type PartnerTier = "bronze" | "silver" | "gold";
+
+export interface PartnerState {
+  isPartner: boolean;
+  partnerCode: string | null;
+  partnerSince: string | null;
+  conversions: number;
+  assessmentStarts: number;
+  tier: PartnerTier;
+}
+
 export interface AppState {
   user: any;
   assessment: any;
@@ -52,6 +63,7 @@ export interface AppState {
   community: CommunityState;
   communityUnlocked: boolean;
   unlocks: UnlockEntry[];
+  partner: PartnerState;
 }
 
 /* ───── Defaults ───── */
@@ -66,6 +78,15 @@ const defaultCommunity: CommunityState = {
   featuredStatus: "none",
   submittedUrl: null,
   leaderboardTab: "supportive",
+};
+
+const defaultPartner: PartnerState = {
+  isPartner: false,
+  partnerCode: null,
+  partnerSince: null,
+  conversions: 0,
+  assessmentStarts: 0,
+  tier: "bronze",
 };
 
 const defaultState: AppState = {
@@ -83,6 +104,7 @@ const defaultState: AppState = {
   community: defaultCommunity,
   communityUnlocked: false,
   unlocks: [],
+  partner: defaultPartner,
 };
 
 /* ───── Storage keys ───── */
@@ -95,6 +117,7 @@ const STORAGE_KEYS = {
   unlocks: "challengeos_unlocks",
   network: "challengeos_network",
   community: "challengeos_community",
+  partner: "challengeos_partner",
 } as const;
 
 const LEGACY_KEY = "challenge-os-state";
@@ -108,6 +131,21 @@ export function generateInviteCode(): string {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
   return code;
+}
+
+export function generatePartnerCode(): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let code = "jv_";
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+export function getPartnerTier(conversions: number): PartnerTier {
+  if (conversions >= 50) return "gold";
+  if (conversions >= 25) return "silver";
+  return "bronze";
 }
 
 /* ───── Persistence helpers ───── */
@@ -142,6 +180,7 @@ function loadState(): AppState {
       community: { ...defaultCommunity, ...safeParse(STORAGE_KEYS.community, {}) },
       communityUnlocked: safeParse(STORAGE_KEYS.community, defaultCommunity).unlocked ?? false,
       unlocks: safeParse(STORAGE_KEYS.unlocks, []),
+      partner: { ...defaultPartner, ...safeParse(STORAGE_KEYS.partner, {}) },
     };
   }
 
@@ -177,6 +216,7 @@ function saveState(state: AppState): void {
   safeWrite(STORAGE_KEYS.unlocks, state.unlocks);
   safeWrite(STORAGE_KEYS.network, state.network);
   safeWrite(STORAGE_KEYS.community, state.community);
+  safeWrite(STORAGE_KEYS.partner, state.partner);
 }
 
 export function clearState(): void {
@@ -215,6 +255,10 @@ const unlockDefs: UnlockDef[] = [
       return day3Done && hasUrl && promoted;
     },
   },
+  // Partner-specific unlocks
+  { id: "partner_10_kit", name: "Partner Growth Kit", value: 197, reason: "10 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 10 },
+  { id: "partner_25_accel", name: "Partner Accelerator Pack", value: 397, reason: "25 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 25 },
+  { id: "partner_50_elite", name: "Elite Partner System", value: 997, reason: "50 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 50 },
 ];
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {

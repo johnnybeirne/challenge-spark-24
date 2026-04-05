@@ -13,6 +13,9 @@ const AppShell = ({ showNav = false }: { showNav?: boolean }) => {
         {showNav && authenticated && <BottomNav />}
       </div>
     </div>
+        {showNav && authenticated && <BottomNav />}
+      </div>
+    </div>
   );
 };
 

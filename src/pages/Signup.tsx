@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
 const REF_SESSION_KEY = "challengeos_ref";
+const PARTNER_REF_KEY = "challengeos_partner_ref";
 
 const Signup = () => {
   const { signInWithMagicLink } = useAuth();
@@ -27,8 +29,10 @@ const Signup = () => {
 
     // Gather referral metadata
     let referredBy: string | null = null;
+    let partnerRef: string | null = null;
     try {
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
+      partnerRef = sessionStorage.getItem(PARTNER_REF_KEY);
     } catch {}
 
     const { error } = await signInWithMagicLink(email.trim().toLowerCase(), {
@@ -41,6 +45,11 @@ const Signup = () => {
     if (error) {
       toast.error(error.message || "Failed to send magic link");
       return;
+    }
+
+    // Track partner conversion
+    if (partnerRef) {
+      (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
     }
 
     trackEvent("signup_completed");

@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          badge_description: string | null
+          badge_icon: string
+          badge_id: string
+          badge_name: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_description?: string | null
+          badge_icon?: string
+          badge_id: string
+          badge_name: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_description?: string | null
+          badge_icon?: string
+          badge_id?: string
+          badge_name?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenge_progress: {
         Row: {
           ai_outputs: Json
@@ -69,6 +99,80 @@ export type Database = {
           id?: string
           launch_url?: string | null
           tasks?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cross_promotions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          impressions: number
+          is_active: boolean
+          priority: number
+          promoter_id: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          impressions?: number
+          is_active?: boolean
+          priority?: number
+          promoter_id: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          impressions?: number
+          is_active?: boolean
+          priority?: number
+          promoter_id?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cross_promotions_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leaderboard_overrides: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          referral_adjustment: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          referral_adjustment?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          referral_adjustment?: number
           updated_at?: string
           user_id?: string
         }
@@ -131,6 +235,48 @@ export type Database = {
           },
         ]
       }
+      promoters: {
+        Row: {
+          approved_at: string | null
+          assessment_starts: number
+          conversions: number
+          created_at: string
+          id: string
+          is_approved: boolean
+          is_founding_partner: boolean
+          partner_code: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          assessment_starts?: number
+          conversions?: number
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          is_founding_partner?: boolean
+          partner_code: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          assessment_starts?: number
+          conversions?: number
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          is_founding_partner?: boolean
+          partner_code?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       unlocks: {
         Row: {
           id: string
@@ -166,7 +312,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      process_partner_referral: {
+        Args: { p_partner_code: string }
+        Returns: undefined
+      }
+      track_partner_assessment: {
+        Args: { p_partner_code: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

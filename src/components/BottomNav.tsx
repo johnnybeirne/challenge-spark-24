@@ -1,20 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Flame, Gift, Users, Crown, Handshake } from "lucide-react";
+import { LayoutDashboard, Flame, Gift, Users, Crown, Handshake, Trophy } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { usePromoter } from "@/hooks/usePromoter";
 
 const baseTabs = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/day/1", label: "Challenge", icon: Flame },
   { to: "/unlocks", label: "Unlocks", icon: Gift },
   { to: "/referrals", label: "Referrals", icon: Users },
-  { to: "/community", label: "Circle", icon: Crown },
+  { to: "/leaderboard", label: "Ranks", icon: Trophy },
 ];
 
 const BottomNav = () => {
   const { pathname } = useLocation();
-  const { state } = useAppState();
+  const { promoter } = usePromoter();
 
-  const tabs = state.partner.isPartner
+  const tabs = promoter
     ? [...baseTabs, { to: "/partner", label: "Partner", icon: Handshake }]
     : baseTabs;
   return (

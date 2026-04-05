@@ -18,7 +18,9 @@ import Referrals from "@/pages/Referrals";
 import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
 import Features from "@/pages/Features";
+import Leaderboard from "@/pages/Leaderboard";
 import AdminAnalytics from "@/pages/AdminAnalytics";
+import AdminPromoters from "@/pages/AdminPromoters";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,10 +51,12 @@ const App = () => (
               <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
               <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
               <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
+              <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
             </Route>
 
             {/* Admin */}
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/promoters" element={<AdminPromoters />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

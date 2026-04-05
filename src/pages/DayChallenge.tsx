@@ -108,6 +108,7 @@ const DayChallenge = () => {
       ...prev,
       referrals: { ...prev.referrals, invites: (prev.referrals.invites || 0) + 1 },
     }));
+    trackEvent("referral_sent");
     toast.success("Invite sent — one step closer to Builder Circle.");
   };
 

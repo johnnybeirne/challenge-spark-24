@@ -26,8 +26,11 @@ const defaultState: AppState = {
     currentDay: 1,
     tasks: {},
     aiOutputs: {},
+    launchUrl: "",
+    completed: false,
   },
-  referrals: { count: 0 },
+  referrals: { count: 0, shares: 0, invites: 0 },
+  communityUnlocked: false,
   unlocks: [],
 };
 

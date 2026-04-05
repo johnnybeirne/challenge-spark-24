@@ -1,185 +1,248 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePromoter } from "@/hooks/usePromoter";
-import { useBadges } from "@/hooks/useBadges";
 import { useAppState } from "@/context/AppContext";
+import { useBadges } from "@/hooks/useBadges";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-  TrendingUp, Users, BarChart3, Crown, Share2, Copy, CheckCircle, Gift, Star, Trophy,
+  Crown, Users, TrendingUp, Globe, Copy, Share2, Eye,
+  Gift, Trophy, Rocket, Shield, Zap, ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
-import { useNavigate } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import Spinner from "@/components/Spinner";
 
-const TIER_CONFIG = {
-  bronze: { label: "Bronze", next: "Silver", target: 10, color: "text-amber-600" },
-  silver: { label: "Silver", next: "Gold", target: 25, color: "text-gray-400" },
-  gold: { label: "Gold", next: "Elite", target: 50, color: "text-yellow-500" },
-  elite: { label: "Elite", next: null, target: 50, color: "text-purple-500" },
-} as const;
+/* ─── Leaderboard entry type ─── */
+interface LeaderEntry {
+  name: string;
+  score: number;
+  badge: string;
+  isUser?: boolean;
+}
 
-const PARTNER_MILESTONES = [
-  { conversions: 10, name: "Partner Growth Kit", value: 197, id: "partner_10_kit" },
-  { conversions: 25, name: "Partner Accelerator Pack", value: 397, id: "partner_25_accel" },
-  { conversions: 50, name: "Elite Partner System", value: 997, id: "partner_50_elite" },
+/* ─── Reward milestones ─── */
+const REWARD_MILESTONES = [
+  { at: 10, name: "Partner Growth Kit", value: 197 },
+  { at: 25, name: "Partner Accelerator Pack", value: 397 },
+  { at: 50, name: "AI-powered challenge app", value: 5000 },
 ];
+
+/* ─── Visibility helpers ─── */
+function getVisibility(score: number) {
+  if (score >= 60) return { label: "Featured", color: "text-primary", bg: "bg-primary/10" };
+  if (score >= 30) return { label: "High", color: "text-green-600", bg: "bg-green-500/10" };
+  if (score >= 10) return { label: "Growing", color: "text-amber-500", bg: "bg-amber-500/10" };
+  return { label: "Low", color: "text-muted-foreground", bg: "bg-muted" };
+}
 
 const PartnerDashboard = () => {
   const { state } = useAppState();
   const { promoter, loading } = usePromoter();
   const { badges } = useBadges();
   const navigate = useNavigate();
+  const [topPromoters, setTopPromoters] = useState<LeaderEntry[]>([]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><Spinner /></div>;
+  // Track page view
+  useEffect(() => {
+    trackEvent("promoter_dashboard_viewed");
+  }, []);
 
+  // Load top 5 promoters for leaderboard preview
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: promoters } = await (supabase.from("promoters") as any)
+          .select("partner_code, conversions, user_id, is_founding_partner")
+          .eq("is_approved", true)
+          .order("conversions", { ascending: false })
+          .limit(5);
+
+        if (promoters?.length) {
+          const userIds = promoters.map((p: any) => p.user_id);
+          const { data: profiles } = await supabase
+            .from("profiles")
+            .select("user_id, name")
+            .in("user_id", userIds);
+          const nameMap = new Map((profiles || []).map((p) => [p.user_id, p.name]));
+
+          setTopPromoters(
+            promoters.map((p: any) => ({
+              name: nameMap.get(p.user_id) || "Partner",
+              score: p.conversions,
+              badge: p.is_founding_partner ? "Founding" : "Partner",
+              isUser: p.user_id === state.user?.id,
+            }))
+          );
+        }
+      } catch {}
+    })();
+  }, [state.user?.id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
+  // Non-promoter redirect
   if (!promoter) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         <Crown className="h-12 w-12 text-muted-foreground mb-4" />
         <h1 className="text-xl font-bold text-foreground mb-2">Not a partner yet</h1>
-        <p className="text-sm text-muted-foreground mb-4">Become a partner from the Builder Circle page.</p>
+        <p className="text-sm text-muted-foreground mb-4 text-center">
+          Become a partner from the Builder Circle page to access this dashboard.
+        </p>
         <Button onClick={() => navigate("/community")}>Go to Community</Button>
       </div>
     );
   }
 
-  const tier = promoter.tier as keyof typeof TIER_CONFIG;
-  const tierInfo = TIER_CONFIG[tier] || TIER_CONFIG.bronze;
-  const conversionRate = promoter.assessment_starts > 0
-    ? Math.round((promoter.conversions / promoter.assessment_starts) * 100)
-    : 0;
+  const direct = promoter.conversions;
+  const indirect = Math.floor(direct * 0.4); // estimated from network
+  const totalNetwork = direct + indirect;
+  const estimatedReach = direct * 1 + indirect * 0.5;
+  const leaderboardScore =
+    state.network.direct * 3 +
+    state.network.indirect +
+    state.community.boostsGiven * 2 +
+    state.community.boostsReceived * 4 +
+    direct * 5;
 
-  const progressToNext = tierInfo.next
-    ? Math.min(100, (promoter.conversions / tierInfo.target) * 100)
+  const visibility = getVisibility(leaderboardScore);
+  const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
+
+  // Next reward milestone
+  const nextMilestone = REWARD_MILESTONES.find((m) => direct < m.at);
+  const prevMilestone = [...REWARD_MILESTONES].reverse().find((m) => direct >= m.at);
+  const progressToNext = nextMilestone
+    ? Math.min(100, (direct / nextMilestone.at) * 100)
     : 100;
 
-  const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(partnerLink);
+      toast.success("Partner link copied!");
+      trackEvent("promoter_link_copied");
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
 
   const handleShare = () => {
     shareOrCopy({
       text: "I'm helping builders launch in 3 days — take the free assessment",
       url: partnerLink,
     });
+    trackEvent("promoter_shared");
   };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(partnerLink);
-      toast.success("Partner link copied!");
-    } catch {
-      toast.error("Failed to copy");
-    }
-  };
-
-  const unlockedIds = new Set(state.unlocks.map((u) => u.id));
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[480px] mx-auto px-4 py-8 pb-24">
+        {/* ─── HEADER ─── */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <Crown className="h-5 w-5 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Partner Dashboard</h1>
+            <h1 className="text-2xl font-bold text-foreground">Promoter Dashboard</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Drive builders into the challenge and earn premium rewards.
+            You're growing your audience through the ChallengeOS network.
           </p>
+          {promoter.is_founding_partner && (
+            <Badge className="mt-2 bg-primary/10 text-primary text-xs gap-1">
+              <Shield className="h-3 w-3" /> Founding Partner
+            </Badge>
+          )}
         </div>
 
-        {/* Tier + Founding badge */}
-        <Card className="border-primary/20 bg-primary/5 mb-6">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Crown className={`h-5 w-5 ${tierInfo.color}`} />
-                <span className="font-semibold text-foreground">{tierInfo.label} Partner</span>
-                {promoter.is_founding_partner && (
-                  <Badge className="bg-primary/10 text-primary text-[9px]">Founding Partner</Badge>
-                )}
-              </div>
-              <Badge className="bg-primary/10 text-primary text-xs">
-                {promoter.conversions} conversion{promoter.conversions !== 1 ? "s" : ""}
-              </Badge>
-            </div>
-            {!promoter.is_approved && (
-              <p className="text-xs text-amber-600 mb-2">⏳ Pending admin approval</p>
-            )}
-            {tierInfo.next ? (
-              <>
-                <Progress value={progressToNext} className="h-2 mb-2" />
-                <p className="text-xs text-muted-foreground">
-                  {tierInfo.target - promoter.conversions} more to reach {tierInfo.next}
-                </p>
-              </>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                You've reached the highest tier. Keep growing your network!
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Stats grid */}
+        {/* ─── SECTION 1: CORE METRICS ─── */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {[
-            { icon: Users, label: "Conversions", value: promoter.conversions },
-            { icon: BarChart3, label: "Assessment starts", value: promoter.assessment_starts },
-            { icon: TrendingUp, label: "Conversion rate", value: `${conversionRate}%` },
-            { icon: Crown, label: "Current tier", value: tierInfo.label },
-          ].map(({ icon: Icon, label, value }) => (
+            { icon: Users, label: "Direct Referrals", value: direct, sub: `You brought in ${direct} builder${direct !== 1 ? "s" : ""}` },
+            { icon: TrendingUp, label: "Indirect Referrals", value: indirect, sub: `They brought in ${indirect} more` },
+            { icon: Globe, label: "Total Network", value: totalNetwork, sub: `Your network size: ${totalNetwork}` },
+            { icon: Zap, label: "Estimated Reach", value: Math.round(estimatedReach), sub: `Estimated audience reach` },
+          ].map(({ icon: Icon, label, value, sub }) => (
             <Card key={label} className="border-border">
-              <CardContent className="p-4 text-center">
-                <Icon className="h-4 w-4 text-primary mx-auto mb-2" />
-                <p className="text-lg font-bold text-foreground">{value}</p>
-                <p className="text-xs text-muted-foreground">{label}</p>
+              <CardContent className="p-4">
+                <Icon className="h-4 w-4 text-primary mb-2" />
+                <p className="text-2xl font-bold text-foreground">{value}</p>
+                <p className="text-xs font-medium text-foreground">{label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Partner link */}
+        {/* ─── SECTION 2: NETWORK GROWTH VISUAL ─── */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-2">Your partner link</h3>
-            <div className="bg-muted/50 rounded-lg p-3 mb-3 break-all">
-              <p className="text-xs text-muted-foreground font-mono">{partnerLink}</p>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1 gap-1 min-h-[44px]" onClick={handleCopy}>
-                <Copy className="h-3 w-3" /> Copy link
-              </Button>
-              <Button size="sm" className="flex-1 gap-1 min-h-[44px]" onClick={handleShare}>
-                <Share2 className="h-3 w-3" /> Share
-              </Button>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Your network is compounding</h3>
+            <div className="space-y-2">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">Direct</span>
+                  <span className="text-foreground font-medium">{direct}</span>
+                </div>
+                <Progress value={totalNetwork > 0 ? (direct / totalNetwork) * 100 : 0} className="h-2" />
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">Indirect</span>
+                  <span className="text-foreground font-medium">{indirect}</span>
+                </div>
+                <Progress value={totalNetwork > 0 ? (indirect / totalNetwork) * 100 : 0} className="h-2" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Leaderboard link */}
-        <Button variant="outline" className="w-full mb-6 gap-2" onClick={() => navigate("/leaderboard")}>
-          <Trophy className="h-4 w-4" /> View Leaderboard
-        </Button>
+        {/* ─── SECTION 3: VISIBILITY & CROSS-PROMOTION ─── */}
+        <Card className="border-border mb-6">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Eye className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Your visibility inside the network</h3>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className={`text-xs ${visibility.bg} ${visibility.color}`}>
+                {visibility.label}
+              </Badge>
+              <span className="text-xs text-muted-foreground">Score: {leaderboardScore}</span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              The more you contribute, the more your challenge is shown to other partners' audiences.
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Reward milestones */}
+        {/* ─── SECTION 4: REWARDS & PROGRESSION ─── */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <Gift className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Partner rewards</h3>
+              <h3 className="text-sm font-semibold text-foreground">Your rewards</h3>
             </div>
             <div className="space-y-3">
-              {PARTNER_MILESTONES.map((m) => {
-                const unlocked = unlockedIds.has(m.id);
-                const progress = Math.min(100, (promoter.conversions / m.conversions) * 100);
+              {REWARD_MILESTONES.map((m) => {
+                const unlocked = direct >= m.at;
+                const progress = Math.min(100, (direct / m.at) * 100);
                 return (
-                  <div key={m.id} className="space-y-1.5">
+                  <div key={m.at} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {unlocked ? (
-                          <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                          <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center">
+                            <span className="text-[10px] text-primary-foreground">✓</span>
+                          </div>
                         ) : (
                           <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
                         )}
@@ -187,40 +250,156 @@ const PartnerDashboard = () => {
                           {m.name}
                         </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">${m.value}</span>
+                      <span className="text-xs text-muted-foreground">${m.value.toLocaleString()}</span>
                     </div>
                     <div className="ml-6">
                       <Progress value={progress} className="h-1.5" />
                       <p className="text-[10px] text-muted-foreground mt-0.5">
-                        {promoter.conversions}/{m.conversions} conversions
+                        {direct}/{m.at} conversions
                       </p>
                     </div>
                   </div>
                 );
               })}
             </div>
+            {nextMilestone && (
+              <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
+                You're <span className="text-foreground font-semibold">{nextMilestone.at - direct} referrals</span> away from unlocking:<br />
+                <span className="text-foreground font-medium">{nextMilestone.name}</span> (${nextMilestone.value.toLocaleString()} value)
+              </p>
+            )}
           </CardContent>
         </Card>
 
-        {/* Badges */}
-        {badges.length > 0 && (
-          <Card className="border-border mb-6">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Star className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Your badges</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {badges.map(b => (
-                  <Badge key={b.badge_id} className="bg-primary/10 text-primary text-xs gap-1">
-                    {b.badge_name}
-                  </Badge>
+        {/* ─── SECTION 5: LEADERBOARD PREVIEW ─── */}
+        <Card className="border-border mb-6">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Trophy className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Top promoters this week</h3>
+            </div>
+            {topPromoters.length === 0 ? (
+              <p className="text-xs text-muted-foreground text-center py-4">No promoters yet</p>
+            ) : (
+              <div className="space-y-0">
+                {topPromoters.map((entry, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 py-2.5 ${
+                      i < topPromoters.length - 1 ? "border-b border-border" : ""
+                    } ${entry.isUser ? "bg-primary/5 -mx-2 px-2 rounded" : ""}`}
+                  >
+                    <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
+                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold text-foreground shrink-0">
+                      {(entry.name || "?").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
+                        {entry.name} {entry.isUser && "(You)"}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0 flex items-center gap-2">
+                      <p className="text-sm font-bold text-foreground">{entry.score}</p>
+                      <Badge className="text-[9px] bg-muted text-muted-foreground">{entry.badge}</Badge>
+                    </div>
+                  </div>
                 ))}
               </div>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full mt-3 gap-1 text-xs"
+              onClick={() => {
+                navigate("/leaderboard");
+                trackEvent("promoter_cta_clicked", { cta: "view_leaderboard" });
+              }}
+            >
+              View full leaderboard <ArrowRight className="h-3 w-3" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* ─── SECTION 6: ACTIONS ─── */}
+        <div className="grid gap-3 mb-6">
+          <Button className="w-full gap-2 min-h-[48px]" onClick={handleCopy}>
+            <Copy className="h-4 w-4" /> Copy my referral link
+          </Button>
+          <Button variant="outline" className="w-full gap-2 min-h-[48px]" onClick={handleShare}>
+            <Share2 className="h-4 w-4" /> Share challenge
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full gap-2 min-h-[48px]"
+            onClick={() => {
+              navigate("/community");
+              trackEvent("promoter_cta_clicked", { cta: "view_builder_circle" });
+            }}
+          >
+            <Crown className="h-4 w-4" /> View Builder Circle
+          </Button>
+        </div>
+
+        {/* ─── SECTION 7: IMPACT ─── */}
+        <Card className="border-primary/20 bg-primary/5 mb-6">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Rocket className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Your impact</h3>
+            </div>
+            <div className="space-y-1 text-sm text-foreground">
+              <p>You introduced <span className="font-bold">{direct}</span> builder{direct !== 1 ? "s" : ""}</p>
+              <p>They introduced <span className="font-bold">{indirect}</span> more</p>
+              <p>You've helped grow the network by <span className="font-bold text-primary">{totalNetwork}</span> builders</p>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3 italic">
+              This is how network-driven growth compounds.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* ─── SECTION 8: FOUNDING PARTNER ADVANTAGE ─── */}
+        {promoter.is_founding_partner && (
+          <Card className="border-primary/30 bg-primary/5 mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Founding Partner Advantage</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                You joined early. You receive higher visibility across the network and priority positioning
+                inside the challenge ecosystem.
+              </p>
             </CardContent>
           </Card>
         )}
 
+        {/* ─── SECTION 9: PERFORMANCE NUDGE ─── */}
+        {direct < 3 && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap className="h-4 w-4 text-amber-500" />
+                <h3 className="text-sm font-semibold text-foreground">Start your network</h3>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Invite your first 3 builders to activate your growth.
+              </p>
+              <Button
+                size="sm"
+                className="gap-1"
+                onClick={() => {
+                  handleShare();
+                  trackEvent("promoter_cta_clicked", { cta: "nudge_invite" });
+                }}
+              >
+                Invite builders <ArrowRight className="h-3 w-3" />
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Partner since */}
         {promoter.created_at && (
           <p className="text-xs text-muted-foreground text-center">
             Partner since {new Date(promoter.created_at).toLocaleDateString()}

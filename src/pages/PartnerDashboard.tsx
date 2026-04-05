@@ -4,6 +4,7 @@ import { usePromoter } from "@/hooks/usePromoter";
 import { useAppState } from "@/context/AppContext";
 import { useBadges } from "@/hooks/useBadges";
 import { supabase } from "@/integrations/supabase/client";
+import CrossPromoSlots from "@/components/CrossPromoSlots";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

@@ -58,6 +58,20 @@ const Unlocks = () => {
           />
         )}
 
+        {/* Cross-promotion between sections */}
+        <div className="mb-4">
+          <CrossPromoSlots slots={2} title="Featured builders" />
+        </div>
+
+        <div className="space-y-3">
+            icon={Gift}
+            title="No unlocks yet"
+            description="Complete challenge days and invite builders to start earning rewards worth up to $297."
+            actionLabel="Start Day 1"
+            actionPath="/day/1"
+          />
+        )}
+
         <div className="space-y-3">
           {allUnlocks.map((item) => {
             const unlocked = earnedIds.has(item.id);

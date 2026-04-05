@@ -164,6 +164,11 @@ const Dashboard = () => {
         </Card>
       )}
 
+      {/* Cross-promotion */}
+      <div className="mb-4">
+        <CrossPromoSlots slots={2} title="From the network" />
+      </div>
+
       {/* Activity */}
       <div className="mb-4">
         <ActivityFeed limit={3} title="Builder activity" />

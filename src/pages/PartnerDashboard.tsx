@@ -38,10 +38,10 @@ const PartnerDashboard = () => {
   const partnerLink = `${window.location.origin}/assess?ref=${partner.partnerCode}`;
 
   const handleShare = () => {
-    shareOrCopy(
-      "I'm helping builders launch in 3 days — take the free assessment",
-      partnerLink
-    );
+    shareOrCopy({
+      text: "I'm helping builders launch in 3 days — take the free assessment",
+      url: partnerLink,
+    });
   };
 
   const handleCopy = async () => {

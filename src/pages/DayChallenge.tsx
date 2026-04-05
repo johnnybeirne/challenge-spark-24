@@ -92,6 +92,7 @@ const DayChallenge = () => {
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
+      </div>
 
       <div className="space-y-4">
         {config.tasks.map((task, i) => (

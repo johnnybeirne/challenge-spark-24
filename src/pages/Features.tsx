@@ -68,8 +68,11 @@ const Features = () => {
                   <Card key={f.title} className="border-border">
                     <CardContent className="flex items-start gap-3 p-4">
                       <div className="mt-0.5 shrink-0">{f.icon}</div>
-                      <div>
-                        <p className="font-medium text-foreground text-sm">{f.title}</p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-foreground text-sm">{f.title}</p>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">{f.addedAt}</span>
+                        </div>
                         <p className="text-xs text-muted-foreground">{f.description}</p>
                       </div>
                     </CardContent>

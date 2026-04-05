@@ -5,11 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
-import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp } from "lucide-react";
-import { toast } from "sonner";
 
 const DEFAULT_SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
-  "I took this 90-second assessment on audience growth — curious what you'd get?";
 
 const Referrals = () => {
   const { state, setState } = useAppState();

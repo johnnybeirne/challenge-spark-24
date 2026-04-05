@@ -70,10 +70,13 @@ const StatusPopup = () => {
           alt={current.name}
           className="h-8 w-8 rounded-full object-cover shrink-0"
         />
-        <p className="text-sm text-foreground">
-          <span className="font-semibold">{current.name}</span>{" "}
-          <span className="text-muted-foreground">{current.action}</span>
-        </p>
+        <div>
+          <p className="text-sm text-foreground">
+            <span className="font-semibold">{current.name}</span>{" "}
+            <span className="text-muted-foreground">{current.action}</span>
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">{current.timeAgo}</p>
+        </div>
       </div>
     </div>
   );

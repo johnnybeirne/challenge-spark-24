@@ -179,7 +179,7 @@ const UnlockedCommunity = () => {
   }, [boostedBuilders, setState]);
 
   const copyLink = async () => {
-    const link = state.community.submittedUrl || state.challenge.launchUrl || window.location.origin;
+    const link = state.user?.submittedUrl || state.challenge.launchUrl || window.location.origin;
     try {
       await navigator.clipboard.writeText(link);
       toast.success("Link copied!");

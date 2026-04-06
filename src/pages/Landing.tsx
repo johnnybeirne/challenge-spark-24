@@ -5,6 +5,7 @@ import { ArrowRight, Zap, Target, Link2, Mail } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { trackEvent } from "@/lib/analytics";
+import ActivityFeed from "@/components/ActivityFeed";
 
 /* ── Countdown helper ── */
 function getNextMonday() {

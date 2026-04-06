@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import ActivityFeed from "@/components/ActivityFeed";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { usePromoter } from "@/hooks/usePromoter";
@@ -406,6 +407,15 @@ const UnlockedCommunity = () => {
             })()}
           </CardContent>
         </Card>
+
+        {/* Recommended builder (rotating slot) */}
+        <div className="mb-6">
+          <CrossPromoSpotlight
+            title="Recommended builder"
+            subtitle=""
+            position="community"
+          />
+        </div>
 
         {/* 7. Activity Feed */}
         <div className="mb-6">

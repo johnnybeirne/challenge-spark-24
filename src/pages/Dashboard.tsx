@@ -8,7 +8,7 @@ import { Share2, Users, TrendingUp } from "lucide-react";
 import ActivityFeed from "@/components/ActivityFeed";
 import InviteNudgeCard from "@/components/InviteNudgeCard";
 import InviteMilestoneModal from "@/components/InviteMilestoneModal";
-import CrossPromoSlots from "@/components/CrossPromoSlots";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -163,9 +163,13 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* Cross-promotion */}
+      {/* Builder spotlight */}
       <div className="mb-4">
-        <CrossPromoSlots slots={2} title="From the network" />
+        <CrossPromoSpotlight
+          title="Builder spotlight"
+          subtitle="See what other builders are launching inside the network"
+          position="dashboard"
+        />
       </div>
 
       {/* Activity */}

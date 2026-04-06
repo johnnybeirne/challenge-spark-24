@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 import Day2InviteNudge from "@/components/Day2InviteNudge";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
+import PostActionPromo from "@/components/PostActionPromo";
 import { trackEvent } from "@/lib/analytics";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
@@ -49,6 +51,7 @@ const DayChallenge = () => {
   const config = dayConfig[dayNum] || dayConfig[1];
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
+  const [showPostActionPromo, setShowPostActionPromo] = useState(false);
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];
@@ -75,6 +78,10 @@ const DayChallenge = () => {
     if (!wasChecked) {
       setShowTaskAnim(true);
       setTimeout(() => setShowTaskAnim(false), 100);
+      // Show post-action promo 30% of the time
+      if (Math.random() < 0.3) {
+        setTimeout(() => setShowPostActionPromo(true), 600);
+      }
     }
   };
 
@@ -301,6 +308,21 @@ const DayChallenge = () => {
           {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge 🎉"}
         </Button>
       )}
+
+      {/* Cross-promo at bottom */}
+      <div className="mt-6">
+        <CrossPromoSpotlight
+          title="Other builders in progress"
+          subtitle=""
+          position={`day-${dayNum}`}
+        />
+      </div>
+
+      <PostActionPromo
+        open={showPostActionPromo}
+        onClose={() => setShowPostActionPromo(false)}
+        position={`day-${dayNum}-task-complete`}
+      />
     </div>
   );
 };

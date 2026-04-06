@@ -51,7 +51,7 @@ const LockedCommunity = () => {
 
   const day3Done = state.challenge.completed || state.challenge.currentDay > 3;
   const hasUrl = !!state.challenge.launchUrl;
-  const hasPromotion = state.referrals.shares >= 1 || state.referrals.invites >= 3;
+  const hasPromotion = state.network.direct >= 3;
 
   const getCtaAction = () => {
     if (!day3Done) return { label: "Finish the challenge", path: "/day/3" };

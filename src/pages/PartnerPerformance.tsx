@@ -124,12 +124,7 @@ const PartnerPerformance = () => {
   const clickTrend = makeTrend(clicks);
   const unlockTrend = makeTrend(unlocks);
 
-  const leaderboardScore =
-    (state.network.direct * 3) +
-    state.network.indirect +
-    (state.community.boostsGiven * 2) +
-    (state.community.boostsReceived * 4) +
-    (clicks * 5);
+  const leaderboardScore = calculateLeaderboardScore(state);
   const visibility = getVisibility(leaderboardScore);
 
   const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;

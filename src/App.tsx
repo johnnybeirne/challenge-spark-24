@@ -41,9 +41,13 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Public routes */}
-              <Route element={<AppShell />}>
+              {/* Landing – full-width layout */}
+              <Route element={<AppShell fullWidth />}>
                 <Route path="/" element={<Landing />} />
+              </Route>
+
+              {/* Public routes – narrow mobile container */}
+              <Route element={<AppShell />}>
                 <Route path="/assess" element={<Assessment />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/join" element={<Signup />} />

@@ -189,7 +189,7 @@ const UnlockedCommunity = () => {
   };
 
   const leaderboard = generateLeaderboard(score, state.user?.name || "You");
-  const appUrl = state.community.submittedUrl || state.challenge.launchUrl;
+  const appUrl = state.user?.submittedUrl || state.challenge.launchUrl;
 
   const statusBadgeColor = (status: string) => {
     switch (status) {

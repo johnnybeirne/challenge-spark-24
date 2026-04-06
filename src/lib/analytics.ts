@@ -37,7 +37,10 @@ export type AnalyticsEvent =
   | "partner_visibility_help_viewed"
   | "rewards_page_viewed"
   | "reward_accessed"
-  | "partner_asset_clicked";
+  | "reward_page_viewed"
+  | "partner_asset_clicked"
+  | "partner_asset_accessed"
+  | "partner_profile_clicked";
 
 export async function trackEvent(
   event: AnalyticsEvent,

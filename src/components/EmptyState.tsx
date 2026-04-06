@@ -1,6 +1,7 @@
 import { type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 
 interface EmptyStateProps {
   icon: LucideIcon;
@@ -25,6 +26,13 @@ const EmptyState = ({ icon: Icon, title, description, actionLabel, actionPath }:
           {actionLabel}
         </Button>
       )}
+      <div className="mt-6 w-full max-w-[320px]">
+        <CrossPromoSpotlight
+          title="Be one of the first to get featured"
+          subtitle=""
+          position="empty-state"
+        />
+      </div>
     </div>
   );
 };

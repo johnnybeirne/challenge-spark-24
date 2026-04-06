@@ -408,6 +408,15 @@ const UnlockedCommunity = () => {
           </CardContent>
         </Card>
 
+        {/* Recommended builder (rotating slot) */}
+        <div className="mb-6">
+          <CrossPromoSpotlight
+            title="Recommended builder"
+            subtitle=""
+            position="community"
+          />
+        </div>
+
         {/* 7. Activity Feed */}
         <div className="mb-6">
           <ActivityFeed limit={5} refresh title="Builder activity" />

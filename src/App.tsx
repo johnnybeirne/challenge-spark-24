@@ -60,6 +60,7 @@ const App = () => (
             {/* Admin */}
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/promoters" element={<AdminPromoters />} />
+            <Route path="/admin/activity-feed" element={<AdminActivityFeed />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

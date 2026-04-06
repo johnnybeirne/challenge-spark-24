@@ -7,21 +7,100 @@ export interface SocialProofItem {
   action: string;
 }
 
+export interface FeatureCard {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface HowItWorksStep {
+  title: string;
+  description: string;
+}
+
+export interface AudienceColumn {
+  title: string;
+  items: string[];
+}
+
+export interface ExampleCard {
+  challenge: string;
+  quiz: string;
+  audienceBadge: string;
+  styleBadge: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface LandingConfig {
   heroHeadline: string;
   heroSubheadline: string;
+  heroSupportingLine: string;
+  heroMicroProof: string;
   primaryCtaText: string;
   primaryCtaLink: string;
+  heroBelowCtaText: string;
+
+  showFeatures: boolean;
+  featuresTitle: string;
+  featureCards: FeatureCard[];
+  featuresFooter: string;
+  featuresCtaText: string;
+
+  showWhyThisWorks: boolean;
+  whyTitle: string;
+  whyBody: string;
+
+  showHowItWorks: boolean;
+  howTitle: string;
+  howSteps: HowItWorksStep[];
+  howFooter: string;
+
+  showWhoThisIsFor: boolean;
+  whoTitle: string;
+  whoIntro: string;
+  whoB2b: AudienceColumn;
+  whoB2c: AudienceColumn;
+  whoFooter: string;
+  whoCtaText: string;
+
+  showSocialProof: boolean;
+  socialProofTitle: string;
+  socialProofItems: SocialProofItem[];
+  socialProofRotateSpeed: number;
+  socialProofMetric: string;
+
+  showExamples: boolean;
+  examplesTitle: string;
+  exampleCards: ExampleCard[];
+  examplesFooter: string;
+  examplesCtaText: string;
+
+  showUrgency: boolean;
   urgencyText: string;
+  urgencyBody: string;
+  urgencyBonus: string;
   showCountdown: boolean;
   countdownTarget: string | null;
   autoAdvanceCountdown: boolean;
-  promiseText: string;
-  showSocialProof: boolean;
-  socialProofItems: SocialProofItem[];
-  socialProofRotateSpeed: number;
-  bottomCtaText: string;
-  bottomCtaLink: string;
+  urgencyCtaText: string;
+
+  showFaq: boolean;
+  faqTitle: string;
+  faqItems: FaqItem[];
+
+  finalCtaTitle: string;
+  finalCtaBody: string;
+  finalCtaButtonText: string;
+  finalCtaBelowText: string;
+
+  // legacy compat
+  promiseText?: string;
+  bottomCtaText?: string;
+  bottomCtaLink?: string;
 }
 
 export interface AssessmentSplitOption {
@@ -207,24 +286,110 @@ export interface SiteConfig {
 
 export const defaultSiteConfig: SiteConfig = {
   landing: {
-    heroHeadline: "How much trust leverage are you sitting on?",
-    heroSubheadline: "Use your audience — however small — to grow without content burnout.",
-    primaryCtaText: "Take the 90-second assessment",
+    heroHeadline: "Build an app that generates leads while you sleep",
+    heroSubheadline: "Discover what to build, then create it in 3 days — a challenge app with a quiz, referral engine, and email capture that brings in new leads without constant content.",
+    heroSupportingLine: "Most people discover an idea they hadn't even considered.",
+    heroMicroProof: "3 days. Not 3 months.",
+    primaryCtaText: "Discover what to build",
     primaryCtaLink: "/assess",
+    heroBelowCtaText: "Free • Takes 90 seconds • No signup required",
+
+    showFeatures: true,
+    featuresTitle: "One app. Four growth engines.",
+    featureCards: [
+      { icon: "📊", title: "A quiz that attracts leads", description: "Your audience takes a short diagnostic, gets a personalised result, and wants to share it." },
+      { icon: "🎯", title: "A challenge that builds trust", description: "Structured daily tasks that deliver a real outcome — so leads experience your expertise before they buy." },
+      { icon: "🔗", title: "A referral system that grows itself", description: "Participants invite others to unlock rewards. Every user becomes a promoter." },
+      { icon: "📧", title: "Email capture on autopilot", description: "Every quiz taker and challenge participant becomes a lead in your list. Automatic." },
+    ],
+    featuresFooter: "Every person who joins can invite others — turning your challenge into a growth loop, not a one-time campaign.",
+    featuresCtaText: "Take the assessment",
+
+    showWhyThisWorks: true,
+    whyTitle: "Why this works (when content doesn't)",
+    whyBody: "Most people try to grow by posting more content.\n\nBut content is temporary — it disappears, gets ignored, and requires constant effort.\n\nThis works differently.\n\nInstead of chasing attention, your audience participates.\n\nThey take the quiz, join the challenge, and invite others.\n\nThat turns your audience into a growth engine.",
+
+    showHowItWorks: true,
+    howTitle: "How it works",
+    howSteps: [
+      { title: "Take the 90-second assessment", description: "We'll ask about your expertise, your audience, and how you work. You'll get a personalised recommendation for exactly what challenge to build." },
+      { title: "Build it in 3 days", description: "Follow a guided 3-day challenge. Day 1: define and structure. Day 2: build the core. Day 3: launch it live." },
+      { title: "Watch it grow", description: "Your challenge generates leads through its built-in quiz, referral system, and shareable moments — on autopilot." },
+    ],
+    howFooter: "Once live, your challenge continues to generate leads as people join and invite others.",
+
+    showWhoThisIsFor: true,
+    whoTitle: "If you're tired of creating content just to stay visible",
+    whoIntro: "Posting more doesn't scale. This gives you a system that grows through participation instead.",
+    whoB2b: {
+      title: "If you sell to businesses",
+      items: [
+        "Consultants who want inbound leads instead of cold outreach",
+        "Agencies that want to demonstrate expertise before the sales call",
+        "B2B coaches who want a scalable way to attract decision-makers",
+        "Trainers who want to prove their method works",
+      ],
+    },
+    whoB2c: {
+      title: "If you sell to consumers",
+      items: [
+        "Coaches who want clients without posting content every day",
+        "Course creators who want a lead magnet that actually converts",
+        "Creators who want their audience to grow through word of mouth",
+        "Experts who want to stop trading time for attention",
+      ],
+    },
+    whoFooter: "The assessment figures out which you are and tailors everything to your world.",
+    whoCtaText: "Find out what to build",
+
+    showSocialProof: true,
+    socialProofTitle: "Builders are already launching",
+    socialProofItems: [
+      { name: "Sarah", action: "launched her quiz — 47 leads in the first week" },
+      { name: "James", action: "built a B2B readiness assessment in 3 days" },
+      { name: "Maria", action: "got 200 signups through referrals" },
+      { name: "Alex", action: "shipped a 5-day copywriting challenge" },
+      { name: "Priya", action: "leadership quiz went viral in her LinkedIn network" },
+      { name: "Tom", action: "built a client onboarding challenge for his agency" },
+    ],
+    socialProofRotateSpeed: 4,
+    socialProofMetric: "147 builders started • 38 launched this week",
+
+    showExamples: true,
+    examplesTitle: "See what others are building",
+    exampleCards: [
+      { challenge: "Build your sales playbook in 3 days", quiz: "How sales-ready is your team?", audienceBadge: "B2B", styleBadge: "Quick Win" },
+      { challenge: "Build your personal brand in 5 days", quiz: "What's your brand archetype?", audienceBadge: "B2C", styleBadge: "Transformation" },
+      { challenge: "Train your team to write winning proposals in 5 days", quiz: "What's your proposal skill level?", audienceBadge: "B2B", styleBadge: "Skill Builder" },
+      { challenge: "Launch your podcast in 3 days", quiz: "How podcast-ready are you?", audienceBadge: "B2C", styleBadge: "Launch" },
+    ],
+    examplesFooter: "All built in days — not months. Yours will be tailored to your expertise and audience.",
+    examplesCtaText: "Discover what yours should be",
+
+    showUrgency: true,
     urgencyText: "Next cohort starts",
+    urgencyBody: "Every Monday, a new group of builders starts the 3-day challenge together. Join now and build alongside others.",
+    urgencyBonus: "Each month, selected builders get their challenge promoted across our network.",
     showCountdown: true,
     countdownTarget: null,
     autoAdvanceCountdown: true,
-    promiseText: "In 3 days, you'll build a system that grows your audience through trust.",
-    showSocialProof: true,
-    socialProofItems: [
-      { name: "Sarah", action: "launched her app" },
-      { name: "James", action: "completed Day 2" },
-      { name: "Maria", action: "shared her score" },
+    urgencyCtaText: "Join this cohort",
+
+    showFaq: true,
+    faqTitle: "Common questions",
+    faqItems: [
+      { question: "Do I need to know how to code?", answer: "No. The 3-day challenge walks you through everything step by step. If you can answer questions about your expertise, you can build this." },
+      { question: "What exactly will I have after 3 days?", answer: "A live challenge app with a quiz entry point that captures emails, a multi-day challenge experience, and a built-in referral system. Everything you need to generate leads on autopilot." },
+      { question: "Is this for B2B or B2C?", answer: "Both. The assessment identifies whether you sell to businesses or consumers and tailors everything — your challenge topic, quiz angle, examples, and framing — to your audience." },
+      { question: "What if I don't know what my challenge should be about?", answer: "That's exactly what the assessment is for. It takes 90 seconds and tells you exactly what to build based on your expertise and audience." },
+      { question: "Is this free?", answer: "The assessment and 3-day challenge are free. You'll unlock bonus resources by completing days and inviting other builders." },
+      { question: "How is this different from a course or template?", answer: "You don't watch anything. You build something real — a live app that generates leads. And the referral system means it grows itself after you launch." },
     ],
-    socialProofRotateSpeed: 4,
-    bottomCtaText: "Take the assessment — it's free",
-    bottomCtaLink: "/assess",
+
+    finalCtaTitle: "You're 90 seconds away from knowing exactly what to build",
+    finalCtaBody: "Take the assessment. Get your personalised challenge recommendation. Start building tomorrow.",
+    finalCtaButtonText: "Take the assessment",
+    finalCtaBelowText: "Start today. Launch in 3 days.",
   },
   assessment: {
     introTitle: "Discover your challenge",

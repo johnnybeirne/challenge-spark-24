@@ -25,7 +25,7 @@ const CrossPromoSpotlight = ({
   useEffect(() => {
     if (!tracked.current && promos.length > 0) {
       tracked.current = true;
-      trackEvent("crosspromo_viewed", { position, promo_id: promos[0].id });
+      trackEvent("crosspromo_impression", { position, promo_id: promos[0].id });
     }
   }, [promos, position]);
 

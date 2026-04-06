@@ -109,14 +109,8 @@ const PartnerDashboard = () => {
   const indirect = Math.floor(direct * 0.4); // estimated from network
   const totalNetwork = direct + indirect;
   const estimatedReach = direct * 1 + indirect * 0.5;
-  const leaderboardScore =
-    state.network.direct * 3 +
-    state.network.indirect +
-    state.community.boostsGiven * 2 +
-    state.community.boostsReceived * 4 +
-    direct * 5;
-
-  const visibility = getVisibility(leaderboardScore);
+  const leaderboardScore = calculateLeaderboardScore(state);
+  const visibility = getVisibilityLocal(leaderboardScore);
   const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
 
   // Next reward milestone

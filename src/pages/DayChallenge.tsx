@@ -308,6 +308,21 @@ const DayChallenge = () => {
           {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge 🎉"}
         </Button>
       )}
+
+      {/* Cross-promo at bottom */}
+      <div className="mt-6">
+        <CrossPromoSpotlight
+          title="Other builders in progress"
+          subtitle=""
+          position={`day-${dayNum}`}
+        />
+      </div>
+
+      <PostActionPromo
+        open={showPostActionPromo}
+        onClose={() => setShowPostActionPromo(false)}
+        position={`day-${dayNum}-task-complete`}
+      />
     </div>
   );
 };

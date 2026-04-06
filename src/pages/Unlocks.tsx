@@ -60,7 +60,11 @@ const Unlocks = () => {
 
         {/* Cross-promotion between sections */}
         <div className="mb-4">
-          <CrossPromoSlots slots={2} title="Featured builders" />
+          <CrossPromoSpotlight
+            title="See what others have built"
+            subtitle=""
+            position="unlocks"
+          />
         </div>
 
 

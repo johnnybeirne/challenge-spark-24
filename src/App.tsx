@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/context/AppContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import AppShell from "@/components/AppShell";
-import AuthGuard from "@/components/AuthGuard";
+import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
 import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
@@ -47,7 +47,7 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
               </Route>
 
-              {/* Authenticated routes */}
+              {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
                 <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
@@ -56,10 +56,12 @@ const App = () => (
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
-                <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
-                <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
-                <Route path="/promoter" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
-                <Route path="/partner/performance" element={<AuthGuard><PartnerPerformance /></AuthGuard>} />
+
+                {/* Partner-only routes */}
+                <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />
+                <Route path="/partner/performance" element={<PartnerGuard><PartnerPerformance /></PartnerGuard>} />
+                <Route path="/rewards" element={<PartnerGuard><Rewards /></PartnerGuard>} />
+                <Route path="/reward/:id" element={<PartnerGuard><RewardDetail /></PartnerGuard>} />
               </Route>
 
               {/* Admin — URL-only access */}

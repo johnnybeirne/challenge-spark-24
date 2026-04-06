@@ -9,10 +9,25 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) return <Spinner />;
 
-  // Require Supabase auth
   if (!user) {
     if (state.assessment) return <Navigate to="/results" replace />;
     return <Navigate to="/join" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+/** Guard for promoter-only routes */
+export const PartnerGuard = ({ children }: { children: React.ReactNode }) => {
+  const { state } = useAppState();
+  const { user, loading } = useAuth();
+
+  if (loading) return <Spinner />;
+  if (!user) return <Navigate to="/join" replace />;
+
+  const role = state.user?.role;
+  if (role !== "promoter" && role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

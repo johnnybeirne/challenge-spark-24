@@ -1,16 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   ArrowRight, Crown, Globe, Megaphone, Shield, Sparkles,
   TrendingUp, Users, Zap, HelpCircle, ChevronRight,
+  Package, CheckCircle, Clock,
 } from "lucide-react";
 import { usePromoter } from "@/hooks/usePromoter";
 import { useFoundingConfig } from "@/hooks/useFoundingConfig";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 import ActivityFeed from "@/components/ActivityFeed";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
@@ -22,23 +27,31 @@ const HOW_STEPS = [
     desc: "Share ChallengeOS with your audience using your unique partner link.",
   },
   {
-    icon: Sparkles,
-    title: "Get featured inside the challenge",
-    desc: "We showcase your work to every builder going through the challenge.",
+    icon: Package,
+    title: "Contribute something valuable",
+    desc: "Add a resource worth $97+ to the network — a course, template, tool, or asset.",
   },
   {
     icon: Globe,
-    title: "Grow through the network",
-    desc: "Get exposure to other partners' audiences — not just your own.",
+    title: "Get cross-promoted",
+    desc: "We feature you and cross-promote you to other partners' audiences.",
   },
 ];
 
 const VALUE_ITEMS = [
   "Cross-promotion to other partners' audiences",
   "Feature placement inside the challenge",
-  "Referral rewards (including second-level growth)",
+  "Referral rewards (2-level system)",
   "Access to Builder Circle",
   "Network-driven audience growth",
+];
+
+const CONTRIBUTION_EXAMPLES = [
+  "A lead magnet or resource guide",
+  "A mini-course or training",
+  "A workshop or live session",
+  "A template, tool, or framework",
+  "Access to a paid asset",
 ];
 
 const EARLY_BENEFITS = [
@@ -50,37 +63,113 @@ const EARLY_BENEFITS = [
 const Partners = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { promoter, loading: promoLoading, becomePromoter } = usePromoter();
+  const { promoter, loading: promoLoading } = usePromoter();
   const { slotsRemaining, loading: configLoading } = useFoundingConfig();
+
+  const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [existingApp, setExistingApp] = useState<any>(null);
+  const [appLoading, setAppLoading] = useState(true);
+
+  // Form state
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [value, setValue] = useState("97");
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     trackEvent("partners_page_viewed");
   }, []);
 
-  const handleBecomePartner = async () => {
-    trackEvent("partners_cta_clicked");
+  // Check for existing application
+  useEffect(() => {
+    if (!user) { setAppLoading(false); return; }
+    (async () => {
+      const { data } = await (supabase.from("partner_contributions") as any)
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (data?.length) setExistingApp(data[0]);
+      setAppLoading(false);
+    })();
+  }, [user]);
 
+  const handleApply = () => {
+    trackEvent("partner_application_started");
     if (!user) {
       navigate("/join?next=partners");
       return;
     }
-
     if (promoter) {
       navigate("/partner");
       return;
     }
-
-    const result = await becomePromoter();
-    if (result) {
-      trackEvent("promoter_joined");
-      toast.success("Welcome aboard, partner! 🎉");
-      navigate("/partner");
-    } else {
-      toast.error("Something went wrong. Please try again.");
-    }
+    setShowForm(true);
+    setTimeout(() => {
+      document.getElementById("application-form")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
-  const loading = authLoading || promoLoading || configLoading;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const trimmedTitle = title.trim();
+    const trimmedDesc = description.trim();
+    const trimmedUrl = url.trim();
+    const numValue = parseInt(value);
+
+    if (!trimmedTitle || !trimmedDesc || !trimmedUrl) {
+      toast.error("All fields are required");
+      return;
+    }
+    if (trimmedTitle.length > 200) {
+      toast.error("Title must be under 200 characters");
+      return;
+    }
+    if (trimmedDesc.length > 2000) {
+      toast.error("Description must be under 2000 characters");
+      return;
+    }
+    if (isNaN(numValue) || numValue < 97) {
+      toast.error("Estimated value must be at least $97");
+      return;
+    }
+    try {
+      new URL(trimmedUrl);
+    } catch {
+      toast.error("Please enter a valid URL");
+      return;
+    }
+
+    setSubmitting(true);
+    const { error } = await (supabase.from("partner_contributions") as any).insert({
+      user_id: user!.id,
+      contribution_title: trimmedTitle,
+      contribution_description: trimmedDesc,
+      estimated_value: numValue,
+      contribution_url: trimmedUrl,
+    });
+
+    if (error) {
+      toast.error("Failed to submit. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    trackEvent("partner_application_submitted");
+    toast.success("Application submitted! We'll review it shortly.");
+    setShowForm(false);
+    setExistingApp({ status: "pending" });
+    setSubmitting(false);
+  };
+
+  const loading = authLoading || promoLoading || configLoading || appLoading;
+
+  // Determine CTA state
+  const isPending = existingApp?.status === "pending";
+  const isRejected = existingApp?.status === "rejected";
+  const isApproved = !!promoter;
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,7 +193,7 @@ const Partners = () => {
             Become a ChallengeOS Partner
           </h1>
           <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-            Promote the challenge. Grow your audience through the network.
+            Promote the challenge. Contribute value. Grow your audience through the network.
           </p>
         </div>
 
@@ -128,6 +217,35 @@ const Partners = () => {
               </Card>
             ))}
           </div>
+        </section>
+
+        {/* ─── WHAT YOU CONTRIBUTE ─── */}
+        <section className="mb-10">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+            What you contribute
+          </h2>
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-5">
+              <p className="text-sm text-foreground leading-relaxed mb-4">
+                To join as a partner, you must contribute something of real value
+                <span className="font-semibold"> (minimum $97 value)</span> to the network.
+              </p>
+              <p className="text-xs text-muted-foreground font-medium mb-2 uppercase tracking-wider">
+                Examples
+              </p>
+              <ul className="space-y-2">
+                {CONTRIBUTION_EXAMPLES.map((ex, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Package className="h-3 w-3 text-primary mt-0.5 shrink-0" />
+                    <span className="text-xs text-foreground">{ex}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[11px] text-muted-foreground mt-4 italic leading-relaxed">
+                This ensures the network stays high-quality and every partner benefits.
+              </p>
+            </CardContent>
+          </Card>
         </section>
 
         {/* ─── WHAT YOU GET ─── */}
@@ -159,7 +277,6 @@ const Partners = () => {
               <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                 You're not just using your audience — you're plugging into a network where partners help grow each other's audiences.
               </p>
-              {/* Visual diagram */}
               <div className="flex items-center gap-2 text-xs text-foreground font-medium justify-center flex-wrap">
                 <Badge variant="secondary" className="gap-1"><Users className="h-3 w-3" /> You</Badge>
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
@@ -169,6 +286,9 @@ const Partners = () => {
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
                 <Badge variant="secondary" className="gap-1"><TrendingUp className="h-3 w-3" /> Network growth</Badge>
               </div>
+              <p className="text-[11px] text-muted-foreground text-center mt-3 italic">
+                Every partner contributes value — this is what makes the network work.
+              </p>
             </CardContent>
           </Card>
         </section>
@@ -210,23 +330,47 @@ const Partners = () => {
         <section className="mb-10 space-y-3">
           {loading ? (
             <div className="flex justify-center py-4"><Spinner /></div>
-          ) : promoter ? (
+          ) : isApproved ? (
             <Button className="w-full gap-2 min-h-[48px]" onClick={() => navigate("/partner")}>
               <Crown className="h-4 w-4" /> Go to your Partner Dashboard
               <ArrowRight className="h-4 w-4" />
             </Button>
+          ) : isPending ? (
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="p-5 flex items-center gap-3">
+                <Clock className="h-5 w-5 text-primary shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Application submitted</p>
+                  <p className="text-xs text-muted-foreground">We're reviewing your contribution. You'll be notified once approved.</p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : isRejected ? (
+            <>
+              <Card className="border-destructive/20 bg-destructive/5 mb-2">
+                <CardContent className="p-5">
+                  <p className="text-sm font-medium text-foreground mb-1">Application not approved</p>
+                  <p className="text-xs text-muted-foreground">
+                    {existingApp?.review_notes || "Your contribution didn't meet the requirements. You can apply again with a different asset."}
+                  </p>
+                </CardContent>
+              </Card>
+              <Button className="w-full gap-2 min-h-[48px]" onClick={handleApply}>
+                <Crown className="h-4 w-4" /> Apply again
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </>
           ) : (
             <>
-              <Button className="w-full gap-2 min-h-[48px]" onClick={handleBecomePartner}>
-                <Crown className="h-4 w-4" /> Become a partner
+              <Button className="w-full gap-2 min-h-[48px]" onClick={handleApply}>
+                <Crown className="h-4 w-4" /> Apply to become a partner
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 variant="outline"
                 className="w-full gap-2 min-h-[48px]"
                 onClick={() => {
-                  const el = document.getElementById("faq-section");
-                  el?.scrollIntoView({ behavior: "smooth" });
+                  document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
                 Learn more
@@ -235,11 +379,98 @@ const Partners = () => {
           )}
         </section>
 
+        {/* ─── APPLICATION FORM ─── */}
+        {showForm && (
+          <section id="application-form" className="mb-10">
+            <Card className="border-primary/20">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Package className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-semibold text-foreground">Your contribution</h3>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contrib-title" className="text-xs">Contribution title</Label>
+                    <Input
+                      id="contrib-title"
+                      placeholder="e.g. SaaS Launch Playbook"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      maxLength={200}
+                      className="min-h-[44px]"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contrib-desc" className="text-xs">Description</Label>
+                    <Textarea
+                      id="contrib-desc"
+                      placeholder="What is it, who is it for, and what value does it deliver?"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      maxLength={2000}
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contrib-value" className="text-xs">Estimated value (USD, minimum $97)</Label>
+                    <Input
+                      id="contrib-value"
+                      type="number"
+                      min={97}
+                      placeholder="97"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      className="min-h-[44px]"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contrib-url" className="text-xs">Link to resource</Label>
+                    <Input
+                      id="contrib-url"
+                      type="url"
+                      placeholder="https://..."
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="min-h-[44px]"
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full gap-2 min-h-[48px]" disabled={submitting}>
+                    {submitting ? <Spinner size="sm" /> : (
+                      <>
+                        <CheckCircle className="h-4 w-4" /> Submit application
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </section>
+        )}
+
         {/* ─── OBJECTION HANDLING / FAQ ─── */}
-        <section id="faq-section" className="mb-6">
+        <section id="faq-section" className="mb-6 space-y-3">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-            Common question
+            Common questions
           </h2>
+          <Card className="border-border">
+            <CardContent className="p-5">
+              <div className="flex items-start gap-2.5">
+                <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    Why do I need to contribute something?
+                  </p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Because this is a shared growth network — every partner brings value, so everyone benefits.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <Card className="border-border">
             <CardContent className="p-5">
               <div className="flex items-start gap-2.5">

@@ -51,6 +51,7 @@ const DayChallenge = () => {
   const config = dayConfig[dayNum] || dayConfig[1];
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
+  const [showPostActionPromo, setShowPostActionPromo] = useState(false);
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];

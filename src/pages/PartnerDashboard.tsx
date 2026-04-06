@@ -365,6 +365,13 @@ const PartnerDashboard = () => {
           >
             <Crown className="h-4 w-4" /> View Builder Circle
           </Button>
+          <Button
+            variant="outline"
+            className="w-full gap-2 min-h-[48px]"
+            onClick={() => navigate("/partner/performance")}
+          >
+            <BarChart3 className="h-4 w-4" /> View asset performance
+          </Button>
         </div>
 
         {/* ─── SECTION 7: IMPACT ─── */}

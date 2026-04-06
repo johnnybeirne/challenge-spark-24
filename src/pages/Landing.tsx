@@ -248,13 +248,19 @@ const Landing = () => {
         <div className="landing-container px-6 md:px-10 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: <Users className="w-5 h-5 text-primary" />, value: "147", label: "builders started" },
-              { icon: <Rocket className="w-5 h-5 text-accent" />, value: "38", label: "launched this week" },
-              { icon: <Zap className="w-5 h-5 text-primary" />, value: "3 days", label: "to build & launch" },
-              { icon: <TrendingUp className="w-5 h-5 text-success" />, value: "Referral", label: "powered growth" },
+              { icon: <Users className="w-5 h-5 text-primary" />, value: "147", label: "builders started", hasAvatars: true },
+              { icon: <Rocket className="w-5 h-5 text-accent" />, value: "38", label: "launched this week", hasAvatars: false },
+              { icon: <Zap className="w-5 h-5 text-primary" />, value: "3 days", label: "to build & launch", hasAvatars: false },
+              { icon: <TrendingUp className="w-5 h-5 text-success" />, value: "Referral", label: "powered growth", hasAvatars: false },
             ].map((s, i) => (
               <div key={i} className="flex items-center gap-3 p-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm border border-border/40">{s.icon}</div>
+                {s.hasAvatars ? (
+                  <div className="flex -space-x-1.5">
+                    {[0,1,2].map(j => <AvatarCircle key={j} index={j} size="w-7 h-7" textSize="text-[8px]" />)}
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm border border-border/40">{s.icon}</div>
+                )}
                 <div>
                   <p className="text-sm font-extrabold text-foreground">{s.value}</p>
                   <p className="text-[11px] text-muted-foreground">{s.label}</p>

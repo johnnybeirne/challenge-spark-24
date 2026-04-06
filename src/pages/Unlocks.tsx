@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, CheckCircle, Gift, Flame, Rocket, Crown, Users, Zap, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EmptyState from "@/components/EmptyState";
-import CrossPromoSlots from "@/components/CrossPromoSlots";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 
 interface UnlockItem {
   id: string;

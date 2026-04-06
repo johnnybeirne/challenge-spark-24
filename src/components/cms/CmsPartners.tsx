@@ -1,12 +1,16 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { useSiteConfig, type PartnerConfig, type RewardDef } from "@/context/SiteConfigContext";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const CmsPartners = () => {
   const { config, updateSection } = useSiteConfig();
@@ -55,6 +59,28 @@ const CmsPartners = () => {
         <div className="space-y-2">
           <Label>Founding Slots</Label>
           <Input type="number" value={draft.foundingSlots} onChange={(e) => update("foundingSlots", Number(e.target.value))} className="w-24" />
+        </div>
+        <div className="space-y-2">
+          <Label>Founding Cutoff Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-[240px] justify-start text-left font-normal", !draft.foundingCutoffDate && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {draft.foundingCutoffDate ? format(new Date(draft.foundingCutoffDate), "PPP") : "No cutoff date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={draft.foundingCutoffDate ? new Date(draft.foundingCutoffDate) : undefined}
+                onSelect={(d) => update("foundingCutoffDate", d ? d.toISOString() : null)}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          {draft.foundingCutoffDate && (
+            <Button variant="ghost" size="sm" onClick={() => update("foundingCutoffDate", null)} className="text-xs text-muted-foreground">Clear date</Button>
+          )}
         </div>
       </section>
 

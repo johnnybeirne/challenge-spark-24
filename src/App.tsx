@@ -25,6 +25,9 @@ import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminCms from "@/pages/AdminCms";
+import AdminHub from "@/pages/AdminHub";
+import AdminPromoters from "@/pages/AdminPromoters";
+import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

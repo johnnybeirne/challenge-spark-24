@@ -78,6 +78,10 @@ const DayChallenge = () => {
     if (!wasChecked) {
       setShowTaskAnim(true);
       setTimeout(() => setShowTaskAnim(false), 100);
+      // Show post-action promo 30% of the time
+      if (Math.random() < 0.3) {
+        setTimeout(() => setShowPostActionPromo(true), 600);
+      }
     }
   };
 

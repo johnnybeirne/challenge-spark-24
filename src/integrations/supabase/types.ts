@@ -241,6 +241,48 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_contributions: {
+        Row: {
+          contribution_description: string
+          contribution_title: string
+          contribution_url: string
+          created_at: string
+          estimated_value: number
+          id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contribution_description: string
+          contribution_title: string
+          contribution_url: string
+          created_at?: string
+          estimated_value?: number
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contribution_description?: string
+          contribution_title?: string
+          contribution_url?: string
+          created_at?: string
+          estimated_value?: number
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

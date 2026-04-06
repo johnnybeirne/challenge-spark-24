@@ -1,54 +1,35 @@
+## Admin CMS — Content & Configuration Control System
 
-## Reconciliation Plan
+### Phase 1: Foundation
+1. **Config store** — Create `src/context/SiteConfigContext.tsx` with full `SiteConfig` interface, defaults matching current hardcoded values, localStorage persistence (`challengeos_site_config`), and context provider
+2. **Wrap app** in `SiteConfigProvider`
 
-### 1. AppState & User types (AppContext.tsx)
-- Add canonical `User` interface with `role`, `adminBoost`, `adminBadge`, `submittedUrl`
-- Add `onboarding`, `crossPromotion`, `partnerAsset`, `partnerPerformance` to AppState
-- Remove top-level `communityUnlocked` (redundant with `community.unlocked`)
-- Remove `referrals.shares` and `referrals.invites` (not in canonical)
-- Remove `community.submittedUrl` (moved to `User.submittedUrl`)
-- Remove `partner: PartnerState` from AppState (promoter hook handles this)
+### Phase 2: CMS Page & Layout
+3. **Create `/admin/cms` route** with sidebar navigation (10 sections) and main editing area
+4. **Admin auth** — reuse existing password gate (`challengeos2024`)
+5. **Add "CMS" link** to admin navigation
 
-### 2. Scoring — one formula
-- Add `adminBoost` to `calculateLeaderboardScore`
-- Add `calculatePromotionScore` and `getVisibilityLevel` to canonical location
-- Remove duplicate scoring in PartnerDashboard, PartnerPerformance, Community
+### Phase 3: CMS Sections (all 10)
+Build each section as a separate component with form fields, save button, and toast feedback:
+- `CmsLanding` — hero, urgency, promise, social proof, bottom CTA
+- `CmsAssessment` — intro, questions, identity types, results text
+- `CmsChallenge` — day structure, tasks, completion messages
+- `CmsRewards` — challenge rewards, referral rewards, Builder Circle unlock
+- `CmsReferrals` — copy, onboarding invite, share channels
+- `CmsCommunity` — Builder Circle, leaderboard, activity feed, featured
+- `CmsBranding` — colors, layout, app identity
+- `CmsPartners` — acquisition page, cross-promo, reward tiers
+- `CmsNotifications` — toast messages, empty states
+- `CmsGlobal` — cohort, analytics, data management
 
-### 3. Routes
-- Remove `/features` (not canonical)
-- Remove `/invite-builders` (not canonical)
-- Rename `/partner` → `/promoter`
-- Keep `/partner/performance`
-- Remove admin routes `/admin/promoters`, `/admin/activity-feed`; keep `/admin/analytics`
+### Phase 4: Landing Page Integration
+6. **Update `Landing.tsx`** to read all text/config from `SiteConfig` context instead of hardcoded strings
 
-### 4. Bottom Nav
-- Remove "Ranks" (5th tab) — canonical says 4 tabs only
-- Remove promoter tab from bottom nav (canonical says card on Dashboard)
+### Phase 5: Future (not in this PR)
+- Progressively migrate Assessment, Challenge, Rewards, etc. to read from config
+- Migrate config to database table when ready
 
-### 5. Analytics events
-- Replace event list with canonical 35 events
-- Update all `trackEvent` calls to use canonical names
-- Remove `as any` casts from trackEvent calls
-
-### 6. Component cleanup
-- Update Referrals page to remove `shares`/`invites` references
-- Update DayChallenge to remove `shares`/`invites` references
-- Update Community to use canonical state shape
-- Fix all type errors from state shape changes
-
-### 7. Persistence keys
-- Update `STORAGE_KEYS` in useSupabaseSync to match canonical list
-- Update `clearState()` in AppContext
-
-### Files modified:
-- `src/context/AppContext.tsx` — major refactor
-- `src/lib/analytics.ts` — canonical events
-- `src/App.tsx` — route cleanup
-- `src/components/BottomNav.tsx` — 4 tabs
-- `src/pages/Referrals.tsx` — remove shares/invites
-- `src/pages/DayChallenge.tsx` — remove shares/invites
-- `src/pages/Community.tsx` — align with canonical state
-- `src/pages/Dashboard.tsx` — minor fixes
-- `src/pages/PartnerDashboard.tsx` — use canonical scoring
-- `src/pages/PartnerPerformance.tsx` — use canonical scoring
-- `src/hooks/useSupabaseSync.tsx` — canonical keys
+### Notes
+- All defaults = current hardcoded values (nothing breaks)
+- Components not yet migrated continue working with hardcoded values
+- CMS only accessible via `/admin/cms` with password auth

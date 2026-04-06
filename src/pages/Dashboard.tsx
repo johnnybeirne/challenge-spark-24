@@ -9,6 +9,8 @@ import ActivityFeed from "@/components/ActivityFeed";
 import InviteNudgeCard from "@/components/InviteNudgeCard";
 import InviteMilestoneModal from "@/components/InviteMilestoneModal";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
+import { usePromoter } from "@/hooks/usePromoter";
+import { useNavigate } from "react-router-dom";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [

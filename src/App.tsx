@@ -24,6 +24,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import InviteBuilders from "@/pages/InviteBuilders";
 import Partners from "@/pages/Partners";
+import Rewards from "@/pages/Rewards";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

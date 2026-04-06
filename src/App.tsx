@@ -10,6 +10,7 @@ import Landing from "@/pages/Landing";
 import Assessment from "@/pages/Assessment";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
+import RewardDetail from "@/pages/RewardDetail";
 import Results from "@/pages/Results";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/partner/performance" element={<AuthGuard><PartnerPerformance /></AuthGuard>} />
               <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
               <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
+              <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
             </Route>
 
             {/* Admin */}

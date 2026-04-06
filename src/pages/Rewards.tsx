@@ -93,7 +93,7 @@ const Rewards = () => {
   const handleAccess = (asset: PartnerAsset) => {
     trackEvent("reward_accessed", { asset_id: asset.id, title: asset.contribution_title });
     trackEvent("partner_asset_clicked", { asset_id: asset.id, partner_user_id: asset.user_id });
-    window.open(asset.contribution_url, "_blank", "noopener,noreferrer");
+    navigate(`/reward/${asset.id}`);
   };
 
   const totalUnlockedValue = assets

@@ -21,6 +21,7 @@ import Features from "@/pages/Features";
 import Leaderboard from "@/pages/Leaderboard";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminPromoters from "@/pages/AdminPromoters";
+import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import InviteBuilders from "@/pages/InviteBuilders";
 import NotFound from "@/pages/NotFound";
 

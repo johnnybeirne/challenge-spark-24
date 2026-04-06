@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 import Day2InviteNudge from "@/components/Day2InviteNudge";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
+import PostActionPromo from "@/components/PostActionPromo";
 import { trackEvent } from "@/lib/analytics";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {

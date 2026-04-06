@@ -48,7 +48,11 @@ export type AnalyticsEvent =
   | "founder_viewed"
   | "founder_slots_remaining"
   | "founder_visibility_boost_applied"
-  | "reward_accessed";
+  | "reward_accessed"
+  | "landing_viewed"
+  | "landing_cta_clicked"
+  | "landing_scroll_depth"
+  | "landing_faq_expanded";
 
 export async function trackEvent(
   event: AnalyticsEvent,

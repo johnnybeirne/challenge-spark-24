@@ -7,21 +7,100 @@ export interface SocialProofItem {
   action: string;
 }
 
+export interface FeatureCard {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface HowItWorksStep {
+  title: string;
+  description: string;
+}
+
+export interface AudienceColumn {
+  title: string;
+  items: string[];
+}
+
+export interface ExampleCard {
+  challenge: string;
+  quiz: string;
+  audienceBadge: string;
+  styleBadge: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface LandingConfig {
   heroHeadline: string;
   heroSubheadline: string;
+  heroSupportingLine: string;
+  heroMicroProof: string;
   primaryCtaText: string;
   primaryCtaLink: string;
+  heroBelowCtaText: string;
+
+  showFeatures: boolean;
+  featuresTitle: string;
+  featureCards: FeatureCard[];
+  featuresFooter: string;
+  featuresCtaText: string;
+
+  showWhyThisWorks: boolean;
+  whyTitle: string;
+  whyBody: string;
+
+  showHowItWorks: boolean;
+  howTitle: string;
+  howSteps: HowItWorksStep[];
+  howFooter: string;
+
+  showWhoThisIsFor: boolean;
+  whoTitle: string;
+  whoIntro: string;
+  whoB2b: AudienceColumn;
+  whoB2c: AudienceColumn;
+  whoFooter: string;
+  whoCtaText: string;
+
+  showSocialProof: boolean;
+  socialProofTitle: string;
+  socialProofItems: SocialProofItem[];
+  socialProofRotateSpeed: number;
+  socialProofMetric: string;
+
+  showExamples: boolean;
+  examplesTitle: string;
+  exampleCards: ExampleCard[];
+  examplesFooter: string;
+  examplesCtaText: string;
+
+  showUrgency: boolean;
   urgencyText: string;
+  urgencyBody: string;
+  urgencyBonus: string;
   showCountdown: boolean;
   countdownTarget: string | null;
   autoAdvanceCountdown: boolean;
-  promiseText: string;
-  showSocialProof: boolean;
-  socialProofItems: SocialProofItem[];
-  socialProofRotateSpeed: number;
-  bottomCtaText: string;
-  bottomCtaLink: string;
+  urgencyCtaText: string;
+
+  showFaq: boolean;
+  faqTitle: string;
+  faqItems: FaqItem[];
+
+  finalCtaTitle: string;
+  finalCtaBody: string;
+  finalCtaButtonText: string;
+  finalCtaBelowText: string;
+
+  // legacy compat
+  promiseText?: string;
+  bottomCtaText?: string;
+  bottomCtaLink?: string;
 }
 
 export interface AssessmentSplitOption {

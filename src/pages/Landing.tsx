@@ -559,7 +559,7 @@ const Landing = () => {
           </div>
           {/* Right: subtle product visual */}
           <div className="hidden md:flex flex-1 justify-center">
-            <div className="opacity-20">
+            <div className="opacity-35">
               <MockupBrowser title="challengeos.app/your-challenge">
                 <div className="space-y-2 py-4">
                   <div className="h-2 bg-background/20 rounded w-3/4" />

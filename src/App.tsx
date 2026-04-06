@@ -58,6 +58,7 @@ const App = () => (
               <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
               <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
               <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
+              <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
             </Route>
 
             {/* Admin */}

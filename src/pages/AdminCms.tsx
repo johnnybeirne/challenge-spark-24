@@ -1,0 +1,115 @@
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
+import CmsLanding from "@/components/cms/CmsLanding";
+import CmsAssessment from "@/components/cms/CmsAssessment";
+import CmsChallenge from "@/components/cms/CmsChallenge";
+import CmsRewards from "@/components/cms/CmsRewards";
+import CmsReferrals from "@/components/cms/CmsReferrals";
+import CmsCommunity from "@/components/cms/CmsCommunity";
+import CmsBranding from "@/components/cms/CmsBranding";
+import CmsPartners from "@/components/cms/CmsPartners";
+import CmsNotifications from "@/components/cms/CmsNotifications";
+import CmsGlobal from "@/components/cms/CmsGlobal";
+import { cn } from "@/lib/utils";
+
+const SECTIONS = [
+  { id: "landing", label: "Landing Page" },
+  { id: "assessment", label: "Assessment" },
+  { id: "challenge", label: "Challenge Content" },
+  { id: "rewards", label: "Rewards & Unlocks" },
+  { id: "referrals", label: "Referral Settings" },
+  { id: "community", label: "Community & Builder Circle" },
+  { id: "branding", label: "Branding & Design" },
+  { id: "partners", label: "Partner Settings" },
+  { id: "notifications", label: "Notifications & Copy" },
+  { id: "global", label: "Global Settings" },
+] as const;
+
+const ADMIN_LINKS = [
+  { path: "/admin/analytics", label: "Analytics" },
+  { path: "/admin/cms", label: "CMS" },
+];
+
+const AdminCms = () => {
+  const [password, setPassword] = useState("");
+  const [authed, setAuthed] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("landing");
+
+  const login = () => {
+    if (password === "challengeos2024") {
+      setAuthed(true);
+    }
+  };
+
+  if (!authed) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
+        <Lock className="h-8 w-8 text-muted-foreground" />
+        <h1 className="text-xl font-bold">Admin CMS</h1>
+        <div className="flex gap-2 w-full max-w-xs">
+          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && login()} />
+          <Button onClick={login}>Enter</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case "landing": return <CmsLanding />;
+      case "assessment": return <CmsAssessment />;
+      case "challenge": return <CmsChallenge />;
+      case "rewards": return <CmsRewards />;
+      case "referrals": return <CmsReferrals />;
+      case "community": return <CmsCommunity />;
+      case "branding": return <CmsBranding />;
+      case "partners": return <CmsPartners />;
+      case "notifications": return <CmsNotifications />;
+      case "global": return <CmsGlobal />;
+      default: return <CmsLanding />;
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className="w-56 border-r bg-card flex flex-col shrink-0">
+        <div className="p-4 border-b">
+          <h2 className="font-bold text-sm">Admin CMS</h2>
+          <div className="flex gap-2 mt-2">
+            {ADMIN_LINKS.map((link) => (
+              <a key={link.path} href={link.path} className="text-xs text-muted-foreground hover:text-foreground">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+        <nav className="flex-1 p-2 space-y-0.5">
+          {SECTIONS.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={cn(
+                "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
+                activeSection === section.id
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+            >
+              {section.label}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 p-6 max-w-2xl overflow-y-auto">
+        {renderSection()}
+      </main>
+    </div>
+  );
+};
+
+export default AdminCms;

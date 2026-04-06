@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/context/AppContext";
+import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import AppShell from "@/components/AppShell";
 import AuthGuard from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
@@ -23,50 +24,54 @@ import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
+import AdminCms from "@/pages/AdminCms";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AppProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route element={<AppShell />}>
-              <Route path="/" element={<Landing />} />
-              <Route path="/assess" element={<Assessment />} />
-              <Route path="/results" element={<Results />} />
-              <Route path="/join" element={<Signup />} />
-              <Route path="/partners" element={<Partners />} />
-            </Route>
+    <SiteConfigProvider>
+      <AppProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route element={<AppShell />}>
+                <Route path="/" element={<Landing />} />
+                <Route path="/assess" element={<Assessment />} />
+                <Route path="/results" element={<Results />} />
+                <Route path="/join" element={<Signup />} />
+                <Route path="/partners" element={<Partners />} />
+              </Route>
 
-            {/* Authenticated routes */}
-            <Route element={<AppShell showNav />}>
-              <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
-              <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
-              <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
-              <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
-              <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
-              <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
-              <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
-              <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
-              <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
-              <Route path="/promoter" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
-              <Route path="/partner/performance" element={<AuthGuard><PartnerPerformance /></AuthGuard>} />
-            </Route>
+              {/* Authenticated routes */}
+              <Route element={<AppShell showNav />}>
+                <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+                <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
+                <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
+                <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
+                <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
+                <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
+                <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
+                <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
+                <Route path="/promoter" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
+                <Route path="/partner/performance" element={<AuthGuard><PartnerPerformance /></AuthGuard>} />
+              </Route>
 
-            {/* Admin — URL-only access */}
-            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              {/* Admin — URL-only access */}
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/cms" element={<AdminCms />} />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AppProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AppProvider>
+    </SiteConfigProvider>
   </QueryClientProvider>
 );
 

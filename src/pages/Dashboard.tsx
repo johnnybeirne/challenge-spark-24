@@ -41,6 +41,7 @@ const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
   const { promoter } = usePromoter();
   const navigate = useNavigate();
+  const experience = getExperience(state.user?.role);
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
   const identityType = state.assessment?.identityType;

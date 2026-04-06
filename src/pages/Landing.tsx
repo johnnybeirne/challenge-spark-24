@@ -446,12 +446,41 @@ const Landing = () => {
           <div className="landing-container px-6 md:px-10">
             <h2 className="text-[1.5rem] md:text-[1.75rem] leading-[1.12] font-extrabold tracking-tight text-foreground mb-2 text-center">{lc.socialProofTitle}</h2>
             <p className="text-[14px] text-muted-foreground text-center mb-8">Real activity from the builder community</p>
-            <div className="max-w-[480px] mx-auto">
-              <ActivityFeed />
+            {/* Masonry-style activity wall with avatars */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-[900px] mx-auto">
+              {[
+                { name: "Sarah K.", action: "launched her quiz", time: "12m ago", metric: "200 signups", idx: 0 },
+                { name: "James T.", action: "built a B2B challenge", time: "1h ago", metric: "3-day sprint", idx: 2 },
+                { name: "Maria R.", action: "got 200 signups", time: "2h ago", metric: "🔥 trending", idx: 1 },
+                { name: "Alex L.", action: "completed Day 3", time: "3h ago", metric: "All tasks done", idx: 3 },
+                { name: "Nina P.", action: "invited 12 builders", time: "4h ago", metric: "Top referrer", idx: 4 },
+                { name: "Rob B.", action: "launched his app", time: "5h ago", metric: "Live now", idx: 5 },
+              ].map((item, i) => (
+                <div key={i} className="stagger-child card-float p-4 flex gap-3 items-start">
+                  <AvatarCircle index={item.idx} size="w-10 h-10" textSize="text-[11px]" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] text-foreground">
+                      <span className="font-bold">{item.name}</span>{" "}
+                      <span className="text-muted-foreground">{item.action}</span>
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] text-muted-foreground">{item.time}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/8 text-primary font-medium">{item.metric}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
             {lc.socialProofMetric && (
-              <p className="text-xs text-muted-foreground text-center mt-4">{lc.socialProofMetric}</p>
+              <p className="text-xs text-muted-foreground text-center mt-6">{lc.socialProofMetric}</p>
             )}
+            {/* Centered avatar stack below */}
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center gap-3">
+                <AvatarStack count={6} />
+                <p className="text-sm text-muted-foreground"><span className="font-bold text-foreground">147+</span> builders and growing</p>
+              </div>
+            </div>
           </div>
         </Reveal>
       )}

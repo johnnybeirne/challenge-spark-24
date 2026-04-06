@@ -59,6 +59,28 @@ const Cta = ({ text, section, to = "/assess", full = true }: { text: string; sec
   </Button>
 );
 
+/* ── Avatar helpers ── */
+const AVATAR_COLORS = ["bg-primary", "bg-accent", "bg-success", "bg-[#E8913A]", "bg-[#D14D72]", "bg-[#7B68EE]"];
+const AVATAR_INITIALS = ["SK", "MR", "JT", "AL", "NP", "RB", "CF", "DW"];
+const AVATAR_NAMES = ["Sarah K.", "Maria R.", "James T.", "Alex L.", "Nina P.", "Rob B.", "Chloe F.", "Dan W."];
+
+const AvatarCircle = ({ index, size = "w-8 h-8", textSize = "text-[10px]" }: { index: number; size?: string; textSize?: string }) => (
+  <div className={`${size} rounded-full ${AVATAR_COLORS[index % AVATAR_COLORS.length]} flex items-center justify-center ${textSize} font-bold text-white ring-2 ring-background`}>
+    {AVATAR_INITIALS[index % AVATAR_INITIALS.length]}
+  </div>
+);
+
+const AvatarStack = ({ count = 5, size = "w-8 h-8", textSize = "text-[10px]" }: { count?: number; size?: string; textSize?: string }) => (
+  <div className="flex -space-x-2.5">
+    {Array.from({ length: count }).map((_, i) => (
+      <AvatarCircle key={i} index={i} size={size} textSize={textSize} />
+    ))}
+    <div className={`${size} rounded-full bg-muted flex items-center justify-center ${textSize} font-semibold text-muted-foreground ring-2 ring-background`}>
+      +{Math.floor(Math.random() * 40 + 90)}
+    </div>
+  </div>
+);
+
 /* ── Fake product mockup screens ── */
 const MockupPhone = ({ title, items }: { title: string; items: string[] }) => (
   <div className="mockup-phone float-gentle">
@@ -179,7 +201,11 @@ const Landing = () => {
                 <Cta text={lc.primaryCtaText} section="hero" />
               </div>
               <p className="text-xs text-muted-foreground mt-3.5 tracking-wide">{lc.heroBelowCtaText}</p>
-              <p className="text-xs font-bold text-primary mt-1.5">{lc.heroMicroProof}</p>
+              {/* Avatar social proof */}
+              <div className="flex items-center gap-3 mt-5">
+                <AvatarStack count={5} size="w-7 h-7" textSize="text-[9px]" />
+                <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">147 builders</span> already started</p>
+              </div>
             </div>
             {/* Right: Product Mockup Composition */}
             <div className="relative flex justify-center md:justify-end items-center min-h-[380px] mt-8 md:mt-0">
@@ -222,13 +248,19 @@ const Landing = () => {
         <div className="landing-container px-6 md:px-10 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: <Users className="w-5 h-5 text-primary" />, value: "147", label: "builders started" },
-              { icon: <Rocket className="w-5 h-5 text-accent" />, value: "38", label: "launched this week" },
-              { icon: <Zap className="w-5 h-5 text-primary" />, value: "3 days", label: "to build & launch" },
-              { icon: <TrendingUp className="w-5 h-5 text-success" />, value: "Referral", label: "powered growth" },
+              { icon: <Users className="w-5 h-5 text-primary" />, value: "147", label: "builders started", hasAvatars: true },
+              { icon: <Rocket className="w-5 h-5 text-accent" />, value: "38", label: "launched this week", hasAvatars: false },
+              { icon: <Zap className="w-5 h-5 text-primary" />, value: "3 days", label: "to build & launch", hasAvatars: false },
+              { icon: <TrendingUp className="w-5 h-5 text-success" />, value: "Referral", label: "powered growth", hasAvatars: false },
             ].map((s, i) => (
               <div key={i} className="flex items-center gap-3 p-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm border border-border/40">{s.icon}</div>
+                {s.hasAvatars ? (
+                  <div className="flex -space-x-1.5">
+                    {[0,1,2].map(j => <AvatarCircle key={j} index={j} size="w-7 h-7" textSize="text-[8px]" />)}
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm border border-border/40">{s.icon}</div>
+                )}
                 <div>
                   <p className="text-sm font-extrabold text-foreground">{s.value}</p>
                   <p className="text-[11px] text-muted-foreground">{s.label}</p>
@@ -414,12 +446,41 @@ const Landing = () => {
           <div className="landing-container px-6 md:px-10">
             <h2 className="text-[1.5rem] md:text-[1.75rem] leading-[1.12] font-extrabold tracking-tight text-foreground mb-2 text-center">{lc.socialProofTitle}</h2>
             <p className="text-[14px] text-muted-foreground text-center mb-8">Real activity from the builder community</p>
-            <div className="max-w-[480px] mx-auto">
-              <ActivityFeed />
+            {/* Masonry-style activity wall with avatars */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-[900px] mx-auto">
+              {[
+                { name: "Sarah K.", action: "launched her quiz", time: "12m ago", metric: "200 signups", idx: 0 },
+                { name: "James T.", action: "built a B2B challenge", time: "1h ago", metric: "3-day sprint", idx: 2 },
+                { name: "Maria R.", action: "got 200 signups", time: "2h ago", metric: "🔥 trending", idx: 1 },
+                { name: "Alex L.", action: "completed Day 3", time: "3h ago", metric: "All tasks done", idx: 3 },
+                { name: "Nina P.", action: "invited 12 builders", time: "4h ago", metric: "Top referrer", idx: 4 },
+                { name: "Rob B.", action: "launched his app", time: "5h ago", metric: "Live now", idx: 5 },
+              ].map((item, i) => (
+                <div key={i} className="stagger-child card-float p-4 flex gap-3 items-start">
+                  <AvatarCircle index={item.idx} size="w-10 h-10" textSize="text-[11px]" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] text-foreground">
+                      <span className="font-bold">{item.name}</span>{" "}
+                      <span className="text-muted-foreground">{item.action}</span>
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] text-muted-foreground">{item.time}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/8 text-primary font-medium">{item.metric}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
             {lc.socialProofMetric && (
-              <p className="text-xs text-muted-foreground text-center mt-4">{lc.socialProofMetric}</p>
+              <p className="text-xs text-muted-foreground text-center mt-6">{lc.socialProofMetric}</p>
             )}
+            {/* Centered avatar stack below */}
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center gap-3">
+                <AvatarStack count={6} />
+                <p className="text-sm text-muted-foreground"><span className="font-bold text-foreground">147+</span> builders and growing</p>
+              </div>
+            </div>
           </div>
         </Reveal>
       )}
@@ -433,6 +494,11 @@ const Landing = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[800px] mx-auto">
               {lc.exampleCards.map((ex, i) => (
                 <div key={i} className="stagger-child card-float p-5">
+                  {/* Creator avatar + name */}
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <AvatarCircle index={i} size="w-7 h-7" textSize="text-[9px]" />
+                    <span className="text-[12px] font-medium text-foreground">{AVATAR_NAMES[i % AVATAR_NAMES.length]}</span>
+                  </div>
                   {/* Mini mockup thumbnail */}
                   <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl p-3 mb-4">
                     <div className="flex gap-1.5 mb-2">

@@ -24,30 +24,53 @@ export interface LandingConfig {
   bottomCtaLink: string;
 }
 
-export interface AssessmentQuestion {
-  text: string;
-  dimension: "Trust" | "Activation" | "Ownership" | "Clarity";
-  options: { label: string; score: number }[];
+export interface AssessmentSplitOption {
+  label: string;
+  value: "b2b" | "b2c";
 }
 
-export interface IdentityType {
+export interface AssessmentTrackOption {
+  label: string;
+  style: "quick_win" | "transformation" | "skill_builder" | "launch";
+}
+
+export interface AssessmentTrackQuestion {
   id: string;
-  displayName: string;
-  icon: string;
-  description: string;
-  minScore: number;
-  maxScore: number;
+  text: string;
+  options: AssessmentTrackOption[];
+}
+
+export interface StyleExample {
+  challenge: string;
+  quiz: string;
+}
+
+export interface StyleResultContent {
+  framing: string;
+  examples: StyleExample[];
 }
 
 export interface AssessmentConfig {
+  introTitle: string;
   introText: string;
   timeEstimate: string;
-  questions: AssessmentQuestion[];
-  identityTypes: IdentityType[];
-  tensionText: string;
-  scoreLabel: string;
-  shareButtonText: string;
+  splitQuestionText: string;
+  splitOptions: AssessmentSplitOption[];
+  b2bQuestions: AssessmentTrackQuestion[];
+  b2cQuestions: AssessmentTrackQuestion[];
+  b2bStyleContent: Record<string, StyleResultContent>;
+  b2cStyleContent: Record<string, StyleResultContent>;
+  b2bTensionText: string;
+  b2cTensionText: string;
+  b2bShareText: string;
+  b2cShareText: string;
   ctaText: string;
+  // Legacy fields (kept for backward compat, not displayed in new CMS)
+  questions?: any[];
+  identityTypes?: any[];
+  tensionText?: string;
+  scoreLabel?: string;
+  shareButtonText?: string;
 }
 
 export interface ChallengeTask {
@@ -204,28 +227,23 @@ export const defaultSiteConfig: SiteConfig = {
     bottomCtaLink: "/assess",
   },
   assessment: {
-    introText: "Answer 8 quick questions to discover your trust leverage score",
+    introTitle: "Discover your challenge",
+    introText: "Answer 9 quick questions. We'll tell you exactly what your evergreen challenge app should be about — including the quiz that attracts your leads.",
     timeEstimate: "90 seconds",
-    questions: [
-      { text: "How large is your current audience (email, social, community)?", dimension: "Trust", options: [{ label: "No audience yet", score: 1 }, { label: "Under 500", score: 2 }, { label: "500–5,000", score: 3 }, { label: "5,000+", score: 4 }] },
-      { text: "How often does your audience engage with your content?", dimension: "Activation", options: [{ label: "Rarely", score: 1 }, { label: "Sometimes", score: 2 }, { label: "Often", score: 3 }, { label: "Very actively", score: 4 }] },
-      { text: "Do people share your content without being asked?", dimension: "Trust", options: [{ label: "Never", score: 1 }, { label: "Occasionally", score: 2 }, { label: "Regularly", score: 3 }, { label: "All the time", score: 4 }] },
-      { text: "Have you launched a product, service, or project in the last year?", dimension: "Activation", options: [{ label: "No", score: 1 }, { label: "I started one", score: 2 }, { label: "Yes, one", score: 3 }, { label: "Multiple", score: 4 }] },
-      { text: "How clear is your growth strategy right now?", dimension: "Clarity", options: [{ label: "No strategy", score: 1 }, { label: "Vague idea", score: 2 }, { label: "Somewhat clear", score: 3 }, { label: "Crystal clear", score: 4 }] },
-      { text: "Do you have systems to capture and nurture leads?", dimension: "Ownership", options: [{ label: "None", score: 1 }, { label: "Basic", score: 2 }, { label: "Decent", score: 3 }, { label: "Fully automated", score: 4 }] },
-      { text: "How much do you rely on platforms you don't control (social media, marketplaces)?", dimension: "Ownership", options: [{ label: "Completely", score: 1 }, { label: "Mostly", score: 2 }, { label: "Partially", score: 3 }, { label: "Very little", score: 4 }] },
-      { text: "If you asked 10 people in your network for help, how many would respond?", dimension: "Clarity", options: [{ label: "0–1", score: 1 }, { label: "2–3", score: 2 }, { label: "4–6", score: 3 }, { label: "7+", score: 4 }] },
+    splitQuestionText: "Who do you sell to (or want to sell to)?",
+    splitOptions: [
+      { label: "Businesses, teams, or professionals", value: "b2b" },
+      { label: "Individual consumers or the general public", value: "b2c" },
     ],
-    identityTypes: [
-      { id: "hidden_authority", displayName: "Hidden Authority", icon: "🔮", description: "You have deep expertise but haven't activated your audience yet.", minScore: 0, maxScore: 25 },
-      { id: "unactivated_audience", displayName: "Unactivated Audience", icon: "📡", description: "You have reach but haven't converted it into trust-based growth.", minScore: 26, maxScore: 50 },
-      { id: "momentum_builder", displayName: "Momentum Builder", icon: "🚀", description: "You're building momentum and need systems to sustain it.", minScore: 51, maxScore: 75 },
-      { id: "network_catalyst", displayName: "Network Catalyst", icon: "⚡", description: "You're already leveraging trust — time to scale.", minScore: 76, maxScore: 100 },
-    ],
-    tensionText: "You're sitting on growth that should already be happening — but without a system, it stays stuck.",
-    scoreLabel: "Your trust leverage score",
-    shareButtonText: "I scored XX/100 — what would you get?",
-    ctaText: "Join the challenge",
+    b2bQuestions: [],
+    b2cQuestions: [],
+    b2bStyleContent: {},
+    b2cStyleContent: {},
+    b2bTensionText: "You now know what to build. In 3 days, you'll have a live challenge app that generates qualified B2B leads — with a diagnostic assessment, daily tasks, referral mechanics, and email capture. Evergreen and automatic.",
+    b2cTensionText: "You now know what to build. In 3 days, you'll have a live challenge app that generates leads — with a quiz entry point, daily tasks, referral mechanics, and email capture. Evergreen and automatic.",
+    b2bShareText: "I'm building a [style] for B2B — what would you build?",
+    b2cShareText: "I'm building a [style] for consumers — what would you build?",
+    ctaText: "Start building your challenge",
   },
   challenge: {
     challengeTitle: "3-Day Challenge",

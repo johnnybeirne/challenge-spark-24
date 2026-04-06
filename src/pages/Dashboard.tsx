@@ -30,11 +30,11 @@ const dayTasks: Record<number, { label: string }[]> = {
   ],
 };
 
-const identityLabels: Record<string, string> = {
-  hidden_authority: "Hidden Authority",
-  unactivated_audience: "Unactivated Audience",
-  momentum_builder: "Momentum Builder",
-  network_catalyst: "Network Catalyst",
+const styleLabelsMap: Record<string, string> = {
+  quick_win: "Quick Win",
+  transformation: "Transformation",
+  skill_builder: "Skill Builder",
+  launch: "Launch",
 };
 
 const Dashboard = () => {
@@ -44,7 +44,8 @@ const Dashboard = () => {
   const experience = getExperience(state.user?.role);
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
-  const identityType = state.assessment?.identityType;
+  const recommended = state.assessment?.recommended;
+  const audienceType = state.assessment?.audienceType;
 
   const toggleTask = (taskKey: string) => {
     setState((prev) => ({
@@ -80,9 +81,9 @@ const Dashboard = () => {
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          {identityType && (
+          {recommended && (
             <Badge variant="secondary" className="text-xs">
-              {identityLabels[identityType] || identityType}
+              {styleLabelsMap[recommended] || recommended} · {audienceType === "b2b" ? "B2B" : "B2C"}
             </Badge>
           )}
           {authUser && (

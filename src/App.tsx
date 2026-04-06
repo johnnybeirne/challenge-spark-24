@@ -25,6 +25,9 @@ import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminCms from "@/pages/AdminCms";
+import AdminHub from "@/pages/AdminHub";
+import AdminPromoters from "@/pages/AdminPromoters";
+import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,7 +67,14 @@ const App = () => (
                 <Route path="/reward/:id" element={<PartnerGuard><RewardDetail /></PartnerGuard>} />
               </Route>
 
-              {/* Admin — URL-only access */}
+              {/* Owner console — unique URL, password-protected */}
+              <Route path="/owner-console" element={<AdminHub />} />
+              <Route path="/owner-console/analytics" element={<AdminAnalytics />} />
+              <Route path="/owner-console/cms" element={<AdminCms />} />
+              <Route path="/owner-console/promoters" element={<AdminPromoters />} />
+              <Route path="/owner-console/activity" element={<AdminActivityFeed />} />
+
+              {/* Legacy admin redirects */}
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
               <Route path="/admin/cms" element={<AdminCms />} />
 

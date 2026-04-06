@@ -1,35 +1,45 @@
-## Admin CMS — Content & Configuration Control System
 
-### Phase 1: Foundation
-1. **Config store** — Create `src/context/SiteConfigContext.tsx` with full `SiteConfig` interface, defaults matching current hardcoded values, localStorage persistence (`challengeos_site_config`), and context provider
-2. **Wrap app** in `SiteConfigProvider`
 
-### Phase 2: CMS Page & Layout
-3. **Create `/admin/cms` route** with sidebar navigation (10 sections) and main editing area
-4. **Admin auth** — reuse existing password gate (`challengeos2024`)
-5. **Add "CMS" link** to admin navigation
+## Prompt 33 — CMS Gap Analysis and Completion Plan
 
-### Phase 3: CMS Sections (all 10)
-Build each section as a separate component with form fields, save button, and toast feedback:
-- `CmsLanding` — hero, urgency, promise, social proof, bottom CTA
-- `CmsAssessment` — intro, questions, identity types, results text
-- `CmsChallenge` — day structure, tasks, completion messages
-- `CmsRewards` — challenge rewards, referral rewards, Builder Circle unlock
-- `CmsReferrals` — copy, onboarding invite, share channels
-- `CmsCommunity` — Builder Circle, leaderboard, activity feed, featured
-- `CmsBranding` — colors, layout, app identity
-- `CmsPartners` — acquisition page, cross-promo, reward tiers
-- `CmsNotifications` — toast messages, empty states
-- `CmsGlobal` — cohort, analytics, data management
+Prompt 33 was **already implemented** in a previous session. The full infrastructure exists: `SiteConfigContext` with all 10 config sections, `AdminCms` page with sidebar at `/owner-console/cms`, all 10 editor components (`CmsLanding`, `CmsAssessment`, `CmsChallenge`, etc.), localStorage persistence with deep merge, and Landing page integration.
 
-### Phase 4: Landing Page Integration
-6. **Update `Landing.tsx`** to read all text/config from `SiteConfig` context instead of hardcoded strings
+### What's Already Done
+- SiteConfig interface with all types and defaults
+- SiteConfigProvider with localStorage persistence and deep merge
+- All 10 CMS editor panels built and functional
+- Route at `/owner-console/cms` with password auth
+- Landing page reads from config context
 
-### Phase 5: Future (not in this PR)
-- Progressively migrate Assessment, Challenge, Rewards, etc. to read from config
-- Migrate config to database table when ready
+### Gaps to Close
 
-### Notes
-- All defaults = current hardcoded values (nothing breaks)
-- Components not yet migrated continue working with hardcoded values
-- CMS only accessible via `/admin/cms` with password auth
+**1. CmsLanding — Missing date picker for countdown target**
+- Add a date picker field for `countdownTarget` (currently `null`, no UI to set it)
+- Add custom URL option to CTA link dropdowns (currently only `/assess` and `/join`)
+
+**2. CmsAssessment — Empty questions array**
+- The `questions` array defaults to `[]`. Populate with the 8 default assessment questions so the owner can edit them from the CMS.
+
+**3. CmsPartners — Missing founding cutoff date picker**
+- Add date picker for `foundingCutoffDate` field (exists in config but no UI)
+
+**4. CmsGlobal — Missing data management buttons**
+- Add "Export all user data" button (export all `challengeos_*` localStorage keys)
+- Add "Export analytics events" button
+- Add "Clear all user data" button with double confirmation dialog
+
+**5. Mobile responsiveness**
+- CMS sidebar is fixed `w-56` — add responsive behavior so on mobile it collapses to a dropdown/sheet
+
+**6. Unsaved changes indicator**
+- Add subtle visual indicator when the draft differs from saved config (e.g., dot on the Save button or yellow border)
+
+### Files to Modify
+- `src/components/cms/CmsLanding.tsx` — date picker + custom URL
+- `src/context/SiteConfigContext.tsx` — populate default questions
+- `src/components/cms/CmsPartners.tsx` — date picker for cutoff
+- `src/components/cms/CmsGlobal.tsx` — data export/clear buttons
+- `src/pages/AdminCms.tsx` — mobile responsive sidebar
+
+### No new files needed. No structural changes. All additions are incremental enhancements to existing components.
+

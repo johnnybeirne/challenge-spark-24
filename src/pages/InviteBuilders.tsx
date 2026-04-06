@@ -12,7 +12,7 @@ const InviteBuilders = () => {
   const { state } = useAppState();
 
   useEffect(() => {
-    trackEvent("onboarding_viewed" as any);
+    trackEvent("onboarding_viewed");
   }, []);
 
   const inviteCode = state.user?.inviteCode ?? "";

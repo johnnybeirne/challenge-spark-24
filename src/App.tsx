@@ -24,6 +24,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import InviteBuilders from "@/pages/InviteBuilders";
 import Partners from "@/pages/Partners";
+import Rewards from "@/pages/Rewards";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
               <Route path="/partner" element={<AuthGuard><PartnerDashboard /></AuthGuard>} />
               <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
+              <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
             </Route>
 
             {/* Admin */}

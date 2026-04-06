@@ -30,11 +30,11 @@ const dayTasks: Record<number, { label: string }[]> = {
   ],
 };
 
-const identityLabels: Record<string, string> = {
-  hidden_authority: "Hidden Authority",
-  unactivated_audience: "Unactivated Audience",
-  momentum_builder: "Momentum Builder",
-  network_catalyst: "Network Catalyst",
+const styleLabelsMap: Record<string, string> = {
+  quick_win: "Quick Win",
+  transformation: "Transformation",
+  skill_builder: "Skill Builder",
+  launch: "Launch",
 };
 
 const Dashboard = () => {

@@ -37,7 +37,7 @@ const CrossPromoSpotlight = ({
 
   const handleClick = (id: string) => {
     trackClick(id);
-    trackEvent("crosspromo_clicked", { position, promo_id: id });
+    trackEvent("crosspromo_click", { position, promo_id: id });
   };
 
   return (

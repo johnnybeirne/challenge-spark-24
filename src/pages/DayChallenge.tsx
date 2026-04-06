@@ -14,6 +14,7 @@ import Day2InviteNudge from "@/components/Day2InviteNudge";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import PostActionPromo from "@/components/PostActionPromo";
 import { trackEvent } from "@/lib/analytics";
+import { shareOrCopy } from "@/lib/share";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -64,7 +65,7 @@ const DayChallenge = () => {
   const communityEligible =
     state.challenge.launchUrl &&
     isValidUrl(state.challenge.launchUrl) &&
-    (state.referrals.shares + state.referrals.invites) >= 3;
+    state.network.direct >= 3;
 
   const toggleTask = (key: string) => {
     const wasChecked = isChecked(key);
@@ -78,7 +79,6 @@ const DayChallenge = () => {
     if (!wasChecked) {
       setShowTaskAnim(true);
       setTimeout(() => setShowTaskAnim(false), 100);
-      // Show post-action promo 30% of the time
       if (Math.random() < 0.3) {
         setTimeout(() => setShowPostActionPromo(true), 600);
       }
@@ -103,25 +103,26 @@ const DayChallenge = () => {
   };
 
   const handleShare = () => {
-    setState((prev) => ({
-      ...prev,
-      referrals: { ...prev.referrals, shares: (prev.referrals.shares || 0) + 1 },
-    }));
+    const inviteCode = state.user?.inviteCode ?? "";
+    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+    shareOrCopy({ text: "I'm building a 3-day audience growth system — check it out!", url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
   };
 
   const handleInvite = () => {
-    setState((prev) => ({
-      ...prev,
-      referrals: { ...prev.referrals, invites: (prev.referrals.invites || 0) + 1 },
-    }));
-    trackEvent("referral_sent");
+    const inviteCode = state.user?.inviteCode ?? "";
+    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+    shareOrCopy({ text: "I'm building a 3-day audience growth system — want to try it with me?", url: referralLink });
+    trackEvent("share_clicked", { day: dayNum, type: "invite" });
     toast.success("Invite sent — one step closer to Builder Circle.");
   };
 
   const unlockCommunity = () => {
-    setState((prev) => ({ ...prev, communityUnlocked: true }));
+    setState((prev) => ({
+      ...prev,
+      community: { ...prev.community, unlocked: true, unlockedAt: new Date().toISOString(), entryReason: "invited_3" },
+    }));
     trackEvent("community_unlocked");
     toast.success("Builder Circle unlocked! 🎉");
     navigate("/community");
@@ -152,7 +153,6 @@ const DayChallenge = () => {
     return (
       <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
         <Confetti />
-        {/* Celebration */}
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <Rocket className="w-8 h-8 text-primary" />
@@ -165,7 +165,6 @@ const DayChallenge = () => {
           </p>
         </div>
 
-        {/* Critical message */}
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
             <p className="text-sm font-semibold text-foreground leading-relaxed">
@@ -177,7 +176,6 @@ const DayChallenge = () => {
           </CardContent>
         </Card>
 
-        {/* Builder Circle intro */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -193,7 +191,6 @@ const DayChallenge = () => {
               Join a network where builders promote each other.
             </p>
 
-            {/* Share / Invite actions */}
             <div className="space-y-3 mb-5">
               <Button variant="outline" className="w-full gap-2" onClick={handleShare}>
                 <Share2 className="w-4 h-4" /> Share your launch
@@ -203,12 +200,10 @@ const DayChallenge = () => {
               </Button>
             </div>
 
-            {/* Progress */}
             <div className="text-xs text-muted-foreground mb-4">
-              {Math.min((state.referrals.shares || 0) + (state.referrals.invites || 0), 3)} / 3 shares or invites
+              {state.network.direct} / 3 direct referrals
             </div>
 
-            {/* Unlock CTA */}
             <Button
               className="w-full gap-2"
               size="lg"
@@ -220,7 +215,7 @@ const DayChallenge = () => {
             </Button>
             {!communityEligible && (
               <p className="text-xs text-muted-foreground text-center mt-2">
-                Submit your live URL and share or invite 3 people to unlock.
+                Submit your live URL and invite 3 builders to unlock.
               </p>
             )}
           </CardContent>
@@ -246,7 +241,6 @@ const DayChallenge = () => {
         )}
       </div>
 
-      {/* Day 2 soft gate */}
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
@@ -282,7 +276,6 @@ const DayChallenge = () => {
         ))}
       </div>
 
-      {/* Day 3: Require live URL */}
       {dayNum === 3 && (
         <Card className="mt-4">
           <CardContent className="p-5">
@@ -309,7 +302,6 @@ const DayChallenge = () => {
         </Button>
       )}
 
-      {/* Cross-promo at bottom */}
       <div className="mt-6">
         <CrossPromoSpotlight
           title="Other builders in progress"

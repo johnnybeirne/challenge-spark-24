@@ -54,7 +54,7 @@ const Rewards = () => {
   const nextTier = getNextTier(directReferrals);
 
   useEffect(() => {
-    trackEvent("rewards_page_viewed");
+    trackEvent("reward_accessed");
   }, []);
 
   useEffect(() => {

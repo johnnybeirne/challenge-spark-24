@@ -62,6 +62,7 @@ const App = () => (
 
             {/* Admin — URL-only access */}
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/cms" element={<AdminCms />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

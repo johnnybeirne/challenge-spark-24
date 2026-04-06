@@ -60,6 +60,28 @@ const CmsPartners = () => {
           <Label>Founding Slots</Label>
           <Input type="number" value={draft.foundingSlots} onChange={(e) => update("foundingSlots", Number(e.target.value))} className="w-24" />
         </div>
+        <div className="space-y-2">
+          <Label>Founding Cutoff Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-[240px] justify-start text-left font-normal", !draft.foundingCutoffDate && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {draft.foundingCutoffDate ? format(new Date(draft.foundingCutoffDate), "PPP") : "No cutoff date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={draft.foundingCutoffDate ? new Date(draft.foundingCutoffDate) : undefined}
+                onSelect={(d) => update("foundingCutoffDate", d ? d.toISOString() : null)}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          {draft.foundingCutoffDate && (
+            <Button variant="ghost" size="sm" onClick={() => update("foundingCutoffDate", null)} className="text-xs text-muted-foreground">Clear date</Button>
+          )}
+        </div>
       </section>
 
       <section className="space-y-4">

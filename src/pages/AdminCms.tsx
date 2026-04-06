@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import CmsLanding from "@/components/cms/CmsLanding";
 import CmsAssessment from "@/components/cms/CmsAssessment";
 import CmsChallenge from "@/components/cms/CmsChallenge";
@@ -13,6 +14,7 @@ import CmsPartners from "@/components/cms/CmsPartners";
 import CmsNotifications from "@/components/cms/CmsNotifications";
 import CmsGlobal from "@/components/cms/CmsGlobal";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SECTIONS = [
   { id: "landing", label: "Landing Page" },
@@ -38,6 +40,8 @@ const AdminCms = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("landing");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const login = () => {
     if (password === "challengeos2024") {
@@ -74,39 +78,66 @@ const AdminCms = () => {
     }
   };
 
+  const sidebarNav = (
+    <nav className="flex-1 p-2 space-y-0.5">
+      {SECTIONS.map((section) => (
+        <button
+          key={section.id}
+          onClick={() => { setActiveSection(section.id); setSheetOpen(false); }}
+          className={cn(
+            "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
+            activeSection === section.id
+              ? "bg-primary/10 text-primary font-medium"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          )}
+        >
+          {section.label}
+        </button>
+      ))}
+    </nav>
+  );
+
+  const sidebarHeader = (
+    <div className="p-4 border-b">
+      <h2 className="font-bold text-sm">Admin CMS</h2>
+      <div className="flex gap-2 mt-2 flex-wrap">
+        {ADMIN_LINKS.map((link) => (
+          <a key={link.path} href={link.path} className="text-xs text-muted-foreground hover:text-foreground">
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="min-h-screen">
+        <header className="flex items-center gap-2 p-3 border-b bg-card sticky top-0 z-10">
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon"><Menu className="h-5 w-5" /></Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-56 p-0">
+              {sidebarHeader}
+              {sidebarNav}
+            </SheetContent>
+          </Sheet>
+          <span className="text-sm font-medium">{SECTIONS.find((s) => s.id === activeSection)?.label}</span>
+        </header>
+        <main className="p-4 max-w-2xl overflow-y-auto">
+          {renderSection()}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
       <aside className="w-56 border-r bg-card flex flex-col shrink-0">
-        <div className="p-4 border-b">
-          <h2 className="font-bold text-sm">Admin CMS</h2>
-          <div className="flex gap-2 mt-2">
-            {ADMIN_LINKS.map((link) => (
-              <a key={link.path} href={link.path} className="text-xs text-muted-foreground hover:text-foreground">
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-        <nav className="flex-1 p-2 space-y-0.5">
-          {SECTIONS.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              className={cn(
-                "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
-                activeSection === section.id
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              )}
-            >
-              {section.label}
-            </button>
-          ))}
-        </nav>
+        {sidebarHeader}
+        {sidebarNav}
       </aside>
-
-      {/* Main */}
       <main className="flex-1 p-6 max-w-2xl overflow-y-auto">
         {renderSection()}
       </main>

@@ -206,7 +206,16 @@ export const defaultSiteConfig: SiteConfig = {
   assessment: {
     introText: "Answer 8 quick questions to discover your trust leverage score",
     timeEstimate: "90 seconds",
-    questions: [],
+    questions: [
+      { text: "How large is your current audience (email, social, community)?", dimension: "Trust", options: [{ label: "No audience yet", score: 1 }, { label: "Under 500", score: 2 }, { label: "500–5,000", score: 3 }, { label: "5,000+", score: 4 }] },
+      { text: "How often does your audience engage with your content?", dimension: "Activation", options: [{ label: "Rarely", score: 1 }, { label: "Sometimes", score: 2 }, { label: "Often", score: 3 }, { label: "Very actively", score: 4 }] },
+      { text: "Do people share your content without being asked?", dimension: "Trust", options: [{ label: "Never", score: 1 }, { label: "Occasionally", score: 2 }, { label: "Regularly", score: 3 }, { label: "All the time", score: 4 }] },
+      { text: "Have you launched a product, service, or project in the last year?", dimension: "Activation", options: [{ label: "No", score: 1 }, { label: "I started one", score: 2 }, { label: "Yes, one", score: 3 }, { label: "Multiple", score: 4 }] },
+      { text: "How clear is your growth strategy right now?", dimension: "Clarity", options: [{ label: "No strategy", score: 1 }, { label: "Vague idea", score: 2 }, { label: "Somewhat clear", score: 3 }, { label: "Crystal clear", score: 4 }] },
+      { text: "Do you have systems to capture and nurture leads?", dimension: "Ownership", options: [{ label: "None", score: 1 }, { label: "Basic", score: 2 }, { label: "Decent", score: 3 }, { label: "Fully automated", score: 4 }] },
+      { text: "How much do you rely on platforms you don't control (social media, marketplaces)?", dimension: "Ownership", options: [{ label: "Completely", score: 1 }, { label: "Mostly", score: 2 }, { label: "Partially", score: 3 }, { label: "Very little", score: 4 }] },
+      { text: "If you asked 10 people in your network for help, how many would respond?", dimension: "Clarity", options: [{ label: "0–1", score: 1 }, { label: "2–3", score: 2 }, { label: "4–6", score: 3 }, { label: "7+", score: 4 }] },
+    ],
     identityTypes: [
       { id: "hidden_authority", displayName: "Hidden Authority", icon: "🔮", description: "You have deep expertise but haven't activated your audience yet.", minScore: 0, maxScore: 25 },
       { id: "unactivated_audience", displayName: "Unactivated Audience", icon: "📡", description: "You have reach but haven't converted it into trust-based growth.", minScore: 26, maxScore: 50 },

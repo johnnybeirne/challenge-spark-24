@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { Zap, Rocket, Users, Heart } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 import avatarSarah from "@/assets/avatars/sarah.jpg";
 import avatarJames from "@/assets/avatars/james.jpg";
@@ -16,7 +18,24 @@ interface ActivityItem {
   avatar: string;
 }
 
-const ACTIVITIES: ActivityItem[] = [
+const ICON_MAP: Record<string, React.ReactNode> = {
+  zap: <Zap className="h-3.5 w-3.5" />,
+  rocket: <Rocket className="h-3.5 w-3.5" />,
+  users: <Users className="h-3.5 w-3.5" />,
+  heart: <Heart className="h-3.5 w-3.5" />,
+};
+
+const AVATAR_MAP: Record<string, string> = {
+  "/avatars/sarah.jpg": avatarSarah,
+  "/avatars/james.jpg": avatarJames,
+  "/avatars/maria.jpg": avatarMaria,
+  "/avatars/alex.jpg": avatarAlex,
+  "/avatars/tara.jpg": avatarTara,
+  "/avatars/owen.jpg": avatarOwen,
+  "/avatars/lily.jpg": avatarLily,
+};
+
+const FALLBACK_ACTIVITIES: ActivityItem[] = [
   { name: "Sarah", action: "completed Day 1", time: "2m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarSarah },
   { name: "James", action: "launched his app", time: "8m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Maria", action: "invited 3 builders", time: "15m ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarMaria },
@@ -33,7 +52,32 @@ interface ActivityFeedProps {
 }
 
 const ActivityFeed = ({ title }: ActivityFeedProps) => {
-  const doubled = [...ACTIVITIES, ...ACTIVITIES];
+  const [items, setItems] = useState<ActivityItem[]>(FALLBACK_ACTIVITIES);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from("activity_feed_items")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (data && data.length > 0) {
+        setItems(
+          data.map((row) => ({
+            name: row.name,
+            action: row.action,
+            time: row.time_label,
+            icon: ICON_MAP[row.icon_type] || ICON_MAP.zap,
+            avatar: AVATAR_MAP[row.avatar_url || ""] || avatarSarah,
+          }))
+        );
+      }
+    };
+    load();
+  }, []);
+
+  const doubled = [...items, ...items];
 
   return (
     <div>
@@ -43,7 +87,6 @@ const ActivityFeed = ({ title }: ActivityFeedProps) => {
         </p>
       )}
       <div className="relative h-[156px] overflow-hidden rounded-lg">
-        {/* Top/bottom fade masks */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-6 z-10 bg-gradient-to-b from-background to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 z-10 bg-gradient-to-t from-background to-transparent" />
 

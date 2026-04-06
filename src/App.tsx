@@ -21,6 +21,7 @@ import Features from "@/pages/Features";
 import Leaderboard from "@/pages/Leaderboard";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminPromoters from "@/pages/AdminPromoters";
+import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import InviteBuilders from "@/pages/InviteBuilders";
 import NotFound from "@/pages/NotFound";
 
@@ -59,6 +60,7 @@ const App = () => (
             {/* Admin */}
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/promoters" element={<AdminPromoters />} />
+            <Route path="/admin/activity-feed" element={<AdminActivityFeed />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

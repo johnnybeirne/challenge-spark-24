@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Crown, Users, TrendingUp, Globe, Copy, Share2, Eye,
-  Gift, Trophy, Rocket, Shield, Zap, ArrowRight,
+  Gift, Trophy, Rocket, Shield, Zap, ArrowRight, BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";

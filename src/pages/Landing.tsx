@@ -59,6 +59,28 @@ const Cta = ({ text, section, to = "/assess", full = true }: { text: string; sec
   </Button>
 );
 
+/* ── Avatar helpers ── */
+const AVATAR_COLORS = ["bg-primary", "bg-accent", "bg-success", "bg-[#E8913A]", "bg-[#D14D72]", "bg-[#7B68EE]"];
+const AVATAR_INITIALS = ["SK", "MR", "JT", "AL", "NP", "RB", "CF", "DW"];
+const AVATAR_NAMES = ["Sarah K.", "Maria R.", "James T.", "Alex L.", "Nina P.", "Rob B.", "Chloe F.", "Dan W."];
+
+const AvatarCircle = ({ index, size = "w-8 h-8", textSize = "text-[10px]" }: { index: number; size?: string; textSize?: string }) => (
+  <div className={`${size} rounded-full ${AVATAR_COLORS[index % AVATAR_COLORS.length]} flex items-center justify-center ${textSize} font-bold text-white ring-2 ring-background`}>
+    {AVATAR_INITIALS[index % AVATAR_INITIALS.length]}
+  </div>
+);
+
+const AvatarStack = ({ count = 5, size = "w-8 h-8", textSize = "text-[10px]" }: { count?: number; size?: string; textSize?: string }) => (
+  <div className="flex -space-x-2.5">
+    {Array.from({ length: count }).map((_, i) => (
+      <AvatarCircle key={i} index={i} size={size} textSize={textSize} />
+    ))}
+    <div className={`${size} rounded-full bg-muted flex items-center justify-center ${textSize} font-semibold text-muted-foreground ring-2 ring-background`}>
+      +{Math.floor(Math.random() * 40 + 90)}
+    </div>
+  </div>
+);
+
 /* ── Fake product mockup screens ── */
 const MockupPhone = ({ title, items }: { title: string; items: string[] }) => (
   <div className="mockup-phone float-gentle">

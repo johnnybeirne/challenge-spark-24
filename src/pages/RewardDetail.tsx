@@ -54,7 +54,7 @@ const RewardDetail = () => {
   const unlockedSlots = getUnlockedCount(directReferrals);
 
   useEffect(() => {
-    trackEvent("reward_page_viewed" as any, { asset_id: id });
+    trackEvent("reward_accessed", { asset_id: id });
   }, [id]);
 
   useEffect(() => {

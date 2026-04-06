@@ -326,7 +326,7 @@ const PartnerPerformance = () => {
               size="sm"
               variant="outline"
               className="mt-3 text-xs gap-1"
-              onClick={() => trackEvent("partner_visibility_help_viewed" as any)}
+              onClick={() => trackEvent("partner_visibility_help_viewed")}
             >
               Got it <ArrowRight className="h-3 w-3" />
             </Button>

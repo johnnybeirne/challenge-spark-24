@@ -12,7 +12,7 @@ export interface User {
   inviteCode: string;
   referredBy: string | null;
   referredByParent?: string | null;
-  role: "participant" | "pending_promoter" | "promoter";
+  role: "participant" | "pending_promoter" | "promoter" | "admin";
   joinedAt: string;
   isFoundingPartner: boolean;
   foundingPartnerRank: number | null;

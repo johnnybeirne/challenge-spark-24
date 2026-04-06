@@ -81,9 +81,9 @@ const Dashboard = () => {
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          {identityType && (
+          {recommended && (
             <Badge variant="secondary" className="text-xs">
-              {identityLabels[identityType] || identityType}
+              {styleLabelsMap[recommended] || recommended} · {audienceType === "b2b" ? "B2B" : "B2C"}
             </Badge>
           )}
           {authUser && (

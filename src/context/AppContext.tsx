@@ -5,16 +5,24 @@ import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hoo
 
 /* ───── Types ───── */
 
-export interface CommunityState {
-  unlocked: boolean;
-  unlockedAt: string | null;
-  entryReason: string | null;
-  boostsGiven: number;
-  boostsReceived: number;
-  leaderboardScore: number;
-  featuredStatus: "none" | "eligible" | "featured";
+export interface User {
+  id?: string;
+  name: string;
+  email: string;
+  inviteCode: string;
+  referredBy: string | null;
+  referredByParent?: string | null;
+  role: "participant" | "pending_promoter" | "promoter";
+  joinedAt: string;
+  isFoundingPartner: boolean;
+  foundingPartnerRank: number | null;
+  foundingPartnerJoinedAt: string | null;
+  isEligibleForPromotion: boolean;
+  qualityScore: number;
+  adminBoost: number;
+  adminBadge: string | null;
   submittedUrl: string | null;
-  leaderboardTab: "supportive" | "network" | "active" | "launched";
+  createdAt?: number;
 }
 
 export interface ReferralRecord {
@@ -31,20 +39,25 @@ export interface UnlockEntry {
   timestamp: string;
 }
 
-export type PartnerTier = "bronze" | "silver" | "gold";
-
-export interface PartnerState {
-  isPartner: boolean;
-  partnerCode: string | null;
-  partnerSince: string | null;
-  conversions: number;
-  assessmentStarts: number;
-  tier: PartnerTier;
+export interface CommunityState {
+  unlocked: boolean;
+  unlockedAt: string | null;
+  entryReason: string | null;
+  boostsGiven: number;
+  boostsReceived: number;
+  leaderboardScore: number;
+  featuredStatus: "none" | "eligible" | "featured";
+  leaderboardTab: "supportive" | "network" | "active" | "launched";
 }
 
 export interface AppState {
-  user: any;
-  assessment: any;
+  user: User | null;
+  assessment: {
+    scores: Record<string, number>;
+    total: number;
+    percentage: number;
+    identityType: string | null;
+  } | null;
   challenge: {
     currentDay: number;
     tasks: Record<string, boolean>;
@@ -52,20 +65,39 @@ export interface AppState {
     launchUrl: string;
     completed: boolean;
   };
-  referrals: {
-    count: number;
-    shares: number;
-    invites: number;
-    records: ReferralRecord[];
-  };
   network: {
     direct: number;
     indirect: number;
   };
-  community: CommunityState;
-  communityUnlocked: boolean;
+  referrals: {
+    count: number;
+    records: ReferralRecord[];
+  };
   unlocks: UnlockEntry[];
-  partner: PartnerState;
+  community: CommunityState;
+  onboarding: {
+    invitedCount: number;
+    invitedCompleted: boolean;
+  };
+  crossPromotion: {
+    impressions: number;
+    clicks: number;
+    ctr: number;
+  };
+  partnerAsset: {
+    title: string;
+    description: string;
+    value: number;
+    url: string;
+    isApproved: boolean;
+  } | null;
+  partnerPerformance: {
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    unlocks: number;
+    rewardAccesses: number;
+  } | null;
 }
 
 /* ───── Defaults ───── */
@@ -78,17 +110,7 @@ const defaultCommunity: CommunityState = {
   boostsReceived: 0,
   leaderboardScore: 0,
   featuredStatus: "none",
-  submittedUrl: null,
   leaderboardTab: "supportive",
-};
-
-const defaultPartner: PartnerState = {
-  isPartner: false,
-  partnerCode: null,
-  partnerSince: null,
-  conversions: 0,
-  assessmentStarts: 0,
-  tier: "bronze",
 };
 
 export const defaultState: AppState = {
@@ -101,12 +123,14 @@ export const defaultState: AppState = {
     launchUrl: "",
     completed: false,
   },
-  referrals: { count: 0, shares: 0, invites: 0, records: [] },
+  referrals: { count: 0, records: [] },
   network: { direct: 0, indirect: 0 },
   community: defaultCommunity,
-  communityUnlocked: false,
   unlocks: [],
-  partner: defaultPartner,
+  onboarding: { invitedCount: 0, invitedCompleted: false },
+  crossPromotion: { impressions: 0, clicks: 0, ctr: 0 },
+  partnerAsset: null,
+  partnerPerformance: null,
 };
 
 /* ───── Helpers ───── */
@@ -123,12 +147,6 @@ export function generatePartnerCode(): string {
   let code = "jv_";
   for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
-}
-
-export function getPartnerTier(conversions: number): PartnerTier {
-  if (conversions >= 50) return "gold";
-  if (conversions >= 25) return "silver";
-  return "bronze";
 }
 
 /* ───── Unlock engine ───── */
@@ -156,13 +174,10 @@ const unlockDefs: UnlockDef[] = [
     check: (s) => {
       const day3Done = s.challenge.completed || s.challenge.currentDay > 3;
       const hasUrl = !!s.challenge.launchUrl;
-      const promoted = s.referrals.shares > 0 || s.network.direct >= 3;
+      const promoted = s.network.direct >= 3;
       return day3Done && hasUrl && promoted;
     },
   },
-  { id: "partner_10_kit", name: "Partner Growth Kit", value: 197, reason: "10 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 10 },
-  { id: "partner_25_accel", name: "Partner Accelerator Pack", value: 397, reason: "25 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 25 },
-  { id: "partner_50_elite", name: "Elite Partner System", value: 997, reason: "50 partner conversions", check: (s) => s.partner.isPartner && s.partner.conversions >= 50 },
 ];
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {
@@ -185,17 +200,14 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
     updated = { ...updated, unlocks: [...updated.unlocks, entry] };
 
     if (def.id === "builder_circle") {
-      const entryReason =
-        updated.referrals.shares > 0 && updated.network.direct >= 3
-          ? "launched_and_promoted"
-          : updated.referrals.shares > 0
-          ? "shared_link"
-          : "invited_3";
-
       updated = {
         ...updated,
-        community: { ...updated.community, unlocked: true, unlockedAt: new Date().toISOString(), entryReason },
-        communityUnlocked: true,
+        community: {
+          ...updated.community,
+          unlocked: true,
+          unlockedAt: new Date().toISOString(),
+          entryReason: updated.network.direct >= 3 ? "invited_3" : "launched_and_promoted",
+        },
       };
     }
 
@@ -212,7 +224,8 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
           updated.network.direct * 3 +
           updated.network.indirect * 1 +
           updated.community.boostsGiven * 2 +
-          updated.community.boostsReceived * 4,
+          updated.community.boostsReceived * 4 +
+          (updated.user?.adminBoost ?? 0),
       },
     };
   }
@@ -220,20 +233,12 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
-export function calculateLeaderboardScore(state: AppState): number {
-  return (
-    state.network.direct * 3 +
-    state.network.indirect * 1 +
-    state.community.boostsGiven * 2 +
-    state.community.boostsReceived * 4
-  );
-}
-
 export function clearState(): void {
   const keys = [
     "challengeos_user", "challengeos_assessment", "challengeos_challenge",
     "challengeos_referrals", "challengeos_unlocks", "challengeos_network",
-    "challengeos_community", "challengeos_partner", "challenge-os-state",
+    "challengeos_community", "challengeos_onboarding", "challengeos_crosspromotion",
+    "challengeos_partnerasset", "challengeos_partnerperformance", "challenge-os-state",
   ];
   keys.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
 }
@@ -262,26 +267,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (authUser) {
       (async () => {
-        // Try migrating localStorage first
         await migrateLocalToSupabase(authUser.id);
-
-        // Load from Supabase
         const remote = await loadFromSupabase(authUser.id);
         if (remote) {
           setStateRaw((prev) => ({
             ...prev,
             ...remote,
             community: prev.community,
-            communityUnlocked: prev.communityUnlocked,
-            partner: prev.partner,
             referrals: prev.referrals,
+            onboarding: prev.onboarding,
+            crossPromotion: prev.crossPromotion,
+            partnerAsset: prev.partnerAsset,
+            partnerPerformance: prev.partnerPerformance,
           }));
           prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
         }
         setHydrated(true);
       })();
     } else {
-      // Load assessment from localStorage for unauthenticated flow
       try {
         const raw = localStorage.getItem("challengeos_assessment");
         if (raw) {

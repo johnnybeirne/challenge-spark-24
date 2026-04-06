@@ -1,23 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Flame, Gift, Users, Crown, Handshake, Trophy } from "lucide-react";
-import { useAppState } from "@/context/AppContext";
-import { usePromoter } from "@/hooks/usePromoter";
+import { LayoutDashboard, Flame, Gift, Users } from "lucide-react";
 
-const baseTabs = [
+const tabs = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/day/1", label: "Challenge", icon: Flame },
   { to: "/unlocks", label: "Unlocks", icon: Gift },
   { to: "/referrals", label: "Referrals", icon: Users },
-  { to: "/leaderboard", label: "Ranks", icon: Trophy },
 ];
 
 const BottomNav = () => {
   const { pathname } = useLocation();
-  const { promoter } = usePromoter();
 
-  const tabs = promoter
-    ? [...baseTabs, { to: "/partner", label: "Partner", icon: Handshake }]
-    : baseTabs;
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-card border-t border-border z-50 safe-area-bottom">
       <div className="flex justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">

@@ -1,310 +1,311 @@
-/* ───── Assessment Data: B2B / B2C branching questions ───── */
+/* ───── Assessment Data: New 8-question discovery engine ───── */
 
-export type AudienceType = "b2b" | "b2c";
-export type ChallengeStyle = "quick_win" | "transformation" | "skill_builder" | "launch";
+export type AudienceType = "b2b" | "b2c" | "mixed";
+export type ChallengeType = "quick_win" | "transformation" | "skill_builder" | "launch";
+export type ReadinessLevel = "high" | "medium" | "low";
+export type GrowthBlock = "content" | "clarity" | "leads" | "consistency";
 export type Confidence = "strong" | "moderate" | "mixed";
 
-export interface AssessmentOption {
-  label: string;
-  style: ChallengeStyle;
-}
+/* ── Keep these exports for backward compat with Results page ── */
+export type ChallengeStyle = ChallengeType;
 
-export interface TrackQuestion {
+export interface AssessmentQuestion {
   id: string;
   text: string;
-  options: AssessmentOption[];
+  options: {
+    label: string;
+    value: string;
+  }[];
 }
 
-export const splitQuestion = {
-  id: "q1",
-  text: "Who do you sell to (or want to sell to)?",
-  options: [
-    { label: "Businesses, teams, or professionals", value: "b2b" as AudienceType },
-    { label: "Individual consumers or the general public", value: "b2c" as AudienceType },
-  ],
+export const questions: AssessmentQuestion[] = [
+  {
+    id: "q1",
+    text: "Who do you primarily want to reach?",
+    options: [
+      { label: "Business owners / teams", value: "b2b" },
+      { label: "Individuals / consumers", value: "b2c" },
+      { label: "Both", value: "both" },
+      { label: "Not sure yet", value: "not_sure" },
+    ],
+  },
+  {
+    id: "q2",
+    text: "What result would you most like to help people achieve?",
+    options: [
+      { label: "Solve a specific problem quickly", value: "quick_win" },
+      { label: "Create a meaningful transformation", value: "transformation" },
+      { label: "Learn or improve a skill", value: "skill_builder" },
+      { label: "Launch something new", value: "launch" },
+    ],
+  },
+  {
+    id: "q3",
+    text: "What do you help people with today?",
+    options: [
+      { label: "Strategy / advice", value: "strategy" },
+      { label: "Done-for-you services", value: "services" },
+      { label: "Coaching / transformation", value: "coaching" },
+      { label: "Content / education", value: "content" },
+      { label: "Not clearly defined yet", value: "undefined" },
+    ],
+  },
+  {
+    id: "q4",
+    text: "How big is your current audience?",
+    options: [
+      { label: "Just starting (0–100)", value: "starting" },
+      { label: "Small (100–1,000)", value: "small" },
+      { label: "Growing (1k–10k)", value: "growing" },
+      { label: "Established (10k+)", value: "established" },
+    ],
+  },
+  {
+    id: "q5",
+    text: "How are you currently getting leads?",
+    options: [
+      { label: "Mostly referrals / word of mouth", value: "referrals" },
+      { label: "Content (social/email)", value: "content" },
+      { label: "Ads", value: "ads" },
+      { label: "Inconsistent / not predictable", value: "inconsistent" },
+    ],
+  },
+  {
+    id: "q6",
+    text: "What frustrates you most about growing your audience?",
+    options: [
+      { label: "I have to constantly create content", value: "content" },
+      { label: "Growth feels slow or inconsistent", value: "consistency" },
+      { label: "I'm not getting enough leads", value: "leads" },
+      { label: "I don't know what to build", value: "clarity" },
+    ],
+  },
+  {
+    id: "q7",
+    text: "How ready are you to build something new?",
+    options: [
+      { label: "Ready now", value: "ready" },
+      { label: "Almost ready", value: "almost" },
+      { label: "Exploring ideas", value: "exploring" },
+      { label: "Just curious", value: "curious" },
+    ],
+  },
+  {
+    id: "q8",
+    text: "If you built something valuable, how likely would you be to share it?",
+    options: [
+      { label: "Very likely", value: "very_likely" },
+      { label: "Likely", value: "likely" },
+      { label: "Maybe", value: "maybe" },
+      { label: "Unlikely", value: "unlikely" },
+    ],
+  },
+];
+
+/* ───── Scoring ───── */
+
+export function classifyAudience(q1: string): AudienceType {
+  if (q1 === "b2b") return "b2b";
+  if (q1 === "b2c") return "b2c";
+  return "mixed"; // "both" or "not_sure"
+}
+
+export function classifyChallengeType(q2: string): ChallengeType {
+  const map: Record<string, ChallengeType> = {
+    quick_win: "quick_win",
+    transformation: "transformation",
+    skill_builder: "skill_builder",
+    launch: "launch",
+  };
+  return map[q2] || "quick_win";
+}
+
+export function classifyReadiness(q7: string): ReadinessLevel {
+  if (q7 === "ready") return "high";
+  if (q7 === "almost") return "medium";
+  return "low"; // exploring or curious
+}
+
+export function classifyGrowthBlock(q6: string): GrowthBlock {
+  const map: Record<string, GrowthBlock> = {
+    content: "content",
+    consistency: "consistency",
+    leads: "leads",
+    clarity: "clarity",
+  };
+  return map[q6] || "content";
+}
+
+/* ───── Result generation ───── */
+
+export interface RecommendedChallenge {
+  title: string;
+  description: string;
+  outcome: string;
+}
+
+export interface AssessmentResult {
+  audienceType: AudienceType;
+  challengeType: ChallengeType;
+  readinessLevel: ReadinessLevel;
+  growthBlock: GrowthBlock;
+  recommendedChallenge: RecommendedChallenge;
+  messagingAngle: string;
+  growthInsight: string;
+  shareIntent: boolean;
+  completedAt: number;
+  answers: Record<string, string>;
+}
+
+interface ChallengeTemplate {
+  title: string;
+  description: string;
+  outcome: string;
+  messagingAngle: string;
+}
+
+const challengeTemplates: Record<AudienceType, Record<ChallengeType, ChallengeTemplate>> = {
+  b2b: {
+    quick_win: {
+      title: "Build your client acquisition system in 3 days",
+      description: "A short challenge that helps your audience implement a working system quickly — while experiencing your expertise in real time.",
+      outcome: "Participants leave with something usable and are more likely to become leads.",
+      messagingAngle: "Position this as a fast, practical result — not theory.",
+    },
+    transformation: {
+      title: "Transform how your clients operate in 5 days",
+      description: "A structured challenge that shifts how teams think and work — building deep trust through a guided transformation experience.",
+      outcome: "Participants experience real change and see you as the expert who made it happen.",
+      messagingAngle: "Lead with the shift they'll experience — make the before/after vivid.",
+    },
+    skill_builder: {
+      title: "Upskill your clients' teams in 5 days",
+      description: "A hands-on challenge that builds real capability through daily practice — demonstrating your training methodology in action.",
+      outcome: "Teams gain a measurable new skill and see the value of deeper engagement.",
+      messagingAngle: "Show the skill gap, then prove you can close it.",
+    },
+    launch: {
+      title: "Help your clients ship in 3 days",
+      description: "A deadline-driven challenge that gets stuck projects across the finish line — with accountability and structure built in.",
+      outcome: "Participants finally launch something that was stuck, and they credit you for it.",
+      messagingAngle: "Create urgency around execution — the plan exists, the launch doesn't.",
+    },
+  },
+  b2c: {
+    quick_win: {
+      title: "Help your audience get a quick win in 3 days",
+      description: "A focused challenge that delivers one clear, tangible result — the kind people screenshot and share.",
+      outcome: "Participants get a fast result they're proud of, and they tell their friends.",
+      messagingAngle: "Make the result specific and visible — something they can show off.",
+    },
+    transformation: {
+      title: "Guide your audience through a transformation in 5 days",
+      description: "A journey-based challenge that creates a genuine shift in how people think or live — building the kind of trust that converts to sales.",
+      outcome: "Participants have a breakthrough moment and want more of your guidance.",
+      messagingAngle: "Lead with the emotional shift — make them feel the possibility.",
+    },
+    skill_builder: {
+      title: "Teach your audience a new skill in 5 days",
+      description: "A learn-by-doing challenge that takes people from beginner to capable — proving your teaching method works.",
+      outcome: "Participants learn something real and become advocates for your approach.",
+      messagingAngle: "Show progress — make the learning feel tangible and achievable.",
+    },
+    launch: {
+      title: "Help your audience launch something in 3 days",
+      description: "A momentum-driven challenge that turns procrastinators into launchers — with the structure and accountability they've been missing.",
+      outcome: "Participants finally do the thing and celebrate publicly.",
+      messagingAngle: "Tap into the frustration of not starting — then provide the push.",
+    },
+  },
+  mixed: {
+    quick_win: {
+      title: "Build a quick-win challenge in 3 days",
+      description: "A practical challenge that delivers fast results for your audience — whether they're businesses or individuals.",
+      outcome: "Participants get an immediate result and become warm leads.",
+      messagingAngle: "Focus on speed and tangibility — results people can point to.",
+    },
+    transformation: {
+      title: "Create a transformation challenge in 5 days",
+      description: "A structured challenge that creates meaningful change — adaptable to both business teams and individual participants.",
+      outcome: "Participants experience a real shift and want to continue working with you.",
+      messagingAngle: "Lead with the transformation — make the journey compelling.",
+    },
+    skill_builder: {
+      title: "Build a skill-building challenge in 5 days",
+      description: "A hands-on learning challenge that teaches through doing — perfect for audiences who want practical capability.",
+      outcome: "Participants gain a new skill and see you as the go-to expert.",
+      messagingAngle: "Show the gap, teach the skill, celebrate the progress.",
+    },
+    launch: {
+      title: "Create a launch challenge in 3 days",
+      description: "A deadline-driven challenge that gets people to ship — with built-in accountability that keeps them moving.",
+      outcome: "Participants launch something real and share their achievement.",
+      messagingAngle: "Create urgency — the idea exists, the execution doesn't.",
+    },
+  },
 };
 
-export const b2bQuestions: TrackQuestion[] = [
-  {
-    id: "q2", text: "What do you help businesses do?",
-    options: [
-      { label: "Solve a specific problem or hit a target fast", style: "quick_win" },
-      { label: "Transform how their team operates or thinks", style: "transformation" },
-      { label: "Build a capability or upskill their people", style: "skill_builder" },
-      { label: "Ship a project, product, or initiative", style: "launch" },
-    ],
-  },
-  {
-    id: "q3", text: "What's the main pain point for the businesses you serve?",
-    options: [
-      { label: "They need a result yesterday — speed matters", style: "quick_win" },
-      { label: "They know something needs to change but can't get unstuck", style: "transformation" },
-      { label: "Their team lacks a specific skill that's costing them", style: "skill_builder" },
-      { label: "They have plans that never make it to execution", style: "launch" },
-    ],
-  },
-  {
-    id: "q4", text: "How do you typically work with clients?",
-    options: [
-      { label: "Deliver a focused sprint that gets one thing done", style: "quick_win" },
-      { label: "Run a structured programme that shifts how they work", style: "transformation" },
-      { label: "Train and coach until the skill is embedded", style: "skill_builder" },
-      { label: "Set milestones, remove blockers, hold them accountable", style: "launch" },
-    ],
-  },
-  {
-    id: "q5", text: "After your challenge, what should a business have?",
-    options: [
-      { label: "A finished asset — a strategy doc, a funnel, a process", style: "quick_win" },
-      { label: "A measurable shift in how their team operates", style: "transformation" },
-      { label: "A team that can do something they couldn't before", style: "skill_builder" },
-      { label: "Something launched — a product, campaign, or initiative", style: "launch" },
-    ],
-  },
-  {
-    id: "q6", text: "What would make a business leader share your challenge with peers?",
-    options: [
-      { label: "They got a tangible ROI they can point to", style: "quick_win" },
-      { label: "Their team had a breakthrough others need to hear about", style: "transformation" },
-      { label: "Their people levelled up and they want others to know how", style: "skill_builder" },
-      { label: "They finally shipped something that was stuck for months", style: "launch" },
-    ],
-  },
-  {
-    id: "q7", text: "What would a great entry assessment for your B2B audience look like?",
-    options: [
-      { label: "'How ready is your business to [achieve X]?' — a readiness scorecard", style: "quick_win" },
-      { label: "'What stage of [transformation] is your team at?' — a maturity model", style: "transformation" },
-      { label: "'What's your team's [skill] level?' — a competency assessment", style: "skill_builder" },
-      { label: "'What's blocking your [project] from launching?' — a blocker diagnostic", style: "launch" },
-    ],
-  },
-  {
-    id: "q8", text: "How much do your clients need to understand before taking action?",
-    options: [
-      { label: "Very little — they want a plan, not a lecture", style: "quick_win" },
-      { label: "They need context — the why matters as much as the how", style: "transformation" },
-      { label: "A fair amount — each concept builds on the last", style: "skill_builder" },
-      { label: "Minimal — they need structure and deadlines, not more theory", style: "launch" },
-    ],
-  },
-  {
-    id: "q9", text: "What do you want your challenge app to do for your business?",
-    options: [
-      { label: "Attract decision-makers who need a quick solution", style: "quick_win" },
-      { label: "Build trust with companies considering a bigger engagement", style: "transformation" },
-      { label: "Demonstrate expertise that justifies consulting or training fees", style: "skill_builder" },
-      { label: "Create urgency that shortens the sales cycle", style: "launch" },
-    ],
-  },
-];
+const growthInsights: Record<GrowthBlock, string> = {
+  content: "You don't need more content — you need a system people can engage with.",
+  consistency: "Consistency comes from systems, not willpower. Build something that grows itself.",
+  leads: "The problem isn't visibility — it's conversion. Give people an experience, not just information.",
+  clarity: "You know more than you think. Start with what you're already good at — the challenge will prove it.",
+};
 
-export const b2cQuestions: TrackQuestion[] = [
-  {
-    id: "q2", text: "What do you help people do?",
-    options: [
-      { label: "Get a specific result fast", style: "quick_win" },
-      { label: "Change how they think or live", style: "transformation" },
-      { label: "Learn a new skill or master a tool", style: "skill_builder" },
-      { label: "Finally do the thing they've been putting off", style: "launch" },
-    ],
-  },
-  {
-    id: "q3", text: "What does your ideal audience struggle with most?",
-    options: [
-      { label: "They want results but don't know where to start", style: "quick_win" },
-      { label: "They feel stuck and need a breakthrough", style: "transformation" },
-      { label: "They want to learn but courses feel too passive", style: "skill_builder" },
-      { label: "They have ideas but never follow through", style: "launch" },
-    ],
-  },
-  {
-    id: "q4", text: "How do you naturally guide people?",
-    options: [
-      { label: "Give them a clear plan and let them execute", style: "quick_win" },
-      { label: "Walk them through a journey, one step at a time", style: "transformation" },
-      { label: "Break things down and build up gradually", style: "skill_builder" },
-      { label: "Set a deadline and hold them accountable", style: "launch" },
-    ],
-  },
-  {
-    id: "q5", text: "What should someone have after your challenge?",
-    options: [
-      { label: "One finished thing they can use immediately", style: "quick_win" },
-      { label: "A new mindset or way of approaching their life", style: "transformation" },
-      { label: "A new skill they can keep using", style: "skill_builder" },
-      { label: "Something live and public that didn't exist before", style: "launch" },
-    ],
-  },
-  {
-    id: "q6", text: "What would make someone share your challenge with friends?",
-    options: [
-      { label: "They got a quick result they're proud of", style: "quick_win" },
-      { label: "They had a personal breakthrough they want to talk about", style: "transformation" },
-      { label: "They learned something they didn't think they could", style: "skill_builder" },
-      { label: "They finally did the thing and want to celebrate", style: "launch" },
-    ],
-  },
-  {
-    id: "q7", text: "What would a great entry quiz for your audience look like?",
-    options: [
-      { label: "'How ready are you to [do X]?' — a readiness scorecard", style: "quick_win" },
-      { label: "'What's your [X] type/style?' — a personality-style quiz", style: "transformation" },
-      { label: "'What's your [X] skill level?' — a level assessment", style: "skill_builder" },
-      { label: "'What's stopping you from [launching X]?' — a blocker finder", style: "launch" },
-    ],
-  },
-  {
-    id: "q8", text: "How much do people need to know before they can take action?",
-    options: [
-      { label: "Very little — just point them in the right direction", style: "quick_win" },
-      { label: "Some context — they need to understand the why", style: "transformation" },
-      { label: "A fair amount — each step needs explanation", style: "skill_builder" },
-      { label: "Almost none — they need structure, not more information", style: "launch" },
-    ],
-  },
-  {
-    id: "q9", text: "What do you want your challenge app to do for your business?",
-    options: [
-      { label: "Attract people who want a fast solution — then offer them more", style: "quick_win" },
-      { label: "Build deep trust by giving people a real experience of my method", style: "transformation" },
-      { label: "Demonstrate my expertise by teaching something valuable", style: "skill_builder" },
-      { label: "Create urgency and momentum that leads to sales", style: "launch" },
-    ],
-  },
-];
+export function generateResult(answers: Record<string, string>): AssessmentResult {
+  const audienceType = classifyAudience(answers.q1);
+  const challengeType = classifyChallengeType(answers.q2);
+  const readinessLevel = classifyReadiness(answers.q7);
+  const growthBlock = classifyGrowthBlock(answers.q6);
 
-/* ───── Style metadata ───── */
+  const template = challengeTemplates[audienceType][challengeType];
 
-export const styleLabels: Record<ChallengeStyle, string> = {
+  return {
+    audienceType,
+    challengeType,
+    readinessLevel,
+    growthBlock,
+    recommendedChallenge: {
+      title: template.title,
+      description: template.description,
+      outcome: template.outcome,
+    },
+    messagingAngle: template.messagingAngle,
+    growthInsight: growthInsights[growthBlock],
+    shareIntent: false,
+    completedAt: Date.now(),
+    answers,
+  };
+}
+
+/* ───── Keep legacy exports for backward compat ───── */
+export const styleLabels: Record<ChallengeType, string> = {
   quick_win: "Quick Win",
   transformation: "Transformation",
   skill_builder: "Skill Builder",
   launch: "Launch",
 };
 
-export const styleIcons: Record<ChallengeStyle, string> = {
+export const styleIcons: Record<ChallengeType, string> = {
   quick_win: "🎯",
   transformation: "🔥",
   skill_builder: "🧠",
   launch: "🚀",
 };
 
-export interface StyleContent {
-  framing: string;
-  examples: { challenge: string; quiz: string }[];
-}
-
-export const b2bStyleContent: Record<ChallengeStyle, StyleContent> = {
-  quick_win: {
-    framing: "Your B2B audience wants speed. Build a challenge that delivers a tangible business result fast — with a readiness assessment that shows them where they stand before they start.",
-    examples: [
-      { challenge: "Build your sales playbook in 3 days", quiz: "How sales-ready is your team?" },
-      { challenge: "Create your hiring process in 5 days", quiz: "How strong is your talent pipeline?" },
-      { challenge: "Design your client onboarding in 3 days", quiz: "How efficient is your onboarding?" },
-    ],
-  },
-  transformation: {
-    framing: "Your B2B audience needs real change. Build a challenge that shifts how a team operates — with a maturity assessment that shows them exactly where they're stuck.",
-    examples: [
-      { challenge: "Transform your management style in 7 days", quiz: "What stage is your leadership at?" },
-      { challenge: "Build a culture of accountability in 5 days", quiz: "How healthy is your team culture?" },
-      { challenge: "Modernise your marketing in 7 days", quiz: "What's your marketing maturity level?" },
-    ],
-  },
-  skill_builder: {
-    framing: "Your B2B audience needs capability. Build a challenge that upskills a team through practice — with a competency assessment that shows their current level.",
-    examples: [
-      { challenge: "Train your team to write proposals that win in 5 days", quiz: "What's your proposal skill level?" },
-      { challenge: "Build your team's data literacy in 7 days", quiz: "How data-fluent is your team?" },
-      { challenge: "Master client presentations in 5 days", quiz: "What's your presentation score?" },
-    ],
-  },
-  launch: {
-    framing: "Your B2B audience has projects stuck in planning. Build a challenge that gets them to ship — with a diagnostic that reveals what's actually blocking them.",
-    examples: [
-      { challenge: "Launch your internal tool in 5 days", quiz: "What's blocking your project?" },
-      { challenge: "Ship your company newsletter in 3 days", quiz: "How launch-ready is your content?" },
-      { challenge: "Go live with your new process in 5 days", quiz: "What's your implementation readiness?" },
-    ],
-  },
+export const audienceLabels: Record<AudienceType, string> = {
+  b2b: "B2B",
+  b2c: "B2C",
+  mixed: "B2B & B2C",
 };
 
-export const b2cStyleContent: Record<ChallengeStyle, StyleContent> = {
-  quick_win: {
-    framing: "Your audience wants a fast result they can see and feel. Build a challenge that delivers one clear win — with a quiz that shows them exactly where they're starting from.",
-    examples: [
-      { challenge: "Launch your landing page in 3 days", quiz: "How launch-ready is your idea?" },
-      { challenge: "Write your lead magnet in 3 days", quiz: "What's your lead magnet style?" },
-      { challenge: "Organise your finances in 3 days", quiz: "What's your money personality?" },
-    ],
-  },
-  transformation: {
-    framing: "Your audience wants real change. Build a challenge that takes them on a journey — with a quiz that reveals where they are and what's holding them back.",
-    examples: [
-      { challenge: "Build your personal brand in 5 days", quiz: "What's your brand archetype?" },
-      { challenge: "Find your niche in 5 days", quiz: "How clear is your positioning?" },
-      { challenge: "Transform your mornings in 7 days", quiz: "What's your energy type?" },
-    ],
-  },
-  skill_builder: {
-    framing: "Your audience wants to learn by doing. Build a challenge that teaches a real skill — with a quiz that assesses their current level.",
-    examples: [
-      { challenge: "Learn copywriting in 7 days", quiz: "What's your copywriting level?" },
-      { challenge: "Master meal prep in 5 days", quiz: "What's your cooking confidence?" },
-      { challenge: "Start drawing in 7 days", quiz: "What type of creative are you?" },
-    ],
-  },
-  launch: {
-    framing: "Your audience has something they've been meaning to do. Build a challenge that gives them the push — with a quiz that shows them how close they already are.",
-    examples: [
-      { challenge: "Launch your podcast in 3 days", quiz: "How podcast-ready are you?" },
-      { challenge: "Start your YouTube channel in 5 days", quiz: "What's your content style?" },
-      { challenge: "Write your first blog post in 3 days", quiz: "What should you write about?" },
-    ],
-  },
-};
-
-/* ───── Scoring ───── */
-
-export function scoreAssessment(answers: Record<string, ChallengeStyle>): {
-  scores: Record<ChallengeStyle, number>;
-  recommended: ChallengeStyle;
-  confidence: Confidence;
-} {
-  const scores: Record<ChallengeStyle, number> = { quick_win: 0, transformation: 0, skill_builder: 0, launch: 0 };
-
-  // Q2-Q9 (keys q2..q9)
-  for (let i = 2; i <= 9; i++) {
-    const style = answers[`q${i}`];
-    if (style) scores[style]++;
-  }
-
-  const sorted = (Object.entries(scores) as [ChallengeStyle, number][]).sort((a, b) => b[1] - a[1]);
-  const top = sorted[0][1];
-
-  // Confidence
-  let confidence: Confidence = "mixed";
-  if (top >= 6) confidence = "strong";
-  else if (top >= 4) confidence = "moderate";
-
-  // Tie-breaking
-  const tied = sorted.filter(([, v]) => v === top).map(([k]) => k);
-  let recommended: ChallengeStyle;
-
-  if (tied.length === 1) {
-    recommended = tied[0];
-  } else {
-    // Specific tie-breaks
-    if (tied.includes("quick_win") && tied.includes("launch")) {
-      recommended = "quick_win";
-    } else if (tied.includes("transformation") && tied.includes("skill_builder")) {
-      recommended = "transformation";
-    } else {
-      // Fall back to Q2 answer
-      recommended = answers["q2"] || tied[0];
-    }
-  }
-
-  return { scores, recommended, confidence };
+/* Legacy exports – no longer used but kept so old imports don't break */
+export const splitQuestion = { id: "q1", text: questions[0].text, options: questions[0].options.map(o => ({ label: o.label, value: o.value as any })) };
+export const b2bQuestions: any[] = [];
+export const b2cQuestions: any[] = [];
+export const b2bStyleContent: Record<string, any> = {};
+export const b2cStyleContent: Record<string, any> = {};
+export function scoreAssessment(answers: Record<string, any>) {
+  const scores = { quick_win: 0, transformation: 0, skill_builder: 0, launch: 0 };
+  return { scores, recommended: "quick_win" as ChallengeType, confidence: "mixed" as Confidence };
 }

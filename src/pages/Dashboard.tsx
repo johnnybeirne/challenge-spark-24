@@ -44,7 +44,7 @@ const Dashboard = () => {
   const experience = getExperience(state.user?.role);
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
-  const recommended = state.assessment?.recommended;
+  const recommended = state.assessment?.challengeType || state.assessment?.recommended;
   const audienceType = state.assessment?.audienceType;
 
   const toggleTask = (taskKey: string) => {

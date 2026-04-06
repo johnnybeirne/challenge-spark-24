@@ -52,7 +52,9 @@ export type AnalyticsEvent =
   | "landing_viewed"
   | "landing_cta_clicked"
   | "landing_scroll_depth"
-  | "landing_faq_expanded";
+  | "landing_faq_expanded"
+  | "assessment_question_answered"
+  | "assessment_time_taken";
 
 export async function trackEvent(
   event: AnalyticsEvent,

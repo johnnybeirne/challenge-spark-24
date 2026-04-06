@@ -5,33 +5,25 @@ import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowRight } from "lucide-react";
-import {
-  splitQuestion,
-  b2bQuestions,
-  b2cQuestions,
-  scoreAssessment,
-  type AudienceType,
-  type ChallengeStyle,
-} from "@/lib/assessmentData";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { questions, generateResult } from "@/lib/assessmentData";
 
 const REF_SESSION_KEY = "challengeos_ref";
-const TOTAL_QUESTIONS = 9;
+const TOTAL_QUESTIONS = questions.length;
 
 const Assessment = () => {
   const navigate = useNavigate();
   const { setState } = useAppState();
   const [searchParams] = useSearchParams();
 
-  const [current, setCurrent] = useState(0); // 0 = split question, 1-8 = track questions
-  const [audienceType, setAudienceType] = useState<AudienceType | null>(null);
-  const [styleAnswers, setStyleAnswers] = useState<Record<string, ChallengeStyle>>({});
+  const [current, setCurrent] = useState(-1); // -1 = intro
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<string | undefined>(undefined);
-  const [showIntro, setShowIntro] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
 
+  // Track start
   useEffect(() => {
     if (!trackedStart.current) {
       trackedStart.current = true;
@@ -53,6 +45,7 @@ const Assessment = () => {
     }
   }, [searchParams]);
 
+  // Track partner assessment
   useEffect(() => {
     try {
       const partnerRef = sessionStorage.getItem("challengeos_partner_ref");
@@ -62,24 +55,23 @@ const Assessment = () => {
     } catch {}
   }, []);
 
-  const trackQuestions = audienceType === "b2b" ? b2bQuestions : b2cQuestions;
-  const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
+  const progress = current < 0 ? 0 : ((current + 1) / TOTAL_QUESTIONS) * 100;
 
   // ── Intro screen ──
-  if (showIntro) {
+  if (current === -1) {
     return (
       <div className="flex flex-col min-h-screen p-6 max-w-lg mx-auto justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-foreground">Discover your challenge</h1>
           <p className="text-muted-foreground leading-relaxed">
-            Answer 9 quick questions. We'll tell you exactly what your evergreen challenge app
-            should be about — including the quiz that attracts your leads.
+            Answer 8 quick questions. We'll tell you exactly what to build — including the strategy
+            that fits your expertise and audience.
           </p>
           <p className="text-sm text-muted-foreground">Takes about 90 seconds</p>
           <Button
             size="lg"
             className="w-full h-14 text-base rounded-xl gap-2 mt-4"
-            onClick={() => setShowIntro(false)}
+            onClick={() => setCurrent(0)}
           >
             Start
             <ArrowRight className="w-5 h-5" />
@@ -89,109 +81,97 @@ const Assessment = () => {
     );
   }
 
-  // ── Q1: Split question ──
-  if (current === 0) {
-    const handleSplit = () => {
-      if (!selected) return;
-      const type = selected as AudienceType;
-      setAudienceType(type);
-      trackEvent(type === "b2b" ? "assessment_track_b2b" as any : "assessment_track_b2c" as any);
-      setSelected(undefined);
-      setCurrent(1);
-    };
-
+  // ── Loading screen ──
+  if (loading) {
     return (
-      <div className="flex flex-col min-h-screen p-6">
-        <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
-          <span>Question 1 of {TOTAL_QUESTIONS}</span>
-          <span>{Math.round(progress)}%</span>
-        </div>
-        <Progress value={progress} className="mb-8 h-2" />
-        <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">{splitQuestion.text}</h2>
-        <Card className="border-0 shadow-none bg-transparent">
-          <CardContent className="p-0 space-y-3">
-            <RadioGroup value={selected} onValueChange={setSelected}>
-              {splitQuestion.options.map((opt) => (
-                <label
-                  key={opt.value}
-                  className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-colors ${
-                    selected === opt.value ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
-                  }`}
-                >
-                  <RadioGroupItem value={opt.value} className="mt-0.5" />
-                  <span className="text-sm leading-snug">{opt.label}</span>
-                </label>
-              ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
-        <div className="mt-auto pt-8">
-          <Button onClick={handleSplit} disabled={!selected} className="w-full h-12 text-base rounded-xl">
-            Next
-          </Button>
-        </div>
+      <div className="flex flex-col min-h-screen p-6 max-w-lg mx-auto justify-center items-center gap-4">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <p className="text-lg font-semibold text-foreground">Generating your personalised recommendation…</p>
+        <p className="text-sm text-muted-foreground">This won't take long</p>
       </div>
     );
   }
 
-  // ── Q2-Q9: Track questions ──
-  const qIndex = current - 1; // 0-7 index into trackQuestions
-  const q = trackQuestions[qIndex];
+  const q = questions[current];
   if (!q) return null;
 
   const handleNext = () => {
     if (!selected) return;
-    const style = selected as ChallengeStyle;
-    const updated = { ...styleAnswers, [q.id]: style };
-    setStyleAnswers(updated);
+
+    const updated = { ...answers, [q.id]: selected };
+    setAnswers(updated);
+
+    // Track
+    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer: selected });
+
+    // Track audience type on Q1
+    if (q.id === "q1") {
+      if (selected === "b2b") trackEvent("assessment_track_b2b" as any);
+      else if (selected === "b2c") trackEvent("assessment_track_b2c" as any);
+    }
+
     setSelected(undefined);
 
     if (current < TOTAL_QUESTIONS - 1) {
       setCurrent(current + 1);
     } else {
-      // Score and navigate
-      const { scores, recommended, confidence } = scoreAssessment(updated);
-      const assessment = {
-        audienceType: audienceType!,
-        scores,
-        recommended,
-        confidence,
-        completedAt: Date.now(),
-      };
-      setState((prev) => ({ ...prev, assessment }));
-      trackEvent("assessment_completed", { audienceType, recommended, confidence });
-      trackEvent(`assessment_result_${recommended}` as any);
-      navigate("/results");
+      // Complete — show loading then navigate
+      setLoading(true);
+      const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+      const result = generateResult(updated);
+
+      trackEvent("assessment_completed", { 
+        audienceType: result.audienceType, 
+        challengeType: result.challengeType,
+        timeTaken,
+      });
+      trackEvent(`assessment_result_${result.challengeType}` as any);
+      trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
+
+      setState((prev) => ({ ...prev, assessment: result as any }));
+
+      setTimeout(() => {
+        navigate("/results");
+      }, 1800);
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen p-6">
+      {/* Progress */}
       <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
         <span>Question {current + 1} of {TOTAL_QUESTIONS}</span>
         <span>{Math.round(progress)}%</span>
       </div>
       <Progress value={progress} className="mb-8 h-2" />
+
+      {/* Question */}
       <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">{q.text}</h2>
-      <Card className="border-0 shadow-none bg-transparent">
-        <CardContent className="p-0 space-y-3">
-          <RadioGroup value={selected} onValueChange={setSelected}>
-            {q.options.map((opt) => (
-              <label
-                key={opt.style}
-                className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-colors ${
-                  selected === opt.style ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
-                }`}
-              >
-                <RadioGroupItem value={opt.style} className="mt-0.5" />
-                <span className="text-sm leading-snug">{opt.label}</span>
-              </label>
-            ))}
-          </RadioGroup>
-        </CardContent>
-      </Card>
+
+      {/* Options */}
+      <div className="space-y-3">
+        {q.options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => setSelected(opt.value)}
+            className={`w-full text-left rounded-xl border p-4 transition-all ${
+              selected === opt.value
+                ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                : "border-border bg-card hover:border-primary/40"
+            }`}
+          >
+            <span className="text-sm leading-snug font-medium">{opt.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Next button */}
       <div className="mt-auto pt-8">
-        <Button onClick={handleNext} disabled={!selected} className="w-full h-12 text-base rounded-xl">
+        <Button
+          onClick={handleNext}
+          disabled={!selected}
+          className="w-full h-[52px] text-base rounded-xl"
+        >
           {current < TOTAL_QUESTIONS - 1 ? "Next" : "See my results"}
         </Button>
       </div>

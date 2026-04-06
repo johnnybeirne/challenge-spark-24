@@ -51,7 +51,7 @@ const LockedCommunity = () => {
 
   const day3Done = state.challenge.completed || state.challenge.currentDay > 3;
   const hasUrl = !!state.challenge.launchUrl;
-  const hasPromotion = state.referrals.shares >= 1 || state.referrals.invites >= 3;
+  const hasPromotion = state.network.direct >= 3;
 
   const getCtaAction = () => {
     if (!day3Done) return { label: "Finish the challenge", path: "/day/3" };
@@ -179,7 +179,7 @@ const UnlockedCommunity = () => {
   }, [boostedBuilders, setState]);
 
   const copyLink = async () => {
-    const link = state.community.submittedUrl || state.challenge.launchUrl || window.location.origin;
+    const link = state.user?.submittedUrl || state.challenge.launchUrl || window.location.origin;
     try {
       await navigator.clipboard.writeText(link);
       toast.success("Link copied!");
@@ -189,7 +189,7 @@ const UnlockedCommunity = () => {
   };
 
   const leaderboard = generateLeaderboard(score, state.user?.name || "You");
-  const appUrl = state.community.submittedUrl || state.challenge.launchUrl;
+  const appUrl = state.user?.submittedUrl || state.challenge.launchUrl;
 
   const statusBadgeColor = (status: string) => {
     switch (status) {
@@ -520,26 +520,20 @@ const Community = () => {
 
   const day3Done = state.challenge.completed || state.challenge.currentDay > 3;
   const hasUrl = !!state.challenge.launchUrl;
-  const hasPromotion = state.referrals.shares >= 1 || state.referrals.invites >= 3;
+  const hasPromotion = state.network.direct >= 3;
   const shouldUnlock = day3Done && hasUrl && hasPromotion && !state.community.unlocked;
 
   useEffect(() => {
     if (shouldUnlock) {
-      const reason = state.referrals.shares >= 1
-        ? "shared_link"
-        : state.referrals.invites >= 3
-        ? "invited_3"
-        : "launched_and_promoted";
+      const reason = state.network.direct >= 3 ? "invited_3" : "launched_and_promoted";
 
       setState((prev) => ({
         ...prev,
-        communityUnlocked: true,
         community: {
           ...prev.community,
           unlocked: true,
           unlockedAt: new Date().toISOString(),
           entryReason: reason,
-          submittedUrl: prev.challenge.launchUrl,
           featuredStatus: "eligible",
         },
         unlocks: [
@@ -555,7 +549,7 @@ const Community = () => {
       }));
       toast.success("Builder Circle unlocked — your challenge can now earn visibility.");
     }
-  }, [shouldUnlock, setState, state.referrals.shares, state.referrals.invites, state.challenge.launchUrl]);
+  }, [shouldUnlock, setState, state.network.direct, state.challenge.launchUrl]);
 
   if (!state.community.unlocked && !shouldUnlock) {
     return <LockedCommunity />;

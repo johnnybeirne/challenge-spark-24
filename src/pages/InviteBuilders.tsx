@@ -12,14 +12,14 @@ const InviteBuilders = () => {
   const { state } = useAppState();
 
   useEffect(() => {
-    trackEvent("onboarding_viewed" as any);
+    trackEvent("onboarding_viewed");
   }, []);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
 
   const handleInvite = () => {
-    trackEvent("onboarding_invite_started" as any);
+    trackEvent("onboarding_invite_started");
     shareOrCopy({
       text: "I'm building a 3-day audience growth system — want to try it with me?",
       url: referralLink,
@@ -27,7 +27,7 @@ const InviteBuilders = () => {
   };
 
   const handleSkip = () => {
-    trackEvent("onboarding_skipped" as any);
+    trackEvent("onboarding_skipped");
     navigate("/dashboard");
   };
 

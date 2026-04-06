@@ -18,13 +18,7 @@ import {
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 
-/* ─── Visibility helpers ─── */
-function getVisibility(score: number) {
-  if (score >= 60) return { label: "Featured", color: "text-primary", bg: "bg-primary/10", desc: "Your profile is featured prominently across the network" };
-  if (score >= 30) return { label: "High", color: "text-green-600", bg: "bg-green-500/10", desc: "Strong visibility based on contribution quality and performance" };
-  if (score >= 10) return { label: "Growing", color: "text-amber-500", bg: "bg-amber-500/10", desc: "Visibility is increasing as your contribution gains traction" };
-  return { label: "Low", color: "text-muted-foreground", bg: "bg-muted", desc: "Share more and contribute to increase your visibility" };
-}
+import { calculateLeaderboardScore, getVisibility } from "@/lib/scoring";
 
 /* ─── Metric card ─── */
 function MetricCard({ icon: Icon, label, value, tooltip }: {
@@ -78,7 +72,7 @@ const PartnerPerformance = () => {
   const [asset, setAsset] = useState<any>(null);
   const [assetLoading, setAssetLoading] = useState(true);
 
-  useEffect(() => { trackEvent("partner_performance_viewed" as any); }, []);
+  useEffect(() => { trackEvent("partner_performance_viewed"); }, []);
 
   // Fetch partner's approved contribution
   useEffect(() => {
@@ -130,12 +124,7 @@ const PartnerPerformance = () => {
   const clickTrend = makeTrend(clicks);
   const unlockTrend = makeTrend(unlocks);
 
-  const leaderboardScore =
-    (state.network.direct * 3) +
-    state.network.indirect +
-    (state.community.boostsGiven * 2) +
-    (state.community.boostsReceived * 4) +
-    (clicks * 5);
+  const leaderboardScore = calculateLeaderboardScore(state);
   const visibility = getVisibility(leaderboardScore);
 
   const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
@@ -209,7 +198,7 @@ const PartnerPerformance = () => {
             </div>
             <div className="flex gap-2 mt-3">
               <Button size="sm" className="gap-1 text-xs" onClick={() => {
-                trackEvent("partner_asset_opened" as any, { asset_id: asset.id });
+                trackEvent("partner_asset_opened", { asset_id: asset.id });
                 window.open(asset.contribution_url, "_blank", "noopener,noreferrer");
               }}>
                 <ExternalLink className="h-3 w-3" /> Open asset link
@@ -337,7 +326,7 @@ const PartnerPerformance = () => {
               size="sm"
               variant="outline"
               className="mt-3 text-xs gap-1"
-              onClick={() => trackEvent("partner_visibility_help_viewed" as any)}
+              onClick={() => trackEvent("partner_visibility_help_viewed")}
             >
               Got it <ArrowRight className="h-3 w-3" />
             </Button>

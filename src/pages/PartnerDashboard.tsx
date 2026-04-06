@@ -34,12 +34,10 @@ const REWARD_MILESTONES = [
   { at: 50, name: "AI-powered challenge app", value: 5000 },
 ];
 
-/* ─── Visibility helpers ─── */
-function getVisibility(score: number) {
-  if (score >= 60) return { label: "Featured", color: "text-primary", bg: "bg-primary/10" };
-  if (score >= 30) return { label: "High", color: "text-green-600", bg: "bg-green-500/10" };
-  if (score >= 10) return { label: "Growing", color: "text-amber-500", bg: "bg-amber-500/10" };
-  return { label: "Low", color: "text-muted-foreground", bg: "bg-muted" };
+import { calculateLeaderboardScore, getVisibility } from "@/lib/scoring";
+
+function getVisibilityLocal(score: number) {
+  return getVisibility(score);
 }
 
 const PartnerDashboard = () => {
@@ -111,14 +109,8 @@ const PartnerDashboard = () => {
   const indirect = Math.floor(direct * 0.4); // estimated from network
   const totalNetwork = direct + indirect;
   const estimatedReach = direct * 1 + indirect * 0.5;
-  const leaderboardScore =
-    state.network.direct * 3 +
-    state.network.indirect +
-    state.community.boostsGiven * 2 +
-    state.community.boostsReceived * 4 +
-    direct * 5;
-
-  const visibility = getVisibility(leaderboardScore);
+  const leaderboardScore = calculateLeaderboardScore(state);
+  const visibility = getVisibilityLocal(leaderboardScore);
   const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
 
   // Next reward milestone

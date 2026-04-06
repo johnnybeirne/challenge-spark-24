@@ -25,7 +25,7 @@ const InviteMilestoneModal = () => {
         if (!shown) {
           setOpen(true);
           sessionStorage.setItem(MILESTONE_KEY, "1");
-          trackEvent("onboarding_invite_completed" as any);
+          trackEvent("onboarding_invite_completed");
         }
       } catch {}
     }

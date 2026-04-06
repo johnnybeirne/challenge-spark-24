@@ -10,7 +10,7 @@ import EmptyState from "@/components/EmptyState";
 const SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
 
 const Referrals = () => {
-  const { state, setState } = useAppState();
+  const { state } = useAppState();
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "builder";
@@ -20,10 +20,6 @@ const Referrals = () => {
     try {
       await navigator.clipboard.writeText(referralLink);
       setCopied(true);
-      setState((prev) => ({
-        ...prev,
-        referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 },
-      }));
       toast("Link copied! Share it with your network.");
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -34,20 +30,12 @@ const Referrals = () => {
   const shareWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink)}`;
     window.open(url, "_blank");
-    setState((prev) => ({
-      ...prev,
-      referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 },
-    }));
   };
 
   const shareEmail = () => {
     const subject = encodeURIComponent("Quick assessment on audience growth");
     const body = encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink);
     window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
-    setState((prev) => ({
-      ...prev,
-      referrals: { ...prev.referrals, invites: prev.referrals.invites + 1 },
-    }));
   };
 
   const direct = state.network.direct;
@@ -55,14 +43,13 @@ const Referrals = () => {
   const totalNetwork = direct + indirect;
   const score = direct * 3 + indirect * 1;
 
-  // Unlock thresholds
   const unlockThresholds = [
     { count: 3, label: "Trust growth playbook", value: "$147" },
     { count: 5, label: "AI prompt pack", value: "$97" },
     { count: 10, label: "Full system", value: "$297" },
   ];
 
-  const hasActivity = (state.referrals.shares + state.referrals.invites) > 0 || direct > 0;
+  const hasActivity = direct > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,10 +75,10 @@ const Referrals = () => {
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground">
-                {state.referrals.shares + state.referrals.invites}
+                {direct}
               </p>
               <p className="text-xs text-muted-foreground">
-                {state.referrals.shares} shares · {state.referrals.invites} invites
+                {direct} direct · {indirect} indirect builders
               </p>
             </div>
           </CardContent>
@@ -195,7 +182,6 @@ const Referrals = () => {
         <div className="space-y-3">
           <Button className="w-full gap-2" onClick={() => {
             shareOrCopy({ text: SHARE_TEXT, url: referralLink });
-            setState((prev) => ({ ...prev, referrals: { ...prev.referrals, shares: prev.referrals.shares + 1 } }));
           }}>
             <Share2 className="h-4 w-4" />
             Share my link

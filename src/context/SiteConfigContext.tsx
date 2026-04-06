@@ -24,30 +24,53 @@ export interface LandingConfig {
   bottomCtaLink: string;
 }
 
-export interface AssessmentQuestion {
-  text: string;
-  dimension: "Trust" | "Activation" | "Ownership" | "Clarity";
-  options: { label: string; score: number }[];
+export interface AssessmentSplitOption {
+  label: string;
+  value: "b2b" | "b2c";
 }
 
-export interface IdentityType {
+export interface AssessmentTrackOption {
+  label: string;
+  style: "quick_win" | "transformation" | "skill_builder" | "launch";
+}
+
+export interface AssessmentTrackQuestion {
   id: string;
-  displayName: string;
-  icon: string;
-  description: string;
-  minScore: number;
-  maxScore: number;
+  text: string;
+  options: AssessmentTrackOption[];
+}
+
+export interface StyleExample {
+  challenge: string;
+  quiz: string;
+}
+
+export interface StyleResultContent {
+  framing: string;
+  examples: StyleExample[];
 }
 
 export interface AssessmentConfig {
+  introTitle: string;
   introText: string;
   timeEstimate: string;
-  questions: AssessmentQuestion[];
-  identityTypes: IdentityType[];
-  tensionText: string;
-  scoreLabel: string;
-  shareButtonText: string;
+  splitQuestionText: string;
+  splitOptions: AssessmentSplitOption[];
+  b2bQuestions: AssessmentTrackQuestion[];
+  b2cQuestions: AssessmentTrackQuestion[];
+  b2bStyleContent: Record<string, StyleResultContent>;
+  b2cStyleContent: Record<string, StyleResultContent>;
+  b2bTensionText: string;
+  b2cTensionText: string;
+  b2bShareText: string;
+  b2cShareText: string;
   ctaText: string;
+  // Legacy fields (kept for backward compat, not displayed in new CMS)
+  questions?: any[];
+  identityTypes?: any[];
+  tensionText?: string;
+  scoreLabel?: string;
+  shareButtonText?: string;
 }
 
 export interface ChallengeTask {

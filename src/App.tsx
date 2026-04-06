@@ -23,6 +23,7 @@ import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import InviteBuilders from "@/pages/InviteBuilders";
+import Partners from "@/pages/Partners";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="/results" element={<Results />} />
               <Route path="/join" element={<Signup />} />
               <Route path="/features" element={<Features />} />
+              <Route path="/partners" element={<Partners />} />
             </Route>
 
             {/* Auth routes */}

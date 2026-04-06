@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Crown, Users, TrendingUp, Globe, Copy, Share2, Eye,
-  Gift, Trophy, Rocket, Shield, Zap, ArrowRight,
+  Gift, Trophy, Rocket, Shield, Zap, ArrowRight, BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
@@ -364,6 +364,13 @@ const PartnerDashboard = () => {
             }}
           >
             <Crown className="h-4 w-4" /> View Builder Circle
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full gap-2 min-h-[48px]"
+            onClick={() => navigate("/partner/performance")}
+          >
+            <BarChart3 className="h-4 w-4" /> View asset performance
           </Button>
         </div>
 

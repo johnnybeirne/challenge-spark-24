@@ -32,6 +32,9 @@ export type AnalyticsEvent =
   | "partner_application_started"
   | "partner_application_submitted"
   | "partner_approved"
+  | "partner_performance_viewed"
+  | "partner_asset_opened"
+  | "partner_visibility_help_viewed"
   | "rewards_page_viewed"
   | "reward_accessed"
   | "partner_asset_clicked";

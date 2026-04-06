@@ -17,7 +17,7 @@ import {
 const Results = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
-  const assessment = state.assessment as AssessmentResult | null;
+  const assessment = state.assessment as unknown as AssessmentResult | null;
 
   if (!assessment || !("challengeType" in assessment)) {
     return (

@@ -20,6 +20,8 @@ export type AnalyticsEvent =
   | "crosspromo_impression"
   | "crosspromo_click"
   | "crosspromo_featured"
+  | "crosspromo_viewed"
+  | "crosspromo_clicked"
   | "founder_unlocked"
   | "founder_viewed"
   | "founder_slots_remaining"

@@ -76,7 +76,7 @@ const AvatarStack = ({ count = 5, size = "w-8 h-8", textSize = "text-[10px]" }: 
       <AvatarCircle key={i} index={i} size={size} textSize={textSize} />
     ))}
     <div className={`${size} rounded-full bg-muted flex items-center justify-center ${textSize} font-semibold text-muted-foreground ring-2 ring-background`}>
-      +110
+      +117
     </div>
   </div>
 );

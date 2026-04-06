@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_feed_items: {
+        Row: {
+          action: string
+          avatar_url: string | null
+          created_at: string
+          icon_type: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          time_label: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          avatar_url?: string | null
+          created_at?: string
+          icon_type?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          time_label?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          avatar_url?: string | null
+          created_at?: string
+          icon_type?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          time_label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string

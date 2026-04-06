@@ -1,12 +1,16 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { useSiteConfig, type PartnerConfig, type RewardDef } from "@/context/SiteConfigContext";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const CmsPartners = () => {
   const { config, updateSection } = useSiteConfig();

@@ -28,7 +28,10 @@ export type AnalyticsEvent =
   | "founder_visibility_boost_applied"
   | "partners_page_viewed"
   | "promoter_joined"
-  | "partners_cta_clicked";
+  | "partners_cta_clicked"
+  | "partner_application_started"
+  | "partner_application_submitted"
+  | "partner_approved";
 
 export async function trackEvent(
   event: AnalyticsEvent,

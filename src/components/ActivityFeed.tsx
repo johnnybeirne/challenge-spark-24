@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Zap, Rocket, Users, Heart } from "lucide-react";
 
 import avatarSarah from "@/assets/avatars/sarah.jpg";
@@ -27,32 +26,14 @@ const ACTIVITIES: ActivityItem[] = [
   { name: "Lily", action: "invited 5 builders", time: "2h ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarLily },
 ];
 
-function shuffleTime(): string {
-  const mins = Math.floor(Math.random() * 55) + 1;
-  return mins < 60 ? `${mins}m ago` : `${Math.floor(mins / 60)}h ago`;
-}
-
 interface ActivityFeedProps {
   limit?: number;
   refresh?: boolean;
   title?: string;
 }
 
-const ActivityFeed = ({ limit = 4, refresh = false, title }: ActivityFeedProps) => {
-  const [items, setItems] = useState<ActivityItem[]>(() => ACTIVITIES.slice(0, limit));
-
-  useEffect(() => {
-    if (!refresh) return;
-    const id = setInterval(() => {
-      setItems(
-        [...ACTIVITIES]
-          .sort(() => Math.random() - 0.5)
-          .slice(0, limit)
-          .map((item) => ({ ...item, time: shuffleTime() }))
-      );
-    }, 60_000);
-    return () => clearInterval(id);
-  }, [limit, refresh]);
+const ActivityFeed = ({ title }: ActivityFeedProps) => {
+  const doubled = [...ACTIVITIES, ...ACTIVITIES];
 
   return (
     <div>
@@ -61,25 +42,31 @@ const ActivityFeed = ({ limit = 4, refresh = false, title }: ActivityFeedProps) 
           {title}
         </p>
       )}
-      <div className="space-y-2">
-        {items.map((item, i) => (
-          <div
-            key={`${item.name}-${i}`}
-            className="flex items-center gap-3 rounded-lg bg-card border border-border px-3 py-2.5"
-          >
-            <img
-              src={item.avatar}
-              alt={item.name}
-              loading="lazy"
-              className="h-7 w-7 rounded-full object-cover shrink-0"
-            />
-            <p className="text-sm text-foreground flex-1">
-              <span className="font-medium">{item.name}</span>{" "}
-              <span className="text-muted-foreground">{item.action}</span>
-            </p>
-            <span className="text-[10px] text-muted-foreground whitespace-nowrap">{item.time}</span>
-          </div>
-        ))}
+      <div className="relative h-[156px] overflow-hidden rounded-lg">
+        {/* Top/bottom fade masks */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-6 z-10 bg-gradient-to-b from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 z-10 bg-gradient-to-t from-background to-transparent" />
+
+        <div className="animate-scroll-up hover:[animation-play-state:paused] flex flex-col gap-2">
+          {doubled.map((item, i) => (
+            <div
+              key={`${item.name}-${i}`}
+              className="flex items-center gap-3 rounded-lg bg-card border border-border px-3 py-2.5 shrink-0"
+            >
+              <img
+                src={item.avatar}
+                alt={item.name}
+                loading="lazy"
+                className="h-7 w-7 rounded-full object-cover shrink-0"
+              />
+              <p className="text-sm text-foreground flex-1">
+                <span className="font-medium">{item.name}</span>{" "}
+                <span className="text-muted-foreground">{item.action}</span>
+              </p>
+              <span className="text-[10px] text-muted-foreground whitespace-nowrap">{item.time}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

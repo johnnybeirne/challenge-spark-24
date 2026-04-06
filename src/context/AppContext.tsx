@@ -52,17 +52,7 @@ export interface CommunityState {
 
 export interface AppState {
   user: User | null;
-  assessment: {
-    audienceType: "b2b" | "b2c";
-    scores: Record<string, number>;
-    recommended: string;
-    confidence: string;
-    completedAt?: number;
-    // Legacy fields kept for backward compat during migration
-    total?: number;
-    percentage?: number;
-    identityType?: string | null;
-  } | null;
+  assessment: Record<string, any> | null;
   challenge: {
     currentDay: number;
     tasks: Record<string, boolean>;

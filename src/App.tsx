@@ -23,6 +23,7 @@ import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
+import AdminCms from "@/pages/AdminCms";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

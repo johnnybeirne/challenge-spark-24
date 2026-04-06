@@ -268,7 +268,10 @@ const Landing = () => {
         {lc.showSocialProof && (
           <section className="flex flex-col gap-4">
             <SectionHeading>{lc.socialProofTitle}</SectionHeading>
-            <SocialProofTicker items={lc.socialProofItems} speed={lc.socialProofRotateSpeed} />
+            <ActivityFeed />
+            {lc.socialProofMetric && (
+              <p className="text-xs text-muted-foreground text-center">{lc.socialProofMetric}</p>
+            )}
           </section>
         )}
 

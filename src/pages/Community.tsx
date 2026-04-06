@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import ActivityFeed from "@/components/ActivityFeed";
+import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { usePromoter } from "@/hooks/usePromoter";

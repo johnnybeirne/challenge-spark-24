@@ -182,7 +182,7 @@ const Landing = () => {
               <p className="text-xs font-bold text-primary mt-1.5">{lc.heroMicroProof}</p>
             </div>
             {/* Right: Product Mockup Composition */}
-            <div className="relative flex justify-center md:justify-end items-center min-h-[320px]">
+            <div className="relative flex justify-center md:justify-end items-center min-h-[380px] mt-8 md:mt-0">
               <div className="relative">
                 {/* Browser mockup — results */}
                 <MockupBrowser title="Your Challenge Results">

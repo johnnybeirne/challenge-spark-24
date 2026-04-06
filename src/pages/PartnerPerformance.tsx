@@ -18,13 +18,7 @@ import {
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 
-/* ─── Visibility helpers ─── */
-function getVisibility(score: number) {
-  if (score >= 60) return { label: "Featured", color: "text-primary", bg: "bg-primary/10", desc: "Your profile is featured prominently across the network" };
-  if (score >= 30) return { label: "High", color: "text-green-600", bg: "bg-green-500/10", desc: "Strong visibility based on contribution quality and performance" };
-  if (score >= 10) return { label: "Growing", color: "text-amber-500", bg: "bg-amber-500/10", desc: "Visibility is increasing as your contribution gains traction" };
-  return { label: "Low", color: "text-muted-foreground", bg: "bg-muted", desc: "Share more and contribute to increase your visibility" };
-}
+import { calculateLeaderboardScore, getVisibility } from "@/lib/scoring";
 
 /* ─── Metric card ─── */
 function MetricCard({ icon: Icon, label, value, tooltip }: {

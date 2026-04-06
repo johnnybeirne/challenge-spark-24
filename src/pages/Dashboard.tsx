@@ -176,6 +176,24 @@ const Dashboard = () => {
         />
       </div>
 
+      {/* Partner CTA (non-promoters only) */}
+      {!promoter && (
+        <Card className="mb-4 border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => navigate("/partners")}>
+          <CardContent className="p-5 flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">Grow your audience faster</p>
+              <p className="text-xs text-muted-foreground">Become a partner and tap into other builders' audiences</p>
+            </div>
+            <Button size="sm" variant="default" className="shrink-0" onClick={(e) => { e.stopPropagation(); navigate("/partners"); }}>
+              Become a partner
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Activity */}
       <div className="mb-4">
         <ActivityFeed limit={3} title="Builder activity" />

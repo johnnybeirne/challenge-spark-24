@@ -43,6 +43,7 @@ const App = () => (
               <Route path="/results" element={<Results />} />
               <Route path="/join" element={<Signup />} />
               <Route path="/features" element={<Features />} />
+              <Route path="/partners" element={<Partners />} />
             </Route>
 
             {/* Auth routes */}

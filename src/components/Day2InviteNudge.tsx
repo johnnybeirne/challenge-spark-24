@@ -17,7 +17,7 @@ const Day2InviteNudge = ({ onContinue }: { onContinue: () => void }) => {
   const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
 
   const handleInvite = () => {
-    trackEvent("onboarding_invite_started" as any);
+    trackEvent("onboarding_invite_started");
     shareOrCopy({
       text: "I'm building a 3-day audience growth system — want to try it with me?",
       url: referralLink,

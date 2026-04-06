@@ -198,7 +198,7 @@ const PartnerPerformance = () => {
             </div>
             <div className="flex gap-2 mt-3">
               <Button size="sm" className="gap-1 text-xs" onClick={() => {
-                trackEvent("partner_asset_opened" as any, { asset_id: asset.id });
+                trackEvent("partner_asset_opened", { asset_id: asset.id });
                 window.open(asset.contribution_url, "_blank", "noopener,noreferrer");
               }}>
                 <ExternalLink className="h-3 w-3" /> Open asset link

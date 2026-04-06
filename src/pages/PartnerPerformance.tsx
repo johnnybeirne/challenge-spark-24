@@ -72,7 +72,7 @@ const PartnerPerformance = () => {
   const [asset, setAsset] = useState<any>(null);
   const [assetLoading, setAssetLoading] = useState(true);
 
-  useEffect(() => { trackEvent("partner_performance_viewed" as any); }, []);
+  useEffect(() => { trackEvent("partner_performance_viewed"); }, []);
 
   // Fetch partner's approved contribution
   useEffect(() => {

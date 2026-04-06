@@ -143,7 +143,7 @@ const RewardDetail = () => {
 
   const handleAccess = () => {
     setLeaving(true);
-    trackEvent("partner_asset_accessed" as any, { asset_id: asset.id, partner_user_id: asset.user_id });
+    trackEvent("partner_asset_clicked", { asset_id: asset.id, partner_user_id: asset.user_id });
     setTimeout(() => {
       window.open(asset.contribution_url, "_blank", "noopener,noreferrer");
       setLeaving(false);

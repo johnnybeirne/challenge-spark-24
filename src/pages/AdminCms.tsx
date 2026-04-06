@@ -28,8 +28,10 @@ const SECTIONS = [
 ] as const;
 
 const ADMIN_LINKS = [
-  { path: "/admin/analytics", label: "Analytics" },
-  { path: "/admin/cms", label: "CMS" },
+  { path: "/owner-console", label: "Hub" },
+  { path: "/owner-console/analytics", label: "Analytics" },
+  { path: "/owner-console/cms", label: "CMS" },
+  { path: "/owner-console/promoters", label: "Promoters" },
 ];
 
 const AdminCms = () => {

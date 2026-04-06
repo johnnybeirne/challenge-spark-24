@@ -201,7 +201,11 @@ const Landing = () => {
                 <Cta text={lc.primaryCtaText} section="hero" />
               </div>
               <p className="text-xs text-muted-foreground mt-3.5 tracking-wide">{lc.heroBelowCtaText}</p>
-              <p className="text-xs font-bold text-primary mt-1.5">{lc.heroMicroProof}</p>
+              {/* Avatar social proof */}
+              <div className="flex items-center gap-3 mt-5">
+                <AvatarStack count={5} size="w-7 h-7" textSize="text-[9px]" />
+                <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">147 builders</span> already started</p>
+              </div>
             </div>
             {/* Right: Product Mockup Composition */}
             <div className="relative flex justify-center md:justify-end items-center min-h-[380px] mt-8 md:mt-0">

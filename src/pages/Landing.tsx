@@ -494,6 +494,11 @@ const Landing = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[800px] mx-auto">
               {lc.exampleCards.map((ex, i) => (
                 <div key={i} className="stagger-child card-float p-5">
+                  {/* Creator avatar + name */}
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <AvatarCircle index={i} size="w-7 h-7" textSize="text-[9px]" />
+                    <span className="text-[12px] font-medium text-foreground">{AVATAR_NAMES[i % AVATAR_NAMES.length]}</span>
+                  </div>
                   {/* Mini mockup thumbnail */}
                   <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl p-3 mb-4">
                     <div className="flex gap-1.5 mb-2">

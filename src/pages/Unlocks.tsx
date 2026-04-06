@@ -58,6 +58,22 @@ const Unlocks = () => {
           />
         )}
 
+        {/* Partner rewards link */}
+        <Card className="mb-4 border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => navigate("/rewards")}>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <Gift className="h-4 w-4 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">Partner rewards</p>
+              <p className="text-xs text-muted-foreground">Unlock high-value assets from builders in the network</p>
+            </div>
+            <Button size="sm" variant="outline" className="shrink-0 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/rewards"); }}>
+              View
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Cross-promotion between sections */}
         <div className="mb-4">
           <CrossPromoSpotlight

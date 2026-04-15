@@ -8,7 +8,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Listen first, then get session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
@@ -37,9 +36,29 @@ export function useAuth() {
     return { error };
   };
 
+  const signUp = async (email: string, password: string, metadata?: Record<string, string>) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata,
+        emailRedirectTo: window.location.origin + "/dashboard",
+      },
+    });
+    return { data, error };
+  };
+
+  const signIn = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { data, error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
-  return { user, session, loading, signInWithMagicLink, signOut };
+  return { user, session, loading, signInWithMagicLink, signUp, signIn, signOut };
 }

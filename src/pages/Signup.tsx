@@ -1,25 +1,32 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Mail, CheckCircle } from "lucide-react";
+import { ArrowRight, Mail, CheckCircle, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const PARTNER_REF_KEY = "challengeos_partner_ref";
 
+type Mode = "signup" | "login";
+
 const Signup = () => {
-  const { signInWithMagicLink } = useAuth();
+  const { signUp, signIn } = useAuth();
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
 
-  const isValid = name.trim().length > 0 && email.trim().includes("@");
+  const isValidLogin = email.trim().includes("@") && password.length >= 6;
+  const isValidSignup = name.trim().length > 0 && isValidLogin;
+  const isValid = mode === "login" ? isValidLogin : isValidSignup;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +34,18 @@ const Signup = () => {
 
     setLoading(true);
 
-    // Gather referral metadata
+    if (mode === "login") {
+      const { error } = await signIn(email.trim().toLowerCase(), password);
+      setLoading(false);
+      if (error) {
+        toast.error(error.message || "Login failed");
+        return;
+      }
+      navigate("/dashboard");
+      return;
+    }
+
+    // Signup mode
     let referredBy: string | null = null;
     let partnerRef: string | null = null;
     try {
@@ -35,7 +53,7 @@ const Signup = () => {
       partnerRef = sessionStorage.getItem(PARTNER_REF_KEY);
     } catch {}
 
-    const { error } = await signInWithMagicLink(email.trim().toLowerCase(), {
+    const { error } = await signUp(email.trim().toLowerCase(), password, {
       name: name.trim(),
       ...(referredBy ? { referred_by: referredBy } : {}),
     });
@@ -43,7 +61,7 @@ const Signup = () => {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message || "Failed to send magic link");
+      toast.error(error.message || "Signup failed");
       return;
     }
 
@@ -53,53 +71,38 @@ const Signup = () => {
     }
 
     trackEvent("signup_completed");
-    setSent(true);
-    toast.success("Check your email for the magic link!");
+    toast.success("Account created! Redirecting…");
+    navigate("/dashboard");
   };
-
-  if (sent) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6">
-        <div className="w-full max-w-sm text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <CheckCircle className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Check your email</h1>
-          <p className="text-sm text-muted-foreground mb-6">
-            We sent a magic link to <strong>{email}</strong>. Click it to join the challenge.
-          </p>
-          <Button variant="outline" onClick={() => setSent(false)}>
-            Use a different email
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-foreground text-center mb-2">
-          Start building your growth system
+          {mode === "login" ? "Welcome back" : "Start building your growth system"}
         </h1>
         <p className="text-sm text-muted-foreground text-center mb-8">
-          Join the 3-day challenge and turn your audience into a trust-powered engine.
+          {mode === "login"
+            ? "Sign in to continue your challenge."
+            : "Join the 3-day challenge and turn your audience into a trust-powered engine."}
         </p>
 
         <Card>
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  autoComplete="name"
-                  maxLength={100}
-                />
-              </div>
+              {mode === "signup" && (
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    autoComplete="name"
+                    maxLength={100}
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -114,18 +117,53 @@ const Signup = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder={mode === "signup" ? "At least 6 characters" : "Your password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                  minLength={6}
+                />
+              </div>
+
               <Button
                 type="submit"
                 disabled={!isValid || loading}
                 className="w-full h-12 text-base rounded-xl gap-2"
               >
-                <Mail className="w-4 h-4" />
-                {loading ? "Sending…" : "Send magic link"}
-                <ArrowRight className="w-4 h-4" />
+                {mode === "login" ? (
+                  <>
+                    <LogIn className="w-4 h-4" />
+                    {loading ? "Signing in…" : "Sign in"}
+                  </>
+                ) : (
+                  <>
+                    <ArrowRight className="w-4 h-4" />
+                    {loading ? "Creating account…" : "Create account"}
+                  </>
+                )}
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
-                No password needed — we'll email you a secure login link.
+              <p className="text-sm text-muted-foreground text-center">
+                {mode === "login" ? (
+                  <>
+                    Don't have an account?{" "}
+                    <button type="button" onClick={() => setMode("signup")} className="text-primary underline">
+                      Sign up
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <button type="button" onClick={() => setMode("login")} className="text-primary underline">
+                      Sign in
+                    </button>
+                  </>
+                )}
               </p>
             </form>
           </CardContent>

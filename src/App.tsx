@@ -29,6 +29,7 @@ import AdminCms from "@/pages/AdminCms";
 import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
+import Features from "@/pages/Features";
 import AdminLayout from "@/components/admin/AdminLayout";
 import NotFound from "@/pages/NotFound";
 
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="cms" element={<AdminCms />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
+                <Route path="features" element={<Features />} />
               </Route>
 
               {/* Legacy admin redirects */}

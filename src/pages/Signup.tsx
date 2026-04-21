@@ -17,15 +17,15 @@ type Step = "name" | "email" | "password";
 
 const PROMPTS: Record<Step, { signup: string; login: string }> = {
   name: {
-    signup: "Johnny here, please enter your name",
+    signup: "Johnny here — what's your name?",
     login: "Welcome back. What's your email?",
   },
   email: {
-    signup: "Nice to meet you, {name}. What's the best email to set up your account?",
+    signup: "Nice to meet you, {name}. What email should I use for your account?",
     login: "And your password?",
   },
   password: {
-    signup: "Last thing — pick a password (6+ characters) and you're in.",
+    signup: "Pick a password (6+ characters) and you're in.",
     login: "",
   },
 };
@@ -144,15 +144,49 @@ const Signup = () => {
     return { type: "password", placeholder: "••••••", value: password, onChange: (e: any) => setPassword(e.target.value), autoComplete: mode === "signup" ? "new-password" : "current-password", minLength: 6 };
   })();
 
+  const stepIndex = step === "name" ? 1 : step === "email" ? (mode === "signup" ? 2 : 1) : (mode === "signup" ? 3 : 2);
+  const totalSteps = mode === "signup" ? 3 : 2;
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background">
       <div className="w-full max-w-md">
+        {/* Mode picker — always visible at the top */}
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl border-2 border-foreground bg-card mb-6">
+          <button
+            type="button"
+            onClick={() => switchMode("signup")}
+            className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              mode === "signup"
+                ? "bg-primary text-primary-foreground"
+                : "text-foreground hover:bg-muted"
+            }`}
+          >
+            Create account
+          </button>
+          <button
+            type="button"
+            onClick={() => switchMode("login")}
+            className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              mode === "login"
+                ? "bg-primary text-primary-foreground"
+                : "text-foreground hover:bg-muted"
+            }`}
+          >
+            Sign in
+          </button>
+        </div>
+
+        {/* Step indicator */}
+        <p className="text-xs text-muted-foreground text-center mb-6">
+          Step {stepIndex} of {totalSteps}
+        </p>
+
         {/* Conversation */}
-        <div className="flex items-start gap-3 mb-6">
+        <div className="flex items-start gap-3 mb-4">
           <div className="relative shrink-0">
             <img
               src={aiAvatar}
-              alt="AI co-pilot"
+              alt="Johnny B AI"
               width={48}
               height={48}
               className="w-12 h-12 rounded-full border-2 border-foreground/10"
@@ -199,27 +233,6 @@ const Signup = () => {
             <ArrowRight className="w-5 h-5" />
           </Button>
         </form>
-
-        {/* Mode toggle */}
-        <div className="mt-8 flex items-center justify-center">
-          {mode === "login" ? (
-            <button
-              type="button"
-              onClick={() => switchMode("signup")}
-              className="px-5 py-3 rounded-xl border-2 border-foreground bg-card hover:bg-muted text-sm font-semibold text-foreground transition-colors"
-            >
-              New here? <span className="text-primary">Start the challenge →</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => switchMode("login")}
-              className="px-5 py-3 rounded-xl border-2 border-foreground bg-card hover:bg-muted text-sm font-semibold text-foreground transition-colors"
-            >
-              Already have an account? <span className="text-primary">Sign in →</span>
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );

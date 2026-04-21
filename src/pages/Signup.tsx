@@ -145,7 +145,17 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background relative">
+      {mode === "signup" && (
+        <button
+          type="button"
+          onClick={() => switchMode("login")}
+          className="absolute top-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-foreground text-sm font-semibold text-foreground hover:bg-foreground hover:text-background transition-colors"
+        >
+          <LogIn className="w-4 h-4" />
+          Login
+        </button>
+      )}
       <div className="w-full max-w-md">
         
 

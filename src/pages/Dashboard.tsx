@@ -220,8 +220,8 @@ const Dashboard = () => {
       {/* Builder spotlight */}
       <div className="mb-4">
         <CrossPromoSpotlight
-          title="Builder spotlight"
-          subtitle="See what others are building"
+          title="App builder spotlight"
+          subtitle="See what other builders are launching"
           position="dashboard"
         />
       </div>
@@ -231,8 +231,8 @@ const Dashboard = () => {
         <CardContent className="p-5 flex items-center gap-3">
           <img src={aiAvatar} alt="Johnny B AI" className="h-10 w-10 rounded-full object-cover border border-border shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold text-foreground">Johnny B AI</p>
-            <p className="text-xs text-muted-foreground">Get help building faster</p>
+            <p className="font-semibold text-foreground">Your AI app builder</p>
+            <p className="text-xs text-muted-foreground">Shape your challenge flow, content & positioning faster</p>
           </div>
           <Sparkles className="w-4 h-4 text-primary" />
         </CardContent>

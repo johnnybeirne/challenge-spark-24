@@ -89,9 +89,9 @@ const Landing = () => {
   );
 
   const steps = [
-    { icon: Rocket, title: "Start challenge", desc: "Pick your idea. We'll handle the rest." },
-    { icon: Users, title: "Invite others", desc: "Share one link. They join in seconds." },
-    { icon: TrendingUp, title: "Unlock growth", desc: "Every person you invite brings more." },
+    { icon: Rocket, title: "Plan your app", desc: "Pick your idea. We'll shape it into an app." },
+    { icon: Users, title: "Build with AI", desc: "Use AI to create your challenge flow & content." },
+    { icon: TrendingUp, title: "Launch & grow", desc: "Share your app. It grows your audience for you." },
   ];
 
   return (

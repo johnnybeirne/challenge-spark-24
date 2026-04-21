@@ -1,18 +1,61 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Share2, ArrowRight, RotateCcw } from "lucide-react";
+import { Share2, ArrowRight } from "lucide-react";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
 import {
   styleLabels,
   styleIcons,
-  audienceLabels,
   type AssessmentResult,
-  type ChallengeType,
 } from "@/lib/assessmentData";
+
+/* ── Trust Leverage scoring (derived from existing answers) ── */
+type Dimensions = {
+  clarity: number;
+  audience: number;
+  system: number;
+  momentum: number;
+};
+
+function calculateTrustLeverage(a: Record<string, string>): { score: number; dims: Dimensions } {
+  // Clarity — q3 (what you help with) + q6 (frustration = clarity?)
+  const clarityMap: Record<string, number> = { strategy: 80, services: 85, coaching: 80, content: 75, undefined: 35 };
+  let clarity = clarityMap[a.q3] ?? 50;
+  if (a.q6 === "clarity") clarity -= 15;
+
+  // Audience — q4 size
+  const audienceMap: Record<string, number> = { starting: 35, small: 60, growing: 80, established: 95 };
+  const audience = audienceMap[a.q4] ?? 50;
+
+  // System — q5 lead source predictability + q6 if leads/consistency block
+  const systemMap: Record<string, number> = { referrals: 60, content: 75, ads: 70, inconsistent: 30 };
+  let system = systemMap[a.q5] ?? 50;
+  if (a.q6 === "leads" || a.q6 === "consistency") system -= 10;
+
+  // Momentum — q7 readiness + q8 share intent
+  const readyMap: Record<string, number> = { ready: 95, almost: 75, exploring: 50, curious: 30 };
+  const shareMap: Record<string, number> = { very_likely: 100, likely: 80, maybe: 50, unlikely: 25 };
+  const momentum = Math.round(((readyMap[a.q7] ?? 50) + (shareMap[a.q8] ?? 50)) / 2);
+
+  const dims: Dimensions = {
+    clarity: Math.max(5, Math.min(100, Math.round(clarity))),
+    audience: Math.max(5, Math.min(100, Math.round(audience))),
+    system: Math.max(5, Math.min(100, Math.round(system))),
+    momentum: Math.max(5, Math.min(100, Math.round(momentum))),
+  };
+  const score = Math.round((dims.clarity + dims.audience + dims.system + dims.momentum) / 4);
+  return { score, dims };
+}
+
+const identityDescriptions: Record<string, string> = {
+  quick_win: "You build trust by getting people fast, tangible results — proof beats promises.",
+  transformation: "You build trust through deep change — the kind people remember and share.",
+  skill_builder: "You build trust by teaching real capability — your method shows your value.",
+  launch: "You build trust by helping people ship — momentum is your superpower.",
+};
 
 const Results = () => {
   const navigate = useNavigate();
@@ -28,124 +71,94 @@ const Results = () => {
     );
   }
 
-  const {
-    audienceType,
-    challengeType,
-    readinessLevel,
-    growthBlock,
-    recommendedChallenge,
-    messagingAngle,
-    growthInsight,
-  } = assessment;
-
+  const { challengeType, answers } = assessment;
   const icon = styleIcons[challengeType];
   const label = styleLabels[challengeType];
-  const audienceLabel = audienceLabels[audienceType];
+  const description = identityDescriptions[challengeType];
 
-  const readinessText =
-    readinessLevel === "high"
-      ? "You're ready to start building right now."
-      : readinessLevel === "medium"
-      ? "You're almost there — this challenge will close the gap."
-      : "This is the perfect way to explore and find your direction.";
+  const { score, dims } = useMemo(() => calculateTrustLeverage(answers), [answers]);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-  const shareText = `I'm building a ${label} challenge for ${audienceLabel} — what would you build?`;
+  const shareText = `I scored ${score}/100 — what would you get?`;
 
   const handleShare = () => {
     trackEvent("assessment_result_shared" as any);
     shareOrCopy({ text: shareText, url: referralLink });
   };
 
+  const dimensionList: { key: keyof Dimensions; label: string }[] = [
+    { key: "clarity", label: "Clarity" },
+    { key: "audience", label: "Audience" },
+    { key: "system", label: "System" },
+    { key: "momentum", label: "Momentum" },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
-      {/* Header */}
+      {/* ── Header: icon + identity type + description ── */}
       <div className="flex flex-col items-center text-center mb-6 pt-4">
         <div className="text-5xl mb-3">{icon}</div>
-        <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-2xl font-bold text-foreground">{label}</h1>
-          <Badge variant="outline" className="text-xs">{audienceLabel}</Badge>
-        </div>
-        <p className="text-sm font-medium text-primary">{readinessText}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your identity</p>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{label}</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{description}</p>
       </div>
 
-      {/* Recommended Challenge */}
-      <Card className="mb-5 border-primary/20 bg-primary/5">
+      {/* ── Tension ── */}
+      <Card className="mb-5 border-accent/30 bg-accent/5">
         <CardContent className="p-5">
-          <h3 className="text-lg font-bold text-foreground mb-2">{recommendedChallenge.title}</h3>
-          <p className="text-sm text-muted-foreground mb-3">{recommendedChallenge.description}</p>
-          <div className="bg-background border border-border rounded-lg p-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Outcome</p>
-            <p className="text-sm text-foreground">{recommendedChallenge.outcome}</p>
+          <p className="text-sm text-foreground leading-relaxed italic">
+            "You're sitting on growth that should already be happening — but without a system, it stays stuck."
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* ── Score ── */}
+      <Card className="mb-5 border-primary/20 bg-primary/5">
+        <CardContent className="p-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+            Your trust leverage score
+          </p>
+          <div className="flex items-baseline justify-center gap-1">
+            <span className="text-5xl font-bold text-primary">{score}</span>
+            <span className="text-xl font-medium text-muted-foreground">/100</span>
           </div>
         </CardContent>
       </Card>
 
-      {/* Messaging Angle */}
+      {/* ── Dimensions: 4 bars ── */}
       <Card className="mb-5">
-        <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Your messaging angle</h3>
-          <p className="text-sm text-foreground leading-relaxed">{messagingAngle}</p>
+        <CardContent className="p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            Your dimensions
+          </h3>
+          {dimensionList.map(({ key, label: dimLabel }) => (
+            <div key={key} className="space-y-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="font-medium text-foreground">{dimLabel}</span>
+                <span className="text-muted-foreground tabular-nums">{dims[key]}/100</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-700"
+                  style={{ width: `${dims[key]}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
-      {/* Growth Insight */}
-      <Card className="mb-5 border-accent/30 bg-accent/5">
-        <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Growth insight</h3>
-          <p className="text-sm text-foreground leading-relaxed">{growthInsight}</p>
-        </CardContent>
-      </Card>
-
-      {/* What you'll build */}
-      <Card className="mb-5">
-        <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Here's what you'll build in 3 days</h3>
-          <ul className="space-y-2 text-sm text-foreground">
-            <li className="flex gap-2">
-              <span className="text-primary">✓</span>
-              <span>A quiz that attracts {audienceType === "b2b" ? "decision-makers" : "your ideal audience"}</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-primary">✓</span>
-              <span>A multi-day challenge that builds trust through real outcomes</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-primary">✓</span>
-              <span>Built-in referrals — participants invite others, so it grows itself</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-primary">✓</span>
-              <span>Email capture on every quiz taker and participant</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Share */}
+      {/* ── Share ── */}
       <Button variant="outline" className="w-full h-12 rounded-xl mb-3 gap-2" onClick={handleShare}>
         <Share2 className="w-4 h-4" />
-        Share my result
+        I scored {score}/100 — what would you get?
       </Button>
 
-      {/* CTA */}
-      <Button className="w-full h-[52px] text-base rounded-xl gap-2 mb-3" onClick={() => navigate("/join")}>
-        Start building your challenge
+      {/* ── CTA ── */}
+      <Button className="w-full h-[52px] text-base rounded-xl gap-2" onClick={() => navigate("/join")}>
+        Join the challenge
         <ArrowRight className="w-4 h-4" />
-      </Button>
-
-      {/* Retake */}
-      <Button
-        variant="ghost"
-        className="w-full gap-2 text-muted-foreground"
-        onClick={() => {
-          trackEvent("assessment_retaken" as any);
-          navigate("/assess");
-        }}
-      >
-        <RotateCcw className="w-4 h-4" />
-        Retake assessment
       </Button>
     </div>
   );

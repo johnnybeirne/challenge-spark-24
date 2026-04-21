@@ -114,6 +114,15 @@ const Landing = () => {
                 <p className="text-sm text-muted-foreground">
                   Takes less than 30 seconds to start
                 </p>
+                <p className="text-sm text-muted-foreground">
+                  Already started?{" "}
+                  <button
+                    onClick={() => navigate("/join")}
+                    className="text-primary font-medium underline-offset-4 hover:underline"
+                  >
+                    Log in
+                  </button>
+                </p>
               </div>
             </div>
           </Reveal>
@@ -188,8 +197,17 @@ const Landing = () => {
           <p className="text-lg text-muted-foreground">
             Less than 30 seconds. No credit card. Just start.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 space-y-3">
             <Cta label="Start your 3-day challenge" section="bottom" />
+            <p className="text-sm text-muted-foreground">
+              Already started?{" "}
+              <button
+                onClick={() => navigate("/join")}
+                className="text-primary font-medium underline-offset-4 hover:underline"
+              >
+                Log in
+              </button>
+            </p>
           </div>
         </Reveal>
       </section>

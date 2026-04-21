@@ -17,7 +17,7 @@ type Step = "name" | "email" | "password";
 
 const PROMPTS: Record<Step, { signup: string; login: string }> = {
   name: {
-    signup: "Hey — I'm your growth co-pilot. What should I call you?",
+    signup: "Johnny here, please enter your name",
     login: "Welcome back. What's your email?",
   },
   email: {

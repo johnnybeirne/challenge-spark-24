@@ -12,7 +12,7 @@ import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
-    { label: "Define your app" },
+    { label: "Define your challenge" },
     { label: "Map your pages" },
     { label: "Create structure" },
   ],

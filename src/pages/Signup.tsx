@@ -150,7 +150,7 @@ const Signup = () => {
             <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
           </div>
           <div className="flex-1 pt-1">
-            <div className="text-xs text-muted-foreground mb-1.5">Co-pilot · online</div>
+            <div className="text-xs text-muted-foreground mb-1.5">Johnny B AI</div>
             <TypingBubble key={`${mode}-${step}`} text={promptText} />
           </div>
         </div>

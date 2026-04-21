@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Users, ArrowRight, Sparkles, Rocket } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
-import aiAvatar from "@/assets/ai-avatar.jpg";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [

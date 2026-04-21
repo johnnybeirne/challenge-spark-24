@@ -180,7 +180,7 @@ const RewardDetail = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">{asset.contribution_description}</p>
             <div className="flex items-center gap-1.5 mt-3 text-xs text-muted-foreground">
               <Crown className="h-3 w-3" />
-              <span>Provided by a verified ChallengeOS partner</span>
+              <span>Provided by a verified Leadio partner</span>
             </div>
           </CardContent>
         </Card>
@@ -210,7 +210,7 @@ const RewardDetail = () => {
           <Card className="border-border mb-6">
             <CardContent className="p-5 text-center">
               <ExternalLink className="h-6 w-6 text-primary mx-auto mb-2 animate-pulse" />
-              <p className="text-sm font-medium text-foreground">You are leaving ChallengeOS</p>
+              <p className="text-sm font-medium text-foreground">You are leaving Leadio</p>
               <p className="text-xs text-muted-foreground mt-1">Opening resource in a new tab…</p>
             </CardContent>
           </Card>
@@ -230,7 +230,7 @@ const RewardDetail = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">{partnerName}</p>
-                <p className="text-xs text-muted-foreground">ChallengeOS Partner</p>
+                <p className="text-xs text-muted-foreground">Leadio Partner</p>
               </div>
             </div>
           </CardContent>

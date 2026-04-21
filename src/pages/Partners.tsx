@@ -24,7 +24,7 @@ const HOW_STEPS = [
   {
     icon: Megaphone,
     title: "Promote the experience",
-    desc: "Share ChallengeOS with your audience using your unique partner link.",
+    desc: "Share Leadio with your audience using your unique partner link.",
   },
   {
     icon: Package,
@@ -190,7 +190,7 @@ const Partners = () => {
             <Crown className="h-6 w-6 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            Become a ChallengeOS Partner
+            Become a Leadio Partner
           </h1>
           <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
             Promote the challenge. Contribute value. Grow your audience through the network.

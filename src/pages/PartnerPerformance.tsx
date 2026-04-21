@@ -137,7 +137,7 @@ const PartnerPerformance = () => {
   };
 
   const handleShare = () => {
-    shareOrCopy({ text: "Join ChallengeOS — build and launch in 3 days", url: partnerLink });
+    shareOrCopy({ text: "Join Leadio — build and launch in 3 days", url: partnerLink });
   };
 
   return (
@@ -150,7 +150,7 @@ const PartnerPerformance = () => {
             <h1 className="text-2xl font-bold text-foreground">Partner Performance</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            See how your asset and profile are performing inside the ChallengeOS network.
+            See how your asset and profile are performing inside the Leadio network.
           </p>
           <Badge className="mt-2 bg-primary/10 text-primary text-xs">
             Approved asset: {asset.contribution_title}
@@ -294,7 +294,7 @@ const PartnerPerformance = () => {
             <Copy className="h-4 w-4" /> Copy my partner link
           </Button>
           <Button variant="outline" className="w-full gap-2 min-h-[48px]" onClick={handleShare}>
-            <Share2 className="h-4 w-4" /> Share ChallengeOS
+            <Share2 className="h-4 w-4" /> Share Leadio
           </Button>
           <Button variant="outline" className="w-full gap-2 min-h-[48px]" onClick={() => navigate("/partner")}>
             <Crown className="h-4 w-4" /> View promoter dashboard
@@ -343,7 +343,7 @@ const PartnerPerformance = () => {
                 As your challenge and asset are shown across the network, your performance data will appear here.
               </p>
               <Button size="sm" onClick={handleShare} className="gap-1">
-                <Share2 className="h-3 w-3" /> Share ChallengeOS
+                <Share2 className="h-3 w-3" /> Share Leadio
               </Button>
             </CardContent>
           </Card>

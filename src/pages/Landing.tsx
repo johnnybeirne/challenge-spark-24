@@ -115,7 +115,7 @@ const Landing = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="font-semibold border-2"
+                    className="font-semibold border-2 border-foreground"
                     onClick={() => {
                       trackEvent("landing_cta_clicked", { section: "hero_login" });
                       navigate("/join");
@@ -206,7 +206,7 @@ const Landing = () => {
             <Button
               size="lg"
               variant="outline"
-              className="font-semibold border-2"
+              className="font-semibold border-2 border-foreground"
               onClick={() => {
                 trackEvent("landing_cta_clicked", { section: "bottom_login" });
                 navigate("/join");

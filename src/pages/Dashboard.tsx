@@ -1,10 +1,11 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { Users, ArrowRight, Sparkles, Rocket } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
 import aiAvatar from "@/assets/ai-avatar.png";

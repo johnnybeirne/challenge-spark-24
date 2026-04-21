@@ -141,6 +141,7 @@ const Signup = () => {
   const switchMode = (next: Mode) => {
     setMode(next);
     if (next === "signup") setStep("name");
+    if (next === "signup") setAccountExistsNotice(false);
   };
 
   return (

@@ -69,7 +69,7 @@ const AiCopilotChat = () => {
       {!open && (
         <button
           onClick={handleOpen}
-          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full overflow-hidden border-2 border-foreground shadow-lg flex items-center justify-center hover:scale-105 transition-transform ${
+          className={`fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full overflow-hidden border-2 border-foreground shadow-lg flex items-center justify-center hover:scale-105 transition-transform ${
             !hasOpened ? "animate-bounce-in" : ""
           }`}
           aria-label="Open chat with Johnny B AI"
@@ -80,8 +80,8 @@ const AiCopilotChat = () => {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden"
-          style={{ maxHeight: "min(520px, calc(100vh - 6rem))" }}
+        <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden"
+          style={{ maxHeight: "min(520px, calc(100vh - 8rem))" }}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">

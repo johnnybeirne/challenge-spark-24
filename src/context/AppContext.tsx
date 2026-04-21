@@ -154,7 +154,10 @@ interface UnlockDef {
   check: (s: AppState) => boolean;
 }
 
-const unlockDefs: UnlockDef[] = [
+export const unlockDefs: UnlockDef[] = [
+  { id: "faster_start", name: "Faster Start Mode", value: 29, reason: "Invited first builder", check: (s) => s.network.direct >= 1 },
+  { id: "ai_accelerator", name: "AI Accelerator", value: 49, reason: "Invited 2 builders", check: (s) => s.network.direct >= 2 },
+  { id: "momentum_boost", name: "Momentum Boost", value: 79, reason: "Invited 3 builders", check: (s) => s.network.direct >= 3 },
   { id: "day1_blueprint", name: "App blueprint", value: 97, reason: "Completed Day 1", check: (s) => s.challenge.currentDay > 1 },
   { id: "day2_playbook", name: "Challenge playbook", value: 147, reason: "Completed Day 2", check: (s) => s.challenge.currentDay > 2 },
   { id: "day3_checklist", name: "Launch checklist", value: 97, reason: "Completed Day 3", check: (s) => s.challenge.completed || s.challenge.currentDay > 3 },
@@ -177,6 +180,19 @@ const unlockDefs: UnlockDef[] = [
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {
   let updated = { ...state };
+
+  // Runtime guard: dedupe any pre-existing duplicates in state.unlocks (defends against bad hydration)
+  const seen = new Set<string>();
+  const deduped: UnlockEntry[] = [];
+  for (const u of updated.unlocks) {
+    if (seen.has(u.id)) continue;
+    seen.add(u.id);
+    deduped.push(u);
+  }
+  if (deduped.length !== updated.unlocks.length) {
+    updated = { ...updated, unlocks: deduped };
+  }
+
   const existing = new Set(updated.unlocks.map((u) => u.id));
   let changed = false;
 
@@ -193,6 +209,20 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
     };
 
     updated = { ...updated, unlocks: [...updated.unlocks, entry] };
+    existing.add(def.id);
+
+    if (def.id === "momentum_boost") {
+      // Auto-complete one low-value Day 1 task as the immediate reward
+      if (!updated.challenge.tasks["day1_create_structure"]) {
+        updated = {
+          ...updated,
+          challenge: {
+            ...updated.challenge,
+            tasks: { ...updated.challenge.tasks, day1_create_structure: true },
+          },
+        };
+      }
+    }
 
     if (def.id === "builder_circle") {
       updated = {

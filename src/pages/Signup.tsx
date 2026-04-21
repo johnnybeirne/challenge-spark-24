@@ -63,6 +63,7 @@ const Signup = () => {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [accountExistsNotice, setAccountExistsNotice] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {
@@ -101,8 +102,8 @@ const Signup = () => {
     if (error) {
       const msg = (error.message || "").toLowerCase();
       if (msg.includes("already") || msg.includes("registered") || msg.includes("exists")) {
-        toast.info("You already have an account — sign in instead.");
         setLoginEmail(signupEmail.trim().toLowerCase());
+        setAccountExistsNotice(true);
         setMode("login");
         return;
       }
@@ -140,6 +141,7 @@ const Signup = () => {
   const switchMode = (next: Mode) => {
     setMode(next);
     if (next === "signup") setStep("name");
+    if (next === "signup") setAccountExistsNotice(false);
   };
 
   return (
@@ -213,9 +215,25 @@ const Signup = () => {
         ) : (
           <>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
-            <p className="text-sm text-muted-foreground text-center mb-8">
+            <p className="text-sm text-muted-foreground text-center mb-6">
               Sign in to continue your challenge.
             </p>
+
+            {accountExistsNotice && (
+              <div className="flex items-start gap-3 mb-6 p-4 rounded-xl border-2 border-foreground bg-primary/5">
+                <img
+                  src={aiAvatar}
+                  alt=""
+                  className="w-10 h-10 rounded-full border-2 border-foreground/10 shrink-0"
+                />
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-0.5">Johnny B AI</div>
+                  <p className="text-sm text-foreground">
+                    Looks like you've already got an account with that email. Pop your password in below and you're back in.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">

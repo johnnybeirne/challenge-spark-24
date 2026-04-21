@@ -51,10 +51,10 @@ function calculateTrustLeverage(a: Record<string, string>): { score: number; dim
 }
 
 const identityDescriptions: Record<string, string> = {
-  quick_win: "You should build a quick-win AI-powered challenge app — fast, tangible results that prove value in minutes.",
-  transformation: "You should build a transformation AI-powered challenge app — guiding users through deep change they remember and share.",
-  skill_builder: "You should build a skill-building AI-powered challenge app — teaching real capability with each step.",
-  launch: "You should build a launch AI-powered challenge app — helping users ship something real by the end.",
+  quick_win: "You should build a quick-win AI-powered challenge — fast, tangible results that prove value in minutes.",
+  transformation: "You should build a transformation AI-powered challenge — guiding users through deep change they remember and share.",
+  skill_builder: "You should build a skill-building AI-powered challenge — teaching real capability with each step.",
+  launch: "You should build a launch AI-powered challenge — helping users ship something real by the end.",
 };
 
 const Results = () => {
@@ -103,7 +103,7 @@ const Results = () => {
       {/* ── Header: icon + identity type + description ── */}
       <div className="flex flex-col items-center text-center mb-6 pt-4">
         <div className="text-5xl mb-3">{icon}</div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your app type</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your challenge type</p>
         <h1 className="text-2xl font-bold text-foreground mb-2">{label}</h1>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{description}</p>
         <p className="text-xs text-muted-foreground/80 leading-relaxed max-w-sm mt-3 italic">
@@ -164,7 +164,7 @@ const Results = () => {
 
       {/* ── CTA ── */}
       <Button className="w-full h-[52px] text-base rounded-xl gap-2" onClick={() => navigate("/join")}>
-        Start building your app
+        Start building your challenge
         <ArrowRight className="w-4 h-4" />
       </Button>
     </div>

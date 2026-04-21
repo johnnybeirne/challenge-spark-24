@@ -12,7 +12,7 @@ import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
-    { label: "Define your app" },
+    { label: "Define your challenge" },
     { label: "Map your pages" },
     { label: "Create structure" },
   ],
@@ -77,7 +77,7 @@ const Dashboard = () => {
             Day {currentDay} of 3
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            You're building your AI-powered challenge app
+            You're building your AI-powered challenge
           </p>
         </div>
         {authUser && (
@@ -99,14 +99,14 @@ const Dashboard = () => {
       <Card className="mb-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
         <CardContent className="p-5">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-            Your app
+            Your challenge
           </p>
           {setup ? (
             <>
               <h2 className="text-lg font-bold text-foreground leading-snug">
                 You're building a{" "}
                 <span className="text-primary">{challengeLabel[setup.challengeType] ?? setup.challengeType}</span>{" "}
-                AI-powered challenge app for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
+                AI-powered challenge for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
               </h2>
               {setup.topicHint && (
                 <p className="text-sm text-muted-foreground mt-2">{setup.topicHint}</p>
@@ -117,9 +117,9 @@ const Dashboard = () => {
             </>
           ) : (
             <>
-              <h2 className="text-lg font-bold text-foreground">Let's set up your app</h2>
+              <h2 className="text-lg font-bold text-foreground">Let's set up your challenge</h2>
               <p className="text-sm text-muted-foreground mt-1 mb-4">
-                Two quick taps and you're building your challenge app.
+                Two quick taps and you're building your challenge.
               </p>
               <Button onClick={() => navigate("/day/1")} className="w-full font-semibold">
                 Start setup
@@ -184,12 +184,12 @@ const Dashboard = () => {
       {(completedCount >= 1 || dwellElapsed) && (
         <Card className="mb-4 border-border">
           <CardContent className="p-4">
-            <p className="font-semibold text-foreground">Build your app with others</p>
+            <p className="font-semibold text-foreground">Build your challenge with others</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Invite others to test your app — builders who share finish and launch more often.
+              Invite others to test your challenge — builders who share finish and launch more often.
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Inviting builders unlocks tools that help you build your app faster.
+              Inviting builders unlocks tools that help you build your challenge faster.
             </p>
             <p className="text-xs text-muted-foreground mt-2">You can do this anytime.</p>
 
@@ -220,7 +220,7 @@ const Dashboard = () => {
       {/* Builder spotlight */}
       <div className="mb-4">
         <CrossPromoSpotlight
-          title="App builder spotlight"
+          title="Builder spotlight"
           subtitle="See what other builders are launching"
           position="dashboard"
         />
@@ -231,7 +231,7 @@ const Dashboard = () => {
         <CardContent className="p-5 flex items-center gap-3">
           <img src={aiAvatar} alt="Johnny B AI" className="h-10 w-10 rounded-full object-cover border border-border shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold text-foreground">Your AI app builder</p>
+            <p className="font-semibold text-foreground">Your AI challenge builder</p>
             <p className="text-xs text-muted-foreground">Shape your challenge flow, content & positioning faster</p>
           </div>
           <Sparkles className="w-4 h-4 text-primary" />

@@ -99,14 +99,14 @@ const Dashboard = () => {
       <Card className="mb-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
         <CardContent className="p-5">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-            Your app
+            Your challenge
           </p>
           {setup ? (
             <>
               <h2 className="text-lg font-bold text-foreground leading-snug">
                 You're building a{" "}
                 <span className="text-primary">{challengeLabel[setup.challengeType] ?? setup.challengeType}</span>{" "}
-                AI-powered challenge app for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
+                AI-powered challenge for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
               </h2>
               {setup.topicHint && (
                 <p className="text-sm text-muted-foreground mt-2">{setup.topicHint}</p>
@@ -117,9 +117,9 @@ const Dashboard = () => {
             </>
           ) : (
             <>
-              <h2 className="text-lg font-bold text-foreground">Let's set up your app</h2>
+              <h2 className="text-lg font-bold text-foreground">Let's set up your challenge</h2>
               <p className="text-sm text-muted-foreground mt-1 mb-4">
-                Two quick taps and you're building your challenge app.
+                Two quick taps and you're building your challenge.
               </p>
               <Button onClick={() => navigate("/day/1")} className="w-full font-semibold">
                 Start setup

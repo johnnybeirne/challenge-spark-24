@@ -197,6 +197,18 @@ const Signup = () => {
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </form>
+
+            <div className="mt-8 pt-6 border-t border-border text-center">
+              <p className="text-sm text-muted-foreground mb-2">Already have an account?</p>
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign in instead
+              </button>
+            </div>
           </>
         ) : (
           <>

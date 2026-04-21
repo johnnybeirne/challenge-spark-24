@@ -2,15 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Share2, Users, TrendingUp } from "lucide-react";
-import ActivityFeed from "@/components/ActivityFeed";
-import InviteNudgeCard from "@/components/InviteNudgeCard";
-import InviteMilestoneModal from "@/components/InviteMilestoneModal";
+import { Progress } from "@/components/ui/progress";
+import { Users, ArrowRight, Sparkles, Rocket, Bot } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
-import { usePromoter } from "@/hooks/usePromoter";
-import { getExperience } from "@/lib/experience";
+import { getSetup } from "@/components/Day1Setup";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -30,141 +26,193 @@ const dayTasks: Record<number, { label: string }[]> = {
   ],
 };
 
-const styleLabelsMap: Record<string, string> = {
-  quick_win: "Quick Win",
-  transformation: "Transformation",
-  skill_builder: "Skill Builder",
-  launch: "Launch",
+const challengeLabel: Record<string, string> = {
+  "quick-win": "quick-win",
+  "transformation": "transformation",
+  "skill": "skill-building",
+  "launch": "launch",
 };
+
+const audienceLabel = (v?: "b2b" | "b2c") =>
+  v === "b2b" ? "businesses" : v === "b2c" ? "consumers" : "";
 
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
-  const { promoter } = usePromoter();
   const navigate = useNavigate();
-  const experience = getExperience(state.user?.role);
   const currentDay = state.challenge.currentDay || 1;
   const tasks = dayTasks[currentDay] || dayTasks[1];
-  const recommended = state.assessment?.challengeType || state.assessment?.recommended;
-  const audienceType = state.assessment?.audienceType;
+  const setup = getSetup();
+  const referralCount = state.network.direct;
 
   const toggleTask = (taskKey: string) => {
     setState((prev) => ({
       ...prev,
       challenge: {
         ...prev.challenge,
-        tasks: {
-          ...prev.challenge.tasks,
-          [taskKey]: !prev.challenge.tasks[taskKey],
-        },
+        tasks: { ...prev.challenge.tasks, [taskKey]: !prev.challenge.tasks[taskKey] },
       },
     }));
   };
 
-  const shareLink = () => {
-    const code = state.user?.inviteCode || "XXXXX";
-    const text = encodeURIComponent(
-      `Join me on the 3-day trust leverage challenge! Use my code: ${code}`
-    );
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
-  };
+  const completedCount = tasks.filter((_, i) => state.challenge.tasks[`day${currentDay}_task${i}`]).length;
 
   return (
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between mb-6">
         <div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
             {state.user?.name ? `Hey, ${state.user.name}` : "Welcome back"}
           </p>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground mt-1">
             Day {currentDay} of 3
           </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            You're building your growth system
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          {recommended && (
-            <Badge variant="secondary" className="text-xs">
-              {styleLabelsMap[recommended] || recommended} · {audienceType === "b2b" ? "B2B" : "B2C"}
-            </Badge>
-          )}
-          {authUser && (
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={async () => {
+        {authUser && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-muted-foreground"
+            onClick={async () => {
               await signOut();
               window.location.href = "/";
-            }}>
-              Sign out
-            </Button>
-          )}
-        </div>
+            }}
+          >
+            Sign out
+          </Button>
+        )}
       </div>
 
-      {/* Invite nudge */}
-      <div className="mb-4">
-        <InviteNudgeCard />
-      </div>
-
-      {/* Milestone modal */}
-      <InviteMilestoneModal />
-
-      {/* Today's Challenge */}
-      <Card className="mb-4">
+      {/* Your Challenge / Setup */}
+      <Card className="mb-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
         <CardContent className="p-5">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-            Today's Challenge
-          </h2>
-          <div className="space-y-3">
-            {tasks.map((task, i) => {
-              const key = `day${currentDay}_task${i}`;
-              const checked = !!state.challenge.tasks[key];
-              return (
-                <label
-                  key={key}
-                  className="flex items-center gap-3 cursor-pointer group"
-                  onClick={() => toggleTask(key)}
-                >
-                  <Checkbox checked={checked} className="pointer-events-none" />
-                  <span
-                    className={`text-sm transition-colors ${
-                      checked
-                        ? "line-through text-muted-foreground"
-                        : "text-foreground group-hover:text-primary"
-                    }`}
-                  >
-                    {task.label}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
+            Your challenge
+          </p>
+          {setup ? (
+            <>
+              <h2 className="text-lg font-bold text-foreground leading-snug">
+                You're building a{" "}
+                <span className="text-primary">{challengeLabel[setup.challengeType] ?? setup.challengeType}</span>{" "}
+                for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
+              </h2>
+              {setup.topicHint && (
+                <p className="text-sm text-muted-foreground mt-2">{setup.topicHint}</p>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 className="text-lg font-bold text-foreground">Let's set this up</h2>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                Two quick taps and you're building.
+              </p>
+              <Button onClick={() => navigate("/day/1")} className="w-full font-semibold">
+                Start setup
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
 
-      {/* Referrals */}
+      {/* Today's Tasks */}
+      {setup && (
+        <Card className="mb-4">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                Today's tasks
+              </p>
+              <span className="text-xs text-muted-foreground font-medium">
+                {completedCount} / {tasks.length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {tasks.map((task, i) => {
+                const key = `day${currentDay}_task${i}`;
+                const checked = !!state.challenge.tasks[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => toggleTask(key)}
+                    className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all active:scale-[0.99] ${
+                      checked
+                        ? "border-primary/40 bg-primary/5"
+                        : "border-border bg-card hover:border-primary/40"
+                    }`}
+                  >
+                    <Checkbox checked={checked} className="pointer-events-none h-5 w-5" />
+                    <span
+                      className={`flex-1 font-medium transition-colors ${
+                        checked ? "line-through text-muted-foreground" : "text-foreground"
+                      }`}
+                    >
+                      {task.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => navigate(`/day/${currentDay}`)}
+            >
+              Open Day {currentDay}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Your Network */}
       <Card className="mb-4">
-        <CardContent className="p-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Users className="w-5 h-5 text-primary" />
-            <span className="text-sm text-foreground">
-              Your referrals: <strong>{state.referrals.count}</strong>
-            </span>
+        <CardContent className="p-5">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                Your network
+              </p>
+              <p className="text-lg font-bold text-foreground mt-0.5">
+                {referralCount} {referralCount === 1 ? "builder" : "builders"} joined through you
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                This grows as people join and invite others
+              </p>
+            </div>
           </div>
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={shareLink}>
-            <Share2 className="w-3.5 h-3.5" />
-            Share your link
+          <Button onClick={() => navigate("/referrals")} className="w-full font-semibold">
+            Invite builders
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </CardContent>
       </Card>
 
-      {/* Network Growth */}
-      {(state.network.direct > 0 || state.network.indirect > 0) && (
-        <Card className="mb-4 bg-primary/5">
-          <CardContent className="p-5 flex items-center gap-3">
-            <TrendingUp className="w-5 h-5 text-primary shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Your network is growing</p>
-              <p className="text-xs text-muted-foreground">
-                {state.network.direct} direct · {state.network.indirect} indirect builders
-              </p>
+      {/* Momentum nudge — < 3 referrals */}
+      {referralCount < 3 && (
+        <Card className="mb-4 border-primary/30 bg-primary/5">
+          <CardContent className="p-5">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                <Rocket className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-foreground leading-snug">
+                  You're {3 - referralCount} {3 - referralCount === 1 ? "invite" : "invites"} away from unlocking faster growth
+                </p>
+              </div>
             </div>
+            <Progress value={(referralCount / 3) * 100} className="h-2 mb-3" />
+            <Button onClick={() => navigate("/referrals")} className="w-full font-semibold">
+              Invite now
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -173,34 +221,24 @@ const Dashboard = () => {
       <div className="mb-4">
         <CrossPromoSpotlight
           title="Builder spotlight"
-          subtitle="See what other builders are launching inside the network"
+          subtitle="See what others are building"
           position="dashboard"
         />
       </div>
 
-      {/* Become a partner — consumer only, not already a promoter */}
-      {experience === "consumer" && !promoter && (
-        <Card className="mb-4 border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => navigate("/partners")}>
-          <CardContent className="p-5 flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <TrendingUp className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-foreground">Contribute to the ecosystem</p>
-              <p className="text-xs text-muted-foreground">Share your expertise and grow your audience through the network</p>
-            </div>
-            <Button size="sm" variant="default" className="shrink-0" onClick={(e) => { e.stopPropagation(); navigate("/partners"); }}>
-              Learn more
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Activity */}
-      <div className="mb-4">
-        <ActivityFeed limit={3} title="Builder activity" />
-      </div>
-
+      {/* AI co-pilot */}
+      <Card className="mb-4 cursor-pointer hover:border-primary/40 transition-colors" onClick={() => navigate(`/day/${currentDay}`)}>
+        <CardContent className="p-5 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Bot className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-foreground">Your AI co-pilot</p>
+            <p className="text-xs text-muted-foreground">Get help building faster</p>
+          </div>
+          <Sparkles className="w-4 h-4 text-primary" />
+        </CardContent>
+      </Card>
     </div>
   );
 };

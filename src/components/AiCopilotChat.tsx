@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bot, Send, Loader2, X, MessageCircle } from "lucide-react";
+import { Send, Loader2, X } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import TypingDots from "@/components/TypingDots";
+import aiAvatar from "@/assets/ai-avatar.jpg";
 
 interface ChatEntry {
   prompt: string;

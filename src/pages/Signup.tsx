@@ -17,7 +17,7 @@ type Mode = "signup" | "login";
 type SignupStep = "name" | "email" | "password";
 
 const SIGNUP_PROMPTS: Record<SignupStep, string> = {
-  name: "Johnny here — what's your name?",
+  name: "Johnny here — what's your first and last name?",
   email: "Nice to meet you, {name}. What email should I use for your account?",
   password: "Pick a password (6+ characters) and you're in.",
 };
@@ -53,7 +53,9 @@ const Signup = () => {
 
   // Signup chat state
   const [step, setStep] = useState<SignupStep>("name");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const name = `${firstName.trim()} ${lastName.trim()}`.trim();
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const signupInputRef = useRef<HTMLInputElement>(null);
@@ -76,7 +78,7 @@ const Signup = () => {
   const promptText = SIGNUP_PROMPTS[step].replace("{name}", name.trim() || "there");
 
   const canAdvanceSignup = (() => {
-    if (step === "name") return name.trim().length > 0;
+    if (step === "name") return firstName.trim().length > 0 && lastName.trim().length > 0;
     if (step === "email") return signupEmail.trim().includes("@");
     return signupPassword.length >= 6;
   })();
@@ -118,8 +120,6 @@ const Signup = () => {
   };
 
   const signupInputProps = (() => {
-    if (step === "name")
-      return { type: "text", placeholder: "Type your name…", value: name, onChange: (e: any) => setName(e.target.value), autoComplete: "name", maxLength: 100 };
     if (step === "email")
       return { type: "email", placeholder: "you@example.com", value: signupEmail, onChange: (e: any) => setSignupEmail(e.target.value), autoComplete: "email", maxLength: 255 };
     return { type: "password", placeholder: "••••••", value: signupPassword, onChange: (e: any) => setSignupPassword(e.target.value), autoComplete: "new-password", minLength: 6 };
@@ -184,12 +184,36 @@ const Signup = () => {
             )}
 
             <form onSubmit={handleSignupNext} className="flex gap-2 items-center mt-6">
-              <Input
-                key={step}
-                ref={signupInputRef}
-                {...(signupInputProps as any)}
-                className="h-12 rounded-xl text-base border-2 border-foreground"
-              />
+              {step === "name" ? (
+                <div className="flex-1 grid grid-cols-2 gap-2">
+                  <Input
+                    ref={signupInputRef}
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    autoComplete="given-name"
+                    maxLength={50}
+                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    autoComplete="family-name"
+                    maxLength={50}
+                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                  />
+                </div>
+              ) : (
+                <Input
+                  key={step}
+                  ref={signupInputRef}
+                  {...(signupInputProps as any)}
+                  className="h-12 rounded-xl text-base border-2 border-foreground"
+                />
+              )}
               <Button
                 type="submit"
                 disabled={!canAdvanceSignup || loading}

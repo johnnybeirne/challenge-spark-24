@@ -47,8 +47,19 @@ Deno.serve(async (req) => {
       daily[day][e.event_name] = (daily[day][e.event_name] || 0) + 1;
     }
 
+    // User list with referral data
+    const { data: users } = await sb
+      .from("profiles")
+      .select("name, email, invite_code, referred_by, direct_referral_count, indirect_referral_count, created_at")
+      .order("created_at", { ascending: false });
+
     return new Response(
-      JSON.stringify({ counts, daily, total_events: events?.length ?? 0 }),
+      JSON.stringify({
+        counts,
+        daily,
+        total_events: events?.length ?? 0,
+        users: users ?? [],
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {

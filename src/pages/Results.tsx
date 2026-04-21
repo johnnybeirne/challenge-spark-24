@@ -51,10 +51,10 @@ function calculateTrustLeverage(a: Record<string, string>): { score: number; dim
 }
 
 const identityDescriptions: Record<string, string> = {
-  quick_win: "You build trust by getting people fast, tangible results — proof beats promises.",
-  transformation: "You build trust through deep change — the kind people remember and share.",
-  skill_builder: "You build trust by teaching real capability — your method shows your value.",
-  launch: "You build trust by helping people ship — momentum is your superpower.",
+  quick_win: "You should build a quick-win AI-powered challenge app — fast, tangible results that prove value in minutes.",
+  transformation: "You should build a transformation AI-powered challenge app — guiding users through deep change they remember and share.",
+  skill_builder: "You should build a skill-building AI-powered challenge app — teaching real capability with each step.",
+  launch: "You should build a launch AI-powered challenge app — helping users ship something real by the end.",
 };
 
 const Results = () => {

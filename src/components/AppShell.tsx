@@ -12,7 +12,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
 
   return (
     <div className="min-h-screen flex justify-center bg-background overflow-x-hidden">
-      <div className={`w-full relative ${fullWidth ? "" : "max-w-[90vw] pb-20"}`}>
+      <div className={`w-full relative ${fullWidth ? "" : "pb-20"}`}>
         <Outlet />
         {showNav && authenticated && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />

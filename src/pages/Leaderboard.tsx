@@ -88,7 +88,7 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-8 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
         <div className="flex items-center gap-2 mb-1">
           <Trophy className="h-5 w-5 text-primary" />
           <h1 className="text-2xl font-bold text-foreground">Leaderboard</h1>

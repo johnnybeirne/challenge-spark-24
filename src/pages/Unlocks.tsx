@@ -34,7 +34,7 @@ const Unlocks = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-foreground mb-1">Unlocks</h1>
         <p className="text-sm text-muted-foreground mb-2">
           Complete challenges and grow your network to earn rewards.
@@ -84,7 +84,7 @@ const Unlocks = () => {
         </div>
 
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {allUnlocks.map((item) => {
             const unlocked = earnedIds.has(item.id);
             return (

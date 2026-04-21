@@ -173,7 +173,7 @@ const Partners = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-10 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24">
         {/* ─── URGENCY BANNER ─── */}
         {!loading && slotsRemaining > 0 && (
           <div className="mb-6 rounded-lg bg-primary/10 border border-primary/20 px-4 py-3 flex items-center gap-2">

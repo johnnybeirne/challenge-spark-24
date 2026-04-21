@@ -53,7 +53,7 @@ const Referrals = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-8 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
           This only works if people go through it.

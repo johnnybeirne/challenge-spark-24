@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bot, Send, Loader2, X, MessageCircle } from "lucide-react";
+import { Send, Loader2, X } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import TypingDots from "@/components/TypingDots";
+import aiAvatar from "@/assets/ai-avatar.jpg";
 
 interface ChatEntry {
   prompt: string;
@@ -56,7 +57,7 @@ const AiCopilotChat = () => {
         },
       }));
     } catch (err: any) {
-      toast.error(err?.message || "Something went wrong with the AI co-pilot.");
+      toast.error(err?.message || "Something went wrong with Johnny B AI.");
     } finally {
       setLoading(false);
     }
@@ -68,12 +69,12 @@ const AiCopilotChat = () => {
       {!open && (
         <button
           onClick={handleOpen}
-          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors ${
+          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full overflow-hidden border-2 border-foreground shadow-lg flex items-center justify-center hover:scale-105 transition-transform ${
             !hasOpened ? "animate-bounce-in" : ""
           }`}
-          aria-label="Open chat"
+          aria-label="Open chat with Johnny B AI"
         >
-          <MessageCircle className={`h-6 w-6 ${!hasOpened ? "animate-subtle-bounce" : ""}`} style={!hasOpened ? { animationDelay: "0.6s" } : {}} />
+          <img src={aiAvatar} alt="Johnny B AI" className="h-full w-full object-cover" />
         </button>
       )}
 
@@ -85,8 +86,8 @@ const AiCopilotChat = () => {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">AI Co-pilot</h3>
+              <img src={aiAvatar} alt="" className="h-7 w-7 rounded-full object-cover border border-border" />
+              <h3 className="text-sm font-semibold text-foreground">Johnny B AI</h3>
             </div>
             <button
               onClick={() => setOpen(false)}
@@ -101,8 +102,8 @@ const AiCopilotChat = () => {
           <ScrollArea className="flex-1 px-4 py-3">
             {history.length === 0 && !loading && (
               <div className="text-center py-8">
-                <Bot className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Ask me anything about the challenge</p>
+                <img src={aiAvatar} alt="" className="h-12 w-12 rounded-full object-cover mx-auto mb-2 opacity-60" />
+                <p className="text-sm text-muted-foreground">Ask Johnny B AI anything about the challenge</p>
               </div>
             )}
             <div className="space-y-3">

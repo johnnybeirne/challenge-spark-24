@@ -103,7 +103,7 @@ const Results = () => {
       {/* ── Header: icon + identity type + description ── */}
       <div className="flex flex-col items-center text-center mb-6 pt-4">
         <div className="text-5xl mb-3">{icon}</div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your identity</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your app type</p>
         <h1 className="text-2xl font-bold text-foreground mb-2">{label}</h1>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{description}</p>
       </div>

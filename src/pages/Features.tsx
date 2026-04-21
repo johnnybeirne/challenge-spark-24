@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw, Zap, Calendar, Users, Share2, Gift, LayoutDashboard, Flame, Brain, Rocket, Shield, Globe, Sparkles } from "lucide-react";
+import { RefreshCw, Copy, Check, Zap, Calendar, Users, Share2, Gift, LayoutDashboard, Flame, Brain, Rocket, Shield, Globe, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface Feature {
   icon: React.ReactNode;
@@ -98,6 +99,7 @@ const Features = () => {
   const [features, setFeatures] = useState<Feature[]>(() => scanFeatures());
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [spinning, setSpinning] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const refresh = useCallback(() => {
     setSpinning(true);
@@ -107,6 +109,26 @@ const Features = () => {
       setSpinning(false);
     }, 400);
   }, []);
+
+  const copyAll = useCallback(async () => {
+    const grouped = features.reduce<Record<string, Feature[]>>((acc, f) => {
+      (acc[f.category] ||= []).push(f);
+      return acc;
+    }, {});
+    const text = Object.entries(grouped)
+      .map(([cat, list]) =>
+        `## ${cat}\n` + list.map((f) => `- ${f.title} (${f.addedAt}): ${f.description}`).join("\n")
+      )
+      .join("\n\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success(`Copied ${features.length} features`);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }, [features]);
 
   const categories = useMemo(() => {
     const order = ["Newly Detected", "Core", "Onboarding", "Launch", "Growth", "Community", "AI", "Admin", "Security", "Polish"];
@@ -123,10 +145,16 @@ const Features = () => {
       <div className="max-w-[680px] mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold text-foreground">App Features</h1>
-          <Button variant="outline" size="sm" onClick={refresh} disabled={spinning} className="gap-2">
-            <RefreshCw className={`h-4 w-4 ${spinning ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={copyAll} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={refresh} disabled={spinning} className="gap-2">
+              <RefreshCw className={`h-4 w-4 ${spinning ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground mb-6">
           Last updated: {lastUpdated.toLocaleTimeString()} · {features.length} features detected

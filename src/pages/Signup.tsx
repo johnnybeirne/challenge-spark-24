@@ -78,7 +78,7 @@ const Signup = () => {
   const promptText = SIGNUP_PROMPTS[step].replace("{name}", name.trim() || "there");
 
   const canAdvanceSignup = (() => {
-    if (step === "name") return name.trim().length > 0;
+    if (step === "name") return firstName.trim().length > 0 && lastName.trim().length > 0;
     if (step === "email") return signupEmail.trim().includes("@");
     return signupPassword.length >= 6;
   })();

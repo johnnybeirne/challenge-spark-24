@@ -103,18 +103,18 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Build an AI-powered challenge app that{" "}
+                Build an AI-powered challenge that{" "}
                 <span className="text-primary">grows your audience for you</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                In 3 days, create an app that attracts leads, guides users through a challenge, and grows through sharing.
+                In 3 days, create a challenge that attracts leads, guides users through it, and grows through sharing.
               </p>
               <p className="text-base md:text-lg font-medium text-foreground/80">
                 Build it once. Let it run and grow.
               </p>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Cta label="Start building your app" section="hero" />
+                  <Cta label="Start building your challenge" section="hero" />
                   <Button
                     size="lg"
                     variant="outline"

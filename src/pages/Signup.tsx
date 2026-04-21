@@ -147,7 +147,7 @@ const Signup = () => {
               height={48}
               className="w-12 h-12 rounded-full border-2 border-foreground/10"
             />
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+            <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
           </div>
           <div className="flex-1 pt-1">
             <div className="text-xs text-muted-foreground mb-1.5">Co-pilot · online</div>

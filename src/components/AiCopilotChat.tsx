@@ -75,7 +75,6 @@ const AiCopilotChat = () => {
           aria-label="Ask Johnny B AI a question"
         >
           <span className="relative flex h-12 w-12 shrink-0">
-            <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping opacity-75" />
             <img src={aiAvatar} alt="Johnny B AI" className="relative h-12 w-12 rounded-full object-cover border-2 border-background" />
           </span>
           <span className="flex flex-col items-start leading-tight">

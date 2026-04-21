@@ -35,9 +35,9 @@ const TypingBubble = ({ text }: { text: string }) => {
     return () => clearInterval(id);
   }, [text]);
   return (
-    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground max-w-[85%]">
+    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-8 py-6 text-2xl text-foreground max-w-[85%]">
       {shown}
-      <span className="inline-block w-1.5 h-4 bg-foreground/40 ml-0.5 animate-pulse align-middle" />
+      <span className="inline-block w-3 h-8 bg-foreground/40 ml-1 animate-pulse align-middle" />
     </div>
   );
 };
@@ -156,46 +156,46 @@ const Signup = () => {
           Login
         </button>
       )}
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-2xl">
         
 
         {mode === "signup" ? (
           <>
-            <p className="text-xs text-muted-foreground text-center mb-6">
+            <p className="text-base text-muted-foreground text-center mb-12">
               Step {step === "name" ? 1 : step === "email" ? 2 : 3} of 3
             </p>
 
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-start gap-6 mb-8">
               <div className="relative shrink-0">
                 <img
                   src={aiAvatar}
                   alt="Johnny B AI"
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 rounded-full border-2 border-foreground/10"
+                  width={96}
+                  height={96}
+                  className="w-24 h-24 rounded-full border-4 border-foreground/10"
                 />
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
+                <span className="absolute bottom-1 right-1 w-6 h-6 bg-primary rounded-full border-4 border-background" />
               </div>
-              <div className="flex-1 pt-1">
-                <div className="text-xs text-muted-foreground mb-1.5">Johnny B AI</div>
+              <div className="flex-1 pt-2">
+                <div className="text-base text-muted-foreground mb-3">Johnny B AI</div>
                 <TypingBubble key={step} text={promptText} />
               </div>
             </div>
 
             {step !== "name" && name && (
-              <div className="flex justify-end mb-3">
-                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2 text-sm">{name}</div>
+              <div className="flex justify-end mb-6">
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-8 py-4 text-2xl">{name}</div>
               </div>
             )}
             {step === "password" && signupEmail && (
-              <div className="flex justify-end mb-3">
-                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2 text-sm">{signupEmail}</div>
+              <div className="flex justify-end mb-6">
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-8 py-4 text-2xl">{signupEmail}</div>
               </div>
             )}
 
-            <form onSubmit={handleSignupNext} className="flex gap-2 items-center mt-6">
+            <form onSubmit={handleSignupNext} className="flex gap-4 items-center mt-12">
               {step === "name" ? (
-                <div className="flex-1 grid grid-cols-2 gap-2">
+                <div className="flex-1 grid grid-cols-2 gap-4">
                   <Input
                     ref={signupInputRef}
                     type="text"
@@ -204,7 +204,7 @@ const Signup = () => {
                     onChange={(e) => setFirstName(e.target.value)}
                     autoComplete="given-name"
                     maxLength={50}
-                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                    className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
                   />
                   <Input
                     type="text"
@@ -213,7 +213,7 @@ const Signup = () => {
                     onChange={(e) => setLastName(e.target.value)}
                     autoComplete="family-name"
                     maxLength={50}
-                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                    className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
                   />
                 </div>
               ) : (
@@ -221,27 +221,27 @@ const Signup = () => {
                   key={step}
                   ref={signupInputRef}
                   {...(signupInputProps as any)}
-                  className="h-12 rounded-xl text-base border-2 border-foreground"
+                  className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
                 />
               )}
               <Button
                 type="submit"
                 disabled={!canAdvanceSignup || loading}
-                className="h-12 w-12 rounded-xl shrink-0 p-0 border-2 border-foreground"
+                className="h-24 w-24 rounded-2xl shrink-0 p-0 border-4 border-foreground"
                 aria-label="Continue"
               >
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="!w-10 !h-10" />
               </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-border text-center">
-              <p className="text-sm text-muted-foreground mb-2">Already have an account?</p>
+            <div className="mt-16 pt-12 border-t border-border text-center">
+              <p className="text-base text-muted-foreground mb-4">Already have an account?</p>
               <button
                 type="button"
                 onClick={() => switchMode("login")}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                className="inline-flex items-center gap-3 text-base font-semibold text-primary hover:underline"
               >
-                <LogIn className="w-4 h-4" />
+                <LogIn className="w-5 h-5" />
                 Sign in instead
               </button>
             </div>

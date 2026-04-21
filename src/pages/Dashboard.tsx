@@ -77,7 +77,7 @@ const Dashboard = () => {
             Day {currentDay} of 3
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            You're building your AI-powered challenge app
+            You're building your AI-powered challenge
           </p>
         </div>
         {authUser && (

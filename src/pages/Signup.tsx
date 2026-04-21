@@ -215,9 +215,25 @@ const Signup = () => {
         ) : (
           <>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
-            <p className="text-sm text-muted-foreground text-center mb-8">
+            <p className="text-sm text-muted-foreground text-center mb-6">
               Sign in to continue your challenge.
             </p>
+
+            {accountExistsNotice && (
+              <div className="flex items-start gap-3 mb-6 p-4 rounded-xl border-2 border-foreground bg-primary/5">
+                <img
+                  src={aiAvatar}
+                  alt=""
+                  className="w-10 h-10 rounded-full border-2 border-foreground/10 shrink-0"
+                />
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-0.5">Johnny B AI</div>
+                  <p className="text-sm text-foreground">
+                    Looks like you've already got an account with that email. Pop your password in below and you're back in.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">

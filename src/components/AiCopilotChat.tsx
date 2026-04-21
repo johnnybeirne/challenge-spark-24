@@ -69,12 +69,12 @@ const AiCopilotChat = () => {
       {!open && (
         <button
           onClick={handleOpen}
-          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors ${
+          className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full overflow-hidden border-2 border-foreground shadow-lg flex items-center justify-center hover:scale-105 transition-transform ${
             !hasOpened ? "animate-bounce-in" : ""
           }`}
-          aria-label="Open chat"
+          aria-label="Open chat with Johnny B AI"
         >
-          <MessageCircle className={`h-6 w-6 ${!hasOpened ? "animate-subtle-bounce" : ""}`} style={!hasOpened ? { animationDelay: "0.6s" } : {}} />
+          <img src={aiAvatar} alt="Johnny B AI" className="h-full w-full object-cover" />
         </button>
       )}
 

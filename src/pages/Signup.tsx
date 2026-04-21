@@ -63,6 +63,7 @@ const Signup = () => {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [accountExistsNotice, setAccountExistsNotice] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {

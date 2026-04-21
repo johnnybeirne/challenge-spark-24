@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw, Zap, Calendar, Users, Share2, Gift, LayoutDashboard, Flame, Brain, Rocket, Shield, Globe, Sparkles } from "lucide-react";
+import { RefreshCw, Copy, Check, Zap, Calendar, Users, Share2, Gift, LayoutDashboard, Flame, Brain, Rocket, Shield, Globe, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface Feature {
   icon: React.ReactNode;

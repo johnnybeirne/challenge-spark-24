@@ -143,6 +143,33 @@ export type Database = {
         }
         Relationships: []
       }
+      copilot_config: {
+        Row: {
+          created_at: string
+          id: string
+          starter_questions: Json
+          system_prompt: string
+          updated_at: string
+          welcome_message: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          starter_questions?: Json
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          starter_questions?: Json
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Relationships: []
+      }
       cross_promotions: {
         Row: {
           created_at: string

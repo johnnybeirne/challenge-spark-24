@@ -111,7 +111,7 @@ const Landing = () => {
               </p>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Cta label="Start your 3-day challenge" section="hero" />
+                  <Cta label="Start building your app" section="hero" />
                   <Button
                     size="lg"
                     variant="outline"

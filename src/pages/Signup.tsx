@@ -42,28 +42,6 @@ const TypingBubble = ({ text }: { text: string }) => {
   );
 };
 
-const ModeToggle = ({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) => (
-  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl border-2 border-foreground bg-card mb-6">
-    <button
-      type="button"
-      onClick={() => onChange("signup")}
-      className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-        mode === "signup" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-      }`}
-    >
-      Create account
-    </button>
-    <button
-      type="button"
-      onClick={() => onChange("login")}
-      className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-        mode === "login" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-      }`}
-    >
-      Sign in
-    </button>
-  </div>
-);
 
 const Signup = () => {
   const { signUp, signIn } = useAuth();
@@ -167,7 +145,7 @@ const Signup = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background">
       <div className="w-full max-w-md">
-        <ModeToggle mode={mode} onChange={switchMode} />
+        
 
         {mode === "signup" ? (
           <>
@@ -219,6 +197,18 @@ const Signup = () => {
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </form>
+
+            <div className="mt-8 pt-6 border-t border-border text-center">
+              <p className="text-sm text-muted-foreground mb-2">Already have an account?</p>
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign in instead
+              </button>
+            </div>
           </>
         ) : (
           <>
@@ -266,6 +256,16 @@ const Signup = () => {
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
             </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => switchMode("signup")}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                ← Back to create account
+              </button>
+            </div>
           </>
         )}
       </div>

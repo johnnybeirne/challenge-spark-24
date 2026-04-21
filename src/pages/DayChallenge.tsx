@@ -247,6 +247,22 @@ const DayChallenge = () => {
         )}
       </div>
 
+      {dayNum === 1 && (
+        <Card className="mb-4 border-primary/20 bg-primary/5">
+          <CardContent className="p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
+              Why this works
+            </p>
+            <p className="text-sm text-foreground leading-relaxed">
+              This isn't a one-time challenge. Once you build it, it keeps running.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+              And as people go through it, they invite others to unlock more — so it grows on its own.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">

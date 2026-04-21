@@ -25,7 +25,7 @@ const PROMPTS: Record<Step, { signup: string; login: string }> = {
     login: "And your password?",
   },
   password: {
-    signup: "Last thing — pick a password (6+ characters) and we're in.",
+    signup: "Last thing — pick a password (6+ characters) and you're in.",
     login: "",
   },
 };

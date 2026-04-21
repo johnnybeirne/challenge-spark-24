@@ -310,7 +310,7 @@ const DayChallenge = () => {
 
       <div className="mt-6">
         <CrossPromoSpotlight
-          title="Other builders in progress"
+          title="Other apps in progress"
           subtitle=""
           position={`day-${dayNum}`}
         />

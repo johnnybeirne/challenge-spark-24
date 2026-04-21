@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/context/AppContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
+import { AuthProvider } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
@@ -36,8 +37,9 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SiteConfigProvider>
-      <AppProvider>
-        <TooltipProvider>
+      <AuthProvider>
+        <AppProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -92,7 +94,8 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </AppProvider>
+        </AppProvider>
+      </AuthProvider>
     </SiteConfigProvider>
   </QueryClientProvider>
 );

@@ -184,12 +184,12 @@ const Dashboard = () => {
       {(completedCount >= 1 || dwellElapsed) && (
         <Card className="mb-4 border-border">
           <CardContent className="p-4">
-            <p className="font-semibold text-foreground">Build your app with others</p>
+            <p className="font-semibold text-foreground">Build your challenge with others</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Invite others to test your app — builders who share finish and launch more often.
+              Invite others to test your challenge — builders who share finish and launch more often.
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Inviting builders unlocks tools that help you build your app faster.
+              Inviting builders unlocks tools that help you build your challenge faster.
             </p>
             <p className="text-xs text-muted-foreground mt-2">You can do this anytime.</p>
 

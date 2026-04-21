@@ -201,23 +201,25 @@ const Signup = () => {
         </form>
 
         {/* Mode toggle */}
-        <p className="text-sm text-muted-foreground text-center mt-8">
+        <div className="mt-8 flex items-center justify-center">
           {mode === "login" ? (
-            <>
-              New here?{" "}
-              <button type="button" onClick={() => switchMode("signup")} className="text-primary underline">
-                Start the challenge
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => switchMode("signup")}
+              className="px-5 py-3 rounded-xl border-2 border-foreground bg-card hover:bg-muted text-sm font-semibold text-foreground transition-colors"
+            >
+              New here? <span className="text-primary">Start the challenge →</span>
+            </button>
           ) : (
-            <>
-              Already have an account?{" "}
-              <button type="button" onClick={() => switchMode("login")} className="text-primary underline">
-                Sign in
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => switchMode("login")}
+              className="px-5 py-3 rounded-xl border-2 border-foreground bg-card hover:bg-muted text-sm font-semibold text-foreground transition-colors"
+            >
+              Already have an account? <span className="text-primary">Sign in →</span>
+            </button>
           )}
-        </p>
+        </div>
       </div>
     </div>
   );

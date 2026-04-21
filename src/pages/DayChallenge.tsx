@@ -174,10 +174,10 @@ const DayChallenge = () => {
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
             <p className="text-sm font-semibold text-foreground leading-relaxed">
-              This is where most people stop.
+              Your challenge is now live.
             </p>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              But this only grows if people see it.
+              It runs continuously and grows as people go through it and invite others.
             </p>
           </CardContent>
         </Card>
@@ -246,6 +246,22 @@ const DayChallenge = () => {
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>
+
+      {dayNum === 1 && (
+        <Card className="mb-4 border-primary/20 bg-primary/5">
+          <CardContent className="p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
+              Why this works
+            </p>
+            <p className="text-sm text-foreground leading-relaxed">
+              This isn't a one-time challenge. Once you build it, it keeps running.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+              And as people go through it, they invite others to unlock more — so it grows on its own.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 

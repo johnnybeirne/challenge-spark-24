@@ -112,7 +112,7 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground mt-2">{setup.topicHint}</p>
               )}
               <p className="text-xs text-muted-foreground mt-3">
-                Your AI-powered challenge app is being built step by step.
+                This challenge keeps running and grows through sharing.
               </p>
             </>
           ) : (

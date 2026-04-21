@@ -109,6 +109,9 @@ const Landing = () => {
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 In 3 days, create an app that attracts leads, guides users through a challenge, and grows through sharing.
               </p>
+              <p className="text-base md:text-lg font-medium text-foreground/80">
+                Build it once. Let it run and grow.
+              </p>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Cta label="Start building your app" section="hero" />

@@ -106,6 +106,9 @@ const Results = () => {
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your app type</p>
         <h1 className="text-2xl font-bold text-foreground mb-2">{label}</h1>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{description}</p>
+        <p className="text-xs text-muted-foreground/80 leading-relaxed max-w-sm mt-3 italic">
+          Your challenge runs continuously and grows as people invite others.
+        </p>
       </div>
 
       {/* ── Tension ── */}

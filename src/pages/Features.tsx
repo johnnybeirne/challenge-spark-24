@@ -145,10 +145,16 @@ const Features = () => {
       <div className="max-w-[680px] mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold text-foreground">App Features</h1>
-          <Button variant="outline" size="sm" onClick={refresh} disabled={spinning} className="gap-2">
-            <RefreshCw className={`h-4 w-4 ${spinning ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={copyAll} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={refresh} disabled={spinning} className="gap-2">
+              <RefreshCw className={`h-4 w-4 ${spinning ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground mb-6">
           Last updated: {lastUpdated.toLocaleTimeString()} · {features.length} features detected

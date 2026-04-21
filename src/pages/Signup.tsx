@@ -256,6 +256,16 @@ const Signup = () => {
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
             </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => switchMode("signup")}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                ← Back to create account
+              </button>
+            </div>
           </>
         )}
       </div>

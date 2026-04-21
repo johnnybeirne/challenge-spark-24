@@ -54,6 +54,11 @@ const DayChallenge = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
+  const [setupDone, setSetupDone] = useState(() => !!getSetup());
+
+  if (dayNum === 1 && !setupDone) {
+    return <Day1Setup onComplete={() => setSetupDone(true)} />;
+  }
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];

@@ -57,7 +57,7 @@ const AiCopilotChat = () => {
         },
       }));
     } catch (err: any) {
-      toast.error(err?.message || "Something went wrong with the AI co-pilot.");
+      toast.error(err?.message || "Something went wrong with Johnny B AI.");
     } finally {
       setLoading(false);
     }

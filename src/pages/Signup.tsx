@@ -161,6 +161,12 @@ const Signup = () => {
 
         {mode === "signup" ? (
           <>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">
+              Start building your AI-powered challenge app
+            </h1>
+            <p className="text-base text-muted-foreground text-center mb-2 max-w-xl mx-auto">
+              In 3 days, you'll create an app that attracts leads, guides users through a challenge, and grows through sharing.
+            </p>
             <p className="text-base text-muted-foreground text-center mb-12">
               Step {step === "name" ? 1 : step === "email" ? 2 : 3} of 3
             </p>
@@ -250,7 +256,7 @@ const Signup = () => {
           <>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
             <p className="text-sm text-muted-foreground text-center mb-6">
-              Sign in to continue your challenge.
+              Sign in to keep building your app.
             </p>
 
             {accountExistsNotice && (

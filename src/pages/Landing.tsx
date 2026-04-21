@@ -89,9 +89,9 @@ const Landing = () => {
   );
 
   const steps = [
-    { icon: Rocket, title: "Start challenge", desc: "Pick your idea. We'll handle the rest." },
-    { icon: Users, title: "Invite others", desc: "Share one link. They join in seconds." },
-    { icon: TrendingUp, title: "Unlock growth", desc: "Every person you invite brings more." },
+    { icon: Rocket, title: "Plan your app", desc: "Pick your idea. We'll shape it into an app." },
+    { icon: Users, title: "Build with AI", desc: "Use AI to create your challenge flow & content." },
+    { icon: TrendingUp, title: "Launch & grow", desc: "Share your app. It grows your audience for you." },
   ];
 
   return (
@@ -103,15 +103,15 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Build a 3-day challenge that{" "}
+                Build an AI-powered challenge app that{" "}
                 <span className="text-primary">grows your audience for you</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                No content grind. No ads. Just a simple system that turns people into promoters.
+                In 3 days, create an app that attracts leads, guides users through a challenge, and grows through sharing.
               </p>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Cta label="Start your 3-day challenge" section="hero" />
+                  <Cta label="Start building your app" section="hero" />
                   <Button
                     size="lg"
                     variant="outline"
@@ -156,10 +156,10 @@ const Landing = () => {
       <section className="px-6 py-20 md:py-24 border-t border-border">
         <Reveal className="mx-auto max-w-3xl text-center space-y-4">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Most people overthink this
+            Most people overthink building an app
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            The fastest builders don't plan — they start. You'll figure it out as you go.
+            The fastest builders don't plan for months — they ship. You'll shape your app as you go.
           </p>
         </Reveal>
       </section>
@@ -168,7 +168,7 @@ const Landing = () => {
       <section className="px-6 py-16 md:py-20 bg-primary/5 border-y border-border">
         <Reveal className="mx-auto max-w-4xl text-center">
           <p className="text-2xl md:text-4xl font-semibold tracking-tight leading-snug">
-            In 3 days, you'll have a working challenge that brings in new people{" "}
+            In 3 days, you'll have an AI-powered challenge app that brings in new people{" "}
             <span className="text-primary">automatically.</span>
           </p>
         </Reveal>
@@ -179,9 +179,9 @@ const Landing = () => {
         <div className="mx-auto max-w-2xl">
           <Reveal className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-              People are starting right now
+              Builders are launching apps right now
             </h2>
-            <p className="text-muted-foreground">Live activity from the community</p>
+            <p className="text-muted-foreground">Live activity from the app builder community</p>
           </Reveal>
           <Reveal>
             <ActivityFeed />
@@ -193,13 +193,13 @@ const Landing = () => {
       <section className="px-6 py-20 md:py-28 border-t border-border">
         <Reveal className="mx-auto max-w-2xl text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Start building now — it's free
+            Start building your app — it's free
           </h2>
           <p className="text-lg text-muted-foreground">
-            Less than 30 seconds. No credit card. Just start.
+            Less than 30 seconds. No credit card. Just start building.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-            <Cta label="Start your 3-day challenge" section="bottom" />
+            <Cta label="Start building your app" section="bottom" />
             <Button
               size="lg"
               variant="outline"

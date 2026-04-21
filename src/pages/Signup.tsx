@@ -102,8 +102,8 @@ const Signup = () => {
     if (error) {
       const msg = (error.message || "").toLowerCase();
       if (msg.includes("already") || msg.includes("registered") || msg.includes("exists")) {
-        toast.info("You already have an account — sign in instead.");
         setLoginEmail(signupEmail.trim().toLowerCase());
+        setAccountExistsNotice(true);
         setMode("login");
         return;
       }

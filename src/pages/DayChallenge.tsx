@@ -19,16 +19,16 @@ import { shareOrCopy } from "@/lib/share";
 
 const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
-    title: "Foundation",
+    title: "Plan your AI-powered challenge app",
     tasks: [
-      { key: "define_app", label: "Define your app", hasTextarea: true, placeholder: "Describe your app idea in 2-3 sentences…" },
+      { key: "define_app", label: "Define your app", hasTextarea: true, placeholder: "Describe your AI-powered challenge app in 2-3 sentences…" },
       { key: "map_pages", label: "Map your pages", hasTextarea: true, placeholder: "List the pages your app needs…" },
-      { key: "create_structure", label: "Create structure", hasTextarea: true, placeholder: "Outline the structure and navigation…" },
+      { key: "create_structure", label: "Create structure", hasTextarea: true, placeholder: "Outline the structure and navigation of your app…" },
     ],
   },
   2: {
-    title: "Build",
-    nudge: "This is the hardest day — push through.",
+    title: "Build your app experience",
+    nudge: "This is the hardest day — keep building your app.",
     tasks: [
       { key: "build_core", label: "Build core feature", hasTextarea: false },
       { key: "connect_flow", label: "Connect flow", hasTextarea: false },
@@ -36,7 +36,7 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
     ],
   },
   3: {
-    title: "Launch",
+    title: "Launch your app",
     tasks: [
       { key: "finalize", label: "Finalize", hasTextarea: false },
       { key: "add_sharing", label: "Add sharing", hasTextarea: false },

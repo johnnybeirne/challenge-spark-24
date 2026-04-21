@@ -184,12 +184,36 @@ const Signup = () => {
             )}
 
             <form onSubmit={handleSignupNext} className="flex gap-2 items-center mt-6">
-              <Input
-                key={step}
-                ref={signupInputRef}
-                {...(signupInputProps as any)}
-                className="h-12 rounded-xl text-base border-2 border-foreground"
-              />
+              {step === "name" ? (
+                <div className="flex-1 grid grid-cols-2 gap-2">
+                  <Input
+                    ref={signupInputRef}
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    autoComplete="given-name"
+                    maxLength={50}
+                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    autoComplete="family-name"
+                    maxLength={50}
+                    className="h-12 rounded-xl text-base border-2 border-foreground"
+                  />
+                </div>
+              ) : (
+                <Input
+                  key={step}
+                  ref={signupInputRef}
+                  {...(signupInputProps as any)}
+                  className="h-12 rounded-xl text-base border-2 border-foreground"
+                />
+              )}
               <Button
                 type="submit"
                 disabled={!canAdvanceSignup || loading}

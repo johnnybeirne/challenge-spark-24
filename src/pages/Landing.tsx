@@ -156,10 +156,10 @@ const Landing = () => {
       <section className="px-6 py-20 md:py-24 border-t border-border">
         <Reveal className="mx-auto max-w-3xl text-center space-y-4">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Most people overthink this
+            Most people overthink building an app
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            The fastest builders don't plan — they start. You'll figure it out as you go.
+            The fastest builders don't plan for months — they ship. You'll shape your app as you go.
           </p>
         </Reveal>
       </section>
@@ -168,7 +168,7 @@ const Landing = () => {
       <section className="px-6 py-16 md:py-20 bg-primary/5 border-y border-border">
         <Reveal className="mx-auto max-w-4xl text-center">
           <p className="text-2xl md:text-4xl font-semibold tracking-tight leading-snug">
-            In 3 days, you'll have a working challenge that brings in new people{" "}
+            In 3 days, you'll have an AI-powered challenge app that brings in new people{" "}
             <span className="text-primary">automatically.</span>
           </p>
         </Reveal>

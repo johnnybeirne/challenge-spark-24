@@ -185,6 +185,7 @@ const Signup = () => {
         {/* Input */}
         <form onSubmit={handleNext} className="flex gap-2 items-center mt-6">
           <Input
+            key={`${mode}-${step}`}
             ref={inputRef}
             {...(inputProps as any)}
             className="h-12 rounded-xl text-base border-2 border-foreground"

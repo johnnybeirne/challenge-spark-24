@@ -201,17 +201,19 @@ const Landing = () => {
           <p className="text-lg text-muted-foreground">
             Less than 30 seconds. No credit card. Just start.
           </p>
-          <div className="pt-2 space-y-3">
+          <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
             <Cta label="Start your 3-day challenge" section="bottom" />
-            <p className="text-sm text-muted-foreground">
-              Already started?{" "}
-              <button
-                onClick={() => navigate("/join")}
-                className="text-primary font-medium underline-offset-4 hover:underline"
-              >
-                Log in
-              </button>
-            </p>
+            <Button
+              size="lg"
+              variant="outline"
+              className="font-semibold border-2"
+              onClick={() => {
+                trackEvent("landing_cta_clicked", { section: "bottom_login" });
+                navigate("/join");
+              }}
+            >
+              Already started? Log in
+            </Button>
           </div>
         </Reveal>
       </section>

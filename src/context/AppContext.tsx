@@ -154,7 +154,10 @@ interface UnlockDef {
   check: (s: AppState) => boolean;
 }
 
-const unlockDefs: UnlockDef[] = [
+export const unlockDefs: UnlockDef[] = [
+  { id: "faster_start", name: "Faster Start Mode", value: 29, reason: "Invited first builder", check: (s) => s.network.direct >= 1 },
+  { id: "ai_accelerator", name: "AI Accelerator", value: 49, reason: "Invited 2 builders", check: (s) => s.network.direct >= 2 },
+  { id: "momentum_boost", name: "Momentum Boost", value: 79, reason: "Invited 3 builders", check: (s) => s.network.direct >= 3 },
   { id: "day1_blueprint", name: "App blueprint", value: 97, reason: "Completed Day 1", check: (s) => s.challenge.currentDay > 1 },
   { id: "day2_playbook", name: "Challenge playbook", value: 147, reason: "Completed Day 2", check: (s) => s.challenge.currentDay > 2 },
   { id: "day3_checklist", name: "Launch checklist", value: 97, reason: "Completed Day 3", check: (s) => s.challenge.completed || s.challenge.currentDay > 3 },

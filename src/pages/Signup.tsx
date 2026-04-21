@@ -42,28 +42,6 @@ const TypingBubble = ({ text }: { text: string }) => {
   );
 };
 
-const ModeToggle = ({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) => (
-  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl border-2 border-foreground bg-card mb-6">
-    <button
-      type="button"
-      onClick={() => onChange("signup")}
-      className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-        mode === "signup" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-      }`}
-    >
-      Create account
-    </button>
-    <button
-      type="button"
-      onClick={() => onChange("login")}
-      className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-        mode === "login" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
-      }`}
-    >
-      Sign in
-    </button>
-  </div>
-);
 
 const Signup = () => {
   const { signUp, signIn } = useAuth();

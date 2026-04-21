@@ -75,7 +75,7 @@ const Signup = () => {
   }, [step, mode]);
 
   // ----- Signup handlers -----
-  const promptText = SIGNUP_PROMPTS[step].replace("{name}", name.trim() || "there");
+  const promptText = SIGNUP_PROMPTS[step].replace("{name}", firstName.trim() || "there");
 
   const canAdvanceSignup = (() => {
     if (step === "name") return firstName.trim().length > 0 && lastName.trim().length > 0;

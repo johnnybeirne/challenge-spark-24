@@ -61,8 +61,14 @@ const Results = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const assessment = state.assessment as unknown as AssessmentResult | null;
+  const hasResult = !!assessment && "challengeType" in (assessment as object);
 
-  if (!assessment || !("challengeType" in assessment)) {
+  const { score, dims } = useMemo(
+    () => calculateTrustLeverage(hasResult ? assessment!.answers : {}),
+    [hasResult, assessment]
+  );
+
+  if (!hasResult || !assessment) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-xl font-bold text-foreground">No results yet</h1>
@@ -71,12 +77,10 @@ const Results = () => {
     );
   }
 
-  const { challengeType, answers } = assessment;
+  const { challengeType } = assessment;
   const icon = styleIcons[challengeType];
   const label = styleLabels[challengeType];
   const description = identityDescriptions[challengeType];
-
-  const { score, dims } = useMemo(() => calculateTrustLeverage(answers), [answers]);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;

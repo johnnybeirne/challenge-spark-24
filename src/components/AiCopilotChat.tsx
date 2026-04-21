@@ -86,8 +86,8 @@ const AiCopilotChat = () => {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">AI Co-pilot</h3>
+              <img src={aiAvatar} alt="" className="h-7 w-7 rounded-full object-cover border border-border" />
+              <h3 className="text-sm font-semibold text-foreground">Johnny B AI</h3>
             </div>
             <button
               onClick={() => setOpen(false)}

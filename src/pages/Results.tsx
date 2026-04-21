@@ -161,7 +161,7 @@ const Results = () => {
 
       {/* ── CTA ── */}
       <Button className="w-full h-[52px] text-base rounded-xl gap-2" onClick={() => navigate("/join")}>
-        Join the challenge
+        Start building your app
         <ArrowRight className="w-4 h-4" />
       </Button>
     </div>

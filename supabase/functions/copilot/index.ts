@@ -1,10 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const FALLBACK_SYSTEM_PROMPT =
+  "You are a concise, actionable AI co-pilot for a 3-day trust-leverage challenge. Keep every answer under 300 words. Be direct, practical, and encouraging. Focus on helping the user build, ship, and grow.";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -21,6 +25,27 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Load admin-editable system prompt from DB
+    let systemPrompt = FALLBACK_SYSTEM_PROMPT;
+    try {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data } = await sb
+          .from("copilot_config")
+          .select("system_prompt")
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data?.system_prompt && typeof data.system_prompt === "string" && data.system_prompt.trim().length > 0) {
+          systemPrompt = data.system_prompt;
+        }
+      }
+    } catch (e) {
+      console.error("copilot config fetch failed, using fallback:", e);
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -30,11 +55,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          {
-            role: "system",
-            content:
-              "You are a concise, actionable AI co-pilot for a 3-day trust-leverage challenge. Keep every answer under 300 words. Be direct, practical, and encouraging. Focus on helping the user build, ship, and grow.",
-          },
+          { role: "system", content: systemPrompt },
           { role: "user", content: prompt },
         ],
       }),

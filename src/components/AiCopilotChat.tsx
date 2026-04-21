@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -6,6 +6,7 @@ import { Send, Loader2, X } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 
@@ -14,6 +15,8 @@ interface ChatEntry {
   response: string;
 }
 
+const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
+
 const AiCopilotChat = () => {
   const { state, setState } = useAppState();
   const [open, setOpen] = useState(false);
@@ -21,6 +24,20 @@ const AiCopilotChat = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<ChatEntry[]>([]);
+  const [welcome, setWelcome] = useState<string>(DEFAULT_WELCOME);
+  const [starters, setStarters] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase.from("copilot_config") as any)
+        .select("welcome_message, starter_questions")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data?.welcome_message) setWelcome(data.welcome_message);
+      if (Array.isArray(data?.starter_questions)) setStarters(data.starter_questions as string[]);
+    })();
+  }, []);
 
   const handleOpen = () => {
     setOpen(true);
@@ -28,8 +45,8 @@ const AiCopilotChat = () => {
     sessionStorage.setItem("chat_opened", "1");
   };
 
-  const askCopilot = async () => {
-    const prompt = input.trim();
+  const askCopilot = async (overridePrompt?: string) => {
+    const prompt = (overridePrompt ?? input).trim();
     if (!prompt || loading) return;
 
     setLoading(true);
@@ -90,7 +107,7 @@ const AiCopilotChat = () => {
           style={{ maxHeight: "min(520px, calc(100vh - 8rem))" }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
             <div className="flex items-center gap-2">
               <img src={aiAvatar} alt="" className="h-7 w-7 rounded-full object-cover border border-border" />
               <h3 className="text-sm font-semibold text-foreground">Johnny B AI</h3>
@@ -104,41 +121,58 @@ const AiCopilotChat = () => {
             </button>
           </div>
 
-          {/* Messages */}
-          <ScrollArea className="flex-1 min-h-0 px-4 py-3">
-            {history.length === 0 && !loading && (
-              <div className="text-center py-8">
-                <img src={aiAvatar} alt="" className="h-12 w-12 rounded-full object-cover mx-auto mb-2 opacity-60" />
-                <p className="text-sm text-muted-foreground">Ask Johnny B AI anything about the challenge</p>
-              </div>
-            )}
-            <div className="space-y-3">
-              {history.map((entry, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-end">
-                    <p className="text-sm text-foreground bg-primary/10 rounded-lg px-3 py-2 max-w-[85%]">
-                      {entry.prompt}
-                    </p>
+          {/* Messages — scrollable */}
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="px-4 py-3">
+              {history.length === 0 && !loading && (
+                <div className="text-center py-6">
+                  <img src={aiAvatar} alt="" className="h-12 w-12 rounded-full object-cover mx-auto mb-3 opacity-80" />
+                  <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                    <ReactMarkdown>{welcome}</ReactMarkdown>
                   </div>
-                  <div className="flex justify-start">
-                    <p className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] whitespace-pre-wrap">
-                      {entry.response}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {loading && (
-                <div className="flex justify-start">
-                  <div className="bg-muted rounded-lg px-3 py-2">
-                    <TypingDots />
-                  </div>
+                  {starters.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                      {starters.map((q, i) => (
+                        <button
+                          key={i}
+                          onClick={() => askCopilot(q)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-border bg-background hover:bg-muted transition-colors text-foreground"
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
+              <div className="space-y-3">
+                {history.map((entry, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="flex justify-end">
+                      <p className="text-sm text-foreground bg-primary/10 rounded-lg px-3 py-2 max-w-[85%]">
+                        {entry.prompt}
+                      </p>
+                    </div>
+                    <div className="flex justify-start">
+                      <div className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] prose prose-sm dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-1.5">
+                        <ReactMarkdown>{entry.response}</ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {loading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-lg px-3 py-2">
+                      <TypingDots />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </ScrollArea>
 
           {/* Input */}
-          <div className="px-3 py-3 border-t border-border bg-card">
+          <div className="px-3 py-3 border-t border-border bg-card shrink-0">
             <div className="flex gap-2">
               <Textarea
                 placeholder="Ask a question…"
@@ -155,7 +189,7 @@ const AiCopilotChat = () => {
               />
               <Button
                 size="icon"
-                onClick={askCopilot}
+                onClick={() => askCopilot()}
                 disabled={!input.trim() || loading}
                 className="shrink-0"
               >

@@ -53,7 +53,9 @@ const Signup = () => {
 
   // Signup chat state
   const [step, setStep] = useState<SignupStep>("name");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const name = `${firstName.trim()} ${lastName.trim()}`.trim();
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const signupInputRef = useRef<HTMLInputElement>(null);

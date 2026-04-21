@@ -1,51 +1,57 @@
 
 
-## Problem Diagnosis
+## Rebuild Landing Page (Leadio – Zero-Friction Entry)
 
-The **root cause** of the broken layout is in `AppShell.tsx` line 15:
+Replace the current 644-line, multi-section landing page with a clean, high-conversion entry that gets users straight into `/join` with no assessment friction.
 
-```
-<div className="w-full max-w-[480px] relative pb-20">
-```
+### What the new page contains
 
-Every page — including the Landing page — is squeezed into a 480px-wide container. The landing page has proper grid layouts, split-screen hero, and 1200px container classes, but they're all trapped inside this mobile-width wrapper. That's why:
+1. **Hero**
+   - Headline: *"Build a 3-day challenge that grows your audience for you"*
+   - Sub: *"No content grind. No ads. Just a simple system that turns people into promoters."*
+   - Primary CTA button: *"Start your 3-day challenge"* → routes to `/join`
+   - Supporting line under CTA: *"Takes less than 30 seconds to start"*
 
-- The hero mockups overlap the text (no room for 2 columns)
-- Feature cards show one word per line
-- The growth loop diagram is cramped
-- The final CTA browser mockup is clipped
-- Nothing looks like a "desktop layout" despite having `md:` breakpoints
+2. **3-step visual diagram** (right of hero on desktop, below on mobile)
+   - Step 1 — Start challenge (Rocket icon)
+   - Step 2 — Invite others (Users icon)
+   - Step 3 — Unlock growth (TrendingUp icon)
+   - Connected with subtle arrows, clean minimal cards
 
-## Plan
+3. **Momentum section**
+   - Title: *"Most people overthink this"*
+   - Body: *"The fastest builders don't plan — they start. You'll figure it out as you go."*
 
-### 1. Give the Landing page a full-width layout
+4. **Promise band**
+   - *"In 3 days, you'll have a working challenge that brings in new people automatically."*
 
-The Landing page needs to break out of the 480px constraint. Two changes:
+5. **Live social proof feed** (auto-rotating vertical scroll)
+   - "Sarah started her challenge"
+   - "James launched Day 2"
+   - "Maria invited 3 builders"
+   - Reuse existing `ActivityFeed` component or a lightweight inline ticker with smooth fade+slide
 
-**AppShell.tsx** — Conditionally remove the `max-w-[480px]` wrapper for the landing page. The cleanest approach: create a second `<Route>` layout that wraps Landing in a full-width shell (no `max-w-[480px]`, no bottom nav).
+6. **Bottom CTA**
+   - *"Start building now — it's free"* → `/join`
 
-**App.tsx** — Move the Landing route to use a new full-width layout wrapper (or a variant of AppShell with a `fullWidth` prop).
+### What gets removed
 
-### 2. Fix hero mockup overlap
+- Assessment/quiz language and any "Take quiz" CTAs
+- All current sections not in spec: Features grid, Why This Works, How It Works, Who This Is For, Examples, Urgency/countdown, FAQ accordion, Founding Partner panel
+- The `useCountdown` hook and CMS-driven landing content blocks (the page becomes static copy — CMS Landing editor will no longer drive this version)
+- The default CTA route `/assess` — all CTAs now go to `/join`
 
-With the container unconstrained, the existing `md:grid-cols-2` layout will work properly. Minor tweaks:
-- Ensure the phone mockup's absolute positioning doesn't bleed over the text column
-- Adjust the glow orb position for wider viewports
+### Technical changes
 
-### 3. Fix final CTA section clipping
+- **`src/pages/Landing.tsx`** — full rewrite. Keep `useReveal` + `useScrollDepth` + `Reveal` wrapper + `Cta` helper (retargeted to `/join`). Drop `useCountdown` and the CMS `useSiteConfig` dependency for landing copy (copy is hardcoded per spec).
+- **CTAs** fire existing `trackEvent("landing_cta_clicked", { section })` analytics.
+- Use existing design tokens (`cta-premium`, primary/accent), Tailwind animations (`animate-fade-in`, `hover-scale`), and lucide icons already in the project.
+- Subtle motion: fade-in + slide on section reveal (already wired via `useReveal`).
+- Responsive: hero is 2-column on `md+`, stacked on mobile.
 
-The browser mockup at 20% opacity is clipped because the section overflows the 480px box. With full width, this resolves naturally. Will also bump opacity to ~35% so it's actually visible.
+### Files touched
 
-### 4. Keep other pages at 480px
+- `src/pages/Landing.tsx` (rewrite)
 
-Assessment, Results, Dashboard, etc. stay wrapped in the 480px mobile-first container — only the Landing page goes full-width.
-
----
-
-### Technical Details
-
-**Files to modify:**
-- `src/components/AppShell.tsx` — Add a `fullWidth` prop that removes the `max-w-[480px]` class
-- `src/App.tsx` — Use `<AppShell fullWidth />` (or a separate wrapper) for the Landing route
-- `src/pages/Landing.tsx` — Minor spacing/overlap fixes once the container constraint is removed
+No routing, context, or component dependency changes required. The `/join` route already exists in `App.tsx`.
 

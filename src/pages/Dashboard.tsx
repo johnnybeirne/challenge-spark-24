@@ -58,7 +58,7 @@ const Dashboard = () => {
   const completedCount = tasks.filter((_, i) => state.challenge.tasks[`day${currentDay}_task${i}`]).length;
 
   return (
-    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>

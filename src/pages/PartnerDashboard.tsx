@@ -140,7 +140,7 @@ const PartnerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[480px] mx-auto px-4 py-8 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
         {/* ─── HEADER ─── */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">

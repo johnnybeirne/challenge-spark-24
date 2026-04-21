@@ -99,7 +99,7 @@ const Results = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
       {/* ── Header: icon + identity type + description ── */}
       <div className="flex flex-col items-center text-center mb-6 pt-4">
         <div className="text-5xl mb-3">{icon}</div>

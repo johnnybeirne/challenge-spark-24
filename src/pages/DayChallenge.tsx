@@ -157,7 +157,7 @@ const DayChallenge = () => {
   // Day 3 celebration + community intro view
   if (showCelebration && dayNum === 3) {
     return (
-      <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+      <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
         <Confetti />
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
@@ -235,7 +235,7 @@ const DayChallenge = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-lg mx-auto">
+    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
       <TaskCompleteAnim show={showTaskAnim} />
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">

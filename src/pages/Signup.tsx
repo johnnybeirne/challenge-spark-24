@@ -17,7 +17,7 @@ type Mode = "signup" | "login";
 type SignupStep = "name" | "email" | "password";
 
 const SIGNUP_PROMPTS: Record<SignupStep, string> = {
-  name: "Johnny here — what's your name?",
+  name: "Johnny here — what's your first and last name?",
   email: "Nice to meet you, {name}. What email should I use for your account?",
   password: "Pick a password (6+ characters) and you're in.",
 };

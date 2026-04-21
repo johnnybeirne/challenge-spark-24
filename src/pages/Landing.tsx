@@ -124,9 +124,6 @@ const Landing = () => {
                     Already started? Log in
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Takes less than 30 seconds to start
-                </p>
               </div>
             </div>
           </Reveal>

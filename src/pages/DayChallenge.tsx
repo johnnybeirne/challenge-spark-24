@@ -164,7 +164,7 @@ const DayChallenge = () => {
             <Rocket className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-3">
-            You built and launched an app in 3 days.
+            You built and launched your challenge in 3 days.
           </h1>
           <p className="text-muted-foreground text-sm">
             That puts you ahead of 99% of people who just talk about building.

@@ -80,7 +80,7 @@ const Landing = () => {
       className={`bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-semibold ${className}`}
       onClick={() => {
         trackEvent("landing_cta_clicked", { section });
-        navigate("/join");
+        navigate("/join", { state: { mode: "signup" } });
       }}
     >
       {label}

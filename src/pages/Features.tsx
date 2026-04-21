@@ -99,6 +99,7 @@ const Features = () => {
   const [features, setFeatures] = useState<Feature[]>(() => scanFeatures());
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [spinning, setSpinning] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const refresh = useCallback(() => {
     setSpinning(true);
@@ -108,6 +109,26 @@ const Features = () => {
       setSpinning(false);
     }, 400);
   }, []);
+
+  const copyAll = useCallback(async () => {
+    const grouped = features.reduce<Record<string, Feature[]>>((acc, f) => {
+      (acc[f.category] ||= []).push(f);
+      return acc;
+    }, {});
+    const text = Object.entries(grouped)
+      .map(([cat, list]) =>
+        `## ${cat}\n` + list.map((f) => `- ${f.title} (${f.addedAt}): ${f.description}`).join("\n")
+      )
+      .join("\n\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success(`Copied ${features.length} features`);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }, [features]);
 
   const categories = useMemo(() => {
     const order = ["Newly Detected", "Core", "Onboarding", "Launch", "Growth", "Community", "AI", "Admin", "Security", "Polish"];

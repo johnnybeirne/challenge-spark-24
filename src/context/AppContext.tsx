@@ -180,6 +180,19 @@ export const unlockDefs: UnlockDef[] = [
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {
   let updated = { ...state };
+
+  // Runtime guard: dedupe any pre-existing duplicates in state.unlocks (defends against bad hydration)
+  const seen = new Set<string>();
+  const deduped: UnlockEntry[] = [];
+  for (const u of updated.unlocks) {
+    if (seen.has(u.id)) continue;
+    seen.add(u.id);
+    deduped.push(u);
+  }
+  if (deduped.length !== updated.unlocks.length) {
+    updated = { ...updated, unlocks: deduped };
+  }
+
   const existing = new Set(updated.unlocks.map((u) => u.id));
   let changed = false;
 
@@ -196,6 +209,20 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
     };
 
     updated = { ...updated, unlocks: [...updated.unlocks, entry] };
+    existing.add(def.id);
+
+    if (def.id === "momentum_boost") {
+      // Auto-complete one low-value Day 1 task as the immediate reward
+      if (!updated.challenge.tasks["day1_create_structure"]) {
+        updated = {
+          ...updated,
+          challenge: {
+            ...updated.challenge,
+            tasks: { ...updated.challenge.tasks, day1_create_structure: true },
+          },
+        };
+      }
+    }
 
     if (def.id === "builder_circle") {
       updated = {

@@ -106,7 +106,7 @@ const AiCopilotChat = () => {
           </div>
 
           {/* Messages */}
-          <ScrollArea className="flex-1 px-4 py-3">
+          <ScrollArea className="flex-1 min-h-0 px-4 py-3">
             {history.length === 0 && !loading && (
               <div className="text-center py-8">
                 <img src={aiAvatar} alt="" className="h-12 w-12 rounded-full object-cover mx-auto mb-2 opacity-60" />

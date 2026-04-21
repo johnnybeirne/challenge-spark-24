@@ -17,15 +17,15 @@ type Step = "name" | "email" | "password";
 
 const PROMPTS: Record<Step, { signup: string; login: string }> = {
   name: {
-    signup: "Johnny here, please enter your name",
+    signup: "Johnny here — what's your name?",
     login: "Welcome back. What's your email?",
   },
   email: {
-    signup: "Nice to meet you, {name}. What's the best email to set up your account?",
+    signup: "Nice to meet you, {name}. What email should I use for your account?",
     login: "And your password?",
   },
   password: {
-    signup: "Last thing — pick a password (6+ characters) and you're in.",
+    signup: "Pick a password (6+ characters) and you're in.",
     login: "",
   },
 };

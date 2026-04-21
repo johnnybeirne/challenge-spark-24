@@ -28,6 +28,7 @@ import AdminCms from "@/pages/AdminCms";
 import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
+import AdminLayout from "@/components/admin/AdminLayout";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,16 +72,21 @@ const App = () => (
                 <Route path="/reward/:id" element={<PartnerGuard><RewardDetail /></PartnerGuard>} />
               </Route>
 
-              {/* Owner console — unique URL, password-protected */}
-              <Route path="/owner-console" element={<AdminHub />} />
-              <Route path="/owner-console/analytics" element={<AdminAnalytics />} />
-              <Route path="/owner-console/cms" element={<AdminCms />} />
-              <Route path="/owner-console/promoters" element={<AdminPromoters />} />
-              <Route path="/owner-console/activity" element={<AdminActivityFeed />} />
+              {/* Owner console — sidebar layout, password-protected */}
+              <Route path="/owner-console" element={<AdminLayout />}>
+                <Route index element={<AdminHub />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="cms" element={<AdminCms />} />
+                <Route path="promoters" element={<AdminPromoters />} />
+                <Route path="activity" element={<AdminActivityFeed />} />
+              </Route>
 
               {/* Legacy admin redirects */}
-              <Route path="/admin/analytics" element={<AdminAnalytics />} />
-              <Route path="/admin/cms" element={<AdminCms />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminHub />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="cms" element={<AdminCms />} />
+              </Route>
 
               <Route path="*" element={<NotFound />} />
             </Routes>

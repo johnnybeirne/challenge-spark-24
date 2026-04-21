@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Loader2, X } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +15,7 @@ interface ChatEntry {
 }
 
 const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
+const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";
 
 const AiCopilotChat = () => {
   const { state, setState } = useAppState();
@@ -26,6 +26,7 @@ const AiCopilotChat = () => {
   const [history, setHistory] = useState<ChatEntry[]>([]);
   const [welcome, setWelcome] = useState<string>(DEFAULT_WELCOME);
   const [starters, setStarters] = useState<string[]>([]);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -38,6 +39,16 @@ const AiCopilotChat = () => {
       if (Array.isArray(data?.starter_questions)) setStarters(data.starter_questions as string[]);
     })();
   }, []);
+
+  useEffect(() => {
+    const container = messagesRef.current;
+    if (!container) return;
+
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: history.length > 0 ? "smooth" : "auto",
+    });
+  }, [history, loading]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -104,7 +115,7 @@ const AiCopilotChat = () => {
       {/* Chat panel */}
       {open && (
         <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden"
-          style={{ maxHeight: "min(520px, calc(100vh - 8rem))" }}
+          style={{ height: CHAT_PANEL_HEIGHT, maxHeight: CHAT_PANEL_HEIGHT }}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
@@ -122,7 +133,7 @@ const AiCopilotChat = () => {
           </div>
 
           {/* Messages — scrollable */}
-          <ScrollArea className="flex-1 min-h-0">
+          <div ref={messagesRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             <div className="px-4 py-3">
               {history.length === 0 && !loading && (
                 <div className="text-center py-6">
@@ -169,7 +180,7 @@ const AiCopilotChat = () => {
                 )}
               </div>
             </div>
-          </ScrollArea>
+          </div>
 
           {/* Input */}
           <div className="px-3 py-3 border-t border-border bg-card shrink-0">

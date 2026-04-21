@@ -182,9 +182,9 @@ const Landing = () => {
         <div className="mx-auto max-w-2xl">
           <Reveal className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-              Builders are launching apps right now
+              Builders are launching challenges right now
             </h2>
-            <p className="text-muted-foreground">Live activity from the app builder community</p>
+            <p className="text-muted-foreground">Live activity from the builder community</p>
           </Reveal>
           <Reveal>
             <ActivityFeed />

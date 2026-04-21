@@ -103,11 +103,11 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Build a 3-day challenge that{" "}
+                Build an AI-powered challenge app that{" "}
                 <span className="text-primary">grows your audience for you</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                No content grind. No ads. Just a simple system that turns people into promoters.
+                In 3 days, create an app that attracts leads, guides users through a challenge, and grows through sharing.
               </p>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">

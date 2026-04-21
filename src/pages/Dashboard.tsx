@@ -62,8 +62,8 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <p className="text-xs font-mono lowercase tracking-wider text-muted-foreground">
-            {state.user?.name ? `hey, ${state.user.name.split(" ")[0]}` : "welcome back"}
+          <p className="text-xs font-mono tracking-wider text-muted-foreground">
+            {state.user?.name ? `Hey, ${state.user.name.split(" ")[0].toLowerCase()}` : "Welcome back"}
           </p>
           <h1 className="text-2xl font-bold text-foreground mt-1">
             Day {currentDay} of 3

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
-import aiAvatar from "@/assets/ai-avatar.jpg";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const PARTNER_REF_KEY = "challengeos_partner_ref";

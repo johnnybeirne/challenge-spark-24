@@ -196,13 +196,13 @@ const Landing = () => {
       <section className="px-6 py-20 md:py-28 border-t border-border">
         <Reveal className="mx-auto max-w-2xl text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Start building your app — it's free
+            Start building your challenge — it's free
           </h2>
           <p className="text-lg text-muted-foreground">
             Less than 30 seconds. No credit card. Just start building.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-            <Cta label="Start building your app" section="bottom" />
+            <Cta label="Start building your challenge" section="bottom" />
             <Button
               size="lg"
               variant="outline"

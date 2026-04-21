@@ -120,8 +120,6 @@ const Signup = () => {
   };
 
   const signupInputProps = (() => {
-    if (step === "name")
-      return { type: "text", placeholder: "Type your name…", value: name, onChange: (e: any) => setName(e.target.value), autoComplete: "name", maxLength: 100 };
     if (step === "email")
       return { type: "email", placeholder: "you@example.com", value: signupEmail, onChange: (e: any) => setSignupEmail(e.target.value), autoComplete: "email", maxLength: 255 };
     return { type: "password", placeholder: "••••••", value: signupPassword, onChange: (e: any) => setSignupPassword(e.target.value), autoComplete: "new-password", minLength: 6 };

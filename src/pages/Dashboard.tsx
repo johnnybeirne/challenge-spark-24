@@ -177,50 +177,38 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* Your Network */}
-      <Card className="mb-4">
-        <CardContent className="p-5">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Users className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Your network
-              </p>
-              <p className="text-lg font-bold text-foreground mt-0.5">
-                {referralCount} {referralCount === 1 ? "builder" : "builders"} joined through you
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                This grows as people join and invite others
-              </p>
-            </div>
-          </div>
-          <Button onClick={() => navigate("/referrals")} className="w-full font-semibold">
-            Invite builders
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Invite card — low priority, delayed, single instance */}
+      {(completedCount >= 1 || dwellElapsed) && (
+        <Card className="mb-4 border-border">
+          <CardContent className="p-4">
+            <p className="font-semibold text-foreground">Build faster with others</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              People who invite others are more likely to finish and launch.
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Inviting builders unlocks tools that help you build faster.
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">You can do this anytime.</p>
 
-      {/* Momentum nudge — < 3 referrals */}
-      {referralCount < 3 && (
-        <Card className="mb-4 border-primary/30 bg-primary/5">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
-                <Rocket className="w-5 h-5 text-primary" />
+            <div className="mt-3 mb-3">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-muted-foreground">
+                  Invite 3 builders to unlock extra tools
+                </span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {Math.min(referralCount, 3)} / 3 builders invited
+                </span>
               </div>
-              <div className="flex-1">
-                <p className="font-bold text-foreground leading-snug">
-                  You're {3 - referralCount} {3 - referralCount === 1 ? "invite" : "invites"} away from unlocking faster growth
-                </p>
-              </div>
+              <Progress value={(Math.min(referralCount, 3) / 3) * 100} className="h-1.5" />
             </div>
-            <Progress value={(referralCount / 3) * 100} className="h-2 mb-3" />
-            <Button onClick={() => navigate("/referrals")} className="w-full font-semibold">
-              Invite now
-              <ArrowRight className="ml-2 h-4 w-4" />
+
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate("/referrals")}
+              className="w-full"
+            >
+              Invite someone
             </Button>
           </CardContent>
         </Card>

@@ -107,7 +107,17 @@ const Signup = () => {
         ...(referredBy ? { referred_by: referredBy } : {}),
       });
       setLoading(false);
-      if (error) return toast.error(error.message || "Signup failed");
+      if (error) {
+        const msg = (error.message || "").toLowerCase();
+        if (msg.includes("already") || msg.includes("registered") || msg.includes("exists")) {
+          toast.info("Looks like you already have an account — sign in instead.");
+          setMode("login");
+          setStep("password");
+          setPassword("");
+          return;
+        }
+        return toast.error(error.message || "Signup failed");
+      }
       if (partnerRef) {
         (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
       }

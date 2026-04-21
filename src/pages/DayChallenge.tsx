@@ -174,10 +174,10 @@ const DayChallenge = () => {
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
             <p className="text-sm font-semibold text-foreground leading-relaxed">
-              This is where most people stop.
+              Your challenge is now live.
             </p>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              But this only grows if people see it.
+              It runs continuously and grows as people go through it and invite others.
             </p>
           </CardContent>
         </Card>

@@ -114,6 +114,15 @@ const Landing = () => {
                 <p className="text-sm text-muted-foreground">
                   Takes less than 30 seconds to start
                 </p>
+                <p className="text-sm text-muted-foreground">
+                  Already started?{" "}
+                  <button
+                    onClick={() => navigate("/join")}
+                    className="text-primary font-medium underline-offset-4 hover:underline"
+                  >
+                    Log in
+                  </button>
+                </p>
               </div>
             </div>
           </Reveal>

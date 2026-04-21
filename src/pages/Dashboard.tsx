@@ -46,6 +46,13 @@ const Dashboard = () => {
   const setup = getSetup();
   const referralCount = state.network.direct;
 
+  // Delay invite card: only after first task done OR 30s on dashboard
+  const [dwellElapsed, setDwellElapsed] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setDwellElapsed(true), 30_000);
+    return () => clearTimeout(t);
+  }, []);
+
   const toggleTask = (taskKey: string) => {
     setState((prev) => ({
       ...prev,

@@ -2,14 +2,26 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lock, TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
+
+interface UserRow {
+  name: string | null;
+  email: string | null;
+  invite_code: string;
+  referred_by: string | null;
+  direct_referral_count: number;
+  indirect_referral_count: number;
+  created_at: string;
+}
 
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
   total_events: number;
+  users?: UserRow[];
 }
 
 const FUNNEL_STEPS = [

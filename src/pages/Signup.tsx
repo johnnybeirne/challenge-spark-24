@@ -71,8 +71,8 @@ const Signup = () => {
     }
 
     trackEvent("signup_completed");
-    toast.success("Account created! Redirecting…");
-    navigate("/dashboard");
+    toast.success("Account created!");
+    navigate("/day/1");
   };
 
   return (

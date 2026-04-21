@@ -13,6 +13,7 @@ import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 import Day2InviteNudge from "@/components/Day2InviteNudge";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import PostActionPromo from "@/components/PostActionPromo";
+import Day1Setup, { getSetup } from "@/components/Day1Setup";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 

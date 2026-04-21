@@ -227,14 +227,12 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* AI co-pilot */}
+      {/* Johnny B AI */}
       <Card className="mb-4 cursor-pointer hover:border-primary/40 transition-colors" onClick={() => navigate(`/day/${currentDay}`)}>
         <CardContent className="p-5 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <Bot className="w-5 h-5 text-primary" />
-          </div>
+          <img src={aiAvatar} alt="Johnny B AI" className="h-10 w-10 rounded-full object-cover border border-border shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold text-foreground">Your AI co-pilot</p>
+            <p className="font-semibold text-foreground">Johnny B AI</p>
             <p className="text-xs text-muted-foreground">Get help building faster</p>
           </div>
           <Sparkles className="w-4 h-4 text-primary" />

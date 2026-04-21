@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight } from "lucide-react";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
@@ -89,9 +89,20 @@ const Day1Setup = ({ onComplete }: Props) => {
     onComplete(data);
   };
 
+  const goBack = () => setStep(((step as number) - 1) as Step);
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-8 animate-fade-in">
       <div className="w-full max-w-md">
+        {step > 0 && (
+          <button
+            onClick={goBack}
+            className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+        )}
         {step === 0 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">

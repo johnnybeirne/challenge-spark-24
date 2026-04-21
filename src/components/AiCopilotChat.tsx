@@ -7,7 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import TypingDots from "@/components/TypingDots";
-import aiAvatar from "@/assets/ai-avatar.jpg";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 interface ChatEntry {
   prompt: string;

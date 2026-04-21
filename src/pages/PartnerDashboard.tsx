@@ -148,7 +148,7 @@ const PartnerDashboard = () => {
             <h1 className="text-2xl font-bold text-foreground">Promoter Dashboard</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            You're growing your audience through the ChallengeOS network.
+            You're growing your audience through the Leadio network.
           </p>
           {promoter.is_founding_partner && (
             <Badge className="mt-2 bg-primary/10 text-primary text-xs gap-1">

@@ -13,6 +13,7 @@ import CmsBranding from "@/components/cms/CmsBranding";
 import CmsPartners from "@/components/cms/CmsPartners";
 import CmsNotifications from "@/components/cms/CmsNotifications";
 import CmsGlobal from "@/components/cms/CmsGlobal";
+import CmsCopilot from "@/components/cms/CmsCopilot";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -26,6 +27,7 @@ const SECTIONS = [
   { id: "branding", label: "Branding & Design" },
   { id: "partners", label: "Partner Settings" },
   { id: "notifications", label: "Notifications & Copy" },
+  { id: "copilot", label: "Johnny B AI (Copilot)" },
   { id: "global", label: "Global Settings" },
 ] as const;
 
@@ -73,6 +75,7 @@ const AdminCms = () => {
       case "branding": return <CmsBranding />;
       case "partners": return <CmsPartners />;
       case "notifications": return <CmsNotifications />;
+      case "copilot": return <CmsCopilot />;
       case "global": return <CmsGlobal />;
       default: return <CmsLanding />;
     }

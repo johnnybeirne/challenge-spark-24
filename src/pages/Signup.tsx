@@ -256,7 +256,7 @@ const Signup = () => {
           <>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
             <p className="text-sm text-muted-foreground text-center mb-6">
-              Sign in to continue your challenge.
+              Sign in to keep building your app.
             </p>
 
             {accountExistsNotice && (

@@ -90,7 +90,7 @@ const Landing = () => {
 
   const steps = [
     { icon: Rocket, title: "Lock In Your Audience", desc: "Define who you help. Turn it into a challenge they want to join." },
-    { icon: Users, title: "Get It Live in Minutes", desc: "AI does the heavy lifting. No overwhelm, no blank page." },
+    { icon: Users, title: "Get It Live in Minutes", desc: "AI-powered building does the heavy lifting. No overwhelm, no blank page." },
     { icon: TrendingUp, title: "Launch and Get Leads", desc: "Share once. Leads come in. Sharing is built in." },
   ];
 
@@ -115,11 +115,11 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Get more leads with an AI challenge that{" "}
+                Get more leads with an AI-powered challenge that{" "}
                 <span className="text-primary">grows itself</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Launch a challenge that pulls in leads and grows every time someone shares it.
+                Launch an AI-powered challenge that pulls in leads and grows every time someone shares it.
               </p>
               <div className="space-y-2 pt-1">
                 <p className="text-base md:text-lg font-semibold text-foreground">Launch in 3 days.</p>

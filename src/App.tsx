@@ -44,16 +44,16 @@ const App = () => (
           <TooltipProvider>
           <Toaster />
           <Sonner />
-          <a
-            href="https://chatgpt.com/s/m_69e8a82491cc8191b7e915c82ee65f68"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Leadio"
-            className="fixed top-5 left-5 z-50 transition-transform hover:scale-105"
-          >
-            <img src={leadioLogo} alt="Leadio" className="h-7 md:h-9 w-auto drop-shadow-sm" />
-          </a>
           <BrowserRouter>
+            <a
+              href="https://chatgpt.com/s/m_69e8a82491cc8191b7e915c82ee65f68"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Leadio"
+              className="absolute top-4 left-4 md:top-6 md:left-6 z-40 inline-block transition-opacity hover:opacity-80"
+            >
+              <img src={leadioLogo} alt="Leadio" className="h-6 md:h-8 w-auto" />
+            </a>
             <Routes>
               {/* Landing – full-width layout */}
               <Route element={<AppShell fullWidth />}>

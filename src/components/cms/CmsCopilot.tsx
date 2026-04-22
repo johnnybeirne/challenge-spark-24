@@ -68,6 +68,7 @@ const CmsCopilot = () => {
           starter_questions: Array.isArray(cfgRes.data.starter_questions)
             ? (cfgRes.data.starter_questions as string[])
             : [],
+          next_qa_date: cfgRes.data.next_qa_date ?? null,
         });
       }
 

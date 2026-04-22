@@ -556,7 +556,7 @@ const HowItWorksScroll = () => {
     },
     {
       headline: "They invite others to unlock more",
-      caption: "Each new person brings more people and unlocks more value",
+      caption: "Trusted invites spread from person to person, unlocking more bonuses",
       Visual: Step4Visual,
     },
     {

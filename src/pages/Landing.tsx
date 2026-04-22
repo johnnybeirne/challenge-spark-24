@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 import ActivityFeed from "@/components/ActivityFeed";
 import HowItWorksScroll from "@/components/HowItWorksScroll";
 

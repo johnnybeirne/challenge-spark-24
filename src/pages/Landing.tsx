@@ -178,14 +178,17 @@ const Landing = () => {
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
             Planning kills momentum. A live challenge gets you leads. Every shared link gets you more.
           </p>
-          <ul className="grid sm:grid-cols-3 gap-4 pt-4 text-left">
+          <ul className="grid sm:grid-cols-3 gap-5 pt-6 text-left">
             {whyPoints.map((p) => (
               <li
-                key={p}
-                className="flex items-start gap-3 p-5 rounded-xl border border-border bg-card/60"
+                key={p.title}
+                className="group relative p-6 rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/40 transition-all"
               >
-                <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="font-medium text-foreground">{p}</span>
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md mb-4">
+                  <p.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1.5">{p.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
               </li>
             ))}
           </ul>
@@ -194,18 +197,24 @@ const Landing = () => {
 
       {/* OUTCOME */}
       <section className="px-6 py-20 md:py-24 bg-primary/5 border-y border-border">
-        <Reveal className="mx-auto max-w-3xl text-center space-y-6">
+        <Reveal className="mx-auto max-w-5xl text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
             What you will have in 3 days
           </h2>
-          <ul className="grid sm:grid-cols-3 gap-4 pt-2 text-left">
-            {outcomePoints.map((p) => (
+          <ul className="grid sm:grid-cols-3 gap-5 pt-4 text-left">
+            {outcomePoints.map((p, i) => (
               <li
-                key={p}
-                className="flex items-start gap-3 p-5 rounded-xl border border-border bg-card"
+                key={p.title}
+                className="group relative p-6 rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/40 transition-all"
               >
-                <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="font-medium text-foreground">{p}</span>
+                <div className="absolute -top-3 -left-3 flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background text-xs font-bold shadow-md">
+                  {i + 1}
+                </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md mb-4">
+                  <p.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1.5">{p.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
               </li>
             ))}
           </ul>

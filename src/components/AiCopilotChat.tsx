@@ -12,7 +12,12 @@ import aiAvatar from "@/assets/ai-avatar.png";
 interface ChatEntry {
   prompt: string;
   response: string;
+  displayed?: string;
+  typing?: boolean;
 }
+
+const TYPE_INTERVAL_MS = 18;
+const TYPE_CHARS_PER_TICK = 2;
 
 const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
 const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";

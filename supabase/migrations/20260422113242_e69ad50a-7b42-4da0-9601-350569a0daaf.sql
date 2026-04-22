@@ -1,0 +1,1 @@
+UPDATE public.copilot_config SET starter_questions = '[]'::jsonb;

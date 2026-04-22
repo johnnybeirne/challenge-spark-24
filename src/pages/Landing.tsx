@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 import ActivityFeed from "@/components/ActivityFeed";
 import HowItWorksScroll from "@/components/HowItWorksScroll";
 
@@ -62,9 +64,18 @@ const useScrollDepth = () => {
 const Landing = () => {
   const navigate = useNavigate();
   useScrollDepth();
+  const [nextQaDate, setNextQaDate] = useState<Date | null>(null);
 
   useEffect(() => {
     trackEvent("landing_viewed");
+    (async () => {
+      const { data } = await (supabase.from("copilot_config") as any)
+        .select("next_qa_date")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data?.next_qa_date) setNextQaDate(new Date(data.next_qa_date));
+    })();
   }, []);
 
   const Cta = ({
@@ -197,7 +208,7 @@ const Landing = () => {
                 Next Live Group Q&amp;A
               </span>
               <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                [Date TBC]
+                {nextQaDate ? format(nextQaDate, "EEE d MMM, h:mm a") : "[Date TBC]"}
               </span>
             </div>
           </div>

@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Loader2, Plus, Trash2, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface CopilotConfig {
@@ -13,6 +17,7 @@ interface CopilotConfig {
   welcome_message: string;
   fallback_message: string;
   starter_questions: string[];
+  next_qa_date: string | null;
 }
 
 interface QaRow {
@@ -31,6 +36,7 @@ const DEFAULTS: CopilotConfig = {
   fallback_message:
     "I don't have an answer for that yet. Try one of the suggested questions below.",
   starter_questions: [],
+  next_qa_date: null,
 };
 
 const CmsCopilot = () => {
@@ -62,6 +68,7 @@ const CmsCopilot = () => {
           starter_questions: Array.isArray(cfgRes.data.starter_questions)
             ? (cfgRes.data.starter_questions as string[])
             : [],
+          next_qa_date: cfgRes.data.next_qa_date ?? null,
         });
       }
 
@@ -94,6 +101,7 @@ const CmsCopilot = () => {
       welcome_message: config.welcome_message.trim(),
       fallback_message: config.fallback_message.trim(),
       starter_questions: cleanedQuestions,
+      next_qa_date: config.next_qa_date,
     };
 
     let cfgError: any;
@@ -232,6 +240,73 @@ const CmsCopilot = () => {
           exact answers to return.
         </p>
       </div>
+
+      <Card>
+        <CardContent className="p-5 space-y-2">
+          <Label>Next Live Group Q&amp;A date</Label>
+          <p className="text-xs text-muted-foreground">
+            Shown in the landing-page banner. Leave blank to display "[Date TBC]".
+          </p>
+          <div className="flex gap-2 items-center pt-1">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal flex-1",
+                    !config.next_qa_date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {config.next_qa_date
+                    ? format(new Date(config.next_qa_date), "EEE d MMM yyyy, h:mm a")
+                    : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={config.next_qa_date ? new Date(config.next_qa_date) : undefined}
+                  onSelect={(d) => {
+                    if (!d) return;
+                    const existing = config.next_qa_date ? new Date(config.next_qa_date) : null;
+                    const next = new Date(d);
+                    next.setHours(existing?.getHours() ?? 19, existing?.getMinutes() ?? 0, 0, 0);
+                    setConfig((c) => ({ ...c, next_qa_date: next.toISOString() }));
+                  }}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+            <Input
+              type="time"
+              className="w-32"
+              value={
+                config.next_qa_date
+                  ? format(new Date(config.next_qa_date), "HH:mm")
+                  : ""
+              }
+              onChange={(e) => {
+                const [h, m] = e.target.value.split(":").map(Number);
+                if (Number.isNaN(h) || Number.isNaN(m)) return;
+                const base = config.next_qa_date ? new Date(config.next_qa_date) : new Date();
+                base.setHours(h, m, 0, 0);
+                setConfig((c) => ({ ...c, next_qa_date: base.toISOString() }));
+              }}
+            />
+            {config.next_qa_date && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setConfig((c) => ({ ...c, next_qa_date: null }))}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="p-5 space-y-2">

@@ -148,6 +148,7 @@ export type Database = {
           created_at: string
           fallback_message: string
           id: string
+          next_qa_date: string | null
           starter_questions: Json
           system_prompt: string
           updated_at: string
@@ -157,6 +158,7 @@ export type Database = {
           created_at?: string
           fallback_message?: string
           id?: string
+          next_qa_date?: string | null
           starter_questions?: Json
           system_prompt?: string
           updated_at?: string
@@ -166,6 +168,7 @@ export type Database = {
           created_at?: string
           fallback_message?: string
           id?: string
+          next_qa_date?: string | null
           starter_questions?: Json
           system_prompt?: string
           updated_at?: string

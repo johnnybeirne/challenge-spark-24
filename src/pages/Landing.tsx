@@ -125,7 +125,7 @@ const Landing = () => {
       </div>
 
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-6 pb-20 md:pt-10 md:pb-28">
+      <section className="relative overflow-hidden px-6 pt-6 pb-6 md:pt-10 md:pb-8">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
           <Reveal>

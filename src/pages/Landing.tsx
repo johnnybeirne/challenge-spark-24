@@ -64,9 +64,18 @@ const useScrollDepth = () => {
 const Landing = () => {
   const navigate = useNavigate();
   useScrollDepth();
+  const [nextQaDate, setNextQaDate] = useState<Date | null>(null);
 
   useEffect(() => {
     trackEvent("landing_viewed");
+    (async () => {
+      const { data } = await (supabase.from("copilot_config") as any)
+        .select("next_qa_date")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data?.next_qa_date) setNextQaDate(new Date(data.next_qa_date));
+    })();
   }, []);
 
   const Cta = ({

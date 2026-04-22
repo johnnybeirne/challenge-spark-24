@@ -192,7 +192,7 @@ const AiCopilotChat = () => {
                     </div>
                     <div className="flex justify-start">
                       <div className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] prose prose-sm dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-1.5">
-                        <ReactMarkdown>{entry.response}</ReactMarkdown>
+                        <ReactMarkdown>{entry.displayed ?? entry.response}</ReactMarkdown>
                       </div>
                     </div>
                   </div>

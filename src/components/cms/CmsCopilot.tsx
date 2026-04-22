@@ -259,7 +259,7 @@ const CmsCopilot = () => {
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {config.next_qa_date
-                    ? format(new Date(config.next_qa_date), "EEE d MMM yyyy, h:mm a")
+                    ? formatQaDateAdmin(config.next_qa_date)
                     : "Pick a date"}
                 </Button>
               </PopoverTrigger>

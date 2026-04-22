@@ -185,6 +185,25 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* LIVE Q&A BANNER */}
+      <section className="px-6 pt-12 pb-4 md:pt-16 md:pb-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-6 sm:px-10 py-5 sm:py-6 rounded-2xl border-2 border-primary/30 bg-primary/5 shadow-sm">
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <Calendar className="h-6 w-6 sm:h-7 sm:w-7" />
+            </div>
+            <div className="flex flex-col sm:items-start text-center sm:text-left">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-primary">
+                Next Live Group Q&amp;A
+              </span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                [Date TBC]
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* HOW IT ACTUALLY WORKS — scroll story */}
       <HowItWorksScroll />
 

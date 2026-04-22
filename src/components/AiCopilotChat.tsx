@@ -12,7 +12,12 @@ import aiAvatar from "@/assets/ai-avatar.png";
 interface ChatEntry {
   prompt: string;
   response: string;
+  displayed?: string;
+  typing?: boolean;
 }
+
+const TYPE_INTERVAL_MS = 18;
+const TYPE_CHARS_PER_TICK = 2;
 
 const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
 const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";
@@ -50,6 +55,27 @@ const AiCopilotChat = () => {
     });
   }, [history, loading]);
 
+  // Typewriter effect for the latest response
+  useEffect(() => {
+    const idx = history.findIndex((h) => h.typing);
+    if (idx === -1) return;
+    const interval = setInterval(() => {
+      setHistory((prev) => {
+        const next = [...prev];
+        const e = next[idx];
+        if (!e || !e.typing) return prev;
+        const nextLen = Math.min((e.displayed?.length ?? 0) + TYPE_CHARS_PER_TICK, e.response.length);
+        next[idx] = {
+          ...e,
+          displayed: e.response.slice(0, nextLen),
+          typing: nextLen < e.response.length,
+        };
+        return next;
+      });
+    }, TYPE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [history]);
+
   const handleOpen = () => {
     setOpen(true);
     setHasOpened(true);
@@ -71,7 +97,7 @@ const AiCopilotChat = () => {
       if (error) throw error;
 
       const response = data?.response ?? "No response received.";
-      const entry: ChatEntry = { prompt, response };
+      const entry: ChatEntry = { prompt, response, displayed: "", typing: true };
       setHistory((prev) => [...prev, entry]);
 
       setState((prev) => ({
@@ -166,7 +192,7 @@ const AiCopilotChat = () => {
                     </div>
                     <div className="flex justify-start">
                       <div className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] prose prose-sm dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-1.5">
-                        <ReactMarkdown>{entry.response}</ReactMarkdown>
+                        <ReactMarkdown>{entry.displayed ?? entry.response}</ReactMarkdown>
                       </div>
                     </div>
                   </div>

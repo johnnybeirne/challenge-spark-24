@@ -20,6 +20,7 @@ const TYPE_INTERVAL_MS = 18;
 const TYPE_CHARS_PER_TICK = 2;
 
 const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
+const DEFAULT_FALLBACK = "I don't have an answer for that yet. Try one of the suggested questions below.";
 const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";
 
 const AiCopilotChat = () => {
@@ -31,17 +32,19 @@ const AiCopilotChat = () => {
   const [history, setHistory] = useState<ChatEntry[]>([]);
   const [welcome, setWelcome] = useState<string>(DEFAULT_WELCOME);
   const [starters, setStarters] = useState<string[]>([]);
+  const [fallback, setFallback] = useState<string>(DEFAULT_FALLBACK);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     (async () => {
       const { data } = await (supabase.from("copilot_config") as any)
-        .select("welcome_message, starter_questions")
+        .select("welcome_message, starter_questions, fallback_message")
         .order("updated_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       if (data?.welcome_message) setWelcome(data.welcome_message);
       if (Array.isArray(data?.starter_questions)) setStarters(data.starter_questions as string[]);
+      if (data?.fallback_message) setFallback(data.fallback_message);
     })();
   }, []);
 

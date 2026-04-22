@@ -272,16 +272,7 @@ const Landing = () => {
       {/* FOOTER */}
       <footer className="border-t border-border px-6 py-8">
         <p className="mx-auto max-w-6xl text-center text-sm text-muted-foreground">
-          © 2026{" "}
-          <a
-            href="https://johnnyburn.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground transition-colors"
-          >
-            johnnyburn.com
-          </a>
-          , Digital Business Institute
+          © 2026 Leadio
         </p>
       </footer>
     </div>

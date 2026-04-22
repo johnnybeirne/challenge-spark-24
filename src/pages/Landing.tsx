@@ -171,7 +171,7 @@ const Landing = () => {
                     <s.icon className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
-                    <span className="text-xs font-mono text-muted-foreground">
+                    <span className="block text-2xl md:text-3xl font-mono font-bold text-muted-foreground leading-none">
                       DAY {i + 1}
                     </span>
                     <h3 className="font-semibold text-foreground mt-1">{s.title}</h3>

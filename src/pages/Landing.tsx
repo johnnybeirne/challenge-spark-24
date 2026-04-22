@@ -195,7 +195,7 @@ const Landing = () => {
             Why this works
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Planning kills momentum. A live challenge gets you leads. Every shared link gets you more.
+            Planning delays results. This brings in leads and grows as people share it.
           </p>
           <ul className="grid sm:grid-cols-3 gap-5 pt-6 text-left">
             {whyPoints.map((p) => (

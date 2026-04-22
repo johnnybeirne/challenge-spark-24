@@ -569,9 +569,9 @@ const HowItWorksScroll = () => {
   const { containerRef, active } = useActiveStep(steps.length);
 
   return (
-    <section className="relative px-6 py-20 md:py-24 border-t border-border bg-foreground/[0.015]">
+    <section className="relative border-t border-border bg-foreground/[0.015]">
       {/* Section heading */}
-      <div className="mx-auto max-w-3xl text-center space-y-4 mb-12 md:mb-16">
+      <div className="mx-auto max-w-3xl text-center space-y-4 px-6 pt-20 md:pt-24 pb-10 md:pb-14">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
           How it actually works
         </h2>
@@ -580,108 +580,149 @@ const HowItWorksScroll = () => {
         </p>
       </div>
 
-      {/* Scroll-driven canvas */}
+      {/* Scroll driver: tall spacer that controls progress */}
       <div
         ref={containerRef}
-        className="relative mx-auto max-w-6xl"
-        style={{ height: `${steps.length * 90}vh` }}
+        className="relative"
+        style={{ height: `${(steps.length + 1) * 80}vh` }}
       >
-        <div className="sticky top-0 h-screen flex items-center">
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 w-full items-center">
-            {/* LEFT: text rail */}
-            <div className="relative h-[60vh] md:h-[70vh] flex flex-col justify-center">
-              <ol className="relative space-y-8 md:space-y-10 pl-8">
-                {/* Spine */}
-                <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-border rounded-full" />
-                <div
-                  className="absolute left-3 top-2 w-0.5 bg-primary rounded-full transition-all duration-500 ease-out"
-                  style={{ height: `${((active + 1) / steps.length) * 100}%` }}
-                />
+        {/* Pinned stage — uses fixed positioning so it works regardless of ancestor overflow */}
+        <PinnedStage containerRef={containerRef} steps={steps} active={active} />
+      </div>
 
-                {steps.map((s, i) => {
-                  const isActive = i === active;
-                  const isPast = i < active;
-                  return (
-                    <li key={s.headline} className="relative">
-                      {/* Dot */}
-                      <span
-                        className={`absolute -left-[22px] top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all duration-500 ${
-                          isActive
-                            ? "bg-primary border-primary scale-110 shadow-md shadow-primary/40"
-                            : isPast
-                            ? "bg-primary border-primary"
-                            : "bg-background border-border"
-                        }`}
-                      >
-                        {isPast && <Check className="h-3 w-3 text-primary-foreground" />}
-                      </span>
+      {/* Bottom padding so next section breathes */}
+      <div className="h-16 md:h-20" />
+    </section>
+  );
+};
 
-                      <div
-                        className={`transition-all duration-500 ease-out ${
-                          isActive
-                            ? "opacity-100 translate-y-0"
-                            : "opacity-40 translate-y-1"
-                        }`}
-                      >
-                        <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                          Step {i + 1}
-                        </div>
-                        <h3 className={`font-bold tracking-tight transition-all duration-500 ${
-                          isActive ? "text-2xl md:text-3xl text-foreground" : "text-lg md:text-xl text-foreground/70"
-                        }`}>
-                          {s.headline}
-                        </h3>
-                        <p className={`mt-2 leading-relaxed transition-all duration-500 ${
-                          isActive ? "text-base text-muted-foreground" : "text-sm text-muted-foreground/70"
-                        }`}>
-                          {s.caption}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
+/* Pinned stage that becomes fixed while the driver is in view */
+const PinnedStage = ({
+  containerRef,
+  steps,
+  active,
+}: {
+  containerRef: React.RefObject<HTMLDivElement>;
+  steps: { headline: string; caption: string; Visual: React.ComponentType<{ active: boolean }> }[];
+  active: number;
+}) => {
+  const [pinState, setPinState] = useState<"before" | "fixed" | "after">("before");
 
-            {/* RIGHT: stage with crossfading visuals */}
-            <div className="relative h-[60vh] md:h-[70vh]">
-              <div className="absolute inset-0 rounded-3xl border border-border bg-gradient-to-br from-card to-primary/[0.03] shadow-xl overflow-hidden">
-                {steps.map((s, i) => {
-                  const isActive = i === active;
-                  return (
-                    <div
-                      key={i}
-                      className={`absolute inset-0 transition-all duration-700 ease-out ${
-                        isActive
-                          ? "opacity-100 scale-100 translate-y-0"
-                          : "opacity-0 scale-95 translate-y-4 pointer-events-none"
-                      }`}
-                      aria-hidden={!isActive}
-                    >
-                      <s.Visual active={isActive} />
+  useEffect(() => {
+    const onScroll = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.top > 0) setPinState("before");
+      else if (rect.bottom < vh) setPinState("after");
+      else setPinState("fixed");
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [containerRef]);
+
+  const positionClass =
+    pinState === "fixed"
+      ? "fixed top-0 left-0 right-0"
+      : pinState === "after"
+      ? "absolute bottom-0 left-0 right-0"
+      : "absolute top-0 left-0 right-0";
+
+  return (
+    <div className={`${positionClass} h-screen flex items-center px-6 pointer-events-none`}>
+      <div className="grid md:grid-cols-2 gap-8 md:gap-12 w-full max-w-6xl mx-auto items-center pointer-events-auto">
+        {/* LEFT: text rail */}
+        <div className="relative">
+          <ol className="relative space-y-6 md:space-y-8 pl-8">
+            <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-border rounded-full" />
+            <div
+              className="absolute left-3 top-2 w-0.5 bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ height: `${((active + 1) / steps.length) * 100}%` }}
+            />
+            {steps.map((s, i) => {
+              const isActive = i === active;
+              const isPast = i < active;
+              return (
+                <li key={s.headline} className="relative">
+                  <span
+                    className={`absolute -left-[22px] top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all duration-500 ${
+                      isActive
+                        ? "bg-primary border-primary scale-110 shadow-md shadow-primary/40"
+                        : isPast
+                        ? "bg-primary border-primary"
+                        : "bg-background border-border"
+                    }`}
+                  >
+                    {isPast && <Check className="h-3 w-3 text-primary-foreground" />}
+                  </span>
+                  <div
+                    className={`transition-all duration-500 ease-out ${
+                      isActive ? "opacity-100 translate-y-0" : "opacity-40 translate-y-1"
+                    }`}
+                  >
+                    <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1">
+                      Step {i + 1}
                     </div>
-                  );
-                })}
-
-                {/* Step counter */}
-                <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-[11px] font-mono font-semibold text-muted-foreground border border-border">
-                  {String(active + 1).padStart(2, "0")}
-                  <span className="opacity-40">/</span>
-                  {String(steps.length).padStart(2, "0")}
-                </div>
-
-                {/* Progress arrow on non-final */}
-                {active < steps.length - 1 && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[11px] font-medium text-muted-foreground animate-pulse">
-                    Scroll <ArrowRight className="h-3.5 w-3.5 rotate-90" />
+                    <h3
+                      className={`font-bold tracking-tight transition-all duration-500 ${
+                        isActive
+                          ? "text-2xl md:text-3xl text-foreground"
+                          : "text-base md:text-lg text-foreground/70"
+                      }`}
+                    >
+                      {s.headline}
+                    </h3>
+                    {isActive && (
+                      <p className="mt-2 text-base text-muted-foreground leading-relaxed">
+                        {s.caption}
+                      </p>
+                    )}
                   </div>
-                )}
-              </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        {/* RIGHT: stage */}
+        <div className="relative h-[58vh] md:h-[70vh]">
+          <div className="absolute inset-0 rounded-3xl border border-border bg-gradient-to-br from-card to-primary/[0.03] shadow-xl overflow-hidden">
+            {steps.map((s, i) => {
+              const isActive = i === active;
+              return (
+                <div
+                  key={i}
+                  className={`absolute inset-0 transition-all duration-700 ease-out ${
+                    isActive
+                      ? "opacity-100 scale-100 translate-y-0"
+                      : "opacity-0 scale-95 translate-y-4 pointer-events-none"
+                  }`}
+                  aria-hidden={!isActive}
+                >
+                  <s.Visual active={isActive} />
+                </div>
+              );
+            })}
+            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-[11px] font-mono font-semibold text-muted-foreground border border-border">
+              {String(active + 1).padStart(2, "0")}
+              <span className="opacity-40">/</span>
+              {String(steps.length).padStart(2, "0")}
             </div>
+            {active < steps.length - 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[11px] font-medium text-muted-foreground animate-pulse">
+                Scroll <ArrowRight className="h-3.5 w-3.5 rotate-90" />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

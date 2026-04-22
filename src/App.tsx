@@ -44,13 +44,6 @@ const App = () => (
           <TooltipProvider>
           <Toaster />
           <Sonner />
-          <header className="relative z-40 border-b border-border bg-background">
-            <div className="mx-auto flex h-16 w-full max-w-6xl items-center px-4 sm:px-6">
-              <span aria-label="Leadio" className="inline-flex items-center">
-                <img src={leadioLogo} alt="Leadio" className="h-7 md:h-8 w-auto" />
-              </span>
-            </div>
-          </header>
           <BrowserRouter>
             <Routes>
               {/* Landing – full-width layout */}

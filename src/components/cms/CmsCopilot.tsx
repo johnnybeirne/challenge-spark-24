@@ -101,6 +101,7 @@ const CmsCopilot = () => {
       welcome_message: config.welcome_message.trim(),
       fallback_message: config.fallback_message.trim(),
       starter_questions: cleanedQuestions,
+      next_qa_date: config.next_qa_date,
     };
 
     let cfgError: any;

@@ -639,7 +639,7 @@ const PinnedStage = ({
       <div className="grid md:grid-cols-2 gap-8 md:gap-12 w-full max-w-6xl mx-auto items-center pointer-events-auto">
         {/* LEFT: text rail */}
         <div className="relative">
-          <ol className="relative space-y-6 md:space-y-8 pl-8">
+          <ol className="relative space-y-6 md:space-y-8 pl-14">
             <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-border rounded-full" />
             <div
               className="absolute left-3 top-2 w-0.5 bg-primary rounded-full transition-all duration-500 ease-out"

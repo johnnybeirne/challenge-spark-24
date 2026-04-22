@@ -76,7 +76,7 @@ const AiCopilotChat = () => {
       if (error) throw error;
 
       const response = data?.response ?? "No response received.";
-      const entry: ChatEntry = { prompt, response };
+      const entry: ChatEntry = { prompt, response, displayed: "", typing: true };
       setHistory((prev) => [...prev, entry]);
 
       setState((prev) => ({

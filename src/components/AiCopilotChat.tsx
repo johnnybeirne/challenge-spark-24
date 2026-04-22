@@ -55,6 +55,27 @@ const AiCopilotChat = () => {
     });
   }, [history, loading]);
 
+  // Typewriter effect for the latest response
+  useEffect(() => {
+    const idx = history.findIndex((h) => h.typing);
+    if (idx === -1) return;
+    const interval = setInterval(() => {
+      setHistory((prev) => {
+        const next = [...prev];
+        const e = next[idx];
+        if (!e || !e.typing) return prev;
+        const nextLen = Math.min((e.displayed?.length ?? 0) + TYPE_CHARS_PER_TICK, e.response.length);
+        next[idx] = {
+          ...e,
+          displayed: e.response.slice(0, nextLen),
+          typing: nextLen < e.response.length,
+        };
+        return next;
+      });
+    }, TYPE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [history]);
+
   const handleOpen = () => {
     setOpen(true);
     setHasOpened(true);

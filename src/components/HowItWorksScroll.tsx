@@ -584,7 +584,7 @@ const HowItWorksScroll = () => {
       <div
         ref={containerRef}
         className="relative"
-        style={{ height: `${(steps.length + 1) * 80}vh` }}
+        style={{ height: `${100 + steps.length * 45}vh` }}
       >
         {/* Pinned stage — uses fixed positioning so it works regardless of ancestor overflow */}
         <PinnedStage containerRef={containerRef} steps={steps} active={active} />

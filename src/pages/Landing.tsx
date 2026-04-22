@@ -186,7 +186,7 @@ const Landing = () => {
       </section>
 
       {/* LIVE Q&A BANNER */}
-      <section className="px-6 pt-12 pb-4 md:pt-16 md:pb-6">
+      <section className="px-6 pt-2 pb-4 md:pt-2 md:pb-6">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-6 sm:px-10 py-5 sm:py-6 rounded-2xl border-2 border-primary/30 bg-primary/5 shadow-sm">
             <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">

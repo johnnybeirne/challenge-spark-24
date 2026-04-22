@@ -146,6 +146,7 @@ export type Database = {
       copilot_config: {
         Row: {
           created_at: string
+          fallback_message: string
           id: string
           starter_questions: Json
           system_prompt: string
@@ -154,6 +155,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          fallback_message?: string
           id?: string
           starter_questions?: Json
           system_prompt?: string
@@ -162,11 +164,45 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          fallback_message?: string
           id?: string
           starter_questions?: Json
           system_prompt?: string
           updated_at?: string
           welcome_message?: string
+        }
+        Relationships: []
+      }
+      copilot_qa: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          is_active: boolean
+          keywords: string[]
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[]
+          question: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[]
+          question?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

@@ -44,16 +44,20 @@ const App = () => (
           <TooltipProvider>
           <Toaster />
           <Sonner />
+          <header className="relative z-40 border-b border-border bg-background">
+            <div className="mx-auto flex h-16 w-full max-w-6xl items-center px-4 sm:px-6">
+              <a
+                href="https://chatgpt.com/s/m_69e8a82491cc8191b7e915c82ee65f68"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Leadio"
+                className="inline-flex items-center transition-opacity hover:opacity-80"
+              >
+                <img src={leadioLogo} alt="Leadio" className="h-7 md:h-8 w-auto" />
+              </a>
+            </div>
+          </header>
           <BrowserRouter>
-            <a
-              href="https://chatgpt.com/s/m_69e8a82491cc8191b7e915c82ee65f68"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Leadio"
-              className="absolute top-4 left-4 md:top-6 md:left-6 z-40 inline-block transition-opacity hover:opacity-80"
-            >
-              <img src={leadioLogo} alt="Leadio" className="h-6 md:h-8 w-auto" />
-            </a>
             <Routes>
               {/* Landing – full-width layout */}
               <Route element={<AppShell fullWidth />}>

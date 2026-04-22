@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Rocket, Users, TrendingUp, ArrowRight, Check } from "lucide-react";
+import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import ActivityFeed from "@/components/ActivityFeed";
@@ -95,15 +95,15 @@ const Landing = () => {
   ];
 
   const whyPoints = [
-    "Attracts the right people",
-    "Captures leads immediately",
-    "Grows through sharing",
+    { icon: Target, title: "Attracts the right people", desc: "Built around a real problem your audience already wants solved." },
+    { icon: Magnet, title: "Captures leads immediately", desc: "Every signup is a lead. No extra funnel needed." },
+    { icon: Share2, title: "Grows through sharing", desc: "Participants invite others. Reach compounds on its own." },
   ];
 
   const outcomePoints = [
-    "A live challenge that brings in leads",
-    "A system that guides people through it",
-    "A built-in growth loop",
+    { icon: Zap, title: "A live challenge that brings in leads", desc: "Up and running. Pulling people in from day one." },
+    { icon: Compass, title: "A system that guides people", desc: "Each day moves them forward. You don't have to babysit it." },
+    { icon: Repeat, title: "A built-in growth loop", desc: "Sharing is part of the experience. Reach keeps climbing." },
   ];
 
   return (

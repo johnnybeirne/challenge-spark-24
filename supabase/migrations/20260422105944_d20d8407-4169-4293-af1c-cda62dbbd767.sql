@@ -1,0 +1,1 @@
+UPDATE public.copilot_config SET starter_questions = (SELECT jsonb_agg(q) FROM jsonb_array_elements_text(starter_questions) q WHERE q != 'What should I do first?');

@@ -7,8 +7,20 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FALLBACK_SYSTEM_PROMPT =
-  "You are a concise, actionable AI co-pilot for a 3-day trust-leverage challenge. Keep every answer under 300 words. Be direct, practical, and encouraging. Focus on helping the user build, ship, and grow.";
+const FALLBACK_DEFAULT =
+  "I don't have an answer for that yet. Try one of the suggested questions below.";
+
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenize(s: string): string[] {
+  return normalize(s).split(" ").filter((w) => w.length > 2);
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -22,70 +34,81 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      throw new Error("Supabase env not configured");
+    }
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Load admin-editable system prompt from DB
-    let systemPrompt = FALLBACK_SYSTEM_PROMPT;
+    // Load fallback message
+    let fallback = FALLBACK_DEFAULT;
     try {
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-      const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
-      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { data } = await sb
-          .from("copilot_config")
-          .select("system_prompt")
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (data?.system_prompt && typeof data.system_prompt === "string" && data.system_prompt.trim().length > 0) {
-          systemPrompt = data.system_prompt;
-        }
+      const { data: cfg } = await sb
+        .from("copilot_config")
+        .select("fallback_message")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cfg?.fallback_message && typeof cfg.fallback_message === "string" && cfg.fallback_message.trim()) {
+        fallback = cfg.fallback_message;
       }
     } catch (e) {
-      console.error("copilot config fetch failed, using fallback:", e);
+      console.error("fallback fetch failed:", e);
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
+    // Load Q&A library
+    const { data: rows, error: qaErr } = await sb
+      .from("copilot_qa")
+      .select("question, answer, keywords")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limited — please try again shortly." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Add funds in Settings → Workspace → Usage." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
-        status: 500,
+    if (qaErr) {
+      console.error("qa fetch failed:", qaErr);
+      return new Response(JSON.stringify({ response: fallback }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? "";
+    const normPrompt = normalize(prompt);
+    const promptTokens = new Set(tokenize(prompt));
 
-    return new Response(JSON.stringify({ response: content }), {
+    let answer: string | null = null;
+
+    // 1. Exact (normalized) question match
+    for (const r of rows ?? []) {
+      if (normalize(r.question) === normPrompt) {
+        answer = r.answer;
+        break;
+      }
+    }
+
+    // 2. Keyword scoring
+    if (!answer) {
+      let bestScore = 0;
+      let bestAnswer: string | null = null;
+      for (const r of rows ?? []) {
+        const kws: string[] = Array.isArray(r.keywords) ? r.keywords : [];
+        let score = 0;
+        for (const kw of kws) {
+          const k = normalize(String(kw));
+          if (!k) continue;
+          if (normPrompt.includes(k)) score += 2;
+        }
+        // Also score against question tokens
+        for (const t of tokenize(r.question)) {
+          if (promptTokens.has(t)) score += 1;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestAnswer = r.answer;
+        }
+      }
+      if (bestScore >= 2) answer = bestAnswer;
+    }
+
+    return new Response(JSON.stringify({ response: answer ?? fallback }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

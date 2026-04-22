@@ -284,7 +284,7 @@ const CmsCopilot = () => {
               className="w-32"
               value={
                 config.next_qa_date
-                  ? format(new Date(config.next_qa_date), "HH:mm")
+                  ? getLocalTimeValue(config.next_qa_date)
                   : ""
               }
               onChange={(e) => {

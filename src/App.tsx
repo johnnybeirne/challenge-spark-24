@@ -44,6 +44,15 @@ const App = () => (
           <TooltipProvider>
           <Toaster />
           <Sonner />
+          <a
+            href="https://chatgpt.com/s/m_69e8a82491cc8191b7e915c82ee65f68"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open in ChatGPT"
+            className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:scale-105 hover:shadow-xl transition-all"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </a>
           <BrowserRouter>
             <Routes>
               {/* Landing – full-width layout */}

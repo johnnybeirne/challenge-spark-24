@@ -89,7 +89,7 @@ const Landing = () => {
   );
 
   const steps = [
-    { icon: Rocket, title: "Lock In Your Audience", desc: "Define who you help. Turn it into a challenge they want to join." },
+    { icon: Rocket, title: "Lock In Your Audience", desc: "Define who you help. Walk away with a ready-to-use lead-building challenge." },
     { icon: Users, title: "Get It Live in Minutes", desc: "AI-powered building does the heavy lifting. No overwhelm, no blank page." },
     { icon: TrendingUp, title: "Launch and Get Leads", desc: "Share once. Leads come in. Sharing is built in." },
   ];

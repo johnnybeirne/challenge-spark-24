@@ -89,7 +89,7 @@ const Landing = () => {
   );
 
   const steps = [
-    { icon: Rocket, title: "Plan your challenge", desc: "Pick your idea. We'll shape it into a challenge." },
+    { icon: Rocket, title: "Define Your Audience & Problem", desc: "Tell us who you help and what you solve — we'll turn it into a challenge people want to join." },
     { icon: Users, title: "Build with AI", desc: "Use AI to create your challenge flow & content." },
     { icon: TrendingUp, title: "Launch & grow", desc: "Share your challenge. It grows your audience for you." },
   ];
@@ -143,7 +143,7 @@ const Landing = () => {
                   </div>
                   <div className="flex-1">
                     <span className="text-xs font-mono text-muted-foreground">
-                      STEP {i + 1}
+                      DAY {i + 1}
                     </span>
                     <h3 className="font-semibold text-foreground mt-1">{s.title}</h3>
                     <p className="text-sm text-muted-foreground">{s.desc}</p>

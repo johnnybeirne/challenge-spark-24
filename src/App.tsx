@@ -7,6 +7,7 @@ import { AppProvider } from "@/context/AppContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
+import { MessageCircle } from "lucide-react";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
 import Assessment from "@/pages/Assessment";

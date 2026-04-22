@@ -49,9 +49,9 @@ const App = () => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Leadio"
-            className="fixed top-4 left-4 z-50 transition-transform hover:scale-105"
+            className="fixed top-5 left-5 z-50 transition-transform hover:scale-105"
           >
-            <img src={leadioLogo} alt="Leadio" className="h-8 md:h-10 w-auto" />
+            <img src={leadioLogo} alt="Leadio" className="h-7 md:h-9 w-auto drop-shadow-sm" />
           </a>
           <BrowserRouter>
             <Routes>

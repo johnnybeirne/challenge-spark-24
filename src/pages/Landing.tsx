@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Rocket, Users, TrendingUp, ArrowRight } from "lucide-react";
+import { Rocket, Users, TrendingUp, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import ActivityFeed from "@/components/ActivityFeed";
@@ -89,9 +89,21 @@ const Landing = () => {
   );
 
   const steps = [
-    { icon: Rocket, title: "Define Your Audience & Problem", desc: "Tell us who you help and what you solve — we'll turn it into a challenge people want to join." },
-    { icon: Users, title: "Build with AI", desc: "Use AI to create your challenge flow & content." },
-    { icon: TrendingUp, title: "Launch & grow", desc: "Share your challenge. It grows your audience for you." },
+    { icon: Rocket, title: "Lock In Your Audience", desc: "Define who you help. Turn it into a challenge they want to join." },
+    { icon: Users, title: "Get It Live in Minutes", desc: "AI does the heavy lifting. No overwhelm, no blank page." },
+    { icon: TrendingUp, title: "Launch and Get Leads", desc: "Share once. Leads come in. Sharing is built in." },
+  ];
+
+  const whyPoints = [
+    "Attracts the right people",
+    "Captures leads immediately",
+    "Grows through sharing",
+  ];
+
+  const outcomePoints = [
+    "A live challenge that brings in leads",
+    "A system that guides people through it",
+    "A built-in growth loop",
   ];
 
   return (
@@ -103,18 +115,20 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Build an AI-powered challenge that{" "}
-                <span className="text-primary">grows your audience for you</span>
+                Get more leads with an AI challenge that{" "}
+                <span className="text-primary">grows itself</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                In 3 days, create a challenge that attracts leads, guides users through it, and grows through sharing.
+                Launch a challenge that pulls in leads and grows every time someone shares it.
               </p>
-              <p className="text-base md:text-lg font-medium text-foreground/80">
-                Build it once. Let it run and grow.
-              </p>
+              <div className="space-y-2 pt-1">
+                <p className="text-base md:text-lg font-semibold text-foreground">Launch in 3 days.</p>
+                <p className="text-base md:text-lg font-semibold text-foreground">Leads come in on autopilot.</p>
+                <p className="text-base md:text-lg font-semibold text-foreground">Every share brings more.</p>
+              </div>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Cta label="Start building your challenge" section="hero" />
+                  <Cta label="Start your challenge" section="hero" />
                   <Button
                     size="lg"
                     variant="outline"
@@ -155,25 +169,46 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* MOMENTUM */}
+      {/* WHY THIS WORKS */}
       <section className="px-6 py-20 md:py-24 border-t border-border">
-        <Reveal className="mx-auto max-w-3xl text-center space-y-4">
+        <Reveal className="mx-auto max-w-3xl text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Most people overthink building a challenge
+            Why this works
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            The fastest builders don't plan for months — they ship. You'll shape your challenge as you go.
+            Planning kills momentum. A live challenge gets you leads. Every shared link gets you more.
           </p>
+          <ul className="grid sm:grid-cols-3 gap-4 pt-4 text-left">
+            {whyPoints.map((p) => (
+              <li
+                key={p}
+                className="flex items-start gap-3 p-5 rounded-xl border border-border bg-card/60"
+              >
+                <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <span className="font-medium text-foreground">{p}</span>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </section>
 
-      {/* PROMISE */}
-      <section className="px-6 py-16 md:py-20 bg-primary/5 border-y border-border">
-        <Reveal className="mx-auto max-w-4xl text-center">
-          <p className="text-2xl md:text-4xl font-semibold tracking-tight leading-snug">
-            In 3 days, you'll have an AI-powered challenge that brings in new people{" "}
-            <span className="text-primary">automatically.</span>
-          </p>
+      {/* OUTCOME */}
+      <section className="px-6 py-20 md:py-24 bg-primary/5 border-y border-border">
+        <Reveal className="mx-auto max-w-3xl text-center space-y-6">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            What you will have in 3 days
+          </h2>
+          <ul className="grid sm:grid-cols-3 gap-4 pt-2 text-left">
+            {outcomePoints.map((p) => (
+              <li
+                key={p}
+                className="flex items-start gap-3 p-5 rounded-xl border border-border bg-card"
+              >
+                <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <span className="font-medium text-foreground">{p}</span>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </section>
 
@@ -182,9 +217,9 @@ const Landing = () => {
         <div className="mx-auto max-w-2xl">
           <Reveal className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-              Builders are launching challenges right now
+              Live right now
             </h2>
-            <p className="text-muted-foreground">Live activity from the builder community</p>
+            <p className="text-muted-foreground">Builders launching challenges and getting leads</p>
           </Reveal>
           <Reveal>
             <ActivityFeed />
@@ -196,13 +231,13 @@ const Landing = () => {
       <section className="px-6 py-20 md:py-28 border-t border-border">
         <Reveal className="mx-auto max-w-2xl text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Start building your challenge — it's free
+            Start your challenge, it is free
           </h2>
           <p className="text-lg text-muted-foreground">
-            Less than 30 seconds. No credit card. Just start building.
+            Live in minutes. No credit card. Just go.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-            <Cta label="Start building your challenge" section="bottom" />
+            <Cta label="Start your challenge" section="bottom" />
             <Button
               size="lg"
               variant="outline"

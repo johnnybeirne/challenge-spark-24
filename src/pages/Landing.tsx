@@ -106,6 +106,14 @@ const Landing = () => {
     { icon: Repeat, title: "A built-in growth loop", desc: "Sharing is part of the experience. Reach keeps climbing." },
   ];
 
+  const comparisonRows = [
+    { old: "Post content every day and hope it converts", new: "Launch one AI-powered challenge that brings in leads continuously" },
+    { old: "Build complex funnels that take weeks", new: "Get a simple challenge live in minutes" },
+    { old: "Pay for traffic to get leads", new: "Let participants invite others and grow your leads organically" },
+    { old: "Passive audience consuming content", new: "Active participants moving through a guided experience" },
+    { old: "Growth stops when you stop posting", new: "Your challenge keeps growing as people share it" },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* AUDIENCE STRIP */}

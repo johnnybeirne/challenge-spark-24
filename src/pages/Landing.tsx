@@ -138,9 +138,6 @@ const Landing = () => {
                 Launch an AI-powered challenge that pulls in leads and grows every time someone shares it.
               </p>
               <div className="space-y-2 pt-1">
-                <p className="text-base md:text-lg font-semibold text-foreground">Launch in 3 days.</p>
-                <p className="text-base md:text-lg font-semibold text-foreground">Leads come in on autopilot.</p>
-                <p className="text-base md:text-lg font-semibold text-foreground">Every share brings more.</p>
               </div>
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col sm:flex-row gap-3">

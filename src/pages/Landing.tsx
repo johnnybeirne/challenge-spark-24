@@ -153,13 +153,6 @@ const Landing = () => {
                     Already started? Log in
                   </Button>
                 </div>
-                <div className="inline-flex items-center gap-3 mt-2 px-4 py-2.5 rounded-lg border border-border bg-card/60 backdrop-blur-sm">
-                  <Calendar className="h-4 w-4 text-primary shrink-0" />
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 leading-tight">
-                    <span className="text-sm font-semibold text-foreground">Next Live Group Q&amp;A</span>
-                    <span className="text-sm text-muted-foreground">[Date TBC]</span>
-                  </div>
-                </div>
               </div>
             </div>
           </Reveal>

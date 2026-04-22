@@ -666,9 +666,6 @@ const PinnedStage = ({
                       isActive ? "opacity-100 translate-y-0" : "opacity-40 translate-y-1"
                     }`}
                   >
-                    <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                      Step {i + 1}
-                    </div>
                     <h3
                       className={`font-bold tracking-tight transition-all duration-500 ${
                         isActive

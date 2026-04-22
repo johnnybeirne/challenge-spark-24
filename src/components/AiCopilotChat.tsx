@@ -186,20 +186,37 @@ const AiCopilotChat = () => {
                 </div>
               )}
               <div className="space-y-3">
-                {history.map((entry, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="flex justify-end">
-                      <p className="text-sm text-foreground bg-primary/10 rounded-lg px-3 py-2 max-w-[85%]">
-                        {entry.prompt}
-                      </p>
-                    </div>
-                    <div className="flex justify-start">
-                      <div className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] prose prose-sm dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-1.5">
-                        <ReactMarkdown>{entry.displayed ?? entry.response}</ReactMarkdown>
+                {history.map((entry, i) => {
+                  const isFallback =
+                    !entry.typing && entry.response.trim() === fallback.trim();
+                  return (
+                    <div key={i} className="space-y-2">
+                      <div className="flex justify-end">
+                        <p className="text-sm text-foreground bg-primary/10 rounded-lg px-3 py-2 max-w-[85%]">
+                          {entry.prompt}
+                        </p>
                       </div>
+                      <div className="flex justify-start">
+                        <div className="text-sm text-foreground bg-muted rounded-lg px-3 py-2 max-w-[85%] prose prose-sm dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-1.5">
+                          <ReactMarkdown>{entry.displayed ?? entry.response}</ReactMarkdown>
+                        </div>
+                      </div>
+                      {isFallback && starters.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {starters.map((q, qi) => (
+                            <button
+                              key={qi}
+                              onClick={() => askCopilot(q)}
+                              className="text-xs px-3 py-1.5 rounded-full border border-border bg-background hover:bg-muted transition-colors text-foreground"
+                            >
+                              {q}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {loading && (
                   <div className="flex justify-start">
                     <div className="bg-muted rounded-lg px-3 py-2">

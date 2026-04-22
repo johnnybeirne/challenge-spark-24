@@ -160,7 +160,8 @@ const Landing = () => {
 
           <Reveal className="md:pl-6">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 text-primary text-sm md:text-base font-bold uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs md:text-sm font-extrabold">FREE</span>
                 Join the 3-Day Challenge
               </div>
               {steps.map((s, i) => (

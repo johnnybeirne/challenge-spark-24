@@ -666,9 +666,6 @@ const PinnedStage = ({
                       isActive ? "opacity-100 translate-y-0" : "opacity-40 translate-y-1"
                     }`}
                   >
-                    <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                      Step {i + 1}
-                    </div>
                     <h3
                       className={`font-bold tracking-tight transition-all duration-500 ${
                         isActive
@@ -709,11 +706,6 @@ const PinnedStage = ({
                 </div>
               );
             })}
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-[11px] font-mono font-semibold text-muted-foreground border border-border">
-              {String(active + 1).padStart(2, "0")}
-              <span className="opacity-40">/</span>
-              {String(steps.length).padStart(2, "0")}
-            </div>
             {active < steps.length - 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[11px] font-medium text-muted-foreground animate-pulse">
                 Scroll <ArrowRight className="h-3.5 w-3.5 rotate-90" />

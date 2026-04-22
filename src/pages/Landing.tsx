@@ -131,11 +131,10 @@ const Landing = () => {
           <Reveal>
             <div className="space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Get more leads with an AI-powered challenge that{" "}
-                <span className="text-primary">grows itself</span>
+                Turn trust into a <span className="text-primary">lead engine</span> that grows itself
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Launch an AI-powered challenge that pulls in leads and grows every time someone shares it.
+                Launch an AI-powered challenge that brings in leads and expands every time someone shares it.
               </p>
               <div className="space-y-2 pt-1">
               </div>

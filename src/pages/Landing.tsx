@@ -119,13 +119,13 @@ const Landing = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* AUDIENCE STRIP */}
       <div className="border-b border-border bg-foreground/[0.03]">
-        <p className="mx-auto max-w-6xl px-6 py-3 text-center text-xs sm:text-sm font-medium text-muted-foreground">
+        <p className="mx-auto max-w-6xl px-6 py-4 text-center text-base sm:text-lg md:text-xl font-medium text-muted-foreground">
           Built for <span className="text-foreground">coaches, consultants, and authors</span> who want more leads without relying on ads or social media
         </p>
       </div>
 
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-16 pb-20 md:pt-24 md:pb-28">
+      <section className="relative overflow-hidden px-6 pt-6 pb-20 md:pt-10 md:pb-28">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
           <Reveal>

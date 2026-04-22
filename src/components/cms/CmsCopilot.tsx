@@ -17,6 +17,7 @@ interface CopilotConfig {
   welcome_message: string;
   fallback_message: string;
   starter_questions: string[];
+  next_qa_date: string | null;
 }
 
 interface QaRow {
@@ -35,6 +36,7 @@ const DEFAULTS: CopilotConfig = {
   fallback_message:
     "I don't have an answer for that yet. Try one of the suggested questions below.",
   starter_questions: [],
+  next_qa_date: null,
 };
 
 const CmsCopilot = () => {

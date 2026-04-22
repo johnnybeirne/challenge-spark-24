@@ -125,7 +125,7 @@ const Landing = () => {
       </div>
 
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-6 pb-20 md:pt-10 md:pb-28">
+      <section className="relative overflow-hidden px-6 pt-6 pb-6 md:pt-10 md:pb-8">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
           <Reveal>
@@ -186,7 +186,7 @@ const Landing = () => {
       </section>
 
       {/* LIVE Q&A BANNER */}
-      <section className="px-6 pt-12 pb-4 md:pt-16 md:pb-6">
+      <section className="px-6 pt-2 pb-4 md:pt-2 md:pb-6">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-6 sm:px-10 py-5 sm:py-6 rounded-2xl border-2 border-primary/30 bg-primary/5 shadow-sm">
             <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">

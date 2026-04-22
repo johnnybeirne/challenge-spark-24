@@ -210,6 +210,61 @@ const Landing = () => {
         </Reveal>
       </section>
 
+      {/* WHY THIS IS DIFFERENT */}
+      <section className="px-6 py-20 md:py-24 border-t border-border">
+        <Reveal className="mx-auto max-w-5xl space-y-10">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+              Why this is different
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              Most people try to grow with content, funnels, or ads. This works differently.
+            </p>
+          </div>
+
+          <div className="hidden md:grid grid-cols-2 gap-5 px-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Old way
+            </div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+              New way
+            </div>
+          </div>
+
+          <ul className="space-y-4">
+            {comparisonRows.map((row) => (
+              <li key={row.new} className="grid md:grid-cols-2 gap-4 md:gap-5">
+                <div className="relative p-5 md:p-6 rounded-2xl border border-border bg-card/40">
+                  <span className="md:hidden block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    Old way
+                  </span>
+                  <div className="flex items-start gap-3">
+                    <span className="mt-1 text-muted-foreground/60 text-lg leading-none">✕</span>
+                    <p className="text-muted-foreground line-through decoration-muted-foreground/30">
+                      {row.old}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="relative p-5 md:p-6 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-primary/[0.03] shadow-sm">
+                  <span className="md:hidden block text-[10px] font-semibold uppercase tracking-wider text-primary mb-2">
+                    New way
+                  </span>
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+                      ✓
+                    </span>
+                    <p className="font-semibold text-foreground">
+                      {row.new}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </section>
+
       {/* OUTCOME */}
       <section className="px-6 py-20 md:py-24 bg-primary/5 border-y border-border">
         <Reveal className="mx-auto max-w-5xl text-center space-y-6">

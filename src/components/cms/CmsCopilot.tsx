@@ -245,7 +245,8 @@ const CmsCopilot = () => {
         <CardContent className="p-5 space-y-2">
           <Label>Next Live Group Q&amp;A date</Label>
           <p className="text-xs text-muted-foreground">
-            Shown in the landing-page banner. Leave blank to display "[Date TBC]".
+            Shown in the landing-page banner. Leave blank to display "[Date TBC]". Times
+            are in your local timezone (<code>{QA_TIMEZONE}</code>).
           </p>
           <div className="flex gap-2 items-center pt-1">
             <Popover>

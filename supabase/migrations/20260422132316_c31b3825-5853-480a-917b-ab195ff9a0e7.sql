@@ -1,0 +1,1 @@
+ALTER TABLE public.copilot_config ADD COLUMN IF NOT EXISTS next_qa_date TIMESTAMP WITH TIME ZONE;

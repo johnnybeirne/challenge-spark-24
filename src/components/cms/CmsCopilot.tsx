@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import { formatQaDateAdmin, getLocalTimeValue, QA_TIMEZONE } from "@/lib/qaDate";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -245,7 +245,8 @@ const CmsCopilot = () => {
         <CardContent className="p-5 space-y-2">
           <Label>Next Live Group Q&amp;A date</Label>
           <p className="text-xs text-muted-foreground">
-            Shown in the landing-page banner. Leave blank to display "[Date TBC]".
+            Shown in the landing-page banner. Leave blank to display "[Date TBC]". Times
+            are in your local timezone (<code>{QA_TIMEZONE}</code>).
           </p>
           <div className="flex gap-2 items-center pt-1">
             <Popover>
@@ -259,7 +260,7 @@ const CmsCopilot = () => {
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {config.next_qa_date
-                    ? format(new Date(config.next_qa_date), "EEE d MMM yyyy, h:mm a")
+                    ? formatQaDateAdmin(config.next_qa_date)
                     : "Pick a date"}
                 </Button>
               </PopoverTrigger>
@@ -284,7 +285,7 @@ const CmsCopilot = () => {
               className="w-32"
               value={
                 config.next_qa_date
-                  ? format(new Date(config.next_qa_date), "HH:mm")
+                  ? getLocalTimeValue(config.next_qa_date)
                   : ""
               }
               onChange={(e) => {

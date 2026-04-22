@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { formatQaDateLong } from "@/lib/qaDate";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
@@ -208,7 +208,7 @@ const Landing = () => {
                 Next Live Group Q&amp;A
               </span>
               <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                {nextQaDate ? format(nextQaDate, "EEE d MMM, h:mm a") : "[Date TBC]"}
+                {nextQaDate ? formatQaDateLong(nextQaDate) : "[Date TBC]"}
               </span>
             </div>
           </div>

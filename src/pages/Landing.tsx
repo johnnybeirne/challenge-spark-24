@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat } from "lucide-react";
+import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import ActivityFeed from "@/components/ActivityFeed";

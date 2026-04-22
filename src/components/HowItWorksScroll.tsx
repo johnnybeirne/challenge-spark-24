@@ -550,8 +550,8 @@ const HowItWorksScroll = () => {
       Visual: Step2Visual,
     },
     {
-      headline: "People join your challenge",
-      caption: "The right people start coming in",
+      headline: "Invite people you can help",
+      caption: "Start with whoever you already know",
       Visual: Step3Visual,
     },
     {

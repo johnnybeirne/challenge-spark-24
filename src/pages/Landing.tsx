@@ -208,7 +208,7 @@ const Landing = () => {
                 Next Live Group Q&amp;A
               </span>
               <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                {nextQaDate ? format(nextQaDate, "EEE d MMM, h:mm a") : "[Date TBC]"}
+                {nextQaDate ? formatQaDateLong(nextQaDate) : "[Date TBC]"}
               </span>
             </div>
           </div>

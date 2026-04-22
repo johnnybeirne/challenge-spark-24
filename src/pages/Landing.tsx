@@ -4,6 +4,7 @@ import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Com
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import ActivityFeed from "@/components/ActivityFeed";
+import HowItWorksScroll from "@/components/HowItWorksScroll";
 
 const useReveal = () => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -183,6 +184,9 @@ const Landing = () => {
           </Reveal>
         </div>
       </section>
+
+      {/* HOW IT ACTUALLY WORKS — scroll story */}
+      <HowItWorksScroll />
 
       {/* WHY THIS WORKS */}
       <section className="px-6 py-20 md:py-24 border-t border-border">

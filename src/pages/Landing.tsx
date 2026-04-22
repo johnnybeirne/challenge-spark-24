@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { formatQaDateLong } from "@/lib/qaDate";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";

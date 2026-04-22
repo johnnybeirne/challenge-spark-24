@@ -540,7 +540,7 @@ const Step5Visual = ({ active }: { active: boolean }) => {
 const HowItWorksScroll = () => {
   const steps = [
     {
-      headline: "Start with your idea",
+      headline: "Tell us how you help your clients",
       caption: "Your challenge is created for you instantly",
       Visual: Step1Visual,
     },

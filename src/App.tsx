@@ -58,6 +58,7 @@ const App = () => (
                 <Route path="/results" element={<Results />} />
                 <Route path="/join" element={<Signup />} />
                 <Route path="/partners" element={<Partners />} />
+                <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
               </Route>
 
               {/* Authenticated routes — consumer + shared */}
@@ -69,7 +70,6 @@ const App = () => (
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
-                <Route path="/app/features" element={<AuthGuard><FeatureOverviewPage mode="user" /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />

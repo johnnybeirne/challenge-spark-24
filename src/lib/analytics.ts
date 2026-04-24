@@ -54,7 +54,11 @@ export type AnalyticsEvent =
   | "landing_scroll_depth"
   | "landing_faq_expanded"
   | "assessment_question_answered"
-  | "assessment_time_taken";
+  | "assessment_time_taken"
+  | "memory_created"
+  | "memory_updated"
+  | "ai_response_personalised"
+  | "personalisation_used";
 
 export async function trackEvent(
   event: AnalyticsEvent,

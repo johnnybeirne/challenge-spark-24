@@ -6,8 +6,7 @@ import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } fro
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 import EmptyState from "@/components/EmptyState";
-
-const SHARE_TEXT = "I just took this 90-second assessment on audience growth — curious what you'd get?";
+import { memoryShareText } from "@/lib/personalisation";
 
 const Referrals = () => {
   const { state } = useAppState();
@@ -15,6 +14,7 @@ const Referrals = () => {
 
   const inviteCode = state.user?.inviteCode ?? "builder";
   const referralLink = `${window.location.origin}/assess?ref=${inviteCode}`;
+  const shareText = memoryShareText(state.memory);
 
   const copyLink = async () => {
     try {
@@ -28,13 +28,13 @@ const Referrals = () => {
   };
 
   const shareWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(shareText + "\n\n" + referralLink)}`;
     window.open(url, "_blank");
   };
 
   const shareEmail = () => {
     const subject = encodeURIComponent("Quick assessment on audience growth");
-    const body = encodeURIComponent(SHARE_TEXT + "\n\n" + referralLink);
+    const body = encodeURIComponent(shareText + "\n\n" + referralLink);
     window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
   };
 
@@ -178,14 +178,14 @@ const Referrals = () => {
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <p className="text-xs font-medium text-muted-foreground mb-2">Share message</p>
-            <p className="text-sm text-foreground italic">"{SHARE_TEXT}"</p>
+            <p className="text-sm text-foreground italic">"{shareText}"</p>
           </CardContent>
         </Card>
 
         {/* Buttons */}
         <div className="space-y-3">
           <Button className="w-full gap-2" onClick={() => {
-            shareOrCopy({ text: SHARE_TEXT, url: referralLink });
+            shareOrCopy({ text: shareText, url: referralLink });
           }}>
             <Share2 className="h-4 w-4" />
             Share my link

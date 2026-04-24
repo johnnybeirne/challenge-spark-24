@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import TypingDots from "@/components/TypingDots";
+import { copilotMemoryContext, hasMemory } from "@/lib/personalisation";
+import { trackEvent } from "@/lib/analytics";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 interface ChatEntry {
@@ -95,8 +97,9 @@ const AiCopilotChat = () => {
     setInput("");
 
     try {
+      const memoryContext = copilotMemoryContext(state.memory);
       const { data, error } = await supabase.functions.invoke("copilot", {
-        body: { prompt },
+        body: { prompt, memory: state.memory, memoryContext },
       });
 
       if (error) throw error;
@@ -104,6 +107,10 @@ const AiCopilotChat = () => {
       const response = data?.response ?? "No response received.";
       const entry: ChatEntry = { prompt, response, displayed: "", typing: true };
       setHistory((prev) => [...prev, entry]);
+      if (hasMemory(state.memory)) {
+        trackEvent("ai_response_personalised", { hasMemory: true });
+        trackEvent("personalisation_used", { surface: "ai_copilot" });
+      }
 
       setState((prev) => ({
         ...prev,

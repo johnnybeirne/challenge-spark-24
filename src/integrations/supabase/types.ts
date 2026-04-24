@@ -490,6 +490,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_memory: {
+        Row: {
+          audience_type: string
+          challenge_name: string
+          challenge_type: string
+          created_at: string
+          desired_outcome: string
+          id: string
+          name: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audience_type?: string
+          challenge_name?: string
+          challenge_type?: string
+          created_at?: string
+          desired_outcome?: string
+          id?: string
+          name?: string
+          topic?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audience_type?: string
+          challenge_name?: string
+          challenge_type?: string
+          created_at?: string
+          desired_outcome?: string
+          id?: string
+          name?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

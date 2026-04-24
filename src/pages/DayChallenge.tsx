@@ -17,6 +17,7 @@ import Day1Setup, { getSetup } from "@/components/Day1Setup";
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
+import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -67,6 +68,10 @@ const DayChallenge = () => {
   const { state, setState } = useAppState();
   const dayNum = Number(day) || 1;
   const config = dayConfig[dayNum] || dayConfig[1];
+  const memory = state.memory;
+  const challengeType = challengeTypeLabel(memory.challengeType);
+  const audience = audienceLabel(memory.audienceType);
+  const challengeName = memory.challengeName || "your challenge";
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
@@ -123,7 +128,14 @@ const DayChallenge = () => {
         ...prev.challenge,
         aiOutputs: { ...prev.challenge.aiOutputs, [taskKey(key)]: value },
       },
+      memory: dayNum === 1 && key === "define_app"
+        ? mergeMemory(prev.memory, {
+            topic: value,
+            challengeName: prev.memory.challengeName || deriveChallengeName(value),
+          })
+        : prev.memory,
     }));
+    if (dayNum === 1 && key === "define_app") trackEvent("memory_updated", { source: "day1_define_app" });
   };
 
   const setLaunchUrl = (url: string) => {
@@ -136,7 +148,7 @@ const DayChallenge = () => {
   const handleShare = () => {
     const inviteCode = state.user?.inviteCode ?? "";
     const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-    shareOrCopy({ text: "I'm building a 3-day audience growth system — check it out!", url: referralLink });
+    shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
   };
@@ -144,7 +156,7 @@ const DayChallenge = () => {
   const handleInvite = () => {
     const inviteCode = state.user?.inviteCode ?? "";
     const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-    shareOrCopy({ text: "I'm building a 3-day audience growth system — want to try it with me?", url: referralLink });
+    shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum, type: "invite" });
     toast.success("Invite sent — one step closer to Builder Circle.");
   };
@@ -267,7 +279,13 @@ const DayChallenge = () => {
           Day {dayNum} of 3
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{config.intro}, {firstName}.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {dayNum === 1
+            ? `Today you’re building a ${challengeType} challenge for ${audience}.`
+            : dayNum === 2
+              ? `Now we turn your ${challengeType} into a working experience.`
+              : `Today you launch ${challengeName}.`}
+        </p>
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
@@ -279,9 +297,19 @@ const DayChallenge = () => {
             <PlayCircle className="h-4 w-4" />
             <p className="text-xs font-mono uppercase tracking-wider">Training</p>
           </div>
-          <p className="text-sm text-foreground leading-relaxed">{config.lesson}</p>
+          <p className="text-sm text-foreground leading-relaxed">
+            {dayNum === 1
+              ? `Let’s define your challenge, ${firstName}.`
+              : dayNum === 2
+                ? `Your users should leave with: ${memory.desiredOutcome || "a clear result they can use"}.`
+                : `Your audience: ${audience}.`}
+          </p>
           <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-            {dayNum === 1 ? `Keep it simple, ${firstName}. Simple wins.` : dayNum === 3 ? `This is where most people stop, ${firstName}. Don’t.` : config.reinforcement}
+            {dayNum === 1 && memory.desiredOutcome
+              ? `Your goal is: ${memory.desiredOutcome}`
+              : dayNum === 3
+                ? `Your promise: ${memory.desiredOutcome || "a result worth sharing"}.`
+                : config.reinforcement}
           </p>
         </CardContent>
       </Card>
@@ -292,7 +320,13 @@ const DayChallenge = () => {
             <Brain className="h-4 w-4" />
             <p className="text-xs font-mono uppercase tracking-wider">AI coaching</p>
           </div>
-          <p className="text-sm font-medium text-foreground">{config.aiPrompt}</p>
+          <p className="text-sm font-medium text-foreground">
+            {dayNum === 2
+              ? `Help me turn my ${challengeType} into a step-by-step experience.`
+              : dayNum === 3
+                ? `Help me write launch copy for ${challengeName}.`
+                : config.aiPrompt}
+          </p>
           <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>
         </CardContent>
       </Card>
@@ -336,13 +370,28 @@ const DayChallenge = () => {
                 </span>
               </label>
               {task.hasTextarea && (
-                <Textarea
-                  placeholder={task.placeholder}
-                  value={getOutput(task.key)}
-                  onChange={(e) => setOutput(task.key, e.target.value)}
-                  className="mt-1"
-                  rows={3}
-                />
+                <div className="space-y-3">
+                  {dayNum === 1 && task.key === "define_app" && (
+                    <Input
+                      placeholder="Challenge name"
+                      value={memory.challengeName}
+                      onChange={(e) => {
+                        setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, { challengeName: e.target.value }) }));
+                        trackEvent("memory_updated", { source: "day1_challenge_name" });
+                      }}
+                    />
+                  )}
+                  <Textarea
+                    placeholder={task.placeholder}
+                    value={getOutput(task.key)}
+                    onChange={(e) => setOutput(task.key, e.target.value)}
+                    className="mt-1"
+                    rows={3}
+                  />
+                  {dayNum === 1 && task.key === "define_app" && memory.challengeName && (
+                    <p className="text-sm text-muted-foreground">Your challenge is now called: {memory.challengeName}</p>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>

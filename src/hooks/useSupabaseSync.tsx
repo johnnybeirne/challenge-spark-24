@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
+import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -12,6 +13,7 @@ const STORAGE_KEYS = [
   "challengeos_network",
   "challengeos_community",
   "challengeos_partner",
+  "challengeos_memory",
   "challenge-os-state",
 ] as const;
 
@@ -24,10 +26,11 @@ function clearLocalStorage() {
 /** Load state from Supabase for authenticated user */
 export async function loadFromSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
-    const [profileRes, progressRes, unlocksRes] = await Promise.all([
+    const [profileRes, progressRes, unlocksRes, memoryRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).single(),
       (supabase.from("challenge_progress") as any).select("*").eq("user_id", userId).single(),
       (supabase.from("unlocks") as any).select("*").eq("user_id", userId),
+      (supabase.from("user_memory") as any).select("*").eq("user_id", userId).maybeSingle(),
     ]);
 
     if (profileRes.error || !profileRes.data) return null;
@@ -35,6 +38,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
     const profile = profileRes.data;
     const progress = progressRes.data;
     const unlocks = unlocksRes.data || [];
+    const memory = memoryRes.data;
 
     return {
       user: {
@@ -62,6 +66,16 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         launchUrl: progress?.launch_url ?? "",
         completed: progress?.completed ?? false,
       },
+      memory: memory
+        ? {
+            name: memory.name || profile.name || "",
+            audienceType: memory.audience_type || "",
+            challengeType: memory.challenge_type || "",
+            topic: memory.topic || "",
+            desiredOutcome: memory.desired_outcome || "",
+            challengeName: memory.challenge_name || "",
+          }
+        : { ...defaultMemory, name: profile.name || "" },
       network: {
         direct: profile.direct_referral_count,
         indirect: profile.indirect_referral_count,
@@ -118,16 +132,35 @@ export async function saveUnlock(
   } catch {}
 }
 
+export async function saveMemory(userId: string, memory: UserMemory) {
+  try {
+    await (supabase.from("user_memory") as any).upsert(
+      {
+        user_id: userId,
+        name: memory.name,
+        audience_type: memory.audienceType,
+        challenge_type: memory.challengeType,
+        topic: memory.topic,
+        desired_outcome: memory.desiredOutcome,
+        challenge_name: memory.challengeName,
+      },
+      { onConflict: "user_id" }
+    );
+  } catch {}
+}
+
 /** Migrate localStorage data to Supabase for newly authenticated user */
 export async function migrateLocalToSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
     const challengeRaw = localStorage.getItem("challengeos_challenge");
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
+    const memoryRaw = localStorage.getItem("challengeos_memory");
 
-    if (!challengeRaw && !unlocksRaw) return null;
+    if (!challengeRaw && !unlocksRaw && !memoryRaw) return null;
 
     const challenge = challengeRaw ? JSON.parse(challengeRaw) : null;
     const unlocks = unlocksRaw ? JSON.parse(unlocksRaw) : [];
+    const memory = memoryRaw ? JSON.parse(memoryRaw) : null;
 
     if (challenge) {
       await saveChallengeProgress(userId, {
@@ -145,6 +178,10 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       }
     }
 
+    if (memory) {
+      await saveMemory(userId, { ...defaultMemory, ...memory });
+    }
+
     clearLocalStorage();
     return null;
   } catch {
@@ -159,6 +196,7 @@ export function useSupabaseSync(
   prevUnlocksRef: React.MutableRefObject<string[]>
 ) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const memoryDebounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Sync challenge progress on change
   useEffect(() => {
@@ -173,6 +211,19 @@ export function useSupabaseSync(
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [authUser, state.challenge]);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
+    memoryDebounceRef.current = setTimeout(() => {
+      saveMemory(authUser.id, state.memory);
+    }, 500);
+
+    return () => {
+      if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
+    };
+  }, [authUser, state.memory]);
 
   // Sync new unlocks
   useEffect(() => {

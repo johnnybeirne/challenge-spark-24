@@ -123,17 +123,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         </CardContent>
       </Card>
 
-      <Card className="border-primary/20 bg-background shadow-sm">
-        <CardContent className={cn(collapsed ? "p-3" : "p-4")}>
-          <div className="mb-2 flex items-center gap-2">
-            <Gift className="h-5 w-5 text-primary" />
-            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
-          </div>
-          {!collapsed && <><p className="text-sm text-muted-foreground">Unlock powerful extras as you build</p>
-          <Button className="mt-4 w-full" variant="secondary" onClick={() => go("/rewards")}>View bonuses</Button></>}
-        </CardContent>
-      </Card>
-
       <Dialog open={modal === "day"} onOpenChange={(open) => !open && setModal(null)}>
         <DialogContent>
           <DialogHeader>

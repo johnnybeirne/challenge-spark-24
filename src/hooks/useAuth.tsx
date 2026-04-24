@@ -9,6 +9,8 @@ interface AuthContextValue {
   signInWithMagicLink: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ data: any; error: any }>;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -61,10 +63,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { data, error };
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error };
+  };
+
   const signOut = async () => { await supabase.auth.signOut(); };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithMagicLink, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signInWithMagicLink, signUp, signIn, resetPassword, updatePassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -133,10 +133,21 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
 const ChallengeSidebar = () => {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <>
-      <div className="fixed left-0 top-0 z-40 hidden h-screen w-[260px] border-r border-border bg-card lg:block">
-        <SidebarContent />
+      <div className={cn("fixed left-0 top-0 z-40 hidden h-screen border-r border-border bg-card transition-[width] duration-300 lg:block", collapsed ? "w-[84px]" : "w-[260px]") }>
+        <Button
+          size="sm"
+          variant="outline"
+          className="absolute -right-4 top-4 z-50 h-8 w-8 rounded-full p-0 shadow-md"
+          onClick={() => setCollapsed((value) => !value)}
+          aria-label={collapsed ? "Expand dashboard sidebar" : "Collapse dashboard sidebar"}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
+        <SidebarContent collapsed={collapsed} />
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>

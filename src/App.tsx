@@ -85,7 +85,7 @@ const App = () => (
                 <Route path="cms" element={<AdminCms />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
-                <Route path="features" element={<Features />} />
+                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 
               {/* Legacy admin redirects */}

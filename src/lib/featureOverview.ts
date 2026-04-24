@@ -294,6 +294,10 @@ export function overviewToText(overview: FeatureOverview): string {
     sections.push("", "User Journey", ...overview.journey.map((step, index) => `${index + 1}. ${step}`));
   }
 
+  if (overview.workflow?.length) {
+    sections.push("", "Workflow", ...overview.workflow.map((step, index) => `${index + 1}. ${step}`));
+  }
+
   sections.push("", "Summary Snapshot", overview.snapshot);
   return sections.join("\n");
 }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
+import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 
 export const SETUP_KEY = "leadio_setup";
 
@@ -12,6 +13,7 @@ export interface SetupData {
   audienceType: "b2b" | "b2c";
   challengeType: string;
   topicHint: string;
+  desiredOutcome?: string;
 }
 
 export const getSetup = (): SetupData | null => {
@@ -50,7 +52,7 @@ const audienceLabel = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
 
 const Day1Setup = ({ onComplete }: Props) => {
-  const { state } = useAppState();
+  const { state, setState } = useAppState();
   const [step, setStep] = useState<Step>(0);
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(null);
   const [challengeType, setChallengeType] = useState<string>("");
@@ -84,11 +86,23 @@ const Day1Setup = ({ onComplete }: Props) => {
       audienceType,
       challengeType,
       topicHint: topicHint.trim(),
+      desiredOutcome: topicHint.trim(),
     };
     try {
       localStorage.setItem(SETUP_KEY, JSON.stringify(data));
     } catch {}
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        name: prev.user?.name || prev.memory.name,
+        audienceType,
+        challengeType: normalizeChallengeType(challengeType),
+        desiredOutcome: topicHint,
+        topic: topicHint,
+      }),
+    }));
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
+    trackEvent("memory_created", { source: "onboarding" });
     onComplete(data);
   };
 

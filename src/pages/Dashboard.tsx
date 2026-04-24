@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Edit3, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Edit3, Sparkles } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
@@ -150,6 +150,25 @@ const Dashboard = () => {
               </Button>
             </>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4 border-border bg-card">
+        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="rounded-full bg-primary/10 p-2 text-primary">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Training</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {state.training.hubCompleted ? "Intro training complete" : "Watch the intro training before you build."}
+              </p>
+            </div>
+          </div>
+          <Button variant={state.training.hubCompleted ? "outline" : "default"} onClick={() => navigate("/training")} className="shrink-0">
+            {state.training.hubCompleted ? "Review training" : "Watch the intro training"}
+          </Button>
         </CardContent>
       </Card>
 

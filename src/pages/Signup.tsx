@@ -188,7 +188,7 @@ const Signup = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               <AddToCalendar firstNameOverride={firstName || "there"} className="h-12" />
-              <Button variant="secondary" className="h-12" onClick={() => navigate("/dashboard")}>Continue to dashboard</Button>
+              <Button variant="secondary" className="h-12" onClick={() => navigate("/training")}>Continue to training</Button>
             </div>
           </div>
         ) : mode === "signup" ? (

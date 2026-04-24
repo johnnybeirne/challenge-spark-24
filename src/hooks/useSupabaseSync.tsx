@@ -4,6 +4,15 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
+import type { TrainingState } from "@/context/AppContext";
+
+const fallbackTraining: TrainingState = {
+  hubCompleted: false,
+  preChallengeWatched: false,
+  day1Watched: false,
+  day2Watched: false,
+  day3Watched: false,
+};
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -15,6 +24,8 @@ const STORAGE_KEYS = [
   "challengeos_community",
   "challengeos_partner",
   "challengeos_memory",
+  "leadio_memory",
+  "leadio_training",
   "challenge-os-state",
 ] as const;
 
@@ -27,11 +38,12 @@ function clearLocalStorage() {
 /** Load state from Supabase for authenticated user */
 export async function loadFromSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
-    const [profileRes, progressRes, unlocksRes, memoryRes] = await Promise.all([
+    const [profileRes, progressRes, unlocksRes, memoryRes, trainingRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).single(),
       (supabase.from("challenge_progress") as any).select("*").eq("user_id", userId).single(),
       (supabase.from("unlocks") as any).select("*").eq("user_id", userId),
       (supabase.from("user_memory") as any).select("*").eq("user_id", userId).maybeSingle(),
+      (supabase.from("training_progress") as any).select("*").eq("user_id", userId).maybeSingle(),
     ]);
 
     if (profileRes.error || !profileRes.data) return null;
@@ -40,6 +52,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
     const progress = progressRes.data;
     const unlocks = unlocksRes.data || [];
     const memory = memoryRes.data;
+    const training = trainingRes.data;
 
     return {
       user: {
@@ -83,6 +96,15 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         direct: profile.direct_referral_count,
         indirect: profile.indirect_referral_count,
       },
+      training: training
+        ? {
+            hubCompleted: !!training.hub_completed,
+            preChallengeWatched: !!training.pre_challenge_watched,
+            day1Watched: !!training.day1_watched,
+            day2Watched: !!training.day2_watched,
+            day3Watched: !!training.day3_watched,
+          }
+        : fallbackTraining,
       unlocks: unlocks.map((u: any) => ({
         id: u.unlock_id,
         name: u.name,
@@ -153,18 +175,36 @@ export async function saveMemory(userId: string, memory: UserMemory) {
   } catch {}
 }
 
+export async function saveTraining(userId: string, training: TrainingState) {
+  try {
+    await (supabase.from("training_progress") as any).upsert(
+      {
+        user_id: userId,
+        hub_completed: training.hubCompleted,
+        pre_challenge_watched: training.preChallengeWatched,
+        day1_watched: training.day1Watched,
+        day2_watched: training.day2Watched,
+        day3_watched: training.day3Watched,
+      },
+      { onConflict: "user_id" }
+    );
+  } catch {}
+}
+
 /** Migrate localStorage data to Supabase for newly authenticated user */
 export async function migrateLocalToSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
     const challengeRaw = localStorage.getItem("challengeos_challenge");
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
-    const memoryRaw = localStorage.getItem("challengeos_memory");
+    const memoryRaw = localStorage.getItem("leadio_memory") || localStorage.getItem("challengeos_memory");
+    const trainingRaw = localStorage.getItem("leadio_training");
 
-    if (!challengeRaw && !unlocksRaw && !memoryRaw) return null;
+    if (!challengeRaw && !unlocksRaw && !memoryRaw && !trainingRaw) return null;
 
     const challenge = challengeRaw ? JSON.parse(challengeRaw) : null;
     const unlocks = unlocksRaw ? JSON.parse(unlocksRaw) : [];
     const memory = memoryRaw ? JSON.parse(memoryRaw) : null;
+    const training = trainingRaw ? JSON.parse(trainingRaw) : null;
 
     if (challenge) {
       await saveChallengeProgress(userId, {
@@ -188,6 +228,10 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       await saveMemory(userId, { ...defaultMemory, ...memory });
     }
 
+    if (training) {
+      await saveTraining(userId, { ...fallbackTraining, ...training });
+    }
+
     clearLocalStorage();
     return null;
   } catch {
@@ -203,6 +247,7 @@ export function useSupabaseSync(
 ) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const memoryDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const trainingDebounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Sync challenge progress on change
   useEffect(() => {
@@ -230,6 +275,19 @@ export function useSupabaseSync(
       if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
     };
   }, [authUser, state.memory]);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
+    trainingDebounceRef.current = setTimeout(() => {
+      saveTraining(authUser.id, state.training);
+    }, 500);
+
+    return () => {
+      if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
+    };
+  }, [authUser, state.training]);
 
   // Sync new unlocks
   useEffect(() => {

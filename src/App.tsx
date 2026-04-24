@@ -14,6 +14,7 @@ import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
 import Signup from "@/pages/Signup";
 import ResetPassword from "@/pages/ResetPassword";
+import Training from "@/pages/Training";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import Unlocks from "@/pages/Unlocks";
@@ -67,6 +68,7 @@ const App = () => (
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
+                <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
                 <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />

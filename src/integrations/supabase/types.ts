@@ -463,6 +463,42 @@ export type Database = {
         }
         Relationships: []
       }
+      training_progress: {
+        Row: {
+          created_at: string
+          day1_watched: boolean
+          day2_watched: boolean
+          day3_watched: boolean
+          hub_completed: boolean
+          id: string
+          pre_challenge_watched: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day1_watched?: boolean
+          day2_watched?: boolean
+          day3_watched?: boolean
+          hub_completed?: boolean
+          id?: string
+          pre_challenge_watched?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day1_watched?: boolean
+          day2_watched?: boolean
+          day3_watched?: boolean
+          hub_completed?: boolean
+          id?: string
+          pre_challenge_watched?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       unlocks: {
         Row: {
           id: string

@@ -69,12 +69,12 @@ export function personalise(text: string, memory?: Partial<UserMemory> | null): 
   };
 
   return text
-    .replaceAll("{name}", safe.name)
-    .replaceAll("{audience}", safe.audience)
-    .replaceAll("{challengeType}", safe.challengeType)
-    .replaceAll("{topic}", safe.topic)
-    .replaceAll("{outcome}", safe.outcome)
-    .replaceAll("{challengeName}", safe.challengeName)
+    .replace(/\{name\}/g, safe.name)
+    .replace(/\{audience\}/g, safe.audience)
+    .replace(/\{challengeType\}/g, safe.challengeType)
+    .replace(/\{topic\}/g, safe.topic)
+    .replace(/\{outcome\}/g, safe.outcome)
+    .replace(/\{challengeName\}/g, safe.challengeName)
     .replace(/\s+/g, " ")
     .trim();
 }

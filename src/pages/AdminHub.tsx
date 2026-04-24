@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap } from "lucide-react";
 
 const sections = [
   {
@@ -30,6 +30,13 @@ const sections = [
     icon: Activity,
     to: "/owner-console/activity",
     color: "text-purple-500",
+  },
+  {
+    title: "Training System",
+    description: "Review the guided training added before and inside challenge days",
+    icon: GraduationCap,
+    to: "/owner-console/training",
+    color: "text-violet-500",
   },
   {
     title: "Client Feature Overview",

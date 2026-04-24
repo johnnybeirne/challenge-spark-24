@@ -44,15 +44,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-3">
         {!collapsed && <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>}
         <button
-          onClick={() => go(`/day/${currentDay}`)}
+          onClick={() => go("/training")}
           className={cn(
             "w-full rounded-2xl border border-primary/30 bg-primary/5 text-left transition-all hover:border-primary",
             collapsed ? "p-3" : "p-4"
           )}
-          title="Back to training"
+          title="Training"
         >
           <div className="flex items-center justify-between gap-3">
-            {!collapsed && <p className="font-semibold text-foreground">Back to training</p>}
+            {!collapsed && <p className="font-semibold text-foreground">Training</p>}
             <BookOpen className="h-5 w-5 text-primary" />
           </div>
         </button>

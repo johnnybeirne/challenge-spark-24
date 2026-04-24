@@ -46,7 +46,7 @@ const TypingBubble = ({ text }: { text: string }) => {
 
 
 const Signup = () => {
-  const { signUp, signIn } = useAuth();
+  const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "signup" ? "signup" : "login";
@@ -69,6 +69,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [accountExistsNotice, setAccountExistsNotice] = useState(false);
   const [signupComplete, setSignupComplete] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {
@@ -144,6 +145,18 @@ const Signup = () => {
     setLoading(false);
     if (error) return toast.error(error.message || "Login failed");
     navigate("/dashboard");
+  };
+
+  const handlePasswordReset = async () => {
+    if (!loginEmail.trim().includes("@") || loading) {
+      return toast.error("Enter your email first, then request the reset link.");
+    }
+    setLoading(true);
+    const { error } = await resetPassword(loginEmail.trim().toLowerCase());
+    setLoading(false);
+    if (error) return toast.error(error.message || "Could not send reset email");
+    setResetSent(true);
+    toast.success("Password reset instructions sent.");
   };
 
   const switchMode = (next: Mode) => {
@@ -311,7 +324,12 @@ const Signup = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
+                <div className="flex items-center justify-between gap-3">
+                  <Label htmlFor="login-password">Password</Label>
+                  <button type="button" onClick={handlePasswordReset} className="text-sm font-medium text-primary hover:underline">
+                    Forgot password?
+                  </button>
+                </div>
                 <Input
                   id="login-password"
                   type="password"
@@ -323,6 +341,12 @@ const Signup = () => {
                   className="h-12 rounded-xl border-2 border-foreground"
                 />
               </div>
+
+              {resetSent && (
+                <p className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm text-muted-foreground">
+                  Check your email for reset instructions. The link opens a secure page where you can choose a new password.
+                </p>
+              )}
 
               <Button
                 type="submit"

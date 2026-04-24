@@ -258,13 +258,38 @@ const DayChallenge = () => {
           Day {dayNum} of 3
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{config.intro}, {firstName}.</p>
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>
 
+      <Card className="mb-4 border-primary/20 bg-primary/5">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2 text-primary">
+            <PlayCircle className="h-4 w-4" />
+            <p className="text-xs font-mono uppercase tracking-wider">Training</p>
+          </div>
+          <p className="text-sm text-foreground leading-relaxed">{config.lesson}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+            {dayNum === 1 ? `Keep it simple, ${firstName}. Simple wins.` : dayNum === 3 ? `This is where most people stop, ${firstName}. Don’t.` : config.reinforcement}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4 border-border">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2 text-primary">
+            <Brain className="h-4 w-4" />
+            <p className="text-xs font-mono uppercase tracking-wider">AI coaching</p>
+          </div>
+          <p className="text-sm font-medium text-foreground">{config.aiPrompt}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>
+        </CardContent>
+      </Card>
+
       {dayNum === 1 && (
-        <Card className="mb-4 border-primary/20 bg-primary/5">
+        <Card className="mb-4 border-border bg-muted/30">
           <CardContent className="p-5">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
               Why this works

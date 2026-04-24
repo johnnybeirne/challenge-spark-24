@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle, Gift, Lock, Menu, Users, X } from "lucide-react";
+import { CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 type ModalType = "day" | "community" | null;
 
-const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
+const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state } = useAppState();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,14 +29,20 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
   };
 
   return (
-    <aside className="flex h-full w-full flex-col gap-5 bg-card p-5">
-      <div className="rounded-2xl border border-border bg-background p-4 shadow-sm">
-        <p className="font-semibold text-foreground">Welcome back, {firstName}</p>
-        <p className="mt-1 text-sm text-muted-foreground">Day {currentDay} of 3</p>
+    <aside className={cn("flex h-full w-full flex-col bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
+      <div className={cn("rounded-2xl border border-border bg-background shadow-sm", collapsed ? "p-3 text-center" : "p-4")}>
+        {collapsed ? (
+          <p className="text-sm font-semibold text-foreground">D{currentDay}</p>
+        ) : (
+          <>
+            <p className="font-semibold text-foreground">Welcome back, {firstName}</p>
+            <p className="mt-1 text-sm text-muted-foreground">Day {currentDay} of 3</p>
+          </>
+        )}
       </div>
 
       <section className="space-y-3">
-        <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>
+        {!collapsed && <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>}
         {[1, 2, 3].map((day) => {
           const unlock = getDayUnlock(day, state.challenge.startedAt);
           const active = location.pathname === `/day/${day}`;
@@ -45,28 +51,30 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
               key={day}
               onClick={() => (unlock.available ? go(`/day/${day}`) : setModal("day"))}
               className={cn(
-                "w-full rounded-2xl border p-4 text-left transition-all",
+                "w-full rounded-2xl border text-left transition-all",
+                collapsed ? "p-3" : "p-4",
                 unlock.available ? "border-primary/35 bg-background shadow-sm hover:border-primary" : "border-border bg-muted/40 opacity-60",
                 active && "ring-2 ring-primary/20"
               )}
+              title={`Day ${day}: ${unlock.label}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold text-foreground">Day {day}</p>
+                <p className="font-semibold text-foreground">{collapsed ? day : `Day ${day}`}</p>
                 {unlock.available ? <CheckCircle className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{unlock.label}</p>
+              {!collapsed && <p className="mt-2 text-sm text-muted-foreground">{unlock.label}</p>}
             </button>
           );
         })}
       </section>
 
       <Card className={cn("border-border shadow-sm", communityUnlocked ? "bg-primary/5" : "bg-muted/40 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
-        <CardContent className="cursor-pointer p-4">
+        <CardContent className={cn("cursor-pointer", collapsed ? "p-3" : "p-4")}>
           <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="font-semibold text-foreground">Builder Circle</p>
+            {!collapsed && <p className="font-semibold text-foreground">Builder Circle</p>}
             {communityUnlocked ? <Users className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
           </div>
-          <p className="text-sm text-muted-foreground">
+          {!collapsed && <><p className="text-sm text-muted-foreground">
             {communityUnlocked ? "Your private builder network is open." : "A private network for builders who have launched"}
           </p>
           {!communityUnlocked && <p className="mt-1 text-sm text-muted-foreground">Unlock after you complete the challenge and take action</p>}
@@ -81,21 +89,21 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
                 <span className={done ? "text-foreground" : "text-muted-foreground"}>{label}</span>
               </div>
             ))}
-          </div>
-          <Button className="mt-4 w-full" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
+          </div></>}
+          {!collapsed && <Button className="mt-4 w-full" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
             {communityUnlocked ? "Enter Builder Circle" : "Unlock Builder Circle"}
-          </Button>
+          </Button>}
         </CardContent>
       </Card>
 
       <Card className="border-primary/20 bg-background shadow-sm">
-        <CardContent className="p-4">
+        <CardContent className={cn(collapsed ? "p-3" : "p-4")}>
           <div className="mb-2 flex items-center gap-2">
             <Gift className="h-5 w-5 text-primary" />
-            <p className="font-semibold text-foreground">Bonus Vault</p>
+            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
           </div>
-          <p className="text-sm text-muted-foreground">Unlock powerful extras as you build</p>
-          <Button className="mt-4 w-full" variant="secondary" onClick={() => go("/rewards")}>View bonuses</Button>
+          {!collapsed && <><p className="text-sm text-muted-foreground">Unlock powerful extras as you build</p>
+          <Button className="mt-4 w-full" variant="secondary" onClick={() => go("/rewards")}>View bonuses</Button></>}
         </CardContent>
       </Card>
 

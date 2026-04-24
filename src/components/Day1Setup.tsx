@@ -109,6 +109,46 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 0 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
+              <p className="text-xs font-mono uppercase tracking-wider text-primary">Before you build, learn the system.</p>
+              <h1 className="text-3xl font-bold tracking-tight">How this challenge works</h1>
+              <p className="text-muted-foreground">Let’s get you set up, {firstName}.</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="flex aspect-video items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <PlayCircle className="h-14 w-14" />
+              </div>
+              <h2 className="mt-4 text-lg font-bold text-foreground">The 3-day challenge growth system</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                You’re going to build something real over the next 3 days, {firstName}.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[
+                ["Build once", "Create an evergreen challenge that keeps working after the launch."],
+                ["Use AI", "Use your AI co-pilot to turn ideas into pages, prompts, and actions."],
+                ["Unlock more", "Invite people who join to unlock extra training and rewards."],
+                ["Launch fast", `By Day 3, you’ll have something live, ${firstName}.`],
+              ].map(([title, body]) => (
+                <div key={title} className="rounded-xl border border-border bg-card/70 p-4">
+                  <p className="font-semibold text-foreground">{title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+              <Lock className="mr-2 inline h-4 w-4" />
+              Unlock this when you’re ready to go deeper, {firstName}.
+            </div>
+            <Button size="lg" onClick={() => setStep(1)} className="w-full h-14 text-base font-semibold">
+              Start Day 1
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="space-y-2 text-center">
               <h1 className="text-3xl font-bold tracking-tight">Let's set this up</h1>
               <p className="text-muted-foreground">Who is your challenge for?</p>
             </div>
@@ -133,7 +173,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 1 && (
+        {step === 2 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="text-2xl font-bold tracking-tight">What result should they get?</h2>
@@ -159,7 +199,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="text-2xl font-bold tracking-tight">
@@ -188,7 +228,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 3 && audienceType && (
+        {step === 4 && audienceType && (
           <div className="space-y-6 animate-fade-in text-center">
             <div className="space-y-3">
               <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">

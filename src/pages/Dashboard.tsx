@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowRight, Sparkles } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
+import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
@@ -81,17 +82,18 @@ const Dashboard = () => {
             You're building your AI-powered challenge
           </p>
         </div>
-        {authUser && (
+        {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button
             variant="ghost"
             size="sm"
             className="text-xs text-muted-foreground"
             onClick={async () => {
+              sessionStorage.removeItem(DEMO_USER_KEY);
               await signOut();
               window.location.href = "/";
             }}
           >
-            Sign out
+            {authUser ? "Sign out" : "Exit user view"}
           </Button>
         )}
       </div>

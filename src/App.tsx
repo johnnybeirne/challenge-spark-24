@@ -30,6 +30,7 @@ import AdminCms from "@/pages/AdminCms";
 import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
+import AdminTraining from "@/pages/AdminTraining";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -85,6 +86,7 @@ const App = () => (
                 <Route path="cms" element={<AdminCms />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
+                <Route path="training" element={<AdminTraining />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 

@@ -17,6 +17,7 @@ import Day1Setup, { getSetup } from "@/components/Day1Setup";
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
+import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -67,6 +68,10 @@ const DayChallenge = () => {
   const { state, setState } = useAppState();
   const dayNum = Number(day) || 1;
   const config = dayConfig[dayNum] || dayConfig[1];
+  const memory = state.memory;
+  const challengeType = challengeTypeLabel(memory.challengeType);
+  const audience = audienceLabel(memory.audienceType);
+  const challengeName = memory.challengeName || "your challenge";
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
@@ -136,7 +141,7 @@ const DayChallenge = () => {
   const handleShare = () => {
     const inviteCode = state.user?.inviteCode ?? "";
     const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-    shareOrCopy({ text: "I'm building a 3-day audience growth system — check it out!", url: referralLink });
+    shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
   };
@@ -144,7 +149,7 @@ const DayChallenge = () => {
   const handleInvite = () => {
     const inviteCode = state.user?.inviteCode ?? "";
     const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-    shareOrCopy({ text: "I'm building a 3-day audience growth system — want to try it with me?", url: referralLink });
+    shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum, type: "invite" });
     toast.success("Invite sent — one step closer to Builder Circle.");
   };

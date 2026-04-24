@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import CmsLanding from "@/components/cms/CmsLanding";
 import CmsAssessment from "@/components/cms/CmsAssessment";
@@ -39,30 +38,9 @@ const ADMIN_LINKS = [
 ];
 
 const AdminCms = () => {
-  const [password, setPassword] = useState("");
-  const [authed, setAuthed] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("landing");
   const [sheetOpen, setSheetOpen] = useState(false);
   const isMobile = useIsMobile();
-
-  const login = () => {
-    if (password === "challengeos2024") {
-      setAuthed(true);
-    }
-  };
-
-  if (!authed) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
-        <Lock className="h-8 w-8 text-muted-foreground" />
-        <h1 className="text-xl font-bold">Admin CMS</h1>
-        <div className="flex gap-2 w-full max-w-xs">
-          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && login()} />
-          <Button onClick={login}>Enter</Button>
-        </div>
-      </div>
-    );
-  }
 
   const renderSection = () => {
     switch (activeSection) {

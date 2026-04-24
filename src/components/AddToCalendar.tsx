@@ -6,9 +6,9 @@ import { useAppState } from "@/context/AppContext";
 import { buildChallengeEvents, downloadChallengeIcs, googleCalendarUrl } from "@/lib/calendarSchedule";
 import { trackEvent } from "@/lib/analytics";
 
-const AddToCalendar = ({ variant = "default", className = "" }: { variant?: "default" | "secondary" | "outline"; className?: string }) => {
+const AddToCalendar = ({ variant = "default", className = "", firstNameOverride }: { variant?: "default" | "secondary" | "outline"; className?: string; firstNameOverride?: string }) => {
   const { state, setState } = useAppState();
-  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
+  const firstName = firstNameOverride || state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
   const events = buildChallengeEvents(firstName, state.memory, state.challenge.startedAt);
 
   const markAdded = () => {

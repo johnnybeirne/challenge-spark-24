@@ -56,6 +56,20 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             <BookOpen className="h-5 w-5 text-primary" />
           </div>
         </button>
+        <button
+          onClick={() => go("/rewards")}
+          className={cn(
+            "w-full rounded-2xl border border-border bg-background text-left shadow-sm transition-all hover:border-primary/60 hover:bg-primary/5",
+            collapsed ? "p-3" : "p-4"
+          )}
+          title="Bonus Vault"
+        >
+          <div className="flex items-center justify-between gap-3">
+            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
+            <Gift className="h-5 w-5 text-primary" />
+          </div>
+          {!collapsed && <p className="mt-2 text-sm text-muted-foreground">Unlock powerful extras as you build</p>}
+        </button>
         {[1, 2, 3].map((day) => {
           const unlock = getDayUnlock(day, state.challenge.startedAt);
           const active = location.pathname === `/day/${day}`;

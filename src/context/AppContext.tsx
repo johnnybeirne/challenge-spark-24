@@ -62,6 +62,7 @@ export interface AppState {
     aiOutputs: Record<string, string>;
     launchUrl: string;
     completed: boolean;
+    calendarAdded: boolean;
   };
   network: {
     direct: number;
@@ -122,6 +123,7 @@ export const defaultState: AppState = {
     aiOutputs: {},
     launchUrl: "",
     completed: false,
+    calendarAdded: false,
   },
   referrals: { count: 0, records: [] },
   network: { direct: 0, indirect: 0 },

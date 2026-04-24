@@ -125,7 +125,6 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {[
                 ["Build once", "Create an evergreen challenge that keeps working after the launch."],
-                ["Use AI", "Use your AI co-pilot to turn ideas into pages, prompts, and actions."],
                 ["Unlock more", "Invite people who join to unlock extra training and rewards."],
                 ["Launch fast", `By Day 3, you’ll have something live, ${firstName}.`],
               ].map(([title, body]) => (

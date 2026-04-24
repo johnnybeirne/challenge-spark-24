@@ -10,6 +10,11 @@ const corsHeaders = {
 const FALLBACK_DEFAULT =
   "I don't have an answer for that yet. Try one of the suggested questions below.";
 
+function withMemory(answer: string, memoryContext?: string): string {
+  if (!memoryContext || !memoryContext.trim()) return answer;
+  return `${memoryContext}\n\nHere’s the next step:\n\n${answer}`;
+}
+
 function normalize(s: string): string {
   return s
     .toLowerCase()
@@ -26,7 +31,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, memoryContext } = await req.json();
     if (!prompt || typeof prompt !== "string") {
       return new Response(JSON.stringify({ error: "prompt is required" }), {
         status: 400,
@@ -108,7 +113,7 @@ serve(async (req) => {
       if (bestScore >= 2) answer = bestAnswer;
     }
 
-    return new Response(JSON.stringify({ response: answer ?? fallback }), {
+    return new Response(JSON.stringify({ response: withMemory(answer ?? fallback, memoryContext) }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

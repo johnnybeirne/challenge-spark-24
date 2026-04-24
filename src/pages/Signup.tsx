@@ -46,7 +46,7 @@ const TypingBubble = ({ text }: { text: string }) => {
 
 
 const Signup = () => {
-  const { signUp, signIn, resetPassword } = useAuth();
+  const { signUp, signIn, signInWithMagicLink, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "signup" ? "signup" : "login";
@@ -67,9 +67,11 @@ const Signup = () => {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [emailAction, setEmailAction] = useState<"reset" | "link" | null>(null);
   const [accountExistsNotice, setAccountExistsNotice] = useState(false);
   const [signupComplete, setSignupComplete] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {
@@ -148,15 +150,27 @@ const Signup = () => {
   };
 
   const handlePasswordReset = async () => {
-    if (!loginEmail.trim().includes("@") || loading) {
+    if (!loginEmail.trim().includes("@") || loading || emailAction) {
       return toast.error("Enter your email first, then request the reset link.");
     }
-    setLoading(true);
+    setEmailAction("reset");
     const { error } = await resetPassword(loginEmail.trim().toLowerCase());
-    setLoading(false);
+    setEmailAction(null);
     if (error) return toast.error(error.message || "Could not send reset email");
     setResetSent(true);
     toast.success("Password reset instructions sent.");
+  };
+
+  const handleMagicLink = async () => {
+    if (!loginEmail.trim().includes("@") || loading || emailAction) {
+      return toast.error("Enter your email first, then request the sign-in link.");
+    }
+    setEmailAction("link");
+    const { error } = await signInWithMagicLink(loginEmail.trim().toLowerCase());
+    setEmailAction(null);
+    if (error) return toast.error(error.message || "Could not send sign-in link");
+    setMagicLinkSent(true);
+    toast.success("Sign-in link sent.");
   };
 
   const switchMode = (next: Mode) => {
@@ -326,8 +340,8 @@ const Signup = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-3">
                   <Label htmlFor="login-password">Password</Label>
-                  <button type="button" onClick={handlePasswordReset} className="text-sm font-medium text-primary hover:underline">
-                    Forgot password?
+                  <button type="button" onClick={handlePasswordReset} disabled={!!emailAction || loading} className="text-sm font-medium text-primary hover:underline disabled:opacity-50">
+                    {emailAction === "reset" ? "Sending reset…" : "Forgot password?"}
                   </button>
                 </div>
                 <Input
@@ -348,6 +362,12 @@ const Signup = () => {
                 </p>
               )}
 
+              {magicLinkSent && (
+                <p className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm text-muted-foreground">
+                  Check your email for a secure sign-in link. Use this if you do not remember your password.
+                </p>
+              )}
+
               <Button
                 type="submit"
                 disabled={!canSubmitLogin || loading}
@@ -355,6 +375,16 @@ const Signup = () => {
               >
                 <LogIn className="w-4 h-4" />
                 {loading ? "Signing in…" : "Sign in"}
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleMagicLink}
+                disabled={!loginEmail.trim().includes("@") || loading || !!emailAction}
+                className="w-full h-12 rounded-xl text-base border-2 border-foreground"
+              >
+                {emailAction === "link" ? "Sending link…" : "Email me a sign-in link"}
               </Button>
             </form>
 

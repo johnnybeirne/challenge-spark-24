@@ -56,6 +56,20 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             <BookOpen className="h-5 w-5 text-primary" />
           </div>
         </button>
+        <button
+          onClick={() => go("/rewards")}
+          className={cn(
+            "w-full rounded-2xl border border-border bg-background text-left shadow-sm transition-all hover:border-primary/60 hover:bg-primary/5",
+            collapsed ? "p-3" : "p-4"
+          )}
+          title="Bonus Vault"
+        >
+          <div className="flex items-center justify-between gap-3">
+            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
+            <Gift className="h-5 w-5 text-primary" />
+          </div>
+          {!collapsed && <p className="mt-2 text-sm text-muted-foreground">Unlock powerful extras as you build</p>}
+        </button>
         {[1, 2, 3].map((day) => {
           const unlock = getDayUnlock(day, state.challenge.startedAt);
           const active = location.pathname === `/day/${day}`;
@@ -106,17 +120,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           {!collapsed && <Button className="mt-4 w-full" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
             {communityUnlocked ? "Enter Builder Circle" : "Unlock Builder Circle"}
           </Button>}
-        </CardContent>
-      </Card>
-
-      <Card className="border-primary/20 bg-background shadow-sm">
-        <CardContent className={cn(collapsed ? "p-3" : "p-4")}>
-          <div className="mb-2 flex items-center gap-2">
-            <Gift className="h-5 w-5 text-primary" />
-            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
-          </div>
-          {!collapsed && <><p className="text-sm text-muted-foreground">Unlock powerful extras as you build</p>
-          <Button className="mt-4 w-full" variant="secondary" onClick={() => go("/rewards")}>View bonuses</Button></>}
         </CardContent>
       </Card>
 

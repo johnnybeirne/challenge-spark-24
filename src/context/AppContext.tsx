@@ -51,6 +51,14 @@ export interface CommunityState {
   leaderboardTab: "supportive" | "network" | "active" | "launched";
 }
 
+export interface TrainingState {
+  hubCompleted: boolean;
+  preChallengeWatched: boolean;
+  day1Watched: boolean;
+  day2Watched: boolean;
+  day3Watched: boolean;
+}
+
 export interface AppState {
   user: User | null;
   assessment: Record<string, any> | null;
@@ -78,6 +86,7 @@ export interface AppState {
     invitedCount: number;
     invitedCompleted: boolean;
   };
+  training: TrainingState;
   crossPromotion: {
     impressions: number;
     clicks: number;
@@ -112,6 +121,14 @@ const defaultCommunity: CommunityState = {
   leaderboardTab: "supportive",
 };
 
+export const defaultTraining: TrainingState = {
+  hubCompleted: false,
+  preChallengeWatched: false,
+  day1Watched: false,
+  day2Watched: false,
+  day3Watched: false,
+};
+
 export const defaultState: AppState = {
   user: null,
   assessment: null,
@@ -130,6 +147,7 @@ export const defaultState: AppState = {
   community: defaultCommunity,
   unlocks: [],
   onboarding: { invitedCount: 0, invitedCompleted: false },
+  training: defaultTraining,
   crossPromotion: { impressions: 0, clicks: 0, ctr: 0 },
   partnerAsset: null,
   partnerPerformance: null,
@@ -270,7 +288,7 @@ export function clearState(): void {
     "challengeos_user", "challengeos_assessment", "challengeos_challenge",
     "challengeos_referrals", "challengeos_unlocks", "challengeos_network",
     "challengeos_community", "challengeos_onboarding", "challengeos_crosspromotion",
-    "challengeos_partnerasset", "challengeos_partnerperformance", "challengeos_memory", "challenge-os-state",
+    "challengeos_partnerasset", "challengeos_partnerperformance", "challengeos_memory", "challenge-os-state", "leadio_memory", "leadio_training",
   ];
   keys.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
 }

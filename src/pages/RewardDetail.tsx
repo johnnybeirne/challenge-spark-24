@@ -113,7 +113,7 @@ const RewardDetail = () => {
     const nextTier = UNLOCK_TIERS.find((t) => t.assets > assetIndex && directReferrals < t.referrals);
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
+        <div className="app-page-container py-8 pb-24">
           <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/rewards")}>
             <ArrowLeft className="h-3 w-3" /> Back to rewards
           </Button>
@@ -152,7 +152,7 @@ const RewardDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
+      <div className="app-page-container py-8 pb-24">
         {/* Back nav */}
         <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/rewards")}>
           <ArrowLeft className="h-3 w-3" /> Back to rewards

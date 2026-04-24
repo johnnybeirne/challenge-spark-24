@@ -53,7 +53,7 @@ const Referrals = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
+      <div className="app-page-container py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
           This only works if people go through it.
@@ -67,6 +67,8 @@ const Referrals = () => {
           />
         )}
 
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(320px,0.45fr)] lg:items-start">
+        <div>
         {/* Stats */}
         <Card className="border-border mb-4">
           <CardContent className="flex items-center gap-4 p-5">
@@ -153,6 +155,8 @@ const Referrals = () => {
           </Card>
         )}
 
+        </div>
+        <div>
         {/* Link */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
@@ -198,6 +202,8 @@ const Referrals = () => {
             <Mail className="h-4 w-4" />
             Share via Email
           </Button>
+        </div>
+        </div>
         </div>
       </div>
     </div>

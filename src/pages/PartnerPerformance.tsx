@@ -142,7 +142,7 @@ const PartnerPerformance = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
+      <div className="app-page-container py-8 pb-24">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
@@ -158,7 +158,7 @@ const PartnerPerformance = () => {
         </div>
 
         {/* ─── TOP METRICS ─── */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
           <MetricCard icon={Eye} label="Impressions" value={impressions} tooltip="How often your partner card or asset was shown to users" />
           <MetricCard icon={MousePointerClick} label="Clicks" value={clicks} tooltip="How often users clicked through to learn more" />
         </div>

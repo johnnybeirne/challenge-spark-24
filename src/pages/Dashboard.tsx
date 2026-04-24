@@ -68,7 +68,7 @@ const Dashboard = () => {
   const completedCount = tasks.filter((_, i) => state.challenge.tasks[`day${currentDay}_task${i}`]).length;
 
   return (
-    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -184,6 +184,8 @@ const Dashboard = () => {
         </Card>
       )}
 
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.45fr)] lg:items-start">
+      <div>
       {/* Invite card — low priority, delayed, single instance */}
       {(completedCount >= 1 || dwellElapsed) && (
         <Card className="mb-4 border-border">
@@ -229,9 +231,10 @@ const Dashboard = () => {
           position="dashboard"
         />
       </div>
+      </div>
 
       {/* Johnny B AI */}
-      <Card className="mb-4 cursor-pointer hover:border-primary/40 transition-colors" onClick={() => navigate(`/day/${currentDay}`)}>
+      <Card className="mb-4 cursor-pointer hover:border-primary/40 transition-colors lg:sticky lg:top-6" onClick={() => navigate(`/day/${currentDay}`)}>
         <CardContent className="p-5 flex items-center gap-3">
           <img src={aiAvatar} alt="Johnny B AI" className="h-10 w-10 rounded-full object-cover border border-border shrink-0" />
           <div className="flex-1">
@@ -241,6 +244,7 @@ const Dashboard = () => {
           <Sparkles className="w-4 h-4 text-primary" />
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

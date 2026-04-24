@@ -11,7 +11,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const experience = getExperience(state.user?.role);
 
   return (
-    <div className="min-h-screen flex justify-center bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <div className={`w-full relative ${fullWidth ? "" : "pb-20"}`}>
         <Outlet />
         {showNav && authenticated && (

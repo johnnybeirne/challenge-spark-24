@@ -20,14 +20,14 @@ const Calendar = () => {
   const currentDay = state.challenge?.currentDay ?? 1;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="app-page-container py-6 pb-24 lg:py-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Live sessions</h1>
         <p className="text-sm text-muted-foreground mt-1">Your cohort schedule</p>
       </div>
 
       {/* Cohort timeline */}
-      <div className="flex gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {cohortDays.map((d) => {
           const isCurrent = currentDay === d.day;
           return (

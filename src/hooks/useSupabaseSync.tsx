@@ -67,6 +67,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         aiOutputs: progress?.ai_outputs ?? {},
         launchUrl: progress?.launch_url ?? "",
         completed: progress?.completed ?? false,
+        calendarAdded: false,
       },
       memory: memory
         ? {
@@ -173,6 +174,7 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
         aiOutputs: challenge.aiOutputs ?? {},
         launchUrl: challenge.launchUrl ?? "",
         completed: challenge.completed ?? false,
+        calendarAdded: challenge.calendarAdded ?? false,
       });
     }
 

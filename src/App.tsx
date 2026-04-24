@@ -31,6 +31,7 @@ import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import Features from "@/pages/Features";
+import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import NotFound from "@/pages/NotFound";
 
@@ -68,6 +69,7 @@ const App = () => (
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
+                <Route path="/app/features" element={<AuthGuard><FeatureOverviewPage mode="user" /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />
@@ -91,6 +93,7 @@ const App = () => (
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<AdminCms />} />
+                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

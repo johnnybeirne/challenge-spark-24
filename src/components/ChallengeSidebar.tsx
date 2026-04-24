@@ -98,7 +98,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <Card className={cn("border-border shadow-sm", communityUnlocked ? "bg-primary/5" : "bg-muted/40 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
         <CardContent className={cn("cursor-pointer", collapsed ? "p-3" : "p-4")}>
           <div className="mb-2 flex items-center justify-between gap-3">
-            {!collapsed && <p className="font-semibold text-foreground">Builder Circle</p>}
+            {!collapsed && <p className="font-semibold text-foreground">Challenge Community</p>}
             {communityUnlocked ? <Users className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
           </div>
           {!collapsed && <><p className="text-sm text-muted-foreground">
@@ -118,7 +118,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             ))}
           </div></>}
           {!collapsed && <Button className="mt-4 w-full" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
-            {communityUnlocked ? "Enter Builder Circle" : "Unlock Builder Circle"}
+            {communityUnlocked ? "Enter Challenge Community" : "Unlock Challenge Community"}
           </Button>}
         </CardContent>
       </Card>

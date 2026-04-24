@@ -12,7 +12,7 @@ import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
-import { audienceLabel, challengeTypeLabel, mergeMemory } from "@/lib/personalisation";
+import { audienceLabel as memoryAudienceLabel, challengeTypeLabel, mergeMemory } from "@/lib/personalisation";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft } from "lucide-react";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, PlayCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
+import { useAppState } from "@/context/AppContext";
 
 export const SETUP_KEY = "leadio_setup";
 
@@ -28,7 +29,7 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-type Step = 0 | 1 | 2 | 3;
+type Step = 0 | 1 | 2 | 3 | 4;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / professionals", icon: Briefcase },
@@ -49,10 +50,12 @@ const audienceLabel = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
 
 const Day1Setup = ({ onComplete }: Props) => {
+  const { state } = useAppState();
   const [step, setStep] = useState<Step>(0);
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(null);
   const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>("");
+  const firstName = state.user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {
     trackEvent("onboarding_viewed", { step });
@@ -64,15 +67,15 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const handleAudience = (v: "b2b" | "b2c") => {
     setAudienceType(v);
-    advance(1);
+    advance(2);
   };
 
   const handleChallenge = (v: string) => {
     setChallengeType(v);
-    advance(2);
+    advance(3);
   };
 
-  const handleTopicNext = () => setStep(3);
+  const handleTopicNext = () => setStep(4);
 
   const handleStart = () => {
     if (!audienceType || !challengeType) return;

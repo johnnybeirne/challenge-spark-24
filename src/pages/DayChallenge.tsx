@@ -18,6 +18,7 @@ import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
+import { canAccessDay } from "@/lib/challengeProgression";
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -85,6 +86,11 @@ const DayChallenge = () => {
     return !!getSetup();
   });
   const firstName = state.user?.name?.split(" ")[0] || "there";
+
+  if (!canAccessDay(dayNum, state.challenge.startedAt)) {
+    navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
+    return null;
+  }
 
   if (dayNum === 1 && !setupDone) {
     return <Day1Setup onComplete={() => setSetupDone(true)} />;

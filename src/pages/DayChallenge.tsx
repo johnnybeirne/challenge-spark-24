@@ -70,6 +70,7 @@ const DayChallenge = () => {
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
   const [setupDone, setSetupDone] = useState(() => !!getSetup());
+  const firstName = state.user?.name?.split(" ")[0] || "there";
 
   if (dayNum === 1 && !setupDone) {
     return <Day1Setup onComplete={() => setSetupDone(true)} />;
@@ -156,7 +157,7 @@ const DayChallenge = () => {
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
       trackEvent("day_completed", { day: dayNum });
-      toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
+      toast.success(`${config.completion.replace(".", `, ${firstName}.`)} Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
       setState((prev) => ({
@@ -179,10 +180,10 @@ const DayChallenge = () => {
             <Rocket className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-3">
-            You built and launched your challenge in 3 days.
+            You launched something real, {firstName}.
           </h1>
           <p className="text-muted-foreground text-sm">
-            That puts you ahead of 99% of people who just talk about building.
+            That puts you ahead of most.
           </p>
         </div>
 

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
+import { ensureStartedAt } from "@/lib/challengeProgression";
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -61,6 +62,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
       },
       challenge: {
         currentDay: progress?.current_day ?? 1,
+        startedAt: ensureStartedAt(progress?.started_at),
         tasks: progress?.tasks ?? {},
         aiOutputs: progress?.ai_outputs ?? {},
         launchUrl: progress?.launch_url ?? "",
@@ -103,6 +105,7 @@ export async function saveChallengeProgress(
       {
         user_id: userId,
         current_day: challenge.currentDay,
+        started_at: challenge.startedAt,
         tasks: challenge.tasks,
         ai_outputs: challenge.aiOutputs,
         launch_url: challenge.launchUrl,
@@ -165,6 +168,7 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
     if (challenge) {
       await saveChallengeProgress(userId, {
         currentDay: challenge.currentDay ?? 1,
+        startedAt: ensureStartedAt(challenge.startedAt),
         tasks: challenge.tasks ?? {},
         aiOutputs: challenge.aiOutputs ?? {},
         launchUrl: challenge.launchUrl ?? "",

@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CheckCircle, ExternalLink, Gift, Lock, Sparkles, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
-import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Gift, Lock, ExternalLink, Users, Crown, Sparkles,
-} from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 interface PartnerAsset {
@@ -22,238 +18,131 @@ interface PartnerAsset {
   partner_name?: string;
 }
 
-/** Unlock tiers: direct referrals required → how many assets unlocked */
-const UNLOCK_TIERS = [
-  { referrals: 0, assets: 1 },
-  { referrals: 3, assets: 3 },
-  { referrals: 5, assets: 5 },
-  { referrals: 10, assets: Infinity },
+const challengeBonuses = [
+  { id: "day1_blueprint", title: "Challenge Blueprint", benefit: "Map the structure of your offer and user journey.", day: 1 },
+  { id: "day2_playbook", title: "Experience Playbook", benefit: "Turn your idea into a step-by-step user experience.", day: 2 },
+  { id: "day3_checklist", title: "Launch Checklist", benefit: "Ship with a cleaner message and launch plan.", day: 3 },
 ];
 
-function getUnlockedCount(directReferrals: number): number {
-  let count = 0;
-  for (const tier of UNLOCK_TIERS) {
-    if (directReferrals >= tier.referrals) count = tier.assets;
-  }
-  return count;
-}
-
-function getNextTier(directReferrals: number) {
-  return UNLOCK_TIERS.find((t) => directReferrals < t.referrals) || null;
-}
+const partnerImages = ["bg-primary/10", "bg-accent/10", "bg-success/10"];
 
 const Rewards = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { state } = useAppState();
   const [assets, setAssets] = useState<PartnerAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
+  const direct = state.network.direct;
+  const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);
+  const unlockedChallengeBonuses = challengeBonuses.filter((b) => completedDay >= b.day).length;
+  const unlockedPartnerCount = direct >= 10 ? assets.length : direct >= 5 ? 5 : direct >= 3 ? 3 : Math.min(1, assets.length);
 
-  const directReferrals = state.network.direct;
-  const unlockedCount = getUnlockedCount(directReferrals);
-  const nextTier = getNextTier(directReferrals);
-
-  useEffect(() => {
-    trackEvent("reward_accessed");
-  }, []);
+  useEffect(() => { trackEvent("reward_accessed"); }, []);
 
   useEffect(() => {
     (async () => {
-      // Fetch approved partner contributions
       const { data: contribs } = await (supabase.from("partner_contributions") as any)
         .select("id, contribution_title, contribution_description, estimated_value, contribution_url, user_id")
         .eq("status", "approved")
         .order("estimated_value", { ascending: false });
 
-      if (!contribs?.length) {
-        setAssets([]);
-        setLoading(false);
-        return;
-      }
-
-      // Get partner names
+      if (!contribs?.length) { setAssets([]); setLoading(false); return; }
       const userIds = [...new Set(contribs.map((c: any) => c.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, name")
-        .in("user_id", userIds as string[]);
-
+      const { data: profiles } = await supabase.from("profiles").select("user_id, name").in("user_id", userIds as string[]);
       const nameMap = new Map((profiles || []).map((p) => [p.user_id, p.name]));
-
-      setAssets(
-        contribs.map((c: any) => ({
-          ...c,
-          partner_name: nameMap.get(c.user_id) || "Builder",
-        }))
-      );
+      setAssets(contribs.map((c: any) => ({ ...c, partner_name: nameMap.get(c.user_id) || "Builder" })));
       setLoading(false);
     })();
   }, []);
 
-  const handleAccess = (asset: PartnerAsset) => {
-    trackEvent("reward_accessed", { asset_id: asset.id, title: asset.contribution_title });
-    trackEvent("partner_asset_clicked", { asset_id: asset.id, partner_user_id: asset.user_id });
-    navigate(`/reward/${asset.id}`);
-  };
-
-  const totalUnlockedValue = assets
-    .slice(0, unlockedCount)
-    .reduce((sum, a) => sum + a.estimated_value, 0);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner />
-      </div>
-    );
-  }
+  if (loading) return <div className="flex min-h-screen items-center justify-center"><Spinner /></div>;
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="app-page-container py-8 pb-24">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1">
-            <Gift className="h-5 w-5 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Your unlocked rewards</h1>
+      <div className="app-page-container py-10 pb-24">
+        <header className="mb-8 max-w-3xl">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground shadow-sm">
+            <Gift className="h-4 w-4 text-primary" /> Bonus Vault
           </div>
-          <p className="text-sm text-muted-foreground">
-            Access high-value resources from builders in the network.
-          </p>
-        </div>
+          <h1 className="text-3xl font-bold text-foreground">Bonus Vault</h1>
+          <p className="mt-2 text-muted-foreground">Unlock tools, training, and rewards as you build your challenge</p>
+        </header>
 
-        {/* Summary card */}
-        {assets.length > 0 && (
-          <Card className="border-primary/20 bg-primary/5 mb-6">
-            <CardContent className="p-5 text-center">
-              <p className="text-3xl font-bold text-primary">${totalUnlockedValue}</p>
-              <p className="text-xs text-muted-foreground">
-                in unlocked rewards · {Math.min(unlockedCount, assets.length)} of {assets.length} assets
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        <Card className="mb-8 border-primary/20 bg-primary/5 shadow-sm">
+          <CardContent className="p-6">
+            <p className="text-xl font-semibold text-foreground">{firstName}, you’ve unlocked {unlockedChallengeBonuses + Math.min(unlockedPartnerCount, assets.length)} bonuses</p>
+            <p className="mt-2 text-sm text-muted-foreground">Keep completing days and inviting builders to open more of the vault.</p>
+          </CardContent>
+        </Card>
 
-        {/* Next tier nudge */}
-        {nextTier && assets.length > unlockedCount && (
-          <Card className="border-border mb-6">
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Users className="h-4 w-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">
-                  Invite {nextTier.referrals - directReferrals} more builder{nextTier.referrals - directReferrals !== 1 ? "s" : ""} to unlock more
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {nextTier.assets === Infinity ? "All" : nextTier.assets} rewards unlock at {nextTier.referrals} referrals
-                </p>
-              </div>
-              <Button size="sm" variant="default" onClick={() => navigate("/referrals")}>
-                Invite
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Empty state */}
-        {assets.length === 0 && (
-          <Card className="border-border">
-            <CardContent className="p-8 text-center">
-              <Sparkles className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-              <h2 className="text-lg font-semibold text-foreground mb-1">No rewards available yet</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                Partner rewards will appear here as builders contribute assets to the network.
-              </p>
-              <Button variant="outline" onClick={() => navigate("/partners")}>
-                Become a partner
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Asset list */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-          {assets.map((asset, index) => {
-            const isUnlocked = index < unlockedCount;
-            const neededReferrals = UNLOCK_TIERS.find(
-              (t) => t.assets > index && directReferrals < t.referrals
-            );
-
-            return (
-              <Card
-                key={asset.id}
-                className={`border-border transition-all ${
-                  isUnlocked ? "bg-card" : "bg-muted/40 opacity-70"
-                }`}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    {/* Icon */}
-                    <div
-                      className={`shrink-0 rounded-full p-2.5 ${
-                        isUnlocked
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {isUnlocked ? (
-                        <Gift className="h-5 w-5" />
-                      ) : (
-                        <Lock className="h-5 w-5" />
-                      )}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">Challenge bonuses</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {challengeBonuses.map((bonus) => {
+              const unlocked = completedDay >= bonus.day;
+              return (
+                <Card key={bonus.id} className={unlocked ? "border-primary/25 bg-card shadow-sm" : "border-border bg-muted/40 opacity-70"}>
+                  <CardContent className="p-5">
+                    <div className="mb-4 flex items-center justify-between">
+                      <Gift className={unlocked ? "h-5 w-5 text-primary" : "h-5 w-5 text-muted-foreground"} />
+                      {unlocked ? <CheckCircle className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
                     </div>
+                    <h3 className="font-semibold text-foreground">{bonus.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{bonus.benefit}</p>
+                    <Button className="mt-5 w-full" variant={unlocked ? "default" : "outline"} onClick={() => navigate(`/day/${bonus.day}`)}>
+                      {unlocked ? "Access" : `Unlock by completing Day ${bonus.day}`}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-semibold text-foreground text-sm truncate">
-                          {asset.contribution_title}
-                        </p>
-                        <Badge className="bg-primary/10 text-primary text-xs shrink-0">
-                          ${asset.estimated_value}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed mb-2">
-                        {asset.contribution_description}
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Crown className="h-3 w-3" />
-                        <span>Provided by {asset.partner_name}</span>
-                      </div>
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">Partner bonuses</h2>
+          {assets.length === 0 ? (
+            <Card><CardContent className="p-8 text-center"><Sparkles className="mx-auto mb-3 h-10 w-10 text-muted-foreground" /><p className="font-semibold text-foreground">Partner bonuses are coming soon</p></CardContent></Card>
+          ) : (
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {assets.map((asset, index) => {
+                const unlocked = index < unlockedPartnerCount;
+                const requirement = index < 3 ? "Invite 3 builders" : "Complete Day 2";
+                return (
+                  <Card key={asset.id} className={unlocked ? "overflow-hidden border-border bg-card shadow-sm" : "overflow-hidden border-border bg-muted/40 opacity-75"}>
+                    <div className={`relative aspect-video ${partnerImages[index % partnerImages.length]} flex items-center justify-center`}>
+                      <Gift className="h-12 w-12 text-primary" />
+                      {!unlocked && <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-sm font-semibold text-foreground">Unlock this bonus</div>}
                     </div>
-                  </div>
+                    <CardContent className="p-5">
+                      <p className="text-sm text-muted-foreground">By {asset.partner_name}</p>
+                      <h3 className="mt-2 font-semibold text-foreground">{asset.contribution_title}</h3>
+                      <p className="mt-3 text-sm font-medium text-foreground">What this helps you achieve</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{asset.contribution_description}</p>
+                      <Button className="mt-5 w-full gap-2" variant={unlocked ? "default" : "outline"} onClick={() => unlocked ? navigate(`/reward/${asset.id}`) : navigate(index < 3 ? "/referrals" : "/day/2")}>
+                        {unlocked ? <ExternalLink className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                        {unlocked ? "Access bonus" : requirement}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-                  {/* Action */}
-                  <div className="mt-3 pl-11">
-                    {isUnlocked ? (
-                      <Button
-                        size="sm"
-                        className="gap-1.5 text-xs"
-                        onClick={() => handleAccess(asset)}
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        Access reward
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 text-xs"
-                        onClick={() => navigate("/referrals")}
-                      >
-                        <Users className="h-3 w-3" />
-                        {neededReferrals
-                          ? `Invite ${neededReferrals.referrals - directReferrals} more to unlock`
-                          : "Invite builders to unlock"}
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <section>
+          <Card className="border-border bg-card shadow-sm">
+            <CardContent className="p-6">
+              <h2 className="mb-4 text-xl font-semibold text-foreground">How to unlock more</h2>
+              <div className="grid gap-4 md:grid-cols-3">
+                {["Complete challenge days", "Invite builders", "Support builders"].map((item) => (
+                  <div key={item} className="rounded-2xl border border-border bg-background p-4 text-sm text-foreground"><Users className="mb-3 h-5 w-5 text-primary" />{item}</div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
       </div>
     </div>
   );

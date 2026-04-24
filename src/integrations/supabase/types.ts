@@ -115,6 +115,7 @@ export type Database = {
           current_day: number
           id: string
           launch_url: string | null
+          started_at: string
           tasks: Json
           updated_at: string
           user_id: string
@@ -126,6 +127,7 @@ export type Database = {
           current_day?: number
           id?: string
           launch_url?: string | null
+          started_at?: string
           tasks?: Json
           updated_at?: string
           user_id: string
@@ -137,6 +139,7 @@ export type Database = {
           current_day?: number
           id?: string
           launch_url?: string | null
+          started_at?: string
           tasks?: Json
           updated_at?: string
           user_id?: string

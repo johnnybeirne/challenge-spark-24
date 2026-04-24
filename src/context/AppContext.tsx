@@ -315,8 +315,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       try {
         const raw = localStorage.getItem("challengeos_assessment");
+        const memoryRaw = localStorage.getItem("challengeos_memory");
         if (raw) {
           setStateRaw((prev) => ({ ...prev, assessment: JSON.parse(raw) }));
+        }
+        if (memoryRaw) {
+          setStateRaw((prev) => ({ ...prev, memory: { ...prev.memory, ...JSON.parse(memoryRaw) } }));
         }
       } catch {}
       setHydrated(true);
@@ -331,6 +335,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {}
     }
   }, [state.assessment]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("challengeos_memory", JSON.stringify(state.memory));
+    } catch {}
+  }, [state.memory]);
 
   // Supabase sync hook
   useSupabaseSync(authUser ?? null, state, prevUnlocksRef);

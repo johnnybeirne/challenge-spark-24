@@ -29,6 +29,7 @@ const Unlocks = () => {
   const navigate = useNavigate();
   const earnedIds = new Set(state.unlocks.map((u) => u.id));
   const firstName = state.user?.name?.split(" ")[0] || "there";
+  const challengeName = state.memory.challengeName || "your challenge";
 
   const totalEarned = state.unlocks.reduce((sum, u) => sum + u.value, 0);
   const totalPossible = allUnlocks.reduce((sum, u) => sum + u.value, 0);
@@ -36,7 +37,7 @@ const Unlocks = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-8 pb-24">
-        <h1 className="text-2xl font-bold text-foreground mb-1">What you’ve unlocked so far, {firstName}</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-1">What you’ve unlocked for {challengeName}</h1>
         <p className="text-sm text-muted-foreground mb-2">
           Complete challenges and grow your network to earn rewards.
         </p>

@@ -4,7 +4,15 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
-import { defaultTraining, type TrainingState } from "@/context/AppContext";
+import type { TrainingState } from "@/context/AppContext";
+
+const fallbackTraining: TrainingState = {
+  hubCompleted: false,
+  preChallengeWatched: false,
+  day1Watched: false,
+  day2Watched: false,
+  day3Watched: false,
+};
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -96,7 +104,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
             day2Watched: !!training.day2_watched,
             day3Watched: !!training.day3_watched,
           }
-        : defaultTraining,
+        : fallbackTraining,
       unlocks: unlocks.map((u: any) => ({
         id: u.unlock_id,
         name: u.name,
@@ -221,7 +229,7 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
     }
 
     if (training) {
-      await saveTraining(userId, { ...defaultTraining, ...training });
+      await saveTraining(userId, { ...fallbackTraining, ...training });
     }
 
     clearLocalStorage();

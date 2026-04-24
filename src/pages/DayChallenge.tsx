@@ -19,6 +19,7 @@ import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";
+import AddToCalendar from "@/components/AddToCalendar";
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
@@ -296,6 +297,18 @@ const DayChallenge = () => {
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>
+
+      {dayNum === 1 && (
+        <Card className="mb-4 border-primary/20 bg-primary/5">
+          <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-foreground">Set your 3-day build time</p>
+              <p className="mt-1 text-sm text-muted-foreground">Set aside 60 minutes each day to complete your challenge.</p>
+            </div>
+            <AddToCalendar className="w-full sm:w-auto" />
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mb-4 border-primary/20 bg-primary/5">
         <CardContent className="p-5">

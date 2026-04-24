@@ -58,7 +58,10 @@ export type AnalyticsEvent =
   | "memory_created"
   | "memory_updated"
   | "ai_response_personalised"
-  | "personalisation_used";
+  | "personalisation_used"
+  | "calendar_add_clicked"
+  | "calendar_google_selected"
+  | "calendar_ics_downloaded";
 
 export async function trackEvent(
   event: AnalyticsEvent,

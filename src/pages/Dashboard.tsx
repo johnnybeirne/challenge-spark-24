@@ -13,6 +13,7 @@ import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { audienceLabel as memoryAudienceLabel, challengeTypeLabel, mergeMemory } from "@/lib/personalisation";
+import AddToCalendar from "@/components/AddToCalendar";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
@@ -85,6 +86,8 @@ const Dashboard = () => {
             You're building your AI-powered challenge
           </p>
         </div>
+        <div className="flex flex-col items-end gap-2">
+        <AddToCalendar variant="secondary" className="h-9 text-xs" />
         {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button
             variant="ghost"
@@ -99,6 +102,7 @@ const Dashboard = () => {
             {authUser ? "Sign out" : "Exit user view"}
           </Button>
         )}
+        </div>
       </div>
 
       {/* Your Challenge / Setup */}

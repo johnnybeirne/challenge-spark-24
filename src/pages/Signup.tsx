@@ -9,6 +9,7 @@ import { ArrowRight, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { defaultMemory, mergeMemory } from "@/lib/personalisation";
+import AddToCalendar from "@/components/AddToCalendar";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const REF_SESSION_KEY = "challengeos_ref";
@@ -67,6 +68,7 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const [accountExistsNotice, setAccountExistsNotice] = useState(false);
+  const [signupComplete, setSignupComplete] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {
@@ -122,7 +124,7 @@ const Signup = () => {
     }
     trackEvent("signup_completed");
     toast.success("You're in.");
-    navigate("/dashboard");
+    setSignupComplete(true);
   };
 
   const signupInputProps = (() => {
@@ -165,7 +167,18 @@ const Signup = () => {
       <div className="w-full max-w-2xl">
         
 
-        {mode === "signup" ? (
+        {signupComplete ? (
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Your 3-day challenge is ready, {firstName}.</h1>
+            <p className="text-base text-muted-foreground mb-8 max-w-xl mx-auto">
+              Set aside 60 minutes each day to complete your challenge.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <AddToCalendar firstNameOverride={firstName || "there"} className="h-12" />
+              <Button variant="secondary" className="h-12" onClick={() => navigate("/dashboard")}>Continue to dashboard</Button>
+            </div>
+          </div>
+        ) : mode === "signup" ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">
               Start building your AI-powered challenge

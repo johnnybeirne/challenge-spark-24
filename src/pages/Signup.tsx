@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { defaultMemory, mergeMemory } from "@/lib/personalisation";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const REF_SESSION_KEY = "challengeos_ref";
@@ -88,6 +89,11 @@ const Signup = () => {
     if (!canAdvanceSignup || loading) return;
     if (step === "name") return setStep("email");
     if (step === "email") return setStep("password");
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("challengeos_memory") || JSON.stringify(defaultMemory));
+      localStorage.setItem("challengeos_memory", JSON.stringify(mergeMemory({ ...defaultMemory, ...existing }, { name })));
+    } catch {}
 
     setLoading(true);
     let referredBy: string | null = null;

@@ -33,13 +33,6 @@ const dayTasks: Record<number, { label: string }[]> = {
   ],
 };
 
-const challengeLabel: Record<string, string> = {
-  "quick-win": "quick-win",
-  "transformation": "transformation",
-  "skill": "skill-building",
-  "launch": "launch",
-};
-
 const audienceLabel = (v?: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : v === "b2c" ? "consumers" : "";
 

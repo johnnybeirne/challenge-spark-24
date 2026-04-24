@@ -14,6 +14,7 @@ export type FeatureOverview = {
   title: string;
   summary: string[];
   groups: FeatureGroup[];
+  workflow?: string[];
   journey?: string[];
   snapshot: string;
 };
@@ -228,6 +229,14 @@ export function scanBuiltFeatures(): FeatureScan {
         "It saves time by centralizing updates and visibility, while supporting revenue growth through referrals, promoter management, partner rewards, and scalable onboarding.",
       ],
       groups: adminGroups,
+      workflow: [
+        "Owner logs into the console.",
+        "Opens overview, analytics, CMS, promoters, activity feed, or feature overview.",
+        "Reviews performance, users, referrals, completions, and activity.",
+        "Updates public content, copilot guidance, branding, or the next live Q&A date.",
+        "Manages promoters, applications, conversions, and activity feed items.",
+        "Refreshes and copies client-ready feature documentation.",
+      ],
       snapshot: "Overall, the admin experience gives clear control, faster operations, and better visibility into business growth.",
     },
     user: {
@@ -237,6 +246,16 @@ export function scanBuiltFeatures(): FeatureScan {
         "Users are guided through assessment, setup, daily tasks, support, referrals, and rewards so they stay focused and get a real launched outcome.",
       ],
       groups: userGroups,
+      workflow: [
+        "Visitor lands on the public page.",
+        "Completes the discovery assessment.",
+        "Receives personalized results and creates an account.",
+        "Uses the dashboard to start the 3-day challenge.",
+        "Completes Day 1, Day 2, and Day 3 guided tasks.",
+        "Uses the copilot, calendar, and progress tracking for support.",
+        "Submits a live URL and completes the launch step.",
+        "Shares a referral link to unlock rewards and community access.",
+      ],
       journey: [
         "Start the discovery assessment.",
         "Answer eight questions to receive a personalized recommendation.",

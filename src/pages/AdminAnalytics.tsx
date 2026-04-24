@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Lock, TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
+
+const ADMIN_PASSWORD = "challengeos2024";
 
 interface UserRow {
   name: string | null;
@@ -33,19 +34,17 @@ const FUNNEL_STEPS = [
 ];
 
 const AdminAnalytics = () => {
-  const [password, setPassword] = useState("");
-  const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<AnalyticsData | null>(null);
 
-  const login = async () => {
+  const loadData = async () => {
     setLoading(true);
     setError("");
     try {
       const { data: res, error: err } = await supabase.functions.invoke(
         "analytics-admin",
-        { body: { password } }
+        { body: { password: ADMIN_PASSWORD } }
       );
       if (err) throw err;
       if (res?.error) {
@@ -53,60 +52,20 @@ const AdminAnalytics = () => {
         return;
       }
       setData(res);
-      setAuthed(true);
     } catch (e: any) {
-      setError(e.message || "Failed to authenticate");
+      setError(e.message || "Failed to load analytics");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const refresh = async () => {
-    setLoading(true);
-    try {
-      const { data: res } = await supabase.functions.invoke(
-        "analytics-admin",
-        { body: { password } }
-      );
-      if (res && !res.error) setData(res);
-    } finally {
-      setLoading(false);
-    }
+    loadData();
   };
-
-  if (!authed) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Lock className="h-5 w-5 text-muted-foreground" />
-              <h1 className="text-lg font-bold text-foreground">Admin Analytics</h1>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                login();
-              }}
-              className="space-y-3"
-            >
-              <Input
-                type="password"
-                placeholder="Enter admin password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="min-h-[44px]"
-              />
-              {error && <p className="text-xs text-destructive">{error}</p>}
-              <Button className="w-full min-h-[44px]" disabled={!password || loading}>
-                {loading ? <Spinner size="sm" /> : "Access Dashboard"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const counts = data?.counts ?? {};
   const totalUsers = counts["signup_completed"] ?? 0;

@@ -4,15 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 
-const ADMIN_PASSWORD = "challengeos2024";
-
 const AdminPromoters = () => {
-  const [password, setPassword] = useState("");
-  const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [promoters, setPromoters] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<Map<string, string>>(new Map());
@@ -20,15 +16,6 @@ const AdminPromoters = () => {
   const [editConversions, setEditConversions] = useState("");
   const [applications, setApplications] = useState<any[]>([]);
   const [tab, setTab] = useState<"promoters" | "applications">("promoters");
-
-  const login = () => {
-    if (password === ADMIN_PASSWORD) {
-      setAuthed(true);
-      loadData();
-    } else {
-      toast.error("Invalid password");
-    }
-  };
 
   const loadData = async () => {
     setLoading(true);
@@ -53,6 +40,10 @@ const AdminPromoters = () => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const toggleApproval = async (id: string, current: boolean) => {
     await (supabase.from("promoters") as any)
@@ -114,25 +105,6 @@ const AdminPromoters = () => {
     toast.success("Application rejected");
     loadData();
   };
-
-  if (!authed) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Lock className="h-5 w-5 text-muted-foreground" />
-              <h1 className="text-lg font-bold text-foreground">Admin: Promoters</h1>
-            </div>
-            <form onSubmit={(e) => { e.preventDefault(); login(); }} className="space-y-3">
-              <Input type="password" placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} className="min-h-[44px]" />
-              <Button className="w-full min-h-[44px]" disabled={!password}>Access</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const pendingApps = applications.filter(a => a.status === "pending");
 

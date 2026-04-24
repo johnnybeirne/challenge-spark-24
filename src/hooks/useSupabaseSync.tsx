@@ -167,18 +167,36 @@ export async function saveMemory(userId: string, memory: UserMemory) {
   } catch {}
 }
 
+export async function saveTraining(userId: string, training: TrainingState) {
+  try {
+    await (supabase.from("training_progress") as any).upsert(
+      {
+        user_id: userId,
+        hub_completed: training.hubCompleted,
+        pre_challenge_watched: training.preChallengeWatched,
+        day1_watched: training.day1Watched,
+        day2_watched: training.day2Watched,
+        day3_watched: training.day3Watched,
+      },
+      { onConflict: "user_id" }
+    );
+  } catch {}
+}
+
 /** Migrate localStorage data to Supabase for newly authenticated user */
 export async function migrateLocalToSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
     const challengeRaw = localStorage.getItem("challengeos_challenge");
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
-    const memoryRaw = localStorage.getItem("challengeos_memory");
+    const memoryRaw = localStorage.getItem("leadio_memory") || localStorage.getItem("challengeos_memory");
+    const trainingRaw = localStorage.getItem("leadio_training");
 
-    if (!challengeRaw && !unlocksRaw && !memoryRaw) return null;
+    if (!challengeRaw && !unlocksRaw && !memoryRaw && !trainingRaw) return null;
 
     const challenge = challengeRaw ? JSON.parse(challengeRaw) : null;
     const unlocks = unlocksRaw ? JSON.parse(unlocksRaw) : [];
     const memory = memoryRaw ? JSON.parse(memoryRaw) : null;
+    const training = trainingRaw ? JSON.parse(trainingRaw) : null;
 
     if (challenge) {
       await saveChallengeProgress(userId, {
@@ -200,6 +218,10 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
 
     if (memory) {
       await saveMemory(userId, { ...defaultMemory, ...memory });
+    }
+
+    if (training) {
+      await saveTraining(userId, { ...defaultTraining, ...training });
     }
 
     clearLocalStorage();

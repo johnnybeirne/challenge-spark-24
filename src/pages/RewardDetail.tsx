@@ -172,7 +172,7 @@ const RewardDetail = () => {
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-3">
               <Badge className="bg-primary/10 text-primary text-xs">${asset.estimated_value}+ value</Badge>
-              <Badge className="bg-green-500/10 text-green-600 text-[10px] gap-1">
+              <Badge className="bg-green-500/10 text-green-600 text-xs gap-1">
                 <Shield className="h-3 w-3" /> Verified Partner
               </Badge>
             </div>

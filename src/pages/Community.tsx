@@ -296,7 +296,7 @@ const UnlockedCommunity = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-foreground text-sm truncate">{b.name}</p>
-                      <Badge className={`text-[10px] ${statusBadgeColor(b.status)}`}>{b.status}</Badge>
+                      <Badge className={`text-xs ${statusBadgeColor(b.status)}`}>{b.status}</Badge>
                     </div>
                     <p className="text-xs text-primary truncate">{b.app}</p>
                     <p className="text-xs text-muted-foreground truncate">{b.desc}</p>
@@ -336,10 +336,10 @@ const UnlockedCommunity = () => {
             }
           >
             <TabsList className="w-full grid grid-cols-4 mb-3">
-              <TabsTrigger value="supportive" className="text-[10px] px-1">Most supportive</TabsTrigger>
-              <TabsTrigger value="network" className="text-[10px] px-1">Network</TabsTrigger>
-              <TabsTrigger value="active" className="text-[10px] px-1">Most active</TabsTrigger>
-              <TabsTrigger value="launched" className="text-[10px] px-1">Launched</TabsTrigger>
+              <TabsTrigger value="supportive" className="text-xs px-1">Most supportive</TabsTrigger>
+              <TabsTrigger value="network" className="text-xs px-1">Network</TabsTrigger>
+              <TabsTrigger value="active" className="text-xs px-1">Most active</TabsTrigger>
+              <TabsTrigger value="launched" className="text-xs px-1">Launched</TabsTrigger>
             </TabsList>
             {["supportive", "network", "active", "launched"].map((tab) => (
               <TabsContent key={tab} value={tab}>
@@ -366,7 +366,7 @@ const UnlockedCommunity = () => {
                         </div>
                         <div className="text-right shrink-0">
                           <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                          <Badge className="text-[9px] bg-muted text-muted-foreground">{entry.badge}</Badge>
+                          <Badge className="text-xs bg-muted text-muted-foreground">{entry.badge}</Badge>
                         </div>
                       </div>
                     ))}
@@ -454,7 +454,7 @@ const UnlockedCommunity = () => {
               <CardContent className="p-4">
                 <Icon className="h-4 w-4 text-primary mb-2" />
                 <p className="text-xs font-semibold text-foreground mb-1">{title}</p>
-                <p className="text-[10px] text-muted-foreground leading-relaxed">{desc}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
               </CardContent>
             </Card>
           ))}

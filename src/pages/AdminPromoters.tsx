@@ -139,7 +139,7 @@ const AdminPromoters = () => {
             <Package className="h-3 w-3" />
             Applications
             {pendingApps.length > 0 && (
-              <Badge className="bg-destructive text-destructive-foreground text-[9px] ml-1">{pendingApps.length}</Badge>
+              <Badge className="bg-destructive text-destructive-foreground text-xs ml-1">{pendingApps.length}</Badge>
             )}
           </Button>
         </div>
@@ -177,7 +177,7 @@ const AdminPromoters = () => {
                       <p className="text-sm font-medium text-foreground">{profiles.get(app.user_id) || app.user_id}</p>
                       <p className="text-xs text-muted-foreground">{new Date(app.created_at).toLocaleDateString()}</p>
                     </div>
-                    <Badge className={`text-[9px] ${
+                    <Badge className={`text-xs ${
                       app.status === "pending" ? "bg-amber-500/10 text-amber-600" :
                       app.status === "approved" ? "bg-green-500/10 text-green-600" :
                       "bg-destructive/10 text-destructive"
@@ -206,10 +206,10 @@ const AdminPromoters = () => {
 
                   {app.status === "pending" && (
                     <div className="flex gap-1.5">
-                      <Button size="sm" className="h-7 text-[10px] gap-1" onClick={() => approveApplication(app)}>
+                      <Button size="sm" className="h-7 text-xs gap-1" onClick={() => approveApplication(app)}>
                         <CheckCircle className="h-3 w-3" /> Approve & Create Partner
                       </Button>
-                      <Button size="sm" variant="destructive" className="h-7 text-[10px] gap-1" onClick={() => rejectApplication(app.id)}>
+                      <Button size="sm" variant="destructive" className="h-7 text-xs gap-1" onClick={() => rejectApplication(app.id)}>
                         <XCircle className="h-3 w-3" /> Reject
                       </Button>
                     </div>
@@ -232,8 +232,8 @@ const AdminPromoters = () => {
                       <p className="text-xs text-muted-foreground font-mono">{p.partner_code}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      {p.is_founding_partner && <Badge className="text-[9px] bg-primary/10 text-primary">Founding</Badge>}
-                      <Badge className={`text-[9px] ${p.is_approved ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"}`}>
+                      {p.is_founding_partner && <Badge className="text-xs bg-primary/10 text-primary">Founding</Badge>}
+                      <Badge className={`text-xs ${p.is_approved ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"}`}>
                         {p.is_approved ? "Approved" : "Pending"}
                       </Badge>
                       <Crown className={`h-3 w-3 ${
@@ -247,15 +247,15 @@ const AdminPromoters = () => {
                   <div className="grid grid-cols-3 gap-2 text-center mb-3">
                     <div className="bg-muted/50 rounded p-2">
                       <p className="text-sm font-bold">{p.conversions}</p>
-                      <p className="text-[10px] text-muted-foreground">Conversions</p>
+                      <p className="text-xs text-muted-foreground">Conversions</p>
                     </div>
                     <div className="bg-muted/50 rounded p-2">
                       <p className="text-sm font-bold">{p.assessment_starts}</p>
-                      <p className="text-[10px] text-muted-foreground">Assessments</p>
+                      <p className="text-xs text-muted-foreground">Assessments</p>
                     </div>
                     <div className="bg-muted/50 rounded p-2">
                       <p className="text-sm font-bold capitalize">{p.tier}</p>
-                      <p className="text-[10px] text-muted-foreground">Tier</p>
+                      <p className="text-xs text-muted-foreground">Tier</p>
                     </div>
                   </div>
 
@@ -274,15 +274,15 @@ const AdminPromoters = () => {
                   ) : null}
 
                   <div className="flex gap-1.5 flex-wrap">
-                    <Button size="sm" variant={p.is_approved ? "destructive" : "default"} className="h-7 text-[10px] gap-1"
+                    <Button size="sm" variant={p.is_approved ? "destructive" : "default"} className="h-7 text-xs gap-1"
                       onClick={() => toggleApproval(p.id, p.is_approved)}>
                       {p.is_approved ? <><XCircle className="h-3 w-3" /> Revoke</> : <><CheckCircle className="h-3 w-3" /> Approve</>}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-[10px] gap-1"
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
                       onClick={() => toggleFounding(p.id, p.is_founding_partner)}>
                       <Star className="h-3 w-3" /> {p.is_founding_partner ? "Unfound" : "Founding"}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-[10px] gap-1"
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
                       onClick={() => { setEditingId(p.id); setEditConversions(String(p.conversions)); }}>
                       <Edit2 className="h-3 w-3" /> Adjust
                     </Button>

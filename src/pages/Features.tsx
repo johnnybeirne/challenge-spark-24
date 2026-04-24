@@ -173,7 +173,7 @@ const Features = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground text-sm">{f.title}</p>
-                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">{f.addedAt}</span>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">{f.addedAt}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{f.description}</p>
                       </div>

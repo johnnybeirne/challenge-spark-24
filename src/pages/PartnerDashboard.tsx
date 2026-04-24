@@ -170,7 +170,7 @@ const PartnerDashboard = () => {
                 <Icon className="h-4 w-4 text-primary mb-2" />
                 <p className="text-2xl font-bold text-foreground">{value}</p>
                 <p className="text-xs font-medium text-foreground">{label}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
               </CardContent>
             </Card>
           ))}
@@ -233,7 +233,7 @@ const PartnerDashboard = () => {
               ].map(({ label, value }) => (
                 <div key={label} className="text-center p-2 bg-muted/50 rounded-lg">
                   <p className="text-lg font-bold text-foreground">{value}</p>
-                  <p className="text-[10px] text-muted-foreground">{label}</p>
+                  <p className="text-xs text-muted-foreground">{label}</p>
                 </div>
               ))}
             </div>
@@ -260,7 +260,7 @@ const PartnerDashboard = () => {
                       <div className="flex items-center gap-2">
                         {unlocked ? (
                           <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center">
-                            <span className="text-[10px] text-primary-foreground">✓</span>
+                            <span className="text-xs text-primary-foreground">✓</span>
                           </div>
                         ) : (
                           <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
@@ -273,7 +273,7 @@ const PartnerDashboard = () => {
                     </div>
                     <div className="ml-6">
                       <Progress value={progress} className="h-1.5" />
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         {direct}/{m.at} conversions
                       </p>
                     </div>
@@ -309,7 +309,7 @@ const PartnerDashboard = () => {
                     } ${entry.isUser ? "bg-primary/5 -mx-2 px-2 rounded" : ""}`}
                   >
                     <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
-                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold text-foreground shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
                       {(entry.name || "?").slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -319,7 +319,7 @@ const PartnerDashboard = () => {
                     </div>
                     <div className="text-right shrink-0 flex items-center gap-2">
                       <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                      <Badge className="text-[9px] bg-muted text-muted-foreground">{entry.badge}</Badge>
+                      <Badge className="text-xs bg-muted text-muted-foreground">{entry.badge}</Badge>
                     </div>
                   </div>
                 ))}

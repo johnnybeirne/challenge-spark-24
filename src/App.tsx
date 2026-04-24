@@ -31,6 +31,7 @@ import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import Features from "@/pages/Features";
+import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import NotFound from "@/pages/NotFound";
 
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/results" element={<Results />} />
                 <Route path="/join" element={<Signup />} />
                 <Route path="/partners" element={<Partners />} />
+                <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
               </Route>
 
               {/* Authenticated routes — consumer + shared */}
@@ -91,6 +93,7 @@ const App = () => (
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<AdminCms />} />
+                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

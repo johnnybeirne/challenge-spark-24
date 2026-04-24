@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, Sparkles } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, Sparkles, FileText } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ const items = [
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Features Built", url: "/owner-console/features", icon: Sparkles },
+  { title: "Feature Overview", url: "/admin/features", icon: FileText },
 ];
 
 export function AdminSidebar() {

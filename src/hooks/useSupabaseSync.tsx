@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
+import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -12,6 +13,7 @@ const STORAGE_KEYS = [
   "challengeos_network",
   "challengeos_community",
   "challengeos_partner",
+  "challengeos_memory",
   "challenge-os-state",
 ] as const;
 
@@ -24,10 +26,11 @@ function clearLocalStorage() {
 /** Load state from Supabase for authenticated user */
 export async function loadFromSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
-    const [profileRes, progressRes, unlocksRes] = await Promise.all([
+    const [profileRes, progressRes, unlocksRes, memoryRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).single(),
       (supabase.from("challenge_progress") as any).select("*").eq("user_id", userId).single(),
       (supabase.from("unlocks") as any).select("*").eq("user_id", userId),
+      (supabase.from("user_memory") as any).select("*").eq("user_id", userId).maybeSingle(),
     ]);
 
     if (profileRes.error || !profileRes.data) return null;
@@ -35,6 +38,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
     const profile = profileRes.data;
     const progress = progressRes.data;
     const unlocks = unlocksRes.data || [];
+    const memory = memoryRes.data;
 
     return {
       user: {
@@ -62,6 +66,16 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         launchUrl: progress?.launch_url ?? "",
         completed: progress?.completed ?? false,
       },
+      memory: memory
+        ? {
+            name: memory.name || profile.name || "",
+            audienceType: memory.audience_type || "",
+            challengeType: memory.challenge_type || "",
+            topic: memory.topic || "",
+            desiredOutcome: memory.desired_outcome || "",
+            challengeName: memory.challenge_name || "",
+          }
+        : { ...defaultMemory, name: profile.name || "" },
       network: {
         direct: profile.direct_referral_count,
         indirect: profile.indirect_referral_count,

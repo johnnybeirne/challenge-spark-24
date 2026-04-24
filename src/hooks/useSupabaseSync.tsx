@@ -196,6 +196,7 @@ export function useSupabaseSync(
   prevUnlocksRef: React.MutableRefObject<string[]>
 ) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const memoryDebounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Sync challenge progress on change
   useEffect(() => {
@@ -210,6 +211,19 @@ export function useSupabaseSync(
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [authUser, state.challenge]);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
+    memoryDebounceRef.current = setTimeout(() => {
+      saveMemory(authUser.id, state.memory);
+    }, 500);
+
+    return () => {
+      if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
+    };
+  }, [authUser, state.memory]);
 
   // Sync new unlocks
   useEffect(() => {

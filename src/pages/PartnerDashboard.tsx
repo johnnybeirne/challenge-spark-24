@@ -140,7 +140,7 @@ const PartnerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
+      <div className="app-page-container py-8 pb-24">
         {/* ─── HEADER ─── */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
@@ -158,7 +158,7 @@ const PartnerDashboard = () => {
         </div>
 
         {/* ─── SECTION 1: CORE METRICS ─── */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           {[
             { icon: Users, label: "Direct Referrals", value: direct, sub: `You brought in ${direct} builder${direct !== 1 ? "s" : ""}` },
             { icon: TrendingUp, label: "Indirect Referrals", value: indirect, sub: `They brought in ${indirect} more` },

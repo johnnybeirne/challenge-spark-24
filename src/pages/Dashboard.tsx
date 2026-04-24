@@ -111,18 +111,31 @@ const Dashboard = () => {
       {/* Your Challenge / Setup */}
       <Card className="mb-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
         <CardContent className="p-5">
-          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-            Your challenge
-          </p>
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Your challenge</p>
+            {setup && (
+              <Button variant="ghost" size="sm" className="gap-2" onClick={() => setEditingMemory((v) => !v)}>
+                <Edit3 className="h-4 w-4" /> Edit
+              </Button>
+            )}
+          </div>
           {setup ? (
             <>
               <h2 className="text-lg font-bold text-foreground leading-snug">
-                You're building a{" "}
-                <span className="text-primary">{challengeLabel[setup.challengeType] ?? setup.challengeType}</span>{" "}
-                AI-powered challenge for <span className="text-primary">{audienceLabel(setup.audienceType)}</span>
+                You’re building: <span className="text-primary">{memory.challengeName || "your challenge"}</span>
               </h2>
-              {setup.topicHint && (
-                <p className="text-sm text-muted-foreground mt-2">{setup.topicHint}</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                A {challengeTypeLabel(memory.challengeType || setup.challengeType)} for {memoryAudienceLabel(memory.audienceType || setup.audienceType)}
+              </p>
+              {(memory.desiredOutcome || setup.topicHint) && (
+                <p className="text-sm text-muted-foreground mt-2">Goal: {memory.desiredOutcome || setup.topicHint}</p>
+              )}
+              {editingMemory && (
+                <div className="mt-4 space-y-3">
+                  <Input placeholder="Challenge name" value={memory.challengeName} onChange={(e) => updateMemory({ challengeName: e.target.value })} />
+                  <Input placeholder="Topic" value={memory.topic} onChange={(e) => updateMemory({ topic: e.target.value })} />
+                  <Textarea placeholder="Desired outcome" value={memory.desiredOutcome} onChange={(e) => updateMemory({ desiredOutcome: e.target.value })} rows={3} />
+                </div>
               )}
               <p className="text-xs text-muted-foreground mt-3">
                 This challenge keeps running and grows through sharing.

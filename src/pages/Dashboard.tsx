@@ -45,6 +45,7 @@ const Dashboard = () => {
   const tasks = dayTasks[currentDay] || dayTasks[1];
   const setup = getSetup();
   const referralCount = state.network.direct;
+  const firstName = state.user?.name?.split(" ")[0] || "there";
 
   // Delay invite card: only after first task done OR 30s on dashboard
   const [dwellElapsed, setDwellElapsed] = useState(false);
@@ -71,7 +72,7 @@ const Dashboard = () => {
       <div className="flex items-start justify-between mb-6">
         <div>
           <p className="text-xs font-mono tracking-wider text-muted-foreground">
-            {state.user?.name ? `Hey, ${state.user.name.split(" ")[0].toLowerCase()}` : "Welcome back"}
+            {state.user?.name ? `Hey, ${firstName.toLowerCase()}` : "Welcome back"}
           </p>
           <h1 className="text-2xl font-bold text-foreground mt-1">
             Day {currentDay} of 3
@@ -135,9 +136,10 @@ const Dashboard = () => {
         <Card className="mb-4">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Today's tasks
-              </p>
+              <div>
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Training progress</p>
+                <h2 className="text-lg font-bold text-foreground mt-1">Your progress, {firstName}</h2>
+              </div>
               <span className="text-xs text-muted-foreground font-medium">
                 {completedCount} / {tasks.length}
               </span>

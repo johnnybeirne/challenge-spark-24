@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
+import { Brain, CheckCircle, Lock, PlayCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
@@ -17,9 +17,14 @@ import Day1Setup, { getSetup } from "@/components/Day1Setup";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 
-const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
+const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
-    title: "Plan your AI-powered challenge",
+    title: "Day 1: Shape Your Challenge",
+    intro: "Today you define what you’re building",
+    lesson: "This is where you decide who your challenge is for and what result it creates.",
+    reinforcement: "Keep it simple. Simple wins.",
+    aiPrompt: "Let’s define your challenge clearly.",
+    completion: "Strong start. This is where momentum begins.",
     tasks: [
       { key: "define_app", label: "Define your challenge", hasTextarea: true, placeholder: "Describe your AI-powered challenge in 2-3 sentences…" },
       { key: "map_pages", label: "Map your pages", hasTextarea: true, placeholder: "List the pages your challenge needs…" },
@@ -27,7 +32,12 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
     ],
   },
   2: {
-    title: "Build your challenge experience",
+    title: "Day 2: Build the Experience",
+    intro: "Now we turn your idea into something real",
+    lesson: "This is where your challenge becomes something people can actually use.",
+    reinforcement: "Don’t overthink it — build the simplest version first.",
+    aiPrompt: "Let’s map your challenge flow.",
+    completion: "You’re building fast. Most people never get this far.",
     nudge: "This is the hardest day — keep building your challenge.",
     tasks: [
       { key: "build_core", label: "Build core feature", hasTextarea: false },
@@ -36,7 +46,12 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
     ],
   },
   3: {
-    title: "Launch your challenge",
+    title: "Day 3: Launch and Grow",
+    intro: "Today you make it live",
+    lesson: "This is where your challenge becomes visible.",
+    reinforcement: "This is where most people stop. Don’t.",
+    aiPrompt: "Let’s get your launch ready.",
+    completion: "You launched something real. That puts you ahead of most.",
     tasks: [
       { key: "finalize", label: "Finalize", hasTextarea: false },
       { key: "add_sharing", label: "Add sharing", hasTextarea: false },
@@ -55,6 +70,7 @@ const DayChallenge = () => {
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
   const [setupDone, setSetupDone] = useState(() => !!getSetup());
+  const firstName = state.user?.name?.split(" ")[0] || "there";
 
   if (dayNum === 1 && !setupDone) {
     return <Day1Setup onComplete={() => setSetupDone(true)} />;
@@ -141,7 +157,7 @@ const DayChallenge = () => {
         challenge: { ...prev.challenge, currentDay: dayNum + 1 },
       }));
       trackEvent("day_completed", { day: dayNum });
-      toast.success(`Day ${dayNum} complete! Day ${dayNum + 1} is now unlocked.`);
+      toast.success(`${config.completion.replace(".", `, ${firstName}.`)} Day ${dayNum + 1} is now unlocked.`);
       navigate("/dashboard");
     } else {
       setState((prev) => ({
@@ -164,10 +180,10 @@ const DayChallenge = () => {
             <Rocket className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-3">
-            You built and launched your challenge in 3 days.
+            You launched something real, {firstName}.
           </h1>
           <p className="text-muted-foreground text-sm">
-            That puts you ahead of 99% of people who just talk about building.
+            That puts you ahead of most.
           </p>
         </div>
 
@@ -242,13 +258,38 @@ const DayChallenge = () => {
           Day {dayNum} of 3
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{config.intro}, {firstName}.</p>
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>
 
+      <Card className="mb-4 border-primary/20 bg-primary/5">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2 text-primary">
+            <PlayCircle className="h-4 w-4" />
+            <p className="text-xs font-mono uppercase tracking-wider">Training</p>
+          </div>
+          <p className="text-sm text-foreground leading-relaxed">{config.lesson}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+            {dayNum === 1 ? `Keep it simple, ${firstName}. Simple wins.` : dayNum === 3 ? `This is where most people stop, ${firstName}. Don’t.` : config.reinforcement}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4 border-border">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2 text-primary">
+            <Brain className="h-4 w-4" />
+            <p className="text-xs font-mono uppercase tracking-wider">AI coaching</p>
+          </div>
+          <p className="text-sm font-medium text-foreground">{config.aiPrompt}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>
+        </CardContent>
+      </Card>
+
       {dayNum === 1 && (
-        <Card className="mb-4 border-primary/20 bg-primary/5">
+        <Card className="mb-4 border-border bg-muted/30">
           <CardContent className="p-5">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
               Why this works
@@ -266,6 +307,7 @@ const DayChallenge = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Action tasks</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">
@@ -318,11 +360,25 @@ const DayChallenge = () => {
       )}
 
       {canComplete && (
-        <Button className="mt-6 w-full gap-2" size="lg" onClick={completeDay}>
-          <CheckCircle className="w-4 h-4" />
-          {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge 🎉"}
-        </Button>
+        <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
+          <CardContent className="p-5">
+            <p className="mb-4 text-sm font-semibold leading-relaxed text-foreground">
+              {config.completion.replace(".", `, ${firstName}.`)}
+            </p>
+            <Button className="w-full gap-2" size="lg" onClick={completeDay}>
+              <CheckCircle className="w-4 h-4" />
+              {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge"}
+            </Button>
+          </CardContent>
+        </Card>
       )}
+
+      <Card className="mt-4 border-dashed bg-muted/30">
+        <CardContent className="flex items-center gap-3 p-5 text-sm text-muted-foreground">
+          <Lock className="h-4 w-4 shrink-0" />
+          <span>Unlock this when you’re ready to go deeper, {firstName}.</span>
+        </CardContent>
+      </Card>
 
       <div className="mt-6">
         <CrossPromoSpotlight

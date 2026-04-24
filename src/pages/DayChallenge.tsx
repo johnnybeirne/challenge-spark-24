@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
+import { Brain, CheckCircle, Lock, PlayCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
@@ -17,9 +17,14 @@ import Day1Setup, { getSetup } from "@/components/Day1Setup";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 
-const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
+const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
   1: {
-    title: "Plan your AI-powered challenge",
+    title: "Day 1: Shape Your Challenge",
+    intro: "Today you define what you’re building",
+    lesson: "This is where you decide who your challenge is for and what result it creates.",
+    reinforcement: "Keep it simple. Simple wins.",
+    aiPrompt: "Let’s define your challenge clearly.",
+    completion: "Strong start. This is where momentum begins.",
     tasks: [
       { key: "define_app", label: "Define your challenge", hasTextarea: true, placeholder: "Describe your AI-powered challenge in 2-3 sentences…" },
       { key: "map_pages", label: "Map your pages", hasTextarea: true, placeholder: "List the pages your challenge needs…" },
@@ -27,7 +32,12 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
     ],
   },
   2: {
-    title: "Build your challenge experience",
+    title: "Day 2: Build the Experience",
+    intro: "Now we turn your idea into something real",
+    lesson: "This is where your challenge becomes something people can actually use.",
+    reinforcement: "Don’t overthink it — build the simplest version first.",
+    aiPrompt: "Let’s map your challenge flow.",
+    completion: "You’re building fast. Most people never get this far.",
     nudge: "This is the hardest day — keep building your challenge.",
     tasks: [
       { key: "build_core", label: "Build core feature", hasTextarea: false },
@@ -36,7 +46,12 @@ const dayConfig: Record<number, { title: string; nudge?: string; tasks: { key: s
     ],
   },
   3: {
-    title: "Launch your challenge",
+    title: "Day 3: Launch and Grow",
+    intro: "Today you make it live",
+    lesson: "This is where your challenge becomes visible.",
+    reinforcement: "This is where most people stop. Don’t.",
+    aiPrompt: "Let’s get your launch ready.",
+    completion: "You launched something real. That puts you ahead of most.",
     tasks: [
       { key: "finalize", label: "Finalize", hasTextarea: false },
       { key: "add_sharing", label: "Add sharing", hasTextarea: false },

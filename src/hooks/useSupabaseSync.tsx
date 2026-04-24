@@ -132,16 +132,35 @@ export async function saveUnlock(
   } catch {}
 }
 
+export async function saveMemory(userId: string, memory: UserMemory) {
+  try {
+    await (supabase.from("user_memory") as any).upsert(
+      {
+        user_id: userId,
+        name: memory.name,
+        audience_type: memory.audienceType,
+        challenge_type: memory.challengeType,
+        topic: memory.topic,
+        desired_outcome: memory.desiredOutcome,
+        challenge_name: memory.challengeName,
+      },
+      { onConflict: "user_id" }
+    );
+  } catch {}
+}
+
 /** Migrate localStorage data to Supabase for newly authenticated user */
 export async function migrateLocalToSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
     const challengeRaw = localStorage.getItem("challengeos_challenge");
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
+    const memoryRaw = localStorage.getItem("challengeos_memory");
 
-    if (!challengeRaw && !unlocksRaw) return null;
+    if (!challengeRaw && !unlocksRaw && !memoryRaw) return null;
 
     const challenge = challengeRaw ? JSON.parse(challengeRaw) : null;
     const unlocks = unlocksRaw ? JSON.parse(unlocksRaw) : [];
+    const memory = memoryRaw ? JSON.parse(memoryRaw) : null;
 
     if (challenge) {
       await saveChallengeProgress(userId, {
@@ -157,6 +176,10 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       for (const u of unlocks) {
         await saveUnlock(userId, u);
       }
+    }
+
+    if (memory) {
+      await saveMemory(userId, { ...defaultMemory, ...memory });
     }
 
     clearLocalStorage();

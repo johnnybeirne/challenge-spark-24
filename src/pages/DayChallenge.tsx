@@ -307,6 +307,7 @@ const DayChallenge = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Action tasks</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">
@@ -359,11 +360,25 @@ const DayChallenge = () => {
       )}
 
       {canComplete && (
-        <Button className="mt-6 w-full gap-2" size="lg" onClick={completeDay}>
-          <CheckCircle className="w-4 h-4" />
-          {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge 🎉"}
-        </Button>
+        <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
+          <CardContent className="p-5">
+            <p className="mb-4 text-sm font-semibold leading-relaxed text-foreground">
+              {config.completion.replace(".", `, ${firstName}.`)}
+            </p>
+            <Button className="w-full gap-2" size="lg" onClick={completeDay}>
+              <CheckCircle className="w-4 h-4" />
+              {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge"}
+            </Button>
+          </CardContent>
+        </Card>
       )}
+
+      <Card className="mt-4 border-dashed bg-muted/30">
+        <CardContent className="flex items-center gap-3 p-5 text-sm text-muted-foreground">
+          <Lock className="h-4 w-4 shrink-0" />
+          <span>Unlock this when you’re ready to go deeper, {firstName}.</span>
+        </CardContent>
+      </Card>
 
       <div className="mt-6">
         <CrossPromoSpotlight

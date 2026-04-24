@@ -370,13 +370,28 @@ const DayChallenge = () => {
                 </span>
               </label>
               {task.hasTextarea && (
-                <Textarea
-                  placeholder={task.placeholder}
-                  value={getOutput(task.key)}
-                  onChange={(e) => setOutput(task.key, e.target.value)}
-                  className="mt-1"
-                  rows={3}
-                />
+                <div className="space-y-3">
+                  {dayNum === 1 && task.key === "define_app" && (
+                    <Input
+                      placeholder="Challenge name"
+                      value={memory.challengeName}
+                      onChange={(e) => {
+                        setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, { challengeName: e.target.value }) }));
+                        trackEvent("memory_updated", { source: "day1_challenge_name" });
+                      }}
+                    />
+                  )}
+                  <Textarea
+                    placeholder={task.placeholder}
+                    value={getOutput(task.key)}
+                    onChange={(e) => setOutput(task.key, e.target.value)}
+                    className="mt-1"
+                    rows={3}
+                  />
+                  {dayNum === 1 && task.key === "define_app" && memory.challengeName && (
+                    <p className="text-sm text-muted-foreground">Your challenge is now called: {memory.challengeName}</p>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>

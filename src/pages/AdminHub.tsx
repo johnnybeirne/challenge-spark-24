@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, Sparkles, FileText } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText } from "lucide-react";
 
 const sections = [
   {
@@ -32,17 +32,10 @@ const sections = [
     color: "text-purple-500",
   },
   {
-    title: "Features Built",
-    description: "Browse everything that has been shipped so far",
-    icon: Sparkles,
-    to: "/owner-console/features",
-    color: "text-pink-500",
-  },
-  {
     title: "Client Feature Overview",
-    description: "Copy-ready administrator and user feature summaries",
+    description: "Copy-ready feature summaries with administrator workflow",
     icon: FileText,
-    to: "/admin/features",
+    to: "/owner-console/features",
     color: "text-cyan-500",
   },
 ];

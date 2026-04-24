@@ -60,40 +60,44 @@ export const deriveChallengeName = (value: string) => {
 
 export function personalise(text: string, memory?: Partial<UserMemory> | null): string {
   const safe = {
-    name: memory?.name?.split(" ")[0] || "there",
-    audience: audienceLabel(memory?.audienceType),
+    firstName: memory?.name?.split(" ")[0] || "there",
+    audienceType: audienceLabel(memory?.audienceType),
     challengeType: challengeTypeLabel(memory?.challengeType),
     topic: memory?.topic || "",
-    outcome: memory?.desiredOutcome || "",
+    desiredOutcome: memory?.desiredOutcome || "",
     challengeName: memory?.challengeName || "your challenge",
   };
 
   return text
-    .replace(/\{name\}/g, safe.name)
-    .replace(/\{audience\}/g, safe.audience)
+    .replace(/\{name\}/g, safe.firstName)
+    .replace(/\{firstName\}/g, safe.firstName)
+    .replace(/\{audience\}/g, safe.audienceType)
+    .replace(/\{audienceType\}/g, safe.audienceType)
     .replace(/\{challengeType\}/g, safe.challengeType)
     .replace(/\{topic\}/g, safe.topic)
-    .replace(/\{outcome\}/g, safe.outcome)
+    .replace(/\{outcome\}/g, safe.desiredOutcome)
+    .replace(/\{desiredOutcome\}/g, safe.desiredOutcome)
     .replace(/\{challengeName\}/g, safe.challengeName)
     .replace(/\s+/g, " ")
     .trim();
 }
 
 export const memoryShareText = (memory: UserMemory) => {
-  const name = memory.challengeName || "your challenge";
-  const type = challengeTypeLabel(memory.challengeType);
-  if (memory.desiredOutcome) {
-    return `I'm building a ${type} challenge called ‘${name}’ — this helps people ${memory.desiredOutcome}. Thought of you.`;
+  if (memory.challengeName) {
+    return `I'm building a challenge called ${memory.challengeName} with Leadio. Want to try it with me?`;
   }
-  return `I'm building a ${type} challenge called ‘${name}’ — want to try it?`;
+  return "I'm building a 3-day challenge with Leadio. Want to try it with me?";
 };
 
 export const copilotMemoryContext = (memory: UserMemory) => {
+  const audience = audienceLabel(memory.audienceType);
   const parts = [
-    `You're building a ${challengeTypeLabel(memory.challengeType)} challenge for ${audienceLabel(memory.audienceType)}.`,
+    `You're building a ${challengeTypeLabel(memory.challengeType)} challenge for ${audience}.`,
     memory.topic ? `It's focused on ${memory.topic}.` : "",
     memory.desiredOutcome ? `The goal is ${memory.desiredOutcome}.` : "",
     memory.challengeName ? `The challenge is called ${memory.challengeName}.` : "",
+    memory.audienceType === "b2b" ? "Adapt advice toward business outcomes, clear ROI, decision-makers, authority, and trust-based referrals." : "",
+    memory.audienceType === "b2c" ? "Adapt advice toward simple action, emotional payoff, shareability, consumer incentives, fun, and momentum." : "",
   ].filter(Boolean);
   return parts.join(" ");
 };

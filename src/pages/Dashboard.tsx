@@ -5,10 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowRight, Edit3, Sparkles } from "lucide-react";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
+import { trackEvent } from "@/lib/analytics";
+import { audienceLabel, challengeTypeLabel, mergeMemory } from "@/lib/personalisation";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
@@ -47,6 +51,8 @@ const Dashboard = () => {
   const setup = getSetup();
   const referralCount = state.network.direct;
   const firstName = state.user?.name?.split(" ")[0] || "there";
+  const memory = state.memory;
+  const [editingMemory, setEditingMemory] = useState(false);
 
   // Delay invite card: only after first task done OR 30s on dashboard
   const [dwellElapsed, setDwellElapsed] = useState(false);
@@ -66,6 +72,10 @@ const Dashboard = () => {
   };
 
   const completedCount = tasks.filter((_, i) => state.challenge.tasks[`day${currentDay}_task${i}`]).length;
+  const updateMemory = (updates: Partial<typeof memory>) => {
+    setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, updates) }));
+    trackEvent("memory_updated", { source: "dashboard" });
+  };
 
   return (
     <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">

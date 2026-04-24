@@ -180,3 +180,21 @@
   margin: 0 auto;
   width: 100%;
 }
+
+/* ── Responsive app shell containers ── */
+.app-page-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .app-page-container {
+    width: 90vw;
+    max-width: 1440px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}

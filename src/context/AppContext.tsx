@@ -57,6 +57,7 @@ export interface AppState {
   memory: UserMemory;
   challenge: {
     currentDay: number;
+    startedAt: string;
     tasks: Record<string, boolean>;
     aiOutputs: Record<string, string>;
     launchUrl: string;
@@ -116,6 +117,7 @@ export const defaultState: AppState = {
   memory: defaultMemory,
   challenge: {
     currentDay: 1,
+    startedAt: new Date().toISOString(),
     tasks: {},
     aiOutputs: {},
     launchUrl: "",

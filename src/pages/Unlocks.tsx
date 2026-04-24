@@ -28,7 +28,6 @@ const Unlocks = () => {
   const { state } = useAppState();
   const navigate = useNavigate();
   const earnedIds = new Set(state.unlocks.map((u) => u.id));
-  const firstName = state.user?.name?.split(" ")[0] || "there";
   const challengeName = state.memory.challengeName || "your challenge";
 
   const totalEarned = state.unlocks.reduce((sum, u) => sum + u.value, 0);

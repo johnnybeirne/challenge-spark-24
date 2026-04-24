@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
+import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 
 /* ───── Types ───── */
 
@@ -53,6 +54,7 @@ export interface CommunityState {
 export interface AppState {
   user: User | null;
   assessment: Record<string, any> | null;
+  memory: UserMemory;
   challenge: {
     currentDay: number;
     tasks: Record<string, boolean>;
@@ -111,6 +113,7 @@ const defaultCommunity: CommunityState = {
 export const defaultState: AppState = {
   user: null,
   assessment: null,
+  memory: defaultMemory,
   challenge: {
     currentDay: 1,
     tasks: {},
@@ -263,7 +266,7 @@ export function clearState(): void {
     "challengeos_user", "challengeos_assessment", "challengeos_challenge",
     "challengeos_referrals", "challengeos_unlocks", "challengeos_network",
     "challengeos_community", "challengeos_onboarding", "challengeos_crosspromotion",
-    "challengeos_partnerasset", "challengeos_partnerperformance", "challenge-os-state",
+    "challengeos_partnerasset", "challengeos_partnerperformance", "challengeos_memory", "challenge-os-state",
   ];
   keys.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
 }

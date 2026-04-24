@@ -61,7 +61,10 @@ export type AnalyticsEvent =
   | "personalisation_used"
   | "calendar_add_clicked"
   | "calendar_google_selected"
-  | "calendar_ics_downloaded";
+  | "calendar_ics_downloaded"
+  | "training_hub_viewed"
+  | "training_hub_completed"
+  | "training_video_marked_watched";
 
 export async function trackEvent(
   event: AnalyticsEvent,

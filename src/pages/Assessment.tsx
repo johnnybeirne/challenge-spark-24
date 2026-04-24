@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
+import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
@@ -128,7 +129,14 @@ const Assessment = () => {
       trackEvent(`assessment_result_${result.challengeType}` as any);
       trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 
-      setState((prev) => ({ ...prev, assessment: result as any }));
+      setState((prev) => ({
+        ...prev,
+        assessment: result as any,
+        memory: mergeMemory(prev.memory, {
+          audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
+          challengeType: normalizeChallengeType(result.challengeType),
+        }),
+      }));
 
       setTimeout(() => {
         navigate("/results");

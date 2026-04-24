@@ -34,6 +34,8 @@ const AiCopilotChat = () => {
   const [starters, setStarters] = useState<string[]>([]);
   const [fallback, setFallback] = useState<string>(DEFAULT_FALLBACK);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  const firstName = state.user?.name?.split(" ")[0] || "there";
+  const personalisedWelcome = welcome === DEFAULT_WELCOME ? `What do you want to work on next, ${firstName}?` : welcome;
 
   useEffect(() => {
     (async () => {
@@ -168,7 +170,7 @@ const AiCopilotChat = () => {
                 <div className="text-center py-6">
                   <img src={aiAvatar} alt="" className="h-12 w-12 rounded-full object-cover mx-auto mb-3 opacity-80" />
                   <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                    <ReactMarkdown>{welcome}</ReactMarkdown>
+                    <ReactMarkdown>{personalisedWelcome}</ReactMarkdown>
                   </div>
                   {starters.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-2 justify-center">

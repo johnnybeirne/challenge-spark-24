@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Copy, RefreshCw } from "lucide-react";
+import { ArrowRight, Check, Copy, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { overviewToText, scanBuiltFeatures, type FeatureOverview } from "@/lib/featureOverview";
 
@@ -16,6 +16,37 @@ const formatTime = (date: Date) =>
     minute: "2-digit",
     second: "2-digit",
   }).format(date);
+
+const WorkflowChart = ({ title, steps }: { title: string; steps: string[] }) => (
+  <section className="mb-6 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+    <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <Badge variant="outline" className="mb-2">Workflow</Badge>
+        <h2 className="text-xl font-semibold text-foreground">{title}</h2>
+      </div>
+      <p className="max-w-md text-sm leading-6 text-muted-foreground">
+        A visual path through what is already built in the app.
+      </p>
+    </div>
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {steps.map((step, index) => (
+        <div key={step} className="relative flex min-h-28 gap-3 rounded-md border border-border bg-background p-4">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+            {index + 1}
+          </span>
+          <div className="flex min-w-0 flex-1 items-center">
+            <p className="text-sm font-medium leading-6 text-foreground">{step}</p>
+          </div>
+          {index < steps.length - 1 && (
+            <span className="absolute -bottom-3 left-1/2 z-10 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-card md:-right-3 md:bottom-auto md:left-auto md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
+              <ArrowRight className="h-3.5 w-3.5 rotate-90 text-muted-foreground md:rotate-0" />
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
   const [scan, setScan] = useState(() => scanBuiltFeatures());
@@ -79,6 +110,10 @@ const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
             <span>{status}</span>
           </div>
         </section>
+
+        {overview.workflow?.length && (
+          <WorkflowChart title={mode === "admin" ? "Administrator Workflow" : "User Workflow"} steps={overview.workflow} />
+        )}
 
         <section className="space-y-5">
           {overview.groups.map((group) => (

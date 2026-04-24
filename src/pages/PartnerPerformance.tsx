@@ -58,7 +58,7 @@ function SparkBars({ data, label }: { data: number[]; label: string }) {
           />
         ))}
       </div>
-      <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+      <div className="flex justify-between text-xs text-muted-foreground mt-1">
         <span>30d ago</span><span>Today</span>
       </div>
     </div>
@@ -193,8 +193,8 @@ const PartnerPerformance = () => {
             <p className="font-medium text-foreground text-sm">{asset.contribution_title}</p>
             <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{asset.contribution_description}</p>
             <div className="flex items-center gap-2 mt-2">
-              <Badge className="bg-primary/10 text-primary text-[10px]">${asset.estimated_value}+ value</Badge>
-              <Badge className="bg-green-500/10 text-green-600 text-[10px]">Approved</Badge>
+              <Badge className="bg-primary/10 text-primary text-xs">${asset.estimated_value}+ value</Badge>
+              <Badge className="bg-green-500/10 text-green-600 text-xs">Approved</Badge>
             </div>
             <div className="flex gap-2 mt-3">
               <Button size="sm" className="gap-1 text-xs" onClick={() => {
@@ -220,7 +220,7 @@ const PartnerPerformance = () => {
             <div className="flex items-center gap-2 mb-2">
               <Badge className={`text-xs ${visibility.bg} ${visibility.color}`}>{visibility.label}</Badge>
               {promoter.is_founding_partner && (
-                <Badge className="text-[10px] bg-primary/10 text-primary gap-1"><Shield className="h-3 w-3" /> Founding</Badge>
+                <Badge className="text-xs bg-primary/10 text-primary gap-1"><Shield className="h-3 w-3" /> Founding</Badge>
               )}
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">{visibility.desc}</p>
@@ -259,18 +259,18 @@ const PartnerPerformance = () => {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Eligible for promotion</span>
-                <Badge className={promoter.is_eligible_for_promotion ? "bg-green-500/10 text-green-600 text-[10px]" : "bg-destructive/10 text-destructive text-[10px]"}>
+                <Badge className={promoter.is_eligible_for_promotion ? "bg-green-500/10 text-green-600 text-xs" : "bg-destructive/10 text-destructive text-xs"}>
                   {promoter.is_eligible_for_promotion ? "Active" : "Inactive"}
                 </Badge>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Asset approved</span>
-                <Badge className="bg-green-500/10 text-green-600 text-[10px]">Yes</Badge>
+                <Badge className="bg-green-500/10 text-green-600 text-xs">Yes</Badge>
               </div>
               {promoter.is_founding_partner && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Founding partner</span>
-                  <Badge className="bg-primary/10 text-primary text-[10px]">#{promoter.founding_rank}</Badge>
+                  <Badge className="bg-primary/10 text-primary text-xs">#{promoter.founding_rank}</Badge>
                 </div>
               )}
             </div>
@@ -280,7 +280,7 @@ const PartnerPerformance = () => {
                   <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-medium text-destructive">Not active in cross-promotion</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Contact admin or update your asset to restore visibility.</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Contact admin or update your asset to restore visibility.</p>
                   </div>
                 </div>
               </div>

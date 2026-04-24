@@ -141,7 +141,7 @@ const Leaderboard = () => {
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                        <p className="text-[10px] text-muted-foreground">pts</p>
+                        <p className="text-xs text-muted-foreground">pts</p>
                       </div>
                     </div>
                   );
@@ -187,7 +187,7 @@ const Leaderboard = () => {
                             {entry.name} {entry.isUser && "(You)"}
                           </p>
                           {entry.is_founding_partner && (
-                            <Badge className="text-[9px] bg-primary/10 text-primary">Founding</Badge>
+                            <Badge className="text-xs bg-primary/10 text-primary">Founding</Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-1">
@@ -197,7 +197,7 @@ const Leaderboard = () => {
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-foreground">{entry.conversions}</p>
-                        <p className="text-[10px] text-muted-foreground">conversions</p>
+                        <p className="text-xs text-muted-foreground">conversions</p>
                       </div>
                     </div>
                   );

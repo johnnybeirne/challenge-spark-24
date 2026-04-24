@@ -20,7 +20,7 @@ const ConsumerNav = () => {
             <Link
               key={to}
               to={to}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 min-h-[44px] min-w-[44px] justify-center text-[10px] transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 min-h-[44px] min-w-[44px] justify-center text-xs transition-colors ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
             >

@@ -30,18 +30,18 @@ const FoundingPartnerPanel = ({ promoter }: FoundingPartnerPanelProps) => {
           <div className="flex items-center gap-2 mb-2">
             <Shield className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Founding Partner</h3>
-            <Badge className="bg-primary/10 text-primary text-[9px] ml-auto">
+            <Badge className="bg-primary/10 text-primary text-xs ml-auto">
               #{promoter.founding_rank}
             </Badge>
           </div>
           <p className="text-xs text-foreground leading-relaxed mb-2">
             You joined early and secured priority visibility within the network.
           </p>
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Visibility is based on active contribution and alignment with platform standards.
           </p>
           {!promoter.is_eligible_for_promotion && (
-            <p className="text-[10px] text-amber-600 mt-2">
+            <p className="text-xs text-amber-600 mt-2">
               ⚠ Your cross-promotion visibility is currently paused. Continue contributing to restore it.
             </p>
           )}

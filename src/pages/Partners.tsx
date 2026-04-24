@@ -241,7 +241,7 @@ const Partners = () => {
                   </li>
                 ))}
               </ul>
-              <p className="text-[11px] text-muted-foreground mt-4 italic leading-relaxed">
+              <p className="text-xs text-muted-foreground mt-4 italic leading-relaxed">
                 This ensures the network stays high-quality and every partner benefits.
               </p>
             </CardContent>
@@ -286,7 +286,7 @@ const Partners = () => {
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
                 <Badge variant="secondary" className="gap-1"><TrendingUp className="h-3 w-3" /> Network growth</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground text-center mt-3 italic">
+              <p className="text-xs text-muted-foreground text-center mt-3 italic">
                 Every partner contributes value — this is what makes the network work.
               </p>
             </CardContent>
@@ -308,7 +308,7 @@ const Partners = () => {
                   </li>
                 ))}
               </ul>
-              <p className="text-[11px] text-muted-foreground mt-4 italic">
+              <p className="text-xs text-muted-foreground mt-4 italic">
                 Visibility inside the network is based on contribution and quality — not just early access.
               </p>
             </CardContent>

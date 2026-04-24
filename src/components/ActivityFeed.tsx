@@ -111,7 +111,7 @@ const ActivityFeed = ({ title }: ActivityFeedProps) => {
                 <span className="font-medium">{item.name}</span>{" "}
                 <span className="text-muted-foreground">{item.action}</span>
               </p>
-              <span className="text-[10px] text-muted-foreground whitespace-nowrap">{item.time}</span>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">{item.time}</span>
             </div>
           ))}
         </div>

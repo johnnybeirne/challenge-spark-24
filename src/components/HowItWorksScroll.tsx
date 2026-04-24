@@ -100,7 +100,7 @@ const Step1Visual = ({ active }: { active: boolean }) => {
               </div>
               <span className="text-xs font-semibold text-foreground">Challenge created</span>
             </div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+            <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               3 days
             </span>
           </div>
@@ -112,7 +112,7 @@ const Step1Visual = ({ active }: { active: boolean }) => {
               {["Coaches", "Lead-gen", "AI-powered"].map((t) => (
                 <span
                   key={t}
-                  className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary"
+                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary"
                 >
                   {t}
                 </span>
@@ -184,7 +184,7 @@ const Step2Visual = ({ active }: { active: boolean }) => {
               style={{ transitionDelay: `${i * 80}ms` }}
             >
               <div className="flex items-center gap-3 px-4 py-3">
-                <span className="text-[10px] font-mono font-bold text-muted-foreground">
+                <span className="text-xs font-mono font-bold text-muted-foreground">
                   DAY {i + 1}
                 </span>
                 <span className="text-sm font-semibold text-foreground">{d.title}</span>
@@ -249,7 +249,7 @@ const Step3Visual = ({ active }: { active: boolean }) => {
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-xl">
             <Sparkles className="h-8 w-8" />
           </div>
-          <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-foreground whitespace-nowrap">
+          <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs font-semibold text-foreground whitespace-nowrap">
             Your challenge
           </div>
         </div>
@@ -432,7 +432,7 @@ const Step4Visual = ({ active }: { active: boolean }) => {
                 }}
               >
                 <div
-                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-accent text-accent-foreground text-[10px] font-bold shadow-md ring-2 ring-background transition-all duration-700 ease-out ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-accent text-accent-foreground text-xs font-bold shadow-md ring-2 ring-background transition-all duration-700 ease-out ${
                     visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-50 -translate-y-3"
                   }`}
                   style={{ transitionDelay: visible ? `${200 + (i * 2 + j) * 80}ms` : "0ms" }}
@@ -707,7 +707,7 @@ const PinnedStage = ({
               );
             })}
             {active < steps.length - 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[11px] font-medium text-muted-foreground animate-pulse">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs font-medium text-muted-foreground animate-pulse">
                 Scroll <ArrowRight className="h-3.5 w-3.5 rotate-90" />
               </div>
             )}

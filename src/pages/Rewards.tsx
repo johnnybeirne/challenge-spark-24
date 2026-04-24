@@ -210,14 +210,14 @@ const Rewards = () => {
                         <p className="font-semibold text-foreground text-sm truncate">
                           {asset.contribution_title}
                         </p>
-                        <Badge className="bg-primary/10 text-primary text-[10px] shrink-0">
+                        <Badge className="bg-primary/10 text-primary text-xs shrink-0">
                           ${asset.estimated_value}
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground leading-relaxed mb-2">
                         {asset.contribution_description}
                       </p>
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Crown className="h-3 w-3" />
                         <span>Provided by {asset.partner_name}</span>
                       </div>

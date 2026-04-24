@@ -269,7 +269,7 @@ const Landing = () => {
             {comparisonRows.map((row) => (
               <li key={row.new} className="grid md:grid-cols-2 gap-4 md:gap-5">
                 <div className="relative p-5 md:p-6 rounded-2xl border border-border bg-card/40">
-                  <span className="md:hidden block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  <span className="md:hidden block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                     Old way
                   </span>
                   <div className="flex items-start gap-3">
@@ -281,7 +281,7 @@ const Landing = () => {
                 </div>
 
                 <div className="relative p-5 md:p-6 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-primary/[0.03] shadow-sm">
-                  <span className="md:hidden block text-[10px] font-semibold uppercase tracking-wider text-primary mb-2">
+                  <span className="md:hidden block text-xs font-semibold uppercase tracking-wider text-primary mb-2">
                     New way
                   </span>
                   <div className="flex items-start gap-3">

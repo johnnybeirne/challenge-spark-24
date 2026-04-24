@@ -4,6 +4,7 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
+import { defaultTraining, type TrainingState } from "@/context/AppContext";
 
 const STORAGE_KEYS = [
   "challengeos_user",
@@ -15,6 +16,8 @@ const STORAGE_KEYS = [
   "challengeos_community",
   "challengeos_partner",
   "challengeos_memory",
+  "leadio_memory",
+  "leadio_training",
   "challenge-os-state",
 ] as const;
 
@@ -27,11 +30,12 @@ function clearLocalStorage() {
 /** Load state from Supabase for authenticated user */
 export async function loadFromSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
-    const [profileRes, progressRes, unlocksRes, memoryRes] = await Promise.all([
+    const [profileRes, progressRes, unlocksRes, memoryRes, trainingRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).single(),
       (supabase.from("challenge_progress") as any).select("*").eq("user_id", userId).single(),
       (supabase.from("unlocks") as any).select("*").eq("user_id", userId),
       (supabase.from("user_memory") as any).select("*").eq("user_id", userId).maybeSingle(),
+      (supabase.from("training_progress") as any).select("*").eq("user_id", userId).maybeSingle(),
     ]);
 
     if (profileRes.error || !profileRes.data) return null;
@@ -40,6 +44,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
     const progress = progressRes.data;
     const unlocks = unlocksRes.data || [];
     const memory = memoryRes.data;
+    const training = trainingRes.data;
 
     return {
       user: {
@@ -83,6 +88,15 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         direct: profile.direct_referral_count,
         indirect: profile.indirect_referral_count,
       },
+      training: training
+        ? {
+            hubCompleted: !!training.hub_completed,
+            preChallengeWatched: !!training.pre_challenge_watched,
+            day1Watched: !!training.day1_watched,
+            day2Watched: !!training.day2_watched,
+            day3Watched: !!training.day3_watched,
+          }
+        : defaultTraining,
       unlocks: unlocks.map((u: any) => ({
         id: u.unlock_id,
         name: u.name,

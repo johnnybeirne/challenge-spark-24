@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Users, X } from "lucide-react";
+import { BookOpen, CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -43,6 +43,19 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
       <section className="space-y-3">
         {!collapsed && <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>}
+        <button
+          onClick={() => go(`/day/${currentDay}`)}
+          className={cn(
+            "w-full rounded-2xl border border-primary/30 bg-primary/5 text-left transition-all hover:border-primary",
+            collapsed ? "p-3" : "p-4"
+          )}
+          title="Back to training"
+        >
+          <div className="flex items-center justify-between gap-3">
+            {!collapsed && <p className="font-semibold text-foreground">Back to training</p>}
+            <BookOpen className="h-5 w-5 text-primary" />
+          </div>
+        </button>
         {[1, 2, 3].map((day) => {
           const unlock = getDayUnlock(day, state.challenge.startedAt);
           const active = location.pathname === `/day/${day}`;

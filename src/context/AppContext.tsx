@@ -326,6 +326,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             community: prev.community,
             referrals: prev.referrals,
             onboarding: prev.onboarding,
+            training: { ...prev.training, ...(remote.training || {}) },
             crossPromotion: prev.crossPromotion,
             partnerAsset: prev.partnerAsset,
             partnerPerformance: prev.partnerPerformance,
@@ -337,12 +338,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       try {
         const raw = localStorage.getItem("challengeos_assessment");
-        const memoryRaw = localStorage.getItem("challengeos_memory");
+        const memoryRaw = localStorage.getItem("leadio_memory") || localStorage.getItem("challengeos_memory");
+        const trainingRaw = localStorage.getItem("leadio_training");
         if (raw) {
           setStateRaw((prev) => ({ ...prev, assessment: JSON.parse(raw) }));
         }
         if (memoryRaw) {
           setStateRaw((prev) => ({ ...prev, memory: { ...prev.memory, ...JSON.parse(memoryRaw) } }));
+        }
+        if (trainingRaw) {
+          setStateRaw((prev) => ({ ...prev, training: { ...prev.training, ...JSON.parse(trainingRaw) } }));
         }
       } catch {}
       setHydrated(true);
@@ -361,8 +366,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     try {
       localStorage.setItem("challengeos_memory", JSON.stringify(state.memory));
+      localStorage.setItem("leadio_memory", JSON.stringify(state.memory));
     } catch {}
   }, [state.memory]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("leadio_training", JSON.stringify(state.training));
+    } catch {}
+  }, [state.training]);
 
   // Supabase sync hook
   useSupabaseSync(authUser ?? null, state, prevUnlocksRef);

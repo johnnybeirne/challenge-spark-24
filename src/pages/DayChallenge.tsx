@@ -128,7 +128,14 @@ const DayChallenge = () => {
         ...prev.challenge,
         aiOutputs: { ...prev.challenge.aiOutputs, [taskKey(key)]: value },
       },
+      memory: dayNum === 1 && key === "define_app"
+        ? mergeMemory(prev.memory, {
+            topic: value,
+            challengeName: prev.memory.challengeName || deriveChallengeName(value),
+          })
+        : prev.memory,
     }));
+    if (dayNum === 1 && key === "define_app") trackEvent("memory_updated", { source: "day1_define_app" });
   };
 
   const setLaunchUrl = (url: string) => {

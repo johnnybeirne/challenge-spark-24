@@ -72,12 +72,12 @@ const App = () => (
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
+                <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
+                <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />
                 <Route path="/partner/performance" element={<PartnerGuard><PartnerPerformance /></PartnerGuard>} />
-                <Route path="/rewards" element={<PartnerGuard><Rewards /></PartnerGuard>} />
-                <Route path="/reward/:id" element={<PartnerGuard><RewardDetail /></PartnerGuard>} />
               </Route>
 
               {/* Owner console — sidebar layout, password-protected */}

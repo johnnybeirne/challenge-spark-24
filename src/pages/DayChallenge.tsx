@@ -14,6 +14,7 @@ import Day2InviteNudge from "@/components/Day2InviteNudge";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import PostActionPromo from "@/components/PostActionPromo";
 import Day1Setup, { getSetup } from "@/components/Day1Setup";
+import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 
@@ -69,7 +70,15 @@ const DayChallenge = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
-  const [setupDone, setSetupDone] = useState(() => !!getSetup());
+  const [setupDone, setSetupDone] = useState(() => {
+    try {
+      if (sessionStorage.getItem(DEMO_SETUP_RESET_KEY) === "1") {
+        sessionStorage.removeItem(DEMO_SETUP_RESET_KEY);
+        return false;
+      }
+    } catch {}
+    return !!getSetup();
+  });
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   if (dayNum === 1 && !setupDone) {

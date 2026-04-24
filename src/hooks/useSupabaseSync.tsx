@@ -239,6 +239,7 @@ export function useSupabaseSync(
 ) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const memoryDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const trainingDebounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Sync challenge progress on change
   useEffect(() => {
@@ -266,6 +267,19 @@ export function useSupabaseSync(
       if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
     };
   }, [authUser, state.memory]);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
+    trainingDebounceRef.current = setTimeout(() => {
+      saveTraining(authUser.id, state.training);
+    }, 500);
+
+    return () => {
+      if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
+    };
+  }, [authUser, state.training]);
 
   // Sync new unlocks
   useEffect(() => {

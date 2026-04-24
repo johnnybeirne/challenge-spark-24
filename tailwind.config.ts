@@ -67,6 +67,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontSize: {
+        xs: ["1rem", { lineHeight: "1.5rem" }],
+        sm: ["1rem", { lineHeight: "1.5rem" }],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

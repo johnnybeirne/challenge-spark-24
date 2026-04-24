@@ -41,8 +41,11 @@
   * { @apply border-border; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; overflow-x: hidden; scroll-behavior: smooth; }
   body { @apply bg-background text-foreground; overflow-x: hidden; }
+  body :where(p, span, a, button, label, input, select, textarea, li, td, th, small, div, [role="tab"], [role="menuitem"]) {
+    font-size: max(1rem, 1em);
+  }
   input, select, textarea { font-size: 16px !important; }
-  @media (min-width: 768px) { input, select, textarea { font-size: 14px !important; } }
+  @media (min-width: 768px) { input, select, textarea { font-size: 16px !important; } }
 }
 
 /* ───── Existing keyframes (used elsewhere) ───── */

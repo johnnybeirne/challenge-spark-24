@@ -6,8 +6,6 @@ import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 
-const ADMIN_PASSWORD = "challengeos2024";
-
 interface UserRow {
   name: string | null;
   email: string | null;
@@ -44,7 +42,7 @@ const AdminAnalytics = () => {
     try {
       const { data: res, error: err } = await supabase.functions.invoke(
         "analytics-admin",
-        { body: { password: ADMIN_PASSWORD } }
+        { body: {} }
       );
       if (err) throw err;
       if (res?.error) {

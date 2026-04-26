@@ -39,7 +39,7 @@ export function AdminSidebar() {
           {!collapsed && (
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold truncate">Owner Console</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Leadio</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Challenge</span>
             </div>
           )}
         </div>

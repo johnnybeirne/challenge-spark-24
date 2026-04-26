@@ -369,7 +369,7 @@ const Landing = () => {
       {/* FOOTER */}
       <footer className="border-t border-border px-6 py-8">
         <p className="mx-auto max-w-6xl text-center text-sm text-muted-foreground">
-          © 2026 Leadio
+          © 2026 Challenge Community
         </p>
       </footer>
     </div>

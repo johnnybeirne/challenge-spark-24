@@ -84,9 +84,9 @@ export function personalise(text: string, memory?: Partial<UserMemory> | null): 
 
 export const memoryShareText = (memory: UserMemory) => {
   if (memory.challengeName) {
-    return `I'm building a challenge called ${memory.challengeName} with Leadio. Want to try it with me?`;
+    return `I'm building a challenge called ${memory.challengeName}. Want to try it with me?`;
   }
-  return "I'm building a 3-day challenge with Leadio. Want to try it with me?";
+  return "I'm building a 3-day challenge. Want to try it with me?";
 };
 
 export const copilotMemoryContext = (memory: UserMemory) => {

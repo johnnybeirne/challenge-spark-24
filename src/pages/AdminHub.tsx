@@ -60,7 +60,7 @@ const AdminHub = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Owner Console</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Full control over Leadio — content, users, analytics, and configuration.
+          Full control over the challenge — content, users, analytics, and configuration.
         </p>
       </div>
 

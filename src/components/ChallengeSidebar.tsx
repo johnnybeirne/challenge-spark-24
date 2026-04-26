@@ -43,7 +43,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         ) : (
           <>
             <p className="font-semibold text-foreground">Welcome back, {firstName}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Day {currentDay} of 3</p>
+            <p className="mt-1 text-sm text-muted-foreground">Dashboard</p>
           </>
         )}
       </button>

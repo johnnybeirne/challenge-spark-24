@@ -1,4 +1,4 @@
-/* ───── Assessment Data: New 8-question discovery engine ───── */
+/* ───── Assessment Data: 9-question diagnostic ───── */
 
 export type AudienceType = "b2b" | "b2c" | "mixed";
 export type ChallengeType = "quick_win" | "transformation" | "skill_builder" | "launch";
@@ -21,83 +21,74 @@ export interface AssessmentQuestion {
 export const questions: AssessmentQuestion[] = [
   {
     id: "q1",
-    text: "Who do you primarily want to reach?",
+    text: "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
     options: [
-      { label: "Business owners / teams", value: "b2b" },
-      { label: "Individuals / consumers", value: "b2c" },
-      { label: "Both", value: "both" },
-      { label: "Not sure yet", value: "not_sure" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q2",
-    text: "What result would you most like to help people achieve?",
+    text: "If you stopped promoting or publishing content, would your leads drop off?",
     options: [
-      { label: "Solve a specific problem quickly", value: "quick_win" },
-      { label: "Create a meaningful transformation", value: "transformation" },
-      { label: "Learn or improve a skill", value: "skill_builder" },
-      { label: "Launch something new", value: "launch" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q3",
-    text: "What do you help people with today?",
+    text: "Can you clearly identify what is driving most of your leads?",
     options: [
-      { label: "Strategy / advice", value: "strategy" },
-      { label: "Done-for-you services", value: "services" },
-      { label: "Coaching / transformation", value: "coaching" },
-      { label: "Content / education", value: "content" },
-      { label: "Not clearly defined yet", value: "undefined" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q4",
-    text: "How big is your current audience?",
+    text: "Are most of your leads already trusting you before you speak to them?",
     options: [
-      { label: "Just starting (0–100)", value: "starting" },
-      { label: "Small (100–1,000)", value: "small" },
-      { label: "Growing (1k–10k)", value: "growing" },
-      { label: "Established (10k+)", value: "established" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q5",
-    text: "How are you currently getting leads?",
+    text: "Do you have a system that encourages people to invite others they know?",
     options: [
-      { label: "Mostly referrals / word of mouth", value: "referrals" },
-      { label: "Content (social/email)", value: "content" },
-      { label: "Ads", value: "ads" },
-      { label: "Inconsistent / not predictable", value: "inconsistent" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q6",
-    text: "What frustrates you most about growing your audience?",
+    text: "Is your lead magnet the same for everyone who finds you?",
     options: [
-      { label: "I have to constantly create content", value: "content" },
-      { label: "Growth feels slow or inconsistent", value: "consistency" },
-      { label: "I'm not getting enough leads", value: "leads" },
-      { label: "I don't know what to build", value: "clarity" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q7",
-    text: "How ready are you to build something new?",
+    text: "When someone becomes a lead, do they know exactly what to do next?",
     options: [
-      { label: "Ready now", value: "ready" },
-      { label: "Almost ready", value: "almost" },
-      { label: "Exploring ideas", value: "exploring" },
-      { label: "Just curious", value: "curious" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
   {
     id: "q8",
-    text: "If you built something valuable, how likely would you be to share it?",
+    text: "Do you have something that continues to bring in leads after it’s been set up?",
     options: [
-      { label: "Very likely", value: "very_likely" },
-      { label: "Likely", value: "likely" },
-      { label: "Maybe", value: "maybe" },
-      { label: "Unlikely", value: "unlikely" },
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
+    ],
+  },
+  {
+    id: "q9",
+    text: "Do your leads only come in when you are actively working on it?",
+    options: [
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
     ],
   },
 ];

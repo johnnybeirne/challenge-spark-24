@@ -373,6 +373,22 @@ const DayChallenge = () => {
         </Card>
       )}
 
+      {dayNum === 2 && (
+        <Card className="mb-4 border-border">
+          <CardContent className="p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Example Diagnostic</p>
+            <ol className="space-y-3 text-sm text-foreground">
+              {diagnosticQuestions.map((question, index) => (
+                <li key={question} className="flex gap-3 leading-relaxed">
+                  <span className="text-muted-foreground">{index + 1}.</span>
+                  <span>{question}</span>
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      )}
+
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
@@ -397,26 +413,22 @@ const DayChallenge = () => {
               </label>
               {task.hasTextarea && (
                 <div className="space-y-3">
-                  {dayNum === 1 && task.key === "define_app" && (
+                  {task.inputType === "input" ? (
                     <Input
-                      placeholder="Challenge name"
-                      value={memory.challengeName}
-                      onChange={(e) => {
-                        setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, { challengeName: e.target.value }) }));
-                        trackEvent("memory_updated", { source: "day1_challenge_name" });
-                      }}
+                      placeholder={task.placeholder}
+                      value={getOutput(task.key)}
+                      onChange={(e) => setOutput(task.key, e.target.value)}
+                    />
+                  ) : (
+                    <Textarea
+                      placeholder={task.placeholder}
+                      value={getOutput(task.key)}
+                      onChange={(e) => setOutput(task.key, e.target.value)}
+                      className="mt-1"
+                      rows={6}
                     />
                   )}
-                  <Textarea
-                    placeholder={task.placeholder}
-                    value={getOutput(task.key)}
-                    onChange={(e) => setOutput(task.key, e.target.value)}
-                    className="mt-1"
-                    rows={3}
-                  />
-                  {dayNum === 1 && task.key === "define_app" && memory.challengeName && (
-                    <p className="text-sm text-muted-foreground">Your challenge is now called: {memory.challengeName}</p>
-                  )}
+                  {task.helper && <p className="text-xs leading-relaxed text-muted-foreground">{task.helper}</p>}
                 </div>
               )}
             </CardContent>

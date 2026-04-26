@@ -7,8 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, BookOpen, Edit3, Sparkles } from "lucide-react";
-import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
+import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, Circle, Edit3, Sparkles, Users } from "lucide-react";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
@@ -34,9 +33,6 @@ const dayTasks: Record<number, { label: string }[]> = {
   ],
 };
 
-const audienceLabel = (v?: "b2b" | "b2c") =>
-  v === "b2b" ? "businesses" : v === "b2c" ? "consumers" : "";
-
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
   const navigate = useNavigate();
@@ -47,9 +43,8 @@ const Dashboard = () => {
   const firstName = state.user?.name?.split(" ")[0] || "there";
   const memory = state.memory;
   const [editingMemory, setEditingMemory] = useState(false);
-
-  // Delay invite card: only after first task done OR 30s on dashboard
   const [dwellElapsed, setDwellElapsed] = useState(false);
+
   useEffect(() => {
     const t = setTimeout(() => setDwellElapsed(true), 30_000);
     return () => clearTimeout(t);
@@ -66,225 +61,203 @@ const Dashboard = () => {
   };
 
   const completedCount = tasks.filter((_, i) => state.challenge.tasks[`day${currentDay}_task${i}`]).length;
+  const progressValue = (completedCount / tasks.length) * 100;
   const updateMemory = (updates: Partial<typeof memory>) => {
     setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, updates) }));
     trackEvent("memory_updated", { source: "dashboard" });
   };
 
   return (
-    <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+    <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
+      <header className="mb-6 flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-xs font-mono tracking-wider text-muted-foreground">
-            {state.user?.name ? `Hey, ${firstName.toLowerCase()}` : "Welcome back"}
-          </p>
-          <h1 className="text-2xl font-bold text-foreground mt-1">
-            Day {currentDay} of 3
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            You're building your AI-powered challenge
-          </p>
+          <p className="text-sm font-medium text-muted-foreground">Welcome back, {firstName}</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-normal text-foreground">Learning dashboard</h1>
         </div>
-        <div className="flex flex-col items-end gap-2">
-        <AddToCalendar variant="secondary" className="h-9 text-xs" />
-        {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs text-muted-foreground"
-            onClick={async () => {
-              sessionStorage.removeItem(DEMO_USER_KEY);
-              await signOut();
-              window.location.href = "/";
-            }}
-          >
-            {authUser ? "Sign out" : "Exit user view"}
-          </Button>
-        )}
-        </div>
-      </div>
-
-      {/* Your Challenge / Setup */}
-      <Card className="mb-4 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-        <CardContent className="p-5">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Your challenge</p>
-            {setup && (
-              <Button variant="ghost" size="sm" className="gap-2" onClick={() => setEditingMemory((v) => !v)}>
-                <Edit3 className="h-4 w-4" /> Edit
-              </Button>
-            )}
-          </div>
-          {setup ? (
-            <>
-              <h2 className="text-lg font-bold text-foreground leading-snug">
-                You’re building: <span className="text-primary">{memory.challengeName || "your challenge"}</span>
-              </h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                A {challengeTypeLabel(memory.challengeType || setup.challengeType)} for {memoryAudienceLabel(memory.audienceType || setup.audienceType)}
-              </p>
-              {(memory.desiredOutcome || setup.topicHint) && (
-                <p className="text-sm text-muted-foreground mt-2">Goal: {memory.desiredOutcome || setup.topicHint}</p>
-              )}
-              {editingMemory && (
-                <div className="mt-4 space-y-3">
-                  <Input placeholder="Challenge name" value={memory.challengeName} onChange={(e) => updateMemory({ challengeName: e.target.value })} />
-                  <Input placeholder="Topic" value={memory.topic} onChange={(e) => updateMemory({ topic: e.target.value })} />
-                  <Textarea placeholder="Desired outcome" value={memory.desiredOutcome} onChange={(e) => updateMemory({ desiredOutcome: e.target.value })} rows={3} />
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground mt-3">
-                This challenge keeps running and grows through sharing.
-              </p>
-            </>
-          ) : (
-            <>
-              <h2 className="text-lg font-bold text-foreground">Let's set up your challenge</h2>
-              <p className="text-sm text-muted-foreground mt-1 mb-4">
-                Two quick taps and you're building your challenge.
-              </p>
-              <Button onClick={() => navigate("/day/1")} className="w-full font-semibold">
-                Start setup
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="mb-4 border-border bg-card">
-        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="rounded-full bg-primary/10 p-2 text-primary">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground">Training</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {state.training.hubCompleted ? "Intro training complete" : "Watch the intro training before you build."}
-              </p>
-            </div>
-          </div>
-          <Button variant={state.training.hubCompleted ? "outline" : "default"} onClick={() => navigate("/training")} className="shrink-0">
-            {state.training.hubCompleted ? "Review training" : "Watch the intro training"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Today's Tasks */}
-      {setup && (
-        <Card className="mb-4">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Training progress</p>
-                <h2 className="text-lg font-bold text-foreground mt-1">Your progress, {firstName}</h2>
-              </div>
-              <span className="text-xs text-muted-foreground font-medium">
-                {completedCount} / {tasks.length}
-              </span>
-            </div>
-            <div className="space-y-2">
-              {tasks.map((task, i) => {
-                const key = `day${currentDay}_task${i}`;
-                const checked = !!state.challenge.tasks[key];
-                return (
-                  <button
-                    key={key}
-                    onClick={() => toggleTask(key)}
-                    className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all active:scale-[0.99] ${
-                      checked
-                        ? "border-primary/40 bg-primary/5"
-                        : "border-border bg-card hover:border-primary/40"
-                    }`}
-                  >
-                    <Checkbox checked={checked} className="pointer-events-none h-5 w-5" />
-                    <span
-                      className={`flex-1 font-medium transition-colors ${
-                        checked ? "line-through text-muted-foreground" : "text-foreground"
-                      }`}
-                    >
-                      {task.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <AddToCalendar variant="secondary" className="h-10" />
+          {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
             <Button
-              variant="outline"
-              className="w-full mt-4"
-              onClick={() => navigate(`/day/${currentDay}`)}
-            >
-              Open Day {currentDay}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.45fr)] lg:items-start">
-      <div>
-      {/* Invite card — low priority, delayed, single instance */}
-      {(completedCount >= 1 || dwellElapsed) && (
-        <Card className="mb-4 border-border">
-          <CardContent className="p-4">
-            <p className="font-semibold text-foreground">Build your challenge with others</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Invite others to test your challenge — builders who share finish and launch more often.
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Inviting builders unlocks tools that help you build your challenge faster.
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">You can do this anytime.</p>
-
-            <div className="mt-3 mb-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-muted-foreground">
-                  Invite 3 builders to unlock extra tools
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">
-                  {Math.min(referralCount, 3)} / 3 builders invited
-                </span>
-              </div>
-              <Progress value={(Math.min(referralCount, 3) / 3) * 100} className="h-1.5" />
-            </div>
-
-            <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
-              onClick={() => navigate("/referrals")}
-              className="w-full"
+              className="text-muted-foreground"
+              onClick={async () => {
+                sessionStorage.removeItem(DEMO_USER_KEY);
+                await signOut();
+                window.location.href = "/";
+              }}
             >
-              Invite someone
+              {authUser ? "Sign out" : "Exit user view"}
             </Button>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </div>
+      </header>
 
-      {/* Builder spotlight */}
-      <div className="mb-4">
-        <CrossPromoSpotlight
-          title="Builder spotlight"
-          subtitle="See what other builders are launching"
-          position="dashboard"
-        />
-      </div>
-      </div>
+      <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="space-y-5">
+          <Card className="overflow-hidden border-border bg-card shadow-sm">
+            <CardContent className="p-0">
+              <div className="border-b border-border bg-muted/40 p-5">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-primary">Day {currentDay} of 3</p>
+                    <h2 className="mt-1 text-2xl font-bold text-foreground">Today’s module</h2>
+                  </div>
+                  <Button onClick={() => navigate(`/day/${currentDay}`)} className="gap-2 sm:w-auto">
+                    Open module
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="mt-5 space-y-2">
+                  <div className="flex items-center justify-between text-sm font-medium text-muted-foreground">
+                    <span>{completedCount} of {tasks.length} complete</span>
+                    <span>{Math.round(progressValue)}%</span>
+                  </div>
+                  <Progress value={progressValue} className="h-2" />
+                </div>
+              </div>
 
-      {/* Johnny B AI */}
-      <Card className="mb-4 cursor-pointer hover:border-primary/40 transition-colors lg:sticky lg:top-6" onClick={() => navigate(`/day/${currentDay}`)}>
-        <CardContent className="p-5 flex items-center gap-3">
-          <img src={aiAvatar} alt="Johnny B AI" className="h-10 w-10 rounded-full object-cover border border-border shrink-0" />
-          <div className="flex-1">
-            <p className="font-semibold text-foreground">Your AI challenge builder</p>
-            <p className="text-xs text-muted-foreground">Shape your challenge flow, content & positioning faster</p>
-          </div>
-          <Sparkles className="w-4 h-4 text-primary" />
-        </CardContent>
-      </Card>
-      </div>
-    </div>
+              <div className="divide-y divide-border">
+                {tasks.map((task, i) => {
+                  const key = `day${currentDay}_task${i}`;
+                  const checked = !!state.challenge.tasks[key];
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => toggleTask(key)}
+                      className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/40"
+                    >
+                      <Checkbox checked={checked} className="pointer-events-none h-5 w-5" />
+                      <span className={`flex-1 font-semibold ${checked ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                        {task.label}
+                      </span>
+                      {checked ? <CheckCircle2 className="h-5 w-5 text-primary" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border bg-card shadow-sm">
+            <CardContent className="p-5">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-primary">Challenge workspace</p>
+                  <h2 className="mt-1 text-xl font-bold text-foreground">
+                    {setup ? memory.challengeName || "Your challenge" : "Set up your challenge"}
+                  </h2>
+                </div>
+                {setup && (
+                  <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditingMemory((v) => !v)}>
+                    <Edit3 className="h-4 w-4" />
+                    Edit
+                  </Button>
+                )}
+              </div>
+
+              {setup ? (
+                <div className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg border border-border bg-muted/30 p-4">
+                      <p className="text-sm font-medium text-muted-foreground">Format</p>
+                      <p className="mt-1 font-semibold text-foreground">{challengeTypeLabel(memory.challengeType || setup.challengeType)}</p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-muted/30 p-4">
+                      <p className="text-sm font-medium text-muted-foreground">Audience</p>
+                      <p className="mt-1 font-semibold text-foreground">{memoryAudienceLabel(memory.audienceType || setup.audienceType)}</p>
+                    </div>
+                  </div>
+
+                  {(memory.desiredOutcome || setup.topicHint) && (
+                    <div className="rounded-lg border border-border p-4">
+                      <p className="text-sm font-medium text-muted-foreground">Outcome</p>
+                      <p className="mt-1 font-semibold text-foreground">{memory.desiredOutcome || setup.topicHint}</p>
+                    </div>
+                  )}
+
+                  {editingMemory && (
+                    <div className="grid gap-3 border-t border-border pt-4">
+                      <Input placeholder="Challenge name" value={memory.challengeName} onChange={(e) => updateMemory({ challengeName: e.target.value })} />
+                      <Input placeholder="Topic" value={memory.topic} onChange={(e) => updateMemory({ topic: e.target.value })} />
+                      <Textarea placeholder="Desired outcome" value={memory.desiredOutcome} onChange={(e) => updateMemory({ desiredOutcome: e.target.value })} rows={3} />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button onClick={() => navigate("/day/1")} className="w-full gap-2 font-semibold">
+                  Start setup
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <aside className="space-y-5 lg:sticky lg:top-6">
+          <Card className="border-border bg-card shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="font-bold text-foreground">Training</p>
+                  <p className="text-sm text-muted-foreground">{state.training.hubCompleted ? "Complete" : "Intro lesson"}</p>
+                </div>
+              </div>
+              <Button variant={state.training.hubCompleted ? "outline" : "default"} onClick={() => navigate("/training")} className="mt-4 w-full">
+                {state.training.hubCompleted ? "Review" : "Watch training"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer border-border bg-card shadow-sm transition-colors hover:border-primary/40" onClick={() => navigate(`/day/${currentDay}`)}>
+            <CardContent className="p-5">
+              <div className="flex items-center gap-3">
+                <img src={aiAvatar} alt="Johnny B AI" className="h-11 w-11 shrink-0 rounded-full border border-border object-cover" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-foreground">Johnny B AI</p>
+                  <p className="text-sm text-muted-foreground">Ask for help</p>
+                </div>
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {(completedCount >= 1 || dwellElapsed) && (
+            <Card className="border-border bg-card shadow-sm">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">Builder invites</p>
+                    <p className="text-sm text-muted-foreground">{Math.min(referralCount, 3)} of 3 invited</p>
+                  </div>
+                </div>
+                <Progress value={(Math.min(referralCount, 3) / 3) * 100} className="mt-4 h-2" />
+                <Button variant="secondary" onClick={() => navigate("/referrals")} className="mt-4 w-full gap-2">
+                  Invite builders
+                  <Users className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="border-border bg-muted/40 shadow-sm">
+            <CardContent className="flex items-center gap-3 p-5">
+              <CalendarDays className="h-5 w-5 text-primary" />
+              <div>
+                <p className="font-bold text-foreground">Next step</p>
+                <p className="text-sm text-muted-foreground">Finish today’s module</p>
+              </div>
+            </CardContent>
+          </Card>
+        </aside>
+      </section>
+    </main>
   );
 };
 

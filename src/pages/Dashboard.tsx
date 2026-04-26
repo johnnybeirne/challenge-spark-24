@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, Circle, Edit3, Sparkles, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, CheckCircle2, Circle, Edit3, Sparkles, Users } from "lucide-react";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
@@ -72,7 +72,7 @@ const Dashboard = () => {
       <header className="mb-6 flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Welcome back, {firstName}</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-normal text-foreground">Learning dashboard</h1>
+          <h1 className="mt-1 text-3xl font-bold tracking-normal text-foreground">Challenge dashboard</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <AddToCalendar variant="secondary" className="h-10" />
@@ -195,23 +195,6 @@ const Dashboard = () => {
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-6">
-          <Card className="border-border bg-card shadow-sm">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary/10 p-2 text-primary">
-                  <BookOpen className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground">Training</p>
-                  <p className="text-sm text-muted-foreground">{state.training.hubCompleted ? "Complete" : "Intro lesson"}</p>
-                </div>
-              </div>
-              <Button variant={state.training.hubCompleted ? "outline" : "default"} onClick={() => navigate("/training")} className="mt-4 w-full">
-                {state.training.hubCompleted ? "Review" : "Watch training"}
-              </Button>
-            </CardContent>
-          </Card>
-
           <Card className="cursor-pointer border-border bg-card shadow-sm transition-colors hover:border-primary/40" onClick={() => navigate(`/day/${currentDay}`)}>
             <CardContent className="p-5">
               <div className="flex items-center gap-3">

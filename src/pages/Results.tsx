@@ -21,6 +21,7 @@ const Results = () => {
   }
 
   const score = assessment.diagnosticScore ?? 0;
+  const percentageScore = Math.round((score / 9) * 100);
   const diagnostic = assessment.diagnosticTitle
     ? {
         title: assessment.diagnosticTitle,
@@ -50,11 +51,11 @@ const Results = () => {
       <Card className="mb-5 border-primary/20 bg-primary/5">
         <CardContent className="p-5 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Your system score
+            Your diagnostic score
           </p>
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-5xl font-bold text-primary">{score}</span>
-            <span className="text-xl font-medium text-muted-foreground">/9</span>
+            <span className="text-5xl font-bold text-primary">{percentageScore}</span>
+            <span className="text-xl font-medium text-muted-foreground">%</span>
           </div>
         </CardContent>
       </Card>

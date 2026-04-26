@@ -300,11 +300,7 @@ const DayChallenge = () => {
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {dayNum === 1
-            ? `Today you’re building a ${challengeType} challenge for ${audience}.`
-            : dayNum === 2
-              ? `Now we turn your ${challengeType} into a working experience.`
-              : `Today you launch ${challengeName}.`}
+          {config.intro}
         </p>
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
@@ -331,17 +327,15 @@ const DayChallenge = () => {
           </div>
           <p className="text-sm text-foreground leading-relaxed">
             {dayNum === 1
-              ? `Let’s define your challenge, ${firstName}.`
+              ? config.lesson
               : dayNum === 2
-                ? `Your users should leave with: ${memory.desiredOutcome || "a clear result they can use"}.`
-                : `Your audience: ${audience}.`}
+                ? config.lesson
+                : config.lesson}
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed mt-2">
             {dayNum === 1 && memory.desiredOutcome
               ? `Your goal is: ${memory.desiredOutcome}`
-              : dayNum === 3
-                ? `Your promise: ${memory.desiredOutcome || "a result worth sharing"}.`
-                : config.reinforcement}
+              : config.reinforcement}
           </p>
         </CardContent>
       </Card>
@@ -354,9 +348,9 @@ const DayChallenge = () => {
           </div>
           <p className="text-sm font-medium text-foreground">
             {dayNum === 2
-              ? `Help me turn my ${challengeType} into a step-by-step experience.`
+              ? config.aiPrompt
               : dayNum === 3
-                ? `Help me write launch copy for ${challengeName}.`
+                ? config.aiPrompt
                 : config.aiPrompt}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>

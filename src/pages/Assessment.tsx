@@ -156,7 +156,7 @@ const Assessment = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col p-6">
+    <div className="mx-auto flex min-h-screen w-[80vw] max-w-[60vw] flex-col p-6 max-md:max-w-[80vw]">
       <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
         <span>{current + 1} / {TOTAL_QUESTIONS}</span>
         <span>{Math.round(progress)}%</span>
@@ -176,7 +176,7 @@ const Assessment = () => {
               size="lg"
               variant={opt.value === "yes" ? "default" : "outline"}
               onClick={() => handleAnswer(opt.value)}
-              className="h-16 rounded-xl text-base font-bold uppercase tracking-wide"
+              className="h-14 rounded-xl text-sm font-bold uppercase tracking-wide"
             >
               {opt.label}
             </Button>

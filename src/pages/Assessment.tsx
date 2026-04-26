@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 
@@ -17,9 +17,8 @@ const Assessment = () => {
   const { setState } = useAppState();
   const [searchParams] = useSearchParams();
 
-  const [current, setCurrent] = useState(-1); // -1 = intro
+  const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [selected, setSelected] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
@@ -56,31 +55,7 @@ const Assessment = () => {
     } catch {}
   }, []);
 
-  const progress = current < 0 ? 0 : ((current + 1) / TOTAL_QUESTIONS) * 100;
-
-  // ── Intro screen ──
-  if (current === -1) {
-    return (
-      <div className="flex flex-col min-h-screen p-6 max-w-lg mx-auto justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-foreground">Discover your challenge</h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Answer 8 quick questions. We'll tell you exactly what to build — including the strategy
-            that fits your expertise and audience.
-          </p>
-          <p className="text-sm text-muted-foreground">Takes about 90 seconds</p>
-          <Button
-            size="lg"
-            className="w-full h-14 text-base rounded-xl gap-2 mt-4"
-            onClick={() => setCurrent(0)}
-          >
-            Start
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
 
   // ── Loading screen ──
   if (loading) {
@@ -96,22 +71,12 @@ const Assessment = () => {
   const q = questions[current];
   if (!q) return null;
 
-  const handleNext = () => {
-    if (!selected) return;
-
-    const updated = { ...answers, [q.id]: selected };
+  const handleAnswer = (answer: string) => {
+    const updated = { ...answers, [q.id]: answer };
     setAnswers(updated);
 
     // Track
-    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer: selected });
-
-    // Track audience type on Q1
-    if (q.id === "q1") {
-      if (selected === "b2b") trackEvent("assessment_track_b2b" as any);
-      else if (selected === "b2c") trackEvent("assessment_track_b2c" as any);
-    }
-
-    setSelected(undefined);
+    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
 
     if (current < TOTAL_QUESTIONS - 1) {
       setCurrent(current + 1);
@@ -122,11 +87,11 @@ const Assessment = () => {
       const result = generateResult(updated);
 
       trackEvent("assessment_completed", { 
-        audienceType: result.audienceType, 
-        challengeType: result.challengeType,
+        score: result.diagnosticScore,
+        level: result.diagnosticLevel,
         timeTaken,
       });
-      trackEvent(`assessment_result_${result.challengeType}` as any);
+      trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
       trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 
       setState((prev) => ({
@@ -145,43 +110,32 @@ const Assessment = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6">
-      {/* Progress */}
-      <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
-        <span>Question {current + 1} of {TOTAL_QUESTIONS}</span>
+    <div className="flex min-h-screen flex-col p-6">
+      <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
+        <span>{current + 1} / {TOTAL_QUESTIONS}</span>
         <span>{Math.round(progress)}%</span>
       </div>
-      <Progress value={progress} className="mb-8 h-2" />
+      <Progress value={progress} className="mb-3 h-2" />
+      <p className="mb-12 text-center text-xs text-muted-foreground">Answer honestly — this only works if you do</p>
 
-      {/* Question */}
-      <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">{q.text}</h2>
+      <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
+        <h1 className="mb-10 text-center text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+          {q.text}
+        </h1>
 
-      {/* Options */}
-      <div className="space-y-3">
-        {q.options.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => setSelected(opt.value)}
-            className={`w-full text-left rounded-xl border p-4 transition-all ${
-              selected === opt.value
-                ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                : "border-border bg-card hover:border-primary/40"
-            }`}
-          >
-            <span className="text-sm leading-snug font-medium">{opt.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Next button */}
-      <div className="mt-auto pt-8">
-        <Button
-          onClick={handleNext}
-          disabled={!selected}
-          className="w-full h-[52px] text-base rounded-xl"
-        >
-          {current < TOTAL_QUESTIONS - 1 ? "Next" : "See my results"}
-        </Button>
+        <div className="grid grid-cols-2 gap-3">
+          {q.options.map((opt) => (
+            <Button
+              key={opt.value}
+              size="lg"
+              variant={opt.value === "yes" ? "default" : "outline"}
+              onClick={() => handleAnswer(opt.value)}
+              className="h-16 rounded-xl text-base font-bold uppercase tracking-wide"
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );

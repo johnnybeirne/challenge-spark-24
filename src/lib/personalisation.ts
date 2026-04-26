@@ -37,7 +37,7 @@ export const challengeTypeLabel = (value?: string) => {
     skill_builder: "skill-building",
     launch: "launch",
   };
-  return normalized ? labels[normalized] : "challenge";
+  return normalized ? labels[normalized] : "3-day";
 };
 
 export const audienceLabel = (value?: string) =>

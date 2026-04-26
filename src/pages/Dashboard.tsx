@@ -7,13 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, CalendarDays, CheckCircle2, Circle, Edit3, Sparkles, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Edit3, Users } from "lucide-react";
 import { getSetup } from "@/components/Day1Setup";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { audienceLabel as memoryAudienceLabel, challengeTypeLabel, mergeMemory } from "@/lib/personalisation";
 import AddToCalendar from "@/components/AddToCalendar";
-import aiAvatar from "@/assets/ai-avatar.png";
 
 const dayTasks: Record<number, { label: string }[]> = {
   1: [
@@ -195,19 +194,6 @@ const Dashboard = () => {
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-6">
-          <Card className="cursor-pointer border-border bg-card shadow-sm transition-colors hover:border-primary/40" onClick={() => navigate(`/day/${currentDay}`)}>
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3">
-                <img src={aiAvatar} alt="Johnny B AI" className="h-11 w-11 shrink-0 rounded-full border border-border object-cover" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-foreground">Johnny B AI</p>
-                  <p className="text-sm text-muted-foreground">Ask for help</p>
-                </div>
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-
           {(completedCount >= 1 || dwellElapsed) && (
             <Card className="border-border bg-card shadow-sm">
               <CardContent className="p-5">
@@ -229,15 +215,6 @@ const Dashboard = () => {
             </Card>
           )}
 
-          <Card className="border-border bg-muted/40 shadow-sm">
-            <CardContent className="flex items-center gap-3 p-5">
-              <CalendarDays className="h-5 w-5 text-primary" />
-              <div>
-                <p className="font-bold text-foreground">Next step</p>
-                <p className="text-sm text-muted-foreground">Finish today’s module</p>
-              </div>
-            </CardContent>
-          </Card>
         </aside>
       </section>
     </main>

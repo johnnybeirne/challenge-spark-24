@@ -140,6 +140,10 @@ export interface AssessmentResult {
   challengeType: ChallengeType;
   readinessLevel: ReadinessLevel;
   growthBlock: GrowthBlock;
+  diagnosticScore?: number;
+  diagnosticLevel?: "low" | "mid" | "high";
+  diagnosticTitle?: string;
+  diagnosticMessage?: string;
   recommendedChallenge: RecommendedChallenge;
   messagingAngle: string;
   growthInsight: string;
@@ -243,11 +247,49 @@ const growthInsights: Record<GrowthBlock, string> = {
   clarity: "You know more than you think. Start with what you're already good at — the challenge will prove it.",
 };
 
+const positiveScoredQuestions = new Set(["q1", "q3", "q4", "q5", "q7", "q8"]);
+const reverseScoredQuestions = new Set(["q2", "q6", "q9"]);
+
+export function calculateDiagnosticScore(answers: Record<string, string>): number {
+  return questions.reduce((total, question) => {
+    const answer = answers[question.id];
+    if (positiveScoredQuestions.has(question.id)) return total + (answer === "yes" ? 1 : 0);
+    if (reverseScoredQuestions.has(question.id)) return total + (answer === "no" ? 1 : 0);
+    return total;
+  }, 0);
+}
+
+export function getDiagnosticResult(score: number) {
+  if (score <= 3) {
+    return {
+      level: "low" as const,
+      title: "Manual Growth",
+      message: "Your lead flow depends heavily on your own effort. If you stop, it slows or stops. There’s no real system supporting you yet.",
+    };
+  }
+
+  if (score <= 6) {
+    return {
+      level: "mid" as const,
+      title: "Inconsistent System",
+      message: "You have pieces in place, but it’s not reliable. Some things work, but they don’t connect into a consistent flow.",
+    };
+  }
+
+  return {
+    level: "high" as const,
+    title: "Emerging Engine",
+    message: "You already have elements of a system. With the right structure, this could become predictable and scalable.",
+  };
+}
+
 export function generateResult(answers: Record<string, string>): AssessmentResult {
-  const audienceType = classifyAudience(answers.q1);
-  const challengeType = classifyChallengeType(answers.q2);
-  const readinessLevel = classifyReadiness(answers.q7);
-  const growthBlock = classifyGrowthBlock(answers.q6);
+  const audienceType = "mixed";
+  const challengeType = "quick_win";
+  const readinessLevel = "medium";
+  const growthBlock = "leads";
+  const diagnosticScore = calculateDiagnosticScore(answers);
+  const diagnosticResult = getDiagnosticResult(diagnosticScore);
 
   const template = challengeTemplates[audienceType][challengeType];
 
@@ -256,6 +298,10 @@ export function generateResult(answers: Record<string, string>): AssessmentResul
     challengeType,
     readinessLevel,
     growthBlock,
+    diagnosticScore,
+    diagnosticLevel: diagnosticResult.level,
+    diagnosticTitle: diagnosticResult.title,
+    diagnosticMessage: diagnosticResult.message,
     recommendedChallenge: {
       title: template.title,
       description: template.description,

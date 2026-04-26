@@ -503,7 +503,7 @@ export const defaultSiteConfig: SiteConfig = {
     footerText: "",
   },
   partners: {
-    pageHeadline: "Become a Leadio Partner",
+    pageHeadline: "Become a Challenge Partner",
     pageSubtitle: "",
     minContributionValue: 97,
     showFoundingUrgency: true,
@@ -522,7 +522,7 @@ export const defaultSiteConfig: SiteConfig = {
       unlock_earned: "New unlock: [name] ($[value] value)",
       builder_circle_unlocked: "Builder Circle unlocked — your challenge can now earn visibility.",
       builder_supported: "You supported a builder — your visibility increased.",
-      partner_approved: "You've been approved as a Leadio partner",
+      partner_approved: "You've been approved as a challenge partner",
       task_completed: "Task complete!",
       day_completed: "Day [X] complete — keep going",
       challenge_completed: "You built and launched an app in 3 days.",

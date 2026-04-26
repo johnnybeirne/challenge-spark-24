@@ -23,11 +23,49 @@ const CmsAssessment = () => {
     <div className="space-y-8">
       <div>
         <h2 className="text-lg font-semibold mb-1">Assessment</h2>
-        <p className="text-sm text-muted-foreground">Edit the challenge discovery assessment — intro, split question, tension text, and CTA copy.</p>
+        <p className="text-sm text-muted-foreground">Edit the assessment landing page, question intro, result text, and CTA copy.</p>
       </div>
 
       <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Pre-Assessment Screen</h3>
+        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Assessment Landing Page</h3>
+        <div className="space-y-2">
+          <Label>Eyebrow</Label>
+          <Input value={draft.landingEyebrow} onChange={(e) => update("landingEyebrow", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Headline</Label>
+          <Input value={draft.landingHeadline} onChange={(e) => update("landingHeadline", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Subheadline</Label>
+          <Textarea value={draft.landingSubheadline} onChange={(e) => update("landingSubheadline", e.target.value)} rows={3} />
+        </div>
+        <div className="space-y-2">
+          <Label>CTA Button</Label>
+          <Input value={draft.landingPrimaryCta} onChange={(e) => update("landingPrimaryCta", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Supporting Text</Label>
+          <Input value={draft.landingSupportingText} onChange={(e) => update("landingSupportingText", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Benefit Points</Label>
+          {(draft.landingPoints ?? []).map((point, i) => (
+            <Input
+              key={i}
+              value={point}
+              onChange={(e) => {
+                const points = [...(draft.landingPoints ?? [])];
+                points[i] = e.target.value;
+                update("landingPoints", points);
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Assessment Intro Fallback</h3>
         <div className="space-y-2">
           <Label>Title</Label>
           <Input value={draft.introTitle} onChange={(e) => update("introTitle", e.target.value)} />

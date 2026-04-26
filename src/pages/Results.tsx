@@ -3,14 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Share2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
-import {
-  styleLabels,
-  styleIcons,
-  type AssessmentResult,
-} from "@/lib/assessmentData";
+import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 
 /* ── Trust Leverage scoring (derived from existing answers) ── */
 type Dimensions = {
@@ -77,14 +73,17 @@ const Results = () => {
     );
   }
 
-  const { challengeType } = assessment;
-  const icon = styleIcons[challengeType];
-  const label = styleLabels[challengeType];
-  const description = identityDescriptions[challengeType];
+  const score = assessment.diagnosticScore ?? 0;
+  const diagnostic = assessment.diagnosticTitle
+    ? {
+        title: assessment.diagnosticTitle,
+        message: assessment.diagnosticMessage ?? "",
+      }
+    : getDiagnosticResult(score);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
-  const shareText = `I scored ${score}/100 — what would you get?`;
+  const shareText = `I scored ${score}/9 — what would you get?`;
 
   const handleShare = () => {
     trackEvent("assessment_result_shared" as any);
@@ -102,13 +101,9 @@ const Results = () => {
     <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
       {/* ── Header: icon + identity type + description ── */}
       <div className="flex flex-col items-center text-center mb-6 pt-4">
-        <div className="text-5xl mb-3">{icon}</div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your challenge type</p>
-        <h1 className="text-2xl font-bold text-foreground mb-2">{label}</h1>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{description}</p>
-        <p className="text-xs text-muted-foreground/80 leading-relaxed max-w-sm mt-3 italic">
-          Your challenge runs continuously and grows as people invite others.
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your diagnostic result</p>
+        <h1 className="text-3xl font-bold text-foreground mb-3">{diagnostic.title}</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{diagnostic.message}</p>
       </div>
 
       {/* ── Tension ── */}
@@ -124,11 +119,11 @@ const Results = () => {
       <Card className="mb-5 border-primary/20 bg-primary/5">
         <CardContent className="p-5 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Your trust leverage score
+            Your system score
           </p>
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-5xl font-bold text-primary">{score}</span>
-            <span className="text-xl font-medium text-muted-foreground">/100</span>
+            <span className="text-xl font-medium text-muted-foreground">/9</span>
           </div>
         </CardContent>
       </Card>
@@ -157,16 +152,13 @@ const Results = () => {
       </Card>
 
       {/* ── Share ── */}
-      <Button variant="outline" className="w-full h-12 rounded-xl mb-3 gap-2" onClick={handleShare}>
-        <Share2 className="w-4 h-4" />
-        I scored {score}/100 — what would you get?
-      </Button>
-
-      {/* ── CTA ── */}
       <Button className="w-full h-[52px] text-base rounded-xl gap-2" onClick={() => navigate("/join")}>
-        Start building your challenge
+        Start the 3-Day Challenge
         <ArrowRight className="w-4 h-4" />
       </Button>
+      <p className="mt-3 text-center text-sm text-muted-foreground">
+        Build a simple version of your own lead system and see how it works.
+      </p>
     </div>
   );
 };

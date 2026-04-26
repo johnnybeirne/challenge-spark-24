@@ -110,43 +110,32 @@ const Assessment = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6">
-      {/* Progress */}
-      <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
-        <span>Question {current + 1} of {TOTAL_QUESTIONS}</span>
+    <div className="flex min-h-screen flex-col p-6">
+      <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
+        <span>{current + 1} / {TOTAL_QUESTIONS}</span>
         <span>{Math.round(progress)}%</span>
       </div>
-      <Progress value={progress} className="mb-8 h-2" />
+      <Progress value={progress} className="mb-3 h-2" />
+      <p className="mb-12 text-center text-xs text-muted-foreground">Answer honestly — this only works if you do</p>
 
-      {/* Question */}
-      <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">{q.text}</h2>
+      <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
+        <h1 className="mb-10 text-center text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+          {q.text}
+        </h1>
 
-      {/* Options */}
-      <div className="space-y-3">
-        {q.options.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => setSelected(opt.value)}
-            className={`w-full text-left rounded-xl border p-4 transition-all ${
-              selected === opt.value
-                ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                : "border-border bg-card hover:border-primary/40"
-            }`}
-          >
-            <span className="text-sm leading-snug font-medium">{opt.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Next button */}
-      <div className="mt-auto pt-8">
-        <Button
-          onClick={handleNext}
-          disabled={!selected}
-          className="w-full h-[52px] text-base rounded-xl"
-        >
-          {current < TOTAL_QUESTIONS - 1 ? "Next" : "See my results"}
-        </Button>
+        <div className="grid grid-cols-2 gap-3">
+          {q.options.map((opt) => (
+            <Button
+              key={opt.value}
+              size="lg"
+              variant={opt.value === "yes" ? "default" : "outline"}
+              onClick={() => handleAnswer(opt.value)}
+              className="h-16 rounded-xl text-base font-bold uppercase tracking-wide"
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );

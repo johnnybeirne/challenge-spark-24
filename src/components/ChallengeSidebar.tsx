@@ -104,8 +104,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </div>
             ))}
           </div></>}
-          {!collapsed && <Button className="mt-4 w-full" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
-            {communityUnlocked ? "Enter Challenge Community" : "Unlock Challenge Community"}
+          {!collapsed && <Button className="mt-4 min-h-10 w-full whitespace-normal px-3 text-center text-sm leading-tight" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); communityUnlocked ? go("/community") : setModal("community"); }}>
+            {communityUnlocked ? "Enter Community" : "Unlock Community"}
           </Button>}
         </CardContent>
       </Card>

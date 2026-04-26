@@ -225,7 +225,7 @@ export function scanBuiltFeatures(): FeatureScan {
     admin: {
       title: "Administrator Feature Overview",
       summary: [
-        "Leadio helps you run the challenge business from one owner console, with controls for content, analytics, promoters, activity, and user growth.",
+        "The owner console helps you run the challenge business, with controls for content, analytics, promoters, activity, and user growth.",
         "It saves time by centralizing updates and visibility, while supporting revenue growth through referrals, promoter management, partner rewards, and scalable onboarding.",
       ],
       groups: adminGroups,
@@ -242,7 +242,7 @@ export function scanBuiltFeatures(): FeatureScan {
     user: {
       title: "User Feature Overview",
       summary: [
-        "Leadio gives users a hyper-personalized guided learning and accountability system for building and launching an AI-powered challenge.",
+        "Users get a hyper-personalized guided learning and accountability system for building and launching an AI-powered challenge.",
         "Users are guided through assessment, setup, daily tasks, support, referrals, and rewards so they stay focused and get a real launched outcome.",
       ],
       groups: userGroups,

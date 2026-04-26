@@ -21,45 +21,58 @@ import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText
 import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 
-const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; placeholder?: string }[] }> = {
+const diagnosticQuestions = [
+  "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
+  "If you stopped promoting or publishing content, would your leads drop off?",
+  "Can you clearly identify what is driving most of your leads?",
+  "Are most of your leads already trusting you before you speak to them?",
+  "Do you have a system that encourages people to invite others they know?",
+  "Is your lead magnet the same for everyone who finds you?",
+  "When someone becomes a lead, do they know exactly what to do next?",
+  "Do you have something that continues to bring in leads after it’s been set up?",
+  "Do your leads only come in when you are actively working on it?",
+];
+
+const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; inputType?: "input" | "textarea"; placeholder?: string; helper?: string }[] }> = {
   1: {
-    title: "Day 1: Shape Your Challenge",
-    intro: "Today you define what you’re building",
-    lesson: "This is where you decide who your challenge is for and what result it creates.",
-    reinforcement: "Keep it simple. Simple wins.",
+    title: "Day 1: Define Your Challenge",
+    intro: "Today you’ll define the challenge you want to create.",
+    lesson: "By the end of this step, you should know who your challenge is for, what problem it helps solve, what simple outcome people should get, and why people would want to share it.",
+    reinforcement: "Keep it clear and practical. You are learning by doing.",
     aiPrompt: "Let’s define your challenge clearly.",
-    completion: "Strong start. This is where momentum begins.",
+    completion: "Your challenge is defined. Keep the momentum going.",
     tasks: [
-      { key: "define_app", label: "Define your challenge", hasTextarea: true, placeholder: "Describe your AI-powered challenge in 2-3 sentences…" },
-      { key: "map_pages", label: "Map your pages", hasTextarea: true, placeholder: "List the pages your challenge needs…" },
-      { key: "create_structure", label: "Create structure", hasTextarea: true, placeholder: "Outline the structure and navigation of your challenge…" },
+      { key: "define_app", label: "Who is your challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads" },
+      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach" },
+      { key: "result", label: "What result should they get from your challenge?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently" },
+      { key: "share_reason", label: "Why would someone invite a friend to this challenge?", hasTextarea: true, inputType: "input", placeholder: "It helps them spot what’s missing and improve faster" },
     ],
   },
   2: {
-    title: "Day 2: Build the Experience",
-    intro: "Now we turn your idea into something real",
-    lesson: "This is where your challenge becomes something people can actually use.",
-    reinforcement: "Don’t overthink it — build the simplest version first.",
-    aiPrompt: "Let’s map your challenge flow.",
-    completion: "You’re building fast. Most people never get this far.",
-    nudge: "This is the hardest day — keep building your challenge.",
+    title: "Day 2: Build Your Lead Magnet Quiz",
+    intro: "Today you’ll create the quiz that acts as the entry point to your challenge.",
+    lesson: "A strong quiz helps people see where they are now, notice what is missing, understand why the challenge matters, and feel motivated to continue.",
+    reinforcement: "This is not just a lead magnet. This is the diagnostic inside your challenge.",
+    aiPrompt: "Help me create a diagnostic quiz for my challenge.",
+    completion: "Your quiz is mapped. Now turn it into a simple working challenge.",
+    nudge: "Keep it focused — each question should reveal a different gap.",
     tasks: [
-      { key: "build_core", label: "Build core feature", hasTextarea: false },
-      { key: "connect_flow", label: "Connect flow", hasTextarea: false },
-      { key: "test_mobile", label: "Test mobile", hasTextarea: false },
+      { key: "quiz_questions", label: "Your Questions", hasTextarea: true, inputType: "textarea", placeholder: "Write your own quiz questions here.", helper: "Use 5 to 9 yes/no questions. Each question should reveal a different gap. Avoid repeating the same idea in different ways." },
     ],
   },
   3: {
-    title: "Day 3: Launch and Grow",
-    intro: "Today you make it live",
-    lesson: "This is where your challenge becomes visible.",
-    reinforcement: "This is where most people stop. Don’t.",
-    aiPrompt: "Let’s get your launch ready.",
-    completion: "You launched something real. That puts you ahead of most.",
+    title: "Day 3: Build Your AI-Powered Challenge",
+    intro: "Today you’ll turn your idea and quiz into a simple challenge.",
+    lesson: "Your first version does not need to be complex. It only needs a clear promise, a quiz entry point, a simple result or diagnosis, 3 short challenge steps, and a reason for people to invite others.",
+    reinforcement: "Build the smallest useful version first.",
+    aiPrompt: "Help me turn my idea and quiz into a simple 3-day AI-powered challenge.",
+    completion: "You built a working challenge. That puts you ahead of most.",
     tasks: [
-      { key: "finalize", label: "Finalize", hasTextarea: false },
-      { key: "add_sharing", label: "Add sharing", hasTextarea: false },
-      { key: "launch", label: "Launch", hasTextarea: false },
+      { key: "landing_page", label: "Create your challenge landing page", hasTextarea: false },
+      { key: "lead_magnet_quiz", label: "Add your lead magnet quiz", hasTextarea: false },
+      { key: "result_page", label: "Add your result page", hasTextarea: false },
+      { key: "day_content", label: "Create Day 1, Day 2, Day 3 content", hasTextarea: false },
+      { key: "invite_step", label: "Add a simple invite step", hasTextarea: false },
     ],
   },
 };
@@ -287,11 +300,7 @@ const DayChallenge = () => {
         </p>
         <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {dayNum === 1
-            ? `Today you’re building a ${challengeType} challenge for ${audience}.`
-            : dayNum === 2
-              ? `Now we turn your ${challengeType} into a working experience.`
-              : `Today you launch ${challengeName}.`}
+          {config.intro}
         </p>
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
@@ -318,17 +327,15 @@ const DayChallenge = () => {
           </div>
           <p className="text-sm text-foreground leading-relaxed">
             {dayNum === 1
-              ? `Let’s define your challenge, ${firstName}.`
+              ? config.lesson
               : dayNum === 2
-                ? `Your users should leave with: ${memory.desiredOutcome || "a clear result they can use"}.`
-                : `Your audience: ${audience}.`}
+                ? config.lesson
+                : config.lesson}
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed mt-2">
             {dayNum === 1 && memory.desiredOutcome
               ? `Your goal is: ${memory.desiredOutcome}`
-              : dayNum === 3
-                ? `Your promise: ${memory.desiredOutcome || "a result worth sharing"}.`
-                : config.reinforcement}
+              : config.reinforcement}
           </p>
         </CardContent>
       </Card>
@@ -341,9 +348,9 @@ const DayChallenge = () => {
           </div>
           <p className="text-sm font-medium text-foreground">
             {dayNum === 2
-              ? `Help me turn my ${challengeType} into a step-by-step experience.`
+              ? config.aiPrompt
               : dayNum === 3
-                ? `Help me write launch copy for ${challengeName}.`
+                ? config.aiPrompt
                 : config.aiPrompt}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>
@@ -362,6 +369,22 @@ const DayChallenge = () => {
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               And as people go through it, they invite others to unlock more — so it grows on its own.
             </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {dayNum === 2 && (
+        <Card className="mb-4 border-border">
+          <CardContent className="p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Example Diagnostic</p>
+            <ol className="space-y-3 text-sm text-foreground">
+              {diagnosticQuestions.map((question, index) => (
+                <li key={question} className="flex gap-3 leading-relaxed">
+                  <span className="text-muted-foreground">{index + 1}.</span>
+                  <span>{question}</span>
+                </li>
+              ))}
+            </ol>
           </CardContent>
         </Card>
       )}
@@ -390,26 +413,22 @@ const DayChallenge = () => {
               </label>
               {task.hasTextarea && (
                 <div className="space-y-3">
-                  {dayNum === 1 && task.key === "define_app" && (
+                  {task.inputType === "input" ? (
                     <Input
-                      placeholder="Challenge name"
-                      value={memory.challengeName}
-                      onChange={(e) => {
-                        setState((prev) => ({ ...prev, memory: mergeMemory(prev.memory, { challengeName: e.target.value }) }));
-                        trackEvent("memory_updated", { source: "day1_challenge_name" });
-                      }}
+                      placeholder={task.placeholder}
+                      value={getOutput(task.key)}
+                      onChange={(e) => setOutput(task.key, e.target.value)}
+                    />
+                  ) : (
+                    <Textarea
+                      placeholder={task.placeholder}
+                      value={getOutput(task.key)}
+                      onChange={(e) => setOutput(task.key, e.target.value)}
+                      className="mt-1"
+                      rows={6}
                     />
                   )}
-                  <Textarea
-                    placeholder={task.placeholder}
-                    value={getOutput(task.key)}
-                    onChange={(e) => setOutput(task.key, e.target.value)}
-                    className="mt-1"
-                    rows={3}
-                  />
-                  {dayNum === 1 && task.key === "define_app" && memory.challengeName && (
-                    <p className="text-sm text-muted-foreground">Your challenge is now called: {memory.challengeName}</p>
-                  )}
+                  {task.helper && <p className="text-xs leading-relaxed text-muted-foreground">{task.helper}</p>}
                 </div>
               )}
             </CardContent>
@@ -420,6 +439,13 @@ const DayChallenge = () => {
       {dayNum === 3 && (
         <Card className="mt-4">
           <CardContent className="p-5">
+            <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
+              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Tool Note</p>
+              <p className="text-sm text-foreground leading-relaxed">This challenge was built using Lovable.</p>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                To build your own version, you’ll use the same approach. A Pro account gives you more credits and flexibility.
+              </p>
+            </div>
             <label className="text-sm font-medium text-foreground block mb-2">
               Paste your live URL
             </label>
@@ -444,7 +470,7 @@ const DayChallenge = () => {
             </p>
             <Button className="w-full gap-2" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge"}
+              {dayNum === 1 ? "Continue to Day 2" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
             </Button>
           </CardContent>
         </Card>

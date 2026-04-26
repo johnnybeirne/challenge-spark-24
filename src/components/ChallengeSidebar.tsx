@@ -29,7 +29,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   };
 
   return (
-    <aside className={cn("flex h-full w-full flex-col bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
+    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
       <div className={cn("rounded-2xl border border-border bg-background shadow-sm", collapsed ? "p-3 text-center" : "p-4")}>
         {collapsed ? (
           <p className="text-sm font-semibold text-foreground">D{currentDay}</p>

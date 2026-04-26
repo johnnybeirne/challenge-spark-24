@@ -133,6 +133,12 @@ export interface AssessmentConfig {
   introTitle: string;
   introText: string;
   timeEstimate: string;
+  landingEyebrow: string;
+  landingHeadline: string;
+  landingSubheadline: string;
+  landingPrimaryCta: string;
+  landingSupportingText: string;
+  landingPoints: string[];
   splitQuestionText: string;
   splitOptions: AssessmentSplitOption[];
   b2bQuestions: AssessmentTrackQuestion[];
@@ -395,6 +401,16 @@ export const defaultSiteConfig: SiteConfig = {
     introTitle: "Discover your challenge",
     introText: "Answer 9 quick questions. We'll tell you exactly what your evergreen challenge app should be about — including the quiz that attracts your leads.",
     timeEstimate: "90 seconds",
+    landingEyebrow: "Free diagnostic",
+    landingHeadline: "Find out why your leads are inconsistent",
+    landingSubheadline: "Answer 9 quick questions and get a clear score showing how much of your lead flow depends on effort versus a real system.",
+    landingPrimaryCta: "Start the assessment",
+    landingSupportingText: "Takes 90 seconds. No signup required.",
+    landingPoints: [
+      "See your lead system score",
+      "Identify the biggest gap",
+      "Know what to fix first",
+    ],
     splitQuestionText: "Who do you sell to (or want to sell to)?",
     splitOptions: [
       { label: "Businesses, teams, or professionals", value: "b2b" },

@@ -5,9 +5,10 @@ import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
+import { useSiteConfig } from "@/context/SiteConfigContext";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
@@ -15,21 +16,23 @@ const TOTAL_QUESTIONS = questions.length;
 const Assessment = () => {
   const navigate = useNavigate();
   const { setState } = useAppState();
+  const { config } = useSiteConfig();
   const [searchParams] = useSearchParams();
 
+  const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
 
-  // Track start
   useEffect(() => {
-    if (!trackedStart.current) {
+    if (started && !trackedStart.current) {
       trackedStart.current = true;
+      startTime.current = Date.now();
       trackEvent("assessment_started");
     }
-  }, []);
+  }, [started]);
 
   // Capture referral
   useEffect(() => {
@@ -56,6 +59,49 @@ const Assessment = () => {
   }, []);
 
   const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
+
+  if (!started) {
+    const assessmentConfig = config.assessment;
+
+    return (
+      <main className="flex min-h-screen flex-col px-6 py-10">
+        <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center">
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="text-center lg:text-left">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                {assessmentConfig.landingEyebrow}
+              </p>
+              <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+                {assessmentConfig.landingHeadline}
+              </h1>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground lg:mx-0">
+                {assessmentConfig.landingSubheadline}
+              </p>
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:items-start">
+                <Button className="h-14 w-full max-w-sm gap-2 rounded-xl text-base font-semibold sm:w-auto sm:px-8" onClick={() => setStarted(true)}>
+                  {assessmentConfig.landingPrimaryCta}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <p className="text-sm text-muted-foreground sm:pt-4">{assessmentConfig.landingSupportingText}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <p className="mb-5 text-sm font-semibold uppercase tracking-widest text-muted-foreground">What you'll get</p>
+              <div className="space-y-4">
+                {(assessmentConfig.landingPoints ?? []).map((point) => (
+                  <div key={point} className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
+                    <span className="text-base font-medium leading-7 text-foreground">{point}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   // ── Loading screen ──
   if (loading) {

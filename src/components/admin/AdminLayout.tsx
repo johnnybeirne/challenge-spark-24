@@ -1,51 +1,76 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
-
-const ADMIN_PASSWORD = "challengeos2024";
-const AUTH_KEY = "leadio_admin_authed";
+import Spinner from "@/components/Spinner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const AdminLayout = () => {
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const { user, loading } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(true);
 
   useEffect(() => {
-    if (sessionStorage.getItem(AUTH_KEY) === "1") setAuthed(true);
-  }, []);
+    let cancelled = false;
 
-  const login = () => {
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(AUTH_KEY, "1");
-      setAuthed(true);
-      setError(false);
-    } else {
-      setError(true);
-    }
-  };
+    const checkAdminRole = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        setCheckingRole(false);
+        return;
+      }
 
-  if (!authed) {
+      setCheckingRole(true);
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+
+      if (!cancelled) {
+        setIsAdmin(Boolean(data) && !error);
+        setCheckingRole(false);
+      }
+    };
+
+    checkAdminRole();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  if (loading || checkingRole) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background">
         <Shield className="h-10 w-10 text-primary" />
+        <Spinner />
+        <p className="text-sm text-muted-foreground">Checking owner access…</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background text-center">
+        <Shield className="h-10 w-10 text-primary" />
         <h1 className="text-xl font-bold">Owner Access</h1>
-        <p className="text-sm text-muted-foreground">Enter your admin password to continue</p>
-        <div className="flex gap-2 w-full max-w-xs">
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => { setPassword(e.target.value); setError(false); }}
-            onKeyDown={(e) => e.key === "Enter" && login()}
-            autoFocus
-          />
-          <Button onClick={login}>Enter</Button>
-        </div>
-        {error && <p className="text-xs text-destructive">Incorrect password</p>}
+        <p className="text-sm text-muted-foreground">Sign in with your app account to continue.</p>
+        <Button asChild>
+          <Link to="/join">Sign in</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background text-center">
+        <Shield className="h-10 w-10 text-primary" />
+        <h1 className="text-xl font-bold">Owner Access</h1>
+        <p className="text-sm text-muted-foreground">Your signed-in account does not have admin access.</p>
       </div>
     );
   }

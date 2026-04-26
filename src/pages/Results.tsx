@@ -51,35 +51,22 @@ const Results = () => {
     : getDiagnosticResult(score);
 
   return (
-    <div className="flex flex-col min-h-screen p-6 pb-24 max-w-6xl mx-auto sm:px-6 lg:px-8">
-      {/* ── Header: icon + identity type + description ── */}
-      <div className="flex flex-col items-center text-center mb-6 pt-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your diagnostic result</p>
-        <h1 className="text-3xl font-bold text-foreground mb-3">{diagnostic.title}</h1>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">{diagnostic.message}</p>
-      </div>
+    <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
+      <header className="mb-8 text-center">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Diagnostic result</p>
+        <h1 className="mb-3 text-3xl font-bold text-foreground">{diagnostic.title}</h1>
+        <p className="mx-auto max-w-md text-base leading-7 text-muted-foreground">{diagnostic.message}</p>
+      </header>
 
-      {/* ── Tension ── */}
-      <Card className="mb-5 border-accent/30 bg-accent/5">
-        <CardContent className="p-5">
-          <p className="text-sm text-foreground leading-relaxed italic">
-            "You're sitting on growth that should already be happening — but without a system, it stays stuck."
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* ── Score ── */}
-      <Card className="mb-5 border-primary/20 bg-primary/5">
-        <CardContent className="p-5 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Your diagnostic score
-          </p>
+      <Card className="mb-5 border-primary/20 bg-primary/5 shadow-none">
+        <CardContent className="p-6 text-center">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Diagnostic score</p>
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-5xl font-bold text-success">{animatedScore}</span>
-            <span className="text-xl font-medium text-muted-foreground">%</span>
+            <span className="text-6xl font-bold text-success">{animatedScore}</span>
+            <span className="text-2xl font-semibold text-muted-foreground">%</span>
           </div>
           <div
-            className="mt-5 h-4 w-full overflow-hidden rounded-full bg-destructive"
+            className="mt-6 h-4 w-full overflow-hidden rounded-full bg-destructive"
             role="meter"
             aria-valuenow={percentageScore}
             aria-valuemin={0}
@@ -91,18 +78,18 @@ const Results = () => {
               style={{ width: `${animatedScore}%` }}
             />
           </div>
-          <div className="mt-2 flex justify-between text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <div className="mt-3 flex justify-between text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             <span>Score</span>
             <span>{100 - animatedScore}% gap</span>
           </div>
         </CardContent>
       </Card>
 
-      <Button className="w-full h-[52px] text-base rounded-xl gap-2" onClick={() => navigate("/join")}>
+      <Button className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold" onClick={() => navigate("/join")}>
         Start the 3-Day Challenge
         <ArrowRight className="w-4 h-4" />
       </Button>
-      <p className="mt-3 text-center text-sm text-muted-foreground">
+      <p className="mt-3 text-center text-sm leading-6 text-muted-foreground">
         Build a simple version of your own lead system and see how it works.
       </p>
     </div>

@@ -1,13 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, Gift, Lock, PlayCircle, Sparkles, Trophy, Users, Zap } from "lucide-react";
+import { CheckCircle, Gift, Lock, PlayCircle, Sparkles, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
 import { audienceLabel, challengeTypeLabel } from "@/lib/personalisation";
 import { trackEvent } from "@/lib/analytics";
 
-const loopSteps = ["Build your challenge", "Deliver value", "Invite others", "Unlock growth"];
 const buildCards = [
   "Quiz / assessment entry point",
   "3-day challenge experience",
@@ -72,18 +71,6 @@ const Training = () => {
             </div>
           </CardContent>
         </Card>
-
-        <section className="mb-8 grid gap-4 md:grid-cols-4">
-          {loopSteps.map((step, index) => (
-            <Card key={step} className="border-border bg-card shadow-sm">
-              <CardContent className="p-5">
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">{index + 1}</div>
-                <p className="font-semibold text-foreground">{step}</p>
-              </CardContent>
-            </Card>
-          ))}
-          <p className="md:col-span-4 text-sm text-muted-foreground">This is the loop that makes your challenge evergreen.</p>
-        </section>
 
         <section className="mb-8 grid gap-6 lg:grid-cols-[0.85fr_0.55fr]">
           <Card className="border-border bg-card shadow-sm">

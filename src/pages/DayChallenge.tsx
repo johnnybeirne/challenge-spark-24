@@ -439,6 +439,13 @@ const DayChallenge = () => {
       {dayNum === 3 && (
         <Card className="mt-4">
           <CardContent className="p-5">
+            <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
+              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Tool Note</p>
+              <p className="text-sm text-foreground leading-relaxed">This challenge was built using Lovable.</p>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                To build your own version, you’ll use the same approach. A Pro account gives you more credits and flexibility.
+              </p>
+            </div>
             <label className="text-sm font-medium text-foreground block mb-2">
               Paste your live URL
             </label>
@@ -463,7 +470,7 @@ const DayChallenge = () => {
             </p>
             <Button className="w-full gap-2" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum < 3 ? `Complete Day ${dayNum} → Unlock Day ${dayNum + 1}` : "Finish Challenge"}
+              {dayNum === 1 ? "Continue to Day 2" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
             </Button>
           </CardContent>
         </Card>

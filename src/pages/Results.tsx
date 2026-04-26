@@ -11,17 +11,7 @@ const Results = () => {
   const { state } = useAppState();
   const assessment = state.assessment as unknown as AssessmentResult | null;
   const hasResult = !!assessment && "challengeType" in (assessment as object);
-
-  if (!hasResult || !assessment) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
-        <h1 className="text-xl font-bold text-foreground">No results yet</h1>
-        <Button onClick={() => navigate("/assess")}>Take the assessment</Button>
-      </div>
-    );
-  }
-
-  const score = assessment.diagnosticScore ?? 0;
+  const score = assessment?.diagnosticScore ?? 0;
   const percentageScore = Math.round((score / 9) * 100);
   const [animatedScore, setAnimatedScore] = useState(0);
 
@@ -43,6 +33,15 @@ const Results = () => {
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [percentageScore]);
+
+  if (!hasResult || !assessment) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
+        <h1 className="text-xl font-bold text-foreground">No results yet</h1>
+        <Button onClick={() => navigate("/assess")}>Take the assessment</Button>
+      </div>
+    );
+  }
 
   const diagnostic = assessment.diagnosticTitle
     ? {

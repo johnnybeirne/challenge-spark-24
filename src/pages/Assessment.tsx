@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 
@@ -17,9 +17,8 @@ const Assessment = () => {
   const { setState } = useAppState();
   const [searchParams] = useSearchParams();
 
-  const [current, setCurrent] = useState(-1); // -1 = intro
+  const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [selected, setSelected] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
@@ -56,31 +55,7 @@ const Assessment = () => {
     } catch {}
   }, []);
 
-  const progress = current < 0 ? 0 : ((current + 1) / TOTAL_QUESTIONS) * 100;
-
-  // ── Intro screen ──
-  if (current === -1) {
-    return (
-      <div className="flex flex-col min-h-screen p-6 max-w-lg mx-auto justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-foreground">Discover your challenge</h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Answer 8 quick questions. We'll tell you exactly what to build — including the strategy
-            that fits your expertise and audience.
-          </p>
-          <p className="text-sm text-muted-foreground">Takes about 90 seconds</p>
-          <Button
-            size="lg"
-            className="w-full h-14 text-base rounded-xl gap-2 mt-4"
-            onClick={() => setCurrent(0)}
-          >
-            Start
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
 
   // ── Loading screen ──
   if (loading) {
@@ -96,22 +71,12 @@ const Assessment = () => {
   const q = questions[current];
   if (!q) return null;
 
-  const handleNext = () => {
-    if (!selected) return;
-
-    const updated = { ...answers, [q.id]: selected };
+  const handleAnswer = (answer: string) => {
+    const updated = { ...answers, [q.id]: answer };
     setAnswers(updated);
 
     // Track
-    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer: selected });
-
-    // Track audience type on Q1
-    if (q.id === "q1") {
-      if (selected === "b2b") trackEvent("assessment_track_b2b" as any);
-      else if (selected === "b2c") trackEvent("assessment_track_b2c" as any);
-    }
-
-    setSelected(undefined);
+    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
 
     if (current < TOTAL_QUESTIONS - 1) {
       setCurrent(current + 1);
@@ -122,11 +87,11 @@ const Assessment = () => {
       const result = generateResult(updated);
 
       trackEvent("assessment_completed", { 
-        audienceType: result.audienceType, 
-        challengeType: result.challengeType,
+        score: result.diagnosticScore,
+        level: result.diagnosticLevel,
         timeTaken,
       });
-      trackEvent(`assessment_result_${result.challengeType}` as any);
+      trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
       trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 
       setState((prev) => ({

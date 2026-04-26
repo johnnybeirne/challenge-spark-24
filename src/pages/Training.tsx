@@ -48,7 +48,7 @@ const Training = () => {
     <div className="min-h-screen bg-background">
       <div className="app-page-container max-w-5xl py-8 pb-24 lg:py-10">
         <header className="mb-8">
-          <p className="mb-3 text-sm font-semibold text-primary">Leadio training</p>
+          <p className="mb-3 text-sm font-semibold text-primary">Challenge training</p>
           <h1 className="text-3xl font-bold text-foreground md:text-4xl">Welcome, {firstName}</h1>
           <p className="mt-3 max-w-2xl text-base text-muted-foreground">
             You’re about to build a challenge that can grow through trust, referrals, and real value.
@@ -61,7 +61,7 @@ const Training = () => {
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm text-muted-foreground">
                 <PlayCircle className="h-4 w-4 text-primary" /> Watch this first
               </div>
-              <h2 className="text-2xl font-bold text-foreground">How Leadio works</h2>
+              <h2 className="text-2xl font-bold text-foreground">How your challenge works</h2>
               <p className="mt-3 text-sm text-muted-foreground">Training video goes here</p>
               <p className="mt-4 max-w-lg text-sm text-muted-foreground">
                 In a few minutes, you’ll understand what you’re building and how it grows.
@@ -91,8 +91,8 @@ const Training = () => {
               <h2 className="text-xl font-bold text-foreground">What you’ll build</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {state.memory.topic
-                  ? `You’ll use Leadio to turn ${state.memory.topic} into a ${challengeType} challenge people can complete and share.`
-                  : `You’ll use Leadio to shape a ${challengeType} challenge for ${audience}.`}
+                  ? `You’ll turn ${state.memory.topic} into a ${challengeType} challenge people can complete and share.`
+                  : `You’ll shape a ${challengeType} challenge for ${audience}.`}
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {buildCards.map((item) => <div key={item} className="rounded-xl border border-border bg-background p-3 text-sm text-foreground"><Sparkles className="mb-2 h-4 w-4 text-primary" />{item}</div>)}

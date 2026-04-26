@@ -349,12 +349,6 @@ const Signup = () => {
                 </p>
               )}
 
-              {magicLinkSent && (
-                <p className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm text-muted-foreground">
-                  Check your email for a secure sign-in link. Use this if you do not remember your password.
-                </p>
-              )}
-
               <Button
                 type="submit"
                 disabled={!canSubmitLogin || loading}
@@ -362,16 +356,6 @@ const Signup = () => {
               >
                 <LogIn className="w-4 h-4" />
                 {loading ? "Signing in…" : "Sign in"}
-              </Button>
-
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleMagicLink}
-                disabled={!loginEmail.trim().includes("@") || loading || !!emailAction}
-                className="w-full h-12 rounded-xl text-base border-2 border-foreground"
-              >
-                {emailAction === "link" ? "Sending link…" : "Email me a sign-in link"}
               </Button>
             </form>
 

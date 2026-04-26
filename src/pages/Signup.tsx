@@ -46,7 +46,7 @@ const TypingBubble = ({ text }: { text: string }) => {
 
 
 const Signup = () => {
-  const { signUp, signIn, signInWithMagicLink, resetPassword } = useAuth();
+  const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "signup" ? "signup" : "login";
@@ -67,11 +67,10 @@ const Signup = () => {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [emailAction, setEmailAction] = useState<"reset" | "link" | null>(null);
+  const [emailAction, setEmailAction] = useState<"reset" | null>(null);
   const [accountExistsNotice, setAccountExistsNotice] = useState(false);
   const [signupComplete, setSignupComplete] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   useEffect(() => {
     if (mode === "signup") {
@@ -159,18 +158,6 @@ const Signup = () => {
     if (error) return toast.error(error.message || "Could not send reset email");
     setResetSent(true);
     toast.success("Password reset instructions sent.");
-  };
-
-  const handleMagicLink = async () => {
-    if (!loginEmail.trim().includes("@") || loading || emailAction) {
-      return toast.error("Enter your email first, then request the sign-in link.");
-    }
-    setEmailAction("link");
-    const { error } = await signInWithMagicLink(loginEmail.trim().toLowerCase());
-    setEmailAction(null);
-    if (error) return toast.error(error.message || "Could not send sign-in link");
-    setMagicLinkSent(true);
-    toast.success("Sign-in link sent.");
   };
 
   const switchMode = (next: Mode) => {

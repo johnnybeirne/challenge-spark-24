@@ -30,7 +30,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
   return (
     <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
-      <div className={cn("rounded-2xl border border-border bg-background shadow-sm", collapsed ? "p-3 text-center" : "p-4")}>
+      <button
+        onClick={() => go("/dashboard")}
+        className={cn(
+          "rounded-2xl border border-border bg-background text-left shadow-sm transition-colors hover:border-primary/40 hover:bg-muted/30",
+          collapsed ? "p-3 text-center" : "p-4"
+        )}
+        title="Back to dashboard"
+      >
         {collapsed ? (
           <p className="text-sm font-semibold text-foreground">D{currentDay}</p>
         ) : (
@@ -39,7 +46,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             <p className="mt-1 text-sm text-muted-foreground">Day {currentDay} of 3</p>
           </>
         )}
-      </div>
+      </button>
 
       <section className="space-y-3">
         {!collapsed && <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>}

@@ -78,8 +78,8 @@ const Training = () => {
               <h2 className="text-xl font-bold text-foreground">What you’ll build</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {state.memory.topic
-                  ? `You’ll turn ${state.memory.topic} into a ${challengeType} challenge people can complete and share.`
-                  : `You’ll shape a ${challengeType} challenge for ${audience}.`}
+                  ? `You’ll turn ${state.memory.topic} into a challenge people can complete and share.`
+                  : `You’ll shape a challenge for ${audience}.`}
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {buildCards.map((item) => <div key={item} className="rounded-xl border border-border bg-background p-3 text-sm text-foreground"><Sparkles className="mb-2 h-4 w-4 text-primary" />{item}</div>)}

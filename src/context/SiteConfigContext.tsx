@@ -142,6 +142,11 @@ export interface AssessmentConfig {
   landingPoints: string[];
   landingPreviewTitle: string;
   landingPreviewItems: string[];
+  landingInsideTitle: string;
+  landingExplanationTitle: string;
+  landingExplanationBody: string;
+  landingFaqTitle: string;
+  landingFaqItems: FaqItem[];
   splitQuestionText: string;
   splitOptions: AssessmentSplitOption[];
   b2bQuestions: AssessmentTrackQuestion[];
@@ -420,6 +425,14 @@ export const defaultSiteConfig: SiteConfig = {
       "Where leads are leaking",
       "What system to build first",
       "Your next practical step",
+    ],
+    landingInsideTitle: "What's inside",
+    landingExplanationTitle: "Stop guessing why leads come and go",
+    landingExplanationBody: "Most people try to fix lead flow by posting more, sending more messages, or rebuilding their offer. This assessment shows whether the problem is attention, trust, conversion, or follow-up — so you know what to fix first.",
+    landingFaqTitle: "Frequently asked questions",
+    landingFaqItems: [
+      { question: "Is this really free?", answer: "Yes. The assessment is free and you do not need to sign up to see your result." },
+      { question: "What happens after I finish?", answer: "You get a clear diagnosis and a recommended next step for building a better lead system." },
     ],
     splitQuestionText: "Who do you sell to (or want to sell to)?",
     splitOptions: [

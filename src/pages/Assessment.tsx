@@ -160,6 +160,14 @@ const Assessment = () => {
               ))}
             </div>
           </div>
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+            <div className="mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full bg-[conic-gradient(hsl(var(--success))_0_76%,hsl(var(--muted))_76%_100%)] p-7 [animation:donut-fill_1.4s_ease-out_both]">
+              <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-card text-center shadow-inner">
+                <span className="text-5xl font-black leading-none text-foreground">76%</span>
+                <span className="mt-2 max-w-[10rem] text-sm font-bold uppercase leading-5 text-muted-foreground">Lead system readiness</span>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="mx-auto w-full max-w-4xl py-12 text-center">

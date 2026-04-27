@@ -84,6 +84,46 @@ const CmsAssessment = () => {
             />
           ))}
         </div>
+        <div className="space-y-2">
+          <Label>What's Inside Title</Label>
+          <Input value={draft.landingInsideTitle} onChange={(e) => update("landingInsideTitle", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Explanation Title</Label>
+          <Input value={draft.landingExplanationTitle} onChange={(e) => update("landingExplanationTitle", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Explanation Body</Label>
+          <Textarea value={draft.landingExplanationBody} onChange={(e) => update("landingExplanationBody", e.target.value)} rows={4} />
+        </div>
+        <div className="space-y-2">
+          <Label>FAQ Title</Label>
+          <Input value={draft.landingFaqTitle} onChange={(e) => update("landingFaqTitle", e.target.value)} />
+        </div>
+        <div className="space-y-3">
+          <Label>FAQ Items</Label>
+          {(draft.landingFaqItems ?? []).map((item, i) => (
+            <div key={i} className="grid gap-2 rounded-xl border border-border p-3">
+              <Input
+                value={item.question}
+                onChange={(e) => {
+                  const items = [...(draft.landingFaqItems ?? [])];
+                  items[i] = { ...items[i], question: e.target.value };
+                  update("landingFaqItems", items);
+                }}
+              />
+              <Textarea
+                value={item.answer}
+                onChange={(e) => {
+                  const items = [...(draft.landingFaqItems ?? [])];
+                  items[i] = { ...items[i], answer: e.target.value };
+                  update("landingFaqItems", items);
+                }}
+                rows={2}
+              />
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="space-y-4">

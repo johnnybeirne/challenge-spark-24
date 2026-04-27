@@ -10,6 +10,7 @@ import { ArrowRight, CheckCircle2, Loader2, Sparkles, Target, Timer, TrendingUp 
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
+import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
@@ -170,9 +171,19 @@ const Assessment = () => {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-4xl py-12 text-center">
-          <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
-          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{assessmentConfig.landingExplanationBody}</p>
+        <section className="mx-auto grid w-full max-w-6xl gap-10 py-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <img
+            src={frustratedEntrepreneurLeads}
+            alt="Frustrated entrepreneur trying to understand where leads are coming from"
+            loading="lazy"
+            width={1280}
+            height={960}
+            className="w-full rounded-3xl border border-border bg-card object-cover shadow-xl shadow-foreground/5"
+          />
+          <div className="text-center lg:text-left">
+            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground lg:mx-0">{assessmentConfig.landingExplanationBody}</p>
+          </div>
         </section>
 
         <section className="mx-auto w-full max-w-4xl py-12">

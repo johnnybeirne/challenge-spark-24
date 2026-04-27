@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
@@ -9,10 +9,12 @@ import { getExperience } from "@/lib/experience";
 
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state } = useAppState();
+  const { pathname } = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const authenticated = !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
+  const showCopilotChat = authenticated && pathname !== "/assess";
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -23,7 +25,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}
       </div>
-      {authenticated && <AiCopilotChat />}
+      {showCopilotChat && <AiCopilotChat />}
     </div>
   );
 };

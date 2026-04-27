@@ -49,6 +49,10 @@ const CmsAssessment = () => {
           <Input value={draft.landingSupportingText} onChange={(e) => update("landingSupportingText", e.target.value)} />
         </div>
         <div className="space-y-2">
+          <Label>Trust Line</Label>
+          <Input value={draft.landingTrustLine} onChange={(e) => update("landingTrustLine", e.target.value)} />
+        </div>
+        <div className="space-y-2">
           <Label>Benefit Points</Label>
           {(draft.landingPoints ?? []).map((point, i) => (
             <Input
@@ -58,6 +62,24 @@ const CmsAssessment = () => {
                 const points = [...(draft.landingPoints ?? [])];
                 points[i] = e.target.value;
                 update("landingPoints", points);
+              }}
+            />
+          ))}
+        </div>
+        <div className="space-y-2">
+          <Label>Result Preview Title</Label>
+          <Input value={draft.landingPreviewTitle} onChange={(e) => update("landingPreviewTitle", e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Result Preview Items</Label>
+          {(draft.landingPreviewItems ?? []).map((item, i) => (
+            <Input
+              key={i}
+              value={item}
+              onChange={(e) => {
+                const items = [...(draft.landingPreviewItems ?? [])];
+                items[i] = e.target.value;
+                update("landingPreviewItems", items);
               }}
             />
           ))}

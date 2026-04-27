@@ -68,9 +68,6 @@ const Assessment = () => {
         <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
             <div className="text-center lg:text-left">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                {assessmentConfig.landingEyebrow}
-              </p>
               <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl">
                 {assessmentConfig.landingHeadline}
               </h1>

@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight, CheckCircle2, Loader2, Sparkles, Target, Timer, TrendingUp } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
@@ -135,6 +136,56 @@ const Assessment = () => {
               </div>
             </div>
           </div>
+        </section>
+
+        <section className="mx-auto grid w-full max-w-6xl gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+            <div className="space-y-3">
+              {assessmentConfig.landingPreviewItems.map((item, index) => (
+                <div key={item} className="rounded-2xl border border-border bg-muted/40 p-4">
+                  <p className="text-xs font-black uppercase text-primary">0{index + 1}</p>
+                  <p className="mt-2 font-bold leading-6 text-foreground">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingInsideTitle}</h2>
+            <div className="mt-6 space-y-4">
+              {assessmentConfig.landingPoints.map((point) => (
+                <div key={point} className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+                  <p className="font-semibold leading-7 text-foreground">{point}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-4xl py-12 text-center">
+          <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{assessmentConfig.landingExplanationBody}</p>
+        </section>
+
+        <section className="mx-auto w-full max-w-4xl py-12">
+          <h2 className="mb-8 text-center text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingFaqTitle}</h2>
+          <Accordion type="single" collapsible className="space-y-3">
+            {assessmentConfig.landingFaqItems.map((item, index) => (
+              <AccordionItem key={item.question} value={`faq-${index}`} className="rounded-2xl border border-border bg-card px-5 shadow-sm">
+                <AccordionTrigger className="text-left font-bold hover:no-underline">{item.question}</AccordionTrigger>
+                <AccordionContent className="leading-7 text-muted-foreground">{item.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+
+        <section className="mx-auto flex w-full max-w-4xl flex-col items-center py-16 text-center">
+          <h2 className="text-2xl font-black leading-tight text-foreground sm:text-3xl">{assessmentConfig.landingHeadline}</h2>
+          <Button className="mt-6 h-14 gap-2 rounded-xl px-10 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => setStarted(true)}>
+            {assessmentConfig.landingPrimaryCta}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <p className="mt-3 text-sm text-muted-foreground">{assessmentConfig.landingSupportingText}</p>
         </section>
       </main>
     );

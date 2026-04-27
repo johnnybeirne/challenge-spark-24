@@ -74,12 +74,12 @@ const Assessment = () => {
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground lg:mx-0">
                 {assessmentConfig.landingSubheadline}
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:items-start">
-                <Button className="h-14 w-full max-w-sm gap-2 rounded-xl text-base font-semibold sm:w-auto sm:px-8" onClick={() => setStarted(true)}>
+              <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
+                <Button className="h-14 w-full max-w-sm gap-2 rounded-xl text-base font-semibold uppercase sm:w-auto sm:px-8" onClick={() => setStarted(true)}>
                   {assessmentConfig.landingPrimaryCta}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                <p className="text-sm text-muted-foreground sm:pt-4">{assessmentConfig.landingSupportingText}</p>
+                <p className="text-sm text-muted-foreground">{assessmentConfig.landingSupportingText}</p>
               </div>
             </div>
 

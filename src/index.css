@@ -63,6 +63,10 @@
   100% { transform: scale(1); opacity: 1; }
 }
 .animate-checkmark-pop { animation: checkmark-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes donut-fill {
+  from { background: conic-gradient(hsl(var(--success)) 0 0%, hsl(var(--muted)) 0% 100%); }
+  to { background: conic-gradient(hsl(var(--success)) 0 76%, hsl(var(--muted)) 76% 100%); }
+}
 @keyframes scroll-up {
   0% { transform: translateY(0); }
   100% { transform: translateY(-50%); }

@@ -138,7 +138,10 @@ export interface AssessmentConfig {
   landingSubheadline: string;
   landingPrimaryCta: string;
   landingSupportingText: string;
+  landingTrustLine: string;
   landingPoints: string[];
+  landingPreviewTitle: string;
+  landingPreviewItems: string[];
   splitQuestionText: string;
   splitOptions: AssessmentSplitOption[];
   b2bQuestions: AssessmentTrackQuestion[];
@@ -406,10 +409,17 @@ export const defaultSiteConfig: SiteConfig = {
     landingSubheadline: "Answer 9 quick questions and get a clear score showing how much of your lead flow depends on effort versus a real system.",
     landingPrimaryCta: "Start the assessment",
     landingSupportingText: "Takes 90 seconds. No signup required.",
+    landingTrustLine: "Instant personalised result. Built for founders, creators, consultants, and experts.",
     landingPoints: [
       "See your lead system score",
       "Identify the biggest gap",
       "Know what to fix first",
+    ],
+    landingPreviewTitle: "Your result will show",
+    landingPreviewItems: [
+      "Where leads are leaking",
+      "What system to build first",
+      "Your next practical step",
     ],
     splitQuestionText: "Who do you sell to (or want to sell to)?",
     splitOptions: [

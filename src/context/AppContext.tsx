@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
+import { getCreditTier, getUnlockedRewards } from "@/lib/credits";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 
 /* ───── Types ───── */
@@ -39,6 +40,22 @@ export interface UnlockEntry {
   value: number;
   reason: string;
   timestamp: string;
+}
+
+export interface CreditActivityEntry {
+  id: string;
+  label: string;
+  credits: number;
+  timestamp: string;
+}
+
+export interface CreditsState {
+  total: number;
+  tier: string;
+  completedDays: number[];
+  awardedActions: string[];
+  activity: CreditActivityEntry[];
+  unlockedRewards: string[];
 }
 
 export interface CommunityState {
@@ -82,6 +99,7 @@ export interface AppState {
     records: ReferralRecord[];
   };
   unlocks: UnlockEntry[];
+  credits: CreditsState;
   community: CommunityState;
   onboarding: {
     invitedCount: number;
@@ -130,6 +148,15 @@ export const defaultTraining: TrainingState = {
   day3Watched: false,
 };
 
+export const defaultCredits: CreditsState = {
+  total: 0,
+  tier: "Starter",
+  completedDays: [],
+  awardedActions: [],
+  activity: [],
+  unlockedRewards: [],
+};
+
 export const defaultState: AppState = {
   user: null,
   assessment: null,
@@ -147,6 +174,7 @@ export const defaultState: AppState = {
   network: { direct: 0, indirect: 0 },
   community: defaultCommunity,
   unlocks: [],
+  credits: defaultCredits,
   onboarding: { invitedCount: 0, invitedCompleted: false },
   training: defaultTraining,
   crossPromotion: { impressions: 0, clicks: 0, ctr: 0 },

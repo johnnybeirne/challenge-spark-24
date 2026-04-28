@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Upload } from "lucide-react";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Sparkles, Upload } from "lucide-react";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
@@ -40,6 +40,7 @@ const Dashboard = () => {
     state.challenge.aiOutputs.day1_share_reason,
   ].filter(Boolean);
   const quizDraft = state.challenge.aiOutputs.day2_quiz_questions;
+  const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
 
   const handlePhotoUpload = async (file?: File) => {
     if (!file || !authUser || photoUploading) return;
@@ -107,6 +108,25 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-3xl space-y-6">
+        {hasSignupCredits && (
+          <section className="rounded-2xl border border-primary/30 bg-primary/5 p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary shadow-[0_0_22px_hsl(var(--primary)/0.16)]">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">Congratulations — 100 credits added</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    You’ve joined the challenge and unlocked your first momentum boost.
+                  </p>
+                </div>
+              </div>
+              <Button variant="secondary" className="h-12 shrink-0" onClick={() => navigate("/unlocks")}>View credits</Button>
+            </div>
+          </section>
+        )}
+
         {authUser && !state.user?.avatarUrl && (
           <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

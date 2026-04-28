@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Sparkles, Upload } from "lucide-react";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Sparkles, Upload } from "lucide-react";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
@@ -67,8 +67,9 @@ const Dashboard = () => {
     setPhotoUploading(false);
 
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
+    const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl } } : prev));
-    toast.success("Photo added to your challenge profile.");
+    toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Unlock Credits earned.");
   };
 
   const getStepStatus = (day: number) => {
@@ -139,6 +140,9 @@ const Dashboard = () => {
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
                   </p>
+                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
+                    <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
+                  </div>
                 </div>
               </div>
               <input
@@ -165,8 +169,11 @@ const Dashboard = () => {
               <div>
                 <h2 className="text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  Keep momentum across all 3 days and earn 50 Unlock Credits when it’s added.
+                  Keep momentum across all 3 days and earn credits when it’s added.
                 </p>
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
+                  <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
+                </div>
               </div>
             </div>
             <AddToCalendar variant="secondary" className="h-12 shrink-0" />

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, Camera, CheckCircle2, Circle, CircleDot, Upload } from "lucide-react";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Upload } from "lucide-react";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2 } from "lucide-react";
+import { Copy, MessageCircle, Mail, Users, CheckCircle, TrendingUp, Share2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 import EmptyState from "@/components/EmptyState";
@@ -42,6 +42,9 @@ const Referrals = () => {
   const indirect = state.network.indirect;
   const totalNetwork = direct + indirect;
   const score = direct * 3 + indirect * 1;
+  const referralCredits = (state.credits?.awardedActions ?? []).filter((id) => id.startsWith("referral_join_")).length * 50;
+  const pendingReferralCredits = Math.max(0, direct * 100 - referralCredits);
+  const creditActivity = state.credits?.activity ?? [];
 
   const unlockThresholds = [
     { count: 3, label: "Trust growth playbook", value: "$147" },
@@ -56,14 +59,14 @@ const Referrals = () => {
       <div className="app-page-container py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          This only works if people go through it.
+          Invite the right people. When they join and take action, your credits grow.
         </p>
 
         {!hasActivity && (
           <EmptyState
             icon={Users}
             title="No referrals yet"
-            description="Share your link below and start building your network. Every builder you invite earns you rewards."
+            description="Invite your first person to start building momentum."
           />
         )}
 
@@ -71,7 +74,7 @@ const Referrals = () => {
         <div>
         {/* Stats */}
         <Card className="border-border mb-4">
-          <CardContent className="flex items-center gap-4 p-5">
+          <CardContent className="grid gap-4 p-5 sm:grid-cols-3">
             <div className="rounded-full bg-primary/10 p-3">
               <Users className="h-6 w-6 text-primary" />
             </div>
@@ -82,6 +85,14 @@ const Referrals = () => {
               <p className="text-xs text-muted-foreground">
                 {direct} direct · {indirect} indirect builders
               </p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
+              <p className="text-xs text-muted-foreground">credits earned from referrals</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
+              <p className="text-xs text-muted-foreground">pending referral credits</p>
             </div>
           </CardContent>
         </Card>
@@ -154,6 +165,27 @@ const Referrals = () => {
             </CardContent>
           </Card>
         )}
+
+        <Card className="border-border mb-6">
+          <CardContent className="p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <p className="text-xs font-medium text-muted-foreground">Credit activity</p>
+            </div>
+            {creditActivity.length ? (
+              <div className="space-y-3">
+                {creditActivity.slice(0, 6).map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/20 px-3 py-2 text-sm">
+                    <span className="text-foreground">{item.label}</span>
+                    <span className="shrink-0 font-bold text-primary">+{item.credits}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">You’ll see credit momentum here as referrals join and take action.</p>
+            )}
+          </CardContent>
+        </Card>
 
         </div>
         <div>

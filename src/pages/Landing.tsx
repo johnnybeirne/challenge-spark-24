@@ -1,379 +1,211 @@
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { Rocket, Users, TrendingUp, ArrowRight, Target, Magnet, Share2, Zap, Compass, Repeat, Calendar } from "lucide-react";
-import { formatQaDateLong } from "@/lib/qaDate";
+import { ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { supabase } from "@/integrations/supabase/client";
-import ActivityFeed from "@/components/ActivityFeed";
-import HowItWorksScroll from "@/components/HowItWorksScroll";
+import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
 
-const useReveal = () => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [shown, setShown] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, shown };
-};
+const PageSection = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
+  <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`}>
+    <div className="mx-auto w-full max-w-6xl">{children}</div>
+  </section>
+);
 
-const Reveal = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
-  const { ref, shown } = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${
-        shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
-};
-
-const useScrollDepth = () => {
-  useEffect(() => {
-    const milestones = [25, 50, 75, 100];
-    const fired = new Set<number>();
-    const onScroll = () => {
-      const h = document.documentElement;
-      const pct = Math.round(((h.scrollTop + window.innerHeight) / h.scrollHeight) * 100);
-      milestones.forEach((m) => {
-        if (pct >= m && !fired.has(m)) {
-          fired.add(m);
-          trackEvent("landing_scroll_depth", { depth: m });
-        }
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-};
+const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) => (
+  <div className="mx-auto max-w-3xl text-center">
+    <p className="text-sm font-black uppercase text-primary">{eyebrow}</p>
+    <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{title}</h2>
+    {body && <p className="mt-5 text-lg leading-8 text-muted-foreground">{body}</p>}
+  </div>
+);
 
 const Landing = () => {
   const navigate = useNavigate();
-  useScrollDepth();
-  const [nextQaDate, setNextQaDate] = useState<Date | null>(null);
 
-  useEffect(() => {
-    trackEvent("landing_viewed");
-    (async () => {
-      const { data } = await (supabase.from("copilot_config") as any)
-        .select("next_qa_date")
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (data?.next_qa_date) setNextQaDate(new Date(data.next_qa_date));
-    })();
-  }, []);
+  const startQuiz = (section: string) => {
+    trackEvent("landing_cta_clicked", { section });
+    navigate("/assess");
+  };
 
-  const Cta = ({
-    label,
-    section,
-    className = "",
-  }: {
-    label: string;
-    section: string;
-    className?: string;
-  }) => (
-    <Button
-      size="lg"
-      className={`bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-semibold ${className}`}
-      onClick={() => {
-        trackEvent("landing_cta_clicked", { section });
-        navigate("/join", { state: { mode: "signup" } });
-      }}
-    >
-      {label}
-      <ArrowRight className="ml-2 h-5 w-5" />
-    </Button>
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <HeroSection onStart={() => startQuiz("hero")} />
+      <ProblemSection />
+      <RevealSection />
+      <ScorePreview />
+      <HowItWorks />
+      <BenefitsSection />
+      <AuthoritySection />
+      <CTASection onStart={() => startQuiz("bottom")} />
+    </main>
   );
+};
 
+const HeroSection = ({ onStart }: { onStart: () => void }) => (
+  <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">
+    <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+      <div className="text-center lg:text-left">
+        <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-bold text-muted-foreground shadow-sm lg:mx-0">
+          Free lead-flow diagnostic
+        </p>
+        <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
+          Find out why your leads are inconsistent
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
+          Answer nine quick questions and get a recommended strategy based on your answers. Instantly
+        </p>
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <Button className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
+            Start the quiz
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <p className="text-sm font-medium text-muted-foreground">No signup required to get your diagnosis.</p>
+        </div>
+      </div>
+
+      <div className="relative">
+        <img
+          src={frustratedEntrepreneurLeads}
+          alt="Frustrated entrepreneur trying to understand where leads are coming from"
+          width={1280}
+          height={960}
+          className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
+        />
+        <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
+          <p className="text-xs font-black uppercase text-primary">The real question</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-foreground">Is your lead flow inconsistent because of attention, trust, conversion, or follow-up?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const ProblemSection = () => {
+  const problems = ["Some weeks bring enquiries. Other weeks go quiet.", "You post, message, tweak, and still cannot tell what caused the result.", "More effort can hide the real bottleneck instead of fixing it."];
+
+  return (
+    <PageSection className="border-y border-border bg-card/55">
+      <SectionHeader eyebrow="The problem" title="Lead flow should not feel like guesswork" body="When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing." />
+      <div className="mt-10 grid gap-4 md:grid-cols-3">
+        {problems.map((problem) => (
+          <div key={problem} className="rounded-xl border border-border bg-background p-6 shadow-sm transition-transform hover:-translate-y-1">
+            <HelpCircle className="h-6 w-6 text-primary" />
+            <p className="mt-5 font-semibold leading-7 text-foreground">{problem}</p>
+          </div>
+        ))}
+      </div>
+    </PageSection>
+  );
+};
+
+const RevealSection = () => (
+  <PageSection>
+    <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+      <div>
+        <p className="text-sm font-black uppercase text-primary">What the quiz reveals</p>
+        <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">Your inconsistency usually has one primary cause</h2>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {["You are not getting enough of the right attention", "People notice you but do not trust the next step", "Interest exists but conversion is unclear", "Follow-up depends too heavily on manual effort"].map((item) => (
+          <div key={item} className="flex items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
+            <Search className="mt-1 h-5 w-5 shrink-0 text-primary" />
+            <p className="font-semibold leading-7 text-foreground">{item}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </PageSection>
+);
+
+const ScorePreview = () => (
+  <PageSection className="border-y border-border bg-card/55">
+    <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+      <div className="mx-auto flex size-64 items-center justify-center rounded-full bg-[conic-gradient(hsl(var(--success))_0_76%,hsl(var(--muted))_76%_100%)] p-6 [animation:donut-fill_1.4s_ease-out_both] lg:mx-0">
+        <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
+          <span className="text-5xl font-black leading-none text-foreground">76%</span>
+          <span className="mt-3 max-w-[10rem] text-sm font-black uppercase leading-5 text-muted-foreground">System readiness</span>
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-black uppercase text-primary">Your result</p>
+        <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">Get a clear diagnosis, then a recommended strategy</h2>
+        <div className="mt-6 space-y-3">
+          {["Where your leads are leaking", "What system gap matters most", "What to do next based on your answers"].map((item) => (
+            <div key={item} className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+              <p className="font-semibold leading-7 text-foreground">{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </PageSection>
+);
+
+const HowItWorks = () => {
   const steps = [
-    { icon: Rocket, title: "Lock In Your Audience", desc: "Define who you help. Walk away with a ready-to-use lead-building challenge." },
-    { icon: Users, title: "Get It Live in Minutes", desc: "AI-powered building does the heavy lifting. No overwhelm, no blank page." },
-    { icon: TrendingUp, title: "Launch and Get Leads", desc: "Share once. Leads come in. Sharing is built in." },
-  ];
-
-  const whyPoints = [
-    { icon: Target, title: "Attracts the right people", desc: "Built around a real problem your audience already wants solved." },
-    { icon: Magnet, title: "Captures leads immediately", desc: "Every signup is a lead. No extra funnel needed." },
-    { icon: Share2, title: "Grows through sharing", desc: "Participants invite others. Reach compounds on its own." },
-  ];
-
-  const outcomePoints = [
-    { icon: Zap, title: "A live challenge that brings in leads", desc: "Up and running. Pulling people in from day one." },
-    { icon: Compass, title: "A system that guides people", desc: "Each day moves them forward. You don't have to babysit it." },
-    { icon: Repeat, title: "A built-in growth loop", desc: "Sharing is part of the experience. Reach keeps climbing." },
-  ];
-
-  const comparisonRows = [
-    { old: "Post content every day and hope it converts", new: "Launch one AI-powered challenge that brings in leads continuously" },
-    { old: "Build complex funnels that take weeks", new: "Get a simple challenge live in minutes" },
-    { old: "Pay for traffic to get leads", new: "Let participants invite others and grow your leads organically" },
-    { old: "Passive audience consuming content", new: "Active participants moving through a guided experience" },
-    { old: "Growth stops when you stop posting", new: "Your challenge keeps growing as people share it" },
+    { icon: ClipboardCheck, title: "Answer", body: "Nine quick questions about how leads currently find, trust, and choose you." },
+    { icon: Gauge, title: "Diagnose", body: "See what is driving the inconsistency instead of guessing from surface symptoms." },
+    { icon: Compass, title: "Act", body: "Move into the next step with a strategy matched to your diagnosis." },
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* AUDIENCE STRIP */}
-      <div className="border-b border-border bg-foreground/[0.03]">
-        <p className="mx-auto max-w-6xl px-6 py-4 text-center text-base sm:text-lg md:text-xl font-medium text-muted-foreground">
-          Built for <span className="text-foreground">coaches, consultants, and authors</span> who want more leads without relying on ads or social media
-        </p>
+    <PageSection>
+      <SectionHeader eyebrow="How it works" title="A simple path from quiz to next step" />
+      <div className="mt-10 grid gap-4 md:grid-cols-3">
+        {steps.map((step, index) => (
+          <div key={step.title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <step.icon className="h-6 w-6" />
+              </div>
+              <span className="text-sm font-black uppercase text-muted-foreground">0{index + 1}</span>
+            </div>
+            <h3 className="mt-6 text-xl font-black text-foreground">{step.title}</h3>
+            <p className="mt-3 leading-7 text-muted-foreground">{step.body}</p>
+          </div>
+        ))}
       </div>
-
-      {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-6 pb-6 md:pt-10 md:pb-8">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
-        <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
-          <Reveal>
-            <div className="space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                Turn trust into a <span className="text-primary">lead engine</span> that grows itself
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Launch an AI-powered challenge that brings in leads and expands every time someone shares it.
-              </p>
-              <div className="space-y-2 pt-1">
-              </div>
-              <div className="space-y-3 pt-2">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Cta label="Start your challenge" section="hero" />
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="font-semibold border-2 border-foreground"
-                    onClick={() => {
-                      trackEvent("landing_cta_clicked", { section: "hero_login" });
-                      navigate("/join");
-                    }}
-                  >
-                    Already started? Log in
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal className="md:pl-6">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 text-primary text-sm md:text-base font-bold uppercase tracking-wider">
-                <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs md:text-sm font-extrabold">FREE</span>
-                Join the 3-Day Challenge
-              </div>
-              {steps.map((s, i) => (
-                <div
-                  key={s.title}
-                  className="flex items-start gap-4 p-5 rounded-xl border border-border bg-card/60 backdrop-blur-sm hover:border-primary/40 transition-colors"
-                >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <s.icon className="h-6 w-6" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="block text-2xl md:text-3xl font-mono font-bold text-muted-foreground leading-none">
-                      DAY {i + 1}
-                    </span>
-                    <h3 className="font-semibold text-foreground mt-1">{s.title}</h3>
-                    <p className="text-sm text-muted-foreground">{s.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* LIVE Q&A BANNER */}
-      <section className="px-6 pt-2 pb-4 md:pt-2 md:pb-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 px-6 sm:px-10 py-5 sm:py-6 rounded-2xl border-2 border-primary/30 bg-primary/5 shadow-sm">
-            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-              <Calendar className="h-6 w-6 sm:h-7 sm:w-7" />
-            </div>
-            <div className="flex flex-col sm:items-start text-center sm:text-left">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-primary">
-                Next Live Group Q&amp;A
-              </span>
-              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                {nextQaDate ? formatQaDateLong(nextQaDate) : "[Date TBC]"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT ACTUALLY WORKS — scroll story */}
-      <HowItWorksScroll />
-
-      {/* WHY THIS WORKS */}
-      <section className="px-6 py-20 md:py-24 border-t border-border">
-        <Reveal className="mx-auto max-w-3xl text-center space-y-6">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Why this works
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Planning delays results. This brings in leads and grows as people share it.
-          </p>
-          <ul className="grid sm:grid-cols-3 gap-5 pt-6 text-left">
-            {whyPoints.map((p) => (
-              <li
-                key={p.title}
-                className="group relative p-6 rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/40 transition-all"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md mb-4">
-                  <p.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-1.5">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </section>
-
-      {/* WHY THIS IS DIFFERENT */}
-      <section className="px-6 py-20 md:py-24 border-t border-border">
-        <Reveal className="mx-auto max-w-5xl space-y-10">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-              Why this is different
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Most people try to grow with content, funnels, or ads. This works differently.
-            </p>
-          </div>
-
-          <div className="hidden md:grid grid-cols-2 gap-5 px-1">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Old way
-            </div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-primary">
-              New way
-            </div>
-          </div>
-
-          <ul className="space-y-4">
-            {comparisonRows.map((row) => (
-              <li key={row.new} className="grid md:grid-cols-2 gap-4 md:gap-5">
-                <div className="relative p-5 md:p-6 rounded-2xl border border-border bg-card/40">
-                  <span className="md:hidden block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                    Old way
-                  </span>
-                  <div className="flex items-start gap-3">
-                    <span className="mt-1 text-muted-foreground/60 text-lg leading-none">✕</span>
-                    <p className="text-muted-foreground line-through decoration-muted-foreground/30">
-                      {row.old}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative p-5 md:p-6 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-primary/[0.03] shadow-sm">
-                  <span className="md:hidden block text-xs font-semibold uppercase tracking-wider text-primary mb-2">
-                    New way
-                  </span>
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-sm">
-                      ✓
-                    </span>
-                    <p className="font-semibold text-foreground">
-                      {row.new}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </section>
-
-      {/* OUTCOME */}
-      <section className="px-6 py-20 md:py-24 bg-primary/5 border-y border-border">
-        <Reveal className="mx-auto max-w-5xl text-center space-y-6">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            What you will have in 3 days
-          </h2>
-          <ul className="grid sm:grid-cols-3 gap-5 pt-4 text-left">
-            {outcomePoints.map((p, i) => (
-              <li
-                key={p.title}
-                className="group relative p-6 rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/40 transition-all"
-              >
-                <div className="absolute -top-3 -left-3 flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background text-xs font-bold shadow-md">
-                  {i + 1}
-                </div>
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md mb-4">
-                  <p.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-1.5">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </section>
-
-      {/* SOCIAL PROOF */}
-      <section className="px-6 py-20 md:py-24">
-        <div className="mx-auto max-w-2xl">
-          <Reveal className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-              Live right now
-            </h2>
-            <p className="text-muted-foreground">Builders launching challenges and getting leads</p>
-          </Reveal>
-          <Reveal>
-            <ActivityFeed />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* BOTTOM CTA */}
-      <section className="px-6 py-20 md:py-28 border-t border-border">
-        <Reveal className="mx-auto max-w-2xl text-center space-y-6">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Start your challenge, it is free
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Live in minutes. No credit card. Just go.
-          </p>
-          <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-            <Cta label="Start your challenge" section="bottom" />
-            <Button
-              size="lg"
-              variant="outline"
-              className="font-semibold border-2 border-foreground"
-              onClick={() => {
-                trackEvent("landing_cta_clicked", { section: "bottom_login" });
-                navigate("/join");
-              }}
-            >
-              Already started? Log in
-            </Button>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-border px-6 py-8">
-        <p className="mx-auto max-w-6xl text-center text-sm text-muted-foreground">
-          © 2026 Challenge Community
-        </p>
-      </footer>
-    </div>
+    </PageSection>
   );
 };
+
+const BenefitsSection = () => (
+  <PageSection className="border-y border-border bg-card/55">
+    <SectionHeader eyebrow="Why take it" title="Know what to fix before you spend more effort" />
+    <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {["Replace vague advice with a diagnosis", "See whether effort or system is the issue", "Understand your next practical move", "Continue cleanly into the full flow"].map((benefit) => (
+        <div key={benefit} className="rounded-xl border border-border bg-background p-5 shadow-sm">
+          <CheckCircle2 className="h-5 w-5 text-success" />
+          <p className="mt-4 font-semibold leading-7 text-foreground">{benefit}</p>
+        </div>
+      ))}
+    </div>
+  </PageSection>
+);
+
+const AuthoritySection = () => (
+  <PageSection>
+    <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 text-center shadow-sm md:p-10">
+      <Eye className="mx-auto h-8 w-8 text-primary" />
+      <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">Built for people who need leads, not another theory</h2>
+      <p className="mt-4 text-lg leading-8 text-muted-foreground">The quiz is designed for founders, creators, consultants, and experts who want to understand what is making their lead flow unpredictable.</p>
+    </div>
+  </PageSection>
+);
+
+const CTASection = ({ onStart }: { onStart: () => void }) => (
+  <PageSection className="border-t border-border">
+    <div className="mx-auto max-w-3xl text-center">
+      <TrendingUp className="mx-auto h-9 w-9 text-primary" />
+      <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">Find the gap in your lead flow</h2>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Start with the quiz, get your diagnosis, then move into the next step with clarity.</p>
+      <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={onStart}>
+        Start the quiz
+        <ArrowRight className="h-4 w-4" />
+      </Button>
+    </div>
+  </PageSection>
+);
 
 export default Landing;

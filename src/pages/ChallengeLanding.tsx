@@ -12,20 +12,23 @@ const Section = ({ children, className = "" }: { children: ReactNode; className?
 
 const flowSteps = [
   {
+    icon: Rocket,
     day: "Day 1",
-    title: "🎯 Day 1 — Design",
-    body: "Create a challenge that helps your audience solve a real problem fast",
+    title: "Lock in your audience",
+    body: "Define who you help and the problem your challenge solves.",
   },
   {
+    icon: Users,
     day: "Day 2",
-    title: "⚡ Day 2 — Build",
-    body: "Use AI to build it fast and make it an engaging, evergreen experience",
+    title: "Build the experience",
+    body: "Create the quiz and challenge flow that captures leads.",
     typed: true,
   },
   {
+    icon: TrendingUp,
     day: "Day 3",
-    title: "🚀 Day 3 — Grow",
-    body: "Turn it into a viral, trust-based growth engine",
+    title: "Launch and grow",
+    body: "Share it with referral mechanics that help it spread.",
   },
 ];
 
@@ -56,8 +59,8 @@ const WordTypewriter = ({ text, active }: { text: string; active: boolean }) => 
   return <span>{words.slice(0, visibleWords).join(" ")}</span>;
 };
 
-const ThreeDayFlow = () => {
-  const sectionRef = useRef<HTMLElement | null>(null);
+const AnimatedDayCards = () => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -78,66 +81,52 @@ const ThreeDayFlow = () => {
     return () => observer.disconnect();
   }, []);
 
-  const lineHeight = isVisible ? "100%" : "0%";
-
   return (
-    <section ref={sectionRef} className="border-y border-border bg-background px-5 py-16 sm:px-6 md:py-24 lg:px-8">
-      <div className="mx-auto max-w-[700px]">
-        <div className="text-center">
-          <p className="text-sm font-black uppercase text-primary">🧩 The 3-Day Challenge System</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">Design. Build. Grow.</h2>
-        </div>
-
-        <div className="relative mt-12 space-y-8 sm:mt-14 sm:space-y-10">
-          <div className="absolute left-5 top-12 h-[calc(100%-6rem)] w-0.5 overflow-hidden rounded-full bg-border sm:left-1/2 sm:-translate-x-1/2">
-            <div
-              className="w-full rounded-full bg-primary shadow-[0_0_24px_hsl(var(--primary)/0.45)] transition-[height] duration-[2100ms] ease-out"
-              style={{ height: lineHeight, transitionDelay: isVisible ? "650ms" : "0ms" }}
-            />
-          </div>
-
-          {flowSteps.map((step, index) => {
-            const cardDelay = [0, 1600, 2850][index];
-            const textDelay = index === 0 ? 200 : index === 2 ? 220 : 0;
-            const isFinal = index === 2;
-
-            return (
-              <div key={step.day} className="relative flex items-center gap-5 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-7">
-                <div className="hidden sm:block" />
-                <div
-                  className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-sm font-black text-primary shadow-sm transition-all duration-700 ease-out ${
-                    isVisible ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-95 opacity-0"
-                  }`}
-                  style={{ transitionDelay: isVisible ? `${cardDelay}ms` : "0ms" }}
-                >
-                  {index + 1}
-                </div>
-                <article
-                  className={`relative z-10 w-full rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-lg sm:p-6 ${
-                    isVisible ? "translate-y-0 opacity-100" : `${isFinal ? "scale-95" : "translate-y-5"} opacity-0`
-                  } ${isFinal && isVisible ? "scale-100" : ""}`}
-                  style={{ transitionDelay: isVisible ? `${cardDelay}ms` : "0ms" }}
-                >
-                  <p className="text-xs font-black uppercase text-primary">{step.day}</p>
-                  <h3
-                    className={`mt-2 text-xl font-black text-foreground transition-opacity duration-500 ${isVisible ? "opacity-100" : "opacity-0"}`}
-                    style={{ transitionDelay: isVisible ? `${cardDelay + textDelay}ms` : "0ms" }}
-                  >
-                    {step.title}
-                  </h3>
-                  <p
-                    className={`mt-3 min-h-[3.5rem] leading-7 text-muted-foreground transition-opacity duration-500 sm:min-h-0 ${isVisible ? "opacity-100" : "opacity-0"}`}
-                    style={{ transitionDelay: isVisible ? `${cardDelay + textDelay + 120}ms` : "0ms" }}
-                  >
-                    {step.typed ? <WordTypewriter text={step.body} active={isVisible} /> : step.body}
-                  </p>
-                </article>
-              </div>
-            );
-          })}
-        </div>
+    <div ref={sectionRef} className="relative space-y-4">
+      <div className="absolute left-11 top-16 hidden h-[calc(100%-8rem)] w-0.5 overflow-hidden rounded-full bg-border sm:block">
+        <div
+          className="w-full rounded-full bg-primary shadow-[0_0_18px_hsl(var(--primary)/0.35)] transition-[height] duration-[2100ms] ease-out"
+          style={{ height: isVisible ? "100%" : "0%", transitionDelay: isVisible ? "650ms" : "0ms" }}
+        />
       </div>
-    </section>
+
+      {flowSteps.map((step, index) => {
+        const cardDelay = [0, 1450, 2650][index];
+        const textDelay = index === 0 ? 200 : index === 2 ? 220 : 0;
+        const isFinal = index === 2;
+
+        return (
+          <article
+            key={step.title}
+            className={`relative z-10 rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-lg ${
+              isVisible ? "translate-y-0 scale-100 opacity-100" : `${isFinal ? "scale-95" : "translate-y-5"} opacity-0`
+            }`}
+            style={{ transitionDelay: isVisible ? `${cardDelay}ms` : "0ms" }}
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <step.icon className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-xs font-black uppercase text-primary">{step.day}</p>
+                <h2
+                  className={`mt-1 text-xl font-black text-foreground transition-opacity duration-500 ${isVisible ? "opacity-100" : "opacity-0"}`}
+                  style={{ transitionDelay: isVisible ? `${cardDelay + textDelay}ms` : "0ms" }}
+                >
+                  {step.title}
+                </h2>
+                <p
+                  className={`mt-2 min-h-[3.5rem] leading-7 text-muted-foreground transition-opacity duration-500 sm:min-h-0 ${isVisible ? "opacity-100" : "opacity-0"}`}
+                  style={{ transitionDelay: isVisible ? `${cardDelay + textDelay + 120}ms` : "0ms" }}
+                >
+                  {step.typed ? <WordTypewriter text={step.body} active={isVisible} /> : step.body}
+                </p>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
   );
 };
 

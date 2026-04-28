@@ -49,7 +49,7 @@ const Signup = () => {
   const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "signup" ? "signup" : "login";
+  const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "login" ? "login" : "signup";
 
   const [mode, setMode] = useState<Mode>(initialMode);
 

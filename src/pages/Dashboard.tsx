@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 import { useAppState } from "@/context/AppContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CheckCircle2, Circle, CircleDot } from "lucide-react";
+import { ArrowRight, Camera, CheckCircle2, Circle, CircleDot, Upload } from "lucide-react";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
+import { toast } from "sonner";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -13,8 +16,10 @@ const challengeSteps = [
 ];
 
 const Dashboard = () => {
-  const { state, authUser, signOut } = useAppState();
+  const { state, setState, authUser, signOut } = useAppState();
   const navigate = useNavigate();
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
   const hasProgress =
@@ -33,6 +38,35 @@ const Dashboard = () => {
     state.challenge.aiOutputs.day1_share_reason,
   ].filter(Boolean);
   const quizDraft = state.challenge.aiOutputs.day2_quiz_questions;
+
+  const handlePhotoUpload = async (file?: File) => {
+    if (!file || !authUser || photoUploading) return;
+    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Please choose an image under 5MB.");
+
+    setPhotoUploading(true);
+    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${authUser.id}/profile-photo.${extension}`;
+    const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: true,
+    });
+
+    if (uploadError) {
+      setPhotoUploading(false);
+      return toast.error(uploadError.message || "Photo upload failed");
+    }
+
+    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
+    const avatarUrl = `${data.publicUrl}?v=${Date.now()}`;
+    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: avatarUrl } as any).eq("user_id", authUser.id);
+    setPhotoUploading(false);
+
+    if (profileError) return toast.error(profileError.message || "Could not save your photo");
+    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl } } : prev));
+    toast.success("Photo added to your challenge profile.");
+  };
 
   const getStepStatus = (day: number) => {
     if (isComplete || currentDay > day) return "Complete";
@@ -71,6 +105,35 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-3xl space-y-6">
+        {authUser && !state.user?.avatarUrl && (
+          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Camera className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">Add your challenge photo</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
+                  </p>
+                </div>
+              </div>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => handlePhotoUpload(event.target.files?.[0])}
+              />
+              <Button type="button" variant="secondary" className="h-12 shrink-0 gap-2" disabled={photoUploading} onClick={() => photoInputRef.current?.click()}>
+                <Upload className="h-4 w-4" />
+                {photoUploading ? "Uploading…" : "Upload photo"}
+              </Button>
+            </div>
+          </section>
+        )}
+
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">

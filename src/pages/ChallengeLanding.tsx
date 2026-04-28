@@ -163,24 +163,7 @@ const ChallengeLanding = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {[
-              { icon: Rocket, label: "Day 1", title: "Lock in your audience", body: "Define who you help and the problem your challenge solves." },
-              { icon: Users, label: "Day 2", title: "Build the experience", body: "Create the quiz and challenge flow that captures leads." },
-              { icon: TrendingUp, label: "Day 3", title: "Launch and grow", body: "Share it with referral mechanics that help it spread." },
-            ].map((step) => (
-              <div key={step.title} className="rounded-xl border border-border bg-card p-5 shadow-sm transition-transform hover:-translate-y-1">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><step.icon className="h-6 w-6" /></div>
-                  <div>
-                    <p className="text-xs font-black uppercase text-primary">{step.label}</p>
-                    <h2 className="mt-1 text-xl font-black text-foreground">{step.title}</h2>
-                    <p className="mt-2 leading-7 text-muted-foreground">{step.body}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <AnimatedDayCards />
         </div>
       </section>
 
@@ -204,8 +187,6 @@ const ChallengeLanding = () => {
           ))}
         </div>
       </Section>
-
-      <ThreeDayFlow />
 
       <Section>
         <div className="grid gap-4 md:grid-cols-3">

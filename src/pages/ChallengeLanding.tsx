@@ -33,36 +33,40 @@ const flowSteps = [
 ];
 
 const WordTypewriter = ({ text, active, delay = 0 }: { text: string; active: boolean; delay?: number }) => {
-  const words = text.split(" ");
-  const [visibleWords, setVisibleWords] = useState(0);
+  const [visibleChars, setVisibleChars] = useState(0);
 
   useEffect(() => {
     if (!active) return;
 
-    setVisibleWords(0);
+    setVisibleChars(0);
     let interval: number | undefined;
     const timeout = window.setTimeout(() => {
       interval = window.setInterval(() => {
-        setVisibleWords((current) => {
-          if (current >= words.length) {
+        setVisibleChars((current) => {
+          if (current >= text.length) {
             if (interval) window.clearInterval(interval);
             return current;
           }
 
           return current + 1;
         });
-      }, 260);
+      }, 45);
     }, delay);
 
     return () => {
       window.clearTimeout(timeout);
       if (interval) window.clearInterval(interval);
     };
-  }, [active, delay, words.length]);
+  }, [active, delay, text.length]);
 
   if (!active) return <span className="opacity-0">{text}</span>;
 
-  return <span>{words.slice(0, visibleWords).join(" ")}</span>;
+  return (
+    <span>
+      {text.slice(0, visibleChars)}
+      {visibleChars < text.length && <span className="ml-0.5 inline-block h-[1em] w-0.5 translate-y-0.5 animate-pulse bg-primary" />}
+    </span>
+  );
 };
 
 const AnimatedDayCards = () => {

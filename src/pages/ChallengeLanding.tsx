@@ -22,7 +22,6 @@ const flowSteps = [
     day: "Day 2",
     title: "Build the experience",
     body: "Create the quiz and challenge flow that captures leads.",
-    typed: true,
   },
   {
     icon: TrendingUp,
@@ -49,7 +48,7 @@ const WordTypewriter = ({ text, active }: { text: string; active: boolean }) => 
 
         return current + 1;
       });
-    }, 115);
+    }, 260);
 
     return () => window.clearInterval(interval);
   }, [active, words.length]);
@@ -119,7 +118,7 @@ const AnimatedDayCards = () => {
                   className={`mt-2 min-h-[3.5rem] leading-7 text-muted-foreground transition-opacity duration-500 sm:min-h-0 ${isVisible ? "opacity-100" : "opacity-0"}`}
                   style={{ transitionDelay: isVisible ? `${cardDelay + textDelay + 120}ms` : "0ms" }}
                 >
-                  {step.typed ? <WordTypewriter text={step.body} active={isVisible} /> : step.body}
+                  <WordTypewriter text={step.body} active={isVisible} />
                 </p>
               </div>
             </div>

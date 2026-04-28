@@ -1,139 +1,86 @@
-import { useAppState } from "@/context/AppContext";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Lock, CheckCircle, Gift, Flame, Rocket, Crown, Users, Zap, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import EmptyState from "@/components/EmptyState";
-import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
-
-interface UnlockItem {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  value: number;
-}
-
-const allUnlocks: UnlockItem[] = [
-  { id: "day1_blueprint", icon: <Gift className="h-6 w-6" />, title: "App blueprint", description: "Your app structure mapped and ready.", value: 97 },
-  { id: "day2_playbook", icon: <Flame className="h-6 w-6" />, title: "Challenge playbook", description: "Core feature built — your app is functional.", value: 147 },
-  { id: "day3_checklist", icon: <Rocket className="h-6 w-6" />, title: "Launch checklist", description: "You shipped a live app in 3 days.", value: 97 },
-  { id: "referral_3_trust", icon: <Users className="h-6 w-6" />, title: "Trust growth playbook", description: "Invited 3 builders to the ecosystem.", value: 147 },
-  { id: "referral_5_prompts", icon: <Zap className="h-6 w-6" />, title: "AI prompt pack", description: "Invited 5 builders — advanced prompts unlocked.", value: 97 },
-  { id: "referral_10_system", icon: <Package className="h-6 w-6" />, title: "Full system", description: "Invited 10 builders — complete system access.", value: 297 },
-  { id: "builder_circle", icon: <Crown className="h-6 w-6" />, title: "Builder Circle access", description: "Launched and promoted — join the builder network.", value: 197 },
-];
+import { CheckCircle, Lock, Sparkles } from "lucide-react";
+import { useAppState } from "@/context/AppContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import CreditStatusCard from "@/components/CreditStatusCard";
+import { creditRewards, creditRules, getNextReward } from "@/lib/credits";
 
 const Unlocks = () => {
   const { state } = useAppState();
   const navigate = useNavigate();
-  const earnedIds = new Set(state.unlocks.map((u) => u.id));
-  const challengeName = state.memory.challengeName || "your challenge";
-
-  const totalEarned = state.unlocks.reduce((sum, u) => sum + u.value, 0);
-  const totalPossible = allUnlocks.reduce((sum, u) => sum + u.value, 0);
+  const credits = state.credits?.total ?? 0;
+  const nextReward = getNextReward(credits);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-8 pb-24">
-        <h1 className="text-2xl font-bold text-foreground mb-1">What you’ve unlocked for {challengeName}</h1>
-        <p className="text-sm text-muted-foreground mb-2">
-          Complete challenges and grow your network to earn rewards.
-        </p>
-
-        {/* Total value */}
-        <Card className="border-border mb-6 bg-primary/5">
-          <CardContent className="p-5 text-center">
-            <p className="text-3xl font-bold text-primary">${totalEarned}</p>
-            <p className="text-xs text-muted-foreground">of ${totalPossible} total value earned</p>
-          </CardContent>
-        </Card>
-
-        {state.unlocks.length === 0 && (
-          <EmptyState
-            icon={Gift}
-            title="No unlocks yet"
-            description="Complete challenge days and invite builders to start earning rewards worth up to $297."
-            actionLabel="Start Day 1"
-            actionPath="/day/1"
-          />
-        )}
-
-        {/* Partner rewards link */}
-        <Card className="mb-4 border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => navigate("/rewards")}>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Gift className="h-4 w-4 text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-foreground">Partner rewards</p>
-              <p className="text-xs text-muted-foreground">Unlock high-value assets from builders in the network</p>
-            </div>
-            <Button size="sm" variant="outline" className="shrink-0 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/rewards"); }}>
-              View
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Cross-promotion between sections */}
-        <div className="mb-4">
-          <CrossPromoSpotlight
-            title="See what others have built"
-            subtitle=""
-            position="unlocks"
-          />
+        <div className="mb-6">
+          <p className="text-sm font-medium text-muted-foreground">Access, status, and momentum</p>
+          <h1 className="mt-1 text-2xl font-bold text-foreground">Unlock Credits</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Credits unlock access inside Leadio as you complete the challenge and invite the right people.
+          </p>
         </div>
 
+        <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(280px,0.55fr)]">
+          <CreditStatusCard credits={credits} />
+          <Card className="border-border bg-card shadow-sm">
+            <CardContent className="p-5">
+              <p className="text-xs font-black uppercase text-primary">How credits work</p>
+              <div className="mt-4 space-y-2">
+                {creditRules.map((rule) => (
+                  <div key={rule.id} className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2 text-sm">
+                    <span className="text-muted-foreground">{rule.label}</span>
+                    <span className="font-bold text-primary">+{rule.credits}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-          {allUnlocks.map((item) => {
-            const unlocked = earnedIds.has(item.id);
+        {credits === 0 && (
+          <Card className="mb-6 border-border bg-card shadow-sm">
+            <CardContent className="p-5 text-sm text-muted-foreground">
+              You’ll start earning credits as you complete the challenge and invite others.
+            </CardContent>
+          </Card>
+        )}
+
+        {nextReward && (
+          <Card className="mb-6 border-primary/20 bg-primary/5 shadow-sm">
+            <CardContent className="p-5">
+              <p className="text-sm font-semibold text-foreground">Progress toward next unlock</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {nextReward.credits - credits} credits to {nextReward.title}. Invite 1 person to unlock this faster.
+              </p>
+              <Progress value={Math.min(100, (credits / nextReward.credits) * 100)} className="mt-4 h-2" />
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {creditRewards.map((reward, index) => {
+            const unlocked = credits >= reward.credits;
             return (
-              <Card
-                key={item.id}
-                className={`border-border transition-all ${
-                  unlocked ? "bg-card" : "bg-muted/40 opacity-70"
-                }`}
-              >
-                <CardContent className="flex items-center gap-4 p-4">
-                  <div
-                    className={`shrink-0 rounded-full p-2.5 ${
-                      unlocked
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {unlocked ? item.icon : <Lock className="h-6 w-6" />}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-foreground text-sm">{item.title}</p>
-                      <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                        ${item.value}
-                      </span>
+              <Card key={reward.title} className={`border-border bg-card shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-md ${!unlocked ? "opacity-80" : ""}`} style={{ animationDelay: `${index * 80}ms` }}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${unlocked ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {unlocked ? <CheckCircle className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                    <span className="rounded-full bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">{reward.credits} credits</span>
                   </div>
-
-                  <div className="shrink-0">
-                    {unlocked ? (
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                        onClick={() => {
-                          if (item.id.startsWith("day")) navigate("/day/1");
-                          else if (item.id.startsWith("referral")) navigate("/referrals");
-                          else navigate("/community");
-                        }}
-                      >
-                        Earn
-                      </Button>
-                    )}
-                  </div>
+                  <h2 className="mt-5 text-lg font-bold text-foreground">{reward.title}</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {unlocked ? `${reward.accessLabel} available.` : `${reward.accessLabel} at ${reward.credits} credits.`}
+                  </p>
+                  <Button variant={unlocked ? "default" : "outline"} className="mt-5 w-full gap-2" onClick={() => navigate(unlocked ? "/rewards" : "/referrals")}>
+                    {unlocked ? "View access" : "Build momentum"}
+                    <Sparkles className="h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
             );

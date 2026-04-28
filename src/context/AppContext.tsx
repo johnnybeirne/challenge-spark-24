@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
+import { getCreditTier, getUnlockedRewards } from "@/lib/credits";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 
 /* ───── Types ───── */
@@ -39,6 +40,22 @@ export interface UnlockEntry {
   value: number;
   reason: string;
   timestamp: string;
+}
+
+export interface CreditActivityEntry {
+  id: string;
+  label: string;
+  credits: number;
+  timestamp: string;
+}
+
+export interface CreditsState {
+  total: number;
+  tier: string;
+  completedDays: number[];
+  awardedActions: string[];
+  activity: CreditActivityEntry[];
+  unlockedRewards: string[];
 }
 
 export interface CommunityState {
@@ -82,6 +99,7 @@ export interface AppState {
     records: ReferralRecord[];
   };
   unlocks: UnlockEntry[];
+  credits: CreditsState;
   community: CommunityState;
   onboarding: {
     invitedCount: number;
@@ -130,6 +148,15 @@ export const defaultTraining: TrainingState = {
   day3Watched: false,
 };
 
+export const defaultCredits: CreditsState = {
+  total: 0,
+  tier: "Starter",
+  completedDays: [],
+  awardedActions: [],
+  activity: [],
+  unlockedRewards: [],
+};
+
 export const defaultState: AppState = {
   user: null,
   assessment: null,
@@ -147,6 +174,7 @@ export const defaultState: AppState = {
   network: { direct: 0, indirect: 0 },
   community: defaultCommunity,
   unlocks: [],
+  credits: defaultCredits,
   onboarding: { invitedCount: 0, invitedCompleted: false },
   training: defaultTraining,
   crossPromotion: { impressions: 0, clicks: 0, ctr: 0 },
@@ -206,6 +234,8 @@ export const unlockDefs: UnlockDef[] = [
 
 export function checkAndTriggerUnlocks(state: AppState): AppState {
   let updated = { ...state };
+
+  updated = applyCreditRules(updated);
 
   // Runtime guard: dedupe any pre-existing duplicates in state.unlocks (defends against bad hydration)
   const seen = new Set<string>();
@@ -282,6 +312,60 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   }
 
   return updated;
+}
+
+function awardCredits(state: AppState, id: string, label: string, credits: number): AppState {
+  const current = state.credits ?? defaultCredits;
+  if (current.awardedActions.includes(id)) return state;
+
+  const total = current.total + credits;
+  return {
+    ...state,
+    credits: {
+      total,
+      tier: getCreditTier(total).name,
+      completedDays: current.completedDays,
+      awardedActions: [...current.awardedActions, id],
+      unlockedRewards: getUnlockedRewards(total).map((reward) => reward.title),
+      activity: [
+        { id, label, credits, timestamp: new Date().toISOString() },
+        ...current.activity,
+      ].slice(0, 12),
+    },
+  };
+}
+
+function applyCreditRules(state: AppState): AppState {
+  const current = { ...defaultCredits, ...(state.credits ?? {}) };
+  let updated: AppState = { ...state, credits: current };
+  const completedDays = new Set(current.completedDays);
+
+  if (updated.challenge.currentDay > 1) {
+    completedDays.add(1);
+    updated = awardCredits(updated, "complete_day_1", "You earned 10 credits for completing Day 1", 10);
+  }
+  if (updated.challenge.currentDay > 2) {
+    completedDays.add(2);
+    updated = awardCredits(updated, "complete_day_2", "You earned 15 credits for completing Day 2", 15);
+  }
+  if (updated.challenge.completed || updated.challenge.currentDay > 3) {
+    completedDays.add(3);
+    updated = awardCredits(updated, "complete_day_3", "You earned 25 credits for completing Day 3", 25);
+  }
+
+  for (let i = 1; i <= updated.network.direct; i += 1) {
+    updated = awardCredits(updated, `referral_join_${i}`, "You earned 50 credits from a new referral", 50);
+  }
+
+  return {
+    ...updated,
+    credits: {
+      ...updated.credits,
+      tier: getCreditTier(updated.credits.total).name,
+      completedDays: Array.from(completedDays).sort(),
+      unlockedRewards: getUnlockedRewards(updated.credits.total).map((reward) => reward.title),
+    },
+  };
 }
 
 export function clearState(): void {

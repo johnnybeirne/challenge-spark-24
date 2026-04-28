@@ -144,13 +144,6 @@ const Assessment = () => {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-4xl px-5 py-14 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
-            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground lg:mx-0">{assessmentConfig.landingExplanationBody}</p>
-          </div>
-        </section>
-
         <section className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-center text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingFaqTitle}</h2>
           <Accordion type="single" collapsible className="space-y-3">

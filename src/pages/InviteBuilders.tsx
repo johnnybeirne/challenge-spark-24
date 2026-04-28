@@ -28,7 +28,7 @@ const InviteBuilders = () => {
 
   const handleSkip = () => {
     trackEvent("onboarding_skipped");
-    navigate("/dashboard");
+    navigate("/user-dashboard");
   };
 
   return (

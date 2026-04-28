@@ -199,7 +199,7 @@ const DayChallenge = () => {
       }));
       trackEvent("day_completed", { day: dayNum });
       toast.success(`${config.completion.replace(".", `, ${firstName}.`)} Day ${dayNum + 1} is now unlocked.`);
-      navigate("/dashboard");
+      navigate("/user-dashboard");
     } else {
       setState((prev) => ({
         ...prev,
@@ -284,7 +284,7 @@ const DayChallenge = () => {
           </CardContent>
         </Card>
 
-        <Button variant="ghost" className="mt-2" onClick={() => navigate("/dashboard")}>
+        <Button variant="ghost" className="mt-2" onClick={() => navigate("/user-dashboard")}>
           Back to Dashboard
         </Button>
       </div>

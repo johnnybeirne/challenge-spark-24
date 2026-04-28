@@ -31,7 +31,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   return (
     <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
       <button
-        onClick={() => go("/dashboard")}
+        onClick={() => go("/user-dashboard")}
         className={cn(
           "rounded-2xl border border-border bg-background text-left shadow-sm transition-colors hover:border-primary/40 hover:bg-muted/30",
           collapsed ? "p-3 text-center" : "p-4"

@@ -32,7 +32,7 @@ const flowSteps = [
   },
 ];
 
-const WordTypewriter = ({ text, active }: { text: string; active: boolean }) => {
+const WordTypewriter = ({ text, active, delay = 0 }: { text: string; active: boolean; delay?: number }) => {
   const words = text.split(" ");
   const [visibleWords, setVisibleWords] = useState(0);
 
@@ -40,19 +40,25 @@ const WordTypewriter = ({ text, active }: { text: string; active: boolean }) => 
     if (!active) return;
 
     setVisibleWords(0);
-    const interval = window.setInterval(() => {
-      setVisibleWords((current) => {
-        if (current >= words.length) {
-          window.clearInterval(interval);
-          return current;
-        }
+    let interval: number | undefined;
+    const timeout = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setVisibleWords((current) => {
+          if (current >= words.length) {
+            if (interval) window.clearInterval(interval);
+            return current;
+          }
 
-        return current + 1;
-      });
-    }, 260);
+          return current + 1;
+        });
+      }, 260);
+    }, delay);
 
-    return () => window.clearInterval(interval);
-  }, [active, words.length]);
+    return () => {
+      window.clearTimeout(timeout);
+      if (interval) window.clearInterval(interval);
+    };
+  }, [active, delay, words.length]);
 
   if (!active) return <span className="opacity-0">{text}</span>;
 
@@ -91,7 +97,7 @@ const AnimatedDayCards = () => {
       </div>
 
       {flowSteps.map((step, index) => {
-        const cardDelay = [0, 1450, 2650][index];
+        const cardDelay = [0, 3200, 6100][index];
         const textDelay = index === 0 ? 200 : index === 2 ? 220 : 0;
         const isFinal = index === 2;
 
@@ -119,7 +125,7 @@ const AnimatedDayCards = () => {
                   className={`mt-2 min-h-[3.5rem] leading-7 text-muted-foreground transition-opacity duration-500 sm:min-h-0 ${isVisible ? "opacity-100" : "opacity-0"}`}
                   style={{ transitionDelay: isVisible ? `${cardDelay + textDelay + 120}ms` : "0ms" }}
                 >
-                  <WordTypewriter text={step.body} active={isVisible} />
+                  <WordTypewriter text={step.body} active={isVisible} delay={cardDelay + textDelay + 120} />
                 </p>
               </div>
             </div>

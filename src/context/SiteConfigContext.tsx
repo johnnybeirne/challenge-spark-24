@@ -411,7 +411,7 @@ export const defaultSiteConfig: SiteConfig = {
     timeEstimate: "90 seconds",
     landingEyebrow: "Free diagnostic",
     landingHeadline: "Find out why your leads are inconsistent",
-    landingSubheadline: "Answer 9 quick questions and get a clear score showing how much of your lead flow depends on effort versus a real system.",
+    landingSubheadline: "Answer nine quick questions and get a recommended strategy based on your answers instantly.",
     landingPrimaryCta: "Start the assessment",
     landingSupportingText: "Takes 90 seconds. No signup required.",
     landingTrustLine: "Instant personalised result. Built for founders, creators, consultants, and experts.",

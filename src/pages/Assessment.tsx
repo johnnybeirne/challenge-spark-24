@@ -21,7 +21,7 @@ const Assessment = () => {
   const { config } = useSiteConfig();
   const [searchParams] = useSearchParams();
 
-  const [started, setStarted] = useState(false);
+  const [started, setStarted] = useState(true);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);

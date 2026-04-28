@@ -44,11 +44,11 @@ const Landing = () => {
 
 const StickyQuizButton = ({ onStart }: { onStart: () => void }) => (
   <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6">
-    <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 sm:flex-row">
+    <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
       <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
         Ready to find the gap in your lead flow?
       </p>
-      <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black uppercase shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
+      <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black uppercase shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
         Start the quiz
         <ArrowRight className="h-4 w-4" />
       </Button>

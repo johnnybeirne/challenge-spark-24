@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Calendar, Compass, Magnet, Repeat, Rocket, Share2, Target, TrendingUp, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ActivityFeed from "@/components/ActivityFeed";
 import { trackEvent } from "@/lib/analytics";
 
 const Section = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
@@ -160,6 +161,7 @@ const ChallengeLanding = () => {
               <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
               <Button variant="outline" className="h-14 rounded-xl px-8 text-base font-black uppercase" onClick={startQuiz}>Take the quiz first</Button>
             </div>
+            <ActivityFeed title="Live builder activity" className="mx-auto mt-8 max-w-md text-left lg:mx-0" />
           </div>
 
           <AnimatedDayCards />

@@ -66,20 +66,52 @@ const Assessment = () => {
     const assessmentConfig = config.assessment;
 
     return (
-      <main className="min-h-screen overflow-hidden bg-background px-5 py-8 sm:px-6 lg:px-8">
-        <section className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-4xl items-center">
-          <div className="w-full text-center">
+      <main className="min-h-screen overflow-hidden bg-background">
+        <section className="mx-auto grid min-h-[92vh] w-full max-w-7xl gap-10 px-5 py-8 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8">
+          <div className="relative order-2 lg:order-1">
+            <img
+              src={frustratedEntrepreneurLeads}
+              alt="Frustrated entrepreneur trying to understand where leads are coming from"
+              width={1280}
+              height={960}
+              className="aspect-[4/5] w-full max-h-[76vh] rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
+            />
+            <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
+              <p className="text-xs font-black uppercase text-primary">Stop guessing why leads come and go</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-foreground">Get a clear read on which parts of your lead system are actually working.</p>
+            </div>
+          </div>
+
+          <div className="order-1 flex flex-col justify-center text-center lg:order-2 lg:text-left">
               <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm lg:mx-0">
                 <Timer className="h-4 w-4 text-primary" />
                 <span>{assessmentConfig.timeEstimate}</span>
               </div>
-              <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-foreground sm:text-5xl lg:mx-0 lg:text-6xl">
                 {assessmentConfig.landingHeadline}
               </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 {assessmentConfig.landingSubheadline}
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3">
+
+              <div className="mt-8 grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
+                <div className="mx-auto flex size-44 items-center justify-center rounded-full bg-[conic-gradient(hsl(var(--success))_0_76%,hsl(var(--muted))_76%_100%)] p-4 [animation:donut-fill_1.4s_ease-out_both] sm:mx-0">
+                  <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
+                    <span className="text-4xl font-black leading-none text-foreground">76%</span>
+                    <span className="mt-2 max-w-[8rem] text-xs font-black uppercase leading-4 text-muted-foreground">Lead system readiness</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {assessmentConfig.landingPreviewItems.slice(0, 3).map((item) => (
+                    <div key={item} className="flex items-start gap-3 text-left">
+                      <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+                      <p className="font-semibold leading-7 text-foreground">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
                 <Button className="h-16 w-full max-w-sm gap-2 rounded-xl text-base font-black uppercase shadow-lg shadow-primary/20 sm:w-auto sm:px-10" onClick={() => setStarted(true)}>
                   {assessmentConfig.landingPrimaryCta}
                   <ArrowRight className="h-4 w-4" />
@@ -87,61 +119,39 @@ const Assessment = () => {
                 <p className="text-sm text-muted-foreground">{assessmentConfig.landingSupportingText}</p>
               </div>
               {assessmentConfig.landingTrustLine && (
-                <p className="mx-auto mt-6 max-w-xl text-sm font-medium leading-6 text-foreground/80">
+                <p className="mx-auto mt-6 max-w-xl text-sm font-medium leading-6 text-foreground/80 lg:mx-0">
                   {assessmentConfig.landingTrustLine}
                 </p>
               )}
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-            <div className="space-y-3">
-              {assessmentConfig.landingPreviewItems.map((item, index) => (
-                <div key={item} className="rounded-2xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs font-black uppercase text-primary">0{index + 1}</p>
-                  <p className="mt-2 font-bold leading-6 text-foreground">{item}</p>
-                </div>
-              ))}
+        <section className="border-y border-border bg-card/55">
+          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
+            <div>
+              <p className="text-sm font-black uppercase text-primary">{assessmentConfig.landingInsideTitle}</p>
+              <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
+              <p className="mt-5 text-lg leading-8 text-muted-foreground">{assessmentConfig.landingExplanationBody}</p>
             </div>
-          </div>
-          <div>
-            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingInsideTitle}</h2>
-            <div className="mt-6 space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
               {assessmentConfig.landingPoints.map((point) => (
-                <div key={point} className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
-                  <p className="font-semibold leading-7 text-foreground">{point}</p>
+                <div key={point} className="rounded-xl border border-border bg-background p-5 shadow-sm">
+                  <CheckCircle2 className="h-5 w-5 text-success" />
+                  <p className="mt-4 font-semibold leading-7 text-foreground">{point}</p>
                 </div>
               ))}
-            </div>
-          </div>
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-            <div className="mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full bg-[conic-gradient(hsl(var(--success))_0_76%,hsl(var(--muted))_76%_100%)] p-7 [animation:donut-fill_1.4s_ease-out_both]">
-              <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-card text-center shadow-inner">
-                <span className="text-5xl font-black leading-none text-foreground">76%</span>
-                <span className="mt-2 max-w-[10rem] text-sm font-bold uppercase leading-5 text-muted-foreground">Lead system readiness</span>
-              </div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-10 py-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <img
-            src={frustratedEntrepreneurLeads}
-            alt="Frustrated entrepreneur trying to understand where leads are coming from"
-            loading="lazy"
-            width={1280}
-            height={960}
-            className="w-full rounded-3xl border border-border bg-card object-cover shadow-xl shadow-foreground/5"
-          />
-          <div className="text-center lg:text-left">
+        <section className="mx-auto w-full max-w-4xl px-5 py-14 sm:px-6 lg:px-8">
+          <div className="text-center">
             <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingExplanationTitle}</h2>
             <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground lg:mx-0">{assessmentConfig.landingExplanationBody}</p>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-4xl py-12">
+        <section className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-center text-3xl font-black leading-tight text-foreground sm:text-4xl">{assessmentConfig.landingFaqTitle}</h2>
           <Accordion type="single" collapsible className="space-y-3">
             {assessmentConfig.landingFaqItems.map((item, index) => (

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Users, X } from "lucide-react";
+import { CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Sparkles, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAppState } from "@/context/AppContext";
 import { getDayUnlock } from "@/lib/challengeProgression";
+import { getCreditTier, getNextReward } from "@/lib/credits";
 import { cn } from "@/lib/utils";
 
 type ModalType = "day" | "community" | null;
@@ -22,6 +23,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const submitted = !!state.challenge.launchUrl;
   const sharedOrInvited = state.network.direct >= 3;
   const communityUnlocked = day3Done && submitted && sharedOrInvited;
+  const credits = state.credits?.total ?? 0;
+  const creditTier = getCreditTier(credits);
+  const nextReward = getNextReward(credits);
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||
     state.challenge.completed ||
@@ -50,6 +54,38 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <>
             <p className="font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
             <p className="mt-1 text-sm text-muted-foreground">Dashboard</p>
+          </>
+        )}
+      </button>
+
+      <button
+        onClick={() => go("/unlocks")}
+        className={cn(
+          "rounded-2xl border border-primary/30 bg-primary/5 text-left shadow-sm transition-all hover:border-primary/60 hover:bg-primary/10",
+          collapsed ? "p-3 text-center" : "p-4"
+        )}
+        title="Unlock Credits"
+      >
+        {collapsed ? (
+          <div className="flex flex-col items-center gap-1 text-primary">
+            <Sparkles className="h-5 w-5" />
+            <span className="text-sm font-black">{credits}</span>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-black uppercase text-primary">Unlock Credits</p>
+                <p className="mt-1 text-4xl font-black leading-none text-foreground">{credits}</p>
+              </div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Sparkles className="h-5 w-5" />
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-primary/25 bg-background px-2.5 py-1 text-xs font-bold text-primary">{creditTier.name}</span>
+              {nextReward && <span className="text-xs text-muted-foreground">Next: {nextReward.credits} credits</span>}
+            </div>
           </>
         )}
       </button>

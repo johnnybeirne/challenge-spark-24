@@ -6,6 +6,41 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 
+const TypewriterText = ({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) => {
+  const [shown, setShown] = useState("");
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setShown(text);
+      return;
+    }
+
+    setShown("");
+    let index = 0;
+    let intervalId: number;
+    const timeoutId = window.setTimeout(() => {
+      intervalId = window.setInterval(() => {
+        index += 1;
+        setShown(text.slice(0, index));
+        if (index >= text.length) window.clearInterval(intervalId);
+      }, 24);
+    }, delay);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.clearInterval(intervalId);
+    };
+  }, [delay, text]);
+
+  return (
+    <span className={className}>
+      {shown}
+      {shown.length < text.length && <span className="ml-1 inline-block h-[1em] w-1 animate-pulse bg-foreground/50 align-[-0.12em]" />}
+    </span>
+  );
+};
+
 const Results = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
@@ -53,9 +88,15 @@ const Results = () => {
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
       <header className="mb-8 text-center">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Diagnostic result</p>
-        <h1 className="mb-3 text-3xl font-bold text-foreground">{diagnostic.title}</h1>
-        <p className="mx-auto max-w-md text-base leading-7 text-muted-foreground">{diagnostic.message}</p>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <TypewriterText text="Diagnostic result" />
+        </p>
+        <h1 className="mb-3 text-3xl font-bold text-foreground">
+          <TypewriterText text={diagnostic.title} delay={520} />
+        </h1>
+        <p className="mx-auto max-w-md text-base leading-7 text-muted-foreground">
+          <TypewriterText text={diagnostic.message} delay={1120} />
+        </p>
       </header>
 
       <Card className="mb-5 border-primary/20 bg-primary/5 shadow-none">

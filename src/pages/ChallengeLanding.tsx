@@ -216,6 +216,8 @@ const ChallengeLanding = () => {
         </div>
       </Section>
 
+      <ThreeDayFlow />
+
       <Section>
         <div className="grid gap-4 md:grid-cols-3">
           {[

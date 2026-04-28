@@ -39,7 +39,7 @@ const FALLBACK_ACTIVITIES: ActivityItem[] = [
   { name: "Michael", action: "launched his challenge", time: "2m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Sarah", action: "is on Day 2", time: "8m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarSarah },
   { name: "Linda", action: "is on Day 3", time: "15m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarLily },
-  { name: "James", action: "launched his challenge", time: "24m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "James", action: "launched his challenge", time: "4d ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Maria", action: "invited 3 builders", time: "15m ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarMaria },
   { name: "Alex", action: "supported another builder", time: "32m ago", icon: <Heart className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Tara", action: "completed Day 3", time: "1h ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarTara },
@@ -47,7 +47,7 @@ const FALLBACK_ACTIVITIES: ActivityItem[] = [
   { name: "Lily", action: "invited 5 builders", time: "2h ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarLily },
   { name: "Noah", action: "completed Day 2", time: "3h ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Emma", action: "got 4 new leads", time: "4h ago", icon: <Heart className="h-3.5 w-3.5" />, avatar: avatarSarah },
-  { name: "Liam", action: "launched his challenge", time: "5h ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Liam", action: "launched his challenge", time: "7d ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Zara", action: "invited 8 builders", time: "6h ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarMaria },
   { name: "Ben", action: "completed Day 3", time: "7h ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarOwen },
 ];

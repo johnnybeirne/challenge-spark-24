@@ -40,9 +40,9 @@ export const creditRules: CreditRule[] = [
   { id: "complete_day_2", label: "Complete Day 2", credits: 15 },
   { id: "complete_day_3", label: "Complete Day 3", credits: 25 },
   { id: "referral_join", label: "Invite someone who joins", credits: 50 },
-  { id: "referral_day_1", label: "Referral completes Day 1", credits: 10 },
-  { id: "referral_day_2", label: "Referral completes Day 2", credits: 15 },
-  { id: "referral_day_3", label: "Referral completes Day 3", credits: 25 },
+  { id: "referral_day_1", label: "Your referral completes Day 1", credits: 10 },
+  { id: "referral_day_2", label: "Your referral completes Day 2", credits: 15 },
+  { id: "referral_day_3", label: "Your referral completes Day 3", credits: 25 },
 ];
 
 export const getCreditTier = (credits: number) =>

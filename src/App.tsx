@@ -10,6 +10,7 @@ import AppShell from "@/components/AppShell";
 import leadioLogo from "@/assets/leadio-logo.png";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
+import ChallengeLanding from "@/pages/ChallengeLanding";
 import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
 import Signup from "@/pages/Signup";
@@ -54,6 +55,7 @@ const App = () => (
               {/* Landing – full-width layout */}
               <Route element={<AppShell fullWidth />}>
                 <Route path="/" element={<Landing />} />
+                <Route path="/challenge" element={<ChallengeLanding />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}

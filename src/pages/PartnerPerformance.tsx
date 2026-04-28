@@ -102,7 +102,7 @@ const PartnerPerformance = () => {
         <p className="text-sm text-muted-foreground mb-4 max-w-xs">
           This dashboard is available for approved partners with an active asset in the network.
         </p>
-        <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+        <Button onClick={() => navigate("/user-dashboard")}>Go to Dashboard</Button>
       </div>
     );
   }

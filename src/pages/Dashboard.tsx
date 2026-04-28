@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowRight, Camera, CheckCircle2, Circle, CircleDot, Upload } from "lucide-react";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
+import CreditStatusCard from "@/components/CreditStatusCard";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -154,6 +155,8 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        <CreditStatusCard credits={state.credits?.total ?? 0} />
 
         <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>

@@ -9,6 +9,7 @@ import { ArrowRight, Camera, CheckCircle2, Circle, CircleDot, Upload } from "luc
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
+import AddToCalendar from "@/components/AddToCalendar";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -134,6 +135,23 @@ const Dashboard = () => {
             </div>
           </section>
         )}
+
+        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CalendarPlus className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  Keep momentum across all 3 days and earn 50 Unlock Credits when it’s added.
+                </p>
+              </div>
+            </div>
+            <AddToCalendar variant="secondary" className="h-12 shrink-0" />
+          </div>
+        </section>
 
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

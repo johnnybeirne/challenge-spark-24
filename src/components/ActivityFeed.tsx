@@ -36,8 +36,10 @@ const AVATAR_MAP: Record<string, string> = {
 };
 
 const FALLBACK_ACTIVITIES: ActivityItem[] = [
-  { name: "Sarah", action: "completed Day 1", time: "2m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarSarah },
-  { name: "James", action: "launched his challenge", time: "8m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Michael", action: "launched his challenge", time: "2m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Sarah", action: "is on Day 2", time: "8m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarSarah },
+  { name: "Linda", action: "is on Day 3", time: "15m ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarLily },
+  { name: "James", action: "launched his challenge", time: "24m ago", icon: <Rocket className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Maria", action: "invited 3 builders", time: "15m ago", icon: <Users className="h-3.5 w-3.5" />, avatar: avatarMaria },
   { name: "Alex", action: "supported another builder", time: "32m ago", icon: <Heart className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Tara", action: "completed Day 3", time: "1h ago", icon: <Zap className="h-3.5 w-3.5" />, avatar: avatarTara },
@@ -54,9 +56,10 @@ interface ActivityFeedProps {
   limit?: number;
   refresh?: boolean;
   title?: string;
+  className?: string;
 }
 
-const ActivityFeed = ({ title }: ActivityFeedProps) => {
+const ActivityFeed = ({ title, className = "" }: ActivityFeedProps) => {
   const [items, setItems] = useState<ActivityItem[]>(FALLBACK_ACTIVITIES);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ const ActivityFeed = ({ title }: ActivityFeedProps) => {
   const doubled = [...items, ...items];
 
   return (
-    <div>
+    <div className={className}>
       {title && (
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
           {title}

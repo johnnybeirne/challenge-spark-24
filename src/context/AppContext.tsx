@@ -361,6 +361,10 @@ function applyCreditRules(state: AppState): AppState {
     updated = awardCredits(updated, "calendar_added", "You earned 50 credits for adding the challenge to your calendar", 50);
   }
 
+  if (updated.user?.avatarUrl) {
+    updated = awardCredits(updated, "profile_photo_uploaded", "You earned 50 credits for uploading your challenge photo", 50);
+  }
+
   for (let i = 1; i <= updated.network.direct; i += 1) {
     updated = awardCredits(updated, `referral_join_${i}`, "You earned 50 credits from a new referral", 50);
   }

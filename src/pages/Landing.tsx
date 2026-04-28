@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
@@ -28,7 +28,7 @@ const Landing = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background pb-24 text-foreground">
       <HeroSection onStart={() => startQuiz("hero")} />
       <ProblemSection />
       <RevealSection />
@@ -37,9 +37,19 @@ const Landing = () => {
       <BenefitsSection />
       <AuthoritySection />
       <CTASection onStart={() => startQuiz("bottom")} />
+      <StickyQuizButton onStart={() => startQuiz("sticky")} />
     </main>
   );
 };
+
+const StickyQuizButton = ({ onStart }: { onStart: () => void }) => (
+  <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-5 sm:bottom-6">
+    <Button className="h-16 w-full max-w-sm gap-3 rounded-xl px-10 text-base font-black uppercase shadow-2xl shadow-primary/25 sm:w-auto" onClick={onStart}>
+      Start the quiz
+      <ArrowRight className="h-5 w-5" />
+    </Button>
+  </div>
+);
 
 const HeroSection = ({ onStart }: { onStart: () => void }) => (
   <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">

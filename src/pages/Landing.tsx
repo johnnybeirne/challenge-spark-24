@@ -60,10 +60,7 @@ const HeroSection = ({ onStart }: { onStart: () => void }) => (
   <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">
     <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
       <div className="text-center lg:text-left">
-        <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-bold text-muted-foreground shadow-sm lg:mx-0">
-          Free lead-flow diagnostic
-        </p>
-        <p className="mx-auto mt-5 max-w-2xl text-base font-black uppercase leading-6 text-primary lg:mx-0">
+        <p className="mx-auto max-w-2xl text-base font-black uppercase leading-6 text-primary lg:mx-0">
           Built for coaches, consultants, and authors who want more leads
         </p>
         <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">

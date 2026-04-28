@@ -22,6 +22,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const submitted = !!state.challenge.launchUrl;
   const sharedOrInvited = state.network.direct >= 3;
   const communityUnlocked = day3Done && submitted && sharedOrInvited;
+  const hasSavedProgress =
+    state.challenge.currentDay > 1 ||
+    state.challenge.completed ||
+    Object.keys(state.challenge.tasks).length > 0 ||
+    Object.keys(state.challenge.aiOutputs).some((key) => Boolean(state.challenge.aiOutputs[key])) ||
+    state.unlocks.length > 0;
 
   const go = (path: string) => {
     onNavigate?.();
@@ -42,7 +48,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <p className="text-sm font-semibold text-foreground">D{currentDay}</p>
         ) : (
           <>
-            <p className="font-semibold text-foreground">Welcome back, {firstName}</p>
+            <p className="font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
             <p className="mt-1 text-sm text-muted-foreground">Dashboard</p>
           </>
         )}

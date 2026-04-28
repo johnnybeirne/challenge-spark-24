@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowRight, CheckCircle2, Loader2, Sparkles, Target, Timer, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Timer } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
@@ -67,19 +67,19 @@ const Assessment = () => {
 
     return (
       <main className="min-h-screen overflow-hidden bg-background px-5 py-8 sm:px-6 lg:px-8">
-        <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="text-center lg:text-left">
+        <section className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-4xl items-center">
+          <div className="w-full text-center">
               <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm lg:mx-0">
                 <Timer className="h-4 w-4 text-primary" />
                 <span>{assessmentConfig.timeEstimate}</span>
               </div>
-              <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-foreground sm:text-5xl lg:mx-0 lg:text-6xl">
+              <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-foreground sm:text-5xl lg:text-6xl">
                 {assessmentConfig.landingHeadline}
               </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
                 {assessmentConfig.landingSubheadline}
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
+              <div className="mt-8 flex flex-col items-center gap-3">
                 <Button className="h-16 w-full max-w-sm gap-2 rounded-xl text-base font-black uppercase shadow-lg shadow-primary/20 sm:w-auto sm:px-10" onClick={() => setStarted(true)}>
                   {assessmentConfig.landingPrimaryCta}
                   <ArrowRight className="h-4 w-4" />
@@ -87,55 +87,10 @@ const Assessment = () => {
                 <p className="text-sm text-muted-foreground">{assessmentConfig.landingSupportingText}</p>
               </div>
               {assessmentConfig.landingTrustLine && (
-                <p className="mx-auto mt-6 max-w-xl text-sm font-medium leading-6 text-foreground/80 lg:mx-0">
+                <p className="mx-auto mt-6 max-w-xl text-sm font-medium leading-6 text-foreground/80">
                   {assessmentConfig.landingTrustLine}
                 </p>
               )}
-          </div>
-
-          <div className="relative">
-            <div className="rounded-3xl border border-border bg-card p-5 shadow-xl shadow-foreground/5 sm:p-7">
-              <div className="mb-6 flex items-center justify-between gap-4 border-b border-border pb-5">
-                <div>
-                  <p className="text-sm font-bold uppercase text-muted-foreground">Lead system score</p>
-                  <p className="mt-1 text-3xl font-black text-foreground">0–100</p>
-                </div>
-                <div className="rounded-2xl bg-muted p-3 text-primary">
-                  <TrendingUp className="h-7 w-7" />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {(assessmentConfig.landingPoints ?? []).map((point, index) => (
-                  <div key={point} className="flex items-center gap-3 rounded-2xl bg-muted/60 p-4">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-sm font-black text-primary">
-                      {index + 1}
-                    </span>
-                    <span className="font-semibold leading-6 text-foreground">{point}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-border p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-accent" />
-                  <p className="font-bold text-foreground">{assessmentConfig.landingPreviewTitle}</p>
-                </div>
-                <div className="space-y-3">
-                  {(assessmentConfig.landingPreviewItems ?? []).map((item) => (
-                    <div key={item} className="flex items-start gap-3 text-sm font-medium leading-6 text-muted-foreground">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-5 flex items-center gap-3 rounded-2xl bg-primary/10 p-4 text-primary">
-                <Target className="h-5 w-5 shrink-0" />
-                <p className="text-sm font-bold leading-6">Designed to give you one clear action, not another generic report.</p>
-              </div>
-            </div>
           </div>
         </section>
 

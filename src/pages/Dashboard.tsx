@@ -35,13 +35,6 @@ const Dashboard = () => {
   const progressValue = (completedDays / 3) * 100;
   const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
-  const challengeIdea = [
-    state.challenge.aiOutputs.day1_define_app,
-    state.challenge.aiOutputs.day1_problem,
-    state.challenge.aiOutputs.day1_result,
-    state.challenge.aiOutputs.day1_share_reason,
-  ].filter(Boolean);
-  const quizDraft = state.challenge.aiOutputs.day2_quiz_questions;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
 
   useEffect(() => {
@@ -261,28 +254,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-
-        <Card className="border-border bg-card shadow-sm">
-          <CardContent className="p-5">
-            <h2 className="text-lg font-bold text-foreground">Your Progress So Far</h2>
-            {challengeIdea.length || quizDraft ? (
-              <div className="mt-4 space-y-4">
-                <div className="rounded-lg border border-border bg-muted/20 p-4">
-                  <p className="text-sm font-semibold text-foreground">Challenge idea</p>
-                  <div className="mt-2 space-y-2 text-sm text-muted-foreground">
-                    {challengeIdea.length ? challengeIdea.map((item, index) => <p key={`${item}-${index}`}>{item}</p>) : <p>Not added yet.</p>}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-border bg-muted/20 p-4">
-                  <p className="text-sm font-semibold text-foreground">Quiz draft</p>
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{quizDraft || "Not added yet."}</p>
-                </div>
-              </div>
-            ) : (
-              <p className="mt-3 text-sm text-muted-foreground">Your inputs will appear here as you progress.</p>
-            )}
-          </CardContent>
-        </Card>
       </section>
     </main>
   );

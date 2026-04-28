@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
 import AddToCalendar from "@/components/AddToCalendar";
+import Confetti from "@/components/Confetti";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [signupCreditCount, setSignupCreditCount] = useState(0);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
   const hasProgress =
@@ -41,6 +43,27 @@ const Dashboard = () => {
   ].filter(Boolean);
   const quizDraft = state.challenge.aiOutputs.day2_quiz_questions;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+
+  useEffect(() => {
+    if (!hasSignupCredits) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setSignupCreditCount(100);
+      return;
+    }
+
+    let frame = 0;
+    const duration = 1400;
+    const start = performance.now();
+    const animate = (time: number) => {
+      const progress = Math.min((time - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setSignupCreditCount(Math.round(eased * 100));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [hasSignupCredits]);
 
   const handlePhotoUpload = async (file?: File) => {
     if (!file || !authUser || photoUploading) return;
@@ -110,20 +133,24 @@ const Dashboard = () => {
 
       <section className="mx-auto max-w-3xl space-y-6">
         {hasSignupCredits && (
-          <section className="rounded-2xl border border-primary/30 bg-primary/5 p-5 shadow-sm sm:p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <section className="relative overflow-hidden rounded-2xl border border-primary/40 bg-primary/10 p-5 shadow-sm ring-2 ring-primary/10 sm:p-6">
+            <Confetti duration={2600} />
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary shadow-[0_0_22px_hsl(var(--primary)/0.16)]">
-                  <Sparkles className="h-6 w-6" />
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-[0_0_22px_hsl(var(--primary)/0.18)]">
+                  <Sparkles className="h-8 w-8" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-foreground">Congratulations — 100 credits added</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    You’ve joined the challenge and unlocked your first momentum boost.
-                  </p>
+                  <p className="text-xs font-black uppercase text-primary">Congratulations</p>
+                  <h2 className="mt-1 text-xl font-black text-foreground">You started the challenge</h2>
+                  <p className="mt-1 text-sm font-semibold leading-relaxed text-muted-foreground">100 Unlock Credits have been added immediately.</p>
                 </div>
               </div>
-              <Button variant="secondary" className="h-12 shrink-0" onClick={() => navigate("/unlocks")}>View credits</Button>
+              <div className="rounded-2xl border border-primary/30 bg-background px-5 py-4 text-center shadow-sm">
+                <p className="text-xs font-black uppercase text-primary">Credits earned</p>
+                <p className="mt-1 text-5xl font-black leading-none text-foreground">{signupCreditCount}</p>
+                <Button variant="secondary" className="mt-4 h-11 shrink-0" onClick={() => navigate("/unlocks")}>View credits</Button>
+              </div>
             </div>
           </section>
         )}

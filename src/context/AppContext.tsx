@@ -235,6 +235,8 @@ export const unlockDefs: UnlockDef[] = [
 export function checkAndTriggerUnlocks(state: AppState): AppState {
   let updated = { ...state };
 
+  updated = applyCreditRules(updated);
+
   // Runtime guard: dedupe any pre-existing duplicates in state.unlocks (defends against bad hydration)
   const seen = new Set<string>();
   const deduped: UnlockEntry[] = [];
@@ -310,6 +312,60 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   }
 
   return updated;
+}
+
+function awardCredits(state: AppState, id: string, label: string, credits: number): AppState {
+  const current = state.credits ?? defaultCredits;
+  if (current.awardedActions.includes(id)) return state;
+
+  const total = current.total + credits;
+  return {
+    ...state,
+    credits: {
+      total,
+      tier: getCreditTier(total).name,
+      completedDays: current.completedDays,
+      awardedActions: [...current.awardedActions, id],
+      unlockedRewards: getUnlockedRewards(total).map((reward) => reward.title),
+      activity: [
+        { id, label, credits, timestamp: new Date().toISOString() },
+        ...current.activity,
+      ].slice(0, 12),
+    },
+  };
+}
+
+function applyCreditRules(state: AppState): AppState {
+  const current = { ...defaultCredits, ...(state.credits ?? {}) };
+  let updated: AppState = { ...state, credits: current };
+  const completedDays = new Set(current.completedDays);
+
+  if (updated.challenge.currentDay > 1) {
+    completedDays.add(1);
+    updated = awardCredits(updated, "complete_day_1", "You earned 10 credits for completing Day 1", 10);
+  }
+  if (updated.challenge.currentDay > 2) {
+    completedDays.add(2);
+    updated = awardCredits(updated, "complete_day_2", "You earned 15 credits for completing Day 2", 15);
+  }
+  if (updated.challenge.completed || updated.challenge.currentDay > 3) {
+    completedDays.add(3);
+    updated = awardCredits(updated, "complete_day_3", "You earned 25 credits for completing Day 3", 25);
+  }
+
+  for (let i = 1; i <= updated.network.direct; i += 1) {
+    updated = awardCredits(updated, `referral_join_${i}`, "You earned 50 credits from a new referral", 50);
+  }
+
+  return {
+    ...updated,
+    credits: {
+      ...updated.credits,
+      tier: getCreditTier(updated.credits.total).name,
+      completedDays: Array.from(completedDays).sort(),
+      unlockedRewards: getUnlockedRewards(updated.credits.total).map((reward) => reward.title),
+    },
+  };
 }
 
 export function clearState(): void {

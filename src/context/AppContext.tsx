@@ -10,6 +10,7 @@ export interface User {
   id?: string;
   name: string;
   email: string;
+  avatarUrl?: string | null;
   inviteCode: string;
   referredBy: string | null;
   referredByParent?: string | null;

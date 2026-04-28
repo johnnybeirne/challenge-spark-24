@@ -417,17 +417,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         await migrateLocalToSupabase(authUser.id);
         const remote = await loadFromSupabase(authUser.id);
         if (remote) {
-          setStateRaw((prev) => ({
-            ...prev,
-            ...remote,
-            community: prev.community,
-            referrals: prev.referrals,
-            onboarding: prev.onboarding,
-            training: { ...prev.training, ...(remote.training || {}) },
-            crossPromotion: prev.crossPromotion,
-            partnerAsset: prev.partnerAsset,
-            partnerPerformance: prev.partnerPerformance,
-          }));
+          setStateRaw((prev) => checkAndTriggerUnlocks({
+              ...prev,
+              ...remote,
+              community: prev.community,
+              referrals: prev.referrals,
+              onboarding: prev.onboarding,
+              training: { ...prev.training, ...(remote.training || {}) },
+              crossPromotion: prev.crossPromotion,
+              partnerAsset: prev.partnerAsset,
+              partnerPerformance: prev.partnerPerformance,
+            }));
           prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
         }
         setHydrated(true);

@@ -46,12 +46,6 @@ const Referrals = () => {
   const pendingReferralCredits = Math.max(0, direct * 100 - referralCredits);
   const creditActivity = state.credits?.activity ?? [];
 
-  const unlockThresholds = [
-    { count: 3, label: "Trust growth playbook", value: "$147" },
-    { count: 5, label: "AI prompt pack", value: "$97" },
-    { count: 10, label: "Full system", value: "$297" },
-  ];
-
   const hasActivity = direct > 0;
 
   return (
@@ -120,31 +114,6 @@ const Referrals = () => {
                 Network score: <strong className="text-foreground">{score}</strong>{" "}
                 <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
               </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Referral milestones */}
-        <Card className="border-border mb-6">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium text-muted-foreground mb-3">Builder milestones</p>
-            <div className="space-y-2">
-              {unlockThresholds.map((t) => {
-                const reached = direct >= t.count;
-                return (
-                  <div key={t.count} className="flex items-center gap-2 text-sm">
-                    {reached ? (
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0" />
-                    ) : (
-                      <div className="h-4 w-4 rounded-full border border-muted-foreground/30 shrink-0" />
-                    )}
-                    <span className={reached ? "text-foreground" : "text-muted-foreground"}>
-                      {t.count} builders → {t.label}
-                    </span>
-                    <span className="ml-auto text-xs text-primary font-medium">{t.value}</span>
-                  </div>
-                );
-              })}
             </div>
           </CardContent>
         </Card>

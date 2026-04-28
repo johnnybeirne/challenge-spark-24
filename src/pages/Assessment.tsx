@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowRight, CheckCircle2, Loader2, Timer } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
@@ -69,10 +69,6 @@ const Assessment = () => {
       <main className="min-h-screen overflow-hidden bg-background">
         <section className="mx-auto flex min-h-[82vh] w-full max-w-4xl items-center px-5 py-8 text-center sm:px-6 lg:px-8">
           <div className="w-full">
-              <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm">
-                <Timer className="h-4 w-4 text-primary" />
-                <span>{assessmentConfig.timeEstimate}</span>
-              </div>
               <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-foreground sm:text-5xl lg:text-6xl">
                 {assessmentConfig.landingHeadline}
               </h1>

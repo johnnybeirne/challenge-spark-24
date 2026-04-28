@@ -221,7 +221,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <CreditStatusCard credits={state.credits?.total ?? 0} />
+        <CreditStatusCard credits={state.credits?.total ?? 0} compact />
 
         <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>

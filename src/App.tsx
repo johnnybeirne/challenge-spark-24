@@ -70,6 +70,7 @@ const App = () => (
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
+                <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/user-dashboard" />} />
                 <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
                 <Route path="/user-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />

@@ -7,7 +7,7 @@ import Spinner from "@/components/Spinner";
 const DEMO_USER_KEY = "leadio_view_as_user";
 const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
 
-const AdminViewAsUser = () => {
+const AdminViewAsUser = ({ redirectTo = "/day/1" }: { redirectTo?: string }) => {
   const { setState } = useAppState();
   const navigate = useNavigate();
 
@@ -38,8 +38,8 @@ const AdminViewAsUser = () => {
       },
     });
 
-    navigate("/day/1", { replace: true });
-  }, [navigate, setState]);
+    navigate(redirectTo, { replace: true });
+  }, [navigate, redirectTo, setState]);
 
   return <Spinner />;
 };

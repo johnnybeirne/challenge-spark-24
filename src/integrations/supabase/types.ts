@@ -592,11 +592,54 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_signups: {
+        Row: {
+          confirmed_invites: number
+          created_at: string
+          current_tier: string
+          email: string
+          id: string
+          name: string | null
+          referral_code: string
+          referred_by_code: string | null
+          updated_at: string
+          waitlist_position: number
+        }
+        Insert: {
+          confirmed_invites?: number
+          created_at?: string
+          current_tier?: string
+          email: string
+          id?: string
+          name?: string | null
+          referral_code: string
+          referred_by_code?: string | null
+          updated_at?: string
+          waitlist_position?: number
+        }
+        Update: {
+          confirmed_invites?: number
+          created_at?: string
+          current_tier?: string
+          email?: string
+          id?: string
+          name?: string | null
+          referral_code?: string
+          referred_by_code?: string | null
+          updated_at?: string
+          waitlist_position?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      calculate_waitlist_tier: {
+        Args: { invite_count: number }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

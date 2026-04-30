@@ -38,6 +38,7 @@ import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
+import Waitlist from "@/pages/Waitlist";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
                 <Route path="/join" element={<Signup />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
+                <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
               </Route>
 

@@ -1,27 +1,82 @@
-Plan to make every font at least 12pt
 
-1. Add a global minimum font-size guard
-- Add a base CSS rule so normal text, labels, helper copy, badges, buttons, nav items, table text, form text, chart labels, and small UI text cannot render below 12pt.
-- Use 12pt as 16px, which is the browser-equivalent CSS size.
-- Keep headings and larger text unchanged.
+# Waitlist Referral Engine
 
-2. Fix Tailwind small-text defaults
-- Update Tailwind’s `xs` text size from its default 12px to 16px so any existing `text-xs` usage becomes compliant automatically.
-- Keep `text-sm` at 16px as well, or ensure it is not below the new minimum.
-- This avoids manually touching hundreds of existing `text-xs` instances across pages, CMS, admin, rewards, nav, charts, badges, and helper text.
+## What gets built
 
-3. Clean up explicit below-minimum sizes
-- Search for hard-coded values such as `text-[10px]`, `text-[11px]`, inline `fontSize`, and component-level CSS below 16px.
-- Replace them with compliant sizes while preserving visual hierarchy through weight, color, uppercase tracking, spacing, and layout instead of tiny type.
+A new `/waitlist` page with email signup, unique referral codes, referral tracking, a 6-tier reward ladder, a leaderboard, and a post-signup sharing screen. All data stored in a new `waitlist_signups` table. No existing routes, tables, or functionality are modified.
 
-4. Preserve mobile friendliness
-- Keep inputs at 16px to prevent mobile browser zoom.
-- Review compact areas like bottom navigation, badges, reward cards, tooltips, chart labels, CMS controls, and admin panels so the larger minimum does not cause clipping.
+---
 
-Technical details
-- Primary files likely affected:
-  - `tailwind.config.ts`
-  - `src/index.css`
-  - Any components/pages with hard-coded `text-[10px]`, `text-[11px]`, or inline font sizes
-- No backend/database changes are needed.
-- After implementation, run a project-wide search for below-12pt text classes to confirm none remain.
+## Database
+
+**New table: `waitlist_signups`**
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | default gen_random_uuid() |
+| email | text UNIQUE NOT NULL | |
+| name | text | nullable |
+| referral_code | text UNIQUE NOT NULL | auto-generated 8-char |
+| referred_by_code | text | nullable, the referrer's code |
+| confirmed_invites | integer | default 0 |
+| current_tier | text | default 'Joined' |
+| waitlist_position | integer | serial-like, set on insert |
+| created_at | timestamptz | default now() |
+| updated_at | timestamptz | default now() |
+
+**RLS policies:**
+- SELECT: public can read all rows (leaderboard needs it)
+- INSERT: public can insert (no auth required — this is a waitlist)
+- UPDATE: none from client (handled by DB function)
+
+**Database function: `process_waitlist_referral`** (SECURITY DEFINER)
+- Called after a new waitlist signup via a trigger
+- If `referred_by_code` is set and valid, increments the referrer's `confirmed_invites` by 1
+- Recalculates and updates the referrer's `current_tier` based on the tier thresholds
+
+**Database function: `assign_waitlist_position`** (trigger BEFORE INSERT)
+- Sets `waitlist_position` to `(SELECT COALESCE(MAX(waitlist_position), 0) + 1 FROM waitlist_signups)`
+
+---
+
+## Frontend
+
+### New file: `src/pages/Waitlist.tsx`
+
+A single-page component with these sections, rendered conditionally based on whether the user has signed up:
+
+**Before signup (landing view):**
+
+1. **Hero** — gradient background, bold headline ("Build a challenge that grows before it even launches"), subheadline, email input + "Join Early Access" button, trust line
+2. **How It Works** — 3 icon cards (Join, Get Link, Move Up)
+3. **Reward Ladder** — 6 tiers displayed as stacked cards with progress indicators, badge-style labels, locked/unlocked states
+4. **Leaderboard** — top waitlist members by confirmed invites, top 3 with gold/silver/bronze styling, movement indicators, placeholder data if empty
+
+**After signup (success view):**
+
+1. Position number + current tier badge
+2. Unique referral link with copy button
+3. Share buttons (native share API + clipboard fallback using existing `src/lib/share.ts`)
+4. Progress bar toward next tier with "X invites away from [next reward]" message
+5. Confetti animation (reuse existing `src/components/Confetti.tsx`)
+6. The reward ladder (showing current position highlighted)
+
+### Route addition in `src/App.tsx`
+
+Add inside the public routes group (no auth required):
+```
+<Route path="/waitlist" element={<Waitlist />} />
+```
+
+---
+
+## Key implementation details
+
+- The `?ref=CODE` query parameter is read on page load and stored in component state for submission
+- Email uniqueness enforced at DB level; duplicate attempts show a friendly "already on the list" message and load their existing record
+- Self-referral prevented: if `ref` code matches the signed-up user's own code, `referred_by_code` is set to null
+- Tier calculation logic: 0=Joined, 1-2=Starter, 3-4=Mover, 5-9=Builder, 10-19=Accelerator, 20+=Founder
+- Leaderboard queries `waitlist_signups` ordered by `confirmed_invites DESC, created_at ASC`, limited to top 20
+- Mobile-first responsive design using existing Tailwind theme tokens and color variables
+- No authentication required — this is a public waitlist page
+- No changes to existing tables, routes, or components

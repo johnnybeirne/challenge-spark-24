@@ -38,6 +38,7 @@ import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
+import Waitlist from "@/pages/Waitlist";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

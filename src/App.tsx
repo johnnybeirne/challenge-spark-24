@@ -66,6 +66,7 @@ const App = () => (
                 <Route path="/join" element={<Signup />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
+                <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
               </Route>
 

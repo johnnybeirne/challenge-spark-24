@@ -160,7 +160,7 @@ const Waitlist = () => {
   };
 
   const referralUrl = signedUp
-    ? `${window.location.origin}/waitlist?ref=${signedUp.referral_code}`
+    ? `https://leadio.johnnybeirne.com/waitlist?ref=${signedUp.referral_code}`
     : "";
 
   const handleCopy = async () => {

@@ -39,7 +39,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   };
 
   return (
-    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
+    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
       <button
         onClick={() => go("/user-dashboard")}
         className={cn(
@@ -203,7 +203,7 @@ const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapse
   };
   return (
     <>
-      <div className={cn("fixed left-0 top-0 z-40 hidden h-screen border-r border-border bg-card transition-[width] duration-300 lg:block", collapsed ? "w-[84px]" : "w-[260px]") }>
+      <div className={cn("fixed left-0 top-0 z-40 hidden h-screen border-r border-border bg-muted/60 transition-[width] duration-300 lg:block", collapsed ? "w-[84px]" : "w-[260px]") }>
         <Button
           size="sm"
           variant="outline"

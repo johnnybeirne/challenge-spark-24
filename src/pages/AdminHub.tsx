@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle } from "lucide-react";
 
 const sections = [
   {
@@ -37,6 +37,13 @@ const sections = [
     icon: GraduationCap,
     to: "/owner-console/training",
     color: "text-violet-500",
+  },
+  {
+    title: "Diagnostic Responses",
+    description: "Edit the Johnny B AI chat shown on the results page for each score tier",
+    icon: MessageCircle,
+    to: "/owner-console/diagnostic-responses",
+    color: "text-pink-500",
   },
   {
     title: "View as User",

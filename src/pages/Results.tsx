@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
@@ -230,7 +230,7 @@ const Results = () => {
     };
   })();
 
-  const bullets = ["Clear steps", "Real results", "People invite others"];
+  
 
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">
@@ -312,14 +312,6 @@ const Results = () => {
               )}
             </div>
 
-            <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-              {bullets.map((b) => (
-                <li key={b} className="flex items-center gap-1.5">
-                  <Check className={`w-4 h-4 ${ctaCopy.scoreColor}`} strokeWidth={3} />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </header>

@@ -24,21 +24,8 @@ const Unlocks = () => {
           </p>
         </div>
 
-        <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(280px,0.55fr)]">
+        <div className="mb-6">
           <CreditStatusCard credits={credits} />
-          <Card className="border-border bg-card shadow-sm">
-            <CardContent className="p-5">
-              <p className="text-xs font-black uppercase text-primary">How credits work</p>
-              <div className="mt-4 space-y-2">
-                {creditRules.map((rule) => (
-                  <div key={rule.id} className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2 text-sm">
-                    <span className="text-muted-foreground">{rule.label}</span>
-                    <span className="font-bold text-primary">+{rule.credits}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {credits === 0 && (

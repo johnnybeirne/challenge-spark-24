@@ -162,6 +162,23 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
+            <div className="mb-2 flex justify-between px-0.5 text-xs font-semibold text-muted-foreground sm:text-sm">
+              {challengeSteps.map((step) => {
+                const status = getStepStatus(step.day);
+                const dim = status === "Locked";
+                return (
+                  <div
+                    key={step.day}
+                    className={`flex flex-col ${step.day === 1 ? "items-start" : step.day === 2 ? "items-center" : "items-end"}`}
+                  >
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${dim ? "text-muted-foreground/60" : "text-primary"}`}>Day {step.day}</span>
+                    {getDayDate(step.day) && (
+                      <span className={`text-xs sm:text-sm ${dim ? "text-muted-foreground/70" : "text-foreground"}`}>{getDayDate(step.day)}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
             <Progress value={Math.max(progressValue, hasProgress ? 8 : 0)} className="mb-5 h-2" />
             <div className="grid gap-3 sm:grid-cols-3">
               {challengeSteps.map((step) => {
@@ -182,12 +199,7 @@ const Dashboard = () => {
                   >
                     <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
-                        {getDayDate(step.day) && (
-                          <p className={`text-[10px] font-medium ${isLocked ? "text-muted-foreground/70" : "text-muted-foreground"}`}>{getDayDate(step.day)}</p>
-                        )}
-                      </div>
+                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
                       <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
                       <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
                     </div>

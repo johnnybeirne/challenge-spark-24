@@ -539,7 +539,7 @@ export const defaultSiteConfig: SiteConfig = {
     cardBorderRadius: 12,
     appName: "Challenge OS",
     appTagline: "Build a system that grows your audience through trust",
-    footerText: "",
+    footerText: "© 2026 Johnny Beirne",
   },
   partners: {
     pageHeadline: "Become a Challenge Partner",

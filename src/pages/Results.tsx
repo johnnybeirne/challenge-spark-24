@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -7,40 +7,58 @@ import { ArrowRight } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
+import { supabase } from "@/integrations/supabase/client";
 
-const TypewriterText = ({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) => {
+const TYPING_SPEED_MS = 22;
+const THINKING_MS = 1200;
+const BETWEEN_MESSAGES_MS = 600;
+
+const TypewriterText = ({
+  text,
+  onDone,
+}: {
+  text: string;
+  onDone?: () => void;
+}) => {
   const [shown, setShown] = useState("");
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
       setShown(text);
+      onDone?.();
       return;
     }
-
     setShown("");
-    let index = 0;
-    let intervalId: number;
-    const timeoutId = window.setTimeout(() => {
-      intervalId = window.setInterval(() => {
-        index += 1;
-        setShown(text.slice(0, index));
-        if (index >= text.length) window.clearInterval(intervalId);
-      }, 24);
-    }, delay);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.clearInterval(intervalId);
-    };
-  }, [delay, text]);
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) {
+        window.clearInterval(id);
+        onDone?.();
+      }
+    }, TYPING_SPEED_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text]);
 
   return (
-    <span className={className}>
+    <span>
       {shown}
-      {shown.length < text.length && <span className="ml-1 inline-block h-[1em] w-1 animate-pulse bg-foreground/50 align-[-0.12em]" />}
+      {shown.length < text.length && (
+        <span className="ml-0.5 inline-block h-[1em] w-[2px] animate-pulse bg-foreground/50 align-[-0.12em]" />
+      )}
     </span>
   );
+};
+
+type DiagnosticRow = {
+  tier: string;
+  min_percent: number;
+  max_percent: number;
+  title: string;
+  messages: string[];
 };
 
 const Results = () => {
@@ -52,21 +70,77 @@ const Results = () => {
   const percentageScore = Math.round((score / 9) * 100);
   const [animatedScore, setAnimatedScore] = useState(0);
 
+  const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("diagnostic_responses")
+      .select("tier,min_percent,max_percent,title,messages")
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        const normalised: DiagnosticRow[] = data.map((r: any) => ({
+          tier: r.tier,
+          min_percent: r.min_percent,
+          max_percent: r.max_percent,
+          title: r.title,
+          messages: Array.isArray(r.messages) ? r.messages.filter((m: any) => typeof m === "string") : [],
+        }));
+        setRows(normalised);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const tierData = useMemo(() => {
+    if (!rows || rows.length === 0) return null;
+    const match = rows.find((r) => percentageScore >= r.min_percent && percentageScore <= r.max_percent);
+    return match ?? rows[0];
+  }, [rows, percentageScore]);
+
+  // Build the chat script: title + messages
+  const chatScript = useMemo<string[]>(() => {
+    if (tierData) {
+      return [tierData.title, ...tierData.messages].filter(Boolean);
+    }
+    if (assessment?.diagnosticTitle) {
+      return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean);
+    }
+    const fallback = getDiagnosticResult(score);
+    return [fallback.title, fallback.message];
+  }, [tierData, assessment, score]);
+
+  // Sequential bubble reveal
+  const [visibleCount, setVisibleCount] = useState(0); // bubbles fully visible (typed)
+  const [thinking, setThinking] = useState(true);
+
+  useEffect(() => {
+    setVisibleCount(0);
+    setThinking(true);
+    const t = window.setTimeout(() => setThinking(false), THINKING_MS);
+    return () => window.clearTimeout(t);
+  }, [chatScript.length]);
+
+  const handleBubbleDone = (index: number) => {
+    if (index + 1 >= chatScript.length) return;
+    setThinking(true);
+    window.setTimeout(() => {
+      setThinking(false);
+      setVisibleCount((c) => Math.max(c, index + 1));
+    }, BETWEEN_MESSAGES_MS);
+  };
+
   useEffect(() => {
     const duration = 900;
     const start = performance.now();
     let frameId: number;
-
     const tick = (timestamp: number) => {
       const progress = Math.min((timestamp - start) / duration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 3);
-      setAnimatedScore(Math.round(percentageScore * easedProgress));
-
-      if (progress < 1) {
-        frameId = requestAnimationFrame(tick);
-      }
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedScore(Math.round(percentageScore * eased));
+      if (progress < 1) frameId = requestAnimationFrame(tick);
     };
-
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [percentageScore]);
@@ -80,47 +154,49 @@ const Results = () => {
     );
   }
 
-  const diagnostic = assessment.diagnosticTitle
-    ? {
-        title: assessment.diagnosticTitle,
-        message: assessment.diagnosticMessage ?? "",
-      }
-    : getDiagnosticResult(score);
-
-  const THINKING_MS = 1600;
-  const [thinking, setThinking] = useState(true);
-  useEffect(() => {
-    const t = window.setTimeout(() => setThinking(false), THINKING_MS);
-    return () => window.clearTimeout(t);
-  }, []);
+  const bubblesToRender = chatScript.slice(0, visibleCount + 1);
+  const showThinkingBubble = thinking;
 
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
       <header className="mb-8">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3">
           <div className="relative shrink-0">
             <img
               src={aiAvatar}
               alt="Johnny B AI"
-              width={56}
-              height={56}
-              className="w-14 h-14 rounded-full border-2 border-foreground/10"
+              width={48}
+              height={48}
+              className="w-12 h-12 rounded-full border-2 border-foreground/10"
             />
-            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary rounded-full border-2 border-background" />
+            <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
           </div>
-          <div className="flex-1 pt-1 min-w-0">
+          <div className="flex-1 min-w-0">
             <div className="text-xs text-muted-foreground mb-2">Johnny B AI</div>
-            <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-full animate-fade-in">
-              {thinking ? (
-                <TypingDots />
-              ) : (
-                <div className="space-y-2">
-                  <h1 className="text-xl font-bold text-foreground leading-snug">
-                    <TypewriterText text={diagnostic.title} delay={0} />
-                  </h1>
-                  <p className="text-base leading-7 text-muted-foreground">
-                    <TypewriterText text={diagnostic.message} delay={Math.max(600, diagnostic.title.length * 24 + 200)} />
-                  </p>
+            <div className="space-y-2">
+              {bubblesToRender.map((text, i) => {
+                const isLast = i === bubblesToRender.length - 1;
+                const isTitle = i === 0;
+                // While the thinking bubble for this index is up, hide its text bubble
+                if (isLast && showThinkingBubble) return null;
+                return (
+                  <div
+                    key={i}
+                    className={`bg-muted/60 rounded-2xl ${i === 0 ? "rounded-tl-sm" : ""} px-4 py-3 inline-block max-w-full animate-fade-in ${
+                      isTitle ? "font-bold text-foreground text-lg leading-snug" : "text-base leading-7 text-foreground/90"
+                    }`}
+                  >
+                    {isLast ? (
+                      <TypewriterText text={text} onDone={() => handleBubbleDone(i)} />
+                    ) : (
+                      <span>{text}</span>
+                    )}
+                  </div>
+                );
+              })}
+              {showThinkingBubble && (
+                <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-4 py-3 inline-block animate-fade-in">
+                  <TypingDots />
                 </div>
               )}
             </div>

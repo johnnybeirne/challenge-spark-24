@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -100,6 +100,11 @@ const DayChallenge = () => {
     return !!getSetup();
   });
   const firstName = state.user?.name?.split(" ")[0] || "there";
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [dayNum]);
+
 
   if (!canAccessDay(dayNum, state.challenge.startedAt)) {
     navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });

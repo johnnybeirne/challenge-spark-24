@@ -235,7 +235,7 @@ const Results = () => {
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">
       <p className="mb-6 text-center text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Your Challenge System Score
+        Your Lead Generation Score
       </p>
 
       <Card className={`mb-10 ${ctaCopy.scoreSoftBorder} ${ctaCopy.scoreSoftBg} shadow-none`}>

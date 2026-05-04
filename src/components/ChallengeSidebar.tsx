@@ -184,7 +184,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           );
         })}
         <button
-          onClick={() => go("/rewards")}
+          onClick={() => go("/bonus-vault")}
           className={cn(
             "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
             collapsed ? "p-2" : "px-3 py-2"

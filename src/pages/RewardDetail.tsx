@@ -114,7 +114,7 @@ const RewardDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="app-page-container py-8 pb-24">
-          <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/rewards")}>
+          <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/bonus-vault")}>
             <ArrowLeft className="h-3 w-3" /> Back to rewards
           </Button>
           <Card className="border-border">
@@ -154,7 +154,7 @@ const RewardDetail = () => {
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-8 pb-24">
         {/* Back nav */}
-        <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/rewards")}>
+        <Button variant="ghost" size="sm" className="mb-4 gap-1 text-xs" onClick={() => navigate("/bonus-vault")}>
           <ArrowLeft className="h-3 w-3" /> Back to rewards
         </Button>
 
@@ -237,7 +237,7 @@ const RewardDetail = () => {
         </Card>
 
         {/* Secondary: back to rewards */}
-        <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/rewards")}>
+        <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/bonus-vault")}>
           <Gift className="h-4 w-4" /> View all rewards
         </Button>
       </div>

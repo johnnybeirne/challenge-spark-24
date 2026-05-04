@@ -203,7 +203,7 @@ const PartnerPerformance = () => {
               }}>
                 <ExternalLink className="h-3 w-3" /> Open asset link
               </Button>
-              <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => navigate("/rewards")}>
+              <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => navigate("/bonus-vault")}>
                 View reward page
               </Button>
             </div>

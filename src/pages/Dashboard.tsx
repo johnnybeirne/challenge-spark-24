@@ -147,9 +147,6 @@ const Dashboard = () => {
                   <div className="min-w-0">
                     <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
                     <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
-                    </p>
                     <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
                       <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
                     </div>

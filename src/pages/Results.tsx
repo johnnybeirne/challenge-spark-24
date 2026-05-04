@@ -251,11 +251,11 @@ const Results = () => {
       </Card>
 
       <Button className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold" onClick={() => navigate("/join")}>
-        Start the 3-Day Challenge
+        {ctaCopy.button}
         <ArrowRight className="w-4 h-4" />
       </Button>
       <p className="mt-3 text-center text-sm leading-6 text-muted-foreground">
-        Build a simple version of your own lead system and see how it works.
+        {ctaCopy.sub}
       </p>
     </div>
   );

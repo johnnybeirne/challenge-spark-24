@@ -309,7 +309,7 @@ const Results = () => {
                 );
               })}
               {showThinkingBubble && (
-                <div className="bg-muted/60 rounded-2xl rounded-tl-md px-4 py-3 w-fit animate-fade-in">
+                <div className="bg-white border border-border rounded-2xl rounded-tl-md px-4 py-3 w-fit animate-fade-in">
                   <TypingDots />
                 </div>
               )}

@@ -139,7 +139,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           {!collapsed && (
             <>
               <p className="mt-1 text-xs text-muted-foreground">
-                {communityUnlocked ? "Your private builder network is open." : "Unlock after launching your challenge"}
+                {communityUnlocked ? "Network with other challenge builders." : "Network with other challenge builders — unlock after launching."}
               </p>
               {!communityUnlocked && (
                 <div className="mt-2 space-y-1">

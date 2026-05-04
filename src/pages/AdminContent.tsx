@@ -1,15 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Plus, Save, Trash2, ExternalLink } from "lucide-react";
+import { Loader2, Plus, Save, Trash2, ExternalLink, Check } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";
+import {
+  CmsPageHeader,
+  EditorCard,
+  FieldLabel,
+  AdvancedDetails,
+} from "@/components/cms/cms-ui";
 
 const PAGES: { id: string; label: string; previewUrl?: string; description: string }[] = [
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page hero, social proof, FAQ" },
@@ -24,11 +28,22 @@ const PAGES: { id: string; label: string; previewUrl?: string; description: stri
 
 type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean };
 
+const sectionTitle = (s: string) =>
+  s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+const friendlyLabel = (row: Draft) => {
+  if (row.label && row.label.trim()) return row.label;
+  return row.key
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 const AdminContent = () => {
   const [activePage, setActivePage] = useState<string>(PAGES[0].id);
   const [rows, setRows] = useState<Draft[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
 
   const load = async (page: string) => {
     setLoading(true);
@@ -67,7 +82,7 @@ const AdminContent = () => {
       setRows((rs) => rs.filter((r) => r.id !== row.id));
       return;
     }
-    if (!confirm(`Delete "${row.section}.${row.key}"?`)) return;
+    if (!confirm(`Delete "${friendlyLabel(row)}"?`)) return;
     const { error } = await supabase.from("site_content").delete().eq("id", row.id);
     if (error) return toast.error(error.message);
     setRows((rs) => rs.filter((r) => r.id !== row.id));
@@ -138,7 +153,11 @@ const AdminContent = () => {
       }
     }
     setSaving(false);
-    if (ok) toast.success(`Saved ${ok} change${ok === 1 ? "" : "s"}`);
+    if (ok) {
+      toast.success(`Saved ${ok} change${ok === 1 ? "" : "s"}`);
+      setJustSaved(true);
+      window.setTimeout(() => setJustSaved(false), 1800);
+    }
     invalidatePage(activePage);
     load(activePage);
   };
@@ -149,7 +168,7 @@ const AdminContent = () => {
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-6 max-w-[1600px] mx-auto">
       {/* Page picker */}
-      <aside className="lg:w-64 shrink-0">
+      <aside className="lg:w-60 shrink-0">
         <div className="sticky top-4 space-y-1">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-2 mb-2">
             Pages
@@ -171,28 +190,20 @@ const AdminContent = () => {
       </aside>
 
       {/* Content editor */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
-          <div>
-            <h1 className="text-2xl font-bold">{currentPage.label}</h1>
-            <p className="text-sm text-muted-foreground">{currentPage.description}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {currentPage.previewUrl && (
-              <Button variant="outline" size="sm" asChild>
-                <Link to={currentPage.previewUrl} target="_blank">
-                  <ExternalLink className="h-4 w-4 mr-1" /> Preview
-                </Link>
-              </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={addSection}>
-              <Plus className="h-4 w-4 mr-1" /> New section
+      <div className="flex-1 min-w-0 space-y-5 pb-24">
+        <CmsPageHeader title={currentPage.label} description={currentPage.description} />
+
+        <div className="flex flex-wrap items-center gap-2">
+          {currentPage.previewUrl && (
+            <Button variant="outline" size="sm" asChild>
+              <Link to={currentPage.previewUrl} target="_blank">
+                <ExternalLink className="h-4 w-4 mr-1.5" /> Preview live page
+              </Link>
             </Button>
-            <Button size="sm" onClick={saveAll} disabled={saving || dirtyCount === 0}>
-              {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
-              Save {dirtyCount > 0 && <Badge variant="secondary" className="ml-2">{dirtyCount}</Badge>}
-            </Button>
-          </div>
+          )}
+          <Button variant="outline" size="sm" onClick={addSection}>
+            <Plus className="h-4 w-4 mr-1.5" /> New section
+          </Button>
         </div>
 
         {loading ? (
@@ -200,93 +211,145 @@ const AdminContent = () => {
             <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading...
           </div>
         ) : Object.keys(grouped).length === 0 ? (
-          <Card>
-            <CardContent className="py-10 text-center text-muted-foreground text-sm">
-              No content yet for this page. Click "New section" to add one.
-            </CardContent>
-          </Card>
+          <EditorCard title="No content yet" description="Add a section to start editing this page.">
+            <Button variant="outline" size="sm" onClick={addSection}>
+              <Plus className="h-4 w-4 mr-1.5" /> Add a section
+            </Button>
+          </EditorCard>
         ) : (
-          <div className="space-y-4">
-            {Object.entries(grouped).map(([section, items]) => (
-              <Card key={section}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base capitalize">{section}</CardTitle>
-                      <CardDescription>{items.length} field{items.length === 1 ? "" : "s"}</CardDescription>
+          Object.entries(grouped).map(([section, items]) => (
+            <EditorCard
+              key={section}
+              title={sectionTitle(section)}
+              description={`${items.length} editable item${items.length === 1 ? "" : "s"} in this section.`}
+              action={
+                <Button variant="ghost" size="sm" onClick={() => addRow(section)}>
+                  <Plus className="h-4 w-4 mr-1.5" /> Add content block
+                </Button>
+              }
+            >
+              {items.map((row) => (
+                <div
+                  key={row.id}
+                  className={`rounded-lg border p-4 space-y-3 transition-colors ${
+                    row._dirty ? "border-primary/50 bg-primary/5" : "bg-background/40"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-0.5 min-w-0 flex-1">
+                      <Input
+                        value={row.label ?? ""}
+                        onChange={(e) => updateRow(row.id, { label: e.target.value })}
+                        placeholder={friendlyLabel(row)}
+                        className="h-9 text-sm font-medium border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground placeholder:font-medium"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Appears in the <span className="font-medium">{sectionTitle(section)}</span> section of{" "}
+                        <span className="font-medium">{currentPage.label}</span>.
+                      </p>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => addRow(section)}>
-                      <Plus className="h-4 w-4 mr-1" /> Add field
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {items.map((row) => (
-                    <div
-                      key={row.id}
-                      className={`grid gap-2 sm:grid-cols-[1fr_2fr_auto] items-start p-3 rounded-md border ${
-                        row._dirty ? "border-primary/50 bg-primary/5" : "border-border"
-                      }`}
-                    >
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Label</Label>
-                        <Input
-                          value={row.label ?? ""}
-                          onChange={(e) => updateRow(row.id, { label: e.target.value })}
-                          placeholder="Friendly label"
-                          className="h-8 text-sm"
-                        />
-                        <div className="flex gap-1">
-                          <Input
-                            value={row.key}
-                            onChange={(e) => updateRow(row.id, { key: e.target.value })}
-                            placeholder="key"
-                            className="h-7 text-xs font-mono"
-                          />
-                          <select
-                            value={row.value_type}
-                            onChange={(e) => updateRow(row.id, { value_type: e.target.value })}
-                            className="h-7 text-xs rounded border border-input bg-background px-1"
-                          >
-                            <option value="text">text</option>
-                            <option value="textarea">textarea</option>
-                            <option value="url">url</option>
-                            <option value="image">image</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Value</Label>
-                        {row.value_type === "textarea" ? (
-                          <Textarea
-                            value={row.value}
-                            onChange={(e) => updateRow(row.id, { value: e.target.value })}
-                            rows={3}
-                            className="text-sm"
-                          />
-                        ) : (
-                          <Input
-                            value={row.value}
-                            onChange={(e) => updateRow(row.id, { value: e.target.value })}
-                            className="text-sm"
-                          />
-                        )}
-                      </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {row._dirty && (
+                        <Badge variant="secondary" className="text-[10px] h-5">Unsaved</Badge>
+                      )}
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeRow(row)}
-                        className="text-muted-foreground hover:text-destructive mt-5"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </div>
+
+                  {row.value_type === "textarea" ? (
+                    <Textarea
+                      value={row.value}
+                      onChange={(e) => updateRow(row.id, { value: e.target.value })}
+                      rows={4}
+                      className="text-base leading-relaxed"
+                    />
+                  ) : (
+                    <Input
+                      value={row.value}
+                      onChange={(e) => updateRow(row.id, { value: e.target.value })}
+                      className="h-11 text-base"
+                      type={row.value_type === "url" ? "url" : "text"}
+                    />
+                  )}
+
+                  <AdvancedDetails>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <FieldLabel
+                          label="Field key"
+                          helper="Internal ID — only change if you know what you're doing."
+                        />
+                        <Input
+                          value={row.key}
+                          onChange={(e) => updateRow(row.id, { key: e.target.value })}
+                          className="h-9 text-xs font-mono"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <FieldLabel
+                          label="Field type"
+                          helper="Controls what kind of input is shown."
+                        />
+                        <select
+                          value={row.value_type}
+                          onChange={(e) => updateRow(row.id, { value_type: e.target.value })}
+                          className="h-9 w-full text-xs rounded-md border border-input bg-background px-2"
+                        >
+                          <option value="text">Short text</option>
+                          <option value="textarea">Long text (textarea)</option>
+                          <option value="url">URL / link</option>
+                          <option value="image">Image URL</option>
+                        </select>
+                      </div>
+                    </div>
+                  </AdvancedDetails>
+                </div>
+              ))}
+            </EditorCard>
+          ))
         )}
+      </div>
+
+      {/* Sticky save bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-3 px-4 sm:px-6 py-3">
+          <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+            {justSaved ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-emerald-700 font-medium">Saved</span>
+              </>
+            ) : dirtyCount > 0 ? (
+              <span>
+                {dirtyCount} unsaved change{dirtyCount === 1 ? "" : "s"}.
+              </span>
+            ) : (
+              <span>All changes saved.</span>
+            )}
+          </div>
+          <Button
+            onClick={saveAll}
+            disabled={saving || dirtyCount === 0}
+            className="h-10 px-5"
+          >
+            {saving ? (
+              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-1.5" />
+            )}
+            Save changes
+            {dirtyCount > 0 && (
+              <Badge variant="secondary" className="ml-2">{dirtyCount}</Badge>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

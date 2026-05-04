@@ -268,7 +268,7 @@ const Results = () => {
             <span className={`text-8xl sm:text-9xl font-bold tracking-tight ${ctaCopy.scoreColor}`}>
               {animatedScore}
             </span>
-            <span className={`text-4xl font-semibold ${ctaCopy.scoreColor}/70`}>%</span>
+            <span className={`text-4xl font-semibold opacity-70 ${ctaCopy.scoreColor}`}>%</span>
           </div>
           <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.18em] ${ctaCopy.scoreColor}`}>
             {ctaCopy.stageLabel}

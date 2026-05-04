@@ -13,8 +13,8 @@ import CmsPartners from "@/components/cms/CmsPartners";
 import CmsNotifications from "@/components/cms/CmsNotifications";
 import CmsGlobal from "@/components/cms/CmsGlobal";
 import CmsCopilot from "@/components/cms/CmsCopilot";
-import CmsPreviewPane from "@/components/admin/CmsPreviewPane";
 import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const SECTIONS = [

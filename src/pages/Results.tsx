@@ -112,7 +112,8 @@ const Results = () => {
   const chatScriptSource = useMemo<string[]>(() => {
     if (rows === null) return []; // still loading; don't start the chat yet
     if (tierData) {
-      return [tierData.title, ...tierData.messages].filter(Boolean);
+      const body = tierData.messages.filter(Boolean).join("\n\n");
+      return [tierData.title, body].filter(Boolean);
     }
     if (assessment?.diagnosticTitle) {
       return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean);

@@ -239,9 +239,19 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" onClick={() => navigate("/challenge/day/1")}>
-                <ArrowRight className="h-4 w-4" /> Get started
-              </Button>
+              <Textarea
+                value={bioDraft}
+                onChange={(e) => setBioDraft(e.target.value.slice(0, 500))}
+                placeholder="e.g. I help solo coaches turn cold leads into paying clients with AI-powered quizzes."
+                className="min-h-[88px] resize-none text-sm"
+                maxLength={500}
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
+                <Button type="button" variant="secondary" className="h-10 gap-2" disabled={bioSaving} onClick={handleBioSave}>
+                  {bioSaving ? "Saving…" : state.user?.bio ? "Update bio" : "Save bio"}
+                </Button>
+              </div>
             </div>
           </section>
         </div>

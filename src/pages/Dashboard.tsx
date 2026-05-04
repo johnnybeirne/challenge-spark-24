@@ -295,12 +295,9 @@ const Dashboard = () => {
                     <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 pr-14">
                   <p className="text-xs font-black uppercase tracking-wide text-primary">Step 3</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Tell us who you help and how</h2>
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                    <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                  </div>
                 </div>
               </div>
               <Textarea

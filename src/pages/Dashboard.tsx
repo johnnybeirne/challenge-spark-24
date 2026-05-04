@@ -216,19 +216,33 @@ const Dashboard = () => {
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
               <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
-              <span className="text-sm font-medium text-muted-foreground">{completedDays} of 3 complete</span>
+              <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
             <Progress value={progressValue} className="mb-5 h-2" />
             <div className="space-y-3">
-              {challengeSteps.map((step) => (
-                <div key={step.day} className="flex items-center gap-4 rounded-lg border border-border bg-muted/20 p-4">
-                  {getStepIcon(step.day)}
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-foreground">Day {step.day} — {step.title}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{getStepStatus(step.day)}</p>
+              {challengeSteps.map((step) => {
+                const status = getStepStatus(step.day);
+                const isActive = status === "In progress";
+                const isComplete = status === "Complete";
+                return (
+                  <div
+                    key={step.day}
+                    className={`flex items-center gap-4 rounded-lg border p-4 transition-colors ${
+                      isActive
+                        ? "border-primary/40 bg-primary/10"
+                        : isComplete
+                        ? "border-primary/20 bg-primary/5"
+                        : "border-border bg-muted/20"
+                    }`}
+                  >
+                    {getStepIcon(step.day)}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-foreground">Day {step.day} — {step.title}</p>
+                      <p className={`mt-1 text-sm ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>

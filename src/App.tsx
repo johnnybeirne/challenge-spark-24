@@ -64,6 +64,9 @@ const App = () => (
               <Route element={<AppShell />}>
                 <Route path="/assess" element={<Assessment />} />
                 <Route path="/results" element={<Results />} />
+                <Route path="/results/low" element={<Results />} />
+                <Route path="/results/med" element={<Results />} />
+                <Route path="/results/high" element={<Results />} />
                 <Route path="/join" element={<Signup />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />

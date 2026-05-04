@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -63,10 +63,19 @@ type DiagnosticRow = {
 
 const Results = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { state } = useAppState();
+  const previewTier = (() => {
+    const p = location.pathname.toLowerCase();
+    if (p.endsWith("/low")) return "low";
+    if (p.endsWith("/med") || p.endsWith("/mid")) return "mid";
+    if (p.endsWith("/high")) return "high";
+    return null;
+  })();
+  const previewScore = previewTier === "low" ? 2 : previewTier === "mid" ? 5 : previewTier === "high" ? 8 : 0;
   const assessment = state.assessment as unknown as AssessmentResult | null;
-  const hasResult = !!assessment && "challengeType" in (assessment as object);
-  const score = assessment?.diagnosticScore ?? 0;
+  const hasResult = previewTier !== null || (!!assessment && "challengeType" in (assessment as object));
+  const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
   const percentageScore = Math.round((score / 9) * 100);
   const [animatedScore, setAnimatedScore] = useState(0);
 
@@ -165,7 +174,7 @@ const Results = () => {
     return () => cancelAnimationFrame(frameId);
   }, [percentageScore]);
 
-  if (!hasResult || !assessment) {
+  if (!hasResult) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-xl font-bold text-foreground">No results yet</h1>

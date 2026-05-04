@@ -43,25 +43,86 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     navigate(path);
   };
 
+  const handlePhotoUpload = async (file?: File) => {
+    if (!file || !authUser || photoUploading) return;
+    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Please choose an image under 5MB.");
+    setPhotoUploading(true);
+    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${authUser.id}/profile-photo.${extension}`;
+    const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, {
+      cacheControl: "3600", contentType: file.type, upsert: true,
+    });
+    if (uploadError) { setPhotoUploading(false); return toast.error(uploadError.message || "Photo upload failed"); }
+    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
+    const avatarUrl = `${data.publicUrl}?v=${Date.now()}`;
+    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: avatarUrl } as any).eq("user_id", authUser.id);
+    setPhotoUploading(false);
+    if (profileError) return toast.error(profileError.message || "Could not save your photo");
+    const alreadyUploaded = Boolean(state.user?.avatarUrl);
+    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl } } : prev));
+    toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Unlock Credits earned.");
+  };
+
+  const avatarSrc = state.user?.avatarUrl || avatarPlaceholder;
+  const hasAvatar = Boolean(state.user?.avatarUrl);
+
   return (
     <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
-      <button
-        onClick={() => go("/user-dashboard")}
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
+      />
+      <div
         className={cn(
-          "rounded-xl border border-border bg-background text-left transition-colors hover:border-primary/40 hover:bg-muted/30",
-          collapsed ? "p-2 text-center" : "px-3 py-2.5"
+          "rounded-xl border border-border bg-background transition-colors hover:border-primary/40",
+          collapsed ? "p-2" : "px-3 py-2.5"
         )}
-        title="Back to dashboard"
       >
         {collapsed ? (
-          <p className="text-xs font-semibold text-foreground">D{currentDay}</p>
+          <button
+            onClick={() => authUser ? photoInputRef.current?.click() : go("/user-dashboard")}
+            className="relative mx-auto block h-9 w-9"
+            title={hasAvatar ? "Change photo" : "Add your photo"}
+            disabled={photoUploading}
+          >
+            <img src={avatarSrc} alt="Profile" className={cn("h-9 w-9 rounded-full object-cover", !hasAvatar && "border-2 border-dashed border-primary/40")} />
+            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <Camera className="h-2.5 w-2.5" />
+            </span>
+          </button>
         ) : (
-          <>
-            <p className="text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
-            <p className="text-xs text-muted-foreground">Dashboard</p>
-          </>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => authUser && photoInputRef.current?.click()}
+              className="relative h-11 w-11 shrink-0"
+              title={hasAvatar ? "Change photo" : "Add your photo"}
+              disabled={photoUploading || !authUser}
+            >
+              <img
+                src={avatarSrc}
+                alt="Profile"
+                className={cn(
+                  "h-11 w-11 rounded-full object-cover transition-opacity hover:opacity-80",
+                  !hasAvatar && "border-2 border-dashed border-primary/50"
+                )}
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
+                <Camera className="h-3 w-3" />
+              </span>
+            </button>
+            <button onClick={() => go("/user-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
+              <p className="truncate text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {photoUploading ? "Uploading…" : hasAvatar ? "Dashboard" : "Tap photo to add yours"}
+              </p>
+            </button>
+          </div>
         )}
-      </button>
+      </div>
 
       <button
         onClick={() => go("/unlocks")}

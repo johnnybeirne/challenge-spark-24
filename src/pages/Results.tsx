@@ -211,6 +211,40 @@ const Results = () => {
         Your Challenge System Score
       </p>
 
+      <Card className={`mb-10 ${ctaCopy.scoreSoftBorder} ${ctaCopy.scoreSoftBg} shadow-none`}>
+        <CardContent className="p-8 text-center">
+          <div className="flex items-baseline justify-center gap-1">
+            <span className={`text-8xl sm:text-9xl font-bold tracking-tight ${ctaCopy.scoreColor}`}>
+              {animatedScore}
+            </span>
+            <span className={`text-4xl font-semibold opacity-70 ${ctaCopy.scoreColor}`}>%</span>
+          </div>
+          <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.18em] ${ctaCopy.scoreColor}`}>
+            {ctaCopy.stageLabel}
+          </p>
+
+          <div
+            className={`mt-8 h-2.5 w-full overflow-hidden rounded-full ${ctaCopy.scoreTrack}`}
+            role="meter"
+            aria-valuenow={percentageScore}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Diagnostic score percentage"
+          >
+            <div
+              className={`h-full rounded-full ${ctaCopy.scoreBg} transition-[width] duration-100 ease-out`}
+              style={{ width: `${animatedScore}%` }}
+            />
+          </div>
+          <div className="mt-3 flex items-center justify-between text-xs font-medium text-muted-foreground">
+            <span>Score</span>
+            <span className="font-semibold text-foreground/80">
+              Next step: <span className={ctaCopy.scoreColor}>{ctaCopy.nextStep}</span>
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
       <header className="mb-12">
         <div className="flex items-start gap-3">
           <div className="relative shrink-0">
@@ -263,40 +297,6 @@ const Results = () => {
           </div>
         </div>
       </header>
-
-      <Card className={`mb-12 ${ctaCopy.scoreSoftBorder} ${ctaCopy.scoreSoftBg} shadow-none`}>
-        <CardContent className="p-8 text-center">
-          <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-8xl sm:text-9xl font-bold tracking-tight ${ctaCopy.scoreColor}`}>
-              {animatedScore}
-            </span>
-            <span className={`text-4xl font-semibold opacity-70 ${ctaCopy.scoreColor}`}>%</span>
-          </div>
-          <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.18em] ${ctaCopy.scoreColor}`}>
-            {ctaCopy.stageLabel}
-          </p>
-
-          <div
-            className={`mt-8 h-2.5 w-full overflow-hidden rounded-full ${ctaCopy.scoreTrack}`}
-            role="meter"
-            aria-valuenow={percentageScore}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Diagnostic score percentage"
-          >
-            <div
-              className={`h-full rounded-full ${ctaCopy.scoreBg} transition-[width] duration-100 ease-out`}
-              style={{ width: `${animatedScore}%` }}
-            />
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <span>Score</span>
-            <span className="font-semibold text-foreground/80">
-              Next step: <span className={ctaCopy.scoreColor}>{ctaCopy.nextStep}</span>
-            </span>
-          </div>
-        </CardContent>
-      </Card>
 
       <div className="space-y-4">
         <p className="text-center text-base leading-7 text-foreground/80 max-w-md mx-auto">

@@ -312,14 +312,6 @@ const Results = () => {
               )}
             </div>
 
-            <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-              {bullets.map((b) => (
-                <li key={b} className="flex items-center gap-1.5">
-                  <Check className={`w-4 h-4 ${ctaCopy.scoreColor}`} strokeWidth={3} />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </header>

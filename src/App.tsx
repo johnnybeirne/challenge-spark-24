@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,7 +29,6 @@ import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
-import AdminCms from "@/pages/AdminCms";
 import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
@@ -95,7 +94,7 @@ const App = () => (
               <Route path="/owner-console" element={<AdminLayout />}>
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="cms" element={<AdminCms />} />
+                <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
                 <Route path="content" element={<AdminContent />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
@@ -109,7 +108,7 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="cms" element={<AdminCms />} />
+                <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 

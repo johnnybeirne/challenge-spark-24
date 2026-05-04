@@ -15,10 +15,8 @@ const CmsPreviewPane = ({ path, label }: CmsPreviewPaneProps) => {
   const [version, setVersion] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Refresh when path changes (i.e. user switched section)
-  useEffect(() => {
-    setVersion((v) => v + 1);
-  }, [path]);
+  // Note: do NOT auto-bump version on path change — the `key` below already
+  // remounts the iframe per path. Bumping version here caused a double-load flash.
 
   const src = `${path}${path.includes("?") ? "&" : "?"}cmsPreview=1&v=${version}`;
 

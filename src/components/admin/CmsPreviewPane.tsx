@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Monitor, Smartphone, RefreshCw, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";

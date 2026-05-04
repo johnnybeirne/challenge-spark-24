@@ -88,9 +88,6 @@ const Results = () => {
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
       <header className="mb-8 text-center">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          <TypewriterText text="Diagnostic result" />
-        </p>
         <h1 className="mb-3 text-3xl font-bold text-foreground">
           <TypewriterText text={diagnostic.title} delay={520} />
         </h1>

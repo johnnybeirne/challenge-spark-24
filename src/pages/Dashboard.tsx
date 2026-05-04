@@ -262,7 +262,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
-            <Progress value={progressValue} className="mb-5 h-2" />
+            <Progress value={Math.max(progressValue, hasProgress ? 8 : 0)} className="mb-5 h-2" />
             <div className="grid gap-3 sm:grid-cols-3">
               {challengeSteps.map((step) => {
                 const status = getStepStatus(step.day);

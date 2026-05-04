@@ -44,6 +44,13 @@ const Dashboard = () => {
   const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+  const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
+  const getDayDate = (day: number) => {
+    if (!startedAt) return null;
+    const d = new Date(startedAt);
+    d.setDate(d.getDate() + (day - 1));
+    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  };
 
   useEffect(() => {
     if (!hasSignupCredits) return;

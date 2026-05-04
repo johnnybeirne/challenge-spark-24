@@ -130,31 +130,41 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         </button>
       </section>
 
-      <Card className={cn("border-border shadow-sm", communityUnlocked ? "bg-primary/5" : "bg-muted/40 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
-        <CardContent className={cn("cursor-pointer", collapsed ? "p-3" : "p-4")}>
-          <div className="mb-2 flex items-center justify-between gap-3">
-            {!collapsed && <p className="font-semibold text-foreground">Challenge Community</p>}
-            {communityUnlocked ? <Users className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
+      <Card className={cn("border-border", communityUnlocked ? "bg-primary/5" : "bg-muted/40 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
+        <CardContent className={cn("cursor-pointer", collapsed ? "p-2" : "px-3 py-2.5")}>
+          <div className="flex items-center justify-between gap-2">
+            {!collapsed && <p className="text-sm font-semibold text-foreground">Community</p>}
+            {communityUnlocked ? <Users className="h-4 w-4 text-primary" /> : <Lock className="h-4 w-4 text-muted-foreground" />}
           </div>
-          {!collapsed && <><p className="text-sm text-muted-foreground">
-            {communityUnlocked ? "Your private builder network is open." : "A private network for builders who have launched"}
-          </p>
-          {!communityUnlocked && <p className="mt-1 text-sm text-muted-foreground">Unlock after you complete the challenge and take action</p>}
-          <div className="mt-4 space-y-2">
-            {[
-              ["Complete Day 3", day3Done],
-              ["Submit your challenge", submitted],
-              ["Invite 3 builders OR share", sharedOrInvited],
-            ].map(([label, done]) => (
-              <div key={String(label)} className="flex items-center gap-2 text-sm">
-                {done ? <CheckCircle className="h-4 w-4 text-primary" /> : <span className="h-4 w-4 rounded-full border border-border" />}
-                <span className={done ? "text-foreground" : "text-muted-foreground"}>{label}</span>
-              </div>
-            ))}
-          </div></>}
-          {!collapsed && <Button className="mt-4 min-h-10 w-full whitespace-normal px-3 text-center text-sm leading-tight" variant={communityUnlocked ? "default" : "outline"} onClick={(e) => { e.stopPropagation(); if (communityUnlocked) go("/community"); else setModal("community"); }}>
-            {communityUnlocked ? "Enter Community" : "Unlock Community"}
-          </Button>}
+          {!collapsed && (
+            <>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {communityUnlocked ? "Your private builder network is open." : "Unlock after launching your challenge"}
+              </p>
+              {!communityUnlocked && (
+                <div className="mt-2 space-y-1">
+                  {[
+                    ["Complete Day 3", day3Done],
+                    ["Submit your challenge", submitted],
+                    ["Invite 3 builders", sharedOrInvited],
+                  ].map(([label, done]) => (
+                    <div key={String(label)} className="flex items-center gap-2 text-xs">
+                      {done ? <CheckCircle className="h-3.5 w-3.5 text-primary" /> : <span className="h-3.5 w-3.5 rounded-full border border-border" />}
+                      <span className={done ? "text-foreground" : "text-muted-foreground"}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <Button
+                size="sm"
+                className="mt-2.5 h-8 w-full text-xs"
+                variant={communityUnlocked ? "default" : "outline"}
+                onClick={(e) => { e.stopPropagation(); if (communityUnlocked) go("/community"); else setModal("community"); }}
+              >
+                {communityUnlocked ? "Enter Community" : "Unlock Community"}
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
 

@@ -173,18 +173,17 @@ const Results = () => {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs text-muted-foreground mb-2">Johnny B AI</div>
-            <div className="space-y-2">
+            <div className="flex flex-col items-start gap-2">
               {bubblesToRender.map((text, i) => {
                 const isLast = i === bubblesToRender.length - 1;
                 const isTitle = i === 0;
-                // While the thinking bubble for this index is up, hide its text bubble
                 if (isLast && showThinkingBubble) return null;
                 return (
                   <div
                     key={i}
-                    className={`bg-muted/60 rounded-2xl ${i === 0 ? "rounded-tl-sm" : ""} px-4 py-3 inline-block max-w-full animate-fade-in ${
-                      isTitle ? "font-bold text-foreground text-lg leading-snug" : "text-base leading-7 text-foreground/90"
-                    }`}
+                    className={`bg-muted/60 px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl ${
+                      i === 0 ? "rounded-tl-md" : "rounded-tl-2xl"
+                    } ${isTitle ? "font-semibold" : ""}`}
                   >
                     {isLast ? (
                       <TypewriterText text={text} onDone={() => handleBubbleDone(i)} />
@@ -195,7 +194,7 @@ const Results = () => {
                 );
               })}
               {showThinkingBubble && (
-                <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-4 py-3 inline-block animate-fade-in">
+                <div className="bg-muted/60 rounded-2xl rounded-tl-md px-4 py-3 w-fit animate-fade-in">
                   <TypingDots />
                 </div>
               )}

@@ -99,8 +99,9 @@ const Results = () => {
     return match ?? rows[0];
   }, [rows, percentageScore]);
 
-  // Build the chat script: title + messages
+  // Wait for Supabase rows before building the script — prevents mid-typing resets
   const chatScript = useMemo<string[]>(() => {
+    if (rows === null) return []; // still loading; don't start the chat yet
     if (tierData) {
       return [tierData.title, ...tierData.messages].filter(Boolean);
     }
@@ -109,13 +110,14 @@ const Results = () => {
     }
     const fallback = getDiagnosticResult(score);
     return [fallback.title, fallback.message];
-  }, [tierData, assessment, score]);
+  }, [rows, tierData, assessment, score]);
 
   // Sequential bubble reveal
-  const [visibleCount, setVisibleCount] = useState(0); // bubbles fully visible (typed)
+  const [visibleCount, setVisibleCount] = useState(0);
   const [thinking, setThinking] = useState(true);
 
   useEffect(() => {
+    if (chatScript.length === 0) return;
     setVisibleCount(0);
     setThinking(true);
     const t = window.setTimeout(() => setThinking(false), THINKING_MS);

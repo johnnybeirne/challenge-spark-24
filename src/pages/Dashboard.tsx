@@ -44,6 +44,13 @@ const Dashboard = () => {
   const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+  const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
+  const getDayDate = (day: number) => {
+    if (!startedAt) return null;
+    const d = new Date(startedAt);
+    d.setDate(d.getDate() + (day - 1));
+    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  };
 
   useEffect(() => {
     if (!hasSignupCredits) return;
@@ -175,7 +182,12 @@ const Dashboard = () => {
                   >
                     <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                        {getDayDate(step.day) && (
+                          <p className={`text-[10px] font-medium ${isLocked ? "text-muted-foreground/70" : "text-muted-foreground"}`}>{getDayDate(step.day)}</p>
+                        )}
+                      </div>
                       <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
                       <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
                     </div>

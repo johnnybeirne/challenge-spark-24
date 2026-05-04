@@ -39,21 +39,21 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   };
 
   return (
-    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-3 p-3" : "gap-5 p-5")}>
+    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-card", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
       <button
         onClick={() => go("/user-dashboard")}
         className={cn(
-          "rounded-2xl border border-border bg-background text-left shadow-sm transition-colors hover:border-primary/40 hover:bg-muted/30",
-          collapsed ? "p-3 text-center" : "p-4"
+          "rounded-xl border border-border bg-background text-left transition-colors hover:border-primary/40 hover:bg-muted/30",
+          collapsed ? "p-2 text-center" : "px-3 py-2.5"
         )}
         title="Back to dashboard"
       >
         {collapsed ? (
-          <p className="text-sm font-semibold text-foreground">D{currentDay}</p>
+          <p className="text-xs font-semibold text-foreground">D{currentDay}</p>
         ) : (
           <>
-            <p className="font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Dashboard</p>
+            <p className="text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
+            <p className="text-xs text-muted-foreground">Dashboard</p>
           </>
         )}
       </button>
@@ -61,37 +61,35 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <button
         onClick={() => go("/unlocks")}
         className={cn(
-          "rounded-2xl border border-primary/30 bg-primary/5 text-left shadow-sm transition-all hover:border-primary/60 hover:bg-primary/10",
-          collapsed ? "p-3 text-center" : "p-4"
+          "rounded-xl border border-primary/30 bg-primary/5 text-left transition-all hover:border-primary/60 hover:bg-primary/10",
+          collapsed ? "p-2 text-center" : "px-3 py-2.5"
         )}
         title="Unlock Credits"
       >
         {collapsed ? (
-          <div className="flex flex-col items-center gap-1 text-primary">
-            <Sparkles className="h-5 w-5" />
-            <span className="text-sm font-black">{credits}</span>
+          <div className="flex flex-col items-center gap-0.5 text-primary">
+            <Sparkles className="h-4 w-4" />
+            <span className="text-xs font-black">{credits}</span>
           </div>
         ) : (
           <>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-black uppercase text-primary">Unlock Credits</p>
-                <p className="mt-1 text-4xl font-black leading-none text-foreground">{credits}</p>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <p className="text-[11px] font-black uppercase tracking-wide text-primary">Unlock Credits</p>
               </div>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Sparkles className="h-5 w-5" />
-              </div>
+              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">{creditTier.name}</span>
             </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-primary/25 bg-background px-2.5 py-1 text-xs font-bold text-primary">{creditTier.name}</span>
-              {nextReward && <span className="text-xs text-muted-foreground">Next: {nextReward.credits} credits</span>}
+            <div className="mt-1 flex items-baseline justify-between gap-2">
+              <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
+              {nextReward && <span className="text-[11px] text-muted-foreground">Next: {nextReward.credits}</span>}
             </div>
           </>
         )}
       </button>
 
-      <section className="space-y-3">
-        {!collapsed && <p className="text-sm font-semibold text-muted-foreground">Challenge progression</p>}
+      <section className="space-y-1.5">
+        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
         {[1, 2, 3].map((day) => {
           const unlock = getDayUnlock(day, state.challenge.startedAt);
           const active = location.pathname === `/day/${day}`;
@@ -100,34 +98,35 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               key={day}
               onClick={() => (unlock.available ? go(`/day/${day}`) : setModal("day"))}
               className={cn(
-                "w-full rounded-2xl border text-left transition-all",
-                collapsed ? "p-3" : "p-4",
-                unlock.available ? "border-primary/35 bg-background shadow-sm hover:border-primary" : "border-border bg-muted/40 opacity-60",
+                "w-full rounded-xl border text-left transition-all",
+                collapsed ? "p-2" : "px-3 py-2",
+                unlock.available ? "border-primary/30 bg-background hover:border-primary" : "border-border bg-muted/40 opacity-60",
                 active && "ring-2 ring-primary/20"
               )}
               title={`Day ${day}: ${unlock.label}`}
             >
-              <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold text-foreground">{collapsed ? day : `Day ${day}`}</p>
-                {unlock.available ? <CheckCircle className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{collapsed ? day : `Day ${day}`}</p>
+                  {!collapsed && <p className="truncate text-xs text-muted-foreground">{unlock.label}</p>}
+                </div>
+                {unlock.available ? <CheckCircle className="h-4 w-4 shrink-0 text-primary" /> : <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />}
               </div>
-              {!collapsed && <p className="mt-2 text-sm text-muted-foreground">{unlock.label}</p>}
             </button>
           );
         })}
         <button
           onClick={() => go("/rewards")}
           className={cn(
-            "w-full rounded-2xl border border-border bg-background text-left shadow-sm transition-all hover:border-primary/60 hover:bg-primary/5",
-            collapsed ? "p-3" : "p-4"
+            "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+            collapsed ? "p-2" : "px-3 py-2"
           )}
           title="Bonus Vault"
         >
-          <div className="flex items-center justify-between gap-3">
-            {!collapsed && <p className="font-semibold text-foreground">Bonus Vault</p>}
-            <Gift className="h-5 w-5 text-primary" />
+          <div className="flex items-center justify-between gap-2">
+            {!collapsed && <p className="text-sm font-semibold text-foreground">Bonus Vault</p>}
+            <Gift className="h-4 w-4 text-primary" />
           </div>
-          {!collapsed && <p className="mt-2 text-sm text-muted-foreground">Unlock powerful extras as you build</p>}
         </button>
       </section>
 

@@ -209,7 +209,7 @@ const Dashboard = () => {
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
             <Progress value={progressValue} className="mb-5 h-2" />
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               {challengeSteps.map((step) => {
                 const status = getStepStatus(step.day);
                 const isActive = status === "In progress";
@@ -218,7 +218,7 @@ const Dashboard = () => {
                 return (
                   <div
                     key={step.day}
-                    className={`flex items-center gap-4 rounded-lg border p-4 transition-colors ${
+                    className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 transition-colors ${
                       isActive
                         ? "border-primary/40 bg-primary/10"
                         : isComplete
@@ -226,10 +226,11 @@ const Dashboard = () => {
                         : "border-border bg-muted/30 opacity-60"
                     }`}
                   >
-                    {getStepIcon(step.day)}
+                    <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={`font-semibold ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>Day {step.day} — {step.title}</p>
-                      <p className={`mt-1 text-sm ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
+                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
+                      <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
                     </div>
                   </div>
                 );

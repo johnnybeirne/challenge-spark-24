@@ -230,7 +230,7 @@ const Results = () => {
     };
   })();
 
-  const bullets = ["Clear steps", "Real results", "People invite others"];
+  
 
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">

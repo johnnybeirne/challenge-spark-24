@@ -126,29 +126,6 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-3xl space-y-6">
-        {hasSignupCredits && (
-          <section className="relative overflow-hidden rounded-2xl border border-primary/40 bg-primary/10 p-5 shadow-sm ring-2 ring-primary/10 sm:p-6">
-            <Confetti duration={2600} />
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-[0_0_22px_hsl(var(--primary)/0.18)]">
-                  <Sparkles className="h-8 w-8" />
-                </div>
-                <div>
-                  <p className="text-xs font-black uppercase text-primary">Congratulations</p>
-                  <h2 className="mt-1 text-xl font-black text-foreground">You started the challenge</h2>
-                  <p className="mt-1 text-sm font-semibold leading-relaxed text-muted-foreground">100 Unlock Credits have been added immediately.</p>
-                </div>
-              </div>
-              <div className="rounded-2xl border border-primary/30 bg-background px-5 py-4 text-center shadow-sm">
-                <p className="text-xs font-black uppercase text-primary">Credits earned</p>
-                <p className="mt-1 text-5xl font-black leading-none text-foreground">{signupCreditCount}</p>
-                <Button variant="secondary" className="mt-4 h-11 shrink-0" onClick={() => navigate("/unlocks")}>View credits</Button>
-              </div>
-            </div>
-          </section>
-        )}
-
         {authUser && !state.user?.avatarUrl && (
           <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

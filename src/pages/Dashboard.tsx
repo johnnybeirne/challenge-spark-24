@@ -205,9 +205,6 @@ const Dashboard = () => {
                 <div className="min-w-0">
                   <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    Keep momentum across all 3 days and earn credits when it’s added.
-                  </p>
                   <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
                     <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
                   </div>

@@ -61,13 +61,13 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <button
         onClick={() => go("/unlocks")}
         className={cn(
-          "rounded-xl border border-primary/30 bg-primary/5 text-left transition-all hover:border-primary/60 hover:bg-primary/10",
+          "rounded-xl border border-success/30 bg-success/10 text-left transition-all hover:border-success/60 hover:bg-success/15",
           collapsed ? "p-2 text-center" : "px-3 py-2.5"
         )}
         title="Unlock Credits"
       >
         {collapsed ? (
-          <div className="flex flex-col items-center gap-0.5 text-primary">
+          <div className="flex flex-col items-center gap-0.5 text-success">
             <Sparkles className="h-4 w-4" />
             <span className="text-xs font-black">{credits}</span>
           </div>
@@ -75,10 +75,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <>
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <p className="text-[11px] font-black uppercase tracking-wide text-primary">Unlock Credits</p>
+                <Sparkles className="h-4 w-4 text-success" />
+                <p className="text-[11px] font-black uppercase tracking-wide text-success">Unlock Credits</p>
               </div>
-              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">{creditTier.name}</span>
+              <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-bold uppercase text-success">{creditTier.name}</span>
             </div>
             <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">You have</p>
             <div className="mt-0.5 flex items-baseline justify-between gap-2">

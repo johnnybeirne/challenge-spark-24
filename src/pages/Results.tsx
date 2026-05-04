@@ -320,9 +320,6 @@ const Results = () => {
         <p className="text-center text-base leading-7 text-foreground/80 max-w-md mx-auto">
           {ctaCopy.tension}
         </p>
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          Build this in 3 days
-        </p>
         <Button
           className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
           onClick={() => navigate("/join")}

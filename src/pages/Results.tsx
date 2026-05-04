@@ -163,19 +163,45 @@ const Results = () => {
       return {
         button: "Scale your challenge in 3 days",
         sub: "Turn what's already working into a stronger automatic lead generation system.",
+        stageLabel: "Operator Stage",
+        nextStep: "Scale",
+        tension: "Now let's make this scale without adding more effort.",
+        scoreColor: "text-emerald-500",
+        scoreBg: "bg-emerald-500",
+        scoreSoftBg: "bg-emerald-500/5",
+        scoreSoftBorder: "border-emerald-500/20",
+        scoreTrack: "bg-emerald-500/15",
       };
     }
     if (tier === "mid") {
       return {
         button: "Turn this into a working system in 3 days",
         sub: "Build a challenge that delivers results and supports automatic lead generation.",
+        stageLabel: "Builder Stage",
+        nextStep: "Consistency",
+        tension: "Right now, results depend on effort. Let's make them consistent.",
+        scoreColor: "text-blue-500",
+        scoreBg: "bg-blue-500",
+        scoreSoftBg: "bg-blue-500/5",
+        scoreSoftBorder: "border-blue-500/20",
+        scoreTrack: "bg-blue-500/15",
       };
     }
     return {
       button: "Build your challenge in 3 days",
       sub: "Create a simple version of your lead system and see it working.",
+      stageLabel: "Starter Stage",
+      nextStep: "Foundation",
+      tension: "Let's get something working.",
+      scoreColor: "text-amber-500",
+      scoreBg: "bg-amber-500",
+      scoreSoftBg: "bg-amber-500/5",
+      scoreSoftBorder: "border-amber-500/20",
+      scoreTrack: "bg-amber-500/15",
     };
   })();
+
+  const bullets = ["Clear steps", "Real results", "People invite others"];
 
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">

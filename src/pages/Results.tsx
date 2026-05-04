@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -100,7 +100,7 @@ const Results = () => {
   }, [rows, percentageScore]);
 
   // Wait for Supabase rows before building the script — prevents mid-typing resets
-  const chatScript = useMemo<string[]>(() => {
+  const chatScriptSource = useMemo<string[]>(() => {
     if (rows === null) return []; // still loading; don't start the chat yet
     if (tierData) {
       return [tierData.title, ...tierData.messages].filter(Boolean);
@@ -112,24 +112,42 @@ const Results = () => {
     return [fallback.title, fallback.message];
   }, [rows, tierData, assessment, score]);
 
+  const [chatScript, setChatScript] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (chatScript.length === 0 && chatScriptSource.length > 0) {
+      setChatScript(chatScriptSource);
+    }
+  }, [chatScript.length, chatScriptSource]);
+
   // Sequential bubble reveal
   const [visibleCount, setVisibleCount] = useState(0);
   const [thinking, setThinking] = useState(true);
+  const revealTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (chatScript.length === 0) return;
     setVisibleCount(0);
     setThinking(true);
-    const t = window.setTimeout(() => setThinking(false), THINKING_MS);
-    return () => window.clearTimeout(t);
+    if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
+    revealTimerRef.current = window.setTimeout(() => {
+      setVisibleCount(1);
+      setThinking(false);
+      revealTimerRef.current = null;
+    }, THINKING_MS);
+    return () => {
+      if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
+    };
   }, [chatScript.length]);
 
   const handleBubbleDone = (index: number) => {
     if (index + 1 >= chatScript.length) return;
+    if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     setThinking(true);
-    window.setTimeout(() => {
+    revealTimerRef.current = window.setTimeout(() => {
+      setVisibleCount((c) => Math.max(c, index + 2));
       setThinking(false);
-      setVisibleCount((c) => Math.max(c, index + 1));
+      revealTimerRef.current = null;
     }, BETWEEN_MESSAGES_MS);
   };
 
@@ -156,7 +174,7 @@ const Results = () => {
     );
   }
 
-  const bubblesToRender = chatScript.slice(0, visibleCount + 1);
+  const bubblesToRender = chatScript.slice(0, visibleCount);
   const showThinkingBubble = thinking;
 
   const ctaCopy = (() => {
@@ -263,7 +281,6 @@ const Results = () => {
               {bubblesToRender.map((text, i) => {
                 const isLast = i === bubblesToRender.length - 1;
                 const isTitle = i === 0;
-                if (isLast && showThinkingBubble) return null;
                 return (
                   <div
                     key={i}

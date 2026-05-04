@@ -143,28 +143,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <p className="mt-1 text-xs text-muted-foreground">
                 {communityUnlocked ? "Network with other challenge builders." : "Network with other challenge builders — unlock after launching."}
               </p>
-              {!communityUnlocked && (
-                <div className="mt-2 space-y-1">
-                  {[
-                    ["Complete Day 3", day3Done],
-                    ["Submit your challenge", submitted],
-                    ["Invite 3 builders", sharedOrInvited],
-                  ].map(([label, done]) => (
-                    <div key={String(label)} className="flex items-center gap-2 text-xs">
-                      {done ? <CheckCircle className="h-3.5 w-3.5 text-primary" /> : <span className="h-3.5 w-3.5 rounded-full border border-border" />}
-                      <span className={done ? "text-foreground" : "text-muted-foreground"}>{label}</span>
-                    </div>
-                  ))}
-                </div>
+              {communityUnlocked && (
+                <Button
+                  size="sm"
+                  className="mt-2.5 h-8 w-full text-xs"
+                  onClick={(e) => { e.stopPropagation(); go("/community"); }}
+                >
+                  Enter Community
+                </Button>
               )}
-              <Button
-                size="sm"
-                className="mt-2.5 h-8 w-full text-xs"
-                variant={communityUnlocked ? "default" : "outline"}
-                onClick={(e) => { e.stopPropagation(); if (communityUnlocked) go("/community"); else setModal("community"); }}
-              >
-                {communityUnlocked ? "Enter Community" : "Unlock Community"}
-              </Button>
             </>
           )}
         </CardContent>

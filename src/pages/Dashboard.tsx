@@ -126,7 +126,7 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-3">
           {authUser && !state.user?.avatarUrl && (
             <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
               <div className="flex h-full flex-col gap-4">
@@ -195,6 +195,34 @@ const Dashboard = () => {
                 </div>
               </div>
               <AddToCalendar variant="secondary" className="mt-auto h-12 w-full sm:w-auto sm:self-start" />
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="flex h-full flex-col gap-4">
+              <div className="flex items-start gap-4">
+                <div className="relative h-16 w-16 shrink-0">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-primary/40 bg-background shadow-sm">
+                    <Sparkles className="h-7 w-7 text-primary" />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 3</p>
+                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Tell us who you help and how</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    Define your audience and offer so your challenge resonates from Day 1.
+                  </p>
+                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
+                    <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
+                  </div>
+                </div>
+              </div>
+              <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" onClick={() => navigate("/challenge/day/1")}>
+                <ArrowRight className="h-4 w-4" /> Get started
+              </Button>
             </div>
           </section>
         </div>

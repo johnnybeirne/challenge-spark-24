@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Sparkles, Upload } from "lucide-react";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Sparkles, Upload, Zap } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
@@ -198,9 +198,26 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
+        <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+              <Zap className="h-5 w-5" fill="currentColor" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-foreground sm:text-xl">
+                Earn <span className="text-primary">150 credits</span> by completing all 3 steps
+              </h2>
+              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 credits per step · unlocks bonus rewards</p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && !state.user?.avatarUrl && (
-            <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+              <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+                +50 <Zap className="h-3 w-3" fill="currentColor" />
+              </span>
               <div className="flex h-full flex-col gap-4">
                 <div className="flex items-start gap-4">
                   <div className="relative h-16 w-16 shrink-0">
@@ -216,12 +233,9 @@ const Dashboard = () => {
                       <Camera className="h-3.5 w-3.5" />
                     </span>
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 pr-14">
                     <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
                     <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                      <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                    </div>
                   </div>
                 </div>
                 <input
@@ -239,7 +253,10 @@ const Dashboard = () => {
             </section>
           )}
 
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+              +50 <Zap className="h-3 w-3" fill="currentColor" />
+            </span>
             <div className="flex h-full flex-col gap-4">
               <div className="flex items-start gap-4">
                 <div className="relative h-16 w-16 shrink-0">
@@ -255,19 +272,19 @@ const Dashboard = () => {
                     <CalendarPlus className="h-3.5 w-3.5" />
                   </span>
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 pr-14">
                   <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                    <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                  </div>
                 </div>
               </div>
               <AddToCalendar variant="secondary" className="mt-auto h-12 w-full sm:w-auto sm:self-start" />
             </div>
           </section>
 
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+              +50 <Zap className="h-3 w-3" fill="currentColor" />
+            </span>
             <div className="flex h-full flex-col gap-4">
               <div className="flex items-start gap-4">
                 <div className="relative h-16 w-16 shrink-0">
@@ -278,12 +295,9 @@ const Dashboard = () => {
                     <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 pr-14">
                   <p className="text-xs font-black uppercase tracking-wide text-primary">Step 3</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Tell us who you help and how</h2>
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                    <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                  </div>
                 </div>
               </div>
               <Textarea

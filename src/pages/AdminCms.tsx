@@ -13,21 +13,22 @@ import CmsPartners from "@/components/cms/CmsPartners";
 import CmsNotifications from "@/components/cms/CmsNotifications";
 import CmsGlobal from "@/components/cms/CmsGlobal";
 import CmsCopilot from "@/components/cms/CmsCopilot";
+import CmsPreviewPane from "@/components/admin/CmsPreviewPane";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const SECTIONS = [
-  { id: "landing", label: "Landing Page" },
-  { id: "assessment", label: "Assessment" },
-  { id: "challenge", label: "Challenge Content" },
-  { id: "rewards", label: "Rewards & Unlocks" },
-  { id: "referrals", label: "Referral Settings" },
-  { id: "community", label: "Community & Builder Circle" },
-  { id: "branding", label: "Branding & Design" },
-  { id: "partners", label: "Partner Settings" },
-  { id: "notifications", label: "Notifications & Copy" },
-  { id: "copilot", label: "Johnny B AI (Copilot)" },
-  { id: "global", label: "Global Settings" },
+  { id: "landing", label: "Landing Page", previewPath: "/" },
+  { id: "assessment", label: "Assessment", previewPath: "/assessment" },
+  { id: "challenge", label: "Challenge Content", previewPath: "/challenge" },
+  { id: "rewards", label: "Rewards & Unlocks", previewPath: "/rewards" },
+  { id: "referrals", label: "Referral Settings", previewPath: "/referrals" },
+  { id: "community", label: "Community & Builder Circle", previewPath: "/community" },
+  { id: "branding", label: "Branding & Design", previewPath: "/" },
+  { id: "partners", label: "Partner Settings", previewPath: "/partners" },
+  { id: "notifications", label: "Notifications & Copy", previewPath: "/dashboard" },
+  { id: "copilot", label: "Johnny B AI (Copilot)", previewPath: "/dashboard" },
+  { id: "global", label: "Global Settings", previewPath: "/" },
 ] as const;
 
 const ADMIN_LINKS = [

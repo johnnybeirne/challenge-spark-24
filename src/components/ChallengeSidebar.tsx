@@ -84,6 +84,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
               {nextReward && <span className="text-[11px] text-muted-foreground">Next: {nextReward.credits}</span>}
             </div>
+            <p className="mt-1.5 text-[11px] leading-tight text-muted-foreground">Earn by completing tasks. Spend on bonus unlocks.</p>
           </>
         )}
       </button>

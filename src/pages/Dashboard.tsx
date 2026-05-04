@@ -107,7 +107,7 @@ const Dashboard = () => {
       <header className="mb-6 flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Challenge Dashboard</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-normal text-foreground">Your next step is clear</h1>
+          
         </div>
         {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button

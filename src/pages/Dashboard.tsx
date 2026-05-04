@@ -195,11 +195,22 @@ const Dashboard = () => {
         <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <CalendarPlus className="h-6 w-6" />
+              <div className="relative h-16 w-16 shrink-0">
+                <div className="flex h-16 w-16 flex-col overflow-hidden rounded-2xl border-2 border-primary/40 bg-background shadow-sm">
+                  <div className="flex h-5 items-center justify-center bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground">
+                    May
+                  </div>
+                  <div className="flex flex-1 items-center justify-center text-2xl font-black leading-none text-foreground">
+                    5
+                  </div>
+                </div>
+                <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                  <CalendarPlus className="h-3.5 w-3.5" />
+                </span>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
+                <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
+                <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                   Keep momentum across all 3 days and earn credits when it’s added.
                 </p>

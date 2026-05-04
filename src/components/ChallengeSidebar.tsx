@@ -1,22 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Sparkles, Users, X } from "lucide-react";
+import { Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Sparkles, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAppState } from "@/context/AppContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { getDayUnlock } from "@/lib/challengeProgression";
 import { getCreditTier, getNextReward } from "@/lib/credits";
 import { cn } from "@/lib/utils";
+import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 type ModalType = "day" | "community" | null;
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
-  const { state } = useAppState();
+  const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
   const location = useLocation();
   const [modal, setModal] = useState<ModalType>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
   const currentDay = state.challenge.currentDay || 1;
   const day3Done = state.challenge.completed || state.challenge.currentDay > 3;

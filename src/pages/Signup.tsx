@@ -223,7 +223,7 @@ const Signup = () => {
 
             {step !== "name" && name && (
               <div className="flex justify-end mb-6">
-                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-8 py-4 text-2xl">{name}</div>
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-5 py-2.5 text-base">{name}</div>
               </div>
             )}
             {step === "password" && signupEmail && (

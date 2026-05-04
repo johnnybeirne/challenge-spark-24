@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
+import TypingDots from "@/components/TypingDots";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 const TypewriterText = ({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) => {
   const [shown, setShown] = useState("");

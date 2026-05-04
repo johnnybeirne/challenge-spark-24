@@ -13,8 +13,8 @@ import CmsPartners from "@/components/cms/CmsPartners";
 import CmsNotifications from "@/components/cms/CmsNotifications";
 import CmsGlobal from "@/components/cms/CmsGlobal";
 import CmsCopilot from "@/components/cms/CmsCopilot";
-import CmsPreviewPane from "@/components/admin/CmsPreviewPane";
 import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const SECTIONS = [
@@ -118,18 +118,27 @@ const AdminCms = () => {
 
   return (
     <div className="flex min-h-screen h-screen">
-      <aside className="w-56 border-r bg-card flex flex-col shrink-0 overflow-y-auto">
+      <aside className="w-60 border-r bg-card flex flex-col shrink-0 overflow-y-auto">
         {sidebarHeader}
         {sidebarNav}
       </aside>
-      <main className="w-[520px] shrink-0 border-r overflow-y-auto bg-muted/20">
-        <div className="p-6 pb-0">{renderSection()}</div>
+      <main className="flex-1 min-w-0 overflow-y-auto bg-muted/20">
+        <div className="flex items-center justify-between px-6 py-3 border-b bg-card sticky top-0 z-10">
+          <h1 className="text-sm font-semibold">{activeMeta?.label}</h1>
+          {activeMeta && (
+            <a
+              href={activeMeta.previewPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              Preview in new tab
+            </a>
+          )}
+        </div>
+        <div className="p-6 max-w-3xl">{renderSection()}</div>
       </main>
-      <div className="flex-1 min-w-0">
-        {activeMeta && (
-          <CmsPreviewPane path={activeMeta.previewPath} label={activeMeta.label} />
-        )}
-      </div>
     </div>
   );
 };

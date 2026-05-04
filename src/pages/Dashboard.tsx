@@ -182,7 +182,12 @@ const Dashboard = () => {
                   >
                     <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                        {getDayDate(step.day) && (
+                          <p className={`text-[10px] font-medium ${isLocked ? "text-muted-foreground/70" : "text-muted-foreground"}`}>{getDayDate(step.day)}</p>
+                        )}
+                      </div>
                       <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
                       <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
                     </div>

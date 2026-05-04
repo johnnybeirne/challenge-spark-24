@@ -157,6 +157,26 @@ const Results = () => {
   const bubblesToRender = chatScript.slice(0, visibleCount + 1);
   const showThinkingBubble = thinking;
 
+  const ctaCopy = (() => {
+    const tier = tierData?.tier;
+    if (tier === "high") {
+      return {
+        button: "Scale your challenge in 3 days",
+        sub: "Turn what's already working into a stronger automatic lead generation system.",
+      };
+    }
+    if (tier === "mid") {
+      return {
+        button: "Turn this into a working system in 3 days",
+        sub: "Build a challenge that delivers results and supports automatic lead generation.",
+      };
+    }
+    return {
+      button: "Build your challenge in 3 days",
+      sub: "Create a simple version of your lead system and see it working.",
+    };
+  })();
+
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
       <header className="mb-8">
@@ -231,11 +251,11 @@ const Results = () => {
       </Card>
 
       <Button className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold" onClick={() => navigate("/join")}>
-        Start the 3-Day Challenge
+        {ctaCopy.button}
         <ArrowRight className="w-4 h-4" />
       </Button>
       <p className="mt-3 text-center text-sm leading-6 text-muted-foreground">
-        Build a simple version of your own lead system and see how it works.
+        {ctaCopy.sub}
       </p>
     </div>
   );

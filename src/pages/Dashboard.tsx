@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Sparkles, Upload } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
@@ -24,6 +25,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
+  const [bioSaving, setBioSaving] = useState(false);
   const [signupCreditCount, setSignupCreditCount] = useState(0);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
@@ -87,6 +90,22 @@ const Dashboard = () => {
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl } } : prev));
     toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Unlock Credits earned.");
+  };
+
+  const handleBioSave = async () => {
+    if (!authUser || bioSaving) return;
+    const trimmed = bioDraft.trim();
+    if (trimmed.length < 20) return toast.error("Please write at least 20 characters about who you help and how.");
+    if (trimmed.length > 500) return toast.error("Please keep your bio under 500 characters.");
+
+    setBioSaving(true);
+    const { error } = await supabase.from("profiles").update({ bio: trimmed } as any).eq("user_id", authUser.id);
+    setBioSaving(false);
+    if (error) return toast.error(error.message || "Could not save your bio");
+
+    const alreadySaved = Boolean(state.user?.bio);
+    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, bio: trimmed } } : prev));
+    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Unlock Credits earned.");
   };
 
   const getStepStatus = (day: number) => {
@@ -220,9 +239,19 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" onClick={() => navigate("/challenge/day/1")}>
-                <ArrowRight className="h-4 w-4" /> Get started
-              </Button>
+              <Textarea
+                value={bioDraft}
+                onChange={(e) => setBioDraft(e.target.value.slice(0, 500))}
+                placeholder="e.g. I help solo coaches turn cold leads into paying clients with AI-powered quizzes."
+                className="min-h-[88px] resize-none text-sm"
+                maxLength={500}
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
+                <Button type="button" variant="secondary" className="h-10 gap-2" disabled={bioSaving} onClick={handleBioSave}>
+                  {bioSaving ? "Saving…" : state.user?.bio ? "Update bio" : "Save bio"}
+                </Button>
+              </div>
             </div>
           </section>
         </div>

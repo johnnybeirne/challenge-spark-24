@@ -12,6 +12,7 @@ export interface User {
   name: string;
   email: string;
   avatarUrl?: string | null;
+  bio?: string | null;
   inviteCode: string;
   referredBy: string | null;
   referredByParent?: string | null;
@@ -363,6 +364,10 @@ function applyCreditRules(state: AppState): AppState {
 
   if (updated.user?.avatarUrl) {
     updated = awardCredits(updated, "profile_photo_uploaded", "You earned 50 credits for uploading your challenge photo", 50);
+  }
+
+  if (updated.user?.bio && updated.user.bio.trim().length >= 20) {
+    updated = awardCredits(updated, "profile_bio_added", "You earned 50 credits for sharing who you help and how", 50);
   }
 
   for (let i = 1; i <= updated.network.direct; i += 1) {

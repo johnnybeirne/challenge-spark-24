@@ -59,6 +59,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         name: profile.name || "",
         email: profile.email || "",
         avatarUrl: profile.avatar_url || null,
+        bio: (profile as any).bio || null,
         inviteCode: profile.invite_code,
         referredBy: profile.referred_by,
         referredByParent: profile.referred_by_parent,

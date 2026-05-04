@@ -122,8 +122,8 @@ const AdminCms = () => {
         {sidebarHeader}
         {sidebarNav}
       </aside>
-      <main className="w-[460px] shrink-0 border-r overflow-y-auto p-6">
-        {renderSection()}
+      <main className="w-[520px] shrink-0 border-r overflow-y-auto bg-muted/20">
+        <div className="p-6 pb-0">{renderSection()}</div>
       </main>
       <div className="flex-1 min-w-0">
         {activeMeta && (

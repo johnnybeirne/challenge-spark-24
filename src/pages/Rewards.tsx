@@ -61,10 +61,7 @@ const Rewards = () => {
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-10 pb-24">
         <header className="mb-8 max-w-3xl">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground shadow-sm">
-            <Gift className="h-4 w-4 text-primary" /> Bonus Vault
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">Bonus Vault</h1>
+          <h1 className="text-3xl font-bold text-foreground">Your Bonus Vault</h1>
           <p className="mt-2 text-muted-foreground">Unlock tools, training, and rewards as you build your challenge</p>
         </header>
 

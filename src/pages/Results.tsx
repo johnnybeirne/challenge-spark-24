@@ -174,7 +174,7 @@ const Results = () => {
     return () => cancelAnimationFrame(frameId);
   }, [percentageScore]);
 
-  if (!hasResult || !assessment) {
+  if (!hasResult) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-xl font-bold text-foreground">No results yet</h1>

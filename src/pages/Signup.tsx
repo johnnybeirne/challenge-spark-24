@@ -37,9 +37,9 @@ const TypingBubble = ({ text }: { text: string }) => {
     return () => clearInterval(id);
   }, [text]);
   return (
-    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-8 py-6 text-2xl text-foreground max-w-[85%]">
+    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-5 py-3 text-base text-foreground max-w-[85%]">
       {shown}
-      <span className="inline-block w-3 h-8 bg-foreground/40 ml-1 animate-pulse align-middle" />
+      <span className="inline-block w-2 h-5 bg-foreground/40 ml-1 animate-pulse align-middle" />
     </div>
   );
 };
@@ -223,18 +223,18 @@ const Signup = () => {
 
             {step !== "name" && name && (
               <div className="flex justify-end mb-6">
-                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-8 py-4 text-2xl">{name}</div>
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-5 py-2.5 text-base">{name}</div>
               </div>
             )}
             {step === "password" && signupEmail && (
               <div className="flex justify-end mb-6">
-                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-8 py-4 text-2xl">{signupEmail}</div>
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-5 py-2.5 text-base">{signupEmail}</div>
               </div>
             )}
 
-            <form onSubmit={handleSignupNext} className="flex gap-4 items-center mt-12">
+            <form onSubmit={handleSignupNext} className="flex gap-3 items-center mt-8">
               {step === "name" ? (
-                <div className="flex-1 grid grid-cols-2 gap-4">
+                <div className="flex-1 grid grid-cols-2 gap-3">
                   <Input
                     ref={signupInputRef}
                     type="text"
@@ -243,7 +243,7 @@ const Signup = () => {
                     onChange={(e) => setFirstName(e.target.value)}
                     autoComplete="given-name"
                     maxLength={50}
-                    className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
+                    className="h-12 rounded-xl text-base px-4 border-2 border-foreground"
                   />
                   <Input
                     type="text"
@@ -252,7 +252,7 @@ const Signup = () => {
                     onChange={(e) => setLastName(e.target.value)}
                     autoComplete="family-name"
                     maxLength={50}
-                    className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
+                    className="h-12 rounded-xl text-base px-4 border-2 border-foreground"
                   />
                 </div>
               ) : (
@@ -260,16 +260,16 @@ const Signup = () => {
                   key={step}
                   ref={signupInputRef}
                   {...(signupInputProps as any)}
-                  className="h-24 rounded-2xl text-2xl px-6 border-4 border-foreground"
+                  className="h-12 rounded-xl text-base px-4 border-2 border-foreground flex-1"
                 />
               )}
               <Button
                 type="submit"
                 disabled={!canAdvanceSignup || loading}
-                className="h-24 w-24 rounded-2xl shrink-0 p-0 border-4 border-foreground"
+                className="h-12 w-12 rounded-xl shrink-0 p-0 border-2 border-foreground"
                 aria-label="Continue"
               >
-                <ArrowRight className="!w-10 !h-10" />
+                <ArrowRight className="!w-5 !h-5" />
               </Button>
             </form>
 

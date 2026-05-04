@@ -126,7 +126,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 0 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
-              <p className="text-xs font-mono uppercase tracking-wider text-primary">Before you build, learn the system.</p>
+              
               <h1 className="text-3xl font-bold tracking-tight">How this challenge works</h1>
               <p className="text-muted-foreground">Let’s get you set up, {firstName}.</p>
             </div>

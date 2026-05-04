@@ -77,7 +77,7 @@ const Unlocks = () => {
                   <p className="mt-2 text-sm text-muted-foreground">
                     {unlocked ? `${reward.accessLabel} available.` : `${reward.accessLabel} at ${reward.credits} credits.`}
                   </p>
-                  <Button variant={unlocked ? "default" : "outline"} className="mt-5 w-full gap-2" onClick={() => navigate(unlocked ? "/rewards" : "/referrals")}>
+                  <Button variant={unlocked ? "default" : "outline"} className="mt-5 w-full gap-2" onClick={() => navigate(unlocked ? "/bonus-vault" : "/referrals")}>
                     {unlocked ? "View access" : "Build momentum"}
                     <Sparkles className="h-4 w-4" />
                   </Button>

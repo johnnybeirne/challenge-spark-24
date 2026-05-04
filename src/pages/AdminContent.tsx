@@ -22,7 +22,7 @@ const PAGES: { id: string; label: string; previewUrl?: string; description: stri
   { id: "dashboard", label: "Dashboard", previewUrl: "/user-dashboard", description: "Authenticated user dashboard" },
   { id: "challenge", label: "Challenge Days", previewUrl: "/day/1", description: "Day 1, 2, and 3 titles and intros" },
   { id: "unlocks", label: "Unlocks", previewUrl: "/unlocks", description: "Unlocks page copy" },
-  { id: "rewards", label: "Rewards", previewUrl: "/rewards", description: "Rewards page copy" },
+  { id: "rewards", label: "Rewards", previewUrl: "/bonus-vault", description: "Rewards page copy" },
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
 ];
 

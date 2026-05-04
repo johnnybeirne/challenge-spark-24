@@ -1,8 +1,15 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit } from "lucide-react";
 
 const sections = [
+  {
+    title: "Content Editor",
+    description: "Edit every headline, subhead, button, and paragraph across all pages",
+    icon: FileEdit,
+    to: "/owner-console/content",
+    color: "text-primary",
+  },
   {
     title: "Analytics",
     description: "Funnel metrics, daily events, user activity",

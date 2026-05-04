@@ -112,7 +112,8 @@ const Results = () => {
   const chatScriptSource = useMemo<string[]>(() => {
     if (rows === null) return []; // still loading; don't start the chat yet
     if (tierData) {
-      return [tierData.title, ...tierData.messages].filter(Boolean);
+      const body = tierData.messages.filter(Boolean).join("\n\n");
+      return [tierData.title, body].filter(Boolean);
     }
     if (assessment?.diagnosticTitle) {
       return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean);
@@ -293,7 +294,7 @@ const Results = () => {
                 return (
                   <div
                     key={i}
-                    className={`bg-muted/60 px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl ${
+                    className={`bg-muted/60 px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl whitespace-pre-line ${
                       i === 0 ? "rounded-tl-md" : "rounded-tl-2xl"
                     } ${isTitle ? "font-semibold" : ""}`}
                   >

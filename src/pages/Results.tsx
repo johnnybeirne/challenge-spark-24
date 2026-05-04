@@ -296,7 +296,7 @@ const Results = () => {
                 return (
                   <div
                     key={i}
-                    className={`bg-muted/60 px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl whitespace-pre-line ${
+                    className={`bg-white border border-border px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl whitespace-pre-line ${
                       i === 0 ? "rounded-tl-md" : "rounded-tl-2xl"
                     } ${isTitle ? "font-semibold" : ""}`}
                   >

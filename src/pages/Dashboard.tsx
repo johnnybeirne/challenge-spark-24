@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Sparkles, Upload } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
@@ -24,6 +25,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
+  const [bioSaving, setBioSaving] = useState(false);
   const [signupCreditCount, setSignupCreditCount] = useState(0);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;

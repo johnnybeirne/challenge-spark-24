@@ -91,15 +91,15 @@ const Dashboard = () => {
 
   const getStepStatus = (day: number) => {
     if (isComplete || currentDay > day) return "Complete";
-    if (currentDay === day && hasProgress) return "In progress";
-    return "Not started";
+    if (currentDay === day) return "In progress";
+    return "Locked";
   };
 
   const getStepIcon = (day: number) => {
     const status = getStepStatus(day);
     if (status === "Complete") return <CheckCircle2 className="h-5 w-5 text-primary" />;
     if (status === "In progress") return <CircleDot className="h-5 w-5 text-primary" />;
-    return <Circle className="h-5 w-5 text-muted-foreground" />;
+    return <Circle className="h-5 w-5 text-muted-foreground/50" />;
   };
 
   return (

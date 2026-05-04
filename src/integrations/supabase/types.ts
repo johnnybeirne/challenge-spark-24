@@ -259,6 +259,39 @@ export type Database = {
           },
         ]
       }
+      diagnostic_responses: {
+        Row: {
+          created_at: string
+          id: string
+          max_percent: number
+          messages: Json
+          min_percent: number
+          tier: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_percent: number
+          messages?: Json
+          min_percent: number
+          tier: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_percent?: number
+          messages?: Json
+          min_percent?: number
+          tier?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       founding_config: {
         Row: {
           created_at: string

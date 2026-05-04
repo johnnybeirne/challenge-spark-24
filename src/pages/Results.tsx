@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
+import TypingDots from "@/components/TypingDots";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 const TypewriterText = ({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) => {
   const [shown, setShown] = useState("");
@@ -85,15 +87,45 @@ const Results = () => {
       }
     : getDiagnosticResult(score);
 
+  const THINKING_MS = 1600;
+  const [thinking, setThinking] = useState(true);
+  useEffect(() => {
+    const t = window.setTimeout(() => setThinking(false), THINKING_MS);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
-      <header className="mb-8 text-center">
-        <h1 className="mb-3 text-3xl font-bold text-foreground">
-          <TypewriterText text={diagnostic.title} delay={520} />
-        </h1>
-        <p className="mx-auto max-w-md text-base leading-7 text-muted-foreground">
-          <TypewriterText text={diagnostic.message} delay={1120} />
-        </p>
+      <header className="mb-8">
+        <div className="flex items-start gap-4">
+          <div className="relative shrink-0">
+            <img
+              src={aiAvatar}
+              alt="Johnny B AI"
+              width={56}
+              height={56}
+              className="w-14 h-14 rounded-full border-2 border-foreground/10"
+            />
+            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary rounded-full border-2 border-background" />
+          </div>
+          <div className="flex-1 pt-1 min-w-0">
+            <div className="text-xs text-muted-foreground mb-2">Johnny B AI</div>
+            <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-full animate-fade-in">
+              {thinking ? (
+                <TypingDots />
+              ) : (
+                <div className="space-y-2">
+                  <h1 className="text-xl font-bold text-foreground leading-snug">
+                    <TypewriterText text={diagnostic.title} delay={0} />
+                  </h1>
+                  <p className="text-base leading-7 text-muted-foreground">
+                    <TypewriterText text={diagnostic.message} delay={Math.max(600, diagnostic.title.length * 24 + 200)} />
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </header>
 
       <Card className="mb-5 border-primary/20 bg-primary/5 shadow-none">

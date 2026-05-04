@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, PlayCircle, Lock } from "lucide-react";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, PlayCircle, Lock, Mic, MicOff } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
@@ -220,16 +221,22 @@ const Day1Setup = ({ onComplete }: Props) => {
               </h2>
               <p className="text-sm text-muted-foreground">Optional — you can skip this</p>
             </div>
-            <Input
-              autoFocus
-              value={topicHint}
-              onChange={(e) => setTopicHint(e.target.value)}
-              placeholder="e.g. a finished landing page, a clear plan, a launched idea"
-              className="h-14 text-base px-4"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleTopicNext();
-              }}
-            />
+            <div className="relative">
+              <Input
+                autoFocus
+                value={topicHint}
+                onChange={(e) => setTopicHint(e.target.value)}
+                placeholder="e.g. a finished landing page, a clear plan, a launched idea"
+                className="h-14 text-base px-4 pr-14"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleTopicNext();
+                }}
+              />
+              <DictateButton
+                isListening={isDictating}
+                onToggle={() => toggleDictation((text) => setTopicHint((prev) => (prev ? `${prev} ${text}` : text)))}
+              />
+            </div>
             <Button
               size="lg"
               onClick={handleTopicNext}

@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
+import DictateButton from "@/components/DictateButton";
+import { useDictation } from "@/hooks/useDictation";
 
 export const SETUP_KEY = "leadio_setup";
 
@@ -57,6 +59,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(null);
   const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>("");
+  const { isListening: isDictating, toggle: toggleDictation } = useDictation();
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {
@@ -220,16 +223,22 @@ const Day1Setup = ({ onComplete }: Props) => {
               </h2>
               <p className="text-sm text-muted-foreground">Optional — you can skip this</p>
             </div>
-            <Input
-              autoFocus
-              value={topicHint}
-              onChange={(e) => setTopicHint(e.target.value)}
-              placeholder="e.g. a finished landing page, a clear plan, a launched idea"
-              className="h-14 text-base px-4"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleTopicNext();
-              }}
-            />
+            <div className="relative">
+              <Input
+                autoFocus
+                value={topicHint}
+                onChange={(e) => setTopicHint(e.target.value)}
+                placeholder="e.g. a finished landing page, a clear plan, a launched idea"
+                className="h-14 text-base px-4 pr-14"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleTopicNext();
+                }}
+              />
+              <DictateButton
+                isListening={isDictating}
+                onToggle={() => toggleDictation((text) => setTopicHint((prev) => (prev ? `${prev} ${text}` : text)))}
+              />
+            </div>
             <Button
               size="lg"
               onClick={handleTopicNext}

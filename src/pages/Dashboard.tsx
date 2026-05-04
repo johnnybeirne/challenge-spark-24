@@ -92,6 +92,22 @@ const Dashboard = () => {
     toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Unlock Credits earned.");
   };
 
+  const handleBioSave = async () => {
+    if (!authUser || bioSaving) return;
+    const trimmed = bioDraft.trim();
+    if (trimmed.length < 20) return toast.error("Please write at least 20 characters about who you help and how.");
+    if (trimmed.length > 500) return toast.error("Please keep your bio under 500 characters.");
+
+    setBioSaving(true);
+    const { error } = await supabase.from("profiles").update({ bio: trimmed } as any).eq("user_id", authUser.id);
+    setBioSaving(false);
+    if (error) return toast.error(error.message || "Could not save your bio");
+
+    const alreadySaved = Boolean(state.user?.bio);
+    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, bio: trimmed } } : prev));
+    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Unlock Credits earned.");
+  };
+
   const getStepStatus = (day: number) => {
     if (isComplete || currentDay > day) return "Complete";
     if (currentDay === day) return "In progress";

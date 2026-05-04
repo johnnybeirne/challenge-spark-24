@@ -114,15 +114,22 @@ const AdminCms = () => {
     );
   }
 
+  const activeMeta = SECTIONS.find((s) => s.id === activeSection);
+
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-56 border-r bg-card flex flex-col shrink-0">
+    <div className="flex min-h-screen h-screen">
+      <aside className="w-56 border-r bg-card flex flex-col shrink-0 overflow-y-auto">
         {sidebarHeader}
         {sidebarNav}
       </aside>
-      <main className="flex-1 p-6 max-w-2xl overflow-y-auto">
+      <main className="w-[460px] shrink-0 border-r overflow-y-auto p-6">
         {renderSection()}
       </main>
+      <div className="flex-1 min-w-0">
+        {activeMeta && (
+          <CmsPreviewPane path={activeMeta.previewPath} label={activeMeta.label} />
+        )}
+      </div>
     </div>
   );
 };

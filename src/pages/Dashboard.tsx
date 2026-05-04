@@ -91,15 +91,15 @@ const Dashboard = () => {
 
   const getStepStatus = (day: number) => {
     if (isComplete || currentDay > day) return "Complete";
-    if (currentDay === day && hasProgress) return "In progress";
-    return "Not started";
+    if (currentDay === day) return "In progress";
+    return "Locked";
   };
 
   const getStepIcon = (day: number) => {
     const status = getStepStatus(day);
     if (status === "Complete") return <CheckCircle2 className="h-5 w-5 text-primary" />;
     if (status === "In progress") return <CircleDot className="h-5 w-5 text-primary" />;
-    return <Circle className="h-5 w-5 text-muted-foreground" />;
+    return <Circle className="h-5 w-5 text-muted-foreground/50" />;
   };
 
   return (
@@ -224,6 +224,7 @@ const Dashboard = () => {
                 const status = getStepStatus(step.day);
                 const isActive = status === "In progress";
                 const isComplete = status === "Complete";
+                const isLocked = status === "Locked";
                 return (
                   <div
                     key={step.day}
@@ -232,12 +233,12 @@ const Dashboard = () => {
                         ? "border-primary/40 bg-primary/10"
                         : isComplete
                         ? "border-primary/20 bg-primary/5"
-                        : "border-border bg-muted/20"
+                        : "border-border bg-muted/30 opacity-60"
                     }`}
                   >
                     {getStepIcon(step.day)}
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-foreground">Day {step.day} — {step.title}</p>
+                      <p className={`font-semibold ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>Day {step.day} — {step.title}</p>
                       <p className={`mt-1 text-sm ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
                     </div>
                   </div>

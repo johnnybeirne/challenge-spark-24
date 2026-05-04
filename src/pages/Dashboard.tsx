@@ -125,7 +125,7 @@ const Dashboard = () => {
         )}
       </header>
 
-      <section className="mx-auto max-w-3xl space-y-6">
+      <section className="mx-auto max-w-5xl space-y-6">
         <div className="grid gap-6 lg:grid-cols-2">
           {authUser && !state.user?.avatarUrl && (
             <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">

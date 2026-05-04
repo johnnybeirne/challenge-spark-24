@@ -165,7 +165,7 @@ const ChallengeLanding = () => {
               Turn trust into a lead engine that grows itself
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-              Build a live challenge app with a quiz entry point, daily tasks, and referral loops designed to bring in qualified leads.
+              Build a challenge in 3 days where people get a real result, and feel excited to invite others along the way.
             </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>

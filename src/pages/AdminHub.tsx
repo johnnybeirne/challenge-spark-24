@@ -18,10 +18,10 @@ const sections = [
     color: "text-blue-500",
   },
   {
-    title: "CMS",
-    description: "Edit all public-facing content and configuration",
+    title: "Content Editor",
+    description: "Edit public-facing content visually (WYSIWYG)",
     icon: Settings,
-    to: "/owner-console/cms",
+    to: "/owner-console/content",
     color: "text-emerald-500",
   },
   {

@@ -94,7 +94,7 @@ const App = () => (
               <Route path="/owner-console" element={<AdminLayout />}>
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="cms" element={<AdminCms />} />
+                <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
                 <Route path="content" element={<AdminContent />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />

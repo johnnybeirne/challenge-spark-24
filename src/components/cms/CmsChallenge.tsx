@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useSiteConfig, type ChallengeConfig, type ChallengeTask } from "@/context/SiteConfigContext";
-import { Plus, Trash2 } from "lucide-react";
+import {
+  CmsPageHeader,
+  EditorCard,
+  EditableField,
+  ToggleField,
+  RepeatableList,
+  StickyActionBar,
+  AdvancedDetails,
+  FieldLabel,
+} from "./cms-ui";
 
 const CmsChallenge = () => {
   const { config, updateSection } = useSiteConfig();
@@ -18,19 +22,6 @@ const CmsChallenge = () => {
     const tasks = [...days[dayIdx].tasks];
     tasks[taskIdx] = { ...tasks[taskIdx], [field]: value };
     days[dayIdx] = { ...days[dayIdx], tasks };
-    setDraft((prev) => ({ ...prev, days }));
-  };
-
-  const addTask = (dayIdx: number) => {
-    if (draft.days[dayIdx].tasks.length >= 5) return;
-    const days = [...draft.days];
-    days[dayIdx] = { ...days[dayIdx], tasks: [...days[dayIdx].tasks, { title: "", description: "", type: "textarea" }] };
-    setDraft((prev) => ({ ...prev, days }));
-  };
-
-  const removeTask = (dayIdx: number, taskIdx: number) => {
-    const days = [...draft.days];
-    days[dayIdx] = { ...days[dayIdx], tasks: days[dayIdx].tasks.filter((_, i) => i !== taskIdx) };
     setDraft((prev) => ({ ...prev, days }));
   };
 
@@ -46,84 +37,135 @@ const CmsChallenge = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-lg font-semibold mb-1">Challenge Content</h2>
-        <p className="text-sm text-muted-foreground">Edit challenge days, tasks, and messages.</p>
-      </div>
+    <div className="space-y-6">
+      <CmsPageHeader
+        title="Challenge Content"
+        description="Edit the 3-day challenge — titles, intros, and the tasks people complete each day."
+      />
 
-      <div className="space-y-2">
-        <Label>Challenge Title</Label>
-        <Input value={draft.challengeTitle} onChange={(e) => setDraft((prev) => ({ ...prev, challengeTitle: e.target.value }))} />
-      </div>
-
-      <p className="text-xs text-muted-foreground">Days: 3 (fixed for MVP)</p>
+      <EditorCard title="Overall Challenge" description="Top-level title shown across the challenge.">
+        <EditableField
+          label="Challenge title"
+          helper="Shown at the top of the challenge dashboard."
+          value={draft.challengeTitle}
+          onChange={(v) => setDraft((prev) => ({ ...prev, challengeTitle: v }))}
+        />
+        <p className="text-xs text-muted-foreground">The challenge has 3 days (fixed for now).</p>
+      </EditorCard>
 
       {draft.days.map((day, dayIdx) => (
-        <section key={dayIdx} className="border rounded-lg p-4 space-y-4">
-          <h3 className="font-medium">Day {dayIdx + 1}</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>Title</Label>
-              <Input value={day.title} onChange={(e) => updateDay(dayIdx, "title", e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label>Subtitle</Label>
-              <Input value={day.subtitle} onChange={(e) => updateDay(dayIdx, "subtitle", e.target.value)} />
-            </div>
-          </div>
+        <EditorCard
+          key={dayIdx}
+          title={`Day ${dayIdx + 1}`}
+          description={`What people see and do on day ${dayIdx + 1} of the challenge.`}
+        >
+          <EditableField
+            label="Day title"
+            helper={`Big heading shown at the top of Day ${dayIdx + 1}.`}
+            value={day.title}
+            onChange={(v) => updateDay(dayIdx, "title", v)}
+          />
+          <EditableField
+            label="Day subtitle"
+            helper="Short line under the day title."
+            value={day.subtitle}
+            onChange={(v) => updateDay(dayIdx, "subtitle", v)}
+          />
 
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Tasks</Label>
-            {day.tasks.map((task, taskIdx) => (
-              <div key={taskIdx} className="flex gap-2 items-start">
-                <div className="flex-1 space-y-2">
-                  <Input placeholder="Task title" value={task.title} onChange={(e) => updateTask(dayIdx, taskIdx, "title", e.target.value)} />
-                  <div className="flex gap-2">
-                    <Select value={task.type} onValueChange={(v) => updateTask(dayIdx, taskIdx, "type", v)}>
-                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+          <RepeatableList
+            label="Tasks for this day"
+            helper="Each task is something the person completes during the day."
+            items={day.tasks}
+            itemLabel={(i) => `Task ${i + 1}`}
+            addLabel="Add task"
+            onAdd={() => {
+              if (day.tasks.length >= 5) return;
+              updateDay(dayIdx, "tasks", [
+                ...day.tasks,
+                { title: "", description: "", type: "textarea" },
+              ]);
+            }}
+            onRemove={(i) =>
+              updateDay(
+                dayIdx,
+                "tasks",
+                day.tasks.filter((_, j) => j !== i),
+              )
+            }
+            renderItem={(task, taskIdx) => (
+              <div className="space-y-3">
+                <EditableField
+                  label="Task title"
+                  value={task.title}
+                  onChange={(v) => updateTask(dayIdx, taskIdx, "title", v)}
+                />
+                <AdvancedDetails>
+                  <div className="space-y-1.5">
+                    <FieldLabel
+                      label="Input type"
+                      helper="Controls what kind of input the user gets to fill in."
+                    />
+                    <Select
+                      value={task.type}
+                      onValueChange={(v) => updateTask(dayIdx, taskIdx, "type", v)}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="textarea">Textarea</SelectItem>
-                        <SelectItem value="text_input">Text Input</SelectItem>
+                        <SelectItem value="textarea">Long text (textarea)</SelectItem>
+                        <SelectItem value="text_input">Short text</SelectItem>
                         <SelectItem value="checkbox">Checkbox</SelectItem>
-                        <SelectItem value="url_input">URL Input</SelectItem>
+                        <SelectItem value="url_input">Web link (URL)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => removeTask(dayIdx, taskIdx)}><Trash2 className="h-4 w-4" /></Button>
+                </AdvancedDetails>
               </div>
-            ))}
-            <Button variant="outline" size="sm" onClick={() => addTask(dayIdx)}><Plus className="h-4 w-4 mr-1" /> Add task</Button>
-          </div>
+            )}
+          />
 
           {day.nudgeText !== undefined && (
-            <div className="space-y-1">
-              <Label>Nudge Text</Label>
-              <Textarea value={day.nudgeText || ""} onChange={(e) => updateDay(dayIdx, "nudgeText", e.target.value)} rows={2} />
-            </div>
+            <EditableField
+              label="Nudge text"
+              helper="A small motivational message shown during the day."
+              value={day.nudgeText || ""}
+              onChange={(v) => updateDay(dayIdx, "nudgeText", v)}
+              multiline
+              rows={2}
+            />
           )}
 
           {dayIdx === 2 && (
             <>
-              <div className="flex items-center gap-3">
-                <Switch checked={day.requireUrl ?? true} onCheckedChange={(v) => updateDay(dayIdx, "requireUrl", v)} />
-                <Label>Require URL submission</Label>
-              </div>
-              <div className="space-y-1">
-                <Label>Completion Message</Label>
-                <Textarea value={day.completionMessage || ""} onChange={(e) => updateDay(dayIdx, "completionMessage", e.target.value)} rows={2} />
-              </div>
-              <div className="space-y-1">
-                <Label>Post-completion Tension Text</Label>
-                <Textarea value={day.postCompletionTension || ""} onChange={(e) => updateDay(dayIdx, "postCompletionTension", e.target.value)} rows={2} />
-              </div>
+              <ToggleField
+                label="Require people to submit a URL"
+                helper="If on, people must paste their launch URL to complete Day 3."
+                checked={day.requireUrl ?? true}
+                onChange={(v) => updateDay(dayIdx, "requireUrl", v)}
+              />
+              <EditableField
+                label="Completion message"
+                helper="Shown right after people finish Day 3."
+                value={day.completionMessage || ""}
+                onChange={(v) => updateDay(dayIdx, "completionMessage", v)}
+                multiline
+                rows={2}
+              />
+              <EditableField
+                label="Post-completion tension text"
+                helper="Encourages the next step after completion."
+                value={day.postCompletionTension || ""}
+                onChange={(v) => updateDay(dayIdx, "postCompletionTension", v)}
+                multiline
+                rows={2}
+              />
             </>
           )}
-        </section>
+        </EditorCard>
       ))}
 
-      <Button onClick={save} className="w-full">Save Challenge Content</Button>
+      <StickyActionBar onSave={save} saveLabel="Save challenge" />
     </div>
   );
 };

@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useSiteConfig, type NotificationConfig } from "@/context/SiteConfigContext";
+import {
+  CmsPageHeader,
+  EditorCard,
+  EditableField,
+  StickyActionBar,
+} from "./cms-ui";
 
 const CmsNotifications = () => {
   const { config, updateSection } = useSiteConfig();
@@ -22,51 +25,100 @@ const CmsNotifications = () => {
     toast.success("Notifications updated");
   };
 
-  const toastLabels: Record<string, string> = {
-    unlock_earned: "Unlock Earned",
-    builder_circle_unlocked: "Builder Circle Unlocked",
-    builder_supported: "Builder Supported",
-    partner_approved: "Partner Approved",
-    task_completed: "Task Completed",
-    day_completed: "Day Completed",
-    challenge_completed: "Challenge Completed",
+  const toastMeta: Record<string, { label: string; helper: string }> = {
+    unlock_earned: {
+      label: "Unlock earned",
+      helper: "Shown when someone unlocks a new reward.",
+    },
+    builder_circle_unlocked: {
+      label: "Builder Circle unlocked",
+      helper: "Shown the moment someone joins the Builder Circle.",
+    },
+    builder_supported: {
+      label: "Builder supported",
+      helper: "Shown when one builder supports another.",
+    },
+    partner_approved: {
+      label: "Partner approved",
+      helper: "Shown when a partner application is approved.",
+    },
+    task_completed: {
+      label: "Task completed",
+      helper: "Shown after each completed challenge task.",
+    },
+    day_completed: {
+      label: "Day completed",
+      helper: "Shown when a full challenge day is finished.",
+    },
+    challenge_completed: {
+      label: "Challenge completed",
+      helper: "Shown when the entire 3-day challenge is finished.",
+    },
   };
 
-  const emptyLabels: Record<string, string> = {
-    no_referrals: "No Referrals",
-    no_unlocks: "No Unlocks",
-    no_featured: "No Featured Builders",
-    no_activity: "No Activity",
+  const emptyMeta: Record<string, { label: string; helper: string }> = {
+    no_referrals: {
+      label: "No referrals yet",
+      helper: "Shown on the referrals page when no one has been invited.",
+    },
+    no_unlocks: {
+      label: "No unlocks yet",
+      helper: "Shown on the unlocks page before anything is earned.",
+    },
+    no_featured: {
+      label: "No featured builders",
+      helper: "Shown when no builders are currently featured.",
+    },
+    no_activity: {
+      label: "No activity",
+      helper: "Shown when the activity feed is empty.",
+    },
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-lg font-semibold mb-1">Notifications & Copy</h2>
-        <p className="text-sm text-muted-foreground">Edit toast messages and empty states. Use [placeholders] for dynamic values.</p>
-      </div>
+    <div className="space-y-6">
+      <CmsPageHeader
+        title="Notifications & Copy"
+        description="Edit toast messages and empty-state messages. Use [placeholders] for dynamic values."
+      />
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Toast Messages</h3>
-        {Object.entries(draft.toasts).map(([key, value]) => (
-          <div key={key} className="space-y-1">
-            <Label className="text-xs">{toastLabels[key] || key}</Label>
-            <Input value={value} onChange={(e) => updateToast(key, e.target.value)} />
-          </div>
-        ))}
-      </section>
+      <EditorCard
+        title="Toast Messages"
+        description="Quick popup messages that appear when something happens."
+      >
+        {Object.entries(draft.toasts).map(([key, value]) => {
+          const meta = toastMeta[key];
+          return (
+            <EditableField
+              key={key}
+              label={meta?.label ?? key}
+              helper={meta?.helper}
+              value={value}
+              onChange={(v) => updateToast(key, v)}
+            />
+          );
+        })}
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Empty State Messages</h3>
-        {Object.entries(draft.emptyStates).map(([key, value]) => (
-          <div key={key} className="space-y-1">
-            <Label className="text-xs">{emptyLabels[key] || key}</Label>
-            <Input value={value} onChange={(e) => updateEmpty(key, e.target.value)} />
-          </div>
-        ))}
-      </section>
+      <EditorCard
+        title="Empty State Messages"
+        description="Friendly messages shown when a list or screen has no content yet."
+      >
+        {Object.entries(draft.emptyStates).map(([key, value]) => {
+          const meta = emptyMeta[key];
+          return (
+            <EditableField
+              key={key}
+              label={meta?.label ?? key}
+              helper={meta?.helper}
+              value={value}
+              onChange={(v) => updateEmpty(key, v)}
+            />
+          );
+        })}
+      </EditorCard>
 
-      <Button onClick={save} className="w-full">Save Notifications</Button>
+      <StickyActionBar onSave={save} saveLabel="Save notifications" />
     </div>
   );
 };

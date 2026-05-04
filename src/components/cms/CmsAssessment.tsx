@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useSiteConfig, type AssessmentConfig } from "@/context/SiteConfigContext";
+import {
+  CmsPageHeader,
+  EditorCard,
+  EditableField,
+  StickyActionBar,
+  FieldLabel,
+} from "./cms-ui";
 
 const CmsAssessment = () => {
   const { config, updateSection } = useSiteConfig();
@@ -20,44 +24,58 @@ const CmsAssessment = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-lg font-semibold mb-1">Assessment</h2>
-        <p className="text-sm text-muted-foreground">Edit the assessment landing page, question intro, result text, and CTA copy.</p>
-      </div>
+    <div className="space-y-6">
+      <CmsPageHeader
+        title="Assessment"
+        description="Edit the assessment landing page, intro, results, and share copy."
+      />
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Assessment Landing Page</h3>
+      <EditorCard title="Assessment Landing Page" description="The page visitors see before starting the quiz.">
+        <EditableField
+          label="Eyebrow text"
+          helper="Small line shown above the headline."
+          value={draft.landingEyebrow}
+          onChange={(v) => update("landingEyebrow", v)}
+        />
+        <EditableField
+          label="Headline"
+          helper="Main heading at the top of the page."
+          value={draft.landingHeadline}
+          onChange={(v) => update("landingHeadline", v)}
+        />
+        <EditableField
+          label="Subheadline"
+          helper="Sits directly below the headline."
+          value={draft.landingSubheadline}
+          onChange={(v) => update("landingSubheadline", v)}
+          multiline
+        />
+        <EditableField
+          label="Call-to-action button"
+          helper="Label on the main start-the-quiz button."
+          value={draft.landingPrimaryCta}
+          onChange={(v) => update("landingPrimaryCta", v)}
+        />
+        <EditableField
+          label="Supporting text"
+          helper="Short reassurance line under the button."
+          value={draft.landingSupportingText}
+          onChange={(v) => update("landingSupportingText", v)}
+        />
+        <EditableField
+          label="Trust line"
+          helper="Tiny credibility line (e.g. 'Used by 500+ founders')."
+          value={draft.landingTrustLine}
+          onChange={(v) => update("landingTrustLine", v)}
+        />
+
         <div className="space-y-2">
-          <Label>Eyebrow</Label>
-          <Input value={draft.landingEyebrow} onChange={(e) => update("landingEyebrow", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Headline</Label>
-          <Input value={draft.landingHeadline} onChange={(e) => update("landingHeadline", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Subheadline</Label>
-          <Textarea value={draft.landingSubheadline} onChange={(e) => update("landingSubheadline", e.target.value)} rows={3} />
-        </div>
-        <div className="space-y-2">
-          <Label>CTA Button</Label>
-          <Input value={draft.landingPrimaryCta} onChange={(e) => update("landingPrimaryCta", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Supporting Text</Label>
-          <Input value={draft.landingSupportingText} onChange={(e) => update("landingSupportingText", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Trust Line</Label>
-          <Input value={draft.landingTrustLine} onChange={(e) => update("landingTrustLine", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Benefit Points</Label>
+          <FieldLabel label="Benefit points" helper="Bullet list of what visitors will get." />
           {(draft.landingPoints ?? []).map((point, i) => (
             <Input
               key={i}
               value={point}
+              className="h-11 text-base"
               onChange={(e) => {
                 const points = [...(draft.landingPoints ?? [])];
                 points[i] = e.target.value;
@@ -66,16 +84,20 @@ const CmsAssessment = () => {
             />
           ))}
         </div>
+
+        <EditableField
+          label="Result preview title"
+          helper="Heading above the example result preview."
+          value={draft.landingPreviewTitle}
+          onChange={(v) => update("landingPreviewTitle", v)}
+        />
         <div className="space-y-2">
-          <Label>Result Preview Title</Label>
-          <Input value={draft.landingPreviewTitle} onChange={(e) => update("landingPreviewTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Result Preview Items</Label>
+          <FieldLabel label="Result preview items" helper="Things shown in the preview card." />
           {(draft.landingPreviewItems ?? []).map((item, i) => (
             <Input
               key={i}
               value={item}
+              className="h-11 text-base"
               onChange={(e) => {
                 const items = [...(draft.landingPreviewItems ?? [])];
                 items[i] = e.target.value;
@@ -84,120 +106,149 @@ const CmsAssessment = () => {
             />
           ))}
         </div>
-        <div className="space-y-2">
-          <Label>What's Inside Title</Label>
-          <Input value={draft.landingInsideTitle} onChange={(e) => update("landingInsideTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Explanation Title</Label>
-          <Input value={draft.landingExplanationTitle} onChange={(e) => update("landingExplanationTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Explanation Body</Label>
-          <Textarea value={draft.landingExplanationBody} onChange={(e) => update("landingExplanationBody", e.target.value)} rows={4} />
-        </div>
-        <div className="space-y-2">
-          <Label>FAQ Title</Label>
-          <Input value={draft.landingFaqTitle} onChange={(e) => update("landingFaqTitle", e.target.value)} />
-        </div>
+
+        <EditableField
+          label="What's inside title"
+          value={draft.landingInsideTitle}
+          onChange={(v) => update("landingInsideTitle", v)}
+        />
+        <EditableField
+          label="Explanation title"
+          value={draft.landingExplanationTitle}
+          onChange={(v) => update("landingExplanationTitle", v)}
+        />
+        <EditableField
+          label="Explanation body"
+          value={draft.landingExplanationBody}
+          onChange={(v) => update("landingExplanationBody", v)}
+          multiline
+          rows={4}
+        />
+        <EditableField
+          label="FAQ title"
+          value={draft.landingFaqTitle}
+          onChange={(v) => update("landingFaqTitle", v)}
+        />
+
         <div className="space-y-3">
-          <Label>FAQ Items</Label>
+          <FieldLabel label="FAQ items" helper="Common questions shown in the accordion." />
           {(draft.landingFaqItems ?? []).map((item, i) => (
-            <div key={i} className="grid gap-2 rounded-xl border border-border p-3">
-              <Input
+            <div key={i} className="rounded-lg border bg-background/40 p-3 space-y-3">
+              <EditableField
+                label="Question"
                 value={item.question}
-                onChange={(e) => {
+                onChange={(v) => {
                   const items = [...(draft.landingFaqItems ?? [])];
-                  items[i] = { ...items[i], question: e.target.value };
+                  items[i] = { ...items[i], question: v };
                   update("landingFaqItems", items);
                 }}
               />
-              <Textarea
+              <EditableField
+                label="Answer"
+                multiline
+                rows={2}
                 value={item.answer}
-                onChange={(e) => {
+                onChange={(v) => {
                   const items = [...(draft.landingFaqItems ?? [])];
-                  items[i] = { ...items[i], answer: e.target.value };
+                  items[i] = { ...items[i], answer: v };
                   update("landingFaqItems", items);
                 }}
-                rows={2}
               />
             </div>
           ))}
         </div>
-      </section>
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Assessment Intro Fallback</h3>
-        <div className="space-y-2">
-          <Label>Title</Label>
-          <Input value={draft.introTitle} onChange={(e) => update("introTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Body Text</Label>
-          <Textarea value={draft.introText} onChange={(e) => update("introText", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Time Estimate</Label>
-          <Input value={draft.timeEstimate} onChange={(e) => update("timeEstimate", e.target.value)} />
-        </div>
-      </section>
+      <EditorCard title="Assessment Intro" description="Fallback intro shown right before the first question.">
+        <EditableField label="Title" value={draft.introTitle} onChange={(v) => update("introTitle", v)} />
+        <EditableField
+          label="Body text"
+          value={draft.introText}
+          onChange={(v) => update("introText", v)}
+          multiline
+        />
+        <EditableField
+          label="Time estimate"
+          helper="e.g. 'Takes about 2 minutes'."
+          value={draft.timeEstimate}
+          onChange={(v) => update("timeEstimate", v)}
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Split Question (Q1)</h3>
+      <EditorCard
+        title="Audience Split Question"
+        description="The first question that splits visitors into B2B or B2C tracks."
+      >
+        <EditableField
+          label="Question text"
+          value={draft.splitQuestionText}
+          onChange={(v) => update("splitQuestionText", v)}
+        />
         <div className="space-y-2">
-          <Label>Question Text</Label>
-          <Input value={draft.splitQuestionText} onChange={(e) => update("splitQuestionText", e.target.value)} />
+          <FieldLabel label="Answer options" helper="Visitors pick one to choose their track." />
+          {draft.splitOptions.map((opt, i) => (
+            <div key={i} className="flex gap-2 items-center">
+              <Input
+                value={opt.label}
+                className="h-11 text-base flex-1"
+                onChange={(e) => {
+                  const opts = [...draft.splitOptions];
+                  opts[i] = { ...opts[i], label: e.target.value };
+                  update("splitOptions", opts);
+                }}
+              />
+              <span className="text-xs text-muted-foreground font-mono w-12 text-right">{opt.value}</span>
+            </div>
+          ))}
+          <p className="text-xs text-muted-foreground">
+            Questions 2–9 are defined per track in code. CMS override coming soon.
+          </p>
         </div>
-        {draft.splitOptions.map((opt, i) => (
-          <div key={i} className="flex gap-2 items-center">
-            <Input
-              value={opt.label}
-              onChange={(e) => {
-                const opts = [...draft.splitOptions];
-                opts[i] = { ...opts[i], label: e.target.value };
-                update("splitOptions", opts);
-              }}
-              className="flex-1"
-            />
-            <span className="text-xs text-muted-foreground font-mono w-10">{opt.value}</span>
-          </div>
-        ))}
-        <p className="text-xs text-muted-foreground">Questions 2-9 are defined in code per track (B2B / B2C). Override via CMS coming soon.</p>
-      </section>
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Results — Tension Text</h3>
-        <div className="space-y-2">
-          <Label>B2B Tension Text</Label>
-          <Textarea value={draft.b2bTensionText} onChange={(e) => update("b2bTensionText", e.target.value)} rows={3} />
-        </div>
-        <div className="space-y-2">
-          <Label>B2C Tension Text</Label>
-          <Textarea value={draft.b2cTensionText} onChange={(e) => update("b2cTensionText", e.target.value)} rows={3} />
-        </div>
-      </section>
+      <EditorCard title="Results — Tension Text" description="The narrative shown on the results page for each audience.">
+        <EditableField
+          label="B2B audience"
+          helper="Tension copy shown to B2B respondents."
+          value={draft.b2bTensionText}
+          onChange={(v) => update("b2bTensionText", v)}
+          multiline
+          rows={3}
+        />
+        <EditableField
+          label="B2C audience"
+          helper="Tension copy shown to B2C respondents."
+          value={draft.b2cTensionText}
+          onChange={(v) => update("b2cTensionText", v)}
+          multiline
+          rows={3}
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Results — Share Copy</h3>
-        <div className="space-y-2">
-          <Label>B2B Share Text ([style] = dynamic)</Label>
-          <Input value={draft.b2bShareText} onChange={(e) => update("b2bShareText", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>B2C Share Text ([style] = dynamic)</Label>
-          <Input value={draft.b2cShareText} onChange={(e) => update("b2cShareText", e.target.value)} />
-        </div>
-      </section>
+      <EditorCard title="Results — Share Copy" description="Pre-written messages used when people share their result.">
+        <EditableField
+          label="B2B share text"
+          helper="Use [style] as a placeholder for the dynamic style name."
+          value={draft.b2bShareText}
+          onChange={(v) => update("b2bShareText", v)}
+        />
+        <EditableField
+          label="B2C share text"
+          helper="Use [style] as a placeholder for the dynamic style name."
+          value={draft.b2cShareText}
+          onChange={(v) => update("b2cShareText", v)}
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">CTA</h3>
-        <div className="space-y-2">
-          <Label>CTA Button Text</Label>
-          <Input value={draft.ctaText} onChange={(e) => update("ctaText", e.target.value)} />
-        </div>
-      </section>
+      <EditorCard title="Results CTA" description="Button shown at the bottom of the results page.">
+        <EditableField
+          label="CTA button text"
+          value={draft.ctaText}
+          onChange={(v) => update("ctaText", v)}
+        />
+      </EditorCard>
 
-      <Button onClick={save} className="w-full">Save Assessment</Button>
+      <StickyActionBar onSave={save} saveLabel="Save assessment" />
     </div>
   );
 };

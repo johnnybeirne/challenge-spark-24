@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useSiteConfig, type CommunityConfig } from "@/context/SiteConfigContext";
+import {
+  CmsPageHeader,
+  EditorCard,
+  EditableField,
+  ToggleField,
+  StickyActionBar,
+  FieldLabel,
+} from "./cms-ui";
 
 const CmsCommunity = () => {
   const { config, updateSection } = useSiteConfig();
@@ -22,42 +25,62 @@ const CmsCommunity = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-lg font-semibold mb-1">Community & Builder Circle</h2>
-        <p className="text-sm text-muted-foreground">Configure Builder Circle, leaderboard, and activity feed.</p>
-      </div>
+    <div className="space-y-6">
+      <CmsPageHeader
+        title="Community & Builder Circle"
+        description="Configure the Builder Circle page, the leaderboard, and the activity feed."
+      />
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Builder Circle</h3>
-        <div className="space-y-2">
-          <Label>Page Title</Label>
-          <Input value={draft.pageTitle} onChange={(e) => update("pageTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Page Subtitle</Label>
-          <Textarea value={draft.pageSubtitle} onChange={(e) => update("pageSubtitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Value Banner Title</Label>
-          <Input value={draft.valueBannerTitle} onChange={(e) => update("valueBannerTitle", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Value Banner Body</Label>
-          <Textarea value={draft.valueBannerBody} onChange={(e) => update("valueBannerBody", e.target.value)} />
-        </div>
-      </section>
+      <EditorCard
+        title="Builder Circle Page"
+        description="Headings shown at the top of the Builder Circle page."
+      >
+        <EditableField
+          label="Page title"
+          helper="Big heading at the top of the Builder Circle page."
+          value={draft.pageTitle}
+          onChange={(v) => update("pageTitle", v)}
+        />
+        <EditableField
+          label="Page subtitle"
+          helper="Short description shown under the page title."
+          value={draft.pageSubtitle}
+          onChange={(v) => update("pageSubtitle", v)}
+          multiline
+        />
+        <EditableField
+          label="Value banner title"
+          helper="Heading on the value-prop banner inside the page."
+          value={draft.valueBannerTitle}
+          onChange={(v) => update("valueBannerTitle", v)}
+        />
+        <EditableField
+          label="Value banner body"
+          helper="Body copy inside the value-prop banner."
+          value={draft.valueBannerBody}
+          onChange={(v) => update("valueBannerBody", v)}
+          multiline
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Leaderboard</h3>
-        <div className="flex items-center gap-3">
-          <Switch checked={draft.showLeaderboard} onCheckedChange={(v) => update("showLeaderboard", v)} />
-          <Label>Show leaderboard</Label>
-        </div>
-        <div className="space-y-2">
-          <Label>Default Tab</Label>
+      <EditorCard
+        title="Leaderboard"
+        description="Public leaderboard inside the Builder Circle."
+      >
+        <ToggleField
+          label="Show leaderboard"
+          checked={draft.showLeaderboard}
+          onChange={(v) => update("showLeaderboard", v)}
+        />
+        <div className="space-y-1.5">
+          <FieldLabel
+            label="Default tab"
+            helper="Which leaderboard view is shown when the page first loads."
+          />
           <Select value={draft.defaultTab} onValueChange={(v) => update("defaultTab", v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-11">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="supportive">Most supportive</SelectItem>
               <SelectItem value="network">Network growth</SelectItem>
@@ -66,41 +89,59 @@ const CmsCommunity = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
-          <Label>Leaderboard Title</Label>
-          <Input value={draft.leaderboardTitle} onChange={(e) => update("leaderboardTitle", e.target.value)} />
-        </div>
-      </section>
+        <EditableField
+          label="Leaderboard title"
+          helper="Heading shown above the leaderboard."
+          value={draft.leaderboardTitle}
+          onChange={(v) => update("leaderboardTitle", v)}
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Activity Feed</h3>
-        <div className="flex items-center gap-3">
-          <Switch checked={draft.showActivityFeed} onCheckedChange={(v) => update("showActivityFeed", v)} />
-          <Label>Show activity feed</Label>
-        </div>
-        <div className="space-y-2">
-          <Label>Refresh interval (seconds)</Label>
-          <Input type="number" value={draft.feedRefreshInterval} onChange={(e) => update("feedRefreshInterval", Number(e.target.value))} className="w-24" />
-        </div>
-      </section>
+      <EditorCard
+        title="Activity Feed"
+        description="The live feed of what other builders are doing."
+      >
+        <ToggleField
+          label="Show activity feed"
+          checked={draft.showActivityFeed}
+          onChange={(v) => update("showActivityFeed", v)}
+        />
+        <EditableField
+          label="Refresh interval (seconds)"
+          helper="How often the feed checks for new activity."
+          type="number"
+          value={String(draft.feedRefreshInterval)}
+          onChange={(v) => update("feedRefreshInterval", Number(v))}
+        />
+      </EditorCard>
 
-      <section className="space-y-4">
-        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Featured Builders</h3>
-        <div className="space-y-2">
-          <Label>Featured slots</Label>
-          <Input type="number" value={draft.featuredSlots} onChange={(e) => update("featuredSlots", Number(e.target.value))} className="w-24" />
-        </div>
-        <div className="flex items-center gap-3">
-          <Switch checked={draft.autoFeature} onCheckedChange={(v) => update("autoFeature", v)} />
-          <Label>Auto-feature based on score</Label>
-        </div>
-        <div className="space-y-2">
-          <Label>Minimum score to auto-feature</Label>
-          <Input type="number" value={draft.minScoreToFeature} onChange={(e) => update("minScoreToFeature", Number(e.target.value))} className="w-24" />
-        </div>
-      </section>
+      <EditorCard
+        title="Featured Builders"
+        description="Settings for which builders get featured."
+      >
+        <EditableField
+          label="Featured slots"
+          helper="How many builders are featured at any given time."
+          type="number"
+          value={String(draft.featuredSlots)}
+          onChange={(v) => update("featuredSlots", Number(v))}
+        />
+        <ToggleField
+          label="Auto-feature based on score"
+          helper="When on, top-scoring builders are automatically featured."
+          checked={draft.autoFeature}
+          onChange={(v) => update("autoFeature", v)}
+        />
+        <EditableField
+          label="Minimum score to auto-feature"
+          helper="Builders below this score won't be featured automatically."
+          type="number"
+          value={String(draft.minScoreToFeature)}
+          onChange={(v) => update("minScoreToFeature", Number(v))}
+        />
+      </EditorCard>
 
-      <Button onClick={save} className="w-full">Save Community Settings</Button>
+      <StickyActionBar onSave={save} saveLabel="Save community settings" />
     </div>
   );
 };

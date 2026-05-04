@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
@@ -163,23 +163,53 @@ const Results = () => {
       return {
         button: "Scale your challenge in 3 days",
         sub: "Turn what's already working into a stronger automatic lead generation system.",
+        stageLabel: "Operator Stage",
+        nextStep: "Scale",
+        tension: "Now let's make this scale without adding more effort.",
+        scoreColor: "text-emerald-500",
+        scoreBg: "bg-emerald-500",
+        scoreSoftBg: "bg-emerald-500/5",
+        scoreSoftBorder: "border-emerald-500/20",
+        scoreTrack: "bg-emerald-500/15",
       };
     }
     if (tier === "mid") {
       return {
         button: "Turn this into a working system in 3 days",
         sub: "Build a challenge that delivers results and supports automatic lead generation.",
+        stageLabel: "Builder Stage",
+        nextStep: "Consistency",
+        tension: "Right now, results depend on effort. Let's make them consistent.",
+        scoreColor: "text-blue-500",
+        scoreBg: "bg-blue-500",
+        scoreSoftBg: "bg-blue-500/5",
+        scoreSoftBorder: "border-blue-500/20",
+        scoreTrack: "bg-blue-500/15",
       };
     }
     return {
       button: "Build your challenge in 3 days",
       sub: "Create a simple version of your lead system and see it working.",
+      stageLabel: "Starter Stage",
+      nextStep: "Foundation",
+      tension: "Let's get something working.",
+      scoreColor: "text-amber-500",
+      scoreBg: "bg-amber-500",
+      scoreSoftBg: "bg-amber-500/5",
+      scoreSoftBorder: "border-amber-500/20",
+      scoreTrack: "bg-amber-500/15",
     };
   })();
 
+  const bullets = ["Clear steps", "Real results", "People invite others"];
+
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-3xl mx-auto sm:px-6 lg:px-8">
-      <header className="mb-8">
+    <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">
+      <p className="mb-6 text-center text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        Your Challenge System Score
+      </p>
+
+      <header className="mb-12">
         <div className="flex items-start gap-3">
           <div className="relative shrink-0">
             <img
@@ -219,19 +249,33 @@ const Results = () => {
                 </div>
               )}
             </div>
+
+            <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              {bullets.map((b) => (
+                <li key={b} className="flex items-center gap-1.5">
+                  <Check className={`w-4 h-4 ${ctaCopy.scoreColor}`} strokeWidth={3} />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </header>
 
-      <Card className="mb-5 border-primary/20 bg-primary/5 shadow-none">
-        <CardContent className="p-6 text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Diagnostic score</p>
+      <Card className={`mb-12 ${ctaCopy.scoreSoftBorder} ${ctaCopy.scoreSoftBg} shadow-none`}>
+        <CardContent className="p-8 text-center">
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-6xl font-bold text-success">{animatedScore}</span>
-            <span className="text-2xl font-semibold text-muted-foreground">%</span>
+            <span className={`text-8xl sm:text-9xl font-bold tracking-tight ${ctaCopy.scoreColor}`}>
+              {animatedScore}
+            </span>
+            <span className={`text-4xl font-semibold opacity-70 ${ctaCopy.scoreColor}`}>%</span>
           </div>
+          <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.18em] ${ctaCopy.scoreColor}`}>
+            {ctaCopy.stageLabel}
+          </p>
+
           <div
-            className="mt-6 h-4 w-full overflow-hidden rounded-full bg-destructive"
+            className={`mt-8 h-2.5 w-full overflow-hidden rounded-full ${ctaCopy.scoreTrack}`}
             role="meter"
             aria-valuenow={percentageScore}
             aria-valuemin={0}
@@ -239,24 +283,37 @@ const Results = () => {
             aria-label="Diagnostic score percentage"
           >
             <div
-              className="h-full rounded-full bg-success transition-[width] duration-100 ease-out"
+              className={`h-full rounded-full ${ctaCopy.scoreBg} transition-[width] duration-100 ease-out`}
               style={{ width: `${animatedScore}%` }}
             />
           </div>
-          <div className="mt-3 flex justify-between text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <div className="mt-3 flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>Score</span>
-            <span>{100 - animatedScore}% gap</span>
+            <span className="font-semibold text-foreground/80">
+              Next step: <span className={ctaCopy.scoreColor}>{ctaCopy.nextStep}</span>
+            </span>
           </div>
         </CardContent>
       </Card>
 
-      <Button className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold" onClick={() => navigate("/join")}>
-        {ctaCopy.button}
-        <ArrowRight className="w-4 h-4" />
-      </Button>
-      <p className="mt-3 text-center text-sm leading-6 text-muted-foreground">
-        {ctaCopy.sub}
-      </p>
+      <div className="space-y-4">
+        <p className="text-center text-base leading-7 text-foreground/80 max-w-md mx-auto">
+          {ctaCopy.tension}
+        </p>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          Build this in 3 days
+        </p>
+        <Button
+          className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
+          onClick={() => navigate("/join")}
+        >
+          {ctaCopy.button}
+          <ArrowRight className="w-5 h-5" />
+        </Button>
+        <p className="text-center text-sm leading-6 text-muted-foreground max-w-md mx-auto">
+          {ctaCopy.sub}
+        </p>
+      </div>
     </div>
   );
 };

@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const AdminLayout = () => {
   const { user, loading } = useAuth();
+  const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
 
@@ -17,15 +18,14 @@ const AdminLayout = () => {
     let cancelled = false;
 
     const checkAdminRole = async () => {
-      if (!user) {
+      if (!userId) {
         setIsAdmin(false);
         setCheckingRole(false);
         return;
       }
 
-      setCheckingRole(true);
       const { data, error } = await supabase.rpc("has_role", {
-        _user_id: user.id,
+        _user_id: userId,
         _role: "admin",
       });
 
@@ -40,7 +40,7 @@ const AdminLayout = () => {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [userId]);
 
   if (loading || checkingRole) {
     return (

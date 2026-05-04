@@ -198,6 +198,20 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
+        <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+              <Zap className="h-5 w-5" fill="currentColor" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-foreground sm:text-xl">
+                Earn <span className="text-primary">150 credits</span> by completing all 3 steps
+              </h2>
+              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 credits per step · unlocks bonus rewards</p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && !state.user?.avatarUrl && (
             <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">

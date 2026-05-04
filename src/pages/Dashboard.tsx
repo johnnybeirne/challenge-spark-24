@@ -34,7 +34,11 @@ const Dashboard = () => {
     isComplete ||
     state.challenge.currentDay > 1 ||
     Object.keys(state.challenge.tasks).length > 0 ||
-    Object.keys(state.challenge.aiOutputs).some((key) => state.challenge.aiOutputs[key]);
+    Object.keys(state.challenge.aiOutputs).some((key) => state.challenge.aiOutputs[key]) ||
+    (state.credits?.awardedActions?.length ?? 0) > 0 ||
+    Boolean(state.user?.avatarUrl) ||
+    Boolean(state.user?.bio) ||
+    state.challenge.calendarAdded;
   const completedDays = isComplete ? 3 : Math.max(0, currentDay - 1);
   const progressValue = (completedDays / 3) * 100;
   const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";

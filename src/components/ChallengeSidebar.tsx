@@ -189,10 +189,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
             collapsed ? "p-2" : "px-3 py-2"
           )}
-          title="Bonus Vault"
+          title="Your Bonus Vault"
         >
           <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-semibold text-foreground">Bonus Vault</p>}
+            {!collapsed && <p className="text-sm font-semibold text-foreground">Your Bonus Vault</p>}
             <Gift className="h-4 w-4 text-primary" />
           </div>
         </button>

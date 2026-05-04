@@ -37,9 +37,9 @@ const TypingBubble = ({ text }: { text: string }) => {
     return () => clearInterval(id);
   }, [text]);
   return (
-    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-8 py-6 text-2xl text-foreground max-w-[85%]">
+    <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-5 py-3 text-base text-foreground max-w-[85%]">
       {shown}
-      <span className="inline-block w-3 h-8 bg-foreground/40 ml-1 animate-pulse align-middle" />
+      <span className="inline-block w-2 h-5 bg-foreground/40 ml-1 animate-pulse align-middle" />
     </div>
   );
 };

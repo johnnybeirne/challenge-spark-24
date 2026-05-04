@@ -125,80 +125,82 @@ const Dashboard = () => {
         )}
       </header>
 
-      <section className="mx-auto max-w-3xl space-y-6">
-        {authUser && !state.user?.avatarUrl && (
+      <section className="mx-auto max-w-5xl space-y-6">
+        <div className="grid gap-6 lg:grid-cols-2">
+          {authUser && !state.user?.avatarUrl && (
+            <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+              <div className="flex h-full flex-col gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="relative h-16 w-16 shrink-0">
+                    <img
+                      src={avatarPlaceholder}
+                      alt="Profile photo placeholder"
+                      width={512}
+                      height={512}
+                      loading="lazy"
+                      className="h-16 w-16 rounded-full border-2 border-dashed border-primary/40 object-cover"
+                    />
+                    <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                      <Camera className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
+                    <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
+                    </p>
+                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
+                      <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
+                    </div>
+                  </div>
+                </div>
+                <input
+                  ref={photoInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(event) => handlePhotoUpload(event.target.files?.[0])}
+                />
+                <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" disabled={photoUploading} onClick={() => photoInputRef.current?.click()}>
+                  <Upload className="h-4 w-4" />
+                  {photoUploading ? "Uploading…" : "Upload photo"}
+                </Button>
+              </div>
+            </section>
+          )}
+
           <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex h-full flex-col gap-4">
+              <div className="flex items-start gap-4">
                 <div className="relative h-16 w-16 shrink-0">
-                  <img
-                    src={avatarPlaceholder}
-                    alt="Profile photo placeholder"
-                    width={512}
-                    height={512}
-                    loading="lazy"
-                    className="h-16 w-16 rounded-full border-2 border-dashed border-primary/40 object-cover"
-                  />
+                  <div className="flex h-16 w-16 flex-col overflow-hidden rounded-2xl border-2 border-primary/40 bg-background shadow-sm">
+                    <div className="flex h-5 items-center justify-center bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground">
+                      May
+                    </div>
+                    <div className="flex flex-1 items-center justify-center text-2xl font-black leading-none text-foreground">
+                      5
+                    </div>
+                  </div>
                   <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-                    <Camera className="h-3.5 w-3.5" />
+                    <CalendarPlus className="h-3.5 w-3.5" />
                   </span>
                 </div>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
-                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
+                <div className="min-w-0">
+                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
+                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
+                    Keep momentum across all 3 days and earn credits when it’s added.
                   </p>
                   <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
                     <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
                   </div>
                 </div>
               </div>
-              <input
-                ref={photoInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(event) => handlePhotoUpload(event.target.files?.[0])}
-              />
-              <Button type="button" variant="secondary" className="h-12 shrink-0 gap-2" disabled={photoUploading} onClick={() => photoInputRef.current?.click()}>
-                <Upload className="h-4 w-4" />
-                {photoUploading ? "Uploading…" : "Upload photo"}
-              </Button>
+              <AddToCalendar variant="secondary" className="mt-auto h-12 w-full sm:w-auto sm:self-start" />
             </div>
           </section>
-        )}
-
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative h-16 w-16 shrink-0">
-                <div className="flex h-16 w-16 flex-col overflow-hidden rounded-2xl border-2 border-primary/40 bg-background shadow-sm">
-                  <div className="flex h-5 items-center justify-center bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground">
-                    May
-                  </div>
-                  <div className="flex flex-1 items-center justify-center text-2xl font-black leading-none text-foreground">
-                    5
-                  </div>
-                </div>
-                <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-                  <CalendarPlus className="h-3.5 w-3.5" />
-                </span>
-              </div>
-              <div>
-                <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
-                <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  Keep momentum across all 3 days and earn credits when it’s added.
-                </p>
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                  <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                </div>
-              </div>
-            </div>
-            <AddToCalendar variant="secondary" className="h-12 shrink-0" />
-          </div>
-        </section>
+        </div>
 
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

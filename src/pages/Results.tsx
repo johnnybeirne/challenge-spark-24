@@ -113,13 +113,15 @@ const Results = () => {
     if (rows === null) return []; // still loading; don't start the chat yet
     if (tierData) {
       const body = tierData.messages.filter(Boolean).join("\n\n");
-      return [tierData.title, body].filter(Boolean);
+      const combined = [tierData.title, body].filter(Boolean).join("\n\n");
+      return combined ? [combined] : [];
     }
     if (assessment?.diagnosticTitle) {
-      return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean);
+      const combined = [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean).join("\n\n");
+      return combined ? [combined] : [];
     }
     const fallback = getDiagnosticResult(score);
-    return [fallback.title, fallback.message];
+    return [`${fallback.title}\n\n${fallback.message}`];
   }, [rows, tierData, assessment, score]);
 
   const [chatScript, setChatScript] = useState<string[]>([]);

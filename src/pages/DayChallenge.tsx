@@ -101,6 +101,11 @@ const DayChallenge = () => {
   });
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [dayNum]);
+
+
   if (!canAccessDay(dayNum, state.challenge.startedAt)) {
     navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
     return null;

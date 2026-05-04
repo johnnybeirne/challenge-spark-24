@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
 import AddToCalendar from "@/components/AddToCalendar";
 import Confetti from "@/components/Confetti";
+import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -152,11 +153,22 @@ const Dashboard = () => {
           <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Camera className="h-6 w-6" />
+                <div className="relative h-16 w-16 shrink-0">
+                  <img
+                    src={avatarPlaceholder}
+                    alt="Profile photo placeholder"
+                    width={512}
+                    height={512}
+                    loading="lazy"
+                    className="h-16 w-16 rounded-full border-2 border-dashed border-primary/40 object-cover"
+                  />
+                  <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                    <Camera className="h-3.5 w-3.5" />
+                  </span>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-foreground">Add your challenge photo</h2>
+                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
+                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     People who join the challenge are encouraged to upload a photo so the builder community feels more personal.
                   </p>

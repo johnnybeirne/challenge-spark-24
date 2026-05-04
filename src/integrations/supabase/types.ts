@@ -499,6 +499,45 @@ export type Database = {
         }
         Relationships: []
       }
+      site_content: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          label: string | null
+          page: string
+          section: string
+          sort_order: number
+          updated_at: string
+          value: string
+          value_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          label?: string | null
+          page: string
+          section?: string
+          sort_order?: number
+          updated_at?: string
+          value?: string
+          value_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          label?: string | null
+          page?: string
+          section?: string
+          sort_order?: number
+          updated_at?: string
+          value?: string
+          value_type?: string
+        }
+        Relationships: []
+      }
       training_progress: {
         Row: {
           created_at: string

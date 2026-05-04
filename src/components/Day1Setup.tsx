@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, PlayCircle, Lock, Mic, MicOff } from "lucide-react";
-import { toast } from "sonner";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, PlayCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
+import DictateButton from "@/components/DictateButton";
+import { useDictation } from "@/hooks/useDictation";
 
 export const SETUP_KEY = "leadio_setup";
 
@@ -58,6 +59,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(null);
   const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>("");
+  const { isListening: isDictating, toggle: toggleDictation } = useDictation();
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {

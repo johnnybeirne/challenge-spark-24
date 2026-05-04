@@ -79,12 +79,12 @@ const Results = () => {
       .select("tier,min_percent,max_percent,title,messages")
       .then(({ data }) => {
         if (cancelled || !data) return;
-        const normalised: DiagnosticRow[] = data.map((r: any) => ({
+        const normalised: DiagnosticRow[] = data.map((r) => ({
           tier: r.tier,
           min_percent: r.min_percent,
           max_percent: r.max_percent,
           title: r.title,
-          messages: Array.isArray(r.messages) ? r.messages.filter((m: any) => typeof m === "string") : [],
+          messages: Array.isArray(r.messages) ? r.messages.filter((m): m is string => typeof m === "string") : [],
         }));
         setRows(normalised);
       });

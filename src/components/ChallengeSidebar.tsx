@@ -80,7 +80,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </div>
               <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">{creditTier.name}</span>
             </div>
-            <div className="mt-1 flex items-baseline justify-between gap-2">
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">You have</p>
+            <div className="mt-0.5 flex items-baseline justify-between gap-2">
               <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
               {nextReward && <span className="text-[11px] text-muted-foreground">Next: {nextReward.credits}</span>}
             </div>

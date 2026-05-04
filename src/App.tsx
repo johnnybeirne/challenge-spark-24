@@ -86,6 +86,7 @@ const App = () => (
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
                 <Route path="/bonus-vault" element={<AuthGuard><Rewards /></AuthGuard>} />
+                <Route path="/rewards" element={<Navigate to="/bonus-vault" replace />} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
 
                 {/* Partner-only routes */}

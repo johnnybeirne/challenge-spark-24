@@ -17,7 +17,7 @@ const items = [
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
-  { title: "CMS (legacy)", url: "/owner-console/cms", icon: Settings },
+  
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },

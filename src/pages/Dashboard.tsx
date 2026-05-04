@@ -149,6 +149,43 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
+        <Card className="border-border bg-card shadow-sm">
+          <CardContent className="p-5 sm:p-6">
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
+              <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
+            </div>
+            <Progress value={Math.max(progressValue, hasProgress ? 8 : 0)} className="mb-5 h-2" />
+            <div className="grid gap-3 sm:grid-cols-3">
+              {challengeSteps.map((step) => {
+                const status = getStepStatus(step.day);
+                const isActive = status === "In progress";
+                const isComplete = status === "Complete";
+                const isLocked = status === "Locked";
+                return (
+                  <div
+                    key={step.day}
+                    className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 transition-colors ${
+                      isActive
+                        ? "border-primary/40 bg-primary/10"
+                        : isComplete
+                        ? "border-primary/20 bg-primary/5"
+                        : "border-border bg-muted/30 opacity-60"
+                    }`}
+                  >
+                    <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
+                      <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && !state.user?.avatarUrl && (
             <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -254,42 +291,6 @@ const Dashboard = () => {
           </section>
         </div>
 
-        <Card className="border-border bg-card shadow-sm">
-          <CardContent className="p-5 sm:p-6">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
-              <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
-            </div>
-            <Progress value={Math.max(progressValue, hasProgress ? 8 : 0)} className="mb-5 h-2" />
-            <div className="grid gap-3 sm:grid-cols-3">
-              {challengeSteps.map((step) => {
-                const status = getStepStatus(step.day);
-                const isActive = status === "In progress";
-                const isComplete = status === "Complete";
-                const isLocked = status === "Locked";
-                return (
-                  <div
-                    key={step.day}
-                    className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 transition-colors ${
-                      isActive
-                        ? "border-primary/40 bg-primary/10"
-                        : isComplete
-                        ? "border-primary/20 bg-primary/5"
-                        : "border-border bg-muted/30 opacity-60"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
-                    <div className="min-w-0 flex-1">
-                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
-                      <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
-                      <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
 
         <CreditStatusCard credits={state.credits?.total ?? 0} compact />
 

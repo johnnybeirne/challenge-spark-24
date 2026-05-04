@@ -36,6 +36,7 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
+import AdminContent from "@/pages/AdminContent";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -95,6 +96,7 @@ const App = () => (
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<AdminCms />} />
+                <Route path="content" element={<AdminContent />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />

@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,8 +15,9 @@ import {
 
 const items = [
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
+  { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
-  { title: "CMS", url: "/owner-console/cms", icon: Settings },
+  { title: "CMS (legacy)", url: "/owner-console/cms", icon: Settings },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },

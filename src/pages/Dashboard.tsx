@@ -214,7 +214,10 @@ const Dashboard = () => {
 
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && !state.user?.avatarUrl && (
-            <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+              <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+                +50 <Zap className="h-3 w-3" fill="currentColor" />
+              </span>
               <div className="flex h-full flex-col gap-4">
                 <div className="flex items-start gap-4">
                   <div className="relative h-16 w-16 shrink-0">
@@ -230,12 +233,9 @@ const Dashboard = () => {
                       <Camera className="h-3.5 w-3.5" />
                     </span>
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 pr-14">
                     <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
                     <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-black text-primary">
-                      <Coins className="h-4 w-4" /> Earn +50 Unlock Credits
-                    </div>
                   </div>
                 </div>
                 <input
@@ -253,7 +253,10 @@ const Dashboard = () => {
             </section>
           )}
 
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+              +50 <Zap className="h-3 w-3" fill="currentColor" />
+            </span>
             <div className="flex h-full flex-col gap-4">
               <div className="flex items-start gap-4">
                 <div className="relative h-16 w-16 shrink-0">

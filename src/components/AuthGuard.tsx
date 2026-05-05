@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
 import Spinner from "@/components/Spinner";
@@ -7,20 +7,16 @@ import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAppState();
   const { user, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) return <Spinner />;
 
-  const isDemo = !user && state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1";
-
-  if (!user && !isDemo) {
-    if (state.assessment) return <Navigate to="/results" replace />;
-    return <Navigate to="/join" replace />;
+  if (!user && state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1") {
+    return <>{children}</>;
   }
 
-  // Route returning users to training hub until they complete it
-  if (!state.training?.hubCompleted && location.pathname !== "/training") {
-    return <Navigate to="/training" replace />;
+  if (!user) {
+    if (state.assessment) return <Navigate to="/results" replace />;
+    return <Navigate to="/join" replace />;
   }
 
   return <>{children}</>;

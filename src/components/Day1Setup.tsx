@@ -151,10 +151,6 @@ const Day1Setup = ({ onComplete }: Props) => {
                 </div>
               ))}
             </div>
-            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-              <Lock className="mr-2 inline h-4 w-4" />
-              Unlock this when you’re ready to go deeper, {firstName}.
-            </div>
             <Button size="lg" onClick={() => setStep(1)} className="w-full h-14 text-base font-semibold">
               Start Day 1
               <ArrowRight className="ml-2 h-5 w-5" />

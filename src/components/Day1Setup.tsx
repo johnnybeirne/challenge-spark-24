@@ -236,7 +236,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               />
               <DictateButton
                 isListening={isDictating}
-                onToggle={() => toggleDictation((text) => setTopicHint((prev) => (prev ? `${prev} ${text}` : text)))}
+                onToggle={() => toggleDictation((text) => setTopicHint(text))}
               />
             </div>
             <Button

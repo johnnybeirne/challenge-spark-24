@@ -3,7 +3,8 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { creditRules, getCreditTier, getNextReward, getNextTier, getTierProgress } from "@/lib/credits";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { creditRules, creditTiers, getCreditTier, getNextReward, getNextTier, getTierProgress } from "@/lib/credits";
 
 interface CreditStatusCardProps {
   credits: number;

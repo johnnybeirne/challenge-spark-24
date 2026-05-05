@@ -21,7 +21,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
-      <div className={`w-full relative transition-[padding] duration-300 pb-24 ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
+      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         <Outlet />
         <Footer />
         {showNav && authenticated && !showChallengeSidebar && (

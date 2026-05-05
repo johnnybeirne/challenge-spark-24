@@ -10,8 +10,42 @@ const dayRewards = [
   { day: 3, label: "Complete Day 3", credits: 25 },
 ];
 
+const StatusIcon = ({ status }: { status: "done" | "current" | "locked" }) => {
+  if (status === "done") return <Check className="h-3.5 w-3.5 text-primary" aria-label="completed" />;
+  if (status === "current") return <ArrowIcon className="h-3.5 w-3.5 text-foreground" aria-label="current" />;
+  return <Lock className="h-3.5 w-3.5 text-muted-foreground" aria-label="locked" />;
+};
+
+const Row = ({
+  status,
+  label,
+  credits,
+}: {
+  status: "done" | "current" | "locked";
+  label: string;
+  credits: number;
+}) => (
+  <li className="flex items-center justify-between px-5 py-3 text-sm">
+    <span className="flex items-center gap-2.5 text-foreground">
+      <StatusIcon status={status} />
+      {label}
+    </span>
+    <span className="font-semibold text-muted-foreground">+{credits}</span>
+  </li>
+);
+
 const Unlocks = () => {
   const navigate = useNavigate();
+  const { state } = useAppState();
+  const currentDay = state.challenge?.currentDay ?? 1;
+  const completed = !!state.challenge?.completed;
+  const referralCount = state.network?.direct ?? 0;
+
+  const dayStatus = (day: number): "done" | "current" | "locked" => {
+    if (completed || currentDay > day) return "done";
+    if (currentDay === day) return "current";
+    return "locked";
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,7 +58,7 @@ const Unlocks = () => {
         </div>
 
         {/* Primary action */}
-        <Card className="mb-6 border-primary/30 bg-primary/5 shadow-sm">
+        <Card className="mb-8 border-primary/30 bg-primary/5 shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
@@ -50,19 +84,41 @@ const Unlocks = () => {
           </CardContent>
         </Card>
 
-        {/* Secondary list */}
-        <div className="rounded-xl border border-border bg-card">
-          <ul className="divide-y divide-border">
-            {dayRewards.map((r) => (
-              <li
-                key={r.label}
-                className="flex items-center justify-between px-5 py-3 text-sm"
-              >
-                <span className="text-foreground">{r.label}</span>
-                <span className="font-semibold text-muted-foreground">+{r.credits}</span>
-              </li>
-            ))}
-          </ul>
+        {/* Ways to Earn Credits */}
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Ways to Earn Credits</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Complete actions to build your credit balance.
+          </p>
+
+          <p className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            From Progress
+          </p>
+          <div className="rounded-xl border border-border bg-card">
+            <ul className="divide-y divide-border">
+              {dayRewards.map((r) => (
+                <Row
+                  key={r.day}
+                  status={dayStatus(r.day)}
+                  label={r.label}
+                  credits={r.credits}
+                />
+              ))}
+            </ul>
+          </div>
+
+          <p className="mt-6 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            From Invites
+          </p>
+          <div className="rounded-xl border border-border bg-card">
+            <ul className="divide-y divide-border">
+              <Row
+                status={referralCount > 0 ? "done" : "current"}
+                label="Invite someone who joins"
+                credits={50}
+              />
+            </ul>
+          </div>
         </div>
       </div>
     </div>

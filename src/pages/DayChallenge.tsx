@@ -20,6 +20,7 @@ import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
+import DayTrainingCard from "@/components/DayTrainingCard";
 import { supabase } from "@/integrations/supabase/client";
 
 const diagnosticQuestions = [
@@ -314,6 +315,10 @@ const DayChallenge = () => {
         {config.nudge && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
+      </div>
+
+      <div className="mb-4">
+        <DayTrainingCard dayNum={dayNum} />
       </div>
 
       {dayNum === 1 && (

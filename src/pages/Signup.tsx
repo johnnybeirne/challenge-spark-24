@@ -145,7 +145,7 @@ const Signup = () => {
     const { error } = await signIn(loginEmail.trim().toLowerCase(), loginPassword);
     setLoading(false);
     if (error) return toast.error(error.message || "Login failed");
-    navigate("/training");
+    navigate("/user-dashboard");
   };
 
   const handlePasswordReset = async () => {

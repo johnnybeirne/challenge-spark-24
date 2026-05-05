@@ -73,6 +73,7 @@ export interface CommunityState {
 export interface TrainingState {
   hubCompleted: boolean;
   preChallengeWatched: boolean;
+  dashboardVideoWatched: boolean;
   day1Watched: boolean;
   day2Watched: boolean;
   day3Watched: boolean;
@@ -144,6 +145,7 @@ const defaultCommunity: CommunityState = {
 export const defaultTraining: TrainingState = {
   hubCompleted: false,
   preChallengeWatched: false,
+  dashboardVideoWatched: false,
   day1Watched: false,
   day2Watched: false,
   day3Watched: false,

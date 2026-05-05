@@ -78,6 +78,21 @@ const AdminHub = () => {
         </p>
       </div>
 
+      <div className="mb-6 rounded-lg border border-border bg-card p-4">
+        <h2 className="text-sm font-semibold mb-3">Preview challenge days (admin bypass)</h2>
+        <div className="flex flex-wrap gap-2">
+          {[1, 2, 3].map((d) => (
+            <Link
+              key={d}
+              to={`/day/${d}`}
+              className="px-4 py-2 rounded-md border border-border bg-background hover:bg-primary/10 hover:border-primary text-sm font-medium transition-colors"
+            >
+              Day {d}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         {sections.map((s) => (
           <Link key={s.to} to={s.to}>

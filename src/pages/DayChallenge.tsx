@@ -98,7 +98,8 @@ const DayChallenge = () => {
   }, [dayNum]);
 
 
-  if (!canAccessDay(dayNum, state.challenge.startedAt)) {
+  const isAdmin = state.user?.role === "admin";
+  if (!isAdmin && !canAccessDay(dayNum, state.challenge.startedAt)) {
     navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
     return null;
   }

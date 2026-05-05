@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
 import AddToCalendar from "@/components/AddToCalendar";
 import Confetti from "@/components/Confetti";
+import TrainingVideoCard from "@/components/TrainingVideoCard";
+import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 

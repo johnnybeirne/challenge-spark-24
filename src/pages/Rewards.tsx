@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ExternalLink, Gift, Lock, Sparkles, Users } from "lucide-react";
+import { CheckCircle, ExternalLink, Gift, Lock, Sparkles, Star, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
@@ -26,11 +26,19 @@ const challengeBonuses = [
 
 const partnerImages = ["bg-primary/10", "bg-accent/10", "bg-success/10"];
 
+const CREDIT_REWARDS_CATALOG: Record<string, { title: string; description: string; threshold: number }> = {
+  launch_checklist: { title: "Challenge Launch Checklist", description: "A printable checklist to make sure your launch goes live cleanly.", threshold: 50 },
+  ai_prompt_pack: { title: "AI Prompt Pack", description: "Battle-tested prompts for shaping your challenge with AI.", threshold: 100 },
+  referral_templates: { title: "Referral Message Templates", description: "Plug-and-play scripts for inviting people who actually join.", threshold: 150 },
+};
+const UNLOCKED_STORAGE_KEY = "leadio.unlockedRewards.v1";
+
 const Rewards = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const [assets, setAssets] = useState<PartnerAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creditUnlocked, setCreditUnlocked] = useState<string[]>([]);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
   const direct = state.network.direct;
   const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);
@@ -38,6 +46,28 @@ const Rewards = () => {
   const unlockedPartnerCount = direct >= 10 ? assets.length : direct >= 5 ? 5 : direct >= 3 ? 3 : Math.min(1, assets.length);
 
   useEffect(() => { trackEvent("reward_accessed"); }, []);
+
+  useEffect(() => {
+    const read = () => {
+      try {
+        const raw = localStorage.getItem(UNLOCKED_STORAGE_KEY);
+        setCreditUnlocked(raw ? JSON.parse(raw) : []);
+      } catch { setCreditUnlocked([]); }
+    };
+    read();
+    const onStorage = (e: StorageEvent) => { if (e.key === UNLOCKED_STORAGE_KEY) read(); };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("focus", read);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", read);
+    };
+  }, []);
+
+  const creditUnlockedItems = creditUnlocked
+    .map((id) => ({ id, ...CREDIT_REWARDS_CATALOG[id] }))
+    .filter((r) => r.title);
+
 
   useEffect(() => {
     (async () => {
@@ -70,10 +100,33 @@ const Rewards = () => {
 
         <Card className="mb-8 border-primary/20 bg-primary/5 shadow-sm">
           <CardContent className="p-6">
-            <p className="text-xl font-semibold text-foreground">{firstName}, you’ve unlocked {unlockedChallengeBonuses + Math.min(unlockedPartnerCount, assets.length)} bonuses</p>
+            <p className="text-xl font-semibold text-foreground">{firstName}, you’ve unlocked {unlockedChallengeBonuses + Math.min(unlockedPartnerCount, assets.length) + creditUnlockedItems.length} bonuses</p>
             <p className="mt-2 text-sm text-muted-foreground">Keep completing days and inviting builders to open more of the vault.</p>
           </CardContent>
         </Card>
+
+        {creditUnlockedItems.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-foreground">Credit rewards</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              {creditUnlockedItems.map((r) => (
+                <Card key={r.id} className="border-primary/25 bg-card shadow-sm">
+                  <CardContent className="p-5">
+                    <div className="mb-4 flex items-center justify-between">
+                      <Star className="h-5 w-5 text-primary" />
+                      <CheckCircle className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">{r.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{r.description}</p>
+                    <Button className="mt-5 w-full" onClick={() => navigate("/redeem-credits")}>
+                      View
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mb-10">
           <h2 className="mb-4 text-xl font-semibold text-foreground">Challenge bonuses</h2>

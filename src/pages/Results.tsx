@@ -190,11 +190,15 @@ const Results = () => {
   const showThinkingBubble = thinking;
 
   const ctaCopy = (() => {
+    const deadline = new Date();
+    deadline.setDate(deadline.getDate() + 2);
+    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long" });
+    const sub = `Create a simple version of your lead system and see it working by ${deadlineLabel}.`;
     const tier = tierData?.tier;
     if (tier === "high") {
       return {
         button: "Scale your challenge in 3 days",
-        sub: "Turn what's already working into a stronger automatic lead generation system.",
+        sub,
         stageLabel: "Operator Stage",
         nextStep: "Scale",
         tension: "Now let's make this scale without adding more effort.",
@@ -208,7 +212,7 @@ const Results = () => {
     if (tier === "mid") {
       return {
         button: "Turn this into a working system in 3 days",
-        sub: "Build a challenge that delivers results and supports automatic lead generation.",
+        sub,
         stageLabel: "Builder Stage",
         nextStep: "Consistency",
         tension: "Right now, results depend on effort. Let's make them consistent.",
@@ -219,12 +223,9 @@ const Results = () => {
         scoreTrack: "bg-blue-500/15",
       };
     }
-    const deadline = new Date();
-    deadline.setDate(deadline.getDate() + 2);
-    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long" });
     return {
       button: "Build your challenge in 3 days",
-      sub: `Create a simple version of your lead system and see it working by ${deadlineLabel}.`,
+      sub,
       stageLabel: "Starter Stage",
       nextStep: "Foundation",
       tension: "Let's get something working.",

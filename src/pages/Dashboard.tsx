@@ -218,29 +218,31 @@ const Dashboard = () => {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {authUser && !state.user?.avatarUrl && (
-            <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-              <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
-                +50 <Zap className="h-3 w-3" fill="currentColor" />
+          {authUser && (() => {
+            const photoDone = !!state.user?.avatarUrl;
+            return (
+            <section className={`relative rounded-2xl border p-5 shadow-sm sm:p-6 ${photoDone ? "border-border bg-muted/40 opacity-60" : "border-border bg-card"}`}>
+              <span className={`pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
+                {photoDone ? <><Lock className="h-3 w-3" /> Done</> : <>+50 <Zap className="h-3 w-3" fill="currentColor" /></>}
               </span>
               <div className="flex h-full flex-col gap-4">
                 <div className="flex items-start gap-4">
                   <div className="relative h-16 w-16 shrink-0">
                     <img
-                      src={avatarPlaceholder}
-                      alt="Profile photo placeholder"
+                      src={state.user?.avatarUrl || avatarPlaceholder}
+                      alt="Profile photo"
                       width={512}
                       height={512}
                       loading="lazy"
-                      className="h-16 w-16 rounded-full border-2 border-dashed border-primary/40 object-cover"
+                      className={`h-16 w-16 rounded-full border-2 object-cover ${photoDone ? "border-muted grayscale" : "border-dashed border-primary/40"}`}
                     />
-                    <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-                      <Camera className="h-3.5 w-3.5" />
+                    <span className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full shadow-md ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground"}`}>
+                      {photoDone ? <Lock className="h-3.5 w-3.5" /> : <Camera className="h-3.5 w-3.5" />}
                     </span>
                   </div>
                   <div className="min-w-0 pr-14">
-                    <p className="text-xs font-black uppercase tracking-wide text-primary">Step 1</p>
-                    <h2 className="mt-0.5 text-lg font-bold text-foreground">Add your challenge photo</h2>
+                    <p className={`text-xs font-black uppercase tracking-wide ${photoDone ? "text-muted-foreground" : "text-primary"}`}>Step 1</p>
+                    <h2 className={`mt-0.5 text-lg font-bold ${photoDone ? "text-muted-foreground" : "text-foreground"}`}>Add your challenge photo</h2>
                   </div>
                 </div>
                 <input
@@ -253,13 +255,13 @@ const Dashboard = () => {
                     event.currentTarget.value = "";
                   }}
                 />
-                <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" disabled={photoUploading} onClick={() => photoInputRef.current?.click()}>
-                  <Upload className="h-4 w-4" />
-                  {photoUploading ? "Uploading…" : "Upload photo"}
+                <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" disabled={photoUploading || photoDone} onClick={() => photoInputRef.current?.click()}>
+                  {photoDone ? <><Lock className="h-4 w-4" /> Locked</> : <><Upload className="h-4 w-4" /> {photoUploading ? "Uploading…" : "Upload photo"}</>}
                 </Button>
               </div>
             </section>
-          )}
+            );
+          })()}
 
           <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
             <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">

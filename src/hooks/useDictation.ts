@@ -13,7 +13,8 @@ declare global {
 export function useDictation() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
-  const onResultRef = useRef<((text: string) => void) | null>(null);
+  const onUpdateRef = useRef<((text: string, isFinal: boolean) => void) | null>(null);
+  const finalRef = useRef<string>("");
 
   const isSupported =
     typeof window !== "undefined" &&
@@ -27,7 +28,7 @@ export function useDictation() {
   }, []);
 
   const start = useCallback(
-    (onResult: (text: string) => void) => {
+    (onUpdate: (text: string, isFinal: boolean) => void) => {
       if (!isSupported) {
         toast.error("Voice dictation isn't supported in this browser. Try Chrome or Safari.");
         return;
@@ -39,18 +40,28 @@ export function useDictation() {
       const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
       const rec = new Ctor();
       rec.lang = "en-US";
-      rec.interimResults = false;
-      rec.continuous = false;
+      rec.interimResults = true;
+      rec.continuous = true;
       rec.maxAlternatives = 1;
 
-      onResultRef.current = onResult;
+      onUpdateRef.current = onUpdate;
+      finalRef.current = "";
 
       rec.onresult = (e: any) => {
-        const text = Array.from(e.results)
-          .map((r: any) => r[0]?.transcript || "")
-          .join(" ")
-          .trim();
-        if (text) onResultRef.current?.(text);
+        let interim = "";
+        let newFinal = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const res = e.results[i];
+          const txt = res[0]?.transcript || "";
+          if (res.isFinal) newFinal += txt;
+          else interim += txt;
+        }
+        if (newFinal) {
+          finalRef.current = (finalRef.current + " " + newFinal).trim();
+          onUpdateRef.current?.(finalRef.current, true);
+        }
+        const combined = (finalRef.current + " " + interim).trim();
+        if (combined) onUpdateRef.current?.(combined, false);
       };
       rec.onerror = (e: any) => {
         if (e.error !== "aborted" && e.error !== "no-speech") {

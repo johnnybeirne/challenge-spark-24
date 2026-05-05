@@ -12,9 +12,8 @@ const AddToCalendar = ({ variant = "default", className = "", firstNameOverride 
   const events = buildChallengeEvents(firstName, state.memory, state.challenge.startedAt);
 
   const markAdded = () => {
-    const alreadyAdded = state.challenge.calendarAdded;
     setState((prev) => ({ ...prev, challenge: { ...prev.challenge, calendarAdded: true } }));
-    toast.success(alreadyAdded ? `Your challenge schedule is set, ${firstName}` : `Your challenge schedule is set, ${firstName}. +50 credits added.`);
+    toast.success(`Your challenge schedule is set, ${firstName}`);
   };
 
   const openGoogle = () => {

@@ -360,10 +360,6 @@ function applyCreditRules(state: AppState): AppState {
     updated = awardCredits(updated, "complete_day_3", "You earned 25 credits for completing Day 3", 25);
   }
 
-  if (updated.challenge.calendarAdded) {
-    updated = awardCredits(updated, "calendar_added", "You earned 50 credits for adding the challenge to your calendar", 50);
-  }
-
   if (updated.user?.avatarUrl) {
     updated = awardCredits(updated, "profile_photo_uploaded", "You earned 50 credits for uploading your challenge photo", 50);
   }

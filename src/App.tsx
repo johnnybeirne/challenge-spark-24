@@ -83,6 +83,7 @@ const App = () => (
                 <Route path="/user-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
+                <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
                 <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />

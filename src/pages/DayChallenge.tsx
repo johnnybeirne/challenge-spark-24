@@ -22,6 +22,7 @@ import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useDayContent } from "@/hooks/useDayContent";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
@@ -84,7 +85,28 @@ const DayChallenge = () => {
   const navigate = useNavigate();
   const { state, setState } = useAppState();
   const dayNum = Number(day) || 1;
-  const config = dayConfig[dayNum] || dayConfig[1];
+  const dayContent = useDayContent();
+  const cmsCfg = dayContent[`day${dayNum}` as "day1" | "day2" | "day3"] || dayContent.day1;
+  const baseConfig = dayConfig[dayNum] || dayConfig[1];
+  const config = {
+    ...baseConfig,
+    title: cmsCfg.title || baseConfig.title,
+    intro: cmsCfg.intro || baseConfig.intro,
+    lesson: cmsCfg.lesson || baseConfig.lesson,
+    reinforcement: cmsCfg.reinforcement || baseConfig.reinforcement,
+    nudge: cmsCfg.nudge || baseConfig.nudge,
+    completion: cmsCfg.completion || baseConfig.completion,
+    tasks: (cmsCfg.tasks && cmsCfg.tasks.length > 0
+      ? cmsCfg.tasks.map((t) => ({
+          key: t.key,
+          label: t.label,
+          hasTextarea: t.hasTextarea,
+          inputType: (t.inputType === "textarea" ? "textarea" : "input") as "input" | "textarea",
+          placeholder: t.placeholder || undefined,
+          helper: t.helper || undefined,
+        }))
+      : baseConfig.tasks),
+  };
   const memory = state.memory;
   const challengeType = challengeTypeLabel(memory.challengeType);
   const audience = audienceLabel(memory.audienceType);

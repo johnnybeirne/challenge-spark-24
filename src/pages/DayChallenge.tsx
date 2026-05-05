@@ -20,6 +20,7 @@ import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
+import { supabase } from "@/integrations/supabase/client";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
@@ -98,8 +99,19 @@ const DayChallenge = () => {
   }, [dayNum]);
 
 
-  const isAdmin = state.user?.role === "admin";
-  if (!isAdmin && !canAccessDay(dayNum, state.challenge.startedAt)) {
+  const { authUser } = useAppState();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (!authUser?.id) { setIsAdmin(false); setAdminChecked(true); return; }
+    supabase.rpc("has_role", { _user_id: authUser.id, _role: "admin" }).then(({ data }) => {
+      if (!cancelled) { setIsAdmin(Boolean(data)); setAdminChecked(true); }
+    });
+    return () => { cancelled = true; };
+  }, [authUser?.id]);
+
+  if (adminChecked && !isAdmin && !canAccessDay(dayNum, state.challenge.startedAt)) {
     navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
     return null;
   }

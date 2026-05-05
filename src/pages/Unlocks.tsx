@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, UserPlus } from "lucide-react";
+import { ArrowRight, UserPlus, Check, ArrowRight as ArrowIcon, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAppState } from "@/context/AppContext";
 
 const dayRewards = [
-  { label: "Complete Day 1", credits: 10 },
-  { label: "Complete Day 2", credits: 15 },
-  { label: "Complete Day 3", credits: 25 },
+  { day: 1, label: "Complete Day 1", credits: 10 },
+  { day: 2, label: "Complete Day 2", credits: 15 },
+  { day: 3, label: "Complete Day 3", credits: 25 },
 ];
 
 const Unlocks = () => {

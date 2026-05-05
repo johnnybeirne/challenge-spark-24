@@ -6,6 +6,60 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { creditRules, creditTiers, getCreditTier, getNextReward, getNextTier, getTierProgress } from "@/lib/credits";
 
+const GROWTH_MIN = creditTiers.find((t) => t.name === "Growth Partner")!.min;
+const FEATURED_MIN = creditTiers.find((t) => t.name === "Featured Creator")!.min;
+
+const GrowthToFeaturedBar = ({ credits, compact }: { credits: number; compact?: boolean }) => {
+  const navigate = useNavigate();
+  const span = Math.max(1, FEATURED_MIN - GROWTH_MIN);
+  const pct = Math.min(100, Math.max(0, ((credits - GROWTH_MIN) / span) * 100));
+  const goFeatured = () => navigate("/featured-creator");
+
+  return (
+    <div className={compact ? "mb-3" : "mb-5"}>
+      <div className="mb-1.5 flex items-center justify-between text-[11px] font-semibold text-muted-foreground">
+        <span>Growth Partner</span>
+        <TooltipProvider delayDuration={150}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={goFeatured}
+                className="inline-flex items-center gap-1 rounded-md text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                Featured Creator
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" align="end" className="max-w-[240px] text-left">
+              <p className="text-xs font-bold">Featured Creator</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                Unlock premium visibility, promotion, and priority placement in the network.
+              </p>
+              <button
+                type="button"
+                onClick={goFeatured}
+                className="mt-2 text-[11px] font-semibold text-primary hover:underline"
+              >
+                Learn more →
+              </button>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="relative h-2 w-full rounded-full bg-muted">
+        <div
+          className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-primary/40 via-primary/70 to-primary transition-all duration-700"
+          style={{ width: `${pct}%` }}
+        />
+        <div
+          className="absolute top-1/2 h-3 w-3 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-background bg-primary shadow transition-all duration-700"
+          style={{ left: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
 interface CreditStatusCardProps {
   credits: number;
   compact?: boolean;

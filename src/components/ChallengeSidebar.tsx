@@ -198,7 +198,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         </button>
       </section>
 
-      <Card className={cn("border-border", communityUnlocked ? "bg-primary/5" : "bg-muted/40 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
+      <Card className={cn("border-2 border-black", communityUnlocked ? "bg-primary/5" : "bg-orange-200/60 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
         <CardContent className={cn("cursor-pointer", collapsed ? "p-2" : "px-3 py-2.5")}>
           <div className="flex items-center justify-between gap-2">
             {!collapsed && <p className="text-sm font-semibold text-foreground">Community</p>}

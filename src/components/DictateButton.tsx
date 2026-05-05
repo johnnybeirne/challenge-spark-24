@@ -1,4 +1,4 @@
-import { Mic, MicOff } from "lucide-react";
+import { Mic, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -15,14 +15,21 @@ const DictateButton = ({ isListening, onToggle, className, title }: Props) => (
     title={title || (isListening ? "Stop dictation" : "Dictate with your voice")}
     aria-label={isListening ? "Stop dictation" : "Start dictation"}
     className={cn(
-      "absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full transition-colors",
+      "absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1.5 rounded-full transition-colors",
       isListening
-        ? "bg-destructive text-destructive-foreground animate-pulse"
-        : "bg-primary/10 text-primary hover:bg-primary/20",
+        ? "h-10 px-3 bg-destructive text-destructive-foreground animate-pulse"
+        : "h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20",
       className
     )}
   >
-    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+    {isListening ? (
+      <>
+        <span className="text-sm font-semibold">Stop</span>
+        <Square className="h-3.5 w-3.5" fill="currentColor" />
+      </>
+    ) : (
+      <Mic className="h-4 w-4" />
+    )}
   </button>
 );
 

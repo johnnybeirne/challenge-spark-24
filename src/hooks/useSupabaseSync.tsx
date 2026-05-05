@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
 import type { TrainingState } from "@/context/AppContext";
+import { createProfilePhotoUrl } from "@/lib/profilePhoto";
 
 const fallbackTraining: TrainingState = {
   hubCompleted: false,
@@ -54,11 +55,13 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
     const memory = memoryRes.data;
     const training = trainingRes.data;
 
+    const avatarUrl = await createProfilePhotoUrl(profile.avatar_url);
+
     return {
       user: {
         name: profile.name || "",
         email: profile.email || "",
-        avatarUrl: profile.avatar_url || null,
+        avatarUrl,
         bio: (profile as any).bio || null,
         inviteCode: profile.invite_code,
         referredBy: profile.referred_by,

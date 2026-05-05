@@ -206,7 +206,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           </div>
           {!collapsed && (
             <>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-black">
                 {communityUnlocked ? "Network with other challenge builders." : "Network with other challenge builders."}
               </p>
               {communityUnlocked && (

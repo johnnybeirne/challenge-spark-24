@@ -27,6 +27,7 @@ const challengeSteps = [
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
   const navigate = useNavigate();
+  const trainingContent = useTrainingContent();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");

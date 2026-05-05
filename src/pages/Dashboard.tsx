@@ -151,6 +151,34 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
+        {(() => {
+          const firstName = state.user?.name?.split(" ")[0] || "";
+          const t = state.training;
+          const watchedCount = [t.dashboardVideoWatched, t.day1Watched, t.day2Watched, t.day3Watched].filter(Boolean).length;
+          const markDashboardWatched = () => {
+            if (state.training.dashboardVideoWatched) return;
+            setState((prev) => ({ ...prev, training: { ...prev.training, dashboardVideoWatched: true, preChallengeWatched: true } }));
+            trackEvent("dashboard_training_marked_watched");
+          };
+          return (
+            <>
+              <TrainingVideoCard
+                eyebrow="Watch this first"
+                videoTitle="How Leadio works"
+                subtitle={`Before you start Day 1, understand the system you're building${firstName ? `, ${firstName}` : ""}.`}
+                placeholderLabel="Training video goes here"
+                lesson="You'll learn how your challenge works, how referrals help it grow, and what to focus on over the next 3 days."
+                watched={t.dashboardVideoWatched}
+                watchedLabel="Intro training complete"
+                ctaLabel="Mark as watched"
+                onMarkWatched={markDashboardWatched}
+                primaryCta={{ label: firstName ? `Start Day 1, ${firstName}` : "Start Day 1", onClick: () => navigate("/day/1") }}
+                secondaryCta={{ label: "Invite builders first", onClick: () => navigate("/referrals") }}
+              />
+              <p className="text-xs text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
+            </>
+          );
+        })()}
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">

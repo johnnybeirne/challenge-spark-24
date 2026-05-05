@@ -120,6 +120,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <p className="truncate text-xs text-muted-foreground">
                 {photoUploading ? "Uploading…" : hasAvatar ? "Dashboard" : "Tap photo to add yours"}
               </p>
+              <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
+                Growth Partner
+              </span>
             </button>
           </div>
         )}

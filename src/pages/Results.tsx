@@ -224,7 +224,7 @@ const Results = () => {
     const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
     return {
       button: "Build your challenge in 3 days",
-      sub: `Create a simple version of your lead system and see it working — add by ${deadlineLabel}.`,
+      sub: `Create a simple version of your lead system and see it working by ${deadlineLabel}.`,
       stageLabel: "Starter Stage",
       nextStep: "Foundation",
       tension: "Let's get something working.",

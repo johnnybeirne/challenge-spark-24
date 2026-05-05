@@ -111,9 +111,8 @@ const DayChallenge = () => {
     return null;
   }
 
-  if (dayNum === 1 && !setupDone) {
-    return <Day1Setup onComplete={() => setSetupDone(true)} />;
-  }
+  // Setup is now embedded in /training (the onboarding hub).
+  // Day 1 focuses purely on training, tasks, and AI help.
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];

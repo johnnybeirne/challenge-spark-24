@@ -157,6 +157,28 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </button>
 
+      {!collapsed && (
+        <button
+          onClick={() => go("/redeem")}
+          className="rounded-xl border border-primary/30 bg-background px-3 py-2 text-left transition-all hover:border-primary hover:bg-primary/5"
+          title="Redeem Credits"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-semibold text-foreground">Redeem Credits</span>
+            <Gift className="h-4 w-4 text-primary" />
+          </div>
+        </button>
+      )}
+      {collapsed && (
+        <button
+          onClick={() => go("/redeem")}
+          className="rounded-xl border border-primary/30 bg-background p-2 transition-all hover:border-primary hover:bg-primary/5"
+          title="Redeem Credits"
+        >
+          <Gift className="mx-auto h-4 w-4 text-primary" />
+        </button>
+      )}
+
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
         {[1, 2, 3].map((day) => {

@@ -50,11 +50,17 @@ const Unlocks = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-8 pb-24">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground">Unlock Faster</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Inviting people gets you there quickest.
-          </p>
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Unlock Faster</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Inviting people gets you there quickest.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/redeem")}>
+            Redeem Credits
+            <ArrowRight className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Primary action */}

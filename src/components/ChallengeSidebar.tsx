@@ -105,6 +105,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <img
                 src={avatarSrc}
                 alt="Profile"
+                onError={(e) => {
+                  if (e.currentTarget.src !== avatarPlaceholder) e.currentTarget.src = avatarPlaceholder;
+                }}
                 className={cn(
                   "h-11 w-11 rounded-full object-cover transition-opacity hover:opacity-80",
                   !hasAvatar && "border-2 border-dashed border-primary/50"

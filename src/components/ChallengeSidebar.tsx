@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { getDayUnlock } from "@/lib/challengeProgression";
 import { getCreditTier, getNextReward } from "@/lib/credits";
 import { cn } from "@/lib/utils";
+import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 type ModalType = "day" | "community" | null;
@@ -48,19 +49,13 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     if (!file.type.startsWith("image/")) return toast.error("Please choose an image file.");
     if (file.size > 5 * 1024 * 1024) return toast.error("Please choose an image under 5MB.");
     setPhotoUploading(true);
-    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `${authUser.id}/profile-photo.${extension}`;
-    const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, {
-      cacheControl: "3600", contentType: file.type, upsert: true,
-    });
-    if (uploadError) { setPhotoUploading(false); return toast.error(uploadError.message || "Photo upload failed"); }
-    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
-    const avatarUrl = `${data.publicUrl}?v=${Date.now()}`;
-    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: avatarUrl } as any).eq("user_id", authUser.id);
+    const { path, signedUrl, error: uploadError } = await uploadProfilePhoto(authUser.id, file);
+    if (uploadError || !signedUrl) { setPhotoUploading(false); return toast.error(uploadError?.message || "Photo upload failed"); }
+    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: path } as any).eq("user_id", authUser.id);
     setPhotoUploading(false);
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
-    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl } } : prev));
+    setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl: signedUrl } } : prev));
     toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Unlock Credits earned.");
   };
 

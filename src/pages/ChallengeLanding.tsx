@@ -145,7 +145,7 @@ const ChallengeLanding = () => {
 
   const joinChallenge = (section: string) => {
     trackEvent("landing_cta_clicked", { section });
-    navigate("/join", { state: { mode: "signup" } });
+    navigate("/assess");
   };
 
   const startQuiz = () => {

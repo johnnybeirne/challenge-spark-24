@@ -145,6 +145,7 @@ const defaultCommunity: CommunityState = {
 export const defaultTraining: TrainingState = {
   hubCompleted: false,
   preChallengeWatched: false,
+  dashboardVideoWatched: false,
   day1Watched: false,
   day2Watched: false,
   day3Watched: false,

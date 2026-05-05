@@ -106,6 +106,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
         ? {
             hubCompleted: !!training.hub_completed,
             preChallengeWatched: !!training.pre_challenge_watched,
+            dashboardVideoWatched: !!(training as any).dashboard_video_watched,
             day1Watched: !!training.day1_watched,
             day2Watched: !!training.day2_watched,
             day3Watched: !!training.day3_watched,

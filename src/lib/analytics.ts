@@ -64,7 +64,11 @@ export type AnalyticsEvent =
   | "calendar_ics_downloaded"
   | "training_hub_viewed"
   | "training_hub_completed"
-  | "training_video_marked_watched";
+  | "training_video_marked_watched"
+  | "dashboard_training_viewed"
+  | "dashboard_training_marked_watched"
+  | "day_training_viewed"
+  | "day_training_marked_watched";
 
 export async function trackEvent(
   event: AnalyticsEvent,

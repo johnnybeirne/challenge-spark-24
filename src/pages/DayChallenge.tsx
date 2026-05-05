@@ -345,22 +345,6 @@ const DayChallenge = () => {
         </CardContent>
       </Card>
 
-      <Card className="mb-4 border-border">
-        <CardContent className="p-5">
-          <div className="mb-3 flex items-center gap-2 text-primary">
-            <Brain className="h-4 w-4" />
-            <p className="text-xs font-mono uppercase tracking-wider">AI coaching</p>
-          </div>
-          <p className="text-sm font-medium text-foreground">
-            {dayNum === 2
-              ? config.aiPrompt
-              : dayNum === 3
-                ? config.aiPrompt
-                : config.aiPrompt}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">Open Johnny B AI if you want help before completing the tasks.</p>
-        </CardContent>
-      </Card>
 
       {dayNum === 1 && (
         <Card className="mb-4 border-border bg-muted/30">

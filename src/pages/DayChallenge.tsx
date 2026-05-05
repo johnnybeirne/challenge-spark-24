@@ -321,7 +321,7 @@ const DayChallenge = () => {
         <DayTrainingCard dayNum={dayNum} />
       </div>
 
-      {dayNum === 1 && (
+      {dayNum === 1 && !state.challenge.calendarAdded && (
         <Card className="mb-4 border-primary/20 bg-primary/5">
           <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>

@@ -330,7 +330,7 @@ const Results = () => {
           {ctaCopy.button}
           <ArrowRight className="w-5 h-5" />
         </Button>
-        <p className="text-center text-sm leading-6 text-muted-foreground max-w-md mx-auto">
+        <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
           {ctaCopy.sub}
         </p>
       </div>

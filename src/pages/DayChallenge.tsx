@@ -20,6 +20,7 @@ import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
+import DayTrainingCard from "@/components/DayTrainingCard";
 import { supabase } from "@/integrations/supabase/client";
 
 const diagnosticQuestions = [

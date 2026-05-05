@@ -26,11 +26,19 @@ const challengeBonuses = [
 
 const partnerImages = ["bg-primary/10", "bg-accent/10", "bg-success/10"];
 
+const CREDIT_REWARDS_CATALOG: Record<string, { title: string; description: string; threshold: number }> = {
+  launch_checklist: { title: "Challenge Launch Checklist", description: "A printable checklist to make sure your launch goes live cleanly.", threshold: 50 },
+  ai_prompt_pack: { title: "AI Prompt Pack", description: "Battle-tested prompts for shaping your challenge with AI.", threshold: 100 },
+  referral_templates: { title: "Referral Message Templates", description: "Plug-and-play scripts for inviting people who actually join.", threshold: 150 },
+};
+const UNLOCKED_STORAGE_KEY = "leadio.unlockedRewards.v1";
+
 const Rewards = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const [assets, setAssets] = useState<PartnerAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creditUnlocked, setCreditUnlocked] = useState<string[]>([]);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
   const direct = state.network.direct;
   const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);

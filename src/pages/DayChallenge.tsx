@@ -13,7 +13,7 @@ import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 import Day2InviteNudge from "@/components/Day2InviteNudge";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import PostActionPromo from "@/components/PostActionPromo";
-import Day1Setup, { getSetup } from "@/components/Day1Setup";
+// Day1Setup moved to /training hub
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
@@ -90,15 +90,7 @@ const DayChallenge = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
-  const [setupDone, setSetupDone] = useState(() => {
-    try {
-      if (sessionStorage.getItem(DEMO_SETUP_RESET_KEY) === "1") {
-        sessionStorage.removeItem(DEMO_SETUP_RESET_KEY);
-        return false;
-      }
-    } catch {}
-    return !!getSetup();
-  });
+  // Setup state moved to /training hub
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {
@@ -111,9 +103,8 @@ const DayChallenge = () => {
     return null;
   }
 
-  if (dayNum === 1 && !setupDone) {
-    return <Day1Setup onComplete={() => setSetupDone(true)} />;
-  }
+  // Setup is now embedded in /training (the onboarding hub).
+  // Day 1 focuses purely on training, tasks, and AI help.
 
   const taskKey = (key: string) => `day${dayNum}_${key}`;
   const isChecked = (key: string) => !!state.challenge.tasks[taskKey(key)];

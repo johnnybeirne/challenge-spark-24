@@ -55,6 +55,8 @@ const Dashboard = () => {
     return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
   };
 
+  useEffect(() => { trackEvent("dashboard_training_viewed"); }, []);
+
   useEffect(() => {
     if (!hasSignupCredits) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

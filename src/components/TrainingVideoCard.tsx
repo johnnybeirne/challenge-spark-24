@@ -1,6 +1,7 @@
-import { CheckCircle2, PlayCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getEmbedUrl, isDirectVideo } from "@/lib/trainingContent";
 
 interface Props {
   eyebrow: string;
@@ -12,9 +13,57 @@ interface Props {
   watchedLabel?: string;
   ctaLabel: string;
   onMarkWatched: () => void;
+  videoUrl?: string;
   primaryCta?: { label: string; onClick: () => void };
   secondaryCta?: { label: string; onClick: () => void };
 }
+
+const VideoArea = ({ url, placeholder }: { url?: string; placeholder: string }) => {
+  if (!url) {
+    return (
+      <div className="mt-4 flex aspect-video items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 via-muted/40 to-muted/60 border border-border">
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          <PlayCircle className="h-12 w-12 text-primary" />
+          <span className="text-sm font-medium">{placeholder}</span>
+        </div>
+      </div>
+    );
+  }
+  if (isDirectVideo(url)) {
+    return (
+      <video controls className="mt-4 aspect-video w-full rounded-xl border border-border bg-black">
+        <source src={url} />
+      </video>
+    );
+  }
+  const embed = getEmbedUrl(url);
+  if (embed) {
+    return (
+      <div className="mt-4 aspect-video w-full overflow-hidden rounded-xl border border-border bg-black">
+        <iframe
+          src={embed}
+          title="Training video"
+          className="h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="mt-4 flex aspect-video flex-col items-center justify-center gap-3 rounded-xl bg-muted/40 border border-border p-4">
+      <PlayCircle className="h-10 w-10 text-primary" />
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent"
+      >
+        <ExternalLink className="h-4 w-4" /> Open training video
+      </a>
+    </div>
+  );
+};
 
 const TrainingVideoCard = ({
   eyebrow,
@@ -26,6 +75,7 @@ const TrainingVideoCard = ({
   watchedLabel = "Training complete",
   ctaLabel,
   onMarkWatched,
+  videoUrl,
   primaryCta,
   secondaryCta,
 }: Props) => {
@@ -43,12 +93,7 @@ const TrainingVideoCard = ({
         <h2 className="text-xl font-bold text-foreground sm:text-2xl">{videoTitle}</h2>
         <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>
 
-        <div className="mt-4 flex aspect-video items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 via-muted/40 to-muted/60 border border-border">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <PlayCircle className="h-12 w-12 text-primary" />
-            <span className="text-sm font-medium">{placeholderLabel}</span>
-          </div>
-        </div>
+        <VideoArea url={videoUrl} placeholder={placeholderLabel} />
 
         <p className="mt-4 text-sm leading-relaxed text-foreground/80">{lesson}</p>
 

@@ -13,6 +13,7 @@ import CreditStatusCard from "@/components/CreditStatusCard";
 import AddToCalendar from "@/components/AddToCalendar";
 import Confetti from "@/components/Confetti";
 import TrainingVideoCard from "@/components/TrainingVideoCard";
+import { useTrainingContent } from "@/hooks/useTrainingContent";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
@@ -26,6 +27,7 @@ const challengeSteps = [
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
   const navigate = useNavigate();
+  const trainingContent = useTrainingContent();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
@@ -156,26 +158,30 @@ const Dashboard = () => {
         {(() => {
           const firstName = state.user?.name?.split(" ")[0] || "";
           const t = state.training;
+          const cfg = trainingContent.dashboard;
           const watchedCount = [t.dashboardVideoWatched, t.day1Watched, t.day2Watched, t.day3Watched].filter(Boolean).length;
           const markDashboardWatched = () => {
             if (state.training.dashboardVideoWatched) return;
             setState((prev) => ({ ...prev, training: { ...prev.training, dashboardVideoWatched: true, preChallengeWatched: true } }));
             trackEvent("dashboard_training_marked_watched");
           };
+          if (!cfg.enabled) return null;
+          const personalize = (s: string) => firstName ? s.replace(/\.$/, `, ${firstName}.`) : s;
           return (
             <>
               <TrainingVideoCard
-                eyebrow="Watch this first"
-                videoTitle="How Leadio works"
-                subtitle={`Before you start Day 1, understand the system you're building${firstName ? `, ${firstName}` : ""}.`}
-                placeholderLabel="Training video goes here"
-                lesson="You'll learn how your challenge works, how referrals help it grow, and what to focus on over the next 3 days."
+                eyebrow={cfg.title}
+                videoTitle={cfg.videoTitle}
+                subtitle={personalize(cfg.subtitle)}
+                placeholderLabel={cfg.placeholderText}
+                lesson={cfg.supportingText}
+                videoUrl={cfg.videoUrl}
                 watched={t.dashboardVideoWatched}
                 watchedLabel="Intro training complete"
                 ctaLabel="Mark as watched"
                 onMarkWatched={markDashboardWatched}
-                primaryCta={{ label: firstName ? `Start Day 1, ${firstName}` : "Start Day 1", onClick: () => navigate("/day/1") }}
-                secondaryCta={{ label: "Invite builders first", onClick: () => navigate("/referrals") }}
+                primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => navigate("/day/1") }}
+                secondaryCta={{ label: cfg.secondaryCtaText, onClick: () => navigate("/referrals") }}
               />
               <p className="text-xs text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
             </>

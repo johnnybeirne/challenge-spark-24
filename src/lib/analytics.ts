@@ -68,7 +68,12 @@ export type AnalyticsEvent =
   | "dashboard_training_viewed"
   | "dashboard_training_marked_watched"
   | "day_training_viewed"
-  | "day_training_marked_watched";
+  | "day_training_marked_watched"
+  | "admin_training_viewed"
+  | "admin_training_updated"
+  | "training_video_url_added"
+  | "training_section_disabled"
+  | "training_section_enabled";
 
 export async function trackEvent(
   event: AnalyticsEvent,

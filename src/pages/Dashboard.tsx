@@ -344,11 +344,11 @@ const Dashboard = () => {
           <Card className="border-border bg-card shadow-sm">
             <CardContent className="p-5">
               <h2 className="text-lg font-bold text-foreground">What You’re Building</h2>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
                 <li>A simple challenge for your audience</li>
                 <li>A quiz that brings people in</li>
                 <li>A system that encourages sharing</li>
-              </ul>
+              </ol>
             </CardContent>
           </Card>
 

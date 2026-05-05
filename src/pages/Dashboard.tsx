@@ -274,10 +274,10 @@ const Dashboard = () => {
                 <div className="relative h-16 w-16 shrink-0">
                   <div className="flex h-16 w-16 flex-col overflow-hidden rounded-2xl border-2 border-primary/40 bg-background shadow-sm">
                     <div className="flex h-5 items-center justify-center bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground">
-                      May
+                      {(startedAt ?? new Date()).toLocaleDateString(undefined, { month: "short" })}
                     </div>
                     <div className="flex flex-1 items-center justify-center text-2xl font-black leading-none text-foreground">
-                      5
+                      {(startedAt ?? new Date()).getDate()}
                     </div>
                   </div>
                   <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">

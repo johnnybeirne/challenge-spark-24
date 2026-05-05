@@ -90,15 +90,7 @@ const DayChallenge = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
-  const [setupDone, setSetupDone] = useState(() => {
-    try {
-      if (sessionStorage.getItem(DEMO_SETUP_RESET_KEY) === "1") {
-        sessionStorage.removeItem(DEMO_SETUP_RESET_KEY);
-        return false;
-      }
-    } catch {}
-    return !!getSetup();
-  });
+  // Setup state moved to /training hub
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {

@@ -219,9 +219,12 @@ const Results = () => {
         scoreTrack: "bg-blue-500/15",
       };
     }
+    const deadline = new Date();
+    deadline.setDate(deadline.getDate() + 2);
+    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
     return {
       button: "Build your challenge in 3 days",
-      sub: "Create a simple version of your lead system and see it working.",
+      sub: `Create a simple version of your lead system and see it working — add by ${deadlineLabel}.`,
       stageLabel: "Starter Stage",
       nextStep: "Foundation",
       tension: "Let's get something working.",

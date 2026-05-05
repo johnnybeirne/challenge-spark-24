@@ -13,7 +13,7 @@ import TaskCompleteAnim from "@/components/TaskCompleteAnim";
 import Day2InviteNudge from "@/components/Day2InviteNudge";
 import CrossPromoSpotlight from "@/components/CrossPromoSpotlight";
 import PostActionPromo from "@/components/PostActionPromo";
-import Day1Setup, { getSetup } from "@/components/Day1Setup";
+// Day1Setup moved to /training hub
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";

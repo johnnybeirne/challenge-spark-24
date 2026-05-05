@@ -316,6 +316,10 @@ const DayChallenge = () => {
         )}
       </div>
 
+      <div className="mb-4">
+        <DayTrainingCard dayNum={dayNum} />
+      </div>
+
       {dayNum === 1 && (
         <Card className="mb-4 border-primary/20 bg-primary/5">
           <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">

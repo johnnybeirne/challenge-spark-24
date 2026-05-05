@@ -48,6 +48,28 @@ const Rewards = () => {
   useEffect(() => { trackEvent("reward_accessed"); }, []);
 
   useEffect(() => {
+    const read = () => {
+      try {
+        const raw = localStorage.getItem(UNLOCKED_STORAGE_KEY);
+        setCreditUnlocked(raw ? JSON.parse(raw) : []);
+      } catch { setCreditUnlocked([]); }
+    };
+    read();
+    const onStorage = (e: StorageEvent) => { if (e.key === UNLOCKED_STORAGE_KEY) read(); };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("focus", read);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", read);
+    };
+  }, []);
+
+  const creditUnlockedItems = creditUnlocked
+    .map((id) => ({ id, ...CREDIT_REWARDS_CATALOG[id] }))
+    .filter((r) => r.title);
+
+
+  useEffect(() => {
     (async () => {
       const { data: contribs } = await (supabase.from("partner_contributions") as any)
         .select("id, contribution_title, contribution_description, estimated_value, contribution_url, user_id")

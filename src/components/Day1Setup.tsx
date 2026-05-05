@@ -143,7 +143,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               {[
                 ["Build once", "Create an evergreen challenge that keeps working after the launch."],
                 ["Unlock more", "Invite people who join to unlock extra training and rewards."],
-                ["Launch fast", `By Day 3, you’ll have something live, ${firstName}.`],
+                ["Launch fast", `By Day 3, you’ll have a live challenge, ${firstName}.`],
               ].map(([title, body]) => (
                 <div key={title} className="rounded-xl border border-border bg-card/70 p-4">
                   <p className="font-semibold text-foreground">{title}</p>

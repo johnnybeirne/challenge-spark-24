@@ -181,7 +181,7 @@ const Results = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-xl font-bold text-foreground">No results yet</h1>
-        <Button onClick={() => navigate("/assess")}>Take the assessment</Button>
+        <Button onClick={() => navigate("/assess")}>Take the quiz</Button>
       </div>
     );
   }

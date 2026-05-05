@@ -221,7 +221,7 @@ const Results = () => {
     }
     const deadline = new Date();
     deadline.setDate(deadline.getDate() + 2);
-    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
+    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long" });
     return {
       button: "Build your challenge in 3 days",
       sub: `Create a simple version of your lead system and see it working by ${deadlineLabel}.`,

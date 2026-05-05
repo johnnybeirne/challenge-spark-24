@@ -101,6 +101,7 @@ const App = () => (
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
                 <Route path="content" element={<AdminContent />} />
+                <Route path="challenge-days" element={<AdminChallengeDays />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />

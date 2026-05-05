@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ExternalLink, Gift, Lock, Sparkles, Users } from "lucide-react";
+import { CheckCircle, ExternalLink, Gift, Lock, Sparkles, Star, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";

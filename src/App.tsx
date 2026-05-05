@@ -36,6 +36,7 @@ import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
+import AdminChallengeDays from "@/pages/AdminChallengeDays";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";

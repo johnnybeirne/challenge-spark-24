@@ -69,7 +69,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
+        onChange={(e) => {
+          void handlePhotoUpload(e.target.files?.[0]);
+          e.currentTarget.value = "";
+        }}
       />
       <div
         className={cn(

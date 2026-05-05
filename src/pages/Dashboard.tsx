@@ -248,7 +248,10 @@ const Dashboard = () => {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(event) => handlePhotoUpload(event.target.files?.[0])}
+                  onChange={(event) => {
+                    void handlePhotoUpload(event.target.files?.[0]);
+                    event.currentTarget.value = "";
+                  }}
                 />
                 <Button type="button" variant="secondary" className="mt-auto h-12 w-full gap-2 sm:w-auto sm:self-start" disabled={photoUploading} onClick={() => photoInputRef.current?.click()}>
                   <Upload className="h-4 w-4" />

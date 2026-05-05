@@ -22,6 +22,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
   return (
     <Card className="overflow-hidden border-primary/20 bg-primary/5 shadow-sm">
       <CardContent className={compact ? "p-4" : "p-5 sm:p-6"}>
+        <GrowthToFeaturedBar credits={credits} compact={compact} />
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className={compact ? "text-[11px] font-black uppercase text-primary" : "text-xs font-black uppercase text-primary"}>Unlock Credits</p>

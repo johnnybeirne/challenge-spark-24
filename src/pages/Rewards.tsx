@@ -100,10 +100,33 @@ const Rewards = () => {
 
         <Card className="mb-8 border-primary/20 bg-primary/5 shadow-sm">
           <CardContent className="p-6">
-            <p className="text-xl font-semibold text-foreground">{firstName}, you’ve unlocked {unlockedChallengeBonuses + Math.min(unlockedPartnerCount, assets.length)} bonuses</p>
+            <p className="text-xl font-semibold text-foreground">{firstName}, you’ve unlocked {unlockedChallengeBonuses + Math.min(unlockedPartnerCount, assets.length) + creditUnlockedItems.length} bonuses</p>
             <p className="mt-2 text-sm text-muted-foreground">Keep completing days and inviting builders to open more of the vault.</p>
           </CardContent>
         </Card>
+
+        {creditUnlockedItems.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-foreground">Credit rewards</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              {creditUnlockedItems.map((r) => (
+                <Card key={r.id} className="border-primary/25 bg-card shadow-sm">
+                  <CardContent className="p-5">
+                    <div className="mb-4 flex items-center justify-between">
+                      <Star className="h-5 w-5 text-primary" />
+                      <CheckCircle className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">{r.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{r.description}</p>
+                    <Button className="mt-5 w-full" onClick={() => navigate("/redeem-credits")}>
+                      View
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mb-10">
           <h2 className="mb-4 text-xl font-semibold text-foreground">Challenge bonuses</h2>

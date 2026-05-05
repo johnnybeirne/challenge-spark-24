@@ -89,7 +89,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             title={hasAvatar ? "Change photo" : "Add your photo"}
             disabled={photoUploading}
           >
-            <img src={avatarSrc} alt="Profile" className={cn("h-9 w-9 rounded-full object-cover", !hasAvatar && "border-2 border-dashed border-primary/40")} />
+            <img src={avatarSrc} alt="Profile" onError={(e) => { if (e.currentTarget.src !== avatarPlaceholder) e.currentTarget.src = avatarPlaceholder; }} className={cn("h-9 w-9 rounded-full object-cover", !hasAvatar && "border-2 border-dashed border-primary/40")} />
             <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Camera className="h-2.5 w-2.5" />
             </span>

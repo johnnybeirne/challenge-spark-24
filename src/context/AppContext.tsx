@@ -73,6 +73,7 @@ export interface CommunityState {
 export interface TrainingState {
   hubCompleted: boolean;
   preChallengeWatched: boolean;
+  dashboardVideoWatched: boolean;
   day1Watched: boolean;
   day2Watched: boolean;
   day3Watched: boolean;

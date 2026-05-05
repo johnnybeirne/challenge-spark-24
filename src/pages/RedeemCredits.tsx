@@ -7,7 +7,7 @@ const RedeemCredits = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const credits = state.credits?.total ?? 0;
-  const completed = new Set(state.challenge?.completedDays ?? []);
+  const completed = new Set(state.credits?.completedDays ?? []);
 
   const days = [
     { day: 1, label: "Complete Day 1", value: 10 },

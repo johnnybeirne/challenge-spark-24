@@ -75,20 +75,21 @@ const RedeemCredits = () => {
 
         {/* Progress */}
         <div className="mb-8 rounded-xl border border-border bg-card p-5">
-          <div className="flex items-baseline justify-between">
-            <p className="text-sm text-muted-foreground">You have</p>
-            <p className="text-xs text-muted-foreground">
-              Next reward at <span className="font-semibold text-foreground">{next.credits}</span>
-            </p>
-          </div>
-          <p className="mt-1 text-3xl font-black text-foreground">
-            {credits} <span className="text-base font-medium text-muted-foreground">points</span>
+          <p className="text-sm text-muted-foreground">
+            You have <span className="font-semibold text-foreground">{credits} points</span>
           </p>
+          {next && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Your next reward unlocks at <span className="font-semibold text-foreground">{next.credits} points</span>
+            </p>
+          )}
           <div className="mt-4">
             <Progress value={progressPct} className="h-2" />
-            <p className="mt-2 text-xs text-muted-foreground">
-              {credits} / {next.credits} points
-            </p>
+            {next && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                {credits} / {next.credits} points
+              </p>
+            )}
           </div>
         </div>
 

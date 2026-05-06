@@ -146,7 +146,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-success" />
-                <p className="text-sm font-black uppercase tracking-wide text-success">Earn Points</p>
+                <p className="text-sm font-black uppercase tracking-wide text-success">Earn Reward Points</p>
               </div>
               <ChevronRight className="h-4 w-4 text-success" />
             </div>

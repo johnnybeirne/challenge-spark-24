@@ -16,7 +16,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const hideCopilotRoutes = ["/assess"];
-  const showCopilotChat = !hideCopilotRoutes.includes(pathname);
+  const showCopilotChat = authenticated && !hideCopilotRoutes.includes(pathname);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">

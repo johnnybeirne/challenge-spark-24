@@ -95,7 +95,7 @@ const Rewards = () => {
             <Gift className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold text-foreground">Your Bonus Vault</h1>
           </div>
-          <p className="mt-2 text-muted-foreground">Unlock tools, training, and rewards as you build your challenge</p>
+          
         </header>
 
         <Card className="mb-8 border-primary/20 bg-primary/5 shadow-sm">

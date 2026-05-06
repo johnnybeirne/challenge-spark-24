@@ -151,7 +151,7 @@ const Referrals = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">You’ll see credit momentum here as referrals join and take action.</p>
+              <p className="text-sm text-muted-foreground">You’ll see points momentum here as referrals join and take action.</p>
             )}
           </CardContent>
         </Card>

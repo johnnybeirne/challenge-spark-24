@@ -82,11 +82,11 @@ const Referrals = () => {
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
-              <p className="text-xs text-muted-foreground">credits earned from referrals</p>
+              <p className="text-xs text-muted-foreground">points earned from referrals</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
-              <p className="text-xs text-muted-foreground">pending referral credits</p>
+              <p className="text-xs text-muted-foreground">pending referral points</p>
             </div>
           </CardContent>
         </Card>

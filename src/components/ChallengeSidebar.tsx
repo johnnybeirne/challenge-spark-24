@@ -56,7 +56,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl: signedUrl } } : prev));
-    toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Unlock Credits earned.");
+    toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Points earned.");
   };
 
   const avatarSrc = state.user?.avatarUrl || avatarPlaceholder;

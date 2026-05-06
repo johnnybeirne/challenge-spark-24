@@ -111,14 +111,14 @@ const RedeemCredits = () => {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {item.credits} Credits
+                      {item.credits} Points
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-foreground">{item.name}</p>
                     {isUnlocked ? (
                       <p className="mt-0.5 text-xs font-semibold text-primary">Unlocked ✓</p>
                     ) : (
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        Locked · You need {remaining} more credits
+                        Locked · You need {remaining} more points
                       </p>
                     )}
                   </div>

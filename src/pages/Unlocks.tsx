@@ -66,7 +66,7 @@ const Unlocks = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Unlock Faster</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Inviting people gets you there quickest.
+            Inviting people is the fastest way to earn points.
           </p>
         </div>
 
@@ -97,10 +97,7 @@ const Unlocks = () => {
               </div>
 
               <p className="mt-4 text-sm text-foreground">
-                Invite people to unlock this faster
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Most users reach this by inviting {invitesNeeded === 1 ? "1" : `${invitesNeeded}–${invitesNeeded + 1}`} {invitesNeeded === 1 ? "person" : "people"}
+                Invite 1 person who joins <span className="font-semibold text-primary">+50 points</span>
               </p>
             </CardContent>
           </Card>

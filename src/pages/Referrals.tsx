@@ -139,7 +139,7 @@ const Referrals = () => {
           <CardContent className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <p className="text-xs font-medium text-muted-foreground">Credit activity</p>
+              <p className="text-xs font-medium text-muted-foreground">Points activity</p>
             </div>
             {creditActivity.length ? (
               <div className="space-y-3">

@@ -66,10 +66,10 @@ const RedeemCredits = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Unlock Rewards</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            As your credits grow, you unlock more rewards.
+            As your points grow, you unlock more rewards.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Credits are not spent — they track your progress.
+            Points track your progress — they’re never used up.
           </p>
         </div>
 

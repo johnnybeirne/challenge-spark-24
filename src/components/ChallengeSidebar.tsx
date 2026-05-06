@@ -134,7 +134,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           "rounded-xl border border-success/30 bg-success/10 text-left transition-all hover:border-success/60 hover:bg-success/15",
           collapsed ? "p-2 text-center" : "px-3 py-2.5"
         )}
-        title="Earn Points"
+        title="Earn Reward Points"
       >
         {collapsed ? (
           <div className="flex flex-col items-center gap-0.5 text-success">

@@ -151,6 +151,7 @@ const Unlocks = () => {
             Invite People
           </Button>
         </div>
+      </div>
     </div>
   );
 };

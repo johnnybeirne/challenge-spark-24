@@ -134,11 +134,11 @@ const Unlocks = () => {
           </CardContent>
         </Card>
 
-        {/* Ways to Earn Credits */}
+        {/* Ways to Earn Points */}
         <div>
-          <h2 className="text-lg font-bold text-foreground">Ways to Earn Credits</h2>
+          <h2 className="text-lg font-bold text-foreground">Ways to Earn Points</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Complete actions to build your credit balance.
+            Complete actions to build your points balance.
           </p>
 
           <p className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

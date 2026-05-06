@@ -53,7 +53,7 @@ const Referrals = () => {
       <div className="app-page-container py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Invite the right people. When they join and take action, your credits grow.
+          Invite the right people. When they join and take action, your points grow.
         </p>
 
         {!hasActivity && (
@@ -82,11 +82,11 @@ const Referrals = () => {
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
-              <p className="text-xs text-muted-foreground">credits earned from referrals</p>
+              <p className="text-xs text-muted-foreground">points earned from referrals</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
-              <p className="text-xs text-muted-foreground">pending referral credits</p>
+              <p className="text-xs text-muted-foreground">pending referral points</p>
             </div>
           </CardContent>
         </Card>
@@ -139,7 +139,7 @@ const Referrals = () => {
           <CardContent className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <p className="text-xs font-medium text-muted-foreground">Credit activity</p>
+              <p className="text-xs font-medium text-muted-foreground">Points activity</p>
             </div>
             {creditActivity.length ? (
               <div className="space-y-3">
@@ -151,7 +151,7 @@ const Referrals = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">You’ll see credit momentum here as referrals join and take action.</p>
+              <p className="text-sm text-muted-foreground">You’ll see points momentum here as referrals join and take action.</p>
             )}
           </CardContent>
         </Card>

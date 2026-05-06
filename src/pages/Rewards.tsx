@@ -107,7 +107,7 @@ const Rewards = () => {
 
         {creditUnlockedItems.length > 0 && (
           <section className="mb-10">
-            <h2 className="mb-4 text-xl font-semibold text-foreground">Credit rewards</h2>
+            <h2 className="mb-4 text-xl font-semibold text-foreground">Points rewards</h2>
             <div className="grid gap-4 md:grid-cols-3">
               {creditUnlockedItems.map((r) => (
                 <Card key={r.id} className="border-primary/25 bg-card shadow-sm">

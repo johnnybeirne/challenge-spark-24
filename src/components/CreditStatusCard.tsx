@@ -79,14 +79,14 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
         <GrowthToFeaturedBar credits={credits} compact={compact} />
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className={compact ? "text-[11px] font-black uppercase text-primary" : "text-xs font-black uppercase text-primary"}>Unlock Credits</p>
+            <p className={compact ? "text-[11px] font-black uppercase text-primary" : "text-xs font-black uppercase text-primary"}>Points</p>
             <div className={compact ? "mt-2 flex items-end gap-2" : "mt-2 flex items-end gap-3"}>
               <span className={compact ? "text-3xl font-black leading-none text-foreground transition-all duration-700" : "text-4xl font-black leading-none text-foreground transition-all duration-700"}>{credits}</span>
               <span className={compact ? "mb-0.5 rounded-full border border-primary/30 bg-background px-2.5 py-0.5 text-xs font-bold text-primary shadow-[0_0_18px_hsl(var(--primary)/0.12)]" : "mb-1 rounded-full border border-primary/30 bg-background px-3 py-1 text-xs font-bold text-primary shadow-[0_0_18px_hsl(var(--primary)/0.12)]"}>
                 {tier.name}
               </span>
             </div>
-            {compact && <p className="mt-3 text-sm font-medium text-muted-foreground">Next: {nextTier ? `${nextTier.min} credits` : "Top status"}</p>}
+            {compact && <p className="mt-3 text-sm font-medium text-muted-foreground">Next: {nextTier ? `${nextTier.min} points` : "Top status"}</p>}
           </div>
           <div className={compact ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary" : "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"}>
             <Sparkles className={compact ? "h-4 w-4" : "h-5 w-5"} />
@@ -100,14 +100,14 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
           </div>
           <Progress value={progress} className="h-2 transition-all duration-700" />
           <p className="mt-3 text-sm text-muted-foreground">
-            {nextTier ? `You’re ${creditsToNextTier} credits away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
+            {nextTier ? `You’re ${creditsToNextTier} points away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
           </p>
         </div>}
 
         {!compact && <div className="mt-5 rounded-xl border border-border bg-background/70 p-4">
           <p className="text-xs font-bold uppercase text-muted-foreground">Next unlock</p>
           <p className="mt-1 text-sm font-semibold text-foreground">
-            {nextReward ? `${nextReward.credits} Credits — ${nextReward.title}` : "All Phase 1 unlocks are available"}
+            {nextReward ? `${nextReward.credits} Points — ${nextReward.title}` : "All Phase 1 unlocks are available"}
           </p>
         </div>}
 
@@ -123,7 +123,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
         )}
 
         {!compact && <Button className="mt-5 w-full gap-2" onClick={() => navigate("/referrals")}>
-          Invite to earn credits
+          Invite to earn points
           <ArrowRight className="h-4 w-4" />
         </Button>}
       </CardContent>

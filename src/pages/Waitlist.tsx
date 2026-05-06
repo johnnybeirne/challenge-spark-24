@@ -26,7 +26,7 @@ const TIERS: TierDef[] = [
   { name: "Joined", min: 0, icon: <CheckCircle2 className="h-5 w-5" />, color: "from-slate-400 to-slate-500", rewards: ["Waitlist access", "Referral link", "Visible position"] },
   { name: "Starter", min: 1, icon: <Zap className="h-5 w-5" />, color: "from-blue-500 to-blue-600", rewards: ["Move up the leaderboard", "Starter badge"] },
   { name: "Mover", min: 3, icon: <ArrowUp className="h-5 w-5" />, color: "from-emerald-500 to-emerald-600", rewards: ["24-hour early access", "Early Builder Preview", "Momentum Score boost"] },
-  { name: "Builder", min: 5, icon: <Shield className="h-5 w-5" />, color: "from-amber-500 to-amber-600", rewards: ["Bonus starting credits", "Reduced friction in early steps", "Builder status"] },
+  { name: "Builder", min: 5, icon: <Shield className="h-5 w-5" />, color: "from-amber-500 to-amber-600", rewards: ["Bonus starting points", "Reduced friction in early steps", "Builder status"] },
   { name: "Accelerator", min: 10, icon: <Star className="h-5 w-5" />, color: "from-purple-500 to-purple-600", rewards: ["48-hour early access", "Pre-unlocked rewards", "Higher Momentum Score", "Top Promoter visibility"] },
   { name: "Founder", min: 20, icon: <Crown className="h-5 w-5" />, color: "from-yellow-500 to-orange-500", rewards: ["VIP Founder status", "Maximum starting advantage", "Private early group", "Priority visibility"] },
 ];

@@ -99,7 +99,7 @@ const Dashboard = () => {
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl: signedUrl } } : prev));
-    toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Unlock Credits earned.");
+    toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Points earned.");
   };
 
   const handleBioSave = async () => {
@@ -115,7 +115,7 @@ const Dashboard = () => {
 
     const alreadySaved = Boolean(state.user?.bio);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, bio: trimmed } } : prev));
-    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Unlock Credits earned.");
+    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Points earned.");
   };
 
   const getStepStatus = (day: number) => {
@@ -248,9 +248,9 @@ const Dashboard = () => {
             </div>
             <div>
               <h2 className="text-lg font-black text-foreground sm:text-xl">
-                Earn <span className="text-primary">150 credits</span> by completing all 3 steps
+                Earn <span className="text-primary">150 points</span> by completing all 3 steps
               </h2>
-              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 credits per step · unlocks bonus rewards</p>
+              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 points per step · unlocks bonus rewards</p>
             </div>
           </div>
         </div>

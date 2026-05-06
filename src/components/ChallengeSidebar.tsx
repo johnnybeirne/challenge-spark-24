@@ -56,7 +56,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl: signedUrl } } : prev));
-    toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Unlock Credits earned.");
+    toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Points earned.");
   };
 
   const avatarSrc = state.user?.avatarUrl || avatarPlaceholder;
@@ -134,7 +134,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           "rounded-xl border border-success/30 bg-success/10 text-left transition-all hover:border-success/60 hover:bg-success/15",
           collapsed ? "p-2 text-center" : "px-3 py-2.5"
         )}
-        title="Unlock Credits"
+        title="Earn Points"
       >
         {collapsed ? (
           <div className="flex flex-col items-center gap-0.5 text-success">
@@ -145,14 +145,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <>
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-success" />
-              <p className="text-sm font-black uppercase tracking-wide text-success">Unlock Credits</p>
+              <p className="text-sm font-black uppercase tracking-wide text-success">Earn Points</p>
             </div>
             <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">You have</p>
             <div className="mt-0.5 flex items-baseline justify-between gap-2">
               <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
               {nextReward && <span className="text-sm font-semibold text-muted-foreground">Next: {nextReward.credits}</span>}
             </div>
-            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">Earn by completing tasks. Spend on bonus unlocks.</p>
+            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">Earn by completing tasks. Track your progress to bonus unlocks.</p>
           </>
         )}
       </button>
@@ -161,10 +161,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         <button
           onClick={() => go("/redeem")}
           className="rounded-xl border border-primary/30 bg-background px-3 py-2 text-left transition-all hover:border-primary hover:bg-primary/5"
-          title="Redeem Credits"
+          title="Unlock Rewards"
         >
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-foreground">Redeem Credits</span>
+            <span className="text-sm font-semibold text-foreground">Unlock Rewards</span>
             <Gift className="h-4 w-4 text-primary" />
           </div>
         </button>
@@ -173,7 +173,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         <button
           onClick={() => go("/redeem")}
           className="rounded-xl border border-primary/30 bg-background p-2 transition-all hover:border-primary hover:bg-primary/5"
-          title="Redeem Credits"
+          title="Unlock Rewards"
         >
           <Gift className="mx-auto h-4 w-4 text-primary" />
         </button>

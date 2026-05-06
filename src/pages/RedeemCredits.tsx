@@ -66,10 +66,10 @@ const RedeemCredits = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Unlock Rewards</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            As your credits grow, you unlock more rewards.
+            As your points grow, you unlock more rewards.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Credits are not spent — they track your progress.
+            Points track your progress — they’re never used up.
           </p>
         </div>
 
@@ -82,12 +82,12 @@ const RedeemCredits = () => {
             </p>
           </div>
           <p className="mt-1 text-3xl font-black text-foreground">
-            {credits} <span className="text-base font-medium text-muted-foreground">credits</span>
+            {credits} <span className="text-base font-medium text-muted-foreground">points</span>
           </p>
           <div className="mt-4">
             <Progress value={progressPct} className="h-2" />
             <p className="mt-2 text-xs text-muted-foreground">
-              {credits} / {next.credits} credits
+              {credits} / {next.credits} points
             </p>
           </div>
         </div>
@@ -111,14 +111,14 @@ const RedeemCredits = () => {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {item.credits} Credits
+                      {item.credits} Points
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-foreground">{item.name}</p>
                     {isUnlocked ? (
                       <p className="mt-0.5 text-xs font-semibold text-primary">Unlocked ✓</p>
                     ) : (
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        Locked · You need {remaining} more credits
+                        Locked · You need {remaining} more points
                       </p>
                     )}
                   </div>
@@ -143,7 +143,7 @@ const RedeemCredits = () => {
             </p>
             <p className="truncate text-sm text-foreground">
               Invite 1 person who joins{" "}
-              <span className="font-semibold text-primary">+50 credits</span>
+              <span className="font-semibold text-primary">+50 points</span>
             </p>
           </div>
           <Button className="gap-2 shrink-0" onClick={() => navigate("/referrals")}>

@@ -115,7 +115,7 @@ const Dashboard = () => {
 
     const alreadySaved = Boolean(state.user?.bio);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, bio: trimmed } } : prev));
-    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Unlock Credits earned.");
+    toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Points earned.");
   };
 
   const getStepStatus = (day: number) => {

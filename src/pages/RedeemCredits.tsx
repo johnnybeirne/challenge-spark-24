@@ -137,13 +137,13 @@ const RedeemCredits = () => {
       {/* Sticky momentum nudge */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="app-page-container flex items-center justify-between gap-4 py-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="min-w-0 text-center mx-auto sm:mx-0 sm:text-left">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground/80">
               Fastest way to unlock more rewards
             </p>
             <p className="truncate text-sm text-foreground">
               Invite 1 person who joins{" "}
-              <span className="font-semibold text-primary">+50 points</span>
+              <span className="font-bold text-primary">+50 points</span>
             </p>
           </div>
           <Button className="gap-2 shrink-0" onClick={() => navigate("/referrals")}>

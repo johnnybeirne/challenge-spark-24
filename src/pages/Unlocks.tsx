@@ -66,7 +66,7 @@ const Unlocks = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Unlock Faster</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Inviting people gets you there quickest.
+            Inviting people is the fastest way to earn points.
           </p>
         </div>
 

@@ -100,14 +100,14 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
           </div>
           <Progress value={progress} className="h-2 transition-all duration-700" />
           <p className="mt-3 text-sm text-muted-foreground">
-            {nextTier ? `You’re ${creditsToNextTier} credits away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
+            {nextTier ? `You’re ${creditsToNextTier} points away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
           </p>
         </div>}
 
         {!compact && <div className="mt-5 rounded-xl border border-border bg-background/70 p-4">
           <p className="text-xs font-bold uppercase text-muted-foreground">Next unlock</p>
           <p className="mt-1 text-sm font-semibold text-foreground">
-            {nextReward ? `${nextReward.credits} Credits — ${nextReward.title}` : "All Phase 1 unlocks are available"}
+            {nextReward ? `${nextReward.credits} Points — ${nextReward.title}` : "All Phase 1 unlocks are available"}
           </p>
         </div>}
 

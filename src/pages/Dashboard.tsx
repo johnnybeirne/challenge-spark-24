@@ -248,9 +248,9 @@ const Dashboard = () => {
             </div>
             <div>
               <h2 className="text-lg font-black text-foreground sm:text-xl">
-                Earn <span className="text-primary">150 credits</span> by completing all 3 steps
+                Earn <span className="text-primary">150 points</span> by completing all 3 steps
               </h2>
-              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 credits per step · unlocks bonus rewards</p>
+              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 points per step · unlocks bonus rewards</p>
             </div>
           </div>
         </div>

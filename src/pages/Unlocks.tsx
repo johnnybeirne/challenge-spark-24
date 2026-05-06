@@ -70,14 +70,14 @@ const Unlocks = () => {
           </p>
         </div>
 
-        {/* Next Unlock block */}
+        {/* Next Reward block */}
         {nextReward && (
           <Card className="mb-6 border-border bg-card">
             <CardContent className="p-5 sm:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Next Unlock
+                    Next Reward
                   </p>
                   <p className="mt-1 flex items-center gap-2 text-base font-semibold text-foreground">
                     <Sparkles className="h-4 w-4 text-primary" />
@@ -85,15 +85,14 @@ const Unlocks = () => {
                   </p>
                 </div>
                 <span className="shrink-0 text-sm font-semibold text-primary">
-                  {remaining} to go
+                  {remaining} points to go
                 </span>
               </div>
 
               <div className="mt-4">
                 <Progress value={progressPct} className="h-2" />
-                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>You're at {totalCredits}</span>
-                  <span>{nextReward.credits}</span>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {totalCredits} / {nextReward.credits} points
                 </div>
               </div>
 

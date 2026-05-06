@@ -4,19 +4,9 @@ import { ArrowLeft, Check, Lock, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
+import { creditRewards } from "@/lib/credits";
 
-const ladder = [
-  { credits: 100, name: "Starter Resource Kit" },
-  { credits: 200, name: "Reward coming soon" },
-  { credits: 300, name: "Reward coming soon" },
-  { credits: 400, name: "Reward coming soon" },
-  { credits: 500, name: "Advanced Training" },
-  { credits: 600, name: "Reward coming soon" },
-  { credits: 700, name: "Reward coming soon" },
-  { credits: 800, name: "Group 1:1 Access" },
-  { credits: 900, name: "Reward coming soon" },
-  { credits: 1000, name: "1:1 Call" },
-];
+const ladder = creditRewards.map((r) => ({ credits: r.credits, name: r.title }));
 
 const STORAGE_KEY = "leadio.unlockedRewards.v1";
 

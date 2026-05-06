@@ -79,7 +79,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
         <GrowthToFeaturedBar credits={credits} compact={compact} />
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className={compact ? "text-[11px] font-black uppercase text-primary" : "text-xs font-black uppercase text-primary"}>Unlock Credits</p>
+            <p className={compact ? "text-[11px] font-black uppercase text-primary" : "text-xs font-black uppercase text-primary"}>Points</p>
             <div className={compact ? "mt-2 flex items-end gap-2" : "mt-2 flex items-end gap-3"}>
               <span className={compact ? "text-3xl font-black leading-none text-foreground transition-all duration-700" : "text-4xl font-black leading-none text-foreground transition-all duration-700"}>{credits}</span>
               <span className={compact ? "mb-0.5 rounded-full border border-primary/30 bg-background px-2.5 py-0.5 text-xs font-bold text-primary shadow-[0_0_18px_hsl(var(--primary)/0.12)]" : "mb-1 rounded-full border border-primary/30 bg-background px-3 py-1 text-xs font-bold text-primary shadow-[0_0_18px_hsl(var(--primary)/0.12)]"}>

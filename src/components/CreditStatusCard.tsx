@@ -123,7 +123,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
         )}
 
         {!compact && <Button className="mt-5 w-full gap-2" onClick={() => navigate("/referrals")}>
-          Invite to earn credits
+          Invite to earn points
           <ArrowRight className="h-4 w-4" />
         </Button>}
       </CardContent>

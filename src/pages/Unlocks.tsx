@@ -119,7 +119,7 @@ const Unlocks = () => {
                   <p className="text-base font-semibold text-foreground">
                     Invite someone who joins
                   </p>
-                  <p className="mt-0.5 text-sm font-bold text-primary">+50 credits</p>
+                  <p className="mt-0.5 text-sm font-bold text-primary">+50 points</p>
                 </div>
               </div>
               <Button

@@ -99,7 +99,7 @@ const Dashboard = () => {
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, avatarUrl: signedUrl } } : prev));
-    toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Unlock Credits earned.");
+    toast.success(alreadyUploaded ? "Photo added to your challenge profile." : "Photo added. +50 Points earned.");
   };
 
   const handleBioSave = async () => {

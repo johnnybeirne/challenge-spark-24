@@ -53,7 +53,7 @@ const Referrals = () => {
       <div className="app-page-container py-8 pb-24">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Invite the right people. When they join and take action, your credits grow.
+          Invite the right people. When they join and take action, your points grow.
         </p>
 
         {!hasActivity && (

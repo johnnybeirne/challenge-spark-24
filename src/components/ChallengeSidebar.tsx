@@ -143,16 +143,18 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-success" />
-              <p className="text-sm font-black uppercase tracking-wide text-success">Earn Points</p>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-success" />
+                <p className="text-sm font-black uppercase tracking-wide text-success">Earn Points</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-success" />
             </div>
             <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">You have</p>
             <div className="mt-0.5 flex items-baseline justify-between gap-2">
               <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
               {nextReward && <span className="text-sm font-semibold text-muted-foreground">Next: {nextReward.credits}</span>}
             </div>
-            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">Earn by completing tasks. Track your progress to bonus unlocks.</p>
           </>
         )}
       </button>

@@ -106,33 +106,6 @@ const Unlocks = () => {
           </Card>
         )}
 
-        {/* Primary action */}
-        <Card className="mb-8 border-primary/30 bg-primary/5 shadow-sm">
-          <CardContent className="p-5 sm:p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                  <UserPlus className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-base font-semibold text-foreground">
-                    Invite someone who joins
-                  </p>
-                  <p className="mt-0.5 text-sm font-bold text-primary">+50 points</p>
-                </div>
-              </div>
-              <Button
-                size="lg"
-                className="gap-2 sm:shrink-0"
-                onClick={() => navigate("/referrals")}
-              >
-                Invite people
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Ways to Earn Points */}
         <div>
           <h2 className="text-lg font-bold text-foreground">Ways to Earn Points</h2>
@@ -168,6 +141,15 @@ const Unlocks = () => {
               />
             </ul>
           </div>
+
+          <Button
+            size="lg"
+            className="mt-6 w-full gap-2"
+            onClick={() => navigate("/referrals")}
+          >
+            <UserPlus className="h-4 w-4" />
+            Invite People
+          </Button>
         </div>
       </div>
     </div>

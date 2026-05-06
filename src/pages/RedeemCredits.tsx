@@ -143,7 +143,7 @@ const RedeemCredits = () => {
             </p>
             <p className="truncate text-sm text-foreground">
               Invite 1 person who joins{" "}
-              <span className="font-semibold text-primary">+50 credits</span>
+              <span className="font-semibold text-primary">+50 points</span>
             </p>
           </div>
           <Button className="gap-2 shrink-0" onClick={() => navigate("/referrals")}>

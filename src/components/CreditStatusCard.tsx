@@ -86,7 +86,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
                 {tier.name}
               </span>
             </div>
-            {compact && <p className="mt-3 text-sm font-medium text-muted-foreground">Next: {nextTier ? `${nextTier.min} credits` : "Top status"}</p>}
+            {compact && <p className="mt-3 text-sm font-medium text-muted-foreground">Next: {nextTier ? `${nextTier.min} points` : "Top status"}</p>}
           </div>
           <div className={compact ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary" : "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"}>
             <Sparkles className={compact ? "h-4 w-4" : "h-5 w-5"} />

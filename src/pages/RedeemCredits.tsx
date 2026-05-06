@@ -82,12 +82,12 @@ const RedeemCredits = () => {
             </p>
           </div>
           <p className="mt-1 text-3xl font-black text-foreground">
-            {credits} <span className="text-base font-medium text-muted-foreground">credits</span>
+            {credits} <span className="text-base font-medium text-muted-foreground">points</span>
           </p>
           <div className="mt-4">
             <Progress value={progressPct} className="h-2" />
             <p className="mt-2 text-xs text-muted-foreground">
-              {credits} / {next.credits} credits
+              {credits} / {next.credits} points
             </p>
           </div>
         </div>

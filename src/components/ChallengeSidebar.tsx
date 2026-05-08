@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Lock, Menu, Sparkles, Users, X } from "lucide-react";
+import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -221,6 +221,35 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             <Gift className="h-4 w-4 text-primary" />
           </div>
         </button>
+      </section>
+
+      <section className="space-y-1.5">
+        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
+        {[
+          { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
+          { path: "/prompt-library", label: "Prompt Library", Icon: Library },
+          { path: "/resources", label: "Resources", Icon: BookOpen },
+          { path: "/upgrade", label: "Upgrade", Icon: Rocket },
+        ].map(({ path, label, Icon }) => {
+          const active = location.pathname === path;
+          return (
+            <button
+              key={path}
+              onClick={() => go(path)}
+              className={cn(
+                "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+                collapsed ? "p-2" : "px-3 py-2",
+                active && "ring-2 ring-primary/20"
+              )}
+              title={label}
+            >
+              <div className="flex items-center justify-between gap-2">
+                {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
+                <Icon className={cn("h-4 w-4 shrink-0", path === "/upgrade" ? "text-primary" : "text-muted-foreground")} />
+              </div>
+            </button>
+          );
+        })}
       </section>
 
       <Card className={cn("border-2 border-black", communityUnlocked ? "bg-primary/5" : "bg-orange-200/60 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>

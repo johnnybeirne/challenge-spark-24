@@ -81,7 +81,7 @@ const BlueprintLesson = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          Lesson {lesson.n}
+          {lesson.n === 1 ? "Foundations" : lesson.n === 2 ? "Growth Opportunity" : "Your Insight"}
         </span>
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>
@@ -118,7 +118,7 @@ const BlueprintLesson = () => {
               <Button onClick={markComplete} className="h-11 px-6 text-sm font-black uppercase">Mark Complete</Button>
             )}
             <Button asChild variant="outline" className="h-11 gap-2">
-              <Link to={nextHref}>Next: Lesson {lesson.n + 1} <ArrowRight className="h-4 w-4" /></Link>
+              <Link to={nextHref}>{lesson.n === 1 ? "Next: Growth Opportunity" : "Next: Your Insight"} <ArrowRight className="h-4 w-4" /></Link>
             </Button>
           </div>
         </>

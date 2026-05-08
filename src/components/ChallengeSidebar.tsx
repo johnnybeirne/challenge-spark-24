@@ -280,6 +280,25 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         </CardContent>
       </Card>
 
+      <button
+        onClick={async () => {
+          await signOut();
+          onNavigate?.();
+          navigate("/");
+          toast.success("Signed out");
+        }}
+        className={cn(
+          "mt-auto rounded-xl border border-border bg-background text-left transition-all hover:border-destructive/40 hover:bg-destructive/5 hover:text-destructive",
+          collapsed ? "p-2" : "px-3 py-2"
+        )}
+        title="Log out"
+      >
+        <div className="flex items-center justify-between gap-2">
+          {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+          <LogOut className="h-4 w-4 shrink-0" />
+        </div>
+      </button>
+
       <Dialog open={modal === "day"} onOpenChange={(open) => !open && setModal(null)}>
         <DialogContent>
           <DialogHeader>

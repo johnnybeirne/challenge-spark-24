@@ -130,109 +130,13 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </div>
 
-      <button
-        onClick={() => go("/unlocks")}
-        className={cn(
-          "rounded-xl border border-success/30 bg-success/10 text-left transition-all hover:border-success/60 hover:bg-success/15",
-          collapsed ? "p-2 text-center" : "px-3 py-2.5"
-        )}
-        title="Earn Reward Points"
-      >
-        {collapsed ? (
-          <div className="flex flex-col items-center gap-0.5 text-success">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-xs font-black">{credits}</span>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-success" />
-                <p className="text-sm font-black uppercase tracking-wide text-success">Earn Reward Points</p>
-              </div>
-              <ChevronRight className="h-4 w-4 text-success" />
-            </div>
-            <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">You have</p>
-            <div className="mt-0.5 flex items-baseline justify-between gap-2">
-              <p className="text-2xl font-black leading-none text-foreground">{credits}</p>
-              {nextReward && <span className="text-sm font-semibold text-muted-foreground">Next: {nextReward.credits}</span>}
-            </div>
-          </>
-        )}
-      </button>
-
-      {!collapsed && (
-        <button
-          onClick={() => go("/redeem")}
-          className="rounded-xl border border-primary/30 bg-background px-3 py-2 text-left transition-all hover:border-primary hover:bg-primary/5"
-          title="Unlock Rewards"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-foreground">Unlock Rewards</span>
-            <Gift className="h-4 w-4 text-primary" />
-          </div>
-        </button>
-      )}
-      {collapsed && (
-        <button
-          onClick={() => go("/redeem")}
-          className="rounded-xl border border-primary/30 bg-background p-2 transition-all hover:border-primary hover:bg-primary/5"
-          title="Unlock Rewards"
-        >
-          <Gift className="mx-auto h-4 w-4 text-primary" />
-        </button>
-      )}
-
-      <section className="space-y-1.5">
-        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
-        {[1, 2, 3].map((day) => {
-          const unlock = getDayUnlock(day, state.challenge.startedAt);
-          const active = location.pathname === `/day/${day}`;
-          return (
-            <button
-              key={day}
-              onClick={() => (unlock.available ? go(`/day/${day}`) : setModal("day"))}
-              className={cn(
-                "w-full rounded-xl border text-left transition-all",
-                collapsed ? "p-2" : "px-3 py-2",
-                unlock.available ? "border-primary/30 bg-background hover:border-primary" : "border-border bg-muted/40 opacity-60",
-                active && "ring-2 ring-primary/20"
-              )}
-              title={`Day ${day}: ${unlock.label}`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">{collapsed ? day : `Day ${day}`}</p>
-                  {!collapsed && <p className="truncate text-xs text-muted-foreground">{unlock.label}</p>}
-                </div>
-                {unlock.available ? <CheckCircle className="h-4 w-4 shrink-0 text-primary" /> : <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />}
-              </div>
-            </button>
-          );
-        })}
-        <button
-          onClick={() => go("/bonus-vault")}
-          className={cn(
-            "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
-            collapsed ? "p-2" : "px-3 py-2"
-          )}
-          title="Your Bonus Vault"
-        >
-          <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-semibold text-foreground">Your Bonus Vault</p>}
-            <Gift className="h-4 w-4 text-primary" />
-          </div>
-        </button>
-      </section>
-
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
         {[
-          { path: "/blueprint/dashboard", label: "Growth Blueprint", Icon: Sparkles },
-          { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
-          { path: "/prompt-library", label: "Prompt Library", Icon: Library },
-          { path: "/resources", label: "Resources", Icon: BookOpen },
-          { path: "/upgrade", label: "Upgrade", Icon: Rocket },
+          { path: "/blueprint/dashboard", label: "Blueprint Home", Icon: Sparkles },
+          { path: "/blueprint/lesson/1", label: "Foundations", Icon: BookOpen },
+          { path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Sparkles },
+          { path: "/blueprint/lesson/3", label: "Your Insight", Icon: CheckCircle },
         ].map(({ path, label, Icon }) => {
           const active = location.pathname === path;
           return (
@@ -248,37 +152,56 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             >
               <div className="flex items-center justify-between gap-2">
                 {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
-                <Icon className={cn("h-4 w-4 shrink-0", path === "/upgrade" ? "text-primary" : "text-muted-foreground")} />
+                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
               </div>
             </button>
           );
         })}
       </section>
 
-      <Card className={cn("border-2 border-black", communityUnlocked ? "bg-primary/5" : "bg-orange-200/60 opacity-80")} onClick={() => (communityUnlocked ? go("/community") : setModal("community"))}>
-        <CardContent className={cn("cursor-pointer", collapsed ? "p-2" : "px-3 py-2.5")}>
-          <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-bold text-foreground">Community</p>}
-            {communityUnlocked ? <Users className="h-4 w-4 text-primary" /> : <Lock className="h-4 w-4 text-muted-foreground" />}
-          </div>
-          {!collapsed && (
-            <>
-              <p className="mt-1 text-xs text-black">
-                {communityUnlocked ? "Network with other challenge builders." : "Network with other challenge builders."}
-              </p>
-              {communityUnlocked && (
-                <Button
-                  size="sm"
-                  className="mt-2.5 h-8 w-full text-xs"
-                  onClick={(e) => { e.stopPropagation(); go("/community"); }}
-                >
-                  Enter Community
-                </Button>
+      <section className="space-y-1.5">
+        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tools</p>}
+        {[
+          { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
+          { path: "/blueprint/insight", label: "Saved Insights", Icon: Library },
+        ].map(({ path, label, Icon }) => {
+          const active = location.pathname === path;
+          return (
+            <button
+              key={path}
+              onClick={() => go(path)}
+              className={cn(
+                "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+                collapsed ? "p-2" : "px-3 py-2",
+                active && "ring-2 ring-primary/20"
               )}
-            </>
+              title={label}
+            >
+              <div className="flex items-center justify-between gap-2">
+                {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
+                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </div>
+            </button>
+          );
+        })}
+      </section>
+
+      <section className="space-y-1.5">
+        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
+        <button
+          onClick={() => go("/upgrade")}
+          className={cn(
+            "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
+            collapsed ? "p-2" : "px-3 py-2.5"
           )}
-        </CardContent>
-      </Card>
+          title="Unlock Full System"
+        >
+          <div className="flex items-center justify-between gap-2">
+            {!collapsed && <p className="text-sm font-black text-primary">Unlock Full System</p>}
+            <Rocket className="h-4 w-4 shrink-0 text-primary" />
+          </div>
+        </button>
+      </section>
 
       <button
         onClick={async () => {

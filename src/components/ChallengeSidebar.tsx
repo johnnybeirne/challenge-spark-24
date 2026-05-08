@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
+import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ type ModalType = "day" | "community" | null;
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [modal, setModal] = useState<ModalType>(null);
@@ -277,6 +279,25 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           )}
         </CardContent>
       </Card>
+
+      <button
+        onClick={async () => {
+          await signOut();
+          onNavigate?.();
+          navigate("/");
+          toast.success("Signed out");
+        }}
+        className={cn(
+          "mt-auto rounded-xl border border-border bg-background text-left transition-all hover:border-destructive/40 hover:bg-destructive/5 hover:text-destructive",
+          collapsed ? "p-2" : "px-3 py-2"
+        )}
+        title="Log out"
+      >
+        <div className="flex items-center justify-between gap-2">
+          {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+          <LogOut className="h-4 w-4 shrink-0" />
+        </div>
+      </button>
 
       <Dialog open={modal === "day"} onOpenChange={(open) => !open && setModal(null)}>
         <DialogContent>

@@ -25,6 +25,10 @@ import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
 import Leaderboard from "@/pages/Leaderboard";
 import Rewards from "@/pages/Rewards";
+import PromptLibrary from "@/pages/PromptLibrary";
+import ResourcesPage from "@/pages/Resources";
+import Upgrade from "@/pages/Upgrade";
+import Mentor from "@/pages/Mentor";
 import RewardDetail from "@/pages/RewardDetail";
 import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
@@ -91,6 +95,10 @@ const App = () => (
                 <Route path="/bonus-vault" element={<AuthGuard><Rewards /></AuthGuard>} />
                 <Route path="/rewards" element={<Navigate to="/bonus-vault" replace />} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
+                <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
+                <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />
+                <Route path="/resources" element={<AuthGuard><ResourcesPage /></AuthGuard>} />
+                <Route path="/upgrade" element={<AuthGuard><Upgrade /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />

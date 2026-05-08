@@ -19,6 +19,7 @@ type ModalType = "day" | "community" | null;
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [modal, setModal] = useState<ModalType>(null);

@@ -226,6 +226,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
         {[
+          { path: "/blueprint/dashboard", label: "Growth Blueprint", Icon: Sparkles },
           { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
           { path: "/prompt-library", label: "Prompt Library", Icon: Library },
           { path: "/resources", label: "Resources", Icon: BookOpen },

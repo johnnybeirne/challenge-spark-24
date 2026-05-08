@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
+import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";

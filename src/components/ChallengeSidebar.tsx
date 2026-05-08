@@ -1,39 +1,24 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Gift, Library, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Users, X } from "lucide-react";
+import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Library, LogOut, Menu, MessageCircle, Rocket, Sparkles, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { getDayUnlock } from "@/lib/challengeProgression";
-import { getCreditTier, getNextReward } from "@/lib/credits";
 import { cn } from "@/lib/utils";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
-
-type ModalType = "day" | "community" | null;
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [modal, setModal] = useState<ModalType>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
-  const currentDay = state.challenge.currentDay || 1;
-  const day3Done = state.challenge.completed || state.challenge.currentDay > 3;
-  const submitted = !!state.challenge.launchUrl;
-  const sharedOrInvited = state.network.direct >= 3;
-  const communityUnlocked = day3Done && submitted && sharedOrInvited;
-  const credits = state.credits?.total ?? 0;
-  const creditTier = getCreditTier(credits);
-  const nextReward = getNextReward(credits);
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||
     state.challenge.completed ||

@@ -207,26 +207,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         </div>
       </button>
 
-      <Dialog open={modal === "day"} onOpenChange={(open) => !open && setModal(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Almost there, {firstName}</DialogTitle>
-            <DialogDescription>This unlocks automatically after your current day and time window.</DialogDescription>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">You can move faster by inviting others.</p>
-          <DialogFooter><Button onClick={() => go("/referrals")}>Invite builders</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={modal === "community"} onOpenChange={(open) => !open && setModal(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>You’re almost in, {firstName}</DialogTitle>
-            <DialogDescription>You’ve built something real. One more step unlocks a network where builders promote each other.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter><Button onClick={() => (communityUnlocked ? go("/community") : go("/referrals"))}>Unlock Builder Circle</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
     </aside>
   );
 };

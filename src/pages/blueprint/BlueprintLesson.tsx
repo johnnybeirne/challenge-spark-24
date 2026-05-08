@@ -81,7 +81,7 @@ const BlueprintLesson = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          Lesson {lesson.n}
+          {lesson.n === 1 ? "Foundations" : lesson.n === 2 ? "Growth Opportunity" : "Your Insight"}
         </span>
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>

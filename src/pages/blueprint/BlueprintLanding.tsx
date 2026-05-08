@@ -13,9 +13,6 @@ const BlueprintLanding = () => {
       {/* Hero */}
       <section className="px-5 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Free Mini Training
-          </span>
           <h1 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
             Discover How Challenges Could Grow Your Business
           </h1>

@@ -79,6 +79,7 @@ const App = () => (
                 <Route path="/results/med" element={<Results />} />
                 <Route path="/results/high" element={<Results />} />
                 <Route path="/join" element={<Signup />} />
+                <Route path="/blueprint-join" element={<Signup />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />

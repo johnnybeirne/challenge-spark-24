@@ -6,7 +6,7 @@ import { useAppState } from "@/context/AppContext";
 const BlueprintLanding = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
-  const cta = state.user ? "/blueprint/dashboard" : "/join?redirect=/blueprint/dashboard";
+  const cta = state.user ? "/blueprint/dashboard" : "/blueprint-join?redirect=/blueprint/dashboard";
 
   return (
     <main className="min-h-screen bg-background pb-24 text-foreground">

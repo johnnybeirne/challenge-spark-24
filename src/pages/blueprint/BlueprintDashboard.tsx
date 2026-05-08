@@ -5,9 +5,30 @@ import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
 
 const LESSONS = [
-  { n: 1, slug: "1", icon: Zap, title: "Why Challenges Work", body: "Why challenges create momentum, engagement, and action." },
-  { n: 2, slug: "2", icon: Target, title: "The Challenge Growth Opportunity", body: "How challenges turn attention into leads and trust." },
-  { n: 3, slug: "3", icon: Compass, title: "Your Challenge Fit", body: "Get a personalised AI insight for your audience." },
+  {
+    n: 1,
+    slug: "1",
+    icon: Zap,
+    eyebrow: "Foundations",
+    title: "Why Challenges Work",
+    body: "Understand how challenges create momentum, engagement, accountability, and action.",
+  },
+  {
+    n: 2,
+    slug: "2",
+    icon: Target,
+    eyebrow: "Growth Opportunity",
+    title: "The Challenge Growth Opportunity",
+    body: "Learn how challenges turn attention into trust, leads, and sales conversations.",
+  },
+  {
+    n: 3,
+    slug: "3",
+    icon: Compass,
+    eyebrow: "Your Insight",
+    title: "Your Personalised Insight",
+    body: "Get AI-powered recommendations based on your audience and business.",
+  },
 ];
 
 const BlueprintDashboard = () => {
@@ -27,26 +48,26 @@ const BlueprintDashboard = () => {
         </span>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">Welcome back, {firstName}</h1>
         <p className="mt-2 text-base text-muted-foreground">
-          Complete the short training and get your personalised challenge growth insight.
+          Explore how challenges can create engagement, leads, accountability, and growth for your business.
         </p>
 
         <div className="mt-6">
           <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-muted-foreground">
-            <span>Progress</span><span>{completed} / {LESSONS.length} lessons</span>
+            <span>Blueprint Progress</span><span>{pct}%</span>
           </div>
           <Progress value={pct} className="mt-2 h-2" />
         </div>
 
         <Button asChild className="mt-6 h-12 gap-2 px-6 text-sm font-black uppercase">
           <Link to={`/blueprint/lesson/${nextLesson.slug}`}>
-            {completed === 0 ? "Start Lesson 1" : completed === LESSONS.length ? "Review Lesson 3" : `Continue Lesson ${nextLesson.n}`}
+            Continue Learning
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">
-        {LESSONS.map(({ n, slug, icon: Icon, title, body }) => {
+        {LESSONS.map(({ n, slug, icon: Icon, eyebrow, title, body }) => {
           const done = tasks[`blueprint_lesson_${n}`];
           return (
             <Link
@@ -61,7 +82,7 @@ const BlueprintDashboard = () => {
                 {done ? (
                   <CheckCircle2 className="h-5 w-5 text-success" />
                 ) : (
-                  <span className="text-xs font-black uppercase text-muted-foreground">Lesson {n}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{eyebrow}</span>
                 )}
               </div>
               <h3 className="mt-4 text-base font-black">{title}</h3>
@@ -77,7 +98,7 @@ const BlueprintDashboard = () => {
           <div>
             <h3 className="text-base font-black">Your AI Insight</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              {insight ? "Your personalised challenge insight is ready." : "Complete Lesson 3 to generate your insight."}
+              {insight ? "Your personalised insight is ready." : "Complete the final lesson to generate your insight."}
             </p>
           </div>
           <Button asChild variant={insight ? "default" : "outline"} size="sm" className="shrink-0">
@@ -97,7 +118,7 @@ const BlueprintDashboard = () => {
             </div>
             <div>
               <h3 className="text-base font-black">Ask the Mentor</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Have a question about your audience or challenge idea?</p>
+              <p className="mt-1 text-sm text-muted-foreground">Have a question about your audience or business?</p>
             </div>
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0"><Link to="/mentor">Open</Link></Button>

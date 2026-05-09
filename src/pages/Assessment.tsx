@@ -36,7 +36,7 @@ const Assessment = () => {
     }
   }, [started]);
 
-  // Capture referral
+  // Capture referral and pending coupon from URL
   useEffect(() => {
     const ref = searchParams.get("ref");
     if (ref && ref.length > 0) {
@@ -47,6 +47,10 @@ const Assessment = () => {
           sessionStorage.setItem(REF_SESSION_KEY, ref);
         }
       } catch {}
+    }
+    const coupon = searchParams.get("coupon");
+    if (coupon && coupon.trim().length > 0) {
+      try { sessionStorage.setItem("leadio_pending_coupon", coupon.trim().toUpperCase()); } catch {}
     }
   }, [searchParams]);
 

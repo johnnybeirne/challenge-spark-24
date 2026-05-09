@@ -1,5 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+
+const RedirectKeepingQuery = ({ to }: { to: string }) => {
+  const { search } = useLocation();
+  return <Navigate to={`${to}${search}`} replace />;
+};
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,6 +65,9 @@ import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
 import FreeAssessment from "@/pages/FreeAssessment";
+import ChallengeAssessment from "@/pages/ChallengeAssessment";
+import PremiumAssessment from "@/pages/PremiumAssessment";
+import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
 
@@ -91,10 +99,17 @@ const App = () => (
               {/* Public routes – narrow mobile container */}
               <Route element={<AppShell />}>
                 {/* Canonical assessment route + legacy alias */}
+                {/* Assessment engine (one component, three entry routes) */}
                 <Route path="/assess" element={<Assessment />} />
-                <Route path="/assessment" element={<Navigate to="/assess" replace />} />
+                <Route path="/assessment" element={<ChallengeAssessment />} />
                 {/* Free Training assessment entry — same engine, sets entryIntent=free_training */}
                 <Route path="/free-assessment" element={<FreeAssessment />} />
+                {/* Premium course assessment entry — same engine, sets entryIntent=premium_course, preserves coupon */}
+                <Route path="/premium-assessment" element={<PremiumAssessment />} />
+                {/* Direct enrolment aliases */}
+                <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
+                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium-join" />} />
+                <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />

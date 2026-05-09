@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Activity,
@@ -91,10 +91,29 @@ const Premium = () => {
   const { isPremium, coupon } = usePremium();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto-apply coupon from URL (?coupon=) or pending sessionStorage value
+  useEffect(() => {
+    const fromUrl = searchParams.get("coupon");
+    let pending: string | null = null;
+    try { pending = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
+    const candidate = (fromUrl || pending || "").trim().toUpperCase();
+    if (!candidate || applied) return;
+    setCode(candidate);
+    (async () => {
+      const result = await validateCoupon(candidate);
+      if (result.ok === true) {
+        setApplied({ code: result.code, finalPrice: result.finalPrice, originalPrice: result.originalPrice, label: result.label });
+        try { sessionStorage.removeItem("leadio_pending_coupon"); } catch {}
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.08], [1, 0.85]);

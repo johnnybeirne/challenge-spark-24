@@ -67,9 +67,11 @@ const SignupChat = ({
   const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "login" ? "login" : "signup";
-
-  const [mode, setMode] = useState<Mode>(initialMode);
+  const initialMode: Mode =
+    new URLSearchParams(location.search).get("mode") === "login" ||
+    (location.state as { mode?: Mode } | null)?.mode === "login"
+      ? "login"
+      : "signup";
 
   const redirectAfterAuth = (() => {
     const params = new URLSearchParams(location.search);

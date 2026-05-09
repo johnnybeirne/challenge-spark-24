@@ -169,27 +169,48 @@ const BlueprintDashboard = () => {
   );
 };
 
-export const UpgradeCard = () => (
-  <section className="mt-6 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/15 via-background to-background p-6 sm:p-8">
-    <div className="flex items-start gap-3">
-      <Rocket className="h-6 w-6 text-primary" />
-      <div>
-        <h3 className="text-xl font-black sm:text-2xl">Unlock the Full Course</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Premium Modules 4 & 5 cover advanced challenge systems and how to scale with Leadio.
-        </p>
+export const UpgradeCard = () => {
+  const { isPremium } = usePremium();
+  if (isPremium) {
+    return (
+      <section className="mt-6 rounded-3xl border border-success/30 bg-success/5 p-6 sm:p-8">
+        <div className="flex items-start gap-3">
+          <Crown className="h-6 w-6 text-success" />
+          <div>
+            <h3 className="text-xl font-black sm:text-2xl">Premium Unlocked</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              You have full access to Modules 4 & 5 — Advanced Challenge Systems and Scaling With Leadio.
+            </p>
+          </div>
+        </div>
+        <Button asChild variant="outline" className="mt-5 h-11 gap-2">
+          <Link to="/blueprint/lesson/4">Open Module 4 <ArrowRight className="h-4 w-4" /></Link>
+        </Button>
+      </section>
+    );
+  }
+  return (
+    <section className="mt-6 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/15 via-background to-background p-6 sm:p-8">
+      <div className="flex items-start gap-3">
+        <Rocket className="h-6 w-6 text-primary" />
+        <div>
+          <h3 className="text-xl font-black sm:text-2xl">Unlock the Full Course</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Premium Modules 4 & 5 cover advanced challenge systems and how to scale with Leadio.
+          </p>
+        </div>
       </div>
-    </div>
-    <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
-      <span className="text-3xl font-black">Free</span>
-      <span className="text-sm text-muted-foreground line-through">$497 value</span>
-      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-success">with coupon</span>
-    </div>
-    <p className="mt-2 text-xs font-bold text-muted-foreground">Coupon: <span className="font-black text-primary">FOUNDING497</span></p>
-    <Button asChild className="mt-5 h-12 w-full text-base font-black uppercase sm:w-auto sm:px-8">
-      <Link to="/upgrade">Unlock Full Course</Link>
-    </Button>
-  </section>
-);
+      <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
+        <span className="text-3xl font-black">Free</span>
+        <span className="text-sm text-muted-foreground line-through">$497 value</span>
+        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-success">with coupon</span>
+      </div>
+      <p className="mt-2 text-xs font-bold text-muted-foreground">Coupon: <span className="font-black text-primary">FOUNDING497</span></p>
+      <Button asChild className="mt-5 h-12 w-full text-base font-black uppercase sm:w-auto sm:px-8">
+        <Link to="/upgrade">Unlock Full Course</Link>
+      </Button>
+    </section>
+  );
+};
 
 export default BlueprintDashboard;

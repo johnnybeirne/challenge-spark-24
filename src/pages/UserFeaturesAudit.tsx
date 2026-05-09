@@ -777,6 +777,9 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
+        {/* Core Entry Links — owner control hub */}
+        <CoreEntryLinksSection />
+
         {/* Experience Separation */}
         <ExperienceSeparationSection />
 

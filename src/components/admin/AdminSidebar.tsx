@@ -25,6 +25,7 @@ const items = [
   { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Feature Overview", url: "/owner-console/features", icon: FileText },
+  { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
 ];
 
 export function AdminSidebar() {

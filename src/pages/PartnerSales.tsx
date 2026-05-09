@@ -222,7 +222,7 @@ const PartnerSales = () => {
           <Quote className="h-7 w-7 text-primary" />
           <p className="mt-4 text-xl font-bold leading-relaxed text-foreground sm:text-2xl">
             "Leadio finally connected the dots. Three days in, I had a working referral loop that
-            kept producing leads while I slept. Best €497 I've spent on my business this year."
+            kept producing leads while I slept. Best $497 I've spent on my business this year."
           </p>
           <div className="mt-6 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
@@ -241,7 +241,7 @@ const PartnerSales = () => {
           className="mt-14 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-8 sm:p-12"
         >
           <Badge className="bg-primary/15 text-primary border-primary/30">One-time payment</Badge>
-          <h2 className="mt-4 text-3xl font-black sm:text-5xl">Lifetime access — €497</h2>
+          <h2 className="mt-4 text-3xl font-black sm:text-5xl">Lifetime access — $497</h2>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
             Pay once. Keep it forever. All five modules, the platform, every future update, and
             premium AI workflows included.

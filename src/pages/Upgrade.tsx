@@ -56,7 +56,7 @@ const Upgrade = () => {
 
   const handleBuy = () => {
     openCheckout({
-      priceId: "leadio_premium_lifetime",
+      priceId: "leadio_premium_lifetime_usd",
       customerEmail: user?.email,
       userId: user?.id,
       promotionCode: getPartnerCode(),
@@ -100,7 +100,7 @@ const Upgrade = () => {
             >
               <div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-black text-foreground">€497</span>
+                  <span className="text-4xl font-black text-foreground">$497</span>
                   <Badge className="bg-primary/10 text-primary border-primary/30">Lifetime</Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">

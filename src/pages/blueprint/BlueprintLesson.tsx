@@ -102,11 +102,23 @@ const BlueprintLesson = () => {
   const completed = !!state.challenge.tasks[taskKey];
 
   const markComplete = () => {
+    const stamp = new Date().toISOString();
     setState((prev) => ({
       ...prev,
-      challenge: { ...prev.challenge, tasks: { ...prev.challenge.tasks, [taskKey]: true } },
+      challenge: {
+        ...prev.challenge,
+        tasks: { ...prev.challenge.tasks, [taskKey]: true },
+        aiOutputs: {
+          ...prev.challenge.aiOutputs,
+          [`${taskKey}_completed_at`]: stamp,
+        },
+      },
     }));
     toast.success(`Module ${lesson.n} complete`);
+    if (lesson.n === 3) {
+      // Bridge experience — do not auto-redirect, navigate intentionally.
+      navigate("/blueprint/bridge");
+    }
   };
 
   const nextHref = lesson.n < 5 ? `/blueprint/lesson/${lesson.n + 1}` : "/blueprint/dashboard";

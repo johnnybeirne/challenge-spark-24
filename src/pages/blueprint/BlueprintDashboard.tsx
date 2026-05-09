@@ -30,6 +30,7 @@ const MODULES: ModuleEntry[] = [
 
 const BlueprintDashboard = () => {
   const { state } = useAppState();
+  const { isPremium } = usePremium();
   const tasks = state.challenge.tasks;
   const insight = state.challenge.aiOutputs?.blueprint_insight;
   const freeModules = MODULES.filter((m) => !m.locked);

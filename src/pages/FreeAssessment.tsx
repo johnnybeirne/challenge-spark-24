@@ -25,9 +25,6 @@ const FreeAssessment = () => {
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex min-h-[82vh] w-full max-w-4xl items-center px-5 py-8 text-center sm:px-6 lg:px-8">
         <div className="w-full">
-          <p className="mb-4 inline-flex items-center rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            Free Training Funnel
-          </p>
           <h1 className="mx-auto max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Discover What's Blocking Your Lead Generation
           </h1>

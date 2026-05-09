@@ -260,9 +260,9 @@ type CoreEntryLink = {
 const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Assessment Homepage", route: "/", description: "Primary assessment-first entry point for cold traffic.", badge: "Top Funnel" },
   { title: "Direct Challenge Entry", route: "/challenge", description: "Direct entry into the 3-Day Challenge for higher-intent users.", badge: "Challenge" },
-  { title: "Free Training Entry", route: "/free-training", fallback: "/blueprint", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
+  { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
   { title: "Premium Course", route: "/premium", description: "Premium educational experience with coupon-code support and upgrade flow.", badge: "Premium" },
-  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", fallback: "/blueprint", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
+  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
 ];
 
 const CoreEntryLinksSection = () => {

@@ -175,7 +175,7 @@ const BlueprintLesson = () => {
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>
 
-      {isFree(lesson) ? (
+      {unlocked ? (
         <>
           <article className="mt-6 rounded-2xl border border-border bg-card p-6 sm:p-8">
             <p className="text-base leading-8 text-foreground">{lesson.intro}</p>
@@ -234,7 +234,7 @@ const BlueprintLesson = () => {
           )}
         </>
       ) : (
-        <LockedModuleView teaser={lesson.teaser} />
+        <LockedModuleView lesson={lesson as PremiumModule} />
       )}
 
       <UpgradeCard />

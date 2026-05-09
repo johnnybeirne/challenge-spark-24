@@ -73,31 +73,34 @@ const BlueprintDashboard = () => {
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">
         {MODULES.map(({ n, slug, icon: Icon, eyebrow, title, body, locked }) => {
-          const done = !locked && tasks[`blueprint_lesson_${n}`];
+          const isLocked = locked && !isPremium;
+          const done = !isLocked && tasks[`blueprint_lesson_${n}`];
           return (
             <Link
               key={n}
-              to={locked ? `/blueprint/lesson/${slug}` : `/blueprint/lesson/${slug}`}
+              to={`/blueprint/lesson/${slug}`}
               className={`group relative rounded-2xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                locked ? "border-primary/30 hover:border-primary/60" : "border-border hover:border-primary/40"
+                isLocked ? "border-primary/30 hover:border-primary/60" : "border-border hover:border-primary/40"
               }`}
             >
               <div className="flex items-center justify-between">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${locked ? "bg-primary/15 text-primary" : "bg-primary/10 text-primary"}`}>
-                  {locked ? <Lock className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  {isLocked ? <Lock className="h-5 w-5" /> : locked ? <Crown className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                 </div>
                 {done ? (
                   <CheckCircle2 className="h-5 w-5 text-success" />
                 ) : (
                   <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                    Module {n}
+                    {locked ? "Premium" : `Module ${n}`}
                   </span>
                 )}
               </div>
-              <p className="mt-4 text-[10px] font-black uppercase tracking-wider text-primary">{eyebrow}</p>
+              <p className="mt-4 text-[10px] font-black uppercase tracking-wider text-primary">
+                {locked && isPremium ? "Premium · Unlocked" : eyebrow}
+              </p>
               <h3 className="mt-1 text-base font-black">{title}</h3>
               <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{body}</p>
-              {locked && (
+              {isLocked && (
                 <p className="mt-3 text-[11px] font-bold text-primary">Unlock Full Course →</p>
               )}
             </Link>

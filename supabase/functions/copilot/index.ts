@@ -114,16 +114,27 @@ serve(async (req) => {
     const promptTokens = new Set(tokenize(prompt));
 
     let answer: string | null = null;
+    let source: "qa-exact" | "kb" | "qa" | "fallback" = "fallback";
 
-    // 1. Exact (normalized) question match
+    // 1. Exact (normalized) question match — highest confidence
     for (const r of rows ?? []) {
       if (normalize(r.question) === normPrompt) {
         answer = r.answer;
+        source = "qa-exact";
         break;
       }
     }
 
-    // 2. Keyword scoring
+    // 2. Knowledge-base retrieval — Leadio frameworks are the primary intelligence layer
+    if (!answer) {
+      const docs = await retrieveKb(sb, prompt, stage);
+      if (docs.length > 0) {
+        answer = formatKbAnswer(docs);
+        source = "kb";
+      }
+    }
+
+    // 3. Keyword-scored QA fallback
     if (!answer) {
       let bestScore = 0;
       let bestAnswer: string | null = null;
@@ -143,23 +154,16 @@ serve(async (req) => {
           bestAnswer = r.answer;
         }
       }
-      if (bestScore >= 2) answer = bestAnswer;
-    }
-
-    // 3. Knowledge-base retrieval (Leadio frameworks) before falling back
-    let kbUsed = false;
-    if (!answer) {
-      const docs = await retrieveKb(sb, prompt, stage);
-      if (docs.length > 0) {
-        answer = formatKbAnswer(docs);
-        kbUsed = true;
+      if (bestScore >= 2) {
+        answer = bestAnswer;
+        source = "qa";
       }
     }
 
     return new Response(
       JSON.stringify({
         response: withMemory(answer ?? fallback, memoryContext),
-        source: kbUsed ? "kb" : answer ? "qa" : "fallback",
+        source,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

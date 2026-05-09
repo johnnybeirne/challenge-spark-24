@@ -1,9 +1,10 @@
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle2, Lock, Rocket, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { toast } from "sonner";
 import { UpgradeCard } from "./BlueprintDashboard";
+import { usePremium } from "@/hooks/usePremium";
 
 type ModuleSlug = "1" | "2" | "3" | "4" | "5";
 
@@ -17,13 +18,19 @@ type FreeModule = {
   prompt: string;
 };
 
-type LockedModule = {
+type PremiumModule = {
   n: 4 | 5;
   locked: true;
   eyebrow: string;
   title: string;
   teaser: string;
+  previewBullets: string[];
+  intro: string;
+  takeaways: string[];
+  prompt: string;
 };
+
+type LockedModule = PremiumModule;
 
 type ModuleContent = FreeModule | LockedModule;
 

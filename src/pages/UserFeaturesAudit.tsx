@@ -600,6 +600,9 @@ const UserFeaturesAudit = () => {
         {/* LMS Language Audit */}
         <LmsLanguageAuditSection />
 
+        {/* LMS → Challenge Bridge */}
+        <BridgeAuditSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

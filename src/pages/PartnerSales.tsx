@@ -91,7 +91,7 @@ const PartnerSales = () => {
   const { user } = useAuth();
   const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
 
-  const code = useMemo(() => partnerCode.trim().toLowerCase(), [partnerCode]);
+  const code = useMemo(() => partnerCode.trim(), [partnerCode]);
 
   // Silently capture and persist the partner code on mount.
   useEffect(() => {

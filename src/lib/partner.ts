@@ -5,7 +5,7 @@ const KEY = "leadio_partner_code";
 export function setPartnerCode(code: string) {
   try {
     if (!code) return;
-    localStorage.setItem(KEY, code.trim().toLowerCase());
+    localStorage.setItem(KEY, code.trim());
   } catch {
     // ignore
   }

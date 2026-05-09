@@ -189,32 +189,50 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
-        <button
-          onClick={() => go("/blueprint/bridge")}
-          className={cn(
-            "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
-            collapsed ? "p-2" : "px-3 py-2.5"
-          )}
-          title="Join the 3-Day Challenge"
-        >
-          <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-black text-primary">Join the 3-Day Challenge</p>}
-            <Sparkles className="h-4 w-4 shrink-0 text-primary" />
-          </div>
-        </button>
-        <button
-          onClick={() => go("/upgrade")}
-          className={cn(
-            "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
-            collapsed ? "p-2" : "px-3 py-2.5"
-          )}
-          title="Unlock Full Course"
-        >
-          <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-black text-primary">Unlock Full Course</p>}
-            <Rocket className="h-4 w-4 shrink-0 text-primary" />
-          </div>
-        </button>
+        {hasJoinedChallenge ? (
+          <button
+            onClick={() => go("/user-dashboard")}
+            className={cn(
+              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
+              collapsed ? "p-2" : "px-3 py-2.5"
+            )}
+            title="Continue Your Challenge"
+          >
+            <div className="flex items-center justify-between gap-2">
+              {!collapsed && <p className="text-sm font-black text-primary">Continue Your Challenge</p>}
+              <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+            </div>
+          </button>
+        ) : (
+          <button
+            onClick={() => go("/blueprint/bridge")}
+            className={cn(
+              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
+              collapsed ? "p-2" : "px-3 py-2.5"
+            )}
+            title="Start the 3-Day Challenge"
+          >
+            <div className="flex items-center justify-between gap-2">
+              {!collapsed && <p className="text-sm font-black text-primary">Start the 3-Day Challenge</p>}
+              <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+            </div>
+          </button>
+        )}
+        {!isPremiumUser && (
+          <button
+            onClick={() => go("/upgrade")}
+            className={cn(
+              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
+              collapsed ? "p-2" : "px-3 py-2.5"
+            )}
+            title="Unlock Full Course"
+          >
+            <div className="flex items-center justify-between gap-2">
+              {!collapsed && <p className="text-sm font-black text-primary">Unlock Full Course</p>}
+              <Rocket className="h-4 w-4 shrink-0 text-primary" />
+            </div>
+          </button>
+        )}
       </section>
 
       <button

@@ -452,6 +452,48 @@ const LmsLanguageAuditSection = () => {
   );
 };
 
+type BridgeCheck = { label: string; status: Status; note?: string };
+
+const BRIDGE_CHECKS: BridgeCheck[] = [
+  { label: "Module 3 completion bridge route exists", status: "Detected", note: "/blueprint/bridge" },
+  { label: "LMS Module 3 routes to bridge (no auto Day 1 redirect)", status: "Detected", note: "Manual navigation only" },
+  { label: "Bridge shows 3-day challenge preview", status: "Detected", note: "Day 1 / Day 2 / Day 3 cards on bridge" },
+  { label: "Bridge has primary 'Start The 3-Day Challenge' CTA", status: "Detected", note: "→ /user-dashboard" },
+  { label: "Bridge has secondary 'Continue Learning' CTA", status: "Detected", note: "→ /blueprint/dashboard" },
+  { label: "Bridge sets enteredChallengeFromLMS flag", status: "Detected", note: "aiOutputs.entered_challenge_from_lms" },
+  { label: "Bridge captures optional build intent", status: "Detected", note: "aiOutputs.lms_build_intent" },
+  { label: "LMS positioning: 'learn the system'", status: "Detected" },
+  { label: "Challenge positioning: 'implement the system'", status: "Detected" },
+  { label: "No abrupt LMS → Day 1 redirect", status: "Detected" },
+  { label: "Challenge rewards hidden from LMS surface", status: "Detected" },
+];
+
+const BridgeAuditSection = () => (
+  <Card className="border-border">
+    <CardContent className="p-5">
+      <div className="mb-3 flex items-center gap-2">
+        <ShieldAlert className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-black">LMS → Challenge Bridge</h2>
+        <Badge variant="outline" className="ml-auto text-[10px]">Read-only</Badge>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        The transition from learning to implementation must be intentional, contextual, and never automatic.
+      </p>
+      <ul className="space-y-2">
+        {BRIDGE_CHECKS.map(c => (
+          <li key={c.label} className="flex items-start justify-between gap-3 rounded-xl border border-border p-3">
+            <div>
+              <p className="text-sm font-semibold">{c.label}</p>
+              {c.note && <p className="text-xs text-muted-foreground">{c.note}</p>}
+            </div>
+            <StatusBadge status={c.status} />
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+);
+
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);

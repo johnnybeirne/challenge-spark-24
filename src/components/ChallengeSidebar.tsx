@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
+import { useUserState } from "@/hooks/useUserState";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {

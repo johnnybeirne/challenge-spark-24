@@ -14,6 +14,7 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
+  const { hasJoinedChallenge, isPremiumUser } = useUserState();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

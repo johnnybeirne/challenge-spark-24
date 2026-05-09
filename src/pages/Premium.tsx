@@ -104,9 +104,9 @@ const Premium = () => {
     [applied, coupon],
   );
 
-  const handleApply = () => {
+  const handleApply = async () => {
     setError(null);
-    const result = validateCoupon(code);
+    const result = await validateCoupon(code);
     if (result.ok !== true) {
       setError(result.reason);
       setApplied(null);

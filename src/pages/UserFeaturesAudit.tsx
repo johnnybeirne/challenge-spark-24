@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/analytics";
 
 type Status = "Detected" | "Partially detected" | "Not detected" | "Conflicting" | "Needs review";
 

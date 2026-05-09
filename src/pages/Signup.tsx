@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -52,6 +52,13 @@ const Signup = () => {
   const initialMode: Mode = (location.state as { mode?: Mode } | null)?.mode === "login" ? "login" : "signup";
 
   const [mode, setMode] = useState<Mode>(initialMode);
+
+  const redirectAfterAuth = (() => {
+    const params = new URLSearchParams(location.search);
+    const redirect = params.get("redirect");
+    if (redirect && redirect.startsWith("/")) return redirect;
+    return "/user-dashboard";
+  })();
 
   // Signup chat state
   const [step, setStep] = useState<SignupStep>("name");
@@ -145,7 +152,7 @@ const Signup = () => {
     const { error } = await signIn(loginEmail.trim().toLowerCase(), loginPassword);
     setLoading(false);
     if (error) return toast.error(error.message || "Login failed");
-    navigate("/user-dashboard");
+    navigate(redirectAfterAuth);
   };
 
   const handlePasswordReset = async () => {
@@ -189,7 +196,7 @@ const Signup = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               <AddToCalendar firstNameOverride={firstName || "there"} className="h-12" />
-              <Button variant="secondary" className="h-12" onClick={() => navigate("/training")}>Continue to training</Button>
+              <Button variant="secondary" className="h-12" onClick={() => navigate(redirectAfterAuth)}>Continue</Button>
             </div>
           </div>
         ) : mode === "signup" ? (

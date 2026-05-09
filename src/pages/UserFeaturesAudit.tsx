@@ -900,7 +900,10 @@ const UserFeaturesAudit = () => {
       <div className="sticky top-0 z-20 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur">
         <p className="text-xs text-muted-foreground">Last audited at <span className="font-semibold text-foreground">{auditedAt.toLocaleString()}</span></p>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={refresh} size="sm" className="gap-2"><RefreshCw className="h-4 w-4" /> Refresh Audit</Button>
+          <Button onClick={refresh} size="sm" className="gap-2" disabled={auditing}>
+            <RefreshCw className={`h-4 w-4 ${auditing ? "animate-spin" : ""}`} />
+            {auditing ? "Auditing…" : "Refresh Audit"}
+          </Button>
           <Button onClick={copySummary} size="sm" variant="outline" className="gap-2"><Copy className="h-4 w-4" /> Copy Summary</Button>
           <Button onClick={exportJson} size="sm" variant="outline" className="gap-2"><Download className="h-4 w-4" /> Export JSON</Button>
         </div>
@@ -923,6 +926,53 @@ const UserFeaturesAudit = () => {
           </Card>
         ))}
       </section>
+
+      {/* Live signals — populated by Refresh Audit */}
+      <Card className="mb-6 border-primary/30">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <Activity className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-black">Live signals</h2>
+            <Badge variant="outline" className="ml-auto text-[10px]">
+              {auditing ? "Running…" : `Updated ${auditedAt.toLocaleTimeString()}`}
+            </Badge>
+          </div>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Real-time checks against the backend, current browser session, and route reachability. Click Refresh Audit to re-run.
+          </p>
+          {liveChecks.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No checks have run yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {liveChecks.map((c) => (
+                <li key={c.label} className="flex items-start justify-between gap-3 rounded-xl border border-border p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{c.label}</p>
+                    {c.value && <p className="mt-0.5 break-words text-xs text-muted-foreground">{c.value}</p>}
+                  </div>
+                  <StatusBadge status={c.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {routeChecks.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-2 text-xs font-black uppercase tracking-wide text-muted-foreground">Route reachability</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {routeChecks.map((r) => (
+                  <div key={r.route} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
+                    <code className="truncate text-xs">{r.route}</code>
+                    <span className={`text-[11px] font-bold ${r.ok ? "text-success" : "text-destructive"}`}>
+                      {r.httpStatus ?? "ERR"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="space-y-4">
         {/* Core Entry Links — owner control hub */}

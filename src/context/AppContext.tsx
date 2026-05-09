@@ -479,6 +479,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Supabase sync hook
   useSupabaseSync(authUser ?? null, state, prevUnlocksRef);
 
+  // Debounced AI context snapshot — keeps ai_user_context fresh for KB-aware AI.
+  useEffect(() => {
+    if (!authUser) return;
+    const t = setTimeout(() => {
+      import("@/lib/aiContext").then(({ refreshAiContext }) => {
+        refreshAiContext(authUser, state);
+      });
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [
+    authUser,
+    state.assessment,
+    state.challenge?.currentDay,
+    state.challenge?.completed,
+    (state as any).training,
+    (state.user as any)?.isPremium,
+    (state.user as any)?.directReferralCount,
+    state.memory,
+  ]);
+
   // Wrap setState to auto-run unlock checks
   const setState: React.Dispatch<React.SetStateAction<AppState>> = (action) => {
     setStateRaw((prev) => {

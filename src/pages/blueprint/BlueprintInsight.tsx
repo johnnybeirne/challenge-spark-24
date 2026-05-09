@@ -195,4 +195,28 @@ const BlueprintInsight = () => {
   );
 };
 
+const ImplementInsightCta = () => {
+  const { hasJoinedChallenge } = useUserState();
+  const label = hasJoinedChallenge ? "Continue Your Challenge" : "Start the 3-Day Challenge";
+  const href = hasJoinedChallenge ? "/user-dashboard" : "/blueprint/bridge";
+  const heading = hasJoinedChallenge
+    ? "Your 3-Day Challenge is in progress"
+    : "Ready to put this into action?";
+  const body = hasJoinedChallenge
+    ? "Pick up where you left off and apply this insight inside your build."
+    : "Take what you learned and build it inside the 3-Day Challenge.";
+  return (
+    <section className="mt-8 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-6">
+      <h3 className="text-lg font-black">{heading}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+      <Button asChild className="mt-4 h-11 gap-2 px-6 text-sm font-black uppercase">
+        <Link to={href}>
+          {label} <ArrowRight className="h-4 w-4" />
+        </Link>
+      </Button>
+    </section>
+  );
+};
+
 export default BlueprintInsight;
+

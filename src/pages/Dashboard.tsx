@@ -17,6 +17,7 @@ import { useTrainingContent } from "@/hooks/useTrainingContent";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import { useUserStage } from "@/hooks/useUserStage";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },

@@ -298,12 +298,6 @@ const CoreEntryLinksSection = () => {
                   <h3 className="text-base font-black">{link.title}</h3>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <RouteCode route={link.route} />
-                    {link.fallback && (
-                      <>
-                        <span className="text-[10px] text-muted-foreground">fallback</span>
-                        <RouteCode route={link.fallback} />
-                      </>
-                    )}
                   </div>
                 </div>
                 <Badge className="shrink-0">{link.badge}</Badge>
@@ -315,13 +309,6 @@ const CoreEntryLinksSection = () => {
                     <ExternalLink className="h-3.5 w-3.5" /> Open
                   </a>
                 </Button>
-                {link.fallback && (
-                  <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <a href={`${PROD_ORIGIN}${link.fallback}`} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3.5 w-3.5" /> Open fallback
-                    </a>
-                  </Button>
-                )}
                 <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">
                   {copied === link.route ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                   {copied === link.route ? "Copied" : "Copy Link"}

@@ -469,6 +469,9 @@ const UserFeaturesAudit = () => {
         {/* Experience Separation */}
         <ExperienceSeparationSection />
 
+        {/* LMS Language Audit */}
+        <LmsLanguageAuditSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

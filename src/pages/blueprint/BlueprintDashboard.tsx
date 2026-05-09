@@ -92,6 +92,26 @@ const BlueprintDashboard = () => {
         })}
       </section>
 
+      {/* 3-Day Challenge link */}
+      <section className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Flag className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-black">Your 3-Day Challenge</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Continue building your challenge, quiz, and AI-powered system.
+              </p>
+            </div>
+          </div>
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link to="/user-dashboard">Go to Challenge</Link>
+          </Button>
+        </div>
+      </section>
+
       {/* AI insight status */}
       <section className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">

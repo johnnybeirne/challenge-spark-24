@@ -135,11 +135,7 @@ const Dashboard = () => {
 
   return (
     <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
-      <header className="mb-6 flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-[11px] font-black uppercase tracking-wider text-primary">{stage.stageLabel}</p>
-          <p className="mt-0.5 text-sm font-medium text-muted-foreground">Challenge Dashboard</p>
-        </div>
+      <header className="mb-6 flex flex-col gap-4 pb-2 lg:flex-row lg:items-center lg:justify-end">
         {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button
             variant="ghost"

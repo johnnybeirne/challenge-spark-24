@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
 import { usePremium } from "@/hooks/usePremium";
+import { useUserState } from "@/hooks/useUserState";
 
 type ModuleEntry = {
   n: number;

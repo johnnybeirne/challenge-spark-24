@@ -130,6 +130,11 @@ const App = () => (
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
               </Route>
 
+              {/* Internal audit — admin protected via AdminLayout */}
+              <Route path="/user-features" element={<AdminLayout />}>
+                <Route index element={<UserFeaturesAudit />} />
+              </Route>
+
               {/* Legacy admin redirects */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminHub />} />

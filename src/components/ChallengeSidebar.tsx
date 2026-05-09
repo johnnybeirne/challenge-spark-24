@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Camera, CheckCircle, ChevronLeft, ChevronRight, Compass, Library, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Target, Users, X, Zap } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Target, Users, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";

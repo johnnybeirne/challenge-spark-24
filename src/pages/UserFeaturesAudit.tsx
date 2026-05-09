@@ -3,8 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
+import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2, Activity } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { isPremiumUser, getAppliedCoupon } from "@/lib/premium";
+import { getEntryIntent, getPendingCoupon } from "@/lib/entryIntent";
 
 const PROD_ORIGIN = "https://leadio.johnnybeirne.com";
 
@@ -681,9 +684,35 @@ const PremiumAuditSection = () => (
   </Card>
 );
 
+type LiveCheck = {
+  label: string;
+  status: Status;
+  value?: string;
+  note?: string;
+};
+
+type RouteReachability = { route: string; ok: boolean; httpStatus: number | null };
+
+const LIVE_ROUTES_TO_PROBE = [
+  "/",
+  "/assessment",
+  "/free-assessment",
+  "/premium-assessment",
+  "/premium",
+  "/join",
+  "/blueprint-join",
+  "/premium-join",
+  "/free-training/enrol",
+  "/premium/enrol",
+  "/links",
+];
+
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);
+  const [auditing, setAuditing] = useState(false);
+  const [liveChecks, setLiveChecks] = useState<LiveCheck[]>([]);
+  const [routeChecks, setRouteChecks] = useState<RouteReachability[]>([]);
 
   const allFeatures = useMemo(() => CATEGORIES.flatMap(c => c.features), []);
   const totals = useMemo(() => ({
@@ -694,14 +723,129 @@ const UserFeaturesAudit = () => {
     entries: ENTRY_POINTS.filter(e => e.status === "Detected").length,
   }), [allFeatures, tick]);
 
-  useEffect(() => { /* internal audit view */ }, []);
+  const runAudit = async () => {
+    setAuditing(true);
+    const checks: LiveCheck[] = [];
 
-  const refresh = () => {
+    // ── Database signals ────────────────────────────────────────────────
+    const safeCount = async (table: string, filter?: (q: any) => any) => {
+      try {
+        let q: any = (supabase as any).from(table).select("*", { count: "exact", head: true });
+        if (filter) q = filter(q);
+        const { count, error } = await q;
+        if (error) return { ok: false, count: null as number | null, error: error.message };
+        return { ok: true, count: count ?? 0, error: null };
+      } catch (e: any) {
+        return { ok: false, count: null, error: e?.message ?? "unknown" };
+      }
+    };
+
+    const profiles = await safeCount("profiles");
+    checks.push({
+      label: "Profiles table reachable",
+      status: profiles.ok ? "Detected" : "Not detected",
+      value: profiles.ok ? `${profiles.count} profiles` : profiles.error ?? "error",
+    });
+
+    const coupons = await safeCount("coupons");
+    const activeCoupons = await safeCount("coupons", (q) => q.eq("is_active", true));
+    checks.push({
+      label: "Coupons table",
+      status: coupons.ok ? "Detected" : "Not detected",
+      value: coupons.ok ? `${coupons.count} total · ${activeCoupons.count ?? "?"} active` : coupons.error ?? "error",
+    });
+
+    const promoters = await safeCount("promoters");
+    const approvedPromoters = await safeCount("promoters", (q) => q.eq("is_approved", true));
+    checks.push({
+      label: "Promoters / partners",
+      status: promoters.ok ? "Detected" : "Not detected",
+      value: promoters.ok ? `${promoters.count} total · ${approvedPromoters.count ?? "?"} approved` : promoters.error ?? "error",
+    });
+
+    const waitlist = await safeCount("waitlist_signups");
+    checks.push({
+      label: "Waitlist signups",
+      status: waitlist.ok ? "Detected" : "Not detected",
+      value: waitlist.ok ? `${waitlist.count} entries` : waitlist.error ?? "error",
+    });
+
+    const purchases = await safeCount("purchases");
+    checks.push({
+      label: "Purchases table",
+      status: purchases.ok ? "Detected" : "Not detected",
+      value: purchases.ok ? `${purchases.count} records` : purchases.error ?? "error",
+    });
+
+    // ── Auth signals ────────────────────────────────────────────────────
+    try {
+      const { data } = await supabase.auth.getSession();
+      const u = data.session?.user;
+      checks.push({
+        label: "Auth session",
+        status: u ? "Detected" : "Not detected",
+        value: u ? `Signed in as ${u.email}` : "No active session",
+      });
+    } catch {
+      checks.push({ label: "Auth session", status: "Not detected", value: "Unable to read session" });
+    }
+
+    // ── Client-side state signals ───────────────────────────────────────
+    const intent = getEntryIntent();
+    checks.push({
+      label: "Entry intent (sessionStorage)",
+      status: intent ? "Detected" : "Not detected",
+      value: intent ?? "(none — visitor hasn't entered through an assessment route)",
+    });
+
+    const pendingCoupon = getPendingCoupon();
+    checks.push({
+      label: "Pending coupon (sessionStorage)",
+      status: pendingCoupon ? "Detected" : "Not detected",
+      value: pendingCoupon ?? "(none)",
+    });
+
+    const premium = isPremiumUser();
+    const appliedCoupon = getAppliedCoupon();
+    checks.push({
+      label: "Premium access (localStorage)",
+      status: premium ? "Detected" : "Not detected",
+      value: premium ? `Active${appliedCoupon ? ` · coupon ${appliedCoupon}` : ""}` : "Not active in this browser",
+    });
+
+    // ── Route reachability ──────────────────────────────────────────────
+    const routeResults = await Promise.all(
+      LIVE_ROUTES_TO_PROBE.map(async (route) => {
+        try {
+          const res = await fetch(route, { method: "GET", redirect: "follow" });
+          return { route, ok: res.ok, httpStatus: res.status };
+        } catch {
+          return { route, ok: false, httpStatus: null };
+        }
+      }),
+    );
+    setRouteChecks(routeResults);
+    const reachable = routeResults.filter((r) => r.ok).length;
+    checks.push({
+      label: "Routes reachable (HTTP)",
+      status: reachable === routeResults.length ? "Detected" : reachable > 0 ? "Partially detected" : "Not detected",
+      value: `${reachable}/${routeResults.length} routes returned 2xx`,
+    });
+
+    setLiveChecks(checks);
     setAuditedAt(new Date());
-    setTick(t => t + 1);
-    // user_features_audit_refreshed (not in registry; skipped)
-    toast.success("Audit refreshed");
+    setTick((t) => t + 1);
+    setAuditing(false);
+    toast.success("Audit complete");
   };
+
+  // Run once on mount so the page shows live data immediately.
+  useEffect(() => {
+    runAudit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const refresh = () => { void runAudit(); };
 
   const buildSummary = () => {
     const lines: string[] = [];
@@ -756,7 +900,10 @@ const UserFeaturesAudit = () => {
       <div className="sticky top-0 z-20 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur">
         <p className="text-xs text-muted-foreground">Last audited at <span className="font-semibold text-foreground">{auditedAt.toLocaleString()}</span></p>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={refresh} size="sm" className="gap-2"><RefreshCw className="h-4 w-4" /> Refresh Audit</Button>
+          <Button onClick={refresh} size="sm" className="gap-2" disabled={auditing}>
+            <RefreshCw className={`h-4 w-4 ${auditing ? "animate-spin" : ""}`} />
+            {auditing ? "Auditing…" : "Refresh Audit"}
+          </Button>
           <Button onClick={copySummary} size="sm" variant="outline" className="gap-2"><Copy className="h-4 w-4" /> Copy Summary</Button>
           <Button onClick={exportJson} size="sm" variant="outline" className="gap-2"><Download className="h-4 w-4" /> Export JSON</Button>
         </div>
@@ -779,6 +926,53 @@ const UserFeaturesAudit = () => {
           </Card>
         ))}
       </section>
+
+      {/* Live signals — populated by Refresh Audit */}
+      <Card className="mb-6 border-primary/30">
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <Activity className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-black">Live signals</h2>
+            <Badge variant="outline" className="ml-auto text-[10px]">
+              {auditing ? "Running…" : `Updated ${auditedAt.toLocaleTimeString()}`}
+            </Badge>
+          </div>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Real-time checks against the backend, current browser session, and route reachability. Click Refresh Audit to re-run.
+          </p>
+          {liveChecks.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No checks have run yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {liveChecks.map((c) => (
+                <li key={c.label} className="flex items-start justify-between gap-3 rounded-xl border border-border p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{c.label}</p>
+                    {c.value && <p className="mt-0.5 break-words text-xs text-muted-foreground">{c.value}</p>}
+                  </div>
+                  <StatusBadge status={c.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {routeChecks.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-2 text-xs font-black uppercase tracking-wide text-muted-foreground">Route reachability</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {routeChecks.map((r) => (
+                  <div key={r.route} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
+                    <code className="truncate text-xs">{r.route}</code>
+                    <span className={`text-[11px] font-bold ${r.ok ? "text-success" : "text-destructive"}`}>
+                      {r.httpStatus ?? "ERR"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="space-y-4">
         {/* Core Entry Links — owner control hub */}

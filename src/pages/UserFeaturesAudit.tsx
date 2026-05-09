@@ -306,9 +306,18 @@ const CoreEntryLinksSection = () => {
               </div>
               <p className="text-xs text-muted-foreground">{link.description}</p>
               <div className="mt-auto flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="secondary" className="gap-1.5">
+                  <a
+                    href={`${typeof window !== "undefined" ? window.location.origin : ""}${link.route}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> Preview
+                  </a>
+                </Button>
                 <Button asChild size="sm" className="gap-1.5">
                   <a href={`${PROD_ORIGIN}${link.route}`} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-3.5 w-3.5" /> Open
+                    <ExternalLink className="h-3.5 w-3.5" /> Open Live
                   </a>
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">

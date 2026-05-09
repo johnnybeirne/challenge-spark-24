@@ -73,6 +73,8 @@ const SignupChat = ({
       ? "login"
       : "signup";
 
+  const [mode, setMode] = useState<Mode>(initialMode);
+
   const redirectAfterAuth = (() => {
     const params = new URLSearchParams(location.search);
     const redirect = params.get("redirect");

@@ -105,12 +105,22 @@ const Premium = () => {
       });
       return;
     }
-    // No coupon → scroll to coupon section (Stripe not wired here)
-    document.getElementById("coupon-anchor")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // No coupon → open Stripe embedded checkout
+    openCheckout({
+      priceId: "leadio_premium_lifetime_usd",
+      customerEmail: user?.email,
+      userId: user?.id,
+      promotionCode: getPartnerCode(),
+      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+    });
+    setTimeout(() => {
+      document.getElementById("checkout-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <PaymentTestModeBanner />
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,hsl(var(--primary)/0.25),transparent_55%),radial-gradient(circle_at_85%_10%,hsl(var(--primary)/0.18),transparent_50%)]" />

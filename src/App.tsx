@@ -107,8 +107,8 @@ const App = () => (
                 {/* Premium course assessment entry — same engine, sets entryIntent=premium_course, preserves coupon */}
                 <Route path="/premium-assessment" element={<PremiumAssessment />} />
                 {/* Direct enrolment aliases */}
-                <Route path="/free-training/enrol" element={<Navigate to="/blueprint-join" replace />} />
-                <Route path="/premium/enrol" element={<Navigate to="/premium-join" replace />} />
+                <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
+                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium-join" />} />
                 <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />

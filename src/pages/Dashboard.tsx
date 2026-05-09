@@ -17,6 +17,7 @@ import { useTrainingContent } from "@/hooks/useTrainingContent";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import { useUserStage } from "@/hooks/useUserStage";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -27,6 +28,7 @@ const challengeSteps = [
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
   const navigate = useNavigate();
+  const stage = useUserStage();
   const trainingContent = useTrainingContent();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
@@ -135,8 +137,8 @@ const Dashboard = () => {
     <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
       <header className="mb-6 flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Challenge Dashboard</p>
-          
+          <p className="text-[11px] font-black uppercase tracking-wider text-primary">{stage.stageLabel}</p>
+          <p className="mt-0.5 text-sm font-medium text-muted-foreground">Challenge Dashboard</p>
         </div>
         {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button

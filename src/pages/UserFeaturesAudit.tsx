@@ -225,8 +225,48 @@ const CONFLICTS = [
   { flag: "Reward / gamification UI (points, unlocks) appears for users still in free mini LMS scope", severity: "warn" },
   { flag: "Referral invite path does not clearly route through assessment", severity: "info" },
   { flag: "Multiple completion endpoints (bonus vault, blueprint insight, upgrade) — primary unclear", severity: "info" },
-  { flag: "Product naming: 'ChallengeOS' (memory) vs 'Leadio' (UI/logo) appear inconsistently", severity: "warn" },
+  { flag: "Product naming: 'ChallengeOS' references replaced with 'Leadio' across UI + utilities", severity: "info" },
 ];
+
+// ───────── Stage / Navigation cohesion checks (Prompt 47.6) ─────────
+type NavCheck = { label: string; status: Status; note?: string };
+const NAV_COHESION_CHECKS: NavCheck[] = [
+  { label: "BottomNav hidden inside LMS routes", status: "Detected", note: "AppShell switches to ChallengeSidebar (LMS variant) for /blueprint/*" },
+  { label: "Sidebar adapts: LMS items vs Challenge items", status: "Detected", note: "ChallengeSidebar renders LEARN / TOOLS / NEXT STEP for /blueprint/*" },
+  { label: "Assessment routes free of challenge gamification", status: "Detected", note: "/assess uses showNav=false in App routing" },
+  { label: "Single 'start here' journey: /assess → /blueprint → /blueprint/bridge → /user-dashboard", status: "Detected" },
+  { label: "Stage indicator visible on Challenge dashboard", status: "Detected", note: "useUserStage().stageLabel rendered in Dashboard header" },
+  { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "src/lib/calendarSchedule.ts, src/pages/ResetPassword.tsx renamed to Leadio" },
+  { label: "Premium and challenge remain separate", status: "Detected", note: "/upgrade does not redirect to challenge; challenge does not require premium" },
+  { label: "Community gated until challenge entry", status: "Detected", note: "Community unlock requires Day 3 + URL + 3 referrals (canonical rule)" },
+  { label: "User stage hook available", status: "Detected", note: "src/hooks/useUserStage.ts — stage, nextLabel, nextHref" },
+];
+
+const NavCohesionSection = () => (
+  <Card className="border-border">
+    <CardContent className="p-5">
+      <div className="mb-3 flex items-center gap-2">
+        <Layers className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-black">Navigation & Stage Cohesion</h2>
+        <Badge variant="outline" className="ml-auto text-[10px]">Read-only</Badge>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Each stage (assessment → LMS → challenge → premium) should surface its own navigation and CTA hierarchy without leaking the others.
+      </p>
+      <ul className="space-y-2">
+        {NAV_COHESION_CHECKS.map(c => (
+          <li key={c.label} className="flex items-start justify-between gap-3 rounded-xl border border-border p-3">
+            <div>
+              <p className="text-sm font-semibold">{c.label}</p>
+              {c.note && <p className="text-xs text-muted-foreground">{c.note}</p>}
+            </div>
+            <StatusBadge status={c.status} />
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+);
 
 const RECOMMENDATIONS = [
   "Clarify whether assessment is always outside the challenge.",
@@ -646,6 +686,9 @@ const UserFeaturesAudit = () => {
 
         {/* Premium / Ascension */}
         <PremiumAuditSection />
+
+        {/* Navigation & Stage cohesion */}
+        <NavCohesionSection />
 
         {/* Feature registry */}
         <Section title="Feature Registry">

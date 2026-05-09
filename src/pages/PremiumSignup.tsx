@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SignupChat from "@/components/auth/SignupChat";
 import { getAppliedCoupon } from "@/lib/premium";
+import { setPendingCoupon, getPendingCoupon } from "@/lib/entryIntent";
 
 const PremiumSignup = () => {
+  const [params] = useSearchParams();
   const [coupon, setCoupon] = useState<string | null>(null);
   useEffect(() => {
-    setCoupon(getAppliedCoupon());
-  }, []);
+    const fromUrl = params.get("coupon");
+    if (fromUrl) setPendingCoupon(fromUrl);
+    setCoupon(fromUrl || getPendingCoupon() || getAppliedCoupon());
+  }, [params]);
 
   const subcopy = coupon
     ? `Coupon ${coupon} is applied to your enrollment. Create your account to continue to checkout.`

@@ -56,6 +56,7 @@ import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
+import FreeAssessment from "@/pages/FreeAssessment";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

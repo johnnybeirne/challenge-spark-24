@@ -21,6 +21,10 @@ import { Input } from "@/components/ui/input";
 import { usePremium } from "@/hooks/usePremium";
 import { setPremium, validateCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerCode } from "@/lib/partner";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import johnnyPortrait from "@/assets/johnny-beirne.png";
 
 const VALUE_PILLARS = [

@@ -154,6 +154,50 @@ const BlueprintDashboard = () => {
   );
 };
 
+const ImplementCta = () => {
+  const { hasJoinedChallenge, isPremiumUser } = useUserState();
+
+  const { title, body, ctaLabel, ctaHref } = hasJoinedChallenge
+    ? {
+        title: "Your 3-Day Challenge is in progress",
+        body: "Pick up where you left off and keep building your trust-based growth system.",
+        ctaLabel: "Continue Your Challenge",
+        ctaHref: "/user-dashboard",
+      }
+    : isPremiumUser
+    ? {
+        title: "Apply this in the 3-Day Challenge",
+        body: "Take the premium frameworks and put them into action with the guided 3-day build.",
+        ctaLabel: "Start the 3-Day Challenge",
+        ctaHref: "/blueprint/bridge",
+      }
+    : {
+        title: "Ready to implement?",
+        body: "The mini course shows you how trust-based growth works. The 3-Day Challenge helps you build it.",
+        ctaLabel: "Start the 3-Day Challenge",
+        ctaHref: "/blueprint/bridge",
+      };
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Flag className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-base font-black">{title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+          </div>
+        </div>
+        <Button asChild variant={hasJoinedChallenge ? "default" : "outline"} size="sm" className="shrink-0">
+          <Link to={ctaHref}>{ctaLabel}</Link>
+        </Button>
+      </div>
+    </section>
+  );
+};
+
 export const UpgradeCard = () => {
   const { isPremium } = usePremium();
   if (isPremium) {

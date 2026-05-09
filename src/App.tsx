@@ -34,6 +34,7 @@ import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";
 import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
 import BlueprintInsight from "@/pages/blueprint/BlueprintInsight";
+import BlueprintBridge from "@/pages/blueprint/BlueprintBridge";
 import RewardDetail from "@/pages/RewardDetail";
 import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";

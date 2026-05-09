@@ -241,7 +241,7 @@ const Premium = () => {
                   ))}
                 </ul>
 
-                <div className="mt-6 rounded-2xl border border-border bg-background p-4">
+                <div className="mt-6 rounded-2xl border border-foreground bg-background p-4">
                   <label className="flex items-center gap-2 text-xs font-black uppercase tracking-wide text-muted-foreground">
                     <Tag className="h-3.5 w-3.5 text-primary" /> Apply Coupon Code
                   </label>

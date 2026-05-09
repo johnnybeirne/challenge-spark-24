@@ -68,6 +68,7 @@ const ROUTES: RouteRow[] = [
   { route: "/blueprint/dashboard", purpose: "Mini LMS dashboard", access: "Authenticated", status: "Detected" },
   { route: "/blueprint/lesson/:day", purpose: "Mini LMS lesson", access: "Authenticated", status: "Detected" },
   { route: "/blueprint/insight", purpose: "AI insight output", access: "Authenticated", status: "Detected" },
+  { route: "/blueprint/bridge", purpose: "LMS → Challenge transition (Module 3 bridge)", access: "Authenticated", status: "Detected" },
   { route: "/promoter", purpose: "Partner / promoter dashboard", access: "Partner only", status: "Detected" },
   { route: "/partner/performance", purpose: "Partner performance", access: "Partner only", status: "Detected" },
   { route: "/owner-console", purpose: "Owner console hub", access: "Admin", status: "Detected" },

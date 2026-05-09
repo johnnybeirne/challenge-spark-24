@@ -843,7 +843,7 @@ const UserFeaturesAudit = () => {
                 {ENTRY_POINTS.map(e => (
                   <tr key={e.name} className="border-t border-border">
                     <td className="py-2 pr-3 font-semibold">{e.name}</td>
-                    <td className="pr-3"><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{e.route}</code></td>
+                    <td className="pr-3"><RouteCode route={e.route} /></td>
                     <td className="pr-3"><StatusBadge status={e.status} /></td>
                     <td className="pr-3 text-muted-foreground">{e.next}</td>
                     <td className="pr-3">{e.clear ? <Badge className="bg-success/15 text-success">Clear</Badge> : <Badge variant="outline" className="border-amber-500/40 text-amber-600">Unclear</Badge>}</td>

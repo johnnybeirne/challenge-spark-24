@@ -9,6 +9,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { UpgradeCard } from "./BlueprintDashboard";
+import { useUserState } from "@/hooks/useUserState";
 
 const InsightForm = ({ onDone }: { onDone?: () => void }) => {
   const { state, setState } = useAppState();

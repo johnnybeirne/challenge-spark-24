@@ -116,8 +116,14 @@ const Premium = () => {
     toast({ title: "Coupon applied", description: `${result.code} — ${result.label}` });
   };
 
-  const handlePrimaryCta = () => {
+  const handlePrimaryCta = async () => {
     if (effectiveApplied) {
+      const redemption = await redeemCoupon(effectiveApplied.code);
+      if (!redemption.ok) {
+        setError(redemption.reason);
+        toast({ title: "Coupon could not be applied", description: redemption.reason, variant: "destructive" });
+        return;
+      }
       setPremium(true, effectiveApplied.code);
       toast({ title: "Premium access confirmed", description: "Your course area is being prepared." });
       return;

@@ -48,6 +48,7 @@ import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";
+import AdminCoupons from "@/pages/AdminCoupons";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -154,6 +155,7 @@ const App = () => (
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
+                <Route path="coupons" element={<AdminCoupons />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

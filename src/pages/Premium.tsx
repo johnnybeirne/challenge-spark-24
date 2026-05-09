@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { usePremium } from "@/hooks/usePremium";
-import { setPremium, validateCoupon } from "@/lib/premium";
+import { setPremium, validateCoupon, redeemCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/hooks/useAuth";
@@ -104,9 +104,9 @@ const Premium = () => {
     [applied, coupon],
   );
 
-  const handleApply = () => {
+  const handleApply = async () => {
     setError(null);
-    const result = validateCoupon(code);
+    const result = await validateCoupon(code);
     if (result.ok !== true) {
       setError(result.reason);
       setApplied(null);
@@ -116,8 +116,14 @@ const Premium = () => {
     toast({ title: "Coupon applied", description: `${result.code} — ${result.label}` });
   };
 
-  const handlePrimaryCta = () => {
+  const handlePrimaryCta = async () => {
     if (effectiveApplied) {
+      const redemption = await redeemCoupon(effectiveApplied.code);
+      if (redemption.ok !== true) {
+        setError(redemption.reason);
+        toast({ title: "Coupon could not be applied", description: redemption.reason, variant: "destructive" });
+        return;
+      }
       setPremium(true, effectiveApplied.code);
       toast({ title: "Premium access confirmed", description: "Your course area is being prepared." });
       return;

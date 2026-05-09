@@ -269,6 +269,51 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          final_price: number
+          id: string
+          is_active: boolean
+          label: string
+          max_redemptions: number | null
+          notes: string | null
+          original_price: number
+          redemption_count: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          final_price?: number
+          id?: string
+          is_active?: boolean
+          label?: string
+          max_redemptions?: number | null
+          notes?: string | null
+          original_price?: number
+          redemption_count?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          final_price?: number
+          id?: string
+          is_active?: boolean
+          label?: string
+          max_redemptions?: number | null
+          notes?: string | null
+          original_price?: number
+          redemption_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cross_promotions: {
         Row: {
           created_at: string
@@ -616,6 +661,7 @@ export type Database = {
       purchases: {
         Row: {
           amount_cents: number
+          coupon_code: string | null
           created_at: string
           currency: string
           environment: string
@@ -632,6 +678,7 @@ export type Database = {
         }
         Insert: {
           amount_cents: number
+          coupon_code?: string | null
           created_at?: string
           currency?: string
           environment?: string
@@ -648,6 +695,7 @@ export type Database = {
         }
         Update: {
           amount_cents?: number
+          coupon_code?: string | null
           created_at?: string
           currency?: string
           environment?: string
@@ -888,6 +936,7 @@ export type Database = {
         Args: { p_partner_code: string }
         Returns: undefined
       }
+      redeem_coupon: { Args: { p_code: string }; Returns: Json }
       track_partner_assessment: {
         Args: { p_partner_code: string }
         Returns: undefined

@@ -53,13 +53,15 @@ const AdminLayout = () => {
   }
 
   if (!user) {
+    const currentPath = window.location.pathname;
+    const loginHref = `/join?redirect=${encodeURIComponent(currentPath)}`;
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background text-center">
         <Shield className="h-10 w-10 text-primary" />
         <h1 className="text-xl font-bold">Owner Access</h1>
         <p className="text-sm text-muted-foreground">Sign in with your app account to continue.</p>
         <Button asChild>
-          <Link to="/join">Sign in</Link>
+          <Link to={loginHref}>Sign in</Link>
         </Button>
       </div>
     );

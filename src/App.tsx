@@ -82,6 +82,7 @@ const App = () => (
                 {/* Free Training (Blueprint LMS) entry */}
                 <Route path="/blueprint" element={<BlueprintLanding />} />
                 <Route path="/free-training" element={<BlueprintLanding />} />
+                <Route path="/premium" element={<Premium />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}

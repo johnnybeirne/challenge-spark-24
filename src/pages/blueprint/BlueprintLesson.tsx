@@ -242,30 +242,48 @@ const BlueprintLesson = () => {
   );
 };
 
-const LockedModuleView = ({ teaser }: { teaser: string }) => (
+const LockedModuleView = ({ lesson }: { lesson: PremiumModule }) => (
   <section className="mt-6 overflow-hidden rounded-2xl border border-primary/30 bg-card">
-    <div className="relative">
-      <div className="pointer-events-none select-none p-8 blur-sm">
-        <p className="text-base leading-8 text-foreground">{teaser}</p>
-        <div className="mt-6 space-y-2">
+    <div className="grid gap-0 md:grid-cols-2">
+      <div className="p-6 sm:p-8">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
+          <Crown className="h-3 w-3" /> Premium Module
+        </span>
+        <p className="mt-4 text-base leading-7 text-foreground">{lesson.teaser}</p>
+        <ul className="mt-5 space-y-2">
+          {lesson.previewBullets.map((b) => (
+            <li key={b} className="flex items-start gap-2 text-sm text-foreground">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="relative border-t border-border bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8 md:border-l md:border-t-0">
+        <div className="pointer-events-none select-none space-y-2 blur-sm">
           <div className="h-3 w-5/6 rounded bg-muted" />
           <div className="h-3 w-4/6 rounded bg-muted" />
           <div className="h-3 w-3/4 rounded bg-muted" />
+          <div className="h-3 w-2/3 rounded bg-muted" />
+          <div className="h-3 w-5/6 rounded bg-muted" />
         </div>
-      </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/70 p-6 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
-          <Lock className="h-5 w-5" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <Lock className="h-5 w-5" />
+          </div>
+          <p className="text-sm font-bold text-foreground">Premium content locked</p>
+          <p className="text-xs text-muted-foreground">
+            Coupon <span className="font-black text-primary">FOUNDING497</span> — founding member pricing
+          </p>
+          <Button asChild className="h-11 gap-2 px-6 text-sm font-black uppercase">
+            <Link to="/upgrade">
+              <Rocket className="h-4 w-4" /> Unlock Full Course
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="text-xs">
+            <Link to="/upgrade">Use Coupon Code</Link>
+          </Button>
         </div>
-        <p className="max-w-md text-sm leading-6 text-foreground">{teaser}</p>
-        <p className="text-xs font-bold text-muted-foreground">
-          Use coupon code <span className="font-black text-primary">FOUNDING497</span>
-        </p>
-        <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-          <Link to="/upgrade">
-            <Rocket className="h-4 w-4" /> Unlock Full Course
-          </Link>
-        </Button>
       </div>
     </div>
   </section>

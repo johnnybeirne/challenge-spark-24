@@ -53,6 +53,63 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_user_context: {
+        Row: {
+          assessment_score: number | null
+          assessment_type: string | null
+          build_goal: string | null
+          challenge_day: number | null
+          challenge_outputs: Json
+          completed_modules: string[]
+          created_at: string
+          id: string
+          is_premium: boolean
+          last_active_stage: string | null
+          lms_progress: Json
+          partner_code: string | null
+          referral_count: number
+          updated_at: string
+          user_id: string
+          weak_dimension: string | null
+        }
+        Insert: {
+          assessment_score?: number | null
+          assessment_type?: string | null
+          build_goal?: string | null
+          challenge_day?: number | null
+          challenge_outputs?: Json
+          completed_modules?: string[]
+          created_at?: string
+          id?: string
+          is_premium?: boolean
+          last_active_stage?: string | null
+          lms_progress?: Json
+          partner_code?: string | null
+          referral_count?: number
+          updated_at?: string
+          user_id: string
+          weak_dimension?: string | null
+        }
+        Update: {
+          assessment_score?: number | null
+          assessment_type?: string | null
+          build_goal?: string | null
+          challenge_day?: number | null
+          challenge_outputs?: Json
+          completed_modules?: string[]
+          created_at?: string
+          id?: string
+          is_premium?: boolean
+          last_active_stage?: string | null
+          lms_progress?: Json
+          partner_code?: string | null
+          referral_count?: number
+          updated_at?: string
+          user_id?: string
+          weak_dimension?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -312,6 +369,48 @@ export type Database = {
           cutoff_date?: string | null
           id?: string
           max_founders?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kb_documents: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean
+          search_tsv: unknown
+          slug: string
+          source: string | null
+          stage: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          search_tsv?: unknown
+          slug: string
+          source?: string | null
+          stage?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          search_tsv?: unknown
+          slug?: string
+          source?: string | null
+          stage?: string
+          tags?: string[]
+          title?: string
           updated_at?: string
         }
         Relationships: []

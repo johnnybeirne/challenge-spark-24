@@ -262,7 +262,7 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Direct Challenge Entry", route: "/challenge", description: "Direct entry into the 3-Day Challenge for higher-intent users.", badge: "Challenge" },
   { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment engine, but routes users into the free mini course after results (entryIntent=free_training).", badge: "Free Training Funnel" },
   { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
-  { title: "Premium Course", route: "/premium", description: "Premium educational experience with coupon-code support and upgrade flow.", badge: "Premium" },
+  { title: "Premium Course", route: "/premium", description: "Public premium landing page (Leadio Growth Accelerator) with coupon input (FOUNDING497), pricing card, modules, ascension path, and partner/JV-ready section.", badge: "Premium" },
   { title: "Mini Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
 ];
 
@@ -637,8 +637,9 @@ const PREMIUM_CHECKS: PremiumCheck[] = [
   { label: "Locked premium modules exist (4 & 5)", status: "Detected", note: "src/pages/blueprint/BlueprintLesson.tsx — modules 4 & 5 marked locked" },
   { label: "Locked module preview (blur, lock, teaser)", status: "Detected", note: "LockedModuleView with preview bullets + blurred body" },
   { label: "Premium access state", status: "Detected", note: "src/lib/premium.ts + usePremium hook (localStorage)" },
-  { label: "Coupon support (FOUNDING497)", status: "Detected", note: "validateCoupon + Apply coupon UI on /upgrade" },
-  { label: "Upgrade page exists", status: "Detected", note: "/upgrade — hero, modules, audience, challenge connection" },
+  { label: "Coupon support (FOUNDING497)", status: "Detected", note: "validateCoupon + Apply coupon UI on /premium and /upgrade" },
+  { label: "Premium landing page", status: "Detected", note: "/premium — hero, coupon input, modules, ascension path, partner/JV-ready, pricing card" },
+  { label: "Upgrade page exists", status: "Detected", note: "/upgrade — authenticated upgrade flow (Stripe)" },
   { label: "Upgrade CTA from locked modules", status: "Detected", note: "Unlock Full Course → /upgrade" },
   { label: "Premium unlock removes blur", status: "Detected", note: "BlueprintLesson uses unlocked = !locked || isPremium" },
   { label: "Premium and Challenge remain separate", status: "Detected", note: "No automatic redirects between them" },

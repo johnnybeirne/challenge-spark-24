@@ -1,10 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers } from "lucide-react";
+import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
+
+// Clickable route code chip — links internally if value starts with "/"
+const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {
+  const cls = `rounded bg-muted px-1.5 py-0.5 text-[11px] ${className}`;
+  const isRoute = typeof route === "string" && route.startsWith("/") && !route.includes(" ");
+  if (!isRoute) return <code className={cls}>{route}</code>;
+  return (
+    <Link to={route} className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}>
+      <code>{route}</code>
+    </Link>
+  );
+};
 import { useExperienceShell } from "@/components/ExperienceShell";
 import {
   getExperienceFromPath,

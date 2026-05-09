@@ -133,9 +133,11 @@ const BlueprintLesson = () => {
   if (!lesson) return <Navigate to="/blueprint/dashboard" replace />;
 
   const { state, setState } = useAppState();
+  const { isPremium } = usePremium();
   const navigate = useNavigate();
   const taskKey = `blueprint_lesson_${lesson.n}`;
   const completed = !!state.challenge.tasks[taskKey];
+  const unlocked = !lesson.locked || isPremium;
 
   const markComplete = () => {
     const stamp = new Date().toISOString();

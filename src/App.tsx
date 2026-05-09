@@ -57,6 +57,7 @@ import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
 import FreeAssessment from "@/pages/FreeAssessment";
+import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -106,7 +107,6 @@ const App = () => (
                 {/* Referral invite entry — stores code then funnels into assessment */}
                 <Route path="/invite/:referralCode" element={<InviteEntry />} />
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
-                <Route path="/premium" element={<Upgrade />} />
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
               </Route>

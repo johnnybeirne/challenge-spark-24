@@ -3,24 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { setEntryIntent, ENTRY_INTENT_KEY } from "@/lib/entryIntent";
 
-export const ENTRY_INTENT_KEY = "leadio_entry_intent";
-export const ENTRY_INTENT_FREE_TRAINING = "free_training";
+export { ENTRY_INTENT_KEY };
+export const ENTRY_INTENT_FREE_TRAINING = "free_training" as const;
 
 const FreeAssessment = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      sessionStorage.setItem(ENTRY_INTENT_KEY, ENTRY_INTENT_FREE_TRAINING);
-    } catch {}
-    trackEvent("assessment_started" as any, { entry: ENTRY_INTENT_FREE_TRAINING });
+    setEntryIntent("free_training");
+    trackEvent("assessment_started" as any, { entry: "free_training" });
   }, []);
 
   const start = () => {
-    try {
-      sessionStorage.setItem(ENTRY_INTENT_KEY, ENTRY_INTENT_FREE_TRAINING);
-    } catch {}
+    setEntryIntent("free_training");
     navigate("/assess");
   };
 

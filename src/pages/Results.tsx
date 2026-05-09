@@ -328,25 +328,28 @@ const Results = () => {
       <div className="space-y-4">
         {(() => {
           let entryIntent: string | null = null;
+          let pendingCoupon: string | null = null;
           try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
-          const isFreeTraining = entryIntent === "free_training";
+          try { pendingCoupon = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
+
           const freeTrainingDestination = state.user
             ? FREE_TRAINING_COURSE_PATH
-            : `/blueprint-join?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
-          if (isFreeTraining) {
+            : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
+
+          if (entryIntent === "free_training") {
             return (
               <>
                 <Button
                   className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
                   onClick={() => navigate(freeTrainingDestination)}
                 >
-                  Continue to Free Training
+                  Enrol in Free Training
                   <ArrowRight className="w-5 h-5" />
                 </Button>
                 <Button
                   variant="outline"
                   className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
-                  onClick={() => navigate("/challenge")}
+                  onClick={() => navigate("/join")}
                 >
                   Explore the 3-Day Challenge
                 </Button>
@@ -356,6 +359,37 @@ const Results = () => {
               </>
             );
           }
+
+          if (entryIntent === "premium_course") {
+            const premiumDest = pendingCoupon
+              ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}`
+              : "/premium/enrol";
+            return (
+              <>
+                <Button
+                  className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
+                  onClick={() => navigate(premiumDest)}
+                >
+                  Enrol in Leadio Growth Accelerator
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
+                  onClick={() => navigate("/premium")}
+                >
+                  View Premium Course Page
+                </Button>
+                {pendingCoupon && (
+                  <p className="text-center text-sm font-bold text-success">
+                    Coupon {pendingCoupon} will be applied at checkout.
+                  </p>
+                )}
+              </>
+            );
+          }
+
+          // Default: challenge intent
           return (
             <>
               <Button
@@ -364,6 +398,13 @@ const Results = () => {
               >
                 {ctaCopy.button}
                 <ArrowRight className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
+                onClick={() => navigate(freeTrainingDestination)}
+              >
+                Continue to Free Training
               </Button>
               <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
                 {ctaCopy.sub}

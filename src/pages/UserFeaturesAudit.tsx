@@ -494,6 +494,47 @@ const BridgeAuditSection = () => (
   </Card>
 );
 
+// ───────── Premium / Ascension audit ─────────
+type PremiumCheck = { label: string; status: Status; note?: string };
+
+const PREMIUM_CHECKS: PremiumCheck[] = [
+  { label: "Locked premium modules exist (4 & 5)", status: "Detected", note: "src/pages/blueprint/BlueprintLesson.tsx — modules 4 & 5 marked locked" },
+  { label: "Locked module preview (blur, lock, teaser)", status: "Detected", note: "LockedModuleView with preview bullets + blurred body" },
+  { label: "Premium access state", status: "Detected", note: "src/lib/premium.ts + usePremium hook (localStorage)" },
+  { label: "Coupon support (FOUNDING497)", status: "Detected", note: "validateCoupon + Apply coupon UI on /upgrade" },
+  { label: "Upgrade page exists", status: "Detected", note: "/upgrade — hero, modules, audience, challenge connection" },
+  { label: "Upgrade CTA from locked modules", status: "Detected", note: "Unlock Full Course → /upgrade" },
+  { label: "Premium unlock removes blur", status: "Detected", note: "BlueprintLesson uses unlocked = !locked || isPremium" },
+  { label: "Premium and Challenge remain separate", status: "Detected", note: "No automatic redirects between them" },
+  { label: "Premium positioned around AI implementation", status: "Detected", note: "Module 4/5 copy and benefits emphasise AI workflows" },
+];
+
+const PremiumAuditSection = () => (
+  <Card className="border-border">
+    <CardContent className="p-5">
+      <div className="mb-3 flex items-center gap-2">
+        <Layers className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-black">Premium / Ascension Funnel</h2>
+        <Badge variant="outline" className="ml-auto text-[10px]">Read-only</Badge>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Free LMS → Premium course → Challenge are distinct experiences. Premium adds depth and scale, the challenge drives implementation.
+      </p>
+      <ul className="space-y-2">
+        {PREMIUM_CHECKS.map(c => (
+          <li key={c.label} className="flex items-start justify-between gap-3 rounded-xl border border-border p-3">
+            <div>
+              <p className="text-sm font-semibold">{c.label}</p>
+              {c.note && <p className="text-xs text-muted-foreground">{c.note}</p>}
+            </div>
+            <StatusBadge status={c.status} />
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+);
+
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);
@@ -602,6 +643,9 @@ const UserFeaturesAudit = () => {
 
         {/* LMS → Challenge Bridge */}
         <BridgeAuditSection />
+
+        {/* Premium / Ascension */}
+        <PremiumAuditSection />
 
         {/* Feature registry */}
         <Section title="Feature Registry">

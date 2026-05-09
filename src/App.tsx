@@ -7,6 +7,7 @@ import { AppProvider } from "@/context/AppContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
+import ExperienceShell from "@/components/ExperienceShell";
 import leadioLogo from "@/assets/leadio-logo.png";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";

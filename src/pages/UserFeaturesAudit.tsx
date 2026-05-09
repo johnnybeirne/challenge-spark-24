@@ -311,15 +311,15 @@ const CoreEntryLinksSection = () => {
               <p className="text-xs text-muted-foreground">{link.description}</p>
               <div className="mt-auto flex flex-wrap gap-2">
                 <Button asChild size="sm" className="gap-1.5">
-                  <Link to={link.route}>
+                  <a href={link.route} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-3.5 w-3.5" /> Open
-                  </Link>
+                  </a>
                 </Button>
                 {link.fallback && (
                   <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <Link to={link.fallback}>
+                    <a href={link.fallback} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3.5 w-3.5" /> Open fallback
-                    </Link>
+                    </a>
                   </Button>
                 )}
                 <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">

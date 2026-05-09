@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { usePremium } from "@/hooks/usePremium";
 import { setPremium, validateCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
+import johnnyPortrait from "@/assets/johnny-beirne.png";
 
 const VALUE_PILLARS = [
   {

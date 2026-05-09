@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Activity,
@@ -90,6 +90,7 @@ const ACTIVITY_FEED = [
 const Premium = () => {
   const { isPremium, coupon } = usePremium();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
@@ -117,6 +118,10 @@ const Premium = () => {
   };
 
   const handlePrimaryCta = async () => {
+    if (!user) {
+      navigate("/premium-join?redirect=/premium");
+      return;
+    }
     if (effectiveApplied) {
       const redemption = await redeemCoupon(effectiveApplied.code);
       if (redemption.ok !== true) {

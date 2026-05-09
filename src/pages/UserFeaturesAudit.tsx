@@ -266,7 +266,7 @@ const UserFeaturesAudit = () => {
     entries: ENTRY_POINTS.filter(e => e.status === "Detected").length,
   }), [allFeatures, tick]);
 
-  useEffect(() => { trackEvent("admin_hub_viewed"); }, []);
+  useEffect(() => { /* internal audit view */ }, []);
 
   const refresh = () => {
     setAuditedAt(new Date());

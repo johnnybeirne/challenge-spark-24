@@ -451,7 +451,7 @@ const Premium = () => {
             )}
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Lifetime access · One-time payment · Use coupon code <span className="font-mono font-bold text-foreground">FOUNDING497</span>
+            Lifetime access · One-time payment
           </p>
           <Button onClick={handlePrimaryCta} className="mt-6 h-12 gap-2 px-8 text-base font-black uppercase">
             <Rocket className="h-4 w-4" />

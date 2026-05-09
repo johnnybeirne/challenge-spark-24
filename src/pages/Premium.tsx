@@ -228,6 +228,22 @@ const Premium = () => {
         </div>
       </section>
 
+      {/* CHECKOUT */}
+      {isOpen && checkoutElement && (
+        <section id="checkout-anchor" className="mx-auto w-full max-w-3xl px-4 py-10">
+          <div className="rounded-3xl border border-primary/20 bg-card p-2 sm:p-4 shadow-xl shadow-primary/5">
+            {checkoutElement}
+            <button
+              type="button"
+              onClick={closeCheckout}
+              className="mt-3 px-3 text-xs text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      )}
+
       {/* WHAT YOU BUILD */}
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">
         <div className="max-w-2xl">

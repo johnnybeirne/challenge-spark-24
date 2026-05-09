@@ -459,7 +459,7 @@ const ExperienceSeparationSection = () => {
                 {navigation.map(n => (
                   <li key={n.label} className="flex items-center justify-between gap-3">
                     <span className="font-semibold">{n.label}</span>
-                    {n.to && <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{n.to}</code>}
+                    {n.to && <RouteCode route={n.to} />}
                   </li>
                 ))}
               </ul>

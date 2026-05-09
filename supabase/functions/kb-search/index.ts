@@ -23,8 +23,7 @@ function buildTsQuery(q: string): string {
     .split(/\s+/)
     .filter((w) => w.length > 2)
     .slice(0, 8)
-    .map((w) => `${w}:*`)
-    .join(" | ");
+    .join(" ");
 }
 
 serve(async (req) => {

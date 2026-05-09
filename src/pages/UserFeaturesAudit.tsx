@@ -63,6 +63,7 @@ const ROUTES: RouteRow[] = [
   { route: "/challenge", purpose: "Challenge landing", access: "Public", status: "Detected" },
   { route: "/blueprint", purpose: "Blueprint (mini LMS) landing", access: "Public", status: "Detected" },
   { route: "/assess", purpose: "Lead generation assessment", access: "Public", status: "Detected" },
+  { route: "/free-assessment", purpose: "Same assessment, routes to Free Training (entryIntent=free_training)", access: "Public", status: "Detected", notes: "Reuses /assess engine — no duplicated scoring" },
   { route: "/results", purpose: "Assessment results", access: "Public", status: "Detected", notes: "Also /results/low|med|high" },
   { route: "/join", purpose: "Signup / login", access: "Public", status: "Detected" },
   { route: "/blueprint-join", purpose: "Signup gate before Blueprint", access: "Public", status: "Detected" },

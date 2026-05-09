@@ -395,9 +395,13 @@ export type Database = {
           id: string
           indirect_referral_count: number
           invite_code: string
+          is_premium: boolean
           name: string | null
+          partner_code_used: string | null
+          premium_since: string | null
           referred_by: string | null
           referred_by_parent: string | null
+          stripe_customer_id: string | null
           updated_at: string
           user_id: string
         }
@@ -410,9 +414,13 @@ export type Database = {
           id?: string
           indirect_referral_count?: number
           invite_code: string
+          is_premium?: boolean
           name?: string | null
+          partner_code_used?: string | null
+          premium_since?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
+          stripe_customer_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -425,9 +433,13 @@ export type Database = {
           id?: string
           indirect_referral_count?: number
           invite_code?: string
+          is_premium?: boolean
           name?: string | null
+          partner_code_used?: string | null
+          premium_since?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
+          stripe_customer_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -497,6 +509,57 @@ export type Database = {
           partner_code?: string
           quality_score?: number
           tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          environment: string
+          id: string
+          partner_code: string | null
+          price_id: string | null
+          refunded_at: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          partner_code?: string | null
+          price_id?: string | null
+          refunded_at?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          partner_code?: string | null
+          price_id?: string | null
+          refunded_at?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string
         }

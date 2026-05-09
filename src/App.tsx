@@ -60,6 +60,9 @@ import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
 import FreeAssessment from "@/pages/FreeAssessment";
+import ChallengeAssessment from "@/pages/ChallengeAssessment";
+import PremiumAssessment from "@/pages/PremiumAssessment";
+import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
 
@@ -91,10 +94,17 @@ const App = () => (
               {/* Public routes – narrow mobile container */}
               <Route element={<AppShell />}>
                 {/* Canonical assessment route + legacy alias */}
+                {/* Assessment engine (one component, three entry routes) */}
                 <Route path="/assess" element={<Assessment />} />
-                <Route path="/assessment" element={<Navigate to="/assess" replace />} />
+                <Route path="/assessment" element={<ChallengeAssessment />} />
                 {/* Free Training assessment entry — same engine, sets entryIntent=free_training */}
                 <Route path="/free-assessment" element={<FreeAssessment />} />
+                {/* Premium course assessment entry — same engine, sets entryIntent=premium_course, preserves coupon */}
+                <Route path="/premium-assessment" element={<PremiumAssessment />} />
+                {/* Direct enrolment aliases */}
+                <Route path="/free-training/enrol" element={<Navigate to="/blueprint-join" replace />} />
+                <Route path="/premium/enrol" element={<Navigate to="/premium-join" replace />} />
+                <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />

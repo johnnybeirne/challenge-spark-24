@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, CheckCircle2, Compass, Flag, Lock, MessageCircle, Rocket, Sparkles, Target, Users, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, Compass, Crown, Flag, Lock, MessageCircle, Rocket, Sparkles, Target, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
+import { usePremium } from "@/hooks/usePremium";
 
 type ModuleEntry = {
   n: number;

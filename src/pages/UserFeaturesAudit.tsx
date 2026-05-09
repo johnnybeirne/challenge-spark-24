@@ -1,10 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers } from "lucide-react";
+import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
+
+// Clickable route code chip — links internally if value starts with "/"
+const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {
+  const cls = `rounded bg-muted px-1.5 py-0.5 text-[11px] ${className}`;
+  const isRoute = typeof route === "string" && route.startsWith("/") && !route.includes(" ");
+  if (!isRoute) return <code className={cls}>{route}</code>;
+  return (
+    <Link to={route} className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}>
+      <code>{route}</code>
+    </Link>
+  );
+};
 import { useExperienceShell } from "@/components/ExperienceShell";
 import {
   getExperienceFromPath,
@@ -228,6 +241,95 @@ const CONFLICTS = [
   { flag: "Product naming: 'ChallengeOS' references replaced with 'Leadio' across UI + utilities", severity: "info" },
 ];
 
+// ───────── Core Entry Links (Prompt 48.3) ─────────
+type CoreEntryLink = {
+  title: string;
+  route: string;
+  fallback?: string;
+  description: string;
+  badge: string;
+};
+
+const CORE_ENTRY_LINKS: CoreEntryLink[] = [
+  { title: "Assessment Homepage", route: "/", description: "Primary assessment-first entry point for cold traffic.", badge: "Top Funnel" },
+  { title: "Direct Challenge Entry", route: "/challenge", description: "Direct entry into the 3-Day Challenge for higher-intent users.", badge: "Challenge" },
+  { title: "Free Training Entry", route: "/free-training", fallback: "/blueprint", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
+  { title: "Premium Course", route: "/premium", description: "Premium educational experience with coupon-code support and upgrade flow.", badge: "Premium" },
+  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", fallback: "/blueprint", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
+];
+
+const CoreEntryLinksSection = () => {
+  const [copied, setCopied] = useState<string | null>(null);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+  const copyLink = async (route: string) => {
+    try {
+      await navigator.clipboard.writeText(`${origin}${route}`);
+      setCopied(route);
+      toast.success("Link copied");
+      setTimeout(() => setCopied(c => (c === route ? null : c)), 1500);
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+
+  return (
+    <Card className="border-border">
+      <CardContent className="p-5">
+        <div className="mb-1 flex items-center gap-2">
+          <Link2 className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-black">Core Entry Links</h2>
+          <Badge variant="outline" className="ml-auto text-[10px]">Owner hub</Badge>
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Primary URLs to test, promote, and manage the main Leadio funnels.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {CORE_ENTRY_LINKS.map(link => (
+            <div key={link.title} className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-base font-black">{link.title}</h3>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                    <RouteCode route={link.route} />
+                    {link.fallback && (
+                      <>
+                        <span className="text-[10px] text-muted-foreground">fallback</span>
+                        <RouteCode route={link.fallback} />
+                      </>
+                    )}
+                  </div>
+                </div>
+                <Badge className="shrink-0">{link.badge}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">{link.description}</p>
+              <div className="mt-auto flex flex-wrap gap-2">
+                <Button asChild size="sm" className="gap-1.5">
+                  <Link to={link.route}>
+                    <ExternalLink className="h-3.5 w-3.5" /> Open
+                  </Link>
+                </Button>
+                {link.fallback && (
+                  <Button asChild size="sm" variant="outline" className="gap-1.5">
+                    <Link to={link.fallback}>
+                      <ExternalLink className="h-3.5 w-3.5" /> Open fallback
+                    </Link>
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">
+                  {copied === link.route ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied === link.route ? "Copied" : "Copy Link"}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // ───────── Stage / Navigation cohesion checks (Prompt 47.6) ─────────
 type NavCheck = { label: string; status: Status; note?: string };
 const NAV_COHESION_CHECKS: NavCheck[] = [
@@ -357,7 +459,7 @@ const ExperienceSeparationSection = () => {
                 {navigation.map(n => (
                   <li key={n.label} className="flex items-center justify-between gap-3">
                     <span className="font-semibold">{n.label}</span>
-                    {n.to && <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{n.to}</code>}
+                    {n.to && <RouteCode route={n.to} />}
                   </li>
                 ))}
               </ul>
@@ -380,7 +482,7 @@ const ExperienceSeparationSection = () => {
                   <ul className="mt-2 space-y-1">
                     {routes.length === 0 && <li className="text-[11px] text-muted-foreground">None</li>}
                     {routes.map(r => (
-                      <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                      <li key={r}><RouteCode route={r} /></li>
                     ))}
                   </ul>
                 </div>
@@ -391,7 +493,7 @@ const ExperienceSeparationSection = () => {
                 <h4 className="text-xs font-black uppercase tracking-wide text-amber-600">Unknown</h4>
                 <ul className="mt-2 space-y-1">
                   {detectedByExperience.unknown.map(r => (
-                    <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                    <li key={r}><RouteCode route={r} /></li>
                   ))}
                 </ul>
               </div>
@@ -451,7 +553,7 @@ const LmsLanguageAuditSection = () => {
             <h3 className="text-xs font-black uppercase tracking-wide text-muted-foreground">LMS routes audited</h3>
             <ul className="mt-2 space-y-1">
               {LMS_ROUTES_TO_AUDIT.map(r => (
-                <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                <li key={r}><RouteCode route={r} /></li>
               ))}
             </ul>
           </div>
@@ -675,6 +777,9 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
+        {/* Core Entry Links — owner control hub */}
+        <CoreEntryLinksSection />
+
         {/* Experience Separation */}
         <ExperienceSeparationSection />
 
@@ -722,7 +827,7 @@ const UserFeaturesAudit = () => {
                   <h3 className="text-sm font-black">{s.stage}</h3>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {s.routes.map(r => <code key={r} className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code>)}
+                  {s.routes.map(r => <RouteCode key={r} route={r} />)}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">{s.notes}</p>
               </li>
@@ -741,7 +846,7 @@ const UserFeaturesAudit = () => {
                 {ENTRY_POINTS.map(e => (
                   <tr key={e.name} className="border-t border-border">
                     <td className="py-2 pr-3 font-semibold">{e.name}</td>
-                    <td className="pr-3"><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{e.route}</code></td>
+                    <td className="pr-3"><RouteCode route={e.route} /></td>
                     <td className="pr-3"><StatusBadge status={e.status} /></td>
                     <td className="pr-3 text-muted-foreground">{e.next}</td>
                     <td className="pr-3">{e.clear ? <Badge className="bg-success/15 text-success">Clear</Badge> : <Badge variant="outline" className="border-amber-500/40 text-amber-600">Unclear</Badge>}</td>
@@ -762,7 +867,7 @@ const UserFeaturesAudit = () => {
               <tbody>
                 {ROUTES.map(r => (
                   <tr key={r.route} className="border-t border-border align-top">
-                    <td className="py-2 pr-3"><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r.route}</code></td>
+                    <td className="py-2 pr-3"><RouteCode route={r.route} /></td>
                     <td className="pr-3">{r.purpose}</td>
                     <td className="pr-3"><Badge variant="outline">{r.access}</Badge></td>
                     <td className="pr-3"><StatusBadge status={r.status} /></td>

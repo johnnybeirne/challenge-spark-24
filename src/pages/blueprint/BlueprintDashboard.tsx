@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Compass, MessageCircle, Rocket, Sparkles, Target, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Compass, Flag, MessageCircle, Rocket, Sparkles, Target, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";

@@ -553,7 +553,7 @@ const LmsLanguageAuditSection = () => {
             <h3 className="text-xs font-black uppercase tracking-wide text-muted-foreground">LMS routes audited</h3>
             <ul className="mt-2 space-y-1">
               {LMS_ROUTES_TO_AUDIT.map(r => (
-                <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                <li key={r}><RouteCode route={r} /></li>
               ))}
             </ul>
           </div>

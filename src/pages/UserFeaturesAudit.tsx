@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,14 +6,17 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
 
-// Clickable route code chip — opens in a new tab if value starts with "/"
+const PROD_ORIGIN = "https://leadio.johnnybeirne.com";
+
+// Clickable route code chip — opens on the real domain
 const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {
   const cls = `rounded bg-muted px-1.5 py-0.5 text-[11px] ${className}`;
   const isRoute = typeof route === "string" && route.startsWith("/") && !route.includes(" ");
   if (!isRoute) return <code className={cls}>{route}</code>;
+  const href = `${PROD_ORIGIN}${route}`;
   return (
     <a
-      href={route}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}
@@ -265,11 +267,10 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
 
 const CoreEntryLinksSection = () => {
   const [copied, setCopied] = useState<string | null>(null);
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   const copyLink = async (route: string) => {
     try {
-      await navigator.clipboard.writeText(`${origin}${route}`);
+      await navigator.clipboard.writeText(`${PROD_ORIGIN}${route}`);
       setCopied(route);
       toast.success("Link copied");
       setTimeout(() => setCopied(c => (c === route ? null : c)), 1500);
@@ -311,13 +312,13 @@ const CoreEntryLinksSection = () => {
               <p className="text-xs text-muted-foreground">{link.description}</p>
               <div className="mt-auto flex flex-wrap gap-2">
                 <Button asChild size="sm" className="gap-1.5">
-                  <a href={link.route} target="_blank" rel="noopener noreferrer">
+                  <a href={`${PROD_ORIGIN}${link.route}`} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-3.5 w-3.5" /> Open
                   </a>
                 </Button>
                 {link.fallback && (
                   <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <a href={link.fallback} target="_blank" rel="noopener noreferrer">
+                    <a href={`${PROD_ORIGIN}${link.fallback}`} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3.5 w-3.5" /> Open fallback
                     </a>
                   </Button>

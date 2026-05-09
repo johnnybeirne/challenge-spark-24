@@ -65,11 +65,11 @@ const Upgrade = () => {
   const handleApply = () => {
     const result = validateCoupon(couponInput);
     setApplied(result);
-    if (result.ok) {
+    if (result.ok === true) {
       toast.success(`Coupon ${result.code} applied`);
-    } else {
-      toast.error(result.reason);
+      return;
     }
+    toast.error(result.reason);
   };
 
   const handleUnlock = () => {

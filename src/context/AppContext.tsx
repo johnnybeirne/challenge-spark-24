@@ -494,8 +494,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     state.challenge?.currentDay,
     state.challenge?.completed,
     (state as any).training,
-    state.user?.isPremium,
-    state.user?.directReferralCount,
+    (state.user as any)?.isPremium,
+    (state.user as any)?.directReferralCount,
     state.memory,
   ]);
 

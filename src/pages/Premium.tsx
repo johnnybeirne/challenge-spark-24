@@ -119,7 +119,7 @@ const Premium = () => {
   const handlePrimaryCta = async () => {
     if (effectiveApplied) {
       const redemption = await redeemCoupon(effectiveApplied.code);
-      if (!redemption.ok) {
+      if (redemption.ok !== true) {
         setError(redemption.reason);
         toast({ title: "Coupon could not be applied", description: redemption.reason, variant: "destructive" });
         return;

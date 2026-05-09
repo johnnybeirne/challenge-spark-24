@@ -147,6 +147,7 @@ const App = () => (
 
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </ExperienceShell>
           </BrowserRouter>
         </TooltipProvider>
         </AppProvider>

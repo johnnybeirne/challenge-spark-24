@@ -864,7 +864,7 @@ const UserFeaturesAudit = () => {
               <tbody>
                 {ROUTES.map(r => (
                   <tr key={r.route} className="border-t border-border align-top">
-                    <td className="py-2 pr-3"><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r.route}</code></td>
+                    <td className="py-2 pr-3"><RouteCode route={r.route} /></td>
                     <td className="pr-3">{r.purpose}</td>
                     <td className="pr-3"><Badge variant="outline">{r.access}</Badge></td>
                     <td className="pr-3"><StatusBadge status={r.status} /></td>

@@ -177,7 +177,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
         <button
-          onClick={() => go("/user-dashboard")}
+          onClick={() => go("/blueprint/bridge")}
           className={cn(
             "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
             collapsed ? "p-2" : "px-3 py-2.5"

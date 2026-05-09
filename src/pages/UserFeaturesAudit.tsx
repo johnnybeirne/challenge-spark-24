@@ -252,7 +252,6 @@ const CONFLICTS = [
 type CoreEntryLink = {
   title: string;
   route: string;
-  fallback?: string;
   description: string;
   badge: string;
 };

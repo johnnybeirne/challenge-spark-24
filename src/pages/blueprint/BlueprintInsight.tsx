@@ -187,13 +187,8 @@ const BlueprintInsight = () => {
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-6">
-        <h3 className="text-lg font-black">Ready to put this into action?</h3>
-        <p className="mt-1 text-sm text-muted-foreground">Take what you learned and build it inside the 3-Day Challenge.</p>
-        <Button onClick={() => navigate("/user-dashboard")} className="mt-4 h-11 gap-2 px-6 text-sm font-black uppercase">
-          Join the 3-Day Challenge <ArrowRight className="h-4 w-4" />
-        </Button>
-      </section>
+      <ImplementInsightCta />
+
 
       <UpgradeCard />
     </main>

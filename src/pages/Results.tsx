@@ -9,6 +9,8 @@ import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 
+const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
+
 const TYPING_SPEED_MS = 22;
 const THINKING_MS = 1200;
 const BETWEEN_MESSAGES_MS = 600;
@@ -328,12 +330,15 @@ const Results = () => {
           let entryIntent: string | null = null;
           try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
           const isFreeTraining = entryIntent === "free_training";
+          const freeTrainingDestination = state.user
+            ? FREE_TRAINING_COURSE_PATH
+            : `/blueprint-join?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
           if (isFreeTraining) {
             return (
               <>
                 <Button
                   className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                  onClick={() => navigate("/free-training")}
+                  onClick={() => navigate(freeTrainingDestination)}
                 >
                   Continue to Free Training
                   <ArrowRight className="w-5 h-5" />

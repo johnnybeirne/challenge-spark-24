@@ -824,7 +824,7 @@ const UserFeaturesAudit = () => {
                   <h3 className="text-sm font-black">{s.stage}</h3>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {s.routes.map(r => <code key={r} className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code>)}
+                  {s.routes.map(r => <RouteCode key={r} route={r} />)}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">{s.notes}</p>
               </li>

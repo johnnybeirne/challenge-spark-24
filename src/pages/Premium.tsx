@@ -773,9 +773,6 @@ const Premium = () => {
         <AuroraBackdrop />
         <div className="relative mx-auto w-full max-w-4xl px-4 py-24 text-center sm:py-32">
           <Reveal>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> Final step
-            </div>
             <h2 className="mt-6 text-balance text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
               Build a{" "}
               <span className="bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">growth engine</span>{" "}

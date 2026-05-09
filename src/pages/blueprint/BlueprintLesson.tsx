@@ -1,61 +1,99 @@
-import { useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, Sparkles } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { ArrowLeft, ArrowRight, CheckCircle2, Lock, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useAppState } from "@/context/AppContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { UpgradeCard } from "./BlueprintDashboard";
 
-interface LessonContent {
+type ModuleSlug = "1" | "2" | "3" | "4" | "5";
+
+type FreeModule = {
   n: 1 | 2 | 3;
+  locked: false;
+  eyebrow: string;
   title: string;
   intro: string;
   takeaways: string[];
   prompt: string;
-}
+};
 
-const LESSONS: Record<string, LessonContent> = {
+type LockedModule = {
+  n: 4 | 5;
+  locked: true;
+  eyebrow: string;
+  title: string;
+  teaser: string;
+};
+
+type ModuleContent = FreeModule | LockedModule;
+
+const MODULES: Record<ModuleSlug, ModuleContent> = {
   "1": {
     n: 1,
-    title: "Why Challenges Work",
+    locked: false,
+    eyebrow: "Foundations",
+    title: "Why Most Lead Generation Fails",
     intro:
-      "Most content is passive — people scroll, like, and forget. A challenge flips that. It gives your audience a clear goal, a short timeline, and a reason to act *today*. That's why challenges consistently outperform standalone webinars, lead magnets, and email courses for building real engagement.",
+      "Most lead generation fails because it asks for trust before it earns any. Cold ads, gated PDFs, and one-off webinars all skip the part where someone actually experiences working with you. The result: low-quality leads, weak conversion, and a list that doesn't convert.",
     takeaways: [
-      "Challenges create focused action — one clear goal beats ten scattered tips.",
-      "People engage more when there's a deadline and a public commitment.",
-      "Accountability and community turn casual interest into completion.",
+      "People don't buy from brands they don't yet trust.",
+      "Standalone lead magnets create curiosity — not commitment.",
+      "Real lead generation needs an experience, not just an opt-in.",
     ],
-    prompt: "What would your audience be more likely to act on if they had structure and accountability?",
+    prompt: "Where in your current lead generation are you asking for trust before you've earned it?",
   },
   "2": {
     n: 2,
-    title: "The Challenge Growth Opportunity",
+    locked: false,
+    eyebrow: "Growth Opportunity",
+    title: "Trust-Based Lead Generation",
     intro:
-      "A well-designed challenge isn't just engagement — it's a growth engine. Participants experience a small win with you before any sales conversation, which builds trust faster than any other format. Done right, a challenge feeds your leads list, your community, and your offers all at once.",
+      "Trust-based lead generation flips the model. Instead of pushing people toward an offer, you guide them through a small, structured experience where they get a real result with you first. By the time you talk about your offer, you've already proven you can help them.",
     takeaways: [
-      "Challenges generate qualified leads — people self-select by joining.",
-      "They build trust through experience, not promises.",
-      "They lead naturally into paid offers, services, or community.",
+      "Trust compounds when people experience a small, real win.",
+      "A short, structured journey beats a long, passive one.",
+      "When trust comes first, sales conversations get easier.",
     ],
-    prompt: "How could a challenge help your audience experience a small win before they buy from you?",
+    prompt: "What small, structured experience could let your audience feel a win with you before they buy?",
   },
   "3": {
     n: 3,
-    title: "Your Challenge Fit",
+    locked: false,
+    eyebrow: "Referral Loops",
+    title: "Building Referral Loops",
     intro:
-      "Now it's your turn. Tell us about your audience and the result they want, and we'll generate a personalised challenge growth insight tailored to you.",
-    takeaways: [],
-    prompt: "",
+      "Referral loops are what turn one engaged person into many. When the people you help feel the win, they want others to feel it too — but only if you make it easy for them to share. Strong referral loops are built into the experience, not bolted on at the end.",
+    takeaways: [
+      "Referrals come from delight, not from asking too early.",
+      "Make sharing feel generous — not transactional.",
+      "Build the loop into the experience, not as an afterthought.",
+    ],
+    prompt: "What's the most natural moment in your customer journey for someone to want to share?",
+  },
+  "4": {
+    n: 4,
+    locked: true,
+    eyebrow: "Premium Module",
+    title: "Advanced Challenge Systems",
+    teaser:
+      "Learn the advanced systems behind high-converting challenge funnels, AI-guided implementation, and trust-based conversion.",
+  },
+  "5": {
+    n: 5,
+    locked: true,
+    eyebrow: "Premium Module",
+    title: "Scaling With Leadio",
+    teaser:
+      "Learn how to scale with partners, referrals, paid offers, and repeatable Leadio growth loops.",
   },
 };
 
+const isFree = (m: ModuleContent): m is FreeModule => !m.locked;
+
 const BlueprintLesson = () => {
   const { day } = useParams();
-  const lesson = day ? LESSONS[day] : null;
+  const slug = (day ?? "") as ModuleSlug;
+  const lesson = MODULES[slug] ?? null;
   if (!lesson) return <Navigate to="/blueprint/dashboard" replace />;
 
   const { state, setState } = useAppState();
@@ -68,30 +106,31 @@ const BlueprintLesson = () => {
       ...prev,
       challenge: { ...prev.challenge, tasks: { ...prev.challenge.tasks, [taskKey]: true } },
     }));
-    toast.success(`Lesson ${lesson.n} complete`);
+    toast.success(`Module ${lesson.n} complete`);
   };
 
-  const nextHref = lesson.n < 3 ? `/blueprint/lesson/${lesson.n + 1}` : "/blueprint/insight";
+  const nextHref = lesson.n < 5 ? `/blueprint/lesson/${lesson.n + 1}` : "/blueprint/dashboard";
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8 lg:py-12">
       <Link to="/blueprint/dashboard" className="inline-flex items-center gap-1 text-xs font-bold uppercase text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-3 w-3" /> Dashboard
+        <ArrowLeft className="h-3 w-3" /> Course Home
       </Link>
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          {lesson.n === 1 ? "Foundations" : lesson.n === 2 ? "Growth Opportunity" : "Your Insight"}
+          {lesson.locked ? <Lock className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
+          Module {lesson.n} · {lesson.eyebrow}
         </span>
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>
 
-      <article className="mt-6 rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <p className="text-base leading-8 text-foreground">{lesson.intro}</p>
-      </article>
-
-      {lesson.n !== 3 ? (
+      {isFree(lesson) ? (
         <>
+          <article className="mt-6 rounded-2xl border border-border bg-card p-6 sm:p-8">
+            <p className="text-base leading-8 text-foreground">{lesson.intro}</p>
+          </article>
+
           <section className="mt-6 rounded-2xl border border-border bg-background p-6">
             <h2 className="text-sm font-black uppercase tracking-wide text-primary">3 Key Takeaways</h2>
             <ul className="mt-4 space-y-3">
@@ -115,133 +154,71 @@ const BlueprintLesson = () => {
                 <CheckCircle2 className="h-4 w-4" /> Completed
               </span>
             ) : (
-              <Button onClick={markComplete} className="h-11 px-6 text-sm font-black uppercase">Mark Complete</Button>
+              <Button onClick={markComplete} className="h-11 px-6 text-sm font-black uppercase">
+                Complete Module
+              </Button>
             )}
             <Button asChild variant="outline" className="h-11 gap-2">
-              <Link to={nextHref}>{lesson.n === 1 ? "Next: Growth Opportunity" : "Next: Your Insight"} <ArrowRight className="h-4 w-4" /></Link>
+              <Link to={nextHref}>Next Module <ArrowRight className="h-4 w-4" /></Link>
             </Button>
           </div>
+
+          {/* After Module 3, show challenge CTA */}
+          {lesson.n === 3 && (
+            <section className="mt-10 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8">
+              <h3 className="text-xl font-black sm:text-2xl">You understand the system. Now implement it.</h3>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                The mini course shows you how trust-based growth works. The 3-Day Challenge helps you build it.
+              </p>
+              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
+                  <Link to="/user-dashboard">
+                    Join the 3-Day Challenge <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-12 px-6 text-sm font-black uppercase">
+                  <Link to="/blueprint/lesson/4">Keep Learning</Link>
+                </Button>
+              </div>
+            </section>
+          )}
         </>
       ) : (
-        <Lesson3Form
-          onComplete={() => {
-            if (!completed) markComplete();
-            navigate("/blueprint/insight");
-          }}
-        />
+        <LockedModuleView teaser={lesson.teaser} />
       )}
+
+      <UpgradeCard />
     </main>
   );
 };
 
-const Lesson3Form = ({ onComplete }: { onComplete: () => void }) => {
-  const { state, setState } = useAppState();
-  const ai = state.challenge.aiOutputs ?? {};
-  const [problem, setProblem] = useState(ai.blueprint_problem || "");
-  const [audience, setAudience] = useState(ai.blueprint_audience || "");
-  const [result, setResult] = useState(ai.blueprint_result || "");
-  const [loading, setLoading] = useState(false);
-  const [insight, setInsight] = useState<string>(ai.blueprint_insight || "");
-
-  const canSubmit = useMemo(() => problem.trim() && audience.trim() && result.trim() && !loading, [problem, audience, result, loading]);
-
-  const generate = async () => {
-    if (!canSubmit) return;
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("blueprint-insight", {
-        body: { problem: problem.trim(), audience: audience.trim(), result: result.trim() },
-      });
-      if (error) throw error;
-      const text = data?.insight as string;
-      if (!text) throw new Error("No insight returned");
-      setInsight(text);
-      setState((prev) => ({
-        ...prev,
-        challenge: {
-          ...prev.challenge,
-          aiOutputs: {
-            ...prev.challenge.aiOutputs,
-            blueprint_problem: problem.trim(),
-            blueprint_audience: audience.trim(),
-            blueprint_result: result.trim(),
-            blueprint_insight: text,
-          },
-        },
-      }));
-      toast.success("Your insight is ready");
-    } catch (err: any) {
-      toast.error(err?.message || "Could not generate insight. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <>
-      <section className="mt-6 rounded-2xl border border-border bg-background p-6">
-        <h2 className="text-xl font-black">Find Your Challenge Growth Opportunity</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Three quick questions. AI does the rest.</p>
-
-        <div className="mt-6 space-y-5">
-          <div>
-            <Label htmlFor="problem" className="text-sm font-bold">What problem do you solve?</Label>
-            <Textarea
-              id="problem"
-              value={problem}
-              onChange={(e) => setProblem(e.target.value)}
-              placeholder="I help people who struggle with…"
-              rows={3}
-              maxLength={500}
-              className="mt-2 resize-none"
-            />
-          </div>
-          <div>
-            <Label htmlFor="audience" className="text-sm font-bold">Who do you solve it for?</Label>
-            <Textarea
-              id="audience"
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-              placeholder="I help coaches / consultants / business owners / parents / job seekers…"
-              rows={2}
-              maxLength={300}
-              className="mt-2 resize-none"
-            />
-          </div>
-          <div>
-            <Label htmlFor="result" className="text-sm font-bold">What result do they want?</Label>
-            <Textarea
-              id="result"
-              value={result}
-              onChange={(e) => setResult(e.target.value)}
-              placeholder="They want to…"
-              rows={3}
-              maxLength={500}
-              className="mt-2 resize-none"
-            />
-          </div>
+const LockedModuleView = ({ teaser }: { teaser: string }) => (
+  <section className="mt-6 overflow-hidden rounded-2xl border border-primary/30 bg-card">
+    <div className="relative">
+      <div className="pointer-events-none select-none p-8 blur-sm">
+        <p className="text-base leading-8 text-foreground">{teaser}</p>
+        <div className="mt-6 space-y-2">
+          <div className="h-3 w-5/6 rounded bg-muted" />
+          <div className="h-3 w-4/6 rounded bg-muted" />
+          <div className="h-3 w-3/4 rounded bg-muted" />
         </div>
-
-        <Button onClick={generate} disabled={!canSubmit} className="mt-6 h-12 w-full gap-2 text-sm font-black uppercase">
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Sparkles className="h-4 w-4" /> Generate My Challenge Insight</>}
+      </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/70 p-6 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+          <Lock className="h-5 w-5" />
+        </div>
+        <p className="max-w-md text-sm leading-6 text-foreground">{teaser}</p>
+        <p className="text-xs font-bold text-muted-foreground">
+          Use coupon code <span className="font-black text-primary">FOUNDING497</span>
+        </p>
+        <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
+          <Link to="/upgrade">
+            <Rocket className="h-4 w-4" /> Unlock Full Course
+          </Link>
         </Button>
-      </section>
-
-      {insight && (
-        <section className="mt-6 rounded-2xl border border-primary/30 bg-card p-6">
-          <h3 className="text-sm font-black uppercase tracking-wide text-primary">Your Insight</h3>
-          <div className="prose prose-sm mt-3 max-w-none text-foreground dark:prose-invert">
-            <ReactMarkdown>{insight}</ReactMarkdown>
-          </div>
-          <Button onClick={onComplete} className="mt-6 h-11 w-full gap-2 text-sm font-black uppercase">
-            View Full Insight <ArrowRight className="h-4 w-4" />
-          </Button>
-        </section>
-      )}
-
-      <UpgradeCard />
-    </>
-  );
-};
+      </div>
+    </div>
+  </section>
+);
 
 export default BlueprintLesson;

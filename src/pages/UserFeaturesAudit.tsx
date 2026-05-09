@@ -366,6 +366,91 @@ const ExperienceSeparationSection = () => {
   );
 };
 
+const LMS_FORBIDDEN_TERMS = [
+  "Day 1",
+  "Day 2",
+  "Day 3",
+  "Reward Points",
+  "Unlock Rewards",
+  "Bonus Vault",
+  "Challenge Progress",
+  "Leaderboard",
+  "Earn Credits",
+  "Start Challenge",
+];
+
+const LMS_ROUTES_TO_AUDIT = [
+  "/blueprint",
+  "/blueprint/dashboard",
+  "/blueprint/lesson/1",
+  "/blueprint/lesson/2",
+  "/blueprint/lesson/3",
+  "/blueprint/lesson/4",
+  "/blueprint/lesson/5",
+  "/blueprint/insight",
+  "/learn",
+];
+
+const LmsLanguageAuditSection = () => {
+  return (
+    <Card className="border-border">
+      <CardContent className="p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <ShieldAlert className="h-5 w-5 text-amber-500" />
+          <h2 className="text-lg font-black">LMS Language Audit</h2>
+          <Badge variant="outline" className="ml-auto text-[10px]">Read-only</Badge>
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          The Mini LMS / Blueprint experience must not surface 3-Day Challenge language.
+          The terms below should not appear inside any LMS route.
+        </p>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-border p-4">
+            <h3 className="text-xs font-black uppercase tracking-wide text-muted-foreground">LMS routes audited</h3>
+            <ul className="mt-2 space-y-1">
+              {LMS_ROUTES_TO_AUDIT.map(r => (
+                <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-border p-4">
+            <h3 className="text-xs font-black uppercase tracking-wide text-muted-foreground">Forbidden challenge terms</h3>
+            <ul className="mt-2 flex flex-wrap gap-1.5">
+              {LMS_FORBIDDEN_TERMS.map(term => (
+                <li key={term}>
+                  <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/5 px-2 py-0.5 text-[11px] font-bold text-amber-600">
+                    {term}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4">
+          <h3 className="text-xs font-black uppercase tracking-wide text-muted-foreground">Approved LMS replacements</h3>
+          <ul className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+            <li><span className="text-muted-foreground">Day 1 →</span> <span className="font-semibold">Foundations</span></li>
+            <li><span className="text-muted-foreground">Day 2 →</span> <span className="font-semibold">Growth Opportunity</span></li>
+            <li><span className="text-muted-foreground">Day 3 →</span> <span className="font-semibold">Referral Loops</span></li>
+            <li><span className="text-muted-foreground">Challenge Progress →</span> <span className="font-semibold">Learning Progress</span></li>
+            <li><span className="text-muted-foreground">Start Challenge →</span> <span className="font-semibold">Start Learning</span></li>
+            <li><span className="text-muted-foreground">Complete Day →</span> <span className="font-semibold">Complete Module</span></li>
+            <li><span className="text-muted-foreground">Unlock Rewards →</span> <span className="font-semibold">Unlock Full Course</span></li>
+            <li><span className="text-muted-foreground">Reward Points →</span> <span className="font-semibold">Course Access</span></li>
+            <li><span className="text-muted-foreground">Bonus Vault →</span> <span className="font-semibold">Premium Modules</span></li>
+          </ul>
+        </div>
+
+        <p className="mt-4 text-xs text-muted-foreground">
+          This is a static checklist — review LMS pages manually against this list to confirm no challenge language has crept in.
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
+
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);
@@ -468,6 +553,9 @@ const UserFeaturesAudit = () => {
       <div className="space-y-4">
         {/* Experience Separation */}
         <ExperienceSeparationSection />
+
+        {/* LMS Language Audit */}
+        <LmsLanguageAuditSection />
 
         {/* Feature registry */}
         <Section title="Feature Registry">

@@ -222,29 +222,6 @@ const Premium = () => {
               transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="relative"
             >
-              {/* Floating mini cards */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -left-4 -top-6 z-10 hidden rounded-2xl border border-primary/30 bg-card/90 px-3 py-2 text-xs font-bold shadow-xl shadow-primary/10 backdrop-blur sm:flex sm:items-center sm:gap-2"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-primary" /> AI prompt ready
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -right-4 top-12 z-10 hidden rounded-2xl border border-success/30 bg-card/90 px-3 py-2 text-xs font-bold shadow-xl shadow-success/10 backdrop-blur sm:flex sm:items-center sm:gap-2"
-              >
-                <Users className="h-3.5 w-3.5 text-success" /> +3 referrals
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-4 -left-2 z-10 hidden rounded-2xl border border-fuchsia-400/30 bg-card/90 px-3 py-2 text-xs font-bold shadow-xl backdrop-blur sm:flex sm:items-center sm:gap-2"
-              >
-                <Flame className="h-3.5 w-3.5 text-fuchsia-400" /> Day 2 streak
-              </motion.div>
-
               <div id="coupon-anchor" className="rounded-3xl border border-primary/20 bg-card/70 p-6 shadow-2xl shadow-primary/10 backdrop-blur sm:p-7">
                 <div className="flex items-start justify-between">
                   <div>

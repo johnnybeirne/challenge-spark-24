@@ -601,6 +601,9 @@ const Premium = () => {
       {/* ============== AUDIENCE (kept) ============== */}
       <section className="border-y border-border bg-muted/20">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">
+          <Reveal className="mb-8">
+            <div className="text-xs font-black uppercase tracking-widest text-primary">Who it's for</div>
+          </Reveal>
           <StaggerGroup className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {AUDIENCE.map((a) => (
               <StaggerItem key={a}>

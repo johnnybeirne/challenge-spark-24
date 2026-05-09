@@ -84,7 +84,6 @@ const BlueprintBridge = () => {
         },
       },
     }));
-    trackEvent("onboarding_started", { source: "lms_bridge", intent: intent || "unspecified" });
     navigate("/user-dashboard");
   };
 

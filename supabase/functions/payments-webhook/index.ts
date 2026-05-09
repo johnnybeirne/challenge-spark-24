@@ -71,7 +71,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const customerId = session.customer as string | undefined;
   const sessionId = session.id;
   const amount = session.amount_total ?? 0;
-  const currency = session.currency ?? "eur";
+  const currency = session.currency ?? "usd";
   const customerEmail =
     session.customer_details?.email || session.customer_email || undefined;
 
@@ -87,7 +87,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
         stripe_customer_id: customerId ?? null,
         amount_cents: amount,
         currency,
-        price_id: "leadio_premium_lifetime",
+        price_id: "leadio_premium_lifetime_usd",
         partner_code: partnerCode ?? null,
         status: "paid",
         environment: env,

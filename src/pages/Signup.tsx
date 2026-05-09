@@ -53,6 +53,13 @@ const Signup = () => {
 
   const [mode, setMode] = useState<Mode>(initialMode);
 
+  const redirectAfterAuth = (() => {
+    const params = new URLSearchParams(location.search);
+    const redirect = params.get("redirect");
+    if (redirect && redirect.startsWith("/")) return redirect;
+    return "/user-dashboard";
+  })();
+
   // Signup chat state
   const [step, setStep] = useState<SignupStep>("name");
   const [firstName, setFirstName] = useState("");

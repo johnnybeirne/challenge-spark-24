@@ -813,7 +813,70 @@ const UserFeaturesAudit = () => {
       value: premium ? `Active${appliedCoupon ? ` · coupon ${appliedCoupon}` : ""}` : "Not active in this browser",
     });
 
-    // ── Route reachability ──────────────────────────────────────────────
+    // ── State-aware CTA checks (Prompt 48.9) ─────────────────────────────
+    // Derive flags the same way useUserState does, without invoking React hooks.
+    const hasUser = !!(await supabase.auth.getSession()).data.session?.user;
+    const hasJoinedChallenge = hasUser && intent === "challenge";
+    const enrolledInFreeTraining = hasUser;
+    const enrolledInPremiumCourse = premium;
+    const hasValidPremiumCoupon = !!appliedCoupon || !!pendingCoupon;
+
+    checks.push({
+      label: "hasJoinedChallenge",
+      status: hasJoinedChallenge ? "Detected" : "Not detected",
+      value: hasJoinedChallenge
+        ? "User entered via /join — should see Continue Your Challenge"
+        : "User has not entered the challenge — Start CTA shown",
+    });
+    checks.push({
+      label: "enrolledInFreeTraining",
+      status: enrolledInFreeTraining ? "Detected" : "Not detected",
+      value: enrolledInFreeTraining
+        ? "Modules 1–3 unlocked, Modules 4–5 locked unless premium"
+        : "Visitor is not signed in — no free training access",
+    });
+    checks.push({
+      label: "enrolledInPremiumCourse",
+      status: enrolledInPremiumCourse ? "Detected" : "Not detected",
+      value: enrolledInPremiumCourse
+        ? "All 5 modules unlocked — Continue Premium Course CTA"
+        : "Premium not active in this browser",
+    });
+    checks.push({
+      label: "isPremiumUser",
+      status: premium ? "Detected" : "Not detected",
+      value: premium ? "Unlock CTAs should be hidden" : "Unlock CTAs visible",
+    });
+    checks.push({
+      label: "hasValidPremiumCoupon",
+      status: hasValidPremiumCoupon ? "Detected" : "Not detected",
+      value: hasValidPremiumCoupon
+        ? `Coupon present: ${appliedCoupon ?? pendingCoupon}`
+        : "No coupon in session/localStorage",
+    });
+
+    // ── CTA visibility warnings ──────────────────────────────────────────
+    if (hasJoinedChallenge) {
+      checks.push({
+        label: "Warning: challenge users seeing Join CTA",
+        status: "Detected",
+        value: "Sidebar/Blueprint CTAs now switch to Continue Your Challenge",
+      });
+    }
+    if (premium) {
+      checks.push({
+        label: "Warning: premium users seeing Unlock Full Course",
+        status: "Detected",
+        value: "Sidebar Unlock CTA hidden, dashboard UpgradeCard shows Premium Unlocked",
+      });
+    }
+    if (enrolledInFreeTraining && !premium) {
+      checks.push({
+        label: "Free user module visibility",
+        status: "Detected",
+        value: "Modules 4 & 5 locked, Unlock Full Course CTA visible",
+      });
+    }
     const routeResults = await Promise.all(
       LIVE_ROUTES_TO_PROBE.map(async (route) => {
         try {

@@ -80,8 +80,8 @@ const Premium = () => {
   const handleApply = () => {
     setError(null);
     const result = validateCoupon(code);
-    if (!result.ok) {
-      setError(result.ok === false ? result.reason : "Invalid coupon");
+    if (result.ok !== true) {
+      setError(result.reason);
       setApplied(null);
       return;
     }

@@ -118,12 +118,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
         {[
-          { path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, locked: false },
-          { path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, locked: false },
-          { path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, locked: false },
-          { path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Lock, locked: true },
-          { path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: Lock, locked: true },
-        ].map(({ path, label, Icon, locked }) => {
+          { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, locked: false },
+          { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, locked: false },
+          { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, locked: false },
+          { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Lock, locked: true },
+          { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: Lock, locked: true },
+        ].map(({ n, path, label, Icon, locked }) => {
           const active = location.pathname === path;
           return (
             <button
@@ -134,11 +134,22 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                 collapsed ? "p-2" : "px-3 py-2",
                 active && "ring-2 ring-primary/20"
               )}
-              title={label}
+              title={`${n}. ${label}`}
             >
               <div className="flex items-center justify-between gap-2">
-                {!collapsed && (
-                  <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                {!collapsed ? (
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={cn(
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black",
+                      active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
+                    )}>{n}</span>
+                    <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                  </div>
+                ) : (
+                  <span className={cn(
+                    "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
+                    active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
+                  )}>{n}</span>
                 )}
                 <Icon className={cn("h-4 w-4 shrink-0", locked ? "text-primary/60" : "text-muted-foreground")} />
               </div>

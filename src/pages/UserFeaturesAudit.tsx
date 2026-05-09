@@ -3,8 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert } from "lucide-react";
+import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers } from "lucide-react";
 import { toast } from "sonner";
+import { useExperienceShell } from "@/components/ExperienceShell";
+import {
+  getExperienceFromPath,
+  getExperienceConfig,
+  getNavigationForExperience,
+  type ExperienceType,
+} from "@/lib/experienceShell";
 
 type Status = "Detected" | "Partially detected" | "Not detected" | "Conflicting" | "Needs review";
 
@@ -252,6 +259,113 @@ const Section = ({ title, defaultOpen = true, children }: { title: string; defau
   );
 };
 
+const EXPERIENCE_ORDER: ExperienceType[] = ["assessment", "lms", "challenge", "paid", "partner", "admin"];
+
+const EXPERIENCE_ROUTE_SAMPLES: Record<Exclude<ExperienceType, "unknown">, string[]> = {
+  assessment: ["/", "/assess", "/results", "/results/low", "/results/med", "/results/high", "/invite/abc"],
+  lms: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/1", "/blueprint/insight", "/learn", "/learn/module/1"],
+  challenge: ["/user-dashboard", "/dashboard", "/day/1", "/day/2", "/day/3", "/unlocks", "/referrals", "/community", "/calendar"],
+  paid: ["/upgrade", "/checkout", "/course", "/course/module/1"],
+  partner: ["/promoter", "/partner/performance", "/partners"],
+  admin: ["/admin", "/admin/analytics", "/owner-console", "/owner-console/analytics", "/user-features"],
+};
+
+const ExperienceSeparationSection = () => {
+  const { experience, config, navigation, pathname } = useExperienceShell();
+
+  const detectedByExperience = useMemo(() => {
+    const map: Record<ExperienceType, string[]> = {
+      assessment: [], lms: [], challenge: [], paid: [], partner: [], admin: [], unknown: [],
+    };
+    EXPERIENCE_ORDER.forEach(exp => {
+      EXPERIENCE_ROUTE_SAMPLES[exp as Exclude<ExperienceType, "unknown">].forEach(route => {
+        const detected = getExperienceFromPath(route);
+        map[detected].push(route);
+      });
+    });
+    return map;
+  }, []);
+
+  return (
+    <Card className="border-border">
+      <CardContent className="p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <Layers className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-black">Experience Separation</h2>
+          <Badge variant="outline" className="ml-auto text-[10px]">Read-only shell</Badge>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-border p-4">
+            <h3 className="text-sm font-black uppercase tracking-wide text-muted-foreground">Current Route</h3>
+            <dl className="mt-3 space-y-1.5 text-sm">
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Path</dt><dd><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{pathname}</code></dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Detected experience</dt><dd><Badge>{config.label}</Badge></dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Type</dt><dd><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{experience}</code></dd></div>
+              <div><dt className="text-muted-foreground">Purpose</dt><dd className="mt-0.5">{config.purpose}</dd></div>
+              <div><dt className="text-muted-foreground">Tone</dt><dd className="mt-0.5">{config.tone}</dd></div>
+            </dl>
+          </div>
+
+          <div className="rounded-xl border border-border p-4">
+            <h3 className="text-sm font-black uppercase tracking-wide text-muted-foreground">Suggested Navigation</h3>
+            {navigation.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">No navigation defined for this experience.</p>
+            ) : (
+              <ul className="mt-3 space-y-1.5 text-sm">
+                {navigation.map(n => (
+                  <li key={n.label} className="flex items-center justify-between gap-3">
+                    <span className="font-semibold">{n.label}</span>
+                    {n.to && <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{n.to}</code>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-border p-4">
+          <h3 className="text-sm font-black uppercase tracking-wide text-muted-foreground">Routes Detected By Experience</h3>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {EXPERIENCE_ORDER.map(exp => {
+              const cfg = getExperienceConfig(exp);
+              const routes = detectedByExperience[exp];
+              return (
+                <div key={exp} className="rounded-lg border border-border bg-muted/20 p-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black uppercase tracking-wide">{cfg.label}</h4>
+                    <Badge variant="outline" className="text-[10px]">{routes.length}</Badge>
+                  </div>
+                  <ul className="mt-2 space-y-1">
+                    {routes.length === 0 && <li className="text-[11px] text-muted-foreground">None</li>}
+                    {routes.map(r => (
+                      <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+            {detectedByExperience.unknown.length > 0 && (
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <h4 className="text-xs font-black uppercase tracking-wide text-amber-600">Unknown</h4>
+                <ul className="mt-2 space-y-1">
+                  {detectedByExperience.unknown.map(r => (
+                    <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          This shell only classifies routes — it does not redirect, hide, or change any user experience.
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
+
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);
@@ -352,6 +466,9 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
+        {/* Experience Separation */}
+        <ExperienceSeparationSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

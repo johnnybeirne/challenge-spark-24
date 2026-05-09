@@ -334,20 +334,13 @@ const Premium = () => {
                 <motion.div
                   whileHover={{ y: -6, scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 280, damping: 20 }}
-                  className={`relative rounded-2xl border p-5 ${i === 3 ? "border-primary/50 bg-primary/10 shadow-xl shadow-primary/20" : "border-border bg-card"}`}
+                  className="relative rounded-2xl border border-border bg-card p-5"
                 >
-                  <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${i === 3 ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"}`}>
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <step.icon className="h-5 w-5" />
                   </div>
                   <div className="mt-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Stage {i + 1}</div>
                   <div className="mt-1 text-base font-black">{step.label}</div>
-                  {i === 3 && (
-                    <motion.div
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 2.4, repeat: Infinity }}
-                      className="absolute -inset-px rounded-2xl ring-1 ring-primary/40"
-                    />
-                  )}
                 </motion.div>
                 {i < ASCENSION.length - 1 && (
                   <motion.div

@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { usePremium } from "@/hooks/usePremium";
-import { setPremium, validateCoupon } from "@/lib/premium";
+import { setPremium, validateCoupon, redeemCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/hooks/useAuth";

@@ -359,6 +359,9 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
+        {/* Experience Separation */}
+        <ExperienceSeparationSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

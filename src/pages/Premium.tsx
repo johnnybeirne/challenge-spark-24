@@ -516,7 +516,7 @@ const Premium = () => {
           <StaggerGroup className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {MODULES.map((m, i) => (
               <StaggerItem key={m.title}>
-                <motion.div whileHover={{ y: -6, scale: 1.01 }} transition={{ type: "spring", stiffness: 280, damping: 22 }} className={`group relative h-full overflow-hidden rounded-2xl border p-6 ${m.locked ? "border-border bg-card" : "border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card shadow-lg shadow-primary/10"}`}>
+                <motion.div whileHover={{ y: -6, scale: 1.01 }} transition={{ type: "spring", stiffness: 280, damping: 22 }} className="group relative h-full overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card p-6 shadow-lg shadow-primary/10">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
                       <Crown className="h-3 w-3" /> {m.eyebrow}
@@ -525,20 +525,6 @@ const Premium = () => {
                   </div>
                   <h3 className="mt-4 text-lg font-black leading-snug">{m.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{m.body}</p>
-                  <div className="mt-5">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                      <span>{m.locked ? "Locked" : "Preview"}</span>
-                      <span>{m.progress}%</span>
-                    </div>
-                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
-                      <motion.div initial={{ width: 0 }} whileInView={{ width: `${m.progress}%` }} viewport={{ once: true }} transition={{ duration: 1.2, ease: "easeOut" }} className="h-full bg-gradient-to-r from-primary to-fuchsia-400" />
-                    </div>
-                  </div>
-                  {m.locked && (
-                    <div className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/80 px-2 py-1 text-[10px] font-black text-muted-foreground backdrop-blur">
-                      <Lock className="h-3 w-3" /> Premium
-                    </div>
-                  )}
                 </motion.div>
               </StaggerItem>
             ))}

@@ -28,14 +28,14 @@ function tokenize(s: string): string[] {
 }
 
 function buildTsQuery(q: string): string {
+  // websearch_to_tsquery accepts plain words separated by spaces
   return q
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .split(/\s+/)
     .filter((w) => w.length > 2)
     .slice(0, 8)
-    .map((w) => `${w}:*`)
-    .join(" | ");
+    .join(" ");
 }
 
 async function retrieveKb(sb: any, query: string, stage?: string) {

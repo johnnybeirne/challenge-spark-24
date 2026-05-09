@@ -482,7 +482,7 @@ const ExperienceSeparationSection = () => {
                   <ul className="mt-2 space-y-1">
                     {routes.length === 0 && <li className="text-[11px] text-muted-foreground">None</li>}
                     {routes.map(r => (
-                      <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                      <li key={r}><RouteCode route={r} /></li>
                     ))}
                   </ul>
                 </div>

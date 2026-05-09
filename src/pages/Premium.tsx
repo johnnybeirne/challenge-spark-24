@@ -73,6 +73,8 @@ const ASCENSION = [
 
 const Premium = () => {
   const { isPremium, coupon } = usePremium();
+  const { user } = useAuth();
+  const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);

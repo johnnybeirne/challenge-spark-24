@@ -184,8 +184,8 @@ const BlueprintLesson = () => {
               </p>
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                 <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-                  <Link to="/user-dashboard">
-                    Join the 3-Day Challenge <ArrowRight className="h-4 w-4" />
+                  <Link to="/blueprint/bridge">
+                    Continue to Implementation <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="h-12 px-6 text-sm font-black uppercase">

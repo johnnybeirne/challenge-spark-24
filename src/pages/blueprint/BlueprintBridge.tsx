@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAppState } from "@/context/AppContext";
-import { trackEvent } from "@/lib/analytics";
 
 const READINESS_OPTIONS = [
   "Lead magnet funnel",

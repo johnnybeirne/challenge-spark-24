@@ -7,15 +7,20 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
 
-// Clickable route code chip — links internally if value starts with "/"
+// Clickable route code chip — opens in a new tab if value starts with "/"
 const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {
   const cls = `rounded bg-muted px-1.5 py-0.5 text-[11px] ${className}`;
   const isRoute = typeof route === "string" && route.startsWith("/") && !route.includes(" ");
   if (!isRoute) return <code className={cls}>{route}</code>;
   return (
-    <Link to={route} className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}>
+    <a
+      href={route}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}
+    >
       <code>{route}</code>
-    </Link>
+    </a>
   );
 };
 import { useExperienceShell } from "@/components/ExperienceShell";
@@ -306,15 +311,15 @@ const CoreEntryLinksSection = () => {
               <p className="text-xs text-muted-foreground">{link.description}</p>
               <div className="mt-auto flex flex-wrap gap-2">
                 <Button asChild size="sm" className="gap-1.5">
-                  <Link to={link.route}>
+                  <a href={link.route} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-3.5 w-3.5" /> Open
-                  </Link>
+                  </a>
                 </Button>
                 {link.fallback && (
                   <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <Link to={link.fallback}>
+                    <a href={link.fallback} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3.5 w-3.5" /> Open fallback
-                    </Link>
+                    </a>
                   </Button>
                 )}
                 <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">

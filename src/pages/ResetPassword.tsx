@@ -41,7 +41,7 @@ const ResetPassword = () => {
         </div>
         <h1 className="text-2xl font-bold text-foreground">Reset your password</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Choose a new password for your ChallengeOS account.
+          Choose a new password for your Leadio account.
         </p>
 
         {!hasRecoveryLink && !session && (

@@ -271,7 +271,7 @@ const UserFeaturesAudit = () => {
   const refresh = () => {
     setAuditedAt(new Date());
     setTick(t => t + 1);
-    try { trackEvent("admin_hub_viewed"); } catch {}
+    // user_features_audit_refreshed (not in registry; skipped)
     toast.success("Audit refreshed");
   };
 

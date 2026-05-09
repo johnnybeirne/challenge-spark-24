@@ -324,16 +324,48 @@ const Results = () => {
       </header>
 
       <div className="space-y-4">
-        <Button
-          className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-          onClick={() => navigate("/join")}
-        >
-          {ctaCopy.button}
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
-          {ctaCopy.sub}
-        </p>
+        {(() => {
+          let entryIntent: string | null = null;
+          try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
+          const isFreeTraining = entryIntent === "free_training";
+          if (isFreeTraining) {
+            return (
+              <>
+                <Button
+                  className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
+                  onClick={() => navigate("/free-training")}
+                >
+                  Continue to Free Training
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
+                  onClick={() => navigate("/challenge")}
+                >
+                  Explore the 3-Day Challenge
+                </Button>
+                <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "18px" }}>
+                  Get your personalised starting point, then jump straight into the free Challenge Growth Blueprint.
+                </p>
+              </>
+            );
+          }
+          return (
+            <>
+              <Button
+                className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
+                onClick={() => navigate("/join")}
+              >
+                {ctaCopy.button}
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+              <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
+                {ctaCopy.sub}
+              </p>
+            </>
+          );
+        })()}
       </div>
     </div>
   );

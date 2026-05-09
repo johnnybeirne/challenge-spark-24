@@ -53,6 +53,8 @@ import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Waitlist from "@/pages/Waitlist";
 import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
+import PartnerSales from "@/pages/PartnerSales";
+import CheckoutReturn from "@/pages/CheckoutReturn";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -88,6 +90,8 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
+                <Route path="/p/:partnerCode" element={<PartnerSales />} />
+                <Route path="/checkout/return" element={<CheckoutReturn />} />
               </Route>
 
               {/* Authenticated routes — consumer + shared */}

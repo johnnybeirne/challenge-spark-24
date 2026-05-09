@@ -50,6 +50,7 @@ import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Waitlist from "@/pages/Waitlist";
+import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -127,6 +128,11 @@ const App = () => (
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
+              </Route>
+
+              {/* Internal audit — admin protected via AdminLayout */}
+              <Route path="/user-features" element={<AdminLayout />}>
+                <Route index element={<UserFeaturesAudit />} />
               </Route>
 
               {/* Legacy admin redirects */}

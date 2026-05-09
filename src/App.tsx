@@ -34,6 +34,7 @@ import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";
 import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
 import BlueprintInsight from "@/pages/blueprint/BlueprintInsight";
+import BlueprintBridge from "@/pages/blueprint/BlueprintBridge";
 import RewardDetail from "@/pages/RewardDetail";
 import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
@@ -111,6 +112,7 @@ const App = () => (
                 <Route path="/blueprint/dashboard" element={<AuthGuard><BlueprintDashboard /></AuthGuard>} />
                 <Route path="/blueprint/lesson/:day" element={<AuthGuard><BlueprintLesson /></AuthGuard>} />
                 <Route path="/blueprint/insight" element={<AuthGuard><BlueprintInsight /></AuthGuard>} />
+                <Route path="/blueprint/bridge" element={<AuthGuard><BlueprintBridge /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />

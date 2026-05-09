@@ -102,11 +102,23 @@ const BlueprintLesson = () => {
   const completed = !!state.challenge.tasks[taskKey];
 
   const markComplete = () => {
+    const stamp = new Date().toISOString();
     setState((prev) => ({
       ...prev,
-      challenge: { ...prev.challenge, tasks: { ...prev.challenge.tasks, [taskKey]: true } },
+      challenge: {
+        ...prev.challenge,
+        tasks: { ...prev.challenge.tasks, [taskKey]: true },
+        aiOutputs: {
+          ...prev.challenge.aiOutputs,
+          [`${taskKey}_completed_at`]: stamp,
+        },
+      },
     }));
     toast.success(`Module ${lesson.n} complete`);
+    if (lesson.n === 3) {
+      // Bridge experience — do not auto-redirect, navigate intentionally.
+      navigate("/blueprint/bridge");
+    }
   };
 
   const nextHref = lesson.n < 5 ? `/blueprint/lesson/${lesson.n + 1}` : "/blueprint/dashboard";
@@ -172,8 +184,8 @@ const BlueprintLesson = () => {
               </p>
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                 <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-                  <Link to="/user-dashboard">
-                    Join the 3-Day Challenge <ArrowRight className="h-4 w-4" />
+                  <Link to="/blueprint/bridge">
+                    Continue to Implementation <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="h-12 px-6 text-sm font-black uppercase">

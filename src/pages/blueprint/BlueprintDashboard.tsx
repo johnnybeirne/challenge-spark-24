@@ -118,7 +118,7 @@ const BlueprintDashboard = () => {
             </div>
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0">
-            <Link to="/user-dashboard">Join the 3-Day Challenge</Link>
+            <Link to="/blueprint/bridge">Join the 3-Day Challenge</Link>
           </Button>
         </div>
       </section>

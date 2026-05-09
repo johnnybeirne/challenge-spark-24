@@ -252,7 +252,6 @@ const CONFLICTS = [
 type CoreEntryLink = {
   title: string;
   route: string;
-  fallback?: string;
   description: string;
   badge: string;
 };
@@ -260,9 +259,9 @@ type CoreEntryLink = {
 const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Assessment Homepage", route: "/", description: "Primary assessment-first entry point for cold traffic.", badge: "Top Funnel" },
   { title: "Direct Challenge Entry", route: "/challenge", description: "Direct entry into the 3-Day Challenge for higher-intent users.", badge: "Challenge" },
-  { title: "Free Training Entry", route: "/free-training", fallback: "/blueprint", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
+  { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
   { title: "Premium Course", route: "/premium", description: "Premium educational experience with coupon-code support and upgrade flow.", badge: "Premium" },
-  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", fallback: "/blueprint", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
+  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
 ];
 
 const CoreEntryLinksSection = () => {
@@ -299,12 +298,6 @@ const CoreEntryLinksSection = () => {
                   <h3 className="text-base font-black">{link.title}</h3>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <RouteCode route={link.route} />
-                    {link.fallback && (
-                      <>
-                        <span className="text-[10px] text-muted-foreground">fallback</span>
-                        <RouteCode route={link.fallback} />
-                      </>
-                    )}
                   </div>
                 </div>
                 <Badge className="shrink-0">{link.badge}</Badge>
@@ -316,13 +309,6 @@ const CoreEntryLinksSection = () => {
                     <ExternalLink className="h-3.5 w-3.5" /> Open
                   </a>
                 </Button>
-                {link.fallback && (
-                  <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <a href={`${PROD_ORIGIN}${link.fallback}`} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3.5 w-3.5" /> Open fallback
-                    </a>
-                  </Button>
-                )}
                 <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">
                   {copied === link.route ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                   {copied === link.route ? "Copied" : "Copy Link"}

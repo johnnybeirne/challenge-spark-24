@@ -493,7 +493,7 @@ const ExperienceSeparationSection = () => {
                 <h4 className="text-xs font-black uppercase tracking-wide text-amber-600">Unknown</h4>
                 <ul className="mt-2 space-y-1">
                   {detectedByExperience.unknown.map(r => (
-                    <li key={r}><code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r}</code></li>
+                    <li key={r}><RouteCode route={r} /></li>
                   ))}
                 </ul>
               </div>

@@ -687,6 +687,9 @@ const UserFeaturesAudit = () => {
         {/* Premium / Ascension */}
         <PremiumAuditSection />
 
+        {/* Navigation & Stage cohesion */}
+        <NavCohesionSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

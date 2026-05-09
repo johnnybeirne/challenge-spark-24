@@ -112,6 +112,7 @@ const App = () => (
                 <Route path="/blueprint/dashboard" element={<AuthGuard><BlueprintDashboard /></AuthGuard>} />
                 <Route path="/blueprint/lesson/:day" element={<AuthGuard><BlueprintLesson /></AuthGuard>} />
                 <Route path="/blueprint/insight" element={<AuthGuard><BlueprintInsight /></AuthGuard>} />
+                <Route path="/blueprint/bridge" element={<AuthGuard><BlueprintBridge /></AuthGuard>} />
 
                 {/* Partner-only routes */}
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />

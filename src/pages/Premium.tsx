@@ -290,6 +290,55 @@ const Premium = () => {
         </div>
       </section>
 
+      {/* TRAINER BIO */}
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="relative mx-auto w-full max-w-sm">
+            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/30 via-primary/10 to-transparent blur-2xl" />
+            <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-card shadow-2xl shadow-primary/10">
+              <img
+                src={johnnyPortrait}
+                alt="Johnny Beirne — creator of Leadio"
+                className="aspect-square w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase tracking-widest text-primary">Your trainer</div>
+            <h2 className="mt-3 text-3xl font-black sm:text-4xl">Meet Johnny Beirne</h2>
+            <p className="mt-2 text-sm font-bold text-muted-foreground">
+              Creator of Leadio · Challenge-based growth strategist
+            </p>
+            <div className="mt-5 space-y-4 text-base leading-7 text-muted-foreground">
+              <p>
+                Johnny has spent the last decade helping coaches, consultants, and expert-led
+                businesses turn knowledge into repeatable lead-generation systems. Leadio is the
+                distillation of everything that consistently worked — assessment-first funnels,
+                AI-guided challenges, and trust-based referral loops.
+              </p>
+              <p>
+                Inside the Growth Accelerator, you get the same playbook used to launch challenges,
+                build referral engines, and ascend offers across niches — without paid ads as the
+                primary growth lever.
+              </p>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {[
+                { k: "10+", v: "Years in growth" },
+                { k: "200+", v: "Challenges launched" },
+                { k: "1:1", v: "Built with operators" },
+              ].map((s) => (
+                <div key={s.v} className="rounded-2xl border border-border bg-card p-4">
+                  <div className="text-2xl font-black text-primary">{s.k}</div>
+                  <div className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">{s.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* WHO IT'S FOR */}
       <section className="border-y border-border bg-muted/30">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">

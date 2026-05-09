@@ -644,6 +644,9 @@ const UserFeaturesAudit = () => {
         {/* LMS → Challenge Bridge */}
         <BridgeAuditSection />
 
+        {/* Premium / Ascension */}
+        <PremiumAuditSection />
+
         {/* Feature registry */}
         <Section title="Feature Registry">
           <div className="grid gap-4 md:grid-cols-2">

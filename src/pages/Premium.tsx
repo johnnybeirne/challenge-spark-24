@@ -176,7 +176,7 @@ const Premium = () => {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button onClick={handlePrimaryCta} className="h-12 gap-2 px-6 text-base font-black uppercase tracking-wide shadow-lg shadow-primary/30">
                   <Rocket className="h-4 w-4" />
-                  {effectiveApplied ? "Unlock With Coupon" : "Unlock the Premium Course"}
+                  Enrol Here
                 </Button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-success" />
@@ -292,7 +292,7 @@ const Premium = () => {
 
                   <Button onClick={handlePrimaryCta} className="mt-4 h-12 w-full gap-2 text-base font-black uppercase">
                     <Rocket className="h-4 w-4" />
-                    {effectiveApplied ? "Unlock With Coupon" : "Unlock the Premium Course"}
+                    Enrol Here
                   </Button>
                 </div>
               </div>
@@ -802,7 +802,7 @@ const Premium = () => {
             <p className="mt-2 text-sm text-muted-foreground">Lifetime access · One-time payment</p>
             <Button onClick={handlePrimaryCta} className="mt-6 h-12 gap-2 px-8 text-base font-black uppercase">
               <Rocket className="h-4 w-4" />
-              {effectiveApplied ? "Unlock With Coupon" : "Unlock the Premium Course"}
+              Enrol Here
             </Button>
             <p className="mt-3 text-[11px] text-muted-foreground">14-day refund · Secure checkout · No recurring fees</p>
           </div>
@@ -831,7 +831,7 @@ const Premium = () => {
                 <Button onClick={handlePrimaryCta} className="relative h-14 gap-2 px-8 text-base font-black uppercase shadow-2xl shadow-primary/40">
                   <motion.span animate={{ opacity: [0.4, 0.9, 0.4] }} transition={{ duration: 2.4, repeat: Infinity }} className="absolute inset-0 -z-10 rounded-md bg-primary/30 blur-lg" />
                   <Rocket className="h-4 w-4" />
-                  Unlock Leadio Growth Accelerator
+                  Enrol Here
                 </Button>
               </motion.div>
               <Button onClick={scrollToCoupon} variant="outline" className="h-14 gap-2 px-6 text-sm font-black uppercase">

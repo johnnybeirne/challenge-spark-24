@@ -3,8 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert } from "lucide-react";
+import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers } from "lucide-react";
 import { toast } from "sonner";
+import { useExperienceShell } from "@/components/ExperienceShell";
+import {
+  getExperienceFromPath,
+  getExperienceConfig,
+  getNavigationForExperience,
+  type ExperienceType,
+} from "@/lib/experienceShell";
 
 type Status = "Detected" | "Partially detected" | "Not detected" | "Conflicting" | "Needs review";
 

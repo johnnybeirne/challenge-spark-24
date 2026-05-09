@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,20 +9,30 @@ import { ArrowRight, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { defaultMemory, mergeMemory } from "@/lib/personalisation";
-import AddToCalendar from "@/components/AddToCalendar";
 import aiAvatar from "@/assets/ai-avatar.png";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const PARTNER_REF_KEY = "challengeos_partner_ref";
 
+export type SignupProduct = "challenge" | "blueprint" | "premium";
 type Mode = "signup" | "login";
 type SignupStep = "name" | "email" | "password";
 
-const SIGNUP_PROMPTS: Record<SignupStep, string> = {
-  name: "Johnny here — what's your first and last name?",
-  email: "Nice to meet you, {name}. What email should I use for your account?",
-  password: "Pick a password (6+ characters) and you're in.",
-};
+export interface SignupChatProps {
+  product: SignupProduct;
+  headline: string;
+  subcopy: string;
+  johnnyPrompts: { name: string; email: string; password: string };
+  successHeadline: (firstName: string) => string;
+  successSubcopy: string;
+  defaultRedirect: string;
+  /** Render extra success-screen actions. `redirect` is the resolved post-auth target. */
+  renderSuccessActions?: (args: {
+    firstName: string;
+    redirect: string;
+    goToRedirect: () => void;
+  }) => ReactNode;
+}
 
 const TypingBubble = ({ text }: { text: string }) => {
   const [shown, setShown] = useState("");
@@ -44,8 +54,16 @@ const TypingBubble = ({ text }: { text: string }) => {
   );
 };
 
-
-const Signup = () => {
+const SignupChat = ({
+  product,
+  headline,
+  subcopy,
+  johnnyPrompts,
+  successHeadline,
+  successSubcopy,
+  defaultRedirect,
+  renderSuccessActions,
+}: SignupChatProps) => {
   const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,10 +75,9 @@ const Signup = () => {
     const params = new URLSearchParams(location.search);
     const redirect = params.get("redirect");
     if (redirect && redirect.startsWith("/")) return redirect;
-    return "/user-dashboard";
+    return defaultRedirect;
   })();
 
-  // Signup chat state
   const [step, setStep] = useState<SignupStep>("name");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -69,7 +86,6 @@ const Signup = () => {
   const [signupPassword, setSignupPassword] = useState("");
   const signupInputRef = useRef<HTMLInputElement>(null);
 
-  // Login form state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
@@ -86,8 +102,10 @@ const Signup = () => {
     }
   }, [step, mode]);
 
-  // ----- Signup handlers -----
-  const promptText = SIGNUP_PROMPTS[step].replace("{name}", firstName.trim() || "there");
+  const promptText = (() => {
+    const raw = johnnyPrompts[step];
+    return raw.replace("{name}", firstName.trim() || "there");
+  })();
 
   const canAdvanceSignup = (() => {
     if (step === "name") return firstName.trim().length > 0 && lastName.trim().length > 0;
@@ -115,6 +133,7 @@ const Signup = () => {
     } catch {}
     const { error } = await signUp(signupEmail.trim().toLowerCase(), signupPassword, {
       name: name.trim(),
+      signup_product: product,
       ...(referredBy ? { referred_by: referredBy } : {}),
     });
     setLoading(false);
@@ -131,7 +150,7 @@ const Signup = () => {
     if (partnerRef) {
       (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
     }
-    trackEvent("signup_completed");
+    trackEvent("signup_completed", { product });
     toast.success("You're in.");
     setSignupComplete(true);
   };
@@ -142,7 +161,6 @@ const Signup = () => {
     return { type: "password", placeholder: "••••••", value: signupPassword, onChange: (e: any) => setSignupPassword(e.target.value), autoComplete: "new-password", minLength: 6 };
   })();
 
-  // ----- Login handler -----
   const canSubmitLogin = loginEmail.trim().includes("@") && loginPassword.length >= 6;
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -169,9 +187,13 @@ const Signup = () => {
 
   const switchMode = (next: Mode) => {
     setMode(next);
-    if (next === "signup") setStep("name");
-    if (next === "signup") setAccountExistsNotice(false);
+    if (next === "signup") {
+      setStep("name");
+      setAccountExistsNotice(false);
+    }
   };
+
+  const goToRedirect = () => navigate(redirectAfterAuth);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background relative">
@@ -186,27 +208,22 @@ const Signup = () => {
         </button>
       )}
       <div className="w-full max-w-2xl">
-        
-
         {signupComplete ? (
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Your 3-day challenge is ready, {firstName}.</h1>
-            <p className="text-base text-muted-foreground mb-8 max-w-xl mx-auto">
-              Set aside 60 minutes each day to complete your challenge.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{successHeadline(firstName)}</h1>
+            <p className="text-base text-muted-foreground mb-8 max-w-xl mx-auto">{successSubcopy}</p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
-              <AddToCalendar firstNameOverride={firstName || "there"} className="h-12" />
-              <Button variant="secondary" className="h-12" onClick={() => navigate(redirectAfterAuth)}>Continue</Button>
+              {renderSuccessActions ? (
+                renderSuccessActions({ firstName, redirect: redirectAfterAuth, goToRedirect })
+              ) : (
+                <Button className="h-12" onClick={goToRedirect}>Continue</Button>
+              )}
             </div>
           </div>
         ) : mode === "signup" ? (
           <>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">
-              Start building your AI-powered challenge
-            </h1>
-            <p className="text-base text-muted-foreground text-center mb-2 max-w-xl mx-auto">
-              In 3 days, you'll create a challenge that attracts leads, guides users through it, and grows through sharing.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">{headline}</h1>
+            <p className="text-base text-muted-foreground text-center mb-2 max-w-xl mx-auto">{subcopy}</p>
             <p className="text-base text-muted-foreground text-center mb-12">
               Step {step === "name" ? 1 : step === "email" ? 2 : 3} of 3
             </p>
@@ -295,17 +312,11 @@ const Signup = () => {
         ) : (
           <>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">
-              Sign in to keep building your challenge.
-            </p>
+            <p className="text-sm text-muted-foreground text-center mb-6">Sign in to continue.</p>
 
             {accountExistsNotice && (
               <div className="flex items-start gap-3 mb-6 p-4 rounded-xl border-2 border-foreground bg-primary/5">
-                <img
-                  src={aiAvatar}
-                  alt=""
-                  className="w-10 h-10 rounded-full border-2 border-foreground/10 shrink-0"
-                />
+                <img src={aiAvatar} alt="" className="w-10 h-10 rounded-full border-2 border-foreground/10 shrink-0" />
                 <div className="flex-1">
                   <div className="text-xs text-muted-foreground mb-0.5">Johnny B AI</div>
                   <p className="text-sm text-foreground">
@@ -356,22 +367,14 @@ const Signup = () => {
                 </p>
               )}
 
-              <Button
-                type="submit"
-                disabled={!canSubmitLogin || loading}
-                className="w-full h-12 rounded-xl text-base gap-2 border-2 border-foreground"
-              >
+              <Button type="submit" disabled={!canSubmitLogin || loading} className="w-full h-12 rounded-xl text-base gap-2 border-2 border-foreground">
                 <LogIn className="w-4 h-4" />
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => switchMode("signup")}
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
+              <button type="button" onClick={() => switchMode("signup")} className="text-sm text-muted-foreground hover:text-foreground">
                 ← Back to create account
               </button>
             </div>
@@ -382,4 +385,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupChat;

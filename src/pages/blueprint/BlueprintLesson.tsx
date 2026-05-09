@@ -83,7 +83,21 @@ const MODULES: Record<ModuleSlug, ModuleContent> = {
     eyebrow: "Premium Module",
     title: "Advanced Challenge Systems",
     teaser:
-      "Learn the advanced systems behind high-converting challenge funnels, AI-guided implementation, and trust-based conversion.",
+      "Learn how high-converting challenge funnels combine AI implementation, trust loops, referrals, and behavioral momentum.",
+    previewBullets: [
+      "Advanced onboarding",
+      "Viral challenge mechanics",
+      "AI-guided implementation systems",
+      "Conversion architecture",
+    ],
+    intro:
+      "Advanced challenge systems combine onboarding design, viral mechanics, and AI-guided implementation into a single trust-based engine. You'll learn how to engineer momentum from day one and convert engagement into committed action.",
+    takeaways: [
+      "Onboarding is the highest-leverage point in any challenge funnel.",
+      "Viral mechanics work when sharing creates value for the sharer.",
+      "AI removes friction between intention and implementation.",
+    ],
+    prompt: "Where does your current funnel lose momentum — and how could AI-guided implementation close that gap?",
   },
   "5": {
     n: 5,
@@ -91,7 +105,22 @@ const MODULES: Record<ModuleSlug, ModuleContent> = {
     eyebrow: "Premium Module",
     title: "Scaling With Leadio",
     teaser:
-      "Learn how to scale with partners, referrals, paid offers, and repeatable Leadio growth loops.",
+      "Learn how to scale challenges using partners, affiliates, referrals, paid acquisition, and repeatable trust-based systems.",
+    previewBullets: [
+      "Partner systems",
+      "Referral scaling",
+      "Offer ascension",
+      "Audience compounding",
+      "Monetisation systems",
+    ],
+    intro:
+      "Scaling with Leadio is about compounding — partners, referrals, and offer ascension stacked on a trust-based foundation. You'll design the systems that turn one challenge into a repeatable growth engine.",
+    takeaways: [
+      "Partners and affiliates compound reach without compounding ad spend.",
+      "Offer ascension lets each cohort fund the next stage.",
+      "Repeatable systems beat one-off launches every time.",
+    ],
+    prompt: "Which scaling lever — partners, referrals, or ascension — would unlock the most growth for you next?",
   },
 };
 

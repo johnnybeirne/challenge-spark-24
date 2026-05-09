@@ -346,12 +346,12 @@ const Premium = () => {
               <p>
                 Johnny has spent the last decade helping coaches, consultants, and expert-led
                 businesses turn knowledge into repeatable lead-generation systems. Leadio is the
-                distillation of everything that consistently worked — assessment-first funnels,
+                distillation of everything that consistently worked, assessment-first funnels,
                 AI-guided challenges, and trust-based referral loops.
               </p>
               <p>
                 Inside the Growth Accelerator, you get the same playbook used to launch challenges,
-                build referral engines, and ascend offers across niches — without paid ads as the
+                build referral engines, and ascend offers across niches, without paid ads as the
                 primary growth lever.
               </p>
             </div>

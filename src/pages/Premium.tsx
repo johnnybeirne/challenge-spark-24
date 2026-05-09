@@ -21,6 +21,10 @@ import { Input } from "@/components/ui/input";
 import { usePremium } from "@/hooks/usePremium";
 import { setPremium, validateCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerCode } from "@/lib/partner";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import johnnyPortrait from "@/assets/johnny-beirne.png";
 
 const VALUE_PILLARS = [
@@ -69,6 +73,8 @@ const ASCENSION = [
 
 const Premium = () => {
   const { isPremium, coupon } = usePremium();
+  const { user } = useAuth();
+  const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -99,12 +105,22 @@ const Premium = () => {
       });
       return;
     }
-    // No coupon → scroll to coupon section (Stripe not wired here)
-    document.getElementById("coupon-anchor")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // No coupon → open Stripe embedded checkout
+    openCheckout({
+      priceId: "leadio_premium_lifetime_usd",
+      customerEmail: user?.email,
+      userId: user?.id,
+      promotionCode: getPartnerCode(),
+      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+    });
+    setTimeout(() => {
+      document.getElementById("checkout-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <PaymentTestModeBanner />
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,hsl(var(--primary)/0.25),transparent_55%),radial-gradient(circle_at_85%_10%,hsl(var(--primary)/0.18),transparent_50%)]" />
@@ -211,6 +227,22 @@ const Premium = () => {
           </div>
         </div>
       </section>
+
+      {/* CHECKOUT */}
+      {isOpen && checkoutElement && (
+        <section id="checkout-anchor" className="mx-auto w-full max-w-3xl px-4 py-10">
+          <div className="rounded-3xl border border-primary/20 bg-card p-2 sm:p-4 shadow-xl shadow-primary/5">
+            {checkoutElement}
+            <button
+              type="button"
+              onClick={closeCheckout}
+              className="mt-3 px-3 text-xs text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* WHAT YOU BUILD */}
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">

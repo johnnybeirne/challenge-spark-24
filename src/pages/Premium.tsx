@@ -81,7 +81,7 @@ const Premium = () => {
     setError(null);
     const result = validateCoupon(code);
     if (!result.ok) {
-      setError(result.reason);
+      setError(result.ok === false ? result.reason : "Invalid coupon");
       setApplied(null);
       return;
     }

@@ -118,11 +118,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
         {[
-          { path: "/blueprint/dashboard", label: "Blueprint Home", Icon: Sparkles },
-          { path: "/blueprint/lesson/1", label: "Foundations", Icon: BookOpen },
-          { path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Sparkles },
-          { path: "/blueprint/lesson/3", label: "Your Insight", Icon: CheckCircle },
-        ].map(({ path, label, Icon }) => {
+          { path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, locked: false },
+          { path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, locked: false },
+          { path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, locked: false },
+          { path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Lock, locked: true },
+          { path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: Lock, locked: true },
+        ].map(({ path, label, Icon, locked }) => {
           const active = location.pathname === path;
           return (
             <button
@@ -136,8 +137,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               title={label}
             >
               <div className="flex items-center justify-between gap-2">
-                {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
-                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                {!collapsed && (
+                  <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                )}
+                <Icon className={cn("h-4 w-4 shrink-0", locked ? "text-primary/60" : "text-muted-foreground")} />
               </div>
             </button>
           );
@@ -147,8 +150,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tools</p>}
         {[
+          { path: "/blueprint/insight", label: "My Insight", Icon: Compass },
           { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
-          { path: "/blueprint/insight", label: "Saved Insights", Icon: Library },
         ].map(({ path, label, Icon }) => {
           const active = location.pathname === path;
           return (
@@ -174,15 +177,28 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
         <button
+          onClick={() => go("/user-dashboard")}
+          className={cn(
+            "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
+            collapsed ? "p-2" : "px-3 py-2.5"
+          )}
+          title="Join the 3-Day Challenge"
+        >
+          <div className="flex items-center justify-between gap-2">
+            {!collapsed && <p className="text-sm font-black text-primary">Join the 3-Day Challenge</p>}
+            <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+          </div>
+        </button>
+        <button
           onClick={() => go("/upgrade")}
           className={cn(
             "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
             collapsed ? "p-2" : "px-3 py-2.5"
           )}
-          title="Unlock Full System"
+          title="Unlock Full Course"
         >
           <div className="flex items-center justify-between gap-2">
-            {!collapsed && <p className="text-sm font-black text-primary">Unlock Full System</p>}
+            {!collapsed && <p className="text-sm font-black text-primary">Unlock Full Course</p>}
             <Rocket className="h-4 w-4 shrink-0 text-primary" />
           </div>
         </button>

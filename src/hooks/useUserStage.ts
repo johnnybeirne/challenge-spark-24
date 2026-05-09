@@ -56,14 +56,14 @@ export const useUserStage = (): StageFlags => {
   return useMemo(() => {
     const tasks = state.challenge?.tasks ?? {};
     const hasUser = !!state.user;
-    const hasCompletedAssessment = !!state.assessment?.completedAt;
+    const hasCompletedAssessment = !!state.assessment;
     const hasStartedLMS = !!tasks.blueprint_lesson_1 || !!tasks.blueprint_lesson_2 || !!tasks.blueprint_lesson_3;
     const hasCompletedModule3 = !!tasks.blueprint_lesson_3;
     const enteredChallengeFromLMS = state.challenge?.aiOutputs?.entered_challenge_from_lms === "true";
-    const hasEnteredChallenge =
-      enteredChallengeFromLMS ||
-      !!tasks.day_1_complete || !!tasks.day_2_complete || !!tasks.day_3_complete;
-    const hasCompletedChallenge = !!tasks.day_3_complete;
+    const currentDay = state.challenge?.currentDay ?? 1;
+    const challengeCompleted = !!state.challenge?.completed;
+    const hasEnteredChallenge = enteredChallengeFromLMS || currentDay > 1 || challengeCompleted;
+    const hasCompletedChallenge = challengeCompleted || currentDay > 3;
 
     let stage: UserStage = "cold";
     if (isPremium) stage = "premium";

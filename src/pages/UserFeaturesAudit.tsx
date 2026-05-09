@@ -7,14 +7,17 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
 
-// Clickable route code chip — opens in a new tab if value starts with "/"
+const PROD_ORIGIN = "https://leadio.johnnybeirne.com";
+
+// Clickable route code chip — opens on the real domain
 const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {
   const cls = `rounded bg-muted px-1.5 py-0.5 text-[11px] ${className}`;
   const isRoute = typeof route === "string" && route.startsWith("/") && !route.includes(" ");
   if (!isRoute) return <code className={cls}>{route}</code>;
+  const href = `${PROD_ORIGIN}${route}`;
   return (
     <a
-      href={route}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={`${cls} hover:bg-primary/10 hover:text-primary transition-colors underline-offset-2 hover:underline`}

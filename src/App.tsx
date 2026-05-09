@@ -65,6 +65,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ExperienceShell>
             <Routes>
               {/* Landing – full-width layout */}
               <Route element={<AppShell fullWidth />}>

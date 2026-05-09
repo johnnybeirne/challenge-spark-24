@@ -54,25 +54,34 @@ const AdminLayout = () => {
 
   if (!user) {
     const currentPath = window.location.pathname;
-    const loginHref = `/join?redirect=${encodeURIComponent(currentPath)}`;
+    const loginHref = `/join?mode=login&redirect=${encodeURIComponent(currentPath)}`;
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background text-center">
         <Shield className="h-10 w-10 text-primary" />
         <h1 className="text-xl font-bold">Owner Access</h1>
-        <p className="text-sm text-muted-foreground">Sign in with your app account to continue.</p>
+        <p className="text-sm text-muted-foreground">Sign in with your admin account to continue.</p>
         <Button asChild>
-          <Link to={loginHref}>Sign in</Link>
+          <Link to={loginHref}>Log in as admin</Link>
         </Button>
       </div>
     );
   }
 
   if (!isAdmin) {
+    const currentPath = window.location.pathname;
+    const switchHref = `/join?mode=login&redirect=${encodeURIComponent(currentPath)}`;
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background text-center">
         <Shield className="h-10 w-10 text-primary" />
         <h1 className="text-xl font-bold">Owner Access</h1>
-        <p className="text-sm text-muted-foreground">Your signed-in account does not have admin access.</p>
+        <p className="text-sm text-muted-foreground">
+          Your signed-in account ({user.email}) does not have admin access.
+        </p>
+        <Button asChild variant="outline">
+          <Link to={switchHref} onClick={() => supabase.auth.signOut()}>
+            Sign out & log in as admin
+          </Link>
+        </Button>
       </div>
     );
   }

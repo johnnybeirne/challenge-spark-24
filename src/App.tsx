@@ -55,6 +55,7 @@ import Waitlist from "@/pages/Waitlist";
 import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
+import InviteEntry from "@/pages/InviteEntry";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,14 +73,20 @@ const App = () => (
             <Routes>
               {/* Landing – full-width layout */}
               <Route element={<AppShell fullWidth />}>
+                {/* Canonical primary entry — assessment-first landing */}
                 <Route path="/" element={<Landing />} />
+                {/* Direct challenge entry (high-intent users; does NOT force LMS) */}
                 <Route path="/challenge" element={<ChallengeLanding />} />
+                {/* Free Training (Blueprint LMS) entry */}
                 <Route path="/blueprint" element={<BlueprintLanding />} />
+                <Route path="/free-training" element={<BlueprintLanding />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}
               <Route element={<AppShell />}>
+                {/* Canonical assessment route + legacy alias */}
                 <Route path="/assess" element={<Assessment />} />
+                <Route path="/assessment" element={<Navigate to="/assess" replace />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />
@@ -90,7 +97,14 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
+                {/* Partner-branded landing — canonical + legacy alias */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
+                <Route path="/partner/:partnerCode" element={<PartnerSales />} />
+                {/* Referral invite entry — stores code then funnels into assessment */}
+                <Route path="/invite/:referralCode" element={<InviteEntry />} />
+                {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
+                <Route path="/premium" element={<Upgrade />} />
+                <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
               </Route>
 

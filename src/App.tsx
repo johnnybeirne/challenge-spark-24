@@ -50,6 +50,7 @@ import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Waitlist from "@/pages/Waitlist";
+import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

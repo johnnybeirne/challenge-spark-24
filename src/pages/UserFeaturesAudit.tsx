@@ -268,11 +268,10 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
 
 const CoreEntryLinksSection = () => {
   const [copied, setCopied] = useState<string | null>(null);
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   const copyLink = async (route: string) => {
     try {
-      await navigator.clipboard.writeText(`${origin}${route}`);
+      await navigator.clipboard.writeText(`${PROD_ORIGIN}${route}`);
       setCopied(route);
       toast.success("Link copied");
       setTimeout(() => setCopied(c => (c === route ? null : c)), 1500);
@@ -314,13 +313,13 @@ const CoreEntryLinksSection = () => {
               <p className="text-xs text-muted-foreground">{link.description}</p>
               <div className="mt-auto flex flex-wrap gap-2">
                 <Button asChild size="sm" className="gap-1.5">
-                  <a href={link.route} target="_blank" rel="noopener noreferrer">
+                  <a href={`${PROD_ORIGIN}${link.route}`} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-3.5 w-3.5" /> Open
                   </a>
                 </Button>
                 {link.fallback && (
                   <Button asChild size="sm" variant="outline" className="gap-1.5">
-                    <a href={link.fallback} target="_blank" rel="noopener noreferrer">
+                    <a href={`${PROD_ORIGIN}${link.fallback}`} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3.5 w-3.5" /> Open fallback
                     </a>
                   </Button>

@@ -27,11 +27,48 @@ function tokenize(s: string): string[] {
   return normalize(s).split(" ").filter((w) => w.length > 2);
 }
 
+function buildTsQuery(q: string): string {
+  return q
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2)
+    .slice(0, 8)
+    .map((w) => `${w}:*`)
+    .join(" | ");
+}
+
+async function retrieveKb(sb: any, query: string, stage?: string) {
+  const tsq = buildTsQuery(query);
+  const stageList = stage && stage !== "all" ? [stage, "all"] : null;
+  if (!tsq) return [];
+  let q = sb
+    .from("kb_documents")
+    .select("slug,title,content,tags,stage,source")
+    .eq("is_active", true)
+    .textSearch("search_tsv", tsq, { type: "websearch", config: "english" })
+    .limit(2);
+  if (stageList) q = q.in("stage", stageList);
+  const { data, error } = await q;
+  if (error) {
+    console.error("kb retrieve error:", error);
+    return [];
+  }
+  return data ?? [];
+}
+
+function formatKbAnswer(docs: any[]): string {
+  if (!docs.length) return "";
+  const top = docs[0];
+  const source = top.source ?? "Leadio Blueprint";
+  return `${top.content}\n\n_Answer powered by Leadio Blueprint — ${source}_`;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { prompt, memoryContext } = await req.json();
+    const { prompt, memoryContext, stage } = await req.json();
     if (!prompt || typeof prompt !== "string") {
       return new Response(JSON.stringify({ error: "prompt is required" }), {
         status: 400,
@@ -71,9 +108,6 @@ serve(async (req) => {
 
     if (qaErr) {
       console.error("qa fetch failed:", qaErr);
-      return new Response(JSON.stringify({ response: fallback }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
     const normPrompt = normalize(prompt);
@@ -101,7 +135,6 @@ serve(async (req) => {
           if (!k) continue;
           if (normPrompt.includes(k)) score += 2;
         }
-        // Also score against question tokens
         for (const t of tokenize(r.question)) {
           if (promptTokens.has(t)) score += 1;
         }
@@ -113,9 +146,23 @@ serve(async (req) => {
       if (bestScore >= 2) answer = bestAnswer;
     }
 
-    return new Response(JSON.stringify({ response: withMemory(answer ?? fallback, memoryContext) }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // 3. Knowledge-base retrieval (Leadio frameworks) before falling back
+    let kbUsed = false;
+    if (!answer) {
+      const docs = await retrieveKb(sb, prompt, stage);
+      if (docs.length > 0) {
+        answer = formatKbAnswer(docs);
+        kbUsed = true;
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        response: withMemory(answer ?? fallback, memoryContext),
+        source: kbUsed ? "kb" : answer ? "qa" : "fallback",
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (e) {
     console.error("copilot error:", e);
     return new Response(

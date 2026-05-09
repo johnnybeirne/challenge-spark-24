@@ -88,6 +88,8 @@ const App = () => (
                 {/* Canonical assessment route + legacy alias */}
                 <Route path="/assess" element={<Assessment />} />
                 <Route path="/assessment" element={<Navigate to="/assess" replace />} />
+                {/* Free Training assessment entry — same engine, sets entryIntent=free_training */}
+                <Route path="/free-assessment" element={<FreeAssessment />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />

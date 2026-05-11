@@ -758,9 +758,9 @@ const UserFeaturesAudit = () => {
       <div className="sticky top-0 z-20 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur">
         <p className="text-xs text-muted-foreground">Last audited at <span className="font-semibold text-foreground">{auditedAt.toLocaleString()}</span></p>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={refresh} size="sm" className="gap-2" disabled={auditing}>
-            <RefreshCw className={`h-4 w-4 ${auditing ? "animate-spin" : ""}`} />
-            {auditing ? "Auditing…" : "Refresh Audit"}
+          <Button onClick={refresh} size="sm" className="gap-2">
+            <RefreshCw className="h-4 w-4" />
+            Refresh Audit
           </Button>
           <Button onClick={copySummary} size="sm" variant="outline" className="gap-2"><Copy className="h-4 w-4" /> Copy Summary</Button>
           <Button onClick={exportJson} size="sm" variant="outline" className="gap-2"><Download className="h-4 w-4" /> Export JSON</Button>

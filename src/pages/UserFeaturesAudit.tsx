@@ -764,6 +764,9 @@ const UserFeaturesAudit = () => {
         </div>
       </div>
 
+      {/* Core Entry Links — owner control hub */}
+      <CoreEntryLinksSection />
+
       {/* Summary metrics */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {[
@@ -783,22 +786,8 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
-        {/* Core Entry Links — owner control hub */}
-        <CoreEntryLinksSection />
-
         {/* Experience Separation */}
         <ExperienceSeparationSection />
-
-        {/* LMS Language Audit */}
-        <LmsLanguageAuditSection />
-
-        {/* LMS → Challenge Bridge */}
-        <BridgeAuditSection />
-
-        {/* Premium / Ascension */}
-        <PremiumAuditSection />
-
-        {/* Navigation & Stage cohesion */}
         <NavCohesionSection />
 
         {/* Feature registry */}

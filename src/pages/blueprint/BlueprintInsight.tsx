@@ -112,7 +112,6 @@ const BlueprintInsight = () => {
           </p>
         </header>
         <InsightForm onDone={() => setEditing(false)} />
-        <UpgradeCard />
       </main>
     );
   }
@@ -187,9 +186,6 @@ const BlueprintInsight = () => {
       </section>
 
       <ImplementInsightCta />
-
-
-      <UpgradeCard />
     </main>
   );
 };

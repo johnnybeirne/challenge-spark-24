@@ -44,12 +44,11 @@ export function AdminSidebar() {
             <Shield className="h-4 w-4 text-primary" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col min-w-0 flex-1">
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold truncate">Owner Console</span>
               <span className="text-xs text-muted-foreground uppercase tracking-wider">Challenge</span>
             </div>
           )}
-          <SidebarTrigger className="ml-auto h-7 w-7" />
         </div>
       </SidebarHeader>
 

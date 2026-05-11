@@ -28,9 +28,9 @@ Based on this, give a concise, practical recommendation in clean Markdown using 
 Keep each section to 2-4 short sentences. Be direct and specific to their inputs.
 
 Do not overwhelm. Do not give the full implementation plan. Do not provide a complete course.
-Give enough value to create clarity and desire for the paid system.
+Give enough value to create clarity and a clear next step.
 
-Position the paid next step as ChallengeOS Accelerator, a $497 system available free with coupon code FOUNDING497.`;
+Do not mention any product names, pricing, coupon codes, or promotional offers. Do not reference "ChallengeOS", "Leadio", "$497", or "FOUNDING497". Keep the Next Step practical and educational — focused on what they should do, not what to buy.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

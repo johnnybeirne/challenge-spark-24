@@ -769,20 +769,25 @@ const UserFeaturesAudit = () => {
 
       {/* Summary metrics */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Routes", value: totals.routes },
+          { label: "Features", value: totals.features },
+          { label: "Needs review", value: totals.review },
+          { label: "Conflicts", value: totals.conflicts },
+          { label: "Entry points", value: totals.entries },
+        ].map(m => (
+          <Card key={m.label} className="border-border">
+            <CardContent className="p-4">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{m.label}</p>
+              <p className="mt-1 text-2xl font-black">{m.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
 
+      <div className="space-y-4">
         {/* Experience Separation */}
         <ExperienceSeparationSection />
-
-        {/* LMS Language Audit */}
-        <LmsLanguageAuditSection />
-
-        {/* LMS → Challenge Bridge */}
-        <BridgeAuditSection />
-
-        {/* Premium / Ascension */}
-        <PremiumAuditSection />
-
-        {/* Navigation & Stage cohesion */}
         <NavCohesionSection />
 
         {/* Feature registry */}

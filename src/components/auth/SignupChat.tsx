@@ -135,9 +135,12 @@ const SignupChat = ({
       referredBy = sessionStorage.getItem(REF_SESSION_KEY);
       partnerRef = sessionStorage.getItem(PARTNER_REF_KEY);
     } catch {}
+    let entryIntent: string | null = null;
+    try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
     const { error } = await signUp(signupEmail.trim().toLowerCase(), signupPassword, {
       name: name.trim(),
       signup_product: product,
+      ...(entryIntent ? { entry_intent: entryIntent } : {}),
       ...(referredBy ? { referred_by: referredBy } : {}),
     });
     setLoading(false);

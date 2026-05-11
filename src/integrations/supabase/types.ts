@@ -536,6 +536,7 @@ export type Database = {
           created_at: string
           direct_referral_count: number
           email: string | null
+          entry_intent: string | null
           id: string
           indirect_referral_count: number
           invite_code: string
@@ -545,6 +546,7 @@ export type Database = {
           premium_since: string | null
           referred_by: string | null
           referred_by_parent: string | null
+          signup_product: string | null
           stripe_customer_id: string | null
           updated_at: string
           user_id: string
@@ -555,6 +557,7 @@ export type Database = {
           created_at?: string
           direct_referral_count?: number
           email?: string | null
+          entry_intent?: string | null
           id?: string
           indirect_referral_count?: number
           invite_code: string
@@ -564,6 +567,7 @@ export type Database = {
           premium_since?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
+          signup_product?: string | null
           stripe_customer_id?: string | null
           updated_at?: string
           user_id: string
@@ -574,6 +578,7 @@ export type Database = {
           created_at?: string
           direct_referral_count?: number
           email?: string | null
+          entry_intent?: string | null
           id?: string
           indirect_referral_count?: number
           invite_code?: string
@@ -583,6 +588,7 @@ export type Database = {
           premium_since?: string | null
           referred_by?: string | null
           referred_by_parent?: string | null
+          signup_product?: string | null
           stripe_customer_id?: string | null
           updated_at?: string
           user_id?: string

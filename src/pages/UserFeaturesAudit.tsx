@@ -684,14 +684,9 @@ const PremiumAuditSection = () => (
   </Card>
 );
 
-type BridgeCheck = { label: string; status: Status; note?: string };
-
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());
   const [tick, setTick] = useState(0);
-  const [auditing, setAuditing] = useState(false);
-  const [liveChecks, setLiveChecks] = useState<LiveCheck[]>([]);
-  const [routeChecks, setRouteChecks] = useState<RouteReachability[]>([]);
 
   const allFeatures = useMemo(() => CATEGORIES.flatMap(c => c.features), []);
   const totals = useMemo(() => ({

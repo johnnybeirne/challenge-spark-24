@@ -684,28 +684,7 @@ const PremiumAuditSection = () => (
   </Card>
 );
 
-type LiveCheck = {
-  label: string;
-  status: Status;
-  value?: string;
-  note?: string;
-};
-
-type RouteReachability = { route: string; ok: boolean; httpStatus: number | null };
-
-const LIVE_ROUTES_TO_PROBE = [
-  "/",
-  "/assessment",
-  "/free-assessment",
-  "/premium-assessment",
-  "/premium",
-  "/join",
-  "/blueprint-join",
-  "/premium-join",
-  "/free-training/enrol",
-  "/premium/enrol",
-  "/links",
-];
+type BridgeCheck = { label: string; status: Status; note?: string };
 
 const UserFeaturesAudit = () => {
   const [auditedAt, setAuditedAt] = useState<Date>(new Date());

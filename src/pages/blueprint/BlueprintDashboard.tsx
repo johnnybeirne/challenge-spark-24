@@ -112,7 +112,7 @@ const BlueprintDashboard = () => {
                 )}
               </div>
               <p className="mt-4 text-[10px] font-black uppercase tracking-wider text-primary">
-                {locked && isPremium ? "Premium · Unlocked" : eyebrow}
+                {premiumModule && !isLocked ? "Premium · Unlocked" : eyebrow}
               </p>
               <h3 className="mt-1 text-base font-black">{title}</h3>
               <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{body}</p>

@@ -31,7 +31,7 @@ const DictatedTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
     };
 
     return (
-      <div className="relative">
+      <div className="relative w-full flex-1 min-w-0">
         <Textarea
           ref={ref}
           value={value}

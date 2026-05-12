@@ -1,10 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, BookOpen, CheckCircle2, Compass, Crown, Flag, Lock, MessageCircle, Rocket, Sparkles, Target, Users, Zap } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
 import { usePremium } from "@/hooks/usePremium";
 import { useUserState } from "@/hooks/useUserState";
+
+export const PREMIUM_LOCK_MESSAGE =
+  "This is a premium module. Upgrade to unlock Advanced Challenge Systems and the full Leadio growth system.";
 
 type ModuleEntry = {
   n: number;
@@ -32,6 +36,7 @@ const MODULES: ModuleEntry[] = [
 const BlueprintDashboard = () => {
   const { state } = useAppState();
   const { isPremium } = usePremium();
+  const navigate = useNavigate();
   const tasks = state.challenge.tasks;
   const insight = state.challenge.aiOutputs?.blueprint_insight;
   const freeModules = MODULES.filter((m) => !m.locked);
@@ -39,6 +44,11 @@ const BlueprintDashboard = () => {
   const pct = Math.round((completed / freeModules.length) * 100);
   const nextModule = freeModules.find((m) => !tasks[`blueprint_lesson_${m.n}`]) ?? freeModules[freeModules.length - 1];
   const firstName = state.user?.name?.split(" ")[0] || "there";
+
+  const handleLockedClick = () => {
+    toast.message("Premium module locked", { description: PREMIUM_LOCK_MESSAGE });
+    navigate("/upgrade");
+  };
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 lg:py-12">
@@ -76,14 +86,8 @@ const BlueprintDashboard = () => {
         {MODULES.map(({ n, slug, icon: Icon, eyebrow, title, body, locked }) => {
           const isLocked = locked && !isPremium;
           const done = !isLocked && tasks[`blueprint_lesson_${n}`];
-          return (
-            <Link
-              key={n}
-              to={`/blueprint/lesson/${slug}`}
-              className={`group relative rounded-2xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                isLocked ? "border-primary/30 hover:border-primary/60" : "border-border hover:border-primary/40"
-              }`}
-            >
+          const cardInner = (
+            <>
               <div className="flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   {isLocked ? <Lock className="h-5 w-5" /> : locked ? <Crown className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
@@ -104,6 +108,31 @@ const BlueprintDashboard = () => {
               {isLocked && (
                 <p className="mt-3 text-[11px] font-bold text-primary">Unlock Full Course →</p>
               )}
+            </>
+          );
+
+          if (isLocked) {
+            return (
+              <button
+                key={n}
+                type="button"
+                onClick={handleLockedClick}
+                aria-label={`${title} — premium module locked`}
+                title={PREMIUM_LOCK_MESSAGE}
+                className="group relative rounded-2xl border border-primary/30 bg-card p-5 text-left shadow-sm opacity-70 transition-all hover:opacity-100 hover:border-primary/60 hover:shadow-md"
+              >
+                {cardInner}
+              </button>
+            );
+          }
+
+          return (
+            <Link
+              key={n}
+              to={`/blueprint/lesson/${slug}`}
+              className="group relative rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-primary/40"
+            >
+              {cardInner}
             </Link>
           );
         })}

@@ -123,7 +123,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
       return [
         { label: "Learn", to: "/blueprint/dashboard" },
         { label: "Build Challenge Framework", to: "/blueprint/insight" },
-        { label: "Ask the Mentor", to: "/mentor" },
+        { label: "Ask Johnny AI", to: "/mentor" },
         { label: "Upgrade", to: "/upgrade" },
       ];
     case "challenge":

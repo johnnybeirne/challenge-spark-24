@@ -72,9 +72,9 @@ const Mentor = () => {
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-3xl flex-col px-4 py-6 lg:py-10">
       <header className="mb-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          <Sparkles className="h-3.5 w-3.5" /> Challenge Mentor
+          <Sparkles className="h-3.5 w-3.5" /> Johnny AI
         </div>
-        <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">Ask the Mentor</h1>
+        <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">Ask Johnny AI</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Get practical, beginner-friendly help designing, launching, and running your challenge.
         </p>
@@ -131,7 +131,7 @@ const Mentor = () => {
         <div className="flex gap-2">
           <DictatedTextarea
             ref={textareaRef}
-            placeholder="Ask the Challenge Mentor anything…"
+            placeholder="Ask Johnny AI anything…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

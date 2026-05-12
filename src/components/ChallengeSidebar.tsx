@@ -163,7 +163,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tools</p>}
         {[
-          { path: "/blueprint/insight", label: "My Insight", Icon: Compass },
+          { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass },
           { path: "/mentor", label: "Ask the Mentor", Icon: MessageCircle },
         ].map(({ path, label, Icon }) => {
           const active = location.pathname === path;

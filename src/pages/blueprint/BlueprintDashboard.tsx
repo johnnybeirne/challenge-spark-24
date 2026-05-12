@@ -85,7 +85,7 @@ const BlueprintDashboard = () => {
           </Button>
           <Button asChild variant="outline" className="h-12 gap-2 px-6 text-sm font-black uppercase">
             <Link to="/blueprint/insight">
-              <Compass className="h-4 w-4" /> Get My Insight
+              <Compass className="h-4 w-4" /> Build Challenge Framework
             </Link>
           </Button>
         </div>
@@ -157,14 +157,14 @@ const BlueprintDashboard = () => {
       <section className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-base font-black">My Insight</h3>
+            <h3 className="text-base font-black">Build Challenge Framework</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               {insight ? "Your personalised insight is ready." : "Answer three quick questions to generate your insight."}
             </p>
           </div>
           <Button asChild variant={insight ? "default" : "outline"} size="sm" className="shrink-0">
             <Link to="/blueprint/insight">
-              {insight ? "View Insight" : "Get My Insight"}
+              {insight ? "View Framework" : "Build Challenge Framework"}
             </Link>
           </Button>
         </div>

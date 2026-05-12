@@ -6,9 +6,14 @@ import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
 import { usePremium } from "@/hooks/usePremium";
 import { useUserState } from "@/hooks/useUserState";
-
-export const PREMIUM_LOCK_MESSAGE =
-  "This is a premium module. Upgrade to unlock Advanced Challenge Systems and the full Leadio growth system.";
+import {
+  useModuleAccess,
+  isModulePremium,
+  PREMIUM_LOCK_TITLE,
+  PREMIUM_LOCK_MESSAGE,
+  PREMIUM_LOCK_CTA,
+} from "@/hooks/useModuleAccess";
+import { getEntryIntent } from "@/lib/entryIntent";
 
 type ModuleEntry = {
   n: number;

@@ -207,19 +207,29 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <button
             onClick={() => go("/blueprint/bridge")}
             className={cn(
-              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
-              collapsed ? "p-2" : "px-3 py-2.5"
+              "relative w-full overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-left shadow-sm transition-all hover:border-emerald-600 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20",
+              collapsed ? "p-2" : "px-3 py-3"
             )}
-            title="Start the 3-Day Challenge — Free"
+            title="Start the 3-Day Challenge — 100% Free"
           >
+            {!collapsed && (
+              <span className="absolute -right-8 top-2 rotate-45 bg-emerald-500 px-8 py-0.5 text-[10px] font-black uppercase tracking-widest text-white shadow">
+                Free
+              </span>
+            )}
             <div className="flex items-center justify-between gap-2">
-              {!collapsed && (
+              {!collapsed ? (
                 <div className="min-w-0">
-                  <span className="inline-block rounded-full bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none tracking-wider text-white">Free</span>
-                  <p className="mt-1 text-sm font-black text-primary">Start the 3-Day Challenge</p>
+                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
+                    100% Free
+                  </span>
+                  <p className="mt-1.5 text-sm font-black text-emerald-700 dark:text-emerald-300">Start the 3-Day Challenge</p>
+                  <p className="mt-0.5 text-[11px] font-semibold text-emerald-700/80 dark:text-emerald-300/80">No credit card required</p>
                 </div>
+              ) : (
+                <span className="mx-auto rounded-md bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">Free</span>
               )}
-              <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+              <Sparkles className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             </div>
           </button>
         )}

@@ -240,7 +240,10 @@ const ImplementCta = () => {
 
 export const UpgradeCard = () => {
   const { isPremium } = usePremium();
-  if (isPremium) {
+  const isFreeTraining = getEntryIntent() === "free_training";
+  // Treat free_training funnel as free-tier even if a stale premium flag exists.
+  const showUnlocked = isPremium && !isFreeTraining;
+  if (showUnlocked) {
     return (
       <section className="mt-6 rounded-3xl border border-success/30 bg-success/5 p-6 sm:p-8">
         <div className="flex items-start gap-3">
@@ -261,22 +264,14 @@ export const UpgradeCard = () => {
   return (
     <section className="mt-6 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/15 via-background to-background p-6 sm:p-8">
       <div className="flex items-start gap-3">
-        <Rocket className="h-6 w-6 text-primary" />
+        <Lock className="h-6 w-6 text-primary" />
         <div>
-          <h3 className="text-xl font-black sm:text-2xl">Unlock the Full Course</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Premium Modules 4 & 5 cover advanced challenge systems and how to scale with Leadio.
-          </p>
+          <h3 className="text-xl font-black sm:text-2xl">{PREMIUM_LOCK_TITLE}</h3>
+          <p className="mt-2 text-sm text-muted-foreground">{PREMIUM_LOCK_MESSAGE}</p>
         </div>
       </div>
-      <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
-        <span className="text-3xl font-black">Free</span>
-        <span className="text-sm text-muted-foreground line-through">$497 value</span>
-        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-success">with coupon</span>
-      </div>
-      <p className="mt-2 text-xs font-bold text-muted-foreground">Coupon: <span className="font-black text-primary">FOUNDING497</span></p>
-      <Button asChild className="mt-5 h-12 w-full text-base font-black uppercase sm:w-auto sm:px-8">
-        <Link to="/upgrade">Unlock Full Course</Link>
+      <Button asChild className="mt-5 h-12 w-full gap-2 text-base font-black uppercase sm:w-auto sm:px-8">
+        <Link to="/upgrade"><Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}</Link>
       </Button>
     </section>
   );

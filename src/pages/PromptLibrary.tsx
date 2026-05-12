@@ -59,7 +59,7 @@ const PromptLibrary = () => {
           <Sparkles className="h-3.5 w-3.5" /> Prompt Library
         </div>
         <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">Ready-to-use challenge prompts</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Copy a prompt or run it directly with the Challenge Mentor.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Copy a prompt or run it directly with the Johnny AI.</p>
       </header>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">

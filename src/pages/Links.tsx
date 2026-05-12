@@ -51,14 +51,20 @@ const Section = ({ title, cards }: { title: string; cards: Card[] }) => (
 
 const Links = () => {
   const enableFreePreview = () => {
-    import("@/lib/previewTier").then(({ setFreePreview }) => {
-      setFreePreview(true);
+    import("@/lib/previewTier").then(({ setPreviewTier }) => {
+      setPreviewTier("free");
       window.location.href = "/free-assessment?previewTier=free";
     });
   };
-  const exitFreePreview = () => {
-    import("@/lib/previewTier").then(({ setFreePreview }) => {
-      setFreePreview(false);
+  const enablePaidPreview = () => {
+    import("@/lib/previewTier").then(({ setPreviewTier }) => {
+      setPreviewTier("paid");
+      window.location.href = "/user-dashboard?previewTier=paid";
+    });
+  };
+  const clearPreview = () => {
+    import("@/lib/previewTier").then(({ setPreviewTier }) => {
+      setPreviewTier(null);
       window.location.href = "/user-dashboard";
     });
   };
@@ -75,22 +81,28 @@ const Links = () => {
         <Section title="Internal / Admin" cards={INTERNAL_CARDS} />
 
         <section className="mt-12">
-          <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Dev / Admin Preview</h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Preview Mode (Dev / Admin)</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Temporarily simulate a free-training user (entryIntent=free_training, premium=false). Session-only — does not change subscription data.
+            Temporarily simulate a tier without changing the real account or subscription. Session-only override — resolves before subscription state.
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               onClick={enableFreePreview}
-              className="rounded-2xl border-2 border-foreground bg-foreground px-5 py-3 text-sm font-black uppercase tracking-wider text-background transition-colors hover:bg-background hover:text-foreground"
+              className="rounded-2xl border-2 border-amber-500 bg-amber-500 px-5 py-3 text-sm font-black uppercase tracking-wider text-amber-950 transition-colors hover:bg-amber-400"
             >
-              Test Free Path
+              Free
             </button>
             <button
-              onClick={exitFreePreview}
+              onClick={enablePaidPreview}
+              className="rounded-2xl border-2 border-emerald-500 bg-emerald-500 px-5 py-3 text-sm font-black uppercase tracking-wider text-emerald-950 transition-colors hover:bg-emerald-400"
+            >
+              Paid
+            </button>
+            <button
+              onClick={clearPreview}
               className="rounded-2xl border-2 border-foreground bg-card px-5 py-3 text-sm font-black uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
             >
-              Exit Free Preview
+              Clear Preview
             </button>
           </div>
         </section>

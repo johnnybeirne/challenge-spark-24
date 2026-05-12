@@ -244,13 +244,31 @@ const QaModePanel = () => {
       </button>
 
       {open && (
-        <div className="fixed bottom-16 left-4 z-[95] w-[340px] max-h-[80vh] overflow-y-auto rounded-lg border border-border bg-card text-card-foreground shadow-2xl">
-          <div className="sticky top-0 flex items-center justify-between border-b border-border bg-card px-3 py-2">
+        <div
+          className="fixed z-[95] w-[340px] max-h-[80vh] overflow-y-auto rounded-lg border border-border bg-card text-card-foreground shadow-2xl"
+          style={{ left: pos.x, top: pos.y }}
+        >
+          <div
+            onMouseDown={(e) => {
+              e.preventDefault();
+              startDrag(e.clientX, e.clientY);
+            }}
+            onTouchStart={(e) => {
+              const t = e.touches[0];
+              if (t) startDrag(t.clientX, t.clientY);
+            }}
+            className={`sticky top-0 flex items-center justify-between border-b border-border bg-card px-3 py-2 select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+          >
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider">
               <Beaker className="h-4 w-4" />
               QA / Preview Panel
             </div>
-            <button onClick={() => setOpen(false)} className="rounded p-1 hover:bg-muted">
+            <button
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={() => setOpen(false)}
+              className="rounded p-1 hover:bg-muted"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>

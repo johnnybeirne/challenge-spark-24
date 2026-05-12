@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Beaker, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useAppState } from "@/context/AppContext";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import {
   clearQaState,
@@ -11,7 +10,6 @@ import {
   setQaState,
   updateQaFlags,
   updateQaState,
-  type QaAuth,
   type QaEntry,
   type QaTier,
 } from "@/lib/qaPreview";
@@ -19,9 +17,7 @@ import { setEntryIntent } from "@/lib/entryIntent";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },
-  { id: "trial", label: "Trial" },
   { id: "paid", label: "Paid" },
-  { id: "admin", label: "Admin" },
 ];
 
 const ENTRIES: { id: QaEntry; label: string }[] = [
@@ -98,7 +94,6 @@ const Toggle = ({
 
 const QaModePanel = () => {
   const { user } = useAuth();
-  const { state, setState } = useAppState();
   const qa = useQaPreview();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -120,7 +115,6 @@ const QaModePanel = () => {
     };
   }, [user?.id]);
 
-  // Allow non-authed admin override via ?qaAdmin=1 (dev convenience) — opt-in.
   const devQaEnabled = useMemo(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -136,9 +130,7 @@ const QaModePanel = () => {
 
   if (!isAdmin && !devQaEnabled) return null;
 
-  const setTier = (tier: QaTier) => {
-    updateQaState({ active: true, tier });
-  };
+  const setTier = (tier: QaTier) => updateQaState({ active: true, tier });
   const setEntry = (entry: QaEntry) => {
     updateQaState({ active: true, entry });
     try {
@@ -147,44 +139,13 @@ const QaModePanel = () => {
       else setEntryIntent("challenge");
     } catch {}
   };
-  const setAuth = (auth: QaAuth) => {
-    updateQaState({ active: true, auth });
-    if (auth === "logged_out") navigate("/", { replace: true });
-  };
 
   const enable = () => {
     if (!qa.active) updateQaState({ active: true });
   };
-
   const exit = () => {
     clearQaState();
     setOpen(false);
-  };
-
-  // Progress simulators – modify in-memory state only (Supabase sync hook will
-  // persist; admins should run these on test accounts).
-  const resetProgress = () => {
-    setState((s) => ({
-      ...s,
-      challenge: { ...s.challenge, currentDay: 1, completed: false, tasks: {}, launchUrl: "" },
-      assessment: null,
-      community: { ...s.community, unlocked: false },
-    }));
-  };
-  const simulateNew = () => {
-    resetProgress();
-    navigate("/");
-  };
-  const simulateReturning = () => {
-    setState((s) => ({ ...s, challenge: { ...s.challenge, currentDay: 2 } }));
-    navigate("/user-dashboard");
-  };
-  const simulateAssessmentDone = () => {
-    setState((s) => ({
-      ...s,
-      assessment: s.assessment || { score: 70, tier: "med", answers: {}, completedAt: new Date().toISOString() },
-    }));
-    navigate("/results");
   };
 
   const banner = qa.active && (
@@ -193,7 +154,7 @@ const QaModePanel = () => {
         <div className="flex items-center gap-2 truncate">
           <Eye className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate uppercase tracking-wider">
-            QA Preview Active: {qa.tier} · {qa.entry.replace(/_/g, " ")} · {qa.auth.replace("_", " ")}
+            QA Preview Active: {qa.tier} · {qa.entry.replace(/_/g, " ")}
           </span>
         </div>
         <button
@@ -276,46 +237,22 @@ const QaModePanel = () => {
             </div>
 
             <div className="space-y-1.5">
-              <SectionLabel>Auth State</SectionLabel>
-              <div className="flex gap-1.5">
-                <Pill active={qa.active && qa.auth === "logged_in"} onClick={() => setAuth("logged_in")}>Logged In</Pill>
-                <Pill active={qa.active && qa.auth === "logged_out"} onClick={() => setAuth("logged_out")}>Logged Out</Pill>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <SectionLabel>Module Access</SectionLabel>
+              <SectionLabel>Premium Access</SectionLabel>
               <div className="grid gap-1.5">
-                <Toggle label="Unlock Module 4" checked={qa.flags.module4Unlocked} onChange={(v) => updateQaFlags({ module4Unlocked: v })} />
-                <Toggle label="Unlock Module 5" checked={qa.flags.module5Unlocked} onChange={(v) => updateQaFlags({ module5Unlocked: v })} />
-                <Toggle label="Unlock Premium" checked={qa.flags.premiumModulesEnabled} onChange={(v) => updateQaFlags({ premiumModulesEnabled: v })} />
+                <Toggle
+                  label="Unlock Premium"
+                  checked={qa.flags.premiumModulesEnabled}
+                  onChange={(v) => updateQaFlags({ premiumModulesEnabled: v })}
+                />
                 <button
-                  onClick={() => { updateQaFlags({ premiumModulesEnabled: false }); updateQaState({ active: true, tier: "free" }); }}
+                  onClick={() => {
+                    updateQaFlags({ premiumModulesEnabled: false });
+                    updateQaState({ active: true, tier: "free" });
+                  }}
                   className="rounded border border-border px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted"
                 >
                   Lock Premium
                 </button>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <SectionLabel>Feature Flags</SectionLabel>
-              <div className="grid gap-1.5">
-                <Toggle label="AI enabled" checked={qa.flags.aiEnabled} onChange={(v) => updateQaFlags({ aiEnabled: v })} />
-                <Toggle label="Referral system" checked={qa.flags.referralEnabled} onChange={(v) => updateQaFlags({ referralEnabled: v })} />
-                <Toggle label="Assessment completed" checked={qa.flags.assessmentCompleted} onChange={(v) => updateQaFlags({ assessmentCompleted: v })} />
-                <Toggle label="Community unlocked" checked={qa.flags.communityUnlocked} onChange={(v) => updateQaFlags({ communityUnlocked: v })} />
-                <Toggle label="Builder Circle" checked={qa.flags.builderCircleUnlocked} onChange={(v) => updateQaFlags({ builderCircleUnlocked: v })} />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <SectionLabel>User Progress</SectionLabel>
-              <div className="grid grid-cols-2 gap-1.5">
-                <button onClick={resetProgress} className="rounded border border-border px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted">Reset</button>
-                <button onClick={simulateNew} className="rounded border border-border px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted">New User</button>
-                <button onClick={simulateReturning} className="rounded border border-border px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted">Returning</button>
-                <button onClick={simulateAssessmentDone} className="rounded border border-border px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted">Assessment Done</button>
               </div>
             </div>
 
@@ -336,6 +273,7 @@ const QaModePanel = () => {
 
             <div className="rounded border border-dashed border-border/60 bg-muted/40 p-2 text-[10px] leading-snug text-muted-foreground">
               Preview overrides are local-only. They do not change Supabase user records or Stripe subscriptions.
+              For real logged-out testing use incognito; for real account simulation use Owner Console → View as User.
             </div>
           </div>
         </div>

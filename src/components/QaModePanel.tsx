@@ -141,7 +141,11 @@ const QaModePanel = () => {
   };
   const setEntry = (entry: QaEntry) => {
     updateQaState({ active: true, entry });
-    try { setEntryIntent(entry as any); } catch {}
+    try {
+      if (entry === "free_training") setEntryIntent("free_training");
+      else if (entry === "promoter") setEntryIntent("premium_course");
+      else setEntryIntent("challenge");
+    } catch {}
   };
   const setAuth = (auth: QaAuth) => {
     updateQaState({ active: true, auth });

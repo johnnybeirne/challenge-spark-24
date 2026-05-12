@@ -3,8 +3,13 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, Rocket, Sparkles } fr
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { toast } from "sonner";
-import { UpgradeCard, PREMIUM_LOCK_MESSAGE } from "./BlueprintDashboard";
-import { usePremium } from "@/hooks/usePremium";
+import { UpgradeCard } from "./BlueprintDashboard";
+import {
+  useModuleAccess,
+  PREMIUM_LOCK_TITLE,
+  PREMIUM_LOCK_MESSAGE,
+  PREMIUM_LOCK_CTA,
+} from "@/hooks/useModuleAccess";
 
 type ModuleSlug = "1" | "2" | "3" | "4" | "5";
 
@@ -133,11 +138,11 @@ const BlueprintLesson = () => {
   if (!lesson) return <Navigate to="/blueprint/dashboard" replace />;
 
   const { state, setState } = useAppState();
-  const { isPremium } = usePremium();
+  const { allowed, isPremiumModule } = useModuleAccess(lesson.n);
   const navigate = useNavigate();
   const taskKey = `blueprint_lesson_${lesson.n}`;
   const completed = !!state.challenge.tasks[taskKey];
-  const unlocked = !lesson.locked || isPremium;
+  const unlocked = allowed;
 
   const markComplete = () => {
     const stamp = new Date().toISOString();

@@ -112,10 +112,10 @@ const BlueprintBridge = () => {
       {/* Body copy */}
       <section className="mt-6 grid gap-4 rounded-3xl border border-border bg-card p-6 sm:p-8 md:grid-cols-2">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-wider text-primary">The mini course</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-primary">The free course</p>
           <h2 className="mt-1 text-lg font-black">Learn the system</h2>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            The Leadio Mini Course helped you understand why referrals, trust, and challenge-based engagement
+            The Leadio Course helped you understand why referrals, trust, and challenge-based engagement
             outperform traditional lead generation.
           </p>
         </div>

@@ -63,7 +63,7 @@ const BlueprintDashboard = () => {
     <main className="mx-auto w-full max-w-4xl px-4 py-8 lg:py-12">
       <div className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8 shadow-sm">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-primary">
-          <Sparkles className="h-3.5 w-3.5" /> Leadio Mini Course
+          <Sparkles className="h-3.5 w-3.5" /> Leadio Course
         </span>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">Challenge Growth Blueprint</h1>
         <p className="mt-2 text-base text-muted-foreground">
@@ -213,7 +213,7 @@ const ImplementCta = () => {
       }
     : {
         title: "Ready to implement?",
-        body: "The mini course shows you how trust-based growth works. The 3-Day Challenge helps you build it.",
+        body: "The free course shows you how trust-based growth works. The 3-Day Challenge helps you build it.",
         ctaLabel: "Start the 3-Day Challenge",
         ctaHref: "/blueprint/bridge",
       };

@@ -5,14 +5,14 @@ type Card = { title: string; route: string; description: string; badge?: string 
 
 const ASSESSMENT_CARDS: Card[] = [
   { title: "Challenge Assessment", route: "/assessment", description: "Same Leadio assessment → routes users into the 3-Day Challenge after results.", badge: "challenge" },
-  { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment → routes users into the Free Mini Course after results.", badge: "free_training" },
+  { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment → routes users into the Free Course after results.", badge: "free_training" },
   { title: "Premium Course Assessment", route: "/premium-assessment", description: "Same assessment → routes users into the Premium Growth Accelerator after results.", badge: "premium_course" },
   { title: "Premium Assessment with Coupon", route: "/premium-assessment?coupon=FOUNDING497", description: "Premium assessment with coupon preserved through results into checkout.", badge: "premium_course + coupon" },
 ];
 
 const ENROLMENT_CARDS: Card[] = [
   { title: "Join the 3-Day Challenge", route: "/join", description: "Direct challenge signup." },
-  { title: "Enrol in Free Training", route: "/free-training/enrol", description: "Direct free mini-course enrolment." },
+  { title: "Enrol in Free Training", route: "/free-training/enrol", description: "Direct free course enrolment." },
   { title: "Enrol in Premium", route: "/premium/enrol", description: "Direct premium course enrolment." },
 ];
 

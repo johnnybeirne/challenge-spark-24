@@ -205,7 +205,7 @@ const Upgrade = () => {
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-border bg-background p-5">
               <BookOpen className="h-5 w-5 text-primary" />
-              <h3 className="mt-3 text-base font-black">Mini Course</h3>
+              <h3 className="mt-3 text-base font-black">Course</h3>
               <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
                 Teaches the system — trust-based lead generation and referral loops.
               </p>

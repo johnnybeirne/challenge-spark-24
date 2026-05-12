@@ -57,7 +57,7 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
 
   return (
     <section className="mt-6 rounded-2xl border border-border bg-background p-6">
-      <h2 className="text-xl font-black">Build Your Mini Challenge</h2>
+      <h2 className="text-xl font-black">Build Your Challenge</h2>
       <p className="mt-1 text-sm text-muted-foreground">Answer 3 quick questions to create your challenge structure.</p>
 
       <div className="mt-6 space-y-5">
@@ -106,7 +106,7 @@ const BlueprintInsight = () => {
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
             <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
           </span>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Build Your Mini Challenge</h1>
+          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Build Your Challenge</h1>
           <p className="mt-2 text-base text-muted-foreground">
             Describe the problem you solve, who you help, and the result they want — and we'll help you create a simple challenge framework designed to drive engagement and momentum.
           </p>
@@ -156,7 +156,7 @@ const BlueprintInsight = () => {
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
           <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
         </span>
-        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Mini Challenge Framework</h1>
+        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Challenge Framework</h1>
       </header>
 
       <section className="mt-6 grid gap-3 sm:grid-cols-3">

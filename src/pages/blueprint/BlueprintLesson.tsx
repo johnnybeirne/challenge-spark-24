@@ -3,8 +3,13 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, Rocket, Sparkles } fr
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { toast } from "sonner";
-import { UpgradeCard, PREMIUM_LOCK_MESSAGE } from "./BlueprintDashboard";
-import { usePremium } from "@/hooks/usePremium";
+import { UpgradeCard } from "./BlueprintDashboard";
+import {
+  useModuleAccess,
+  PREMIUM_LOCK_TITLE,
+  PREMIUM_LOCK_MESSAGE,
+  PREMIUM_LOCK_CTA,
+} from "@/hooks/useModuleAccess";
 
 type ModuleSlug = "1" | "2" | "3" | "4" | "5";
 
@@ -133,11 +138,11 @@ const BlueprintLesson = () => {
   if (!lesson) return <Navigate to="/blueprint/dashboard" replace />;
 
   const { state, setState } = useAppState();
-  const { isPremium } = usePremium();
+  const { allowed, isPremiumModule } = useModuleAccess(lesson.n);
   const navigate = useNavigate();
   const taskKey = `blueprint_lesson_${lesson.n}`;
   const completed = !!state.challenge.tasks[taskKey];
-  const unlocked = !lesson.locked || isPremium;
+  const unlocked = allowed;
 
   const markComplete = () => {
     const stamp = new Date().toISOString();
@@ -169,8 +174,8 @@ const BlueprintLesson = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          {lesson.locked && !isPremium ? <Lock className="h-3 w-3" /> : lesson.locked ? <Crown className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
-          Module {lesson.n} · {lesson.locked && isPremium ? "Premium" : lesson.eyebrow}
+          {!allowed ? <Lock className="h-3 w-3" /> : isPremiumModule ? <Crown className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
+          Module {lesson.n} · {allowed && isPremiumModule ? "Premium" : lesson.eyebrow}
         </span>
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>
@@ -226,9 +231,6 @@ const BlueprintLesson = () => {
                     Continue to Implementation <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="h-12 px-6 text-sm font-black uppercase">
-                  <Link to="/blueprint/lesson/4">Keep Learning</Link>
-                </Button>
               </div>
             </section>
           )}
@@ -271,17 +273,14 @@ const LockedModuleView = ({ lesson }: { lesson: PremiumModule }) => (
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
             <Lock className="h-5 w-5" />
           </div>
-          <p className="text-sm font-bold text-foreground">Premium content locked</p>
+          <p className="text-sm font-bold text-foreground">{PREMIUM_LOCK_TITLE}</p>
           <p className="max-w-xs text-xs leading-5 text-muted-foreground">
             {PREMIUM_LOCK_MESSAGE}
           </p>
           <Button asChild className="h-11 gap-2 px-6 text-sm font-black uppercase">
             <Link to="/upgrade">
-              <Rocket className="h-4 w-4" /> Unlock Full Course
+              <Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}
             </Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="text-xs">
-            <Link to="/upgrade">Use Coupon Code</Link>
           </Button>
         </div>
       </div>

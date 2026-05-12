@@ -434,13 +434,13 @@ const DayChallenge = () => {
               {task.hasTextarea && (
                 <div className="space-y-3">
                   {task.inputType === "input" ? (
-                    <Input
+                    <DictatedInput
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}
                     />
                   ) : (
-                    <Textarea
+                    <DictatedTextarea
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}

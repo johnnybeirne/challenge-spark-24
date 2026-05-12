@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import DictatedInput from "@/components/dictation/DictatedInput";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Brain, CheckCircle, Lock, PlayCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -434,13 +436,13 @@ const DayChallenge = () => {
               {task.hasTextarea && (
                 <div className="space-y-3">
                   {task.inputType === "input" ? (
-                    <Input
+                    <DictatedInput
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}
                     />
                   ) : (
-                    <Textarea
+                    <DictatedTextarea
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}

@@ -1,61 +1,40 @@
-# Split enrollment into three distinct pages
+## Plan — Microphone dictation on all free-form fields
 
-Today `/join` (challenge) and `/blueprint-join` (free course) both render the same `Signup.tsx` with identical copy. `/premium` has no logged-out enrollment at all. We'll separate them into three purpose-built pages so each product feels distinct, while sharing one underlying chat primitive so we don't duplicate logic.
+We already have `useDictation` (Web Speech API) and a `DictateButton` UI used in `Day1Setup`. Roll the same pattern out to every user-facing free-form input/textarea, skipping name and email fields and skipping admin/CMS authoring screens.
 
-## What changes
+### What gets dictation
 
-### 1. Extract shared primitive
-Create `src/components/auth/SignupChat.tsx` containing the reusable parts of today's `Signup.tsx`:
-- The Johnny B AI typing chat (name → email → password)
-- Login mode + password reset
-- Referral / partner code capture
-- `signUp` / `signIn` calls and analytics
+User-facing free-form fields:
+- `src/pages/blueprint/BlueprintInsight.tsx` — Problem, Audience, Result textareas (the screenshot)
+- `src/pages/DayChallenge.tsx` — all task inputs + textareas (Day 1 setup questions, Day 2 quiz questions, etc.)
+- `src/pages/Mentor.tsx` — Ask-the-mentor textarea
+- `src/pages/Dashboard.tsx` — feedback/notes textarea
+- `src/pages/Partners.tsx` — application "tell us about yourself" textarea
+- `src/components/AiCopilotChat.tsx` — chat composer textarea
+- `src/components/auth/SignupChat.tsx` — only the free-form prompts (skip name + email steps)
 
-It accepts props for what differs between products:
-- `headline`, `subcopy`, `stepHint`
-- `johnnyPrompts` (per-step copy)
-- `successHeadline`, `successSubcopy`
-- `redirectAfterAuth`
-- `productContext` (`"challenge" | "blueprint" | "premium"`) — passed to analytics + stored in user metadata
-- Optional extra success-screen CTAs (e.g. "Add to calendar" for challenge, "Start Lesson 1" for blueprint, "Continue to checkout" for premium)
+Explicitly excluded:
+- Name, email, password, URL, coupon, referral-code fields
+- Admin/CMS authoring (`AdminContent`, `AdminTraining`, `AdminChallengeDays`, `AdminDiagnosticResponses`, `cms-ui`, `CmsCopilot`)
 
-### 2. Three dedicated pages
+### How
 
-**`src/pages/ChallengeSignup.tsx`** (route `/join`)
-- Headline: "Start building your AI-powered challenge"
-- Today's existing copy and 3-step flow
-- Success: Add to Calendar + Continue to dashboard
+1. Create two small wrapper components that keep current styling and add a mic button inside the field:
+   - `src/components/dictation/DictatedTextarea.tsx` — wraps shadcn `Textarea`, mic pinned bottom-right, adds right padding so text doesn't run under the button.
+   - `src/components/dictation/DictatedInput.tsx` — wraps shadcn `Input`, mic pinned right, same right padding treatment.
+   Both accept the same props as the underlying control plus `value` + `onChange` so they can drive controlled state. Internally they call `useDictation()` and on each transcript update call `onChange` with the merged text (existing value + dictated text appended on first start, then live-replaced while listening).
 
-**`src/pages/BlueprintSignup.tsx`** (route `/blueprint-join`)
-- Headline: "Get your free Challenge Growth Blueprint"
-- Subcopy framed around the 3-lesson mini-training + AI insight
-- Johnny prompts tuned for course enrollment ("Welcome to the Blueprint — what's your name?")
-- Success: "Open Lesson 1" + Continue to `/blueprint/dashboard`
+2. Reuse the existing `DictateButton` styling, but allow size/position variants so it works on single-line inputs and multi-line textareas without overlapping content.
 
-**`src/pages/PremiumSignup.tsx`** (new, route `/premium-join`)
-- Headline: "Enroll in Premium"
-- Shows price + coupon summary (reads applied coupon from localStorage so a visitor who applied a code on `/premium` keeps it)
-- Same chat primitive for account creation, then redirects to `/premium` (or directly into checkout) once authenticated
-- Logged-out users hitting `/premium` are redirected here instead of the generic challenge signup
+3. Swap the listed `Textarea`/`Input` usages to the new wrappers. No behavior changes beyond adding the mic. Names, emails, and admin authoring fields stay as plain shadcn controls.
 
-### 3. Routing & entry points
-- `src/App.tsx`: keep `/join` and `/blueprint-join`, point them at the new dedicated pages; add `/premium-join`.
-- `src/pages/Premium.tsx`: when no user is signed in, route to `/premium-join?redirect=/premium` (preserving any applied coupon) rather than the challenge signup.
-- `src/pages/blueprint/BlueprintLanding.tsx`: unchanged (already targets `/blueprint-join`).
-- `src/pages/ChallengeLanding.tsx` / other "Join the challenge" CTAs: unchanged (already target `/join`).
+4. Graceful fallback: when `isSupported` is false (e.g., Firefox), the wrappers render the plain control with no mic button — no UI clutter, no errors.
 
-### 4. Analytics
-Add a `product` field to the `signup_completed` event payload so we can split funnel reporting by Challenge vs Blueprint vs Premium. No new event names — stays within the canonical 35-event list.
+### Files expected to change
 
-### 5. Login behavior
-All three pages still expose the same login form (top-right "Login" button). Login itself isn't product-specific; only the signup framing differs. After login we honor the `?redirect=` param so a user logging in from `/premium-join` lands back on `/premium`.
+- New: `src/components/dictation/DictatedTextarea.tsx`, `src/components/dictation/DictatedInput.tsx`
+- Edit: `src/components/DictateButton.tsx` (add position variant), `BlueprintInsight.tsx`, `DayChallenge.tsx`, `Mentor.tsx`, `Dashboard.tsx`, `Partners.tsx`, `AiCopilotChat.tsx`
 
-## Out of scope
-- No changes to the actual auth backend, RLS, or Supabase tables.
-- No changes to coupon/checkout logic — Premium signup just gets the user authenticated, then the existing `/premium` flow takes over.
-- No visual redesign of the chat itself; only copy and surrounding chrome change per product.
+### Out of scope
 
-## Files touched
-- New: `src/components/auth/SignupChat.tsx`, `src/pages/ChallengeSignup.tsx`, `src/pages/BlueprintSignup.tsx`, `src/pages/PremiumSignup.tsx`
-- Edited: `src/App.tsx`, `src/pages/Premium.tsx`, `src/lib/analytics.ts` (payload only)
-- Removed: `src/pages/Signup.tsx` (logic moves into `SignupChat` + the three pages)
+- Server-side transcription (ElevenLabs Scribe). Browser Web Speech API is already wired and free; no new secrets or edge functions needed. We can upgrade to Scribe later if you want cross-browser parity on Firefox.

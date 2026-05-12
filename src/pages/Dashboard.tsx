@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Lock, Sparkles, Upload, Zap } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
 import CreditStatusCard from "@/components/CreditStatusCard";
@@ -348,7 +348,7 @@ const Dashboard = () => {
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Tell us who you help and how</h2>
                 </div>
               </div>
-              <Textarea
+              <DictatedTextarea
                 value={bioDraft}
                 onChange={(e) => setBioDraft(e.target.value.slice(0, 500))}
                 placeholder="e.g. I help solo coaches turn cold leads into paying clients with AI-powered quizzes."

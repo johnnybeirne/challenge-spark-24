@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Copy, Loader2, RefreshCcw, Sparkles } from "luci
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -63,17 +63,17 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
       <div className="mt-6 space-y-5">
         <div>
           <Label htmlFor="problem" className="text-sm font-bold">What problem do you solve?</Label>
-          <Textarea id="problem" value={problem} onChange={(e) => setProblem(e.target.value)}
+          <DictatedTextarea id="problem" value={problem} onChange={(e) => setProblem(e.target.value)}
             placeholder="I help people who struggle with…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
         <div>
           <Label htmlFor="audience" className="text-sm font-bold">Who do you solve it for?</Label>
-          <Textarea id="audience" value={audience} onChange={(e) => setAudience(e.target.value)}
+          <DictatedTextarea id="audience" value={audience} onChange={(e) => setAudience(e.target.value)}
             placeholder="I help coaches / consultants / business owners…" rows={2} maxLength={300} className="mt-2 resize-none" />
         </div>
         <div>
           <Label htmlFor="result" className="text-sm font-bold">What result do they want?</Label>
-          <Textarea id="result" value={result} onChange={(e) => setResult(e.target.value)}
+          <DictatedTextarea id="result" value={result} onChange={(e) => setResult(e.target.value)}
             placeholder="They want to…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
       </div>

@@ -45,18 +45,53 @@ const Section = ({ title, cards }: { title: string; cards: Card[] }) => (
   </section>
 );
 
-const Links = () => (
-  <main className="min-h-screen bg-background text-foreground">
-    <div className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-black sm:text-4xl">Leadio link directory</h1>
-      <p className="mt-2 text-base text-muted-foreground">
-        One assessment, three entry URLs, three destinations. Use these to send the right traffic to the right funnel.
-      </p>
+const Links = () => {
+  const enableFreePreview = () => {
+    import("@/lib/previewTier").then(({ setFreePreview }) => {
+      setFreePreview(true);
+      window.location.href = "/free-assessment?previewTier=free";
+    });
+  };
+  const exitFreePreview = () => {
+    import("@/lib/previewTier").then(({ setFreePreview }) => {
+      setFreePreview(false);
+      window.location.href = "/user-dashboard";
+    });
+  };
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-black sm:text-4xl">Leadio link directory</h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          One assessment, three entry URLs, three destinations. Use these to send the right traffic to the right funnel.
+        </p>
 
-      <Section title="Assessment entries" cards={ASSESSMENT_CARDS} />
-      <Section title="Direct enrolment" cards={ENROLMENT_CARDS} />
-    </div>
-  </main>
-);
+        <Section title="Assessment entries" cards={ASSESSMENT_CARDS} />
+        <Section title="Direct enrolment" cards={ENROLMENT_CARDS} />
+
+        <section className="mt-12">
+          <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Dev / Admin Preview</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Temporarily simulate a free-training user (entryIntent=free_training, premium=false). Session-only — does not change subscription data.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              onClick={enableFreePreview}
+              className="rounded-2xl border-2 border-foreground bg-foreground px-5 py-3 text-sm font-black uppercase tracking-wider text-background transition-colors hover:bg-background hover:text-foreground"
+            >
+              Test Free Path
+            </button>
+            <button
+              onClick={exitFreePreview}
+              className="rounded-2xl border-2 border-foreground bg-card px-5 py-3 text-sm font-black uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
+            >
+              Exit Free Preview
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+};
 
 export default Links;

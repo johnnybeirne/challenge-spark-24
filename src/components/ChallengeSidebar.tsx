@@ -210,10 +210,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
               collapsed ? "p-2" : "px-3 py-2.5"
             )}
-            title="Start the 3-Day Challenge"
+            title="Start the 3-Day Challenge — Free"
           >
             <div className="flex items-center justify-between gap-2">
-              {!collapsed && <p className="text-sm font-black text-primary">Start the 3-Day Challenge</p>}
+              {!collapsed && (
+                <div className="min-w-0">
+                  <span className="inline-block rounded-full bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none tracking-wider text-white">Free</span>
+                  <p className="mt-1 text-sm font-black text-primary">Start the 3-Day Challenge</p>
+                </div>
+              )}
               <Sparkles className="h-4 w-4 shrink-0 text-primary" />
             </div>
           </button>

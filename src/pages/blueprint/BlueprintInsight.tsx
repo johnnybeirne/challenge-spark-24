@@ -138,7 +138,7 @@ const BlueprintInsight = () => {
           aiOutputs: { ...prev.challenge.aiOutputs, blueprint_insight: text },
         },
       }));
-      toast.success("Insight regenerated");
+      toast.success("Challenge regenerated");
     } catch (err: any) {
       toast.error(err?.message || "Could not regenerate. Please try again.");
     } finally {

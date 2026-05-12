@@ -17,7 +17,7 @@ const BlueprintLanding = () => {
             Discover How Challenges Could Grow Your Business
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            A free mini training that helps you understand how challenges can create engagement, leads, accountability, and growth for your audience.
+            A free free training that helps you understand how challenges can create engagement, leads, accountability, and growth for your audience.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => navigate(cta)}>

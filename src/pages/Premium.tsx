@@ -66,7 +66,7 @@ const AUDIENCE = ["Coaches", "Consultants", "Course creators", "Experts", "Commu
 
 const ASCENSION = [
   { label: "Assessment", icon: Target },
-  { label: "Mini Course", icon: BookOpen },
+  { label: "Course", icon: BookOpen },
   { label: "3-Day Challenge", icon: Workflow },
   { label: "Premium Course", icon: Crown },
   { label: "Coaching / Scale", icon: Rocket },
@@ -750,7 +750,7 @@ const Premium = () => {
                 <div className="mt-5 space-y-3">
                   {[
                     { l: "Assessment", v: 100 },
-                    { l: "Mini Course", v: 72 },
+                    { l: "Course", v: 72 },
                     { l: "Challenge", v: 48 },
                     { l: "Premium", v: 24 },
                     { l: "Coaching", v: 9 },

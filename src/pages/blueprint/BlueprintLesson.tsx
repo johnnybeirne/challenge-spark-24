@@ -223,7 +223,7 @@ const BlueprintLesson = () => {
             <section className="mt-10 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8">
               <h3 className="text-xl font-black sm:text-2xl">You understand the system. Now implement it.</h3>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                The mini course shows you how trust-based growth works. The 3-Day Challenge helps you build it.
+                The free course shows you how trust-based growth works. The 3-Day Challenge helps you build it.
               </p>
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                 <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">

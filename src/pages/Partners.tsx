@@ -48,7 +48,7 @@ const VALUE_ITEMS = [
 
 const CONTRIBUTION_EXAMPLES = [
   "A lead magnet or resource guide",
-  "A mini-course or training",
+  "A course or training",
   "A workshop or live session",
   "A template, tool, or framework",
   "Access to a paid asset",

@@ -61,7 +61,7 @@ type RouteRow = {
 const ROUTES: RouteRow[] = [
   { route: "/", purpose: "Landing", access: "Public", status: "Detected" },
   { route: "/challenge", purpose: "Challenge landing", access: "Public", status: "Detected" },
-  { route: "/blueprint", purpose: "Blueprint (mini LMS) landing", access: "Public", status: "Detected" },
+  { route: "/blueprint", purpose: "Blueprint (free training) landing", access: "Public", status: "Detected" },
   { route: "/assess", purpose: "Lead generation assessment", access: "Public", status: "Detected" },
   { route: "/free-assessment", purpose: "Same assessment, routes to Free Training (entryIntent=free_training)", access: "Public", status: "Detected", notes: "Reuses /assess engine — no duplicated scoring" },
   { route: "/results", purpose: "Assessment results", access: "Public", status: "Detected", notes: "Also /results/low|med|high" },
@@ -86,8 +86,8 @@ const ROUTES: RouteRow[] = [
   { route: "/prompt-library", purpose: "Prompt library", access: "Authenticated", status: "Detected" },
   { route: "/resources", purpose: "Resources", access: "Authenticated", status: "Detected" },
   { route: "/upgrade", purpose: "Upgrade / paid course CTA", access: "Authenticated", status: "Detected" },
-  { route: "/blueprint/dashboard", purpose: "Mini LMS dashboard", access: "Authenticated", status: "Detected" },
-  { route: "/blueprint/lesson/:day", purpose: "Mini LMS lesson", access: "Authenticated", status: "Detected" },
+  { route: "/blueprint/dashboard", purpose: "Training dashboard", access: "Authenticated", status: "Detected" },
+  { route: "/blueprint/lesson/:day", purpose: "Training lesson", access: "Authenticated", status: "Detected" },
   { route: "/blueprint/insight", purpose: "AI insight output", access: "Authenticated", status: "Detected" },
   { route: "/blueprint/bridge", purpose: "LMS → Challenge transition (Module 3 bridge)", access: "Authenticated", status: "Detected" },
   { route: "/promoter", purpose: "Partner / promoter dashboard", access: "Partner only", status: "Detected" },
@@ -118,7 +118,7 @@ const CATEGORIES: Category[] = [
     { name: "Referral invite landing", status: "Partially detected", note: "/referrals exists; dedicated invite landing not detected" },
     { name: "Partner invite landing", status: "Detected", note: "/partners" },
     { name: "Waitlist page", status: "Detected" },
-    { name: "Free mini LMS", status: "Detected", note: "/blueprint" },
+    { name: "Free free training", status: "Detected", note: "/blueprint" },
     { name: "Paid course / locked modules", status: "Partially detected", note: "/upgrade CTA exists; locked module UI not detected" },
   ]},
   { title: "Assessment", features: [
@@ -129,7 +129,7 @@ const CATEGORIES: Category[] = [
     { name: "Referral attribution", status: "Detected" },
     { name: "Shareable results", status: "Needs review" },
   ]},
-  { title: "Mini LMS (Blueprint)", features: [
+  { title: "Training (Blueprint)", features: [
     { name: "LMS dashboard", status: "Detected" },
     { name: "Free lessons", status: "Detected" },
     { name: "AI-guided insight", status: "Detected", note: "blueprint-insight edge fn" },
@@ -208,7 +208,7 @@ const ENTRY_POINTS = [
   { name: "Direct assessment entry", route: "/assess", status: "Detected" as Status, next: "/results", clear: true },
   { name: "Referral invite into assessment", route: "/?ref=…", status: "Partially detected" as Status, next: "/assess", clear: false },
   { name: "Partner invite into assessment", route: "/partners", status: "Partially detected" as Status, next: "/assess", clear: false },
-  { name: "Free mini LMS entry", route: "/blueprint", status: "Detected" as Status, next: "/blueprint-join → /blueprint/dashboard", clear: true },
+  { name: "Free free training entry", route: "/blueprint", status: "Detected" as Status, next: "/blueprint-join → /blueprint/dashboard", clear: true },
   { name: "Paid course entry", route: "/upgrade", status: "Partially detected" as Status, next: "External / TBD", clear: false },
   { name: "Waitlist entry", route: "/waitlist", status: "Detected" as Status, next: "(captures email)", clear: true },
   { name: "Challenge direct entry", route: "/challenge → /join", status: "Detected" as Status, next: "/user-dashboard", clear: true },
@@ -217,7 +217,7 @@ const ENTRY_POINTS = [
 const JOURNEY_STAGES = [
   { stage: "Entry Points", routes: ["/", "/challenge", "/blueprint", "/partners", "/waitlist"], notes: "Multiple front doors. Confirm intended funnel order." },
   { stage: "Assessment / Diagnosis", routes: ["/assess", "/results"], notes: "Should this always precede the challenge?" },
-  { stage: "Free Education / Mini LMS", routes: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/:day"], notes: "Now repositioned as 'Blueprint' — verify language." },
+  { stage: "Free Education / Training", routes: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/:day"], notes: "Now repositioned as 'Blueprint' — verify language." },
   { stage: "Challenge Enrollment", routes: ["/join", "/challenge"], notes: "Single signup endpoint, two landing entry points." },
   { stage: "Three-Day Challenge Execution", routes: ["/user-dashboard", "/day/1", "/day/2", "/day/3"], notes: "Sidebar no longer surfaces day links — handoff via dashboard CTA." },
   { stage: "Referral / Trust Engine", routes: ["/referrals", "/unlocks"], notes: "Community unlock requires 3 direct referrals." },
@@ -238,12 +238,12 @@ const ROLES = [
 ];
 
 const CONFLICTS = [
-  { flag: "Day 1 / Day 2 / Day 3 language inside Blueprint mini LMS", severity: "warn" },
+  { flag: "Day 1 / Day 2 / Day 3 language inside Blueprint free training", severity: "warn" },
   { flag: "Two landing pages for the same product (/ vs /challenge)", severity: "warn" },
   { flag: "Two signup routes (/join and /blueprint-join) — same component", severity: "info" },
   { flag: "Legacy /admin path still mounts AdminLayout alongside /owner-console", severity: "warn" },
   { flag: "Sidebar (Blueprint) and BottomNav (Challenge) surface different products to the same user", severity: "warn" },
-  { flag: "Reward / gamification UI (points, unlocks) appears for users still in free mini LMS scope", severity: "warn" },
+  { flag: "Reward / gamification UI (points, unlocks) appears for users still in free free training scope", severity: "warn" },
   { flag: "Referral invite path does not clearly route through assessment", severity: "info" },
   { flag: "Multiple completion endpoints (bonus vault, blueprint insight, upgrade) — primary unclear", severity: "info" },
   { flag: "Product naming: 'ChallengeOS' references replaced with 'Leadio' across UI + utilities", severity: "info" },
@@ -260,10 +260,10 @@ type CoreEntryLink = {
 const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Assessment Homepage", route: "/", description: "Primary assessment-first entry point for cold traffic.", badge: "Top Funnel" },
   { title: "Direct Challenge Entry", route: "/challenge", description: "Direct entry into the 3-Day Challenge for higher-intent users.", badge: "Challenge" },
-  { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment engine, but routes users into the free mini course after results (entryIntent=free_training).", badge: "Free Training Funnel" },
-  { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided mini course used as a lead magnet before challenge entry.", badge: "Free Training" },
+  { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment engine, but routes users into the free free course after results (entryIntent=free_training).", badge: "Free Training Funnel" },
+  { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided free course used as a lead magnet before challenge entry.", badge: "Free Training" },
   { title: "Premium Course", route: "/premium", description: "Public premium landing page (Leadio Growth Accelerator) with coupon input (FOUNDING497), pricing card, modules, ascension path, and partner/JV-ready section.", badge: "Premium" },
-  { title: "Mini Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the mini course.", badge: "LMS" },
+  { title: "Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the free course.", badge: "LMS" },
 ];
 
 const CoreEntryLinksSection = () => {
@@ -375,7 +375,7 @@ const NavCohesionSection = () => (
 
 const RECOMMENDATIONS = [
   "Clarify whether assessment is always outside the challenge.",
-  "Separate mini LMS navigation from challenge navigation.",
+  "Separate free training navigation from challenge navigation.",
   "Ensure referral invite pages route users into assessment first.",
   "Keep Day 1 / Day 2 / Day 3 language only inside the challenge experience.",
   "Use Leadio as the platform name consistently across copy and memory.",
@@ -547,7 +547,7 @@ const LmsLanguageAuditSection = () => {
           <Badge variant="outline" className="ml-auto text-[10px]">Read-only</Badge>
         </div>
         <p className="mb-4 text-sm text-muted-foreground">
-          The Mini LMS / Blueprint experience must not surface 3-Day Challenge language.
+          The Training / Blueprint experience must not surface 3-Day Challenge language.
           The terms below should not appear inside any LMS route.
         </p>
 

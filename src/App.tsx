@@ -65,7 +65,7 @@ import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
-import FreeAssessment from "@/pages/FreeAssessment";
+
 import ChallengeAssessment from "@/pages/ChallengeAssessment";
 import PremiumAssessment from "@/pages/PremiumAssessment";
 import Links from "@/pages/Links";

@@ -42,6 +42,10 @@ const BlueprintDashboard = () => {
   const { state } = useAppState();
   const { isPremium } = usePremium();
   const navigate = useNavigate();
+  const intent = getEntryIntent();
+  const isFreeTraining = intent === "free_training";
+  // Free-tier: anyone on the free_training funnel OR not premium.
+  const isFreeTier = isFreeTraining || !isPremium;
   const tasks = state.challenge.tasks;
   const insight = state.challenge.aiOutputs?.blueprint_insight;
   const freeModules = MODULES.filter((m) => !m.locked);
@@ -51,7 +55,7 @@ const BlueprintDashboard = () => {
   const firstName = state.user?.name?.split(" ")[0] || "there";
 
   const handleLockedClick = () => {
-    toast.message("Premium module locked", { description: PREMIUM_LOCK_MESSAGE });
+    toast.message(PREMIUM_LOCK_TITLE, { description: PREMIUM_LOCK_MESSAGE });
     navigate("/upgrade");
   };
 
@@ -88,20 +92,22 @@ const BlueprintDashboard = () => {
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">
-        {MODULES.map(({ n, slug, icon: Icon, eyebrow, title, body, locked }) => {
-          const isLocked = locked && !isPremium;
+        {MODULES.map(({ n, slug, icon: Icon, eyebrow, title, body }) => {
+          const premiumModule = isModulePremium(n);
+          // Premium modules require: premium AND not on free_training funnel.
+          const isLocked = premiumModule && (isFreeTraining || !isPremium);
           const done = !isLocked && tasks[`blueprint_lesson_${n}`];
           const cardInner = (
             <>
               <div className="flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  {isLocked ? <Lock className="h-5 w-5" /> : locked ? <Crown className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+                  {isLocked ? <Lock className="h-5 w-5" /> : premiumModule ? <Crown className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                 </div>
                 {done ? (
                   <CheckCircle2 className="h-5 w-5 text-success" />
                 ) : (
                   <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                    {locked ? "Premium" : `Module ${n}`}
+                    {premiumModule ? "Premium" : `Module ${n}`}
                   </span>
                 )}
               </div>

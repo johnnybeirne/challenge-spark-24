@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { Copy, Loader2, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { copilotMemoryContext } from "@/lib/personalisation";
@@ -129,7 +129,7 @@ const Mentor = () => {
 
       <div className="mt-4 rounded-2xl border border-border bg-card p-3">
         <div className="flex gap-2">
-          <Textarea
+          <DictatedTextarea
             ref={textareaRef}
             placeholder="Ask the Challenge Mentor anything…"
             value={input}

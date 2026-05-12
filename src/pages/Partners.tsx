@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { Label } from "@/components/ui/label";
 import {
   ArrowRight, Crown, Globe, Megaphone, Shield, Sparkles,
@@ -403,7 +403,7 @@ const Partners = () => {
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="contrib-desc" className="text-xs">Description</Label>
-                    <Textarea
+                    <DictatedTextarea
                       id="contrib-desc"
                       placeholder="What is it, who is it for, and what value does it deliver?"
                       value={description}

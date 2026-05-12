@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { Send, Loader2, X, MessageCircle } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -240,7 +240,7 @@ const AiCopilotChat = () => {
           {/* Input */}
           <div className="px-3 py-3 border-t border-border bg-card shrink-0">
             <div className="flex gap-2">
-              <Textarea
+              <DictatedTextarea
                 placeholder="Ask a question…"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

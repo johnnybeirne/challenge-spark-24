@@ -105,8 +105,7 @@ const App = () => (
                 {/* Assessment engine (one component, three entry routes) */}
                 <Route path="/assess" element={<Assessment />} />
                 <Route path="/assessment" element={<ChallengeAssessment />} />
-                {/* Free Training assessment entry — same engine, sets entryIntent=free_training */}
-                <Route path="/free-assessment" element={<FreeAssessment />} />
+                {/* /free-assessment moved to full-width landing route above */}
                 {/* Premium course assessment entry — same engine, sets entryIntent=premium_course, preserves coupon */}
                 <Route path="/premium-assessment" element={<PremiumAssessment />} />
                 {/* Direct enrolment aliases */}

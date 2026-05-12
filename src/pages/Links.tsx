@@ -72,6 +72,7 @@ const Links = () => {
 
         <Section title="Assessment entries" cards={ASSESSMENT_CARDS} />
         <Section title="Direct enrolment" cards={ENROLMENT_CARDS} />
+        <Section title="Internal / Admin" cards={INTERNAL_CARDS} />
 
         <section className="mt-12">
           <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Dev / Admin Preview</h2>

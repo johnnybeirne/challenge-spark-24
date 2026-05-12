@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, Rocket, Sparkles } fr
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { toast } from "sonner";
-import { UpgradeCard } from "./BlueprintDashboard";
+import { UpgradeCard, PREMIUM_LOCK_MESSAGE } from "./BlueprintDashboard";
 import { usePremium } from "@/hooks/usePremium";
 
 type ModuleSlug = "1" | "2" | "3" | "4" | "5";
@@ -272,8 +272,8 @@ const LockedModuleView = ({ lesson }: { lesson: PremiumModule }) => (
             <Lock className="h-5 w-5" />
           </div>
           <p className="text-sm font-bold text-foreground">Premium content locked</p>
-          <p className="text-xs text-muted-foreground">
-            Coupon <span className="font-black text-primary">FOUNDING497</span> — founding member pricing
+          <p className="max-w-xs text-xs leading-5 text-muted-foreground">
+            {PREMIUM_LOCK_MESSAGE}
           </p>
           <Button asChild className="h-11 gap-2 px-6 text-sm font-black uppercase">
             <Link to="/upgrade">

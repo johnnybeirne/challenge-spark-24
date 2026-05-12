@@ -26,11 +26,22 @@ const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: strin
   </div>
 );
 
-const Landing = () => {
+const Landing = ({ variant = "default" }: LandingProps) => {
   const navigate = useNavigate();
+  const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
+  const funnel = variant === "free_training" ? "free_training" : "default";
+
+  useEffect(() => {
+    if (entryIntent) setEntryIntent(entryIntent);
+    trackEvent("landing_viewed", { funnel, variant });
+  }, [entryIntent, funnel, variant]);
 
   const startQuiz = (section: string) => {
-    trackEvent("landing_cta_clicked", { section });
+    if (entryIntent) setEntryIntent(entryIntent);
+    trackEvent("landing_cta_clicked", { section, funnel, variant, entryIntent });
+    if (variant === "free_training") {
+      trackEvent("assessment_started" as any, { entry: "free_training", section });
+    }
     navigate("/assess");
   };
 

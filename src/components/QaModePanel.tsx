@@ -99,6 +99,69 @@ const QaModePanel = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const PANEL_W = 340;
+  const PANEL_H_EST = 560;
+  const POS_KEY = "leadio_qa_panel_pos";
+  const getDefaultPos = () => {
+    if (typeof window === "undefined") return { x: 16, y: 200 };
+    return { x: 16, y: Math.max(16, window.innerHeight - PANEL_H_EST - 64) };
+  };
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === "undefined") return { x: 16, y: 200 };
+    try {
+      const raw = localStorage.getItem(POS_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") return p;
+      }
+    } catch {}
+    return getDefaultPos();
+  });
+  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = useCallback((x: number, y: number) => {
+    if (typeof window === "undefined") return { x, y };
+    const maxX = window.innerWidth - 80;
+    const maxY = window.innerHeight - 40;
+    return {
+      x: Math.min(Math.max(-PANEL_W + 80, x), maxX),
+      y: Math.min(Math.max(0, y), maxY),
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const point = "touches" in e ? e.touches[0] : (e as MouseEvent);
+      if (!dragRef.current || !point) return;
+      const next = clamp(point.clientX - dragRef.current.dx, point.clientY - dragRef.current.dy);
+      setPos(next);
+    };
+    const onUp = () => {
+      setDragging(false);
+      dragRef.current = null;
+      try {
+        localStorage.setItem(POS_KEY, JSON.stringify(pos));
+      } catch {}
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [dragging, clamp, pos]);
+
+  const startDrag = (clientX: number, clientY: number) => {
+    dragRef.current = { dx: clientX - pos.x, dy: clientY - pos.y };
+    setDragging(true);
+  };
+
   useEffect(() => {
     let cancelled = false;
     if (!user?.id) {

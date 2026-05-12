@@ -118,7 +118,7 @@ const BlueprintInsight = () => {
 
   const copy = async () => {
     await navigator.clipboard.writeText(insight);
-    toast.success("Insight copied");
+    toast.success("Challenge copied");
   };
 
   const regenerate = async () => {

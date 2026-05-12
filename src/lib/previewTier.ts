@@ -1,41 +1,51 @@
-// Free-tier preview override for admins/devs.
-// Lets a paid account temporarily experience the app as a free-training user
-// without changing any subscription/database state.
+// Admin/dev preview tier override.
+// Lets a logged-in account temporarily experience the app as either a
+// free-training user or a paid (premium) user without changing any
+// subscription/database state.
 //
 // Storage: sessionStorage only. Cleared on tab close, ?previewTier=clear, or
-// the in-app "Exit Free Preview" badge.
+// the in-app "Clear Preview" badge action.
 
 const KEY = "leadio_preview_tier";
 export const PREVIEW_TIER_CHANGED_EVENT = "leadio:preview-tier-changed";
 
-export const isFreePreviewActive = (): boolean => {
-  if (typeof window === "undefined") return false;
+export type PreviewTier = "free" | "paid" | null;
+
+export const getPreviewTier = (): PreviewTier => {
+  if (typeof window === "undefined") return null;
   try {
-    return sessionStorage.getItem(KEY) === "free";
+    const v = sessionStorage.getItem(KEY);
+    return v === "free" || v === "paid" ? v : null;
   } catch {
-    return false;
+    return null;
   }
 };
 
-export const setFreePreview = (on: boolean) => {
+export const isFreePreviewActive = (): boolean => getPreviewTier() === "free";
+export const isPaidPreviewActive = (): boolean => getPreviewTier() === "paid";
+
+export const setPreviewTier = (tier: PreviewTier) => {
   if (typeof window === "undefined") return;
   try {
-    if (on) sessionStorage.setItem(KEY, "free");
+    if (tier === "free" || tier === "paid") sessionStorage.setItem(KEY, tier);
     else sessionStorage.removeItem(KEY);
     window.dispatchEvent(new CustomEvent(PREVIEW_TIER_CHANGED_EVENT));
-    // also fires premium-changed so usePremium re-reads
     window.dispatchEvent(new CustomEvent("leadio:premium-changed"));
   } catch {}
 };
 
-/** Read ?previewTier=free|clear from the URL and apply it once. */
+/** Back-compat helper used elsewhere. */
+export const setFreePreview = (on: boolean) => setPreviewTier(on ? "free" : null);
+
+/** Read ?previewTier=free|paid|clear from the URL and apply it once. */
 export const initFreePreviewFromUrl = () => {
   if (typeof window === "undefined") return;
   try {
     const params = new URLSearchParams(window.location.search);
     const v = params.get("previewTier");
     if (!v) return;
-    if (v === "free") setFreePreview(true);
-    else if (v === "clear" || v === "off" || v === "none") setFreePreview(false);
+    if (v === "free") setPreviewTier("free");
+    else if (v === "paid") setPreviewTier("paid");
+    else if (v === "clear" || v === "off" || v === "none") setPreviewTier(null);
   } catch {}
 };

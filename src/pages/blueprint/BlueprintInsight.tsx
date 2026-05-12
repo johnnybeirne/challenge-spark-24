@@ -57,29 +57,29 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
 
   return (
     <section className="mt-6 rounded-2xl border border-border bg-background p-6">
-      <h2 className="text-xl font-black">Get My Insight</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Three quick questions. AI does the rest.</p>
+      <h2 className="text-xl font-black">Build Your Mini Challenge</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Answer 3 quick questions to create your challenge structure.</p>
 
       <div className="mt-6 space-y-5">
         <div>
-          <Label htmlFor="problem" className="text-sm font-bold">What problem do you solve?</Label>
+          <Label htmlFor="problem" className="text-sm font-bold">What problem does your audience want to solve?</Label>
           <DictatedTextarea id="problem" value={problem} onChange={(e) => setProblem(e.target.value)}
-            placeholder="I help people who struggle with…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="People struggle with…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="audience" className="text-sm font-bold">Who do you solve it for?</Label>
+          <Label htmlFor="audience" className="text-sm font-bold">Who is this challenge for?</Label>
           <DictatedTextarea id="audience" value={audience} onChange={(e) => setAudience(e.target.value)}
-            placeholder="I help coaches / consultants / business owners…" rows={2} maxLength={300} className="mt-2 resize-none" />
+            placeholder="Coaches, consultants, creators, business owners…" rows={2} maxLength={300} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="result" className="text-sm font-bold">What result do they want?</Label>
+          <Label htmlFor="result" className="text-sm font-bold">What transformation or outcome do they want?</Label>
           <DictatedTextarea id="result" value={result} onChange={(e) => setResult(e.target.value)}
-            placeholder="They want to…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="Generate leads, lose weight, improve confidence, get clients…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
       </div>
 
       <Button onClick={generate} disabled={!canSubmit} className="mt-6 h-12 w-full gap-2 text-sm font-black uppercase">
-        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Sparkles className="h-4 w-4" /> Generate My Insight</>}
+        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Sparkles className="h-4 w-4" /> Generate My Challenge</>}
       </Button>
     </section>
   );

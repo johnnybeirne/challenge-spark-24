@@ -89,6 +89,8 @@ const App = () => (
               <Route element={<AppShell fullWidth />}>
                 {/* Canonical primary entry — assessment-first landing */}
                 <Route path="/" element={<Landing />} />
+                {/* Free Training funnel entry — same landing design, sets entryIntent=free_training */}
+                <Route path="/free-assessment" element={<Landing variant="free_training" />} />
                 {/* Direct challenge entry (high-intent users; does NOT force LMS) */}
                 <Route path="/challenge" element={<ChallengeLanding />} />
                 {/* Free Training (Blueprint LMS) entry */}

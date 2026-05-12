@@ -84,6 +84,10 @@ const Results = () => {
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     supabase
       .from("diagnostic_responses")

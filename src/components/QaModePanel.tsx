@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Beaker, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,6 +99,69 @@ const QaModePanel = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const PANEL_W = 340;
+  const PANEL_H_EST = 560;
+  const POS_KEY = "leadio_qa_panel_pos";
+  const getDefaultPos = () => {
+    if (typeof window === "undefined") return { x: 16, y: 200 };
+    return { x: 16, y: Math.max(16, window.innerHeight - PANEL_H_EST - 64) };
+  };
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === "undefined") return { x: 16, y: 200 };
+    try {
+      const raw = localStorage.getItem(POS_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") return p;
+      }
+    } catch {}
+    return getDefaultPos();
+  });
+  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = useCallback((x: number, y: number) => {
+    if (typeof window === "undefined") return { x, y };
+    const maxX = window.innerWidth - 80;
+    const maxY = window.innerHeight - 40;
+    return {
+      x: Math.min(Math.max(-PANEL_W + 80, x), maxX),
+      y: Math.min(Math.max(0, y), maxY),
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const point = "touches" in e ? e.touches[0] : (e as MouseEvent);
+      if (!dragRef.current || !point) return;
+      const next = clamp(point.clientX - dragRef.current.dx, point.clientY - dragRef.current.dy);
+      setPos(next);
+    };
+    const onUp = () => {
+      setDragging(false);
+      dragRef.current = null;
+      try {
+        localStorage.setItem(POS_KEY, JSON.stringify(pos));
+      } catch {}
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [dragging, clamp, pos]);
+
+  const startDrag = (clientX: number, clientY: number) => {
+    dragRef.current = { dx: clientX - pos.x, dy: clientY - pos.y };
+    setDragging(true);
+  };
+
   useEffect(() => {
     let cancelled = false;
     if (!user?.id) {
@@ -181,13 +244,31 @@ const QaModePanel = () => {
       </button>
 
       {open && (
-        <div className="fixed bottom-16 left-4 z-[95] w-[340px] max-h-[80vh] overflow-y-auto rounded-lg border border-border bg-card text-card-foreground shadow-2xl">
-          <div className="sticky top-0 flex items-center justify-between border-b border-border bg-card px-3 py-2">
+        <div
+          className="fixed z-[95] w-[340px] max-h-[80vh] overflow-y-auto rounded-lg border border-border bg-card text-card-foreground shadow-2xl"
+          style={{ left: pos.x, top: pos.y }}
+        >
+          <div
+            onMouseDown={(e) => {
+              e.preventDefault();
+              startDrag(e.clientX, e.clientY);
+            }}
+            onTouchStart={(e) => {
+              const t = e.touches[0];
+              if (t) startDrag(t.clientX, t.clientY);
+            }}
+            className={`sticky top-0 flex items-center justify-between border-b border-border bg-card px-3 py-2 select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+          >
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider">
               <Beaker className="h-4 w-4" />
               QA / Preview Panel
             </div>
-            <button onClick={() => setOpen(false)} className="rounded p-1 hover:bg-muted">
+            <button
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={() => setOpen(false)}
+              className="rounded p-1 hover:bg-muted"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>

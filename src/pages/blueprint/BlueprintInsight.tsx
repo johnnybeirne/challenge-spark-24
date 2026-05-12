@@ -46,10 +46,10 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
           },
         },
       }));
-      toast.success("Your insight is ready");
+      toast.success("Your challenge framework is ready");
       onDone?.();
     } catch (err: any) {
-      toast.error(err?.message || "Could not generate insight. Please try again.");
+      toast.error(err?.message || "Could not generate challenge. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -12,8 +12,10 @@ const PREMIUM_EVENT = "leadio:premium-changed";
 export const isPremiumUser = (): boolean => {
   if (typeof window === "undefined") return false;
   try {
-    // Free preview override: admin/dev simulating a free user
-    if (sessionStorage.getItem("leadio_preview_tier") === "free") return false;
+    // Preview override: admin/dev simulating a tier
+    const preview = sessionStorage.getItem("leadio_preview_tier");
+    if (preview === "free") return false;
+    if (preview === "paid") return true;
     return localStorage.getItem(PREMIUM_KEY) === "true";
   } catch {
     return false;

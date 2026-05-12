@@ -73,8 +73,8 @@ const syncLegacyTier = (s: QaPreviewState) => {
     setLegacyPreviewTier(null);
     return;
   }
-  if (s.tier === "paid" || s.tier === "admin") setLegacyPreviewTier("paid");
-  else setLegacyPreviewTier("free");
+  const paidLike = s.tier === "paid" || s.tier === "admin" || s.flags.premiumModulesEnabled;
+  setLegacyPreviewTier(paidLike ? "paid" : "free");
 };
 
 export const setQaState = (next: QaPreviewState) => {

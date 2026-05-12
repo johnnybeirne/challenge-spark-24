@@ -174,8 +174,8 @@ const BlueprintLesson = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          {lesson.locked && !isPremium ? <Lock className="h-3 w-3" /> : lesson.locked ? <Crown className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
-          Module {lesson.n} · {lesson.locked && isPremium ? "Premium" : lesson.eyebrow}
+          {!allowed ? <Lock className="h-3 w-3" /> : isPremiumModule ? <Crown className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
+          Module {lesson.n} · {allowed && isPremiumModule ? "Premium" : lesson.eyebrow}
         </span>
         <h1 className="mt-3 text-3xl font-black sm:text-4xl">{lesson.title}</h1>
       </header>

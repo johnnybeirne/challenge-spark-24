@@ -72,6 +72,7 @@ import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
+import QaModePanel from "@/components/QaModePanel";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";
 
 if (typeof window !== "undefined") initFreePreviewFromUrl();
@@ -88,6 +89,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <FreePreviewBadge />
+            <QaModePanel />
             <ExperienceShell>
             <Routes>
               {/* Landing – full-width layout */}

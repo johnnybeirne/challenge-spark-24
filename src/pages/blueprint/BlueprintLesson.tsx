@@ -231,9 +231,6 @@ const BlueprintLesson = () => {
                     Continue to Implementation <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="h-12 px-6 text-sm font-black uppercase">
-                  <Link to="/blueprint/lesson/4">Keep Learning</Link>
-                </Button>
               </div>
             </section>
           )}
@@ -276,17 +273,14 @@ const LockedModuleView = ({ lesson }: { lesson: PremiumModule }) => (
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
             <Lock className="h-5 w-5" />
           </div>
-          <p className="text-sm font-bold text-foreground">Premium content locked</p>
+          <p className="text-sm font-bold text-foreground">{PREMIUM_LOCK_TITLE}</p>
           <p className="max-w-xs text-xs leading-5 text-muted-foreground">
             {PREMIUM_LOCK_MESSAGE}
           </p>
           <Button asChild className="h-11 gap-2 px-6 text-sm font-black uppercase">
             <Link to="/upgrade">
-              <Rocket className="h-4 w-4" /> Unlock Full Course
+              <Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}
             </Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="text-xs">
-            <Link to="/upgrade">Use Coupon Code</Link>
           </Button>
         </div>
       </div>

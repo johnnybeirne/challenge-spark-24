@@ -99,7 +99,7 @@ const App = () => (
                 {/* Direct challenge entry (high-intent users; does NOT force LMS) */}
                 <Route path="/challenge" element={<ChallengeLanding />} />
                 {/* Free Training (Blueprint LMS) entry */}
-                <Route path="/blueprint" element={<BlueprintLanding />} />
+                <Route path="/blueprint" element={<Navigate to="/free-training" replace />} />
                 <Route path="/free-training" element={<BlueprintLanding />} />
                 <Route path="/premium" element={<Premium />} />
               </Route>

@@ -14,6 +14,8 @@ export const setEntryIntent = (intent: EntryIntent) => {
 
 export const getEntryIntent = (): EntryIntent | null => {
   try {
+    // Free preview override: admin/dev simulating the free-training funnel
+    if (sessionStorage.getItem("leadio_preview_tier") === "free") return "free_training";
     const v = sessionStorage.getItem(ENTRY_INTENT_KEY);
     if (v === "challenge" || v === "free_training" || v === "premium_course") return v;
   } catch {}

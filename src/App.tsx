@@ -89,6 +89,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <FreePreviewBadge />
+            <QaModePanel />
             <ExperienceShell>
             <Routes>
               {/* Landing – full-width layout */}

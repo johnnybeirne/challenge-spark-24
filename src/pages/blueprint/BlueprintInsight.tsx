@@ -154,16 +154,16 @@ const BlueprintInsight = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          <Sparkles className="h-3.5 w-3.5" /> My Insight
+          <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
         </span>
-        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Personalised Growth Insight</h1>
+        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Mini Challenge Framework</h1>
       </header>
 
       <section className="mt-6 grid gap-3 sm:grid-cols-3">
         {[
           { label: "Problem", value: problem },
           { label: "Audience", value: audience },
-          { label: "Desired result", value: result },
+          { label: "Desired outcome", value: result },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-2xl border border-border bg-card p-4">
             <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{label}</p>

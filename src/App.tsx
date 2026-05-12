@@ -87,6 +87,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <FreePreviewBadge />
             <ExperienceShell>
             <Routes>
               {/* Landing – full-width layout */}

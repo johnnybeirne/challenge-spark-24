@@ -1,9 +1,16 @@
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
+import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+
+export type LandingVariant = "default" | "free_training";
+
+interface LandingProps {
+  variant?: LandingVariant;
+}
 
 const PageSection = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`}>
@@ -19,11 +26,22 @@ const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: strin
   </div>
 );
 
-const Landing = () => {
+const Landing = ({ variant = "default" }: LandingProps) => {
   const navigate = useNavigate();
+  const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
+  const funnel = variant === "free_training" ? "free_training" : "default";
+
+  useEffect(() => {
+    if (entryIntent) setEntryIntent(entryIntent);
+    trackEvent("landing_viewed", { funnel, variant });
+  }, [entryIntent, funnel, variant]);
 
   const startQuiz = (section: string) => {
-    trackEvent("landing_cta_clicked", { section });
+    if (entryIntent) setEntryIntent(entryIntent);
+    trackEvent("landing_cta_clicked", { section, funnel, variant, entryIntent });
+    if (variant === "free_training") {
+      trackEvent("assessment_started" as any, { entry: "free_training", section });
+    }
     navigate("/assess");
   };
 

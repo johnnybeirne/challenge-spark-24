@@ -122,7 +122,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
     case "lms":
       return [
         { label: "Learn", to: "/blueprint/dashboard" },
-        { label: "My Insight", to: "/blueprint/insight" },
+        { label: "Build Challenge Framework", to: "/blueprint/insight" },
         { label: "Ask the Mentor", to: "/mentor" },
         { label: "Upgrade", to: "/upgrade" },
       ];

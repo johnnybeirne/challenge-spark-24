@@ -71,6 +71,10 @@ import PremiumAssessment from "@/pages/PremiumAssessment";
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
+import FreePreviewBadge from "@/components/FreePreviewBadge";
+import { initFreePreviewFromUrl } from "@/lib/previewTier";
+
+if (typeof window !== "undefined") initFreePreviewFromUrl();
 
 const queryClient = new QueryClient();
 

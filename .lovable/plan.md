@@ -1,40 +1,17 @@
-## Plan — Microphone dictation on all free-form fields
+## Make QA Mode Panel Draggable
 
-We already have `useDictation` (Web Speech API) and a `DictateButton` UI used in `Day1Setup`. Roll the same pattern out to every user-facing free-form input/textarea, skipping name and email fields and skipping admin/CMS authoring screens.
+### Goal
+Convert the fixed-position QA Mode popup into a freely draggable floating window that can be moved anywhere on screen and stays out of the way of the content being tested.
 
-### What gets dictation
+### What will change
 
-User-facing free-form fields:
-- `src/pages/blueprint/BlueprintInsight.tsx` — Problem, Audience, Result textareas (the screenshot)
-- `src/pages/DayChallenge.tsx` — all task inputs + textareas (Day 1 setup questions, Day 2 quiz questions, etc.)
-- `src/pages/Mentor.tsx` — Ask-the-mentor textarea
-- `src/pages/Dashboard.tsx` — feedback/notes textarea
-- `src/pages/Partners.tsx` — application "tell us about yourself" textarea
-- `src/components/AiCopilotChat.tsx` — chat composer textarea
-- `src/components/auth/SignupChat.tsx` — only the free-form prompts (skip name + email steps)
+**`src/components/QaModePanel.tsx`**
 
-Explicitly excluded:
-- Name, email, password, URL, coupon, referral-code fields
-- Admin/CMS authoring (`AdminContent`, `AdminTraining`, `AdminChallengeDays`, `AdminDiagnosticResponses`, `cms-ui`, `CmsCopilot`)
+1. **Add drag state** — track `x`, `y` position (default near bottom-left, where it currently sits).
+2. **Add drag handlers** — mousedown on the panel header starts drag; window mousemove updates position; mouseup ends drag. Same for touch events.
+3. **Make the header a drag handle** — cursor changes to `grab`/`grabbing`, only the sticky header initiates drag so buttons inside the panel body still work.
+4. **Replace fixed positioning** — remove `fixed bottom-16 left-4`, use `fixed` with dynamic `left`/`top` via inline `transform: translate(x, y)`.
+5. **Persist position** — save last position to `localStorage` under `leadio_qa_panel_pos` so it reopens in the same spot across toggles and page reloads.
+6. **Constrain to viewport** — clamp position so the panel can never be dragged completely off-screen.
 
-### How
-
-1. Create two small wrapper components that keep current styling and add a mic button inside the field:
-   - `src/components/dictation/DictatedTextarea.tsx` — wraps shadcn `Textarea`, mic pinned bottom-right, adds right padding so text doesn't run under the button.
-   - `src/components/dictation/DictatedInput.tsx` — wraps shadcn `Input`, mic pinned right, same right padding treatment.
-   Both accept the same props as the underlying control plus `value` + `onChange` so they can drive controlled state. Internally they call `useDictation()` and on each transcript update call `onChange` with the merged text (existing value + dictated text appended on first start, then live-replaced while listening).
-
-2. Reuse the existing `DictateButton` styling, but allow size/position variants so it works on single-line inputs and multi-line textareas without overlapping content.
-
-3. Swap the listed `Textarea`/`Input` usages to the new wrappers. No behavior changes beyond adding the mic. Names, emails, and admin authoring fields stay as plain shadcn controls.
-
-4. Graceful fallback: when `isSupported` is false (e.g., Firefox), the wrappers render the plain control with no mic button — no UI clutter, no errors.
-
-### Files expected to change
-
-- New: `src/components/dictation/DictatedTextarea.tsx`, `src/components/dictation/DictatedInput.tsx`
-- Edit: `src/components/DictateButton.tsx` (add position variant), `BlueprintInsight.tsx`, `DayChallenge.tsx`, `Mentor.tsx`, `Dashboard.tsx`, `Partners.tsx`, `AiCopilotChat.tsx`
-
-### Out of scope
-
-- Server-side transcription (ElevenLabs Scribe). Browser Web Speech API is already wired and free; no new secrets or edge functions needed. We can upgrade to Scribe later if you want cross-browser parity on Firefox.
+### No other files touched.

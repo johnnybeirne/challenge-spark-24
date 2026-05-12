@@ -16,6 +16,10 @@ const ENROLMENT_CARDS: Card[] = [
   { title: "Enrol in Premium", route: "/premium/enrol", description: "Direct premium course enrolment." },
 ];
 
+const INTERNAL_CARDS: Card[] = [
+  { title: "User Features Audit", route: "/user-features", description: "Internal audit of every user-facing route, feature, and funnel stage.", badge: "admin" },
+];
+
 const Section = ({ title, cards }: { title: string; cards: Card[] }) => (
   <section className="mt-12">
     <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">{title}</h2>
@@ -68,6 +72,7 @@ const Links = () => {
 
         <Section title="Assessment entries" cards={ASSESSMENT_CARDS} />
         <Section title="Direct enrolment" cards={ENROLMENT_CARDS} />
+        <Section title="Internal / Admin" cards={INTERNAL_CARDS} />
 
         <section className="mt-12">
           <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Dev / Admin Preview</h2>

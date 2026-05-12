@@ -104,11 +104,11 @@ const BlueprintInsight = () => {
         </Link>
         <header className="mt-4">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> My Insight
+            <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
           </span>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Personalised Growth Insight</h1>
+          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Build Your Mini Challenge</h1>
           <p className="mt-2 text-base text-muted-foreground">
-            Tell us about your audience and the result they want, and we'll generate a tailored insight for you.
+            Describe the problem you solve, who you help, and the result they want — and we'll help you create a simple challenge framework designed to drive engagement and momentum.
           </p>
         </header>
         <InsightForm onDone={() => setEditing(false)} />

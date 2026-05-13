@@ -14,6 +14,7 @@ import {
 import { usePromoter } from "@/hooks/usePromoter";
 import { useFoundingConfig } from "@/hooks/useFoundingConfig";
 import { useAuth } from "@/hooks/useAuth";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import ActivityFeed from "@/components/ActivityFeed";

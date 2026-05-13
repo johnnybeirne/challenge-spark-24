@@ -232,6 +232,18 @@ const AdminCoupons = () => {
                   {c.redemption_count} {c.max_redemptions != null ? `/ ${c.max_redemptions}` : ""} used
                 </Badge>
               </div>
+              {c.partner_id && (
+                <div className="text-xs">
+                  <Badge className="bg-primary/10 text-primary">
+                    {partnerLabel(c.partner_id)}
+                    {c.commission_value != null && (
+                      <span className="ml-1 opacity-80">
+                        · {c.commission_type === "percent" ? `${c.commission_value}%` : `€${c.commission_value}`}
+                      </span>
+                    )}
+                  </Badge>
+                </div>
+              )}
               {c.expires_at && (
                 <div className="text-xs text-muted-foreground">
                   Expires {new Date(c.expires_at).toLocaleString()}

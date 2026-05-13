@@ -43,27 +43,35 @@ const emptyDraft = {
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [partners, setPartners] = useState<PartnerOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState(emptyDraft);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("coupons")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const [{ data: cData, error }, { data: pData }] = await Promise.all([
+      supabase.from("coupons").select("*").order("created_at", { ascending: false }),
+      supabase.from("partners").select("id, slug, display_name").eq("status", "active").order("slug"),
+    ]);
     if (error) {
       toast({ title: "Failed to load coupons", description: error.message, variant: "destructive" });
     } else {
-      setCoupons(data as Coupon[]);
+      setCoupons(cData as Coupon[]);
     }
+    setPartners((pData as PartnerOption[]) ?? []);
     setLoading(false);
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  const partnerLabel = (id: string | null) => {
+    if (!id) return null;
+    const p = partners.find((x) => x.id === id);
+    return p ? p.display_name || `/${p.slug}` : id.slice(0, 8);
+  };
 
   const handleCreate = async () => {
     if (!draft.code.trim()) {
@@ -79,6 +87,9 @@ const AdminCoupons = () => {
       max_redemptions: draft.max_redemptions ? Number(draft.max_redemptions) : null,
       expires_at: draft.expires_at ? new Date(draft.expires_at).toISOString() : null,
       notes: draft.notes.trim() || null,
+      partner_id: draft.partner_id || null,
+      commission_type: draft.commission_value !== "" ? draft.commission_type : null,
+      commission_value: draft.commission_value !== "" ? Number(draft.commission_value) : null,
       is_active: true,
     });
     setSaving(false);

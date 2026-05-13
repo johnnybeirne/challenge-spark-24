@@ -35,7 +35,6 @@ import Leaderboard from "@/pages/Leaderboard";
 import Rewards from "@/pages/Rewards";
 import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
-import Upgrade from "@/pages/Upgrade";
 import Mentor from "@/pages/Mentor";
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";

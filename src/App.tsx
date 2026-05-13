@@ -134,6 +134,7 @@ const App = () => (
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
+                <Route path="/debug/attribution" element={<DebugAttribution />} />
               </Route>
 
               {/* Authenticated routes — consumer + shared */}

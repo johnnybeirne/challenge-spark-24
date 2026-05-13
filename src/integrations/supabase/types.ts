@@ -203,6 +203,92 @@ export type Database = {
         }
         Relationships: []
       }
+      commissions: {
+        Row: {
+          amount_cents: number
+          approved_at: string | null
+          commission_type: Database["public"]["Enums"]["commission_kind"]
+          commission_value_snapshot: number
+          created_at: string
+          id: string
+          level: number
+          notes: string | null
+          paid_at: string | null
+          partner_id: string
+          payout_id: string | null
+          purchase_id: string | null
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["commission_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents?: number
+          approved_at?: string | null
+          commission_type: Database["public"]["Enums"]["commission_kind"]
+          commission_value_snapshot: number
+          created_at?: string
+          id?: string
+          level?: number
+          notes?: string | null
+          paid_at?: string | null
+          partner_id: string
+          payout_id?: string | null
+          purchase_id?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["commission_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          approved_at?: string | null
+          commission_type?: Database["public"]["Enums"]["commission_kind"]
+          commission_value_snapshot?: number
+          created_at?: string
+          id?: string
+          level?: number
+          notes?: string | null
+          paid_at?: string | null
+          partner_id?: string
+          payout_id?: string | null
+          purchase_id?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["commission_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "commissions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_commissions_payout"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "payouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       copilot_config: {
         Row: {
           created_at: string
@@ -272,6 +358,8 @@ export type Database = {
       coupons: {
         Row: {
           code: string
+          commission_type: Database["public"]["Enums"]["commission_kind"] | null
+          commission_value: number | null
           created_at: string
           expires_at: string | null
           final_price: number
@@ -281,11 +369,16 @@ export type Database = {
           max_redemptions: number | null
           notes: string | null
           original_price: number
+          partner_id: string | null
           redemption_count: number
           updated_at: string
         }
         Insert: {
           code: string
+          commission_type?:
+            | Database["public"]["Enums"]["commission_kind"]
+            | null
+          commission_value?: number | null
           created_at?: string
           expires_at?: string | null
           final_price?: number
@@ -295,11 +388,16 @@ export type Database = {
           max_redemptions?: number | null
           notes?: string | null
           original_price?: number
+          partner_id?: string | null
           redemption_count?: number
           updated_at?: string
         }
         Update: {
           code?: string
+          commission_type?:
+            | Database["public"]["Enums"]["commission_kind"]
+            | null
+          commission_value?: number | null
           created_at?: string
           expires_at?: string | null
           final_price?: number
@@ -309,10 +407,26 @@ export type Database = {
           max_redemptions?: number | null
           notes?: string | null
           original_price?: number
+          partner_id?: string | null
           redemption_count?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "coupons_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "coupons_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cross_promotions: {
         Row: {
@@ -529,6 +643,188 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          id: string
+          invitee_email: string
+          invitee_partner_id: string | null
+          inviter_partner_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_email: string
+          invitee_partner_id?: string | null
+          inviter_partner_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_email?: string
+          invitee_partner_id?: string | null
+          inviter_partner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_invites_invitee_partner_id_fkey"
+            columns: ["invitee_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "partner_invites_invitee_partner_id_fkey"
+            columns: ["invitee_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_invites_inviter_partner_id_fkey"
+            columns: ["inviter_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "partner_invites_inviter_partner_id_fkey"
+            columns: ["inviter_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          default_commission_type: Database["public"]["Enums"]["commission_kind"]
+          default_commission_value: number
+          display_name: string | null
+          id: string
+          manual_score_adjustment: number
+          parent_partner_id: string | null
+          slug: string
+          status: Database["public"]["Enums"]["partner_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          default_commission_type?: Database["public"]["Enums"]["commission_kind"]
+          default_commission_value?: number
+          display_name?: string | null
+          id?: string
+          manual_score_adjustment?: number
+          parent_partner_id?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["partner_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          default_commission_type?: Database["public"]["Enums"]["commission_kind"]
+          default_commission_value?: number
+          display_name?: string | null
+          id?: string
+          manual_score_adjustment?: number
+          parent_partner_id?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["partner_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partners_parent_partner_id_fkey"
+            columns: ["parent_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "partners_parent_partner_id_fkey"
+            columns: ["parent_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          method: string | null
+          notes: string | null
+          paid_at: string | null
+          partner_id: string
+          period_end: string | null
+          period_start: string | null
+          reference: string | null
+          status: Database["public"]["Enums"]["payout_status"]
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          method?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          partner_id: string
+          period_end?: string | null
+          period_start?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          method?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          partner_id?: string
+          period_end?: string | null
+          period_start?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "payouts_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -717,6 +1013,77 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      referral_attributions: {
+        Row: {
+          bound_at: string
+          created_at: string
+          first_touch_at: string
+          id: string
+          landing_path: string | null
+          landing_query: Json | null
+          parent_partner_id: string | null
+          partner_id: string
+          partner_slug: string
+          source: Database["public"]["Enums"]["attribution_source"]
+          user_id: string
+        }
+        Insert: {
+          bound_at?: string
+          created_at?: string
+          first_touch_at?: string
+          id?: string
+          landing_path?: string | null
+          landing_query?: Json | null
+          parent_partner_id?: string | null
+          partner_id: string
+          partner_slug: string
+          source?: Database["public"]["Enums"]["attribution_source"]
+          user_id: string
+        }
+        Update: {
+          bound_at?: string
+          created_at?: string
+          first_touch_at?: string
+          id?: string
+          landing_path?: string | null
+          landing_query?: Json | null
+          parent_partner_id?: string | null
+          partner_id?: string
+          partner_slug?: string
+          source?: Database["public"]["Enums"]["attribution_source"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_attributions_parent_partner_id_fkey"
+            columns: ["parent_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_parent_partner_id_fkey"
+            columns: ["parent_partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner_leaderboard"
+            referencedColumns: ["partner_id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_content: {
         Row: {
@@ -924,9 +1291,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      partner_leaderboard: {
+        Row: {
+          display_name: string | null
+          manual_score_adjustment: number | null
+          partner_id: string | null
+          signups: number | null
+          slug: string | null
+          status: Database["public"]["Enums"]["partner_status"] | null
+          total_score: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      admin_adjust_partner_score: {
+        Args: { p_delta: number; p_partner_id: string }
+        Returns: undefined
+      }
+      admin_merge_partners: {
+        Args: { p_keep: string; p_remove: string }
+        Returns: undefined
+      }
+      admin_reassign_attribution: {
+        Args: { p_new_partner_slug: string; p_user_id: string }
+        Returns: undefined
+      }
+      admin_revoke_commission: {
+        Args: { p_commission_id: string; p_reason?: string }
+        Returns: undefined
+      }
       calculate_waitlist_tier: {
         Args: { invite_count: number }
         Returns: string
@@ -950,6 +1344,16 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      attribution_source:
+        | "query_param"
+        | "partner_landing"
+        | "invite_link"
+        | "coupon"
+        | "manual"
+      commission_kind: "percent" | "fixed"
+      commission_status: "pending" | "approved" | "paid" | "revoked"
+      partner_status: "pending" | "active" | "suspended"
+      payout_status: "pending" | "paid" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1078,6 +1482,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      attribution_source: [
+        "query_param",
+        "partner_landing",
+        "invite_link",
+        "coupon",
+        "manual",
+      ],
+      commission_kind: ["percent", "fixed"],
+      commission_status: ["pending", "approved", "paid", "revoked"],
+      partner_status: ["pending", "active", "suspended"],
+      payout_status: ["pending", "paid", "cancelled"],
     },
   },
 } as const

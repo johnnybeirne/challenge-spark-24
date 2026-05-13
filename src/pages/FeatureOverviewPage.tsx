@@ -83,6 +83,8 @@ const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
   }, [overview]);
 
   return (
+    <>
+      <SEO title="Platform Features" description="Explore the full Leadio platform — from assessment funnels and AI challenges to referral loops and partner networks." canonical="/app/features" />
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <section className="mb-8 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">

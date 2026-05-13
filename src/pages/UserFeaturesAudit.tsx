@@ -93,7 +93,7 @@ const ROUTES: RouteRow[] = [
   { route: "/promoter", purpose: "Partner / promoter dashboard", access: "Partner only", status: "Detected" },
   { route: "/partner/performance", purpose: "Partner performance", access: "Partner only", status: "Detected" },
   { route: "/p/:partnerCode", purpose: "Partner-branded sales landing (canonical)", access: "Public", status: "Detected", notes: "Auto-applies partner coupon" },
-  { route: "/partner/:partnerCode", purpose: "Partner-branded sales landing (legacy alias)", access: "Public", status: "Detected" },
+  
   { route: "/premium/:partnerCode", purpose: "Premium course JV partner variant", access: "Public", status: "Detected", notes: "Coupon via partner code" },
   { route: "/owner-console/partner-ops", purpose: "Partner ops (coupons, payouts, ledger)", access: "Admin", status: "Detected" },
   { route: "/owner-console", purpose: "Owner console hub", access: "Admin", status: "Detected" },

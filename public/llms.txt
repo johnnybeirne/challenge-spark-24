@@ -1,0 +1,23 @@
+# Leadio
+
+> An AI-powered challenge and quiz system that helps coaches, consultants, creators, and experts diagnose why their lead flow is inconsistent — and guides them toward the right next step based on their answers.
+
+## Pages
+
+- [/](/): Find out why your leads are inconsistent with a free 9-question diagnostic quiz.
+- [/free-assessment](/free-assessment): Same landing page with entry intent set to free training.
+- [/challenge](/challenge): Entry point for the high-intent 3-day builder challenge.
+- [/free-training](/free-training): Free training (Blueprint LMS) — 3 short lessons with an AI-powered personalised insight at the end.
+- [/premium](/premium): Premium course information and sales page.
+- [/assess](/assess): The canonical assessment engine — 9 questions, instant diagnosis.
+- [/assessment](/assessment): Legacy alias for the assessment engine.
+- [/premium-assessment](/premium-assessment): Premium course assessment entry.
+- [/partners](/partners): Partner and promoter program information.
+- [/waitlist](/waitlist): Join the waitlist for upcoming features.
+- [/links](/links): Useful links and resources.
+- [/join](/join): Sign up for the challenge.
+- [/blueprint-join](/blueprint-join): Sign up for the free training.
+- [/premium-join](/premium-join): Sign up for the premium course.
+- [/results](/results): Quiz result page with diagnosis and recommended strategy.
+- [/app/features](/app/features): Feature overview of the platform.
+- [/reset-password](/reset-password): Password reset page.

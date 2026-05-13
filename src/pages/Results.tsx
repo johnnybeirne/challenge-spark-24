@@ -399,13 +399,6 @@ const Results = () => {
                 {ctaCopy.button}
                 <ArrowRight className="w-5 h-5" />
               </Button>
-              <Button
-                variant="outline"
-                className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
-                onClick={() => navigate(freeTrainingDestination)}
-              >
-                Continue to Free Training
-              </Button>
               <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
                 {ctaCopy.sub}
               </p>

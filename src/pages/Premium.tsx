@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SEO } from "@/components/SEO";
 import { usePremium } from "@/hooks/usePremium";
 import { setPremium, validateCoupon, redeemCoupon } from "@/lib/premium";
@@ -97,6 +98,20 @@ const Premium = () => {
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [accessOpen, setAccessOpen] = useState(false);
+
+  // Auto-open the access popup once when premium is detected
+  useEffect(() => {
+    if (!isPremium) return;
+    try {
+      const KEY = "leadio_premium_access_popup_seen";
+      if (sessionStorage.getItem(KEY) === "1") return;
+      sessionStorage.setItem(KEY, "1");
+      setAccessOpen(true);
+    } catch {
+      setAccessOpen(true);
+    }
+  }, [isPremium]);
 
   // Auto-apply coupon from URL (?coupon=) or pending sessionStorage value
   useEffect(() => {
@@ -239,12 +254,15 @@ const Premium = () => {
               </motion.div>
 
               {isPremium && (
-                <div className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm font-bold text-success">
-                  <Check className="h-4 w-4" /> Premium access confirmed.
-                  <Button asChild size="sm" variant="outline" className="ml-2">
-                    <Link to="/blueprint/dashboard">Open Course</Link>
-                  </Button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setAccessOpen(true)}
+                  className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm font-bold text-success shadow-sm transition hover:bg-success/15 hover:shadow-md"
+                >
+                  <Check className="h-4 w-4" />
+                  Premium access confirmed — Open Course
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               )}
             </motion.div>
 
@@ -837,6 +855,31 @@ const Premium = () => {
           </Reveal>
         </div>
       </section>
+
+      <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-success/30 bg-success/10 text-success">
+              <Check className="h-7 w-7" />
+            </div>
+            <DialogTitle className="text-center text-2xl font-black">Premium access confirmed</DialogTitle>
+            <DialogDescription className="text-center">
+              Your course area is ready. Jump in now to start the Premium Growth Accelerator.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="gap-2 font-black uppercase">
+              <Link to="/blueprint/dashboard" onClick={() => setAccessOpen(false)}>
+                Open Course
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => setAccessOpen(false)}>
+              Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
     </>
   );

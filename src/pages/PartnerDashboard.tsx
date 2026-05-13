@@ -471,7 +471,7 @@ function CommissionRatesCard({ partner, onSaved }: { partner: PartnerRow; onSave
     setSaving(true);
     const { error } = await supabase
       .from("partners")
-      .update({ default_l2_commission_type: type, default_l2_commission_value: value })
+      .update({ default_l2_commission_type: type as "percent" | "fixed", default_l2_commission_value: value })
       .eq("id", partner.id);
     setSaving(false);
     if (error) {

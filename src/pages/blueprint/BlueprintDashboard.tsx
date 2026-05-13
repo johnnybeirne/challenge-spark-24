@@ -61,6 +61,15 @@ const BlueprintDashboard = () => {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 lg:py-12">
+      <section className="mb-6 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
+        <p className="text-[11px] font-black uppercase tracking-wider text-primary">Points Earned</p>
+        <div className="mt-1 flex items-end gap-2">
+          <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
+          <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>
+        </div>
+        <p className="mt-2 text-xs font-medium text-muted-foreground">Earn more by completing lessons, the challenge, and inviting builders.</p>
+      </section>
+
       <div className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8 shadow-sm">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-primary">
           <Sparkles className="h-3.5 w-3.5" /> Leadio Course

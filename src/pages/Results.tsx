@@ -4,6 +4,7 @@ import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";

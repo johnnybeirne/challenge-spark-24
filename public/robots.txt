@@ -12,3 +12,4 @@ Allow: /
 
 User-agent: *
 Allow: /
+Sitemap: https://leadio.johnnybeirne.com/sitemap.xml

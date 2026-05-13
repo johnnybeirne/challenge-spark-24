@@ -1309,6 +1309,28 @@ export type Database = {
         Args: { p_delta: number; p_partner_id: string }
         Returns: undefined
       }
+      admin_approve_commission: {
+        Args: { p_commission_id: string }
+        Returns: undefined
+      }
+      admin_approve_partner_commissions: {
+        Args: { p_partner_id: string }
+        Returns: number
+      }
+      admin_create_payout: {
+        Args: {
+          p_commission_ids: string[]
+          p_method?: string
+          p_notes?: string
+          p_partner_id: string
+          p_reference?: string
+        }
+        Returns: string
+      }
+      admin_mark_payout_paid: {
+        Args: { p_payout_id: string; p_reference?: string }
+        Returns: undefined
+      }
       admin_merge_partners: {
         Args: { p_keep: string; p_remove: string }
         Returns: undefined
@@ -1321,6 +1343,7 @@ export type Database = {
         Args: { p_commission_id: string; p_reason?: string }
         Returns: undefined
       }
+      admin_void_payout: { Args: { p_payout_id: string }; Returns: undefined }
       calculate_waitlist_tier: {
         Args: { invite_count: number }
         Returns: string

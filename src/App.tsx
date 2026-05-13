@@ -71,6 +71,7 @@ import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
 import QaModePanel from "@/components/QaModePanel";
+import ScrollToTop from "@/components/ScrollToTop";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";
 
 if (typeof window !== "undefined") initFreePreviewFromUrl();
@@ -86,6 +87,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <FreePreviewBadge />
             <QaModePanel />
             <ExperienceShell>

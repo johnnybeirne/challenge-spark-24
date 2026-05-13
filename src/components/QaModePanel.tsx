@@ -13,11 +13,17 @@ import {
   type QaEntry,
   type QaTier,
 } from "@/lib/qaPreview";
-import { setEntryIntent } from "@/lib/entryIntent";
+import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },
   { id: "paid", label: "Paid" },
+];
+
+const ASSESSMENT_MODES: { id: EntryIntent; label: string }[] = [
+  { id: "free_training", label: "Free Training" },
+  { id: "premium_course", label: "Premium Course" },
+  { id: "challenge", label: "3-Day Challenge" },
 ];
 
 const ENTRIES: { id: QaEntry; label: string }[] = [

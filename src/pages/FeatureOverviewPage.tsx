@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Check, Copy, RefreshCw } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { toast } from "sonner";
 import { overviewToText, scanBuiltFeatures, type FeatureOverview } from "@/lib/featureOverview";
 

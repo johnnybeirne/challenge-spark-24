@@ -323,6 +323,14 @@ const QaModePanel = () => {
   return (
     <>
       {banner}
+      {switching && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-background/85 backdrop-blur-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          <p className="text-sm font-black uppercase tracking-wider text-foreground">
+            Resetting session…
+          </p>
+        </div>
+      )}
       <button
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-4 left-4 z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted"

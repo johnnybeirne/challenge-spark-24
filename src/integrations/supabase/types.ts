@@ -706,6 +706,8 @@ export type Database = {
           created_at: string
           default_commission_type: Database["public"]["Enums"]["commission_kind"]
           default_commission_value: number
+          default_l2_commission_type: Database["public"]["Enums"]["commission_kind"]
+          default_l2_commission_value: number
           display_name: string | null
           id: string
           manual_score_adjustment: number
@@ -721,6 +723,8 @@ export type Database = {
           created_at?: string
           default_commission_type?: Database["public"]["Enums"]["commission_kind"]
           default_commission_value?: number
+          default_l2_commission_type?: Database["public"]["Enums"]["commission_kind"]
+          default_l2_commission_value?: number
           display_name?: string | null
           id?: string
           manual_score_adjustment?: number
@@ -736,6 +740,8 @@ export type Database = {
           created_at?: string
           default_commission_type?: Database["public"]["Enums"]["commission_kind"]
           default_commission_value?: number
+          default_l2_commission_type?: Database["public"]["Enums"]["commission_kind"]
+          default_l2_commission_value?: number
           display_name?: string | null
           id?: string
           manual_score_adjustment?: number

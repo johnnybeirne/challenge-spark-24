@@ -456,4 +456,94 @@ const PartnerDashboard = () => {
   );
 };
 
+import { Input } from "@/components/ui/input";
+import type { PartnerRow } from "@/hooks/usePartner";
+
+function CommissionRatesCard({ partner, onSaved }: { partner: PartnerRow; onSaved: () => void | Promise<void> }) {
+  const [editing, setEditing] = useState(false);
+  const [type, setType] = useState<string>(partner.default_l2_commission_type);
+  const [value, setValue] = useState<number>(Number(partner.default_l2_commission_value));
+  const [saving, setSaving] = useState(false);
+
+  const fmt = (t: string, v: number) => (t === "percent" ? `${v}%` : `€${v}`);
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase
+      .from("partners")
+      .update({ default_l2_commission_type: type, default_l2_commission_value: value })
+      .eq("id", partner.id);
+    setSaving(false);
+    if (error) {
+      toast.error("Failed to save", { description: error.message });
+      return;
+    }
+    toast.success("L2 rate updated");
+    setEditing(false);
+    await onSaved();
+  };
+
+  return (
+    <Card className="border-border mb-6">
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Wallet className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Commission rates</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 bg-muted/50 rounded-lg">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Your direct (L1)</p>
+            <p className="text-base font-bold text-foreground">
+              {fmt(partner.default_commission_type, Number(partner.default_commission_value))}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-1">Per referred sale</p>
+          </div>
+          <div className="p-3 bg-muted/50 rounded-lg">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">From sub-partners (L2)</p>
+            {editing ? (
+              <div className="flex items-center gap-1 mt-1">
+                <Input
+                  type="number"
+                  min={0}
+                  step="0.5"
+                  value={value}
+                  onChange={(e) => setValue(Number(e.target.value))}
+                  className="h-7 text-sm"
+                />
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  className="h-7 text-xs rounded border border-input bg-background px-1"
+                >
+                  <option value="percent">%</option>
+                  <option value="flat">€</option>
+                </select>
+              </div>
+            ) : (
+              <p className="text-base font-bold text-foreground">{fmt(type, value)}</p>
+            )}
+            <p className="text-[11px] text-muted-foreground mt-1">Per sub-partner sale</p>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-3">
+          {editing ? (
+            <>
+              <Button size="sm" variant="ghost" onClick={() => { setEditing(false); setType(partner.default_l2_commission_type); setValue(Number(partner.default_l2_commission_value)); }}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={save} disabled={saving}>
+                {saving ? "Saving…" : "Save"}
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+              Edit L2 rate
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default PartnerDashboard;

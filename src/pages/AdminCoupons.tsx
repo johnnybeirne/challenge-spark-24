@@ -21,7 +21,12 @@ type Coupon = {
   is_active: boolean;
   notes: string | null;
   created_at: string;
+  partner_id: string | null;
+  commission_type: "percent" | "fixed" | null;
+  commission_value: number | null;
 };
+
+type PartnerOption = { id: string; slug: string; display_name: string | null };
 
 const emptyDraft = {
   code: "",
@@ -31,6 +36,9 @@ const emptyDraft = {
   max_redemptions: "" as string,
   expires_at: "" as string,
   notes: "",
+  partner_id: "" as string,
+  commission_type: "percent" as "percent" | "fixed",
+  commission_value: "" as string,
 };
 
 const AdminCoupons = () => {

@@ -426,6 +426,7 @@ const Waitlist = () => {
         </section>
       )}
     </div>
+    </>
   );
 };
 

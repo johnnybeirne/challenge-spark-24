@@ -16,7 +16,13 @@ import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.
 const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
 
-const Assessment = () => {
+import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
+
+interface AssessmentProps {
+  mode?: EntryIntent;
+}
+
+const Assessment = ({ mode }: AssessmentProps = {}) => {
   const navigate = useNavigate();
   const { setState } = useAppState();
   const { config } = useSiteConfig();

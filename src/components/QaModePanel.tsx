@@ -104,6 +104,7 @@ const QaModePanel = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
 
   const PANEL_W = 340;
   const PANEL_H_EST = 560;

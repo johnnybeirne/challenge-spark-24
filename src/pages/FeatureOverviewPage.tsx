@@ -160,6 +160,7 @@ const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

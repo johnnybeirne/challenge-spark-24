@@ -74,6 +74,7 @@ export function usePartner() {
   const [attributions, setAttributions] = useState<AttributionWithProfile[]>([]);
   const [subAttributions, setSubAttributions] = useState<AttributionWithProfile[]>([]);
   const [subPartners, setSubPartners] = useState<SubPartner[]>([]);
+  const [coupons, setCoupons] = useState<PartnerCoupon[]>([]);
   const [totals, setTotals] = useState<PartnerTotals>(ZERO_TOTALS);
 
   const ensurePartnerRow = useCallback(async (): Promise<PartnerRow | null> => {

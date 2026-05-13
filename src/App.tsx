@@ -66,6 +66,7 @@ import InviteEntry from "@/pages/InviteEntry";
 
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
+import DebugAttribution from "@/pages/DebugAttribution";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
 import QaModePanel from "@/components/QaModePanel";
@@ -133,6 +134,7 @@ const App = () => (
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
+                <Route path="/debug/attribution" element={<DebugAttribution />} />
               </Route>
 
               {/* Authenticated routes — consumer + shared */}

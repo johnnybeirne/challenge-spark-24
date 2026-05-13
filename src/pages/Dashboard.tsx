@@ -377,16 +377,6 @@ const Dashboard = () => {
         </div>
 
 
-        <section className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 shadow-sm sm:p-8">
-          <p className="text-xs font-black uppercase tracking-wider text-primary">Points Earned</p>
-          <div className="mt-2 flex items-end gap-3">
-            <span className="text-6xl font-black leading-none text-foreground sm:text-7xl">{state.credits?.total ?? 0}</span>
-            <span className="mb-2 text-sm font-semibold text-muted-foreground">points</span>
-          </div>
-          <p className="mt-3 text-sm font-medium text-muted-foreground">Earn more by completing steps and inviting builders.</p>
-        </section>
-
-
         <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>
             Unlock Rewards

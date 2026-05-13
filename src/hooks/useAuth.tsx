@@ -29,6 +29,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(newSession);
         setUser(newSession?.user ?? null);
         setLoading(false);
+        const uid = newSession?.user?.id;
+        if (uid) {
+          // Defer to avoid running inside the auth callback context
+          setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
+        }
       }
     );
 
@@ -37,6 +42,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(existing);
       setUser(existing?.user ?? null);
       setLoading(false);
+      const uid = existing?.user?.id;
+      if (uid) {
+        setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
+      }
     });
 
     return () => subscription.unsubscribe();

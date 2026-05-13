@@ -8,12 +8,13 @@ import type { EntryIntent } from "@/lib/entryIntent";
 
 type SavedAssessment = AssessmentResult & { mode?: EntryIntent };
 
-const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: string; nextStep: string; Icon: typeof Target }> = {
+const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: string; nextStep: string; retakeHref: string; Icon: typeof Target }> = {
   challenge: {
     label: "3-Day Challenge",
     cta: "Continue 3-Day Challenge",
     href: "/day/1",
     nextStep: "Build your AI-powered challenge in 3 days.",
+    retakeHref: "/assessment",
     Icon: Target,
   },
   free_training: {
@@ -21,6 +22,7 @@ const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: strin
     cta: "Continue Free Training",
     href: "/blueprint/dashboard",
     nextStep: "Continue your Challenge Growth Blueprint course.",
+    retakeHref: "/free-assessment",
     Icon: BookOpen,
   },
   premium_course: {
@@ -28,6 +30,7 @@ const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: strin
     cta: "Continue Premium Course",
     href: "/premium",
     nextStep: "Pick up the Premium Growth Accelerator where you left off.",
+    retakeHref: "/premium-assessment",
     Icon: Crown,
   },
 };

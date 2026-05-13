@@ -252,6 +252,7 @@ export function usePartner() {
     attributions,
     subAttributions,
     subPartners,
+    coupons,
     totals,
     refresh: fetchAll,
   };

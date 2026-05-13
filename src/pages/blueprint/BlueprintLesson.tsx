@@ -213,9 +213,11 @@ const BlueprintLesson = () => {
                 Complete Module
               </Button>
             )}
-            <Button asChild variant="outline" className="h-11 gap-2">
-              <Link to={nextHref}>Next Module <ArrowRight className="h-4 w-4" /></Link>
-            </Button>
+            {lesson.n < 5 && (
+              <Button asChild variant="outline" className="h-11 gap-2">
+                <Link to={nextHref}>Next Module <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+            )}
           </div>
 
           {/* After Module 3, show challenge CTA */}

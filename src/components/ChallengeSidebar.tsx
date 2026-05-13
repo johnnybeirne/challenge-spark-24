@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
+import { BookOpen, CalendarDays, Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -117,63 +117,80 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </div>
 
-      <section className="space-y-1.5">
-        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
-        {[
-          { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
-          { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
-          { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
-          { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
-          { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
-        ].map(({ n, path, label, Icon, premium }) => {
-          const active = location.pathname === path;
-          // Paid users never see locks — premium modules feel "available", just softer if not yet active.
-          const locked = premium && !isPremiumUser;
-          const muted = !active && premium && isPremiumUser;
-          const DisplayIcon = locked ? Lock : Icon;
-          return (
-            <button
-              key={path}
-              onClick={() => go(path)}
-              className={cn(
-                "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5",
-                "border-border bg-background",
-                muted && "border-border/60 bg-muted/30",
-                collapsed ? "p-2" : "px-3 py-2",
-                active && "ring-2 ring-primary/20"
-              )}
-              title={`${n}. ${label}`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                {!collapsed ? (
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={cn(
-                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black",
-                      active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
-                    )}>{n}</span>
-                    <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
-                  </div>
-                ) : (
-                  <span className={cn(
-                    "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
-                    active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
-                  )}>{n}</span>
+      {(() => {
+        const midChallenge = hasJoinedChallenge && !state.challenge.completed;
+        const learnActive = location.pathname.startsWith("/blueprint");
+        return (
+          <section className="space-y-1.5">
+            {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
+            {midChallenge ? (
+              <button
+                onClick={() => go("/blueprint/dashboard")}
+                className={cn(
+                  "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
+                  collapsed ? "p-2" : "px-3 py-2",
+                  learnActive && "ring-2 ring-primary/20"
                 )}
-                <DisplayIcon className={cn(
-                  "h-4 w-4 shrink-0",
-                  locked ? "text-primary/60" : active ? "text-primary" : "text-muted-foreground"
-                )} />
-              </div>
-            </button>
-          );
-        })}
-      </section>
+                title="Training"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  {!collapsed && <p className="text-sm font-semibold text-foreground">Training</p>}
+                  <BookOpen className="h-4 w-4 shrink-0 text-muted-foreground" />
+                </div>
+              </button>
+            ) : (
+              [
+                { n: 1, path: "/blueprint/lesson/1", label: "Module 1 – Foundations", Icon: Zap, premium: false },
+                { n: 2, path: "/blueprint/lesson/2", label: "Module 2 – Growth Opportunity", Icon: Target, premium: false },
+                { n: 3, path: "/blueprint/lesson/3", label: "Module 3 – Referral Loops", Icon: Users, premium: false },
+                { n: 4, path: "/blueprint/lesson/4", label: "Module 4 – Advanced Systems", Icon: Workflow, premium: true },
+                { n: 5, path: "/blueprint/lesson/5", label: "Module 5 – Scaling With Leadio", Icon: TrendingUp, premium: true },
+              ].map(({ n, path, label, Icon, premium }) => {
+                const active = location.pathname === path;
+                const locked = premium && !isPremiumUser;
+                const muted = !active && premium && isPremiumUser;
+                const DisplayIcon = locked ? Lock : Icon;
+                return (
+                  <button
+                    key={path}
+                    onClick={() => go(path)}
+                    className={cn(
+                      "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
+                      muted && "border-border/60 bg-muted/30",
+                      collapsed ? "p-2" : "px-3 py-2",
+                      active && "ring-2 ring-primary/20"
+                    )}
+                    title={label}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      {!collapsed ? (
+                        <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                      ) : (
+                        <span className={cn(
+                          "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
+                          active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
+                        )}>{n}</span>
+                      )}
+                      <DisplayIcon className={cn(
+                        "h-4 w-4 shrink-0",
+                        locked ? "text-primary/60" : active ? "text-primary" : "text-muted-foreground"
+                      )} />
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </section>
+        );
+      })()}
 
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tools</p>}
         {[
           { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass },
           { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle },
+          { path: "/referrals", label: "Referrals", Icon: Share2 },
+          { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays },
         ].map(({ path, label, Icon }) => {
           const active = location.pathname === path;
           return (
@@ -239,21 +256,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                 <span className="mx-auto rounded-md bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">Free</span>
               )}
               <Sparkles className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            </div>
-          </button>
-        )}
-        {!isPremiumUser && (
-          <button
-            onClick={() => go("/premium")}
-            className={cn(
-              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
-              collapsed ? "p-2" : "px-3 py-2.5"
-            )}
-            title="Unlock Full Course"
-          >
-            <div className="flex items-center justify-between gap-2">
-              {!collapsed && <p className="text-sm font-black text-primary">Unlock Full Course</p>}
-              <Rocket className="h-4 w-4 shrink-0 text-primary" />
             </div>
           </button>
         )}

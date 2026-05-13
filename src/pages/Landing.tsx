@@ -60,6 +60,7 @@ const Landing = ({ variant = "default" }: LandingProps) => {
       <CTASection onStart={() => startQuiz("bottom")} />
       <StickyQuizButton onStart={() => startQuiz("sticky")} />
     </main>
+    </>
   );
 };
 

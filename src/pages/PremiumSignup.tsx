@@ -41,6 +41,7 @@ const PremiumSignup = () => {
         </Button>
       )}
     />
+    </>
   );
 };
 

@@ -102,6 +102,7 @@ const HeroSection = ({ onStart }: { onStart: () => void }) => (
           alt="Frustrated entrepreneur trying to understand where leads are coming from"
           width={1280}
           height={960}
+          fetchpriority="high"
           className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
         />
         <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">

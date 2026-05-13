@@ -30,7 +30,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const [searchParams] = useSearchParams();
   const qa = useQaPreview();
 
-  const [started, setStarted] = useState(true);
+  const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);

@@ -21,7 +21,6 @@ import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
 import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
-import PremiumSignup from "@/pages/PremiumSignup";
 import ResetPassword from "@/pages/ResetPassword";
 import Training from "@/pages/Training";
 import Dashboard from "@/pages/Dashboard";

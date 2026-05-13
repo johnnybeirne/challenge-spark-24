@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote } from "lucide-react";
 
 const sections = [
   {
@@ -30,6 +30,13 @@ const sections = [
     icon: Users,
     to: "/owner-console/promoters",
     color: "text-amber-500",
+  },
+  {
+    title: "Payouts",
+    description: "Approve commissions, batch into payouts, mark as paid",
+    icon: Banknote,
+    to: "/owner-console/payouts",
+    color: "text-green-500",
   },
   {
     title: "Activity Feed",

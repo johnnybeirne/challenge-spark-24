@@ -50,28 +50,39 @@ const Leaderboard = () => {
         setEntries(mapped);
       }
 
-      // Load promoter leaderboard
-      const { data: promoters } = await (supabase.from("promoters") as any)
-        .select("partner_code, tier, conversions, assessment_starts, is_founding_partner, user_id")
-        .eq("is_approved", true)
-        .order("conversions", { ascending: false })
-        .limit(50);
+      // Load partner leaderboard from canonical view (attributed signups + manual adjustment)
+      const { data: rows } = await supabase.rpc("get_partner_leaderboard", { p_limit: 50 });
 
-      if (promoters) {
-        // Get names from profiles
-        const userIds = promoters.map((p: any) => p.user_id);
-        const { data: proProfiles } = await supabase
-          .from("profiles")
-          .select("user_id, name")
-          .in("user_id", userIds);
+      if (rows && rows.length > 0) {
+        const partnerIds = rows.map((r: any) => r.partner_id);
+        // Resolve user_id + founding badge per partner
+        const [{ data: partnerMeta }, { data: founders }] = await Promise.all([
+          supabase.from("partners").select("id, user_id").in("id", partnerIds),
+          supabase.from("promoters").select("user_id, is_founding_partner").eq("is_founding_partner", true),
+        ]);
+        const userByPartner = new Map((partnerMeta || []).map((p: any) => [p.id, p.user_id]));
+        const foundingSet = new Set((founders || []).map((f: any) => f.user_id));
 
-        const nameMap = new Map((proProfiles || []).map(p => [p.user_id, p.name]));
+        const userIds = Array.from(userByPartner.values()).filter(Boolean) as string[];
+        const { data: proProfiles } = userIds.length
+          ? await supabase.from("profiles").select("user_id, name").in("user_id", userIds)
+          : { data: [] as any[] };
+        const nameMap = new Map((proProfiles || []).map((p: any) => [p.user_id, p.name]));
 
-        setPromoterEntries(promoters.map((p: any) => ({
-          ...p,
-          name: nameMap.get(p.user_id) || "Partner",
-          isUser: p.user_id === authUser?.id,
-        })));
+        setPromoterEntries(rows.map((r: any) => {
+          const userId = userByPartner.get(r.partner_id) as string | undefined;
+          return {
+            partner_code: r.slug,
+            name: r.display_name || (userId && nameMap.get(userId)) || `/${r.slug}`,
+            avatar_url: r.avatar_url,
+            signups: r.signups,
+            score: r.total_score,
+            is_founding_partner: userId ? foundingSet.has(userId) : false,
+            isUser: userId ? userId === authUser?.id : false,
+          };
+        }));
+      } else {
+        setPromoterEntries([]);
       }
     } catch {}
     setLoading(false);

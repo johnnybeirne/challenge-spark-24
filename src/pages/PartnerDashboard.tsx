@@ -516,7 +516,7 @@ function CommissionRatesCard({ partner, onSaved }: { partner: PartnerRow; onSave
                   className="h-7 text-xs rounded border border-input bg-background px-1"
                 >
                   <option value="percent">%</option>
-                  <option value="flat">€</option>
+                  <option value="fixed">€</option>
                 </select>
               </div>
             ) : (

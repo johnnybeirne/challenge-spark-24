@@ -154,7 +154,7 @@ const Premium = () => {
 
   const handlePrimaryCta = async () => {
     if (!user) {
-      navigate("/premium-join?redirect=/premium");
+      navigate("/join?redirect=/premium");
       return;
     }
     if (effectiveApplied) {

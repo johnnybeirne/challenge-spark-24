@@ -76,6 +76,23 @@ const AdminPromoters = () => {
     loadData();
   };
 
+  const promoteToPartner = async (p: any) => {
+    if (!p.partner_code || !p.user_id) { toast.error("Missing partner_code or user_id"); return; }
+    const { data: existing } = await (supabase.from("partners") as any)
+      .select("id, slug").eq("user_id", p.user_id).maybeSingle();
+    if (existing) { toast.info(`Already a partner (slug: ${existing.slug})`); return; }
+    const profile = profiles.get(p.user_id) || "";
+    const displayName = profile.split(" (")[0] || null;
+    const { error } = await (supabase.from("partners") as any).insert({
+      user_id: p.user_id,
+      slug: p.partner_code,
+      display_name: displayName,
+      status: "active",
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Promoted to partner (slug: ${p.partner_code})`);
+  };
+
   const approveApplication = async (app: any) => {
     // 1. Update application status
     await (supabase.from("partner_contributions") as any)

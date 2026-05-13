@@ -241,19 +241,28 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-              <Zap className="h-5 w-5" fill="currentColor" />
-            </div>
+        <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-black text-foreground sm:text-xl">
-                Earn <span className="text-primary">150 points</span> by completing all 3 steps
-              </h2>
-              <p className="text-xs font-medium text-muted-foreground sm:text-sm">+50 points per step · unlocks bonus rewards</p>
+              <p className="text-[11px] font-black uppercase tracking-wider text-primary">Points Earned</p>
+              <div className="mt-1 flex items-end gap-2">
+                <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
+                <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 sm:text-right">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                <Zap className="h-5 w-5" fill="currentColor" />
+              </div>
+              <div>
+                <p className="text-sm font-black text-foreground sm:text-base">
+                  Earn <span className="text-primary">150 points</span> for all 3 steps
+                </p>
+                <p className="text-xs font-medium text-muted-foreground">+50 per step · unlocks bonus rewards</p>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && (() => {
@@ -367,15 +376,6 @@ const Dashboard = () => {
           </section>
         </div>
 
-
-        <section className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 shadow-sm sm:p-8">
-          <p className="text-xs font-black uppercase tracking-wider text-primary">Points Earned</p>
-          <div className="mt-2 flex items-end gap-3">
-            <span className="text-6xl font-black leading-none text-foreground sm:text-7xl">{state.credits?.total ?? 0}</span>
-            <span className="mb-2 text-sm font-semibold text-muted-foreground">points</span>
-          </div>
-          <p className="mt-3 text-sm font-medium text-muted-foreground">Earn more by completing steps and inviting builders.</p>
-        </section>
 
         <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>

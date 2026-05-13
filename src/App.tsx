@@ -86,6 +86,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <FreePreviewBadge />
             <QaModePanel />
             <ExperienceShell>

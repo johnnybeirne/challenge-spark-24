@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, BookOpen, Crown, Sparkles, Target } from "lucide-react";
+import { ArrowRight, BookOpen, Crown, RotateCcw, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
@@ -8,12 +8,13 @@ import type { EntryIntent } from "@/lib/entryIntent";
 
 type SavedAssessment = AssessmentResult & { mode?: EntryIntent };
 
-const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: string; nextStep: string; Icon: typeof Target }> = {
+const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: string; nextStep: string; retakeHref: string; Icon: typeof Target }> = {
   challenge: {
     label: "3-Day Challenge",
     cta: "Continue 3-Day Challenge",
     href: "/day/1",
     nextStep: "Build your AI-powered challenge in 3 days.",
+    retakeHref: "/assessment",
     Icon: Target,
   },
   free_training: {
@@ -21,6 +22,7 @@ const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: strin
     cta: "Continue Free Training",
     href: "/blueprint/dashboard",
     nextStep: "Continue your Challenge Growth Blueprint course.",
+    retakeHref: "/free-assessment",
     Icon: BookOpen,
   },
   premium_course: {
@@ -28,6 +30,7 @@ const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: strin
     cta: "Continue Premium Course",
     href: "/premium",
     nextStep: "Pick up the Premium Growth Accelerator where you left off.",
+    retakeHref: "/premium-assessment",
     Icon: Crown,
   },
 };
@@ -93,6 +96,9 @@ const AssessmentResultCard = () => {
         </Button>
         <Button variant="outline" onClick={() => navigate("/results")} className="h-11 gap-2 px-5 text-sm font-bold">
           View full result
+        </Button>
+        <Button variant="ghost" onClick={() => navigate(cfg.retakeHref)} className="h-11 gap-2 px-5 text-sm font-bold">
+          <RotateCcw className="h-4 w-4" /> Retake assessment
         </Button>
       </div>
     </section>

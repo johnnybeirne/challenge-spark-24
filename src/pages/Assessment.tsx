@@ -43,6 +43,11 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     }
   }, [started]);
 
+  // Set entry intent based on the route this component was rendered for
+  useEffect(() => {
+    if (mode) setEntryIntent(mode);
+  }, [mode]);
+
   // Capture referral and pending coupon from URL
   useEffect(() => {
     const ref = searchParams.get("ref");

@@ -97,6 +97,9 @@ const AssessmentResultCard = () => {
         <Button variant="outline" onClick={() => navigate("/results")} className="h-11 gap-2 px-5 text-sm font-bold">
           View full result
         </Button>
+        <Button variant="ghost" onClick={() => navigate(cfg.retakeHref)} className="h-11 gap-2 px-5 text-sm font-bold">
+          <RotateCcw className="h-4 w-4" /> Retake assessment
+        </Button>
       </div>
     </section>
   );

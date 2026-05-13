@@ -159,6 +159,44 @@ const AdminCoupons = () => {
             <Label>Expires at (optional)</Label>
             <Input type="datetime-local" value={draft.expires_at} onChange={(e) => setDraft({ ...draft, expires_at: e.target.value })} />
           </div>
+          <div>
+            <Label>Attributed partner (optional)</Label>
+            <select
+              value={draft.partner_id}
+              onChange={(e) => setDraft({ ...draft, partner_id: e.target.value })}
+              className="mt-2 block w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">— No partner —</option>
+              {partners.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.display_name || `/${p.slug}`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label>Commission type</Label>
+            <select
+              value={draft.commission_type}
+              onChange={(e) => setDraft({ ...draft, commission_type: e.target.value as "percent" | "fixed" })}
+              className="mt-2 block w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+              disabled={!draft.partner_id}
+            >
+              <option value="percent">Percent of sale (%)</option>
+              <option value="fixed">Fixed amount (€)</option>
+            </select>
+          </div>
+          <div>
+            <Label>Commission value</Label>
+            <Input
+              type="number"
+              step="0.5"
+              value={draft.commission_value}
+              onChange={(e) => setDraft({ ...draft, commission_value: e.target.value })}
+              placeholder={draft.commission_type === "percent" ? "30" : "50"}
+              disabled={!draft.partner_id}
+            />
+          </div>
           <div className="sm:col-span-2 lg:col-span-3">
             <Label>Notes</Label>
             <Input value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} placeholder="Internal note" />

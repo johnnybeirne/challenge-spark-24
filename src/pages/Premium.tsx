@@ -98,6 +98,20 @@ const Premium = () => {
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [accessOpen, setAccessOpen] = useState(false);
+
+  // Auto-open the access popup once when premium is detected
+  useEffect(() => {
+    if (!isPremium) return;
+    try {
+      const KEY = "leadio_premium_access_popup_seen";
+      if (sessionStorage.getItem(KEY) === "1") return;
+      sessionStorage.setItem(KEY, "1");
+      setAccessOpen(true);
+    } catch {
+      setAccessOpen(true);
+    }
+  }, [isPremium]);
 
   // Auto-apply coupon from URL (?coupon=) or pending sessionStorage value
   useEffect(() => {

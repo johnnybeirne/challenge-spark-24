@@ -60,7 +60,6 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
       <ProblemSection />
       <RevealSection />
       <ScorePreview />
-      <HowItWorks />
       <BenefitsSection />
       <AuthoritySection />
       <CTASection onStart={() => startQuiz("bottom")} />

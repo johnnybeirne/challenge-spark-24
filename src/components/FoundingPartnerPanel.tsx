@@ -64,8 +64,8 @@ const FoundingPartnerPanel = ({ promoter }: FoundingPartnerPanelProps) => {
           </p>
           {slotsRemaining > 0 ? (
             <>
-              <p className="text-xs text-foreground font-medium mb-3">
-                <span className="text-primary font-bold">{slotsRemaining}</span> founding spots remaining
+              <p className="text-base font-black text-foreground mb-3">
+                Only <span className="text-primary text-xl">{slotsRemaining}</span> remaining
               </p>
               <Button
                 size="sm"

@@ -17,6 +17,7 @@ const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
 
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 interface AssessmentProps {
   mode?: EntryIntent;

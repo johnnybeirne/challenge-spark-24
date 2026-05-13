@@ -9,7 +9,7 @@ import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coin
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
-import CreditStatusCard from "@/components/CreditStatusCard";
+
 import AddToCalendar from "@/components/AddToCalendar";
 import Confetti from "@/components/Confetti";
 import TrainingVideoCard from "@/components/TrainingVideoCard";

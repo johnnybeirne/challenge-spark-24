@@ -184,6 +184,7 @@ const App = () => (
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="payouts" element={<AdminPayouts />} />
+                <Route path="partner-ops" element={<AdminPartnerOps />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

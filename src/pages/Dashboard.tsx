@@ -18,6 +18,7 @@ import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
+import AssessmentResultCard from "@/components/AssessmentResultCard";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -185,6 +186,7 @@ const Dashboard = () => {
             </>
           );
         })()}
+        <AssessmentResultCard />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">

@@ -229,6 +229,7 @@ const ChallengeLanding = () => {
         </div>
       </Section>
     </main>
+    </>
   );
 };
 

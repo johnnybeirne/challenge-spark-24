@@ -41,6 +41,20 @@ export interface SubPartner {
   created_at: string;
 }
 
+export interface PartnerCoupon {
+  id: string;
+  code: string;
+  label: string;
+  original_price: number;
+  final_price: number;
+  redemption_count: number;
+  max_redemptions: number | null;
+  is_active: boolean;
+  expires_at: string | null;
+  commission_type: "percent" | "fixed" | null;
+  commission_value: number | null;
+}
+
 export interface PartnerTotals {
   direct: number;
   indirect: number;

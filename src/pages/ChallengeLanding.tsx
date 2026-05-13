@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Calendar, Compass, Magnet, Repeat, Rocket, Share2, Target, TrendingUp, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import ActivityFeed from "@/components/ActivityFeed";
 import { trackEvent } from "@/lib/analytics";
 
@@ -154,7 +155,9 @@ const ChallengeLanding = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <>
+      <SEO title="3-Day Builder Challenge" description="Build a challenge in 3 days where people get a real result and feel excited to invite others." canonical="/challenge" />
+      <main className="min-h-screen bg-background text-foreground">
       <section className="px-5 py-10 sm:px-6 md:py-16 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div className="text-center lg:text-left">
@@ -226,6 +229,7 @@ const ChallengeLanding = () => {
         </div>
       </Section>
     </main>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent } from "@/lib/entryIntent";
 
@@ -19,6 +20,8 @@ const ChallengeAssessment = () => {
   };
 
   return (
+    <>
+      <SEO title="Lead Generation Assessment" description="Score your current lead generation system and get a personalised next step before building your challenge." canonical="/assessment" />
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex min-h-[82vh] w-full max-w-4xl items-center px-5 py-8 text-center sm:px-6 lg:px-8">
         <div className="w-full">
@@ -57,6 +60,7 @@ const ChallengeAssessment = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
@@ -70,6 +71,8 @@ const Assessment = () => {
     const assessmentConfig = config.assessment;
 
     return (
+      <>
+        <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you. Get an instant diagnosis and recommended strategy." canonical="/assess" />
       <main className="min-h-screen overflow-hidden bg-background">
         <section className="mx-auto flex min-h-[82vh] w-full max-w-4xl items-center px-5 py-8 text-center sm:px-6 lg:px-8">
           <div className="w-full">
@@ -165,6 +168,7 @@ const Assessment = () => {
           <p className="mt-3 text-sm text-muted-foreground">{assessmentConfig.landingSupportingText}</p>
         </section>
       </main>
+      </>
     );
   }
 
@@ -221,6 +225,8 @@ const Assessment = () => {
   };
 
   return (
+    <>
+      <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assess" />
     <div className="mx-auto flex min-h-screen w-[80vw] max-w-[60vw] flex-col p-6 max-md:max-w-[80vw]">
       <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
         <span>{current + 1} / {TOTAL_QUESTIONS}</span>
@@ -249,6 +255,7 @@ const Assessment = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

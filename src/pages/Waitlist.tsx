@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { shareOrCopy } from "@/lib/share";
+import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import {
   Rocket, Users, Link2, Trophy, Copy, Share2, ArrowUp,
@@ -181,6 +182,8 @@ const Waitlist = () => {
   const invitesNeeded = nextTier ? nextTier.min - (signedUp?.confirmed_invites || 0) : 0;
 
   return (
+    <>
+      <SEO title="Early Access Waitlist" description="Join the waitlist for Leadio — build a challenge that grows before it even launches. Climb the leaderboard with referrals." canonical="/waitlist" />
     <div className="min-h-screen">
       {showConfetti && <Confetti />}
 
@@ -423,6 +426,7 @@ const Waitlist = () => {
         </section>
       )}
     </div>
+    </>
   );
 };
 

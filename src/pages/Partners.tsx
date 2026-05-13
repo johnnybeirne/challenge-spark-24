@@ -14,6 +14,7 @@ import {
 import { usePromoter } from "@/hooks/usePromoter";
 import { useFoundingConfig } from "@/hooks/useFoundingConfig";
 import { useAuth } from "@/hooks/useAuth";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import ActivityFeed from "@/components/ActivityFeed";
@@ -172,6 +173,8 @@ const Partners = () => {
   const isApproved = !!promoter;
 
   return (
+    <>
+      <SEO title="Partner Program" description="Promote the challenge, contribute value, and grow your audience through the Leadio partner network." canonical="/partners" />
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24">
         {/* ─── URGENCY BANNER ─── */}
@@ -489,6 +492,7 @@ const Partners = () => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

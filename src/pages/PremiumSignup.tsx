@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 import { getAppliedCoupon } from "@/lib/premium";
 import { setPendingCoupon, getPendingCoupon } from "@/lib/entryIntent";
@@ -20,6 +21,8 @@ const PremiumSignup = () => {
     : "Create your account to enroll in the Leadio Growth Accelerator and continue to checkout.";
 
   return (
+    <>
+      <SEO title="Enroll in Premium" description="Create your account to enroll in the Leadio Growth Accelerator — assessment-first funnels, AI challenges, and referral loops." canonical="/premium-join" />
     <SignupChat
       product="premium"
       headline="Enroll in Leadio Premium"
@@ -38,6 +41,7 @@ const PremiumSignup = () => {
         </Button>
       )}
     />
+    </>
   );
 };
 

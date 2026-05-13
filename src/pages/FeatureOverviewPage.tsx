@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Check, Copy, RefreshCw } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { toast } from "sonner";
 import { overviewToText, scanBuiltFeatures, type FeatureOverview } from "@/lib/featureOverview";
 
@@ -82,6 +83,8 @@ const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
   }, [overview]);
 
   return (
+    <>
+      <SEO title="Platform Features" description="Explore the full Leadio platform — from assessment funnels and AI challenges to referral loops and partner networks." canonical="/app/features" />
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <section className="mb-8 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -157,6 +160,7 @@ const FeatureOverviewPage = ({ mode }: FeatureOverviewPageProps) => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

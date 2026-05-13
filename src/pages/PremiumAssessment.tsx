@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Tag } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, setPendingCoupon, getPendingCoupon } from "@/lib/entryIntent";
 
@@ -25,6 +26,8 @@ const PremiumAssessment = () => {
   };
 
   return (
+    <>
+      <SEO title="Growth System Assessment" description="Diagnose what's missing in your growth funnel before enrolling in the Leadio Growth Accelerator." canonical="/premium-assessment" />
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex min-h-[82vh] w-full max-w-4xl items-center px-5 py-8 text-center sm:px-6 lg:px-8">
         <div className="w-full">
@@ -69,6 +72,7 @@ const PremiumAssessment = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

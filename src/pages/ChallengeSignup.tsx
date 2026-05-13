@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 import AddToCalendar from "@/components/AddToCalendar";
 
@@ -7,6 +8,8 @@ const ChallengeSignup = () => {
   const navigate = useNavigate();
 
   return (
+    <>
+      <SEO title="Join the Challenge" description="Start building your AI-powered challenge in 3 days. Create a challenge that attracts leads and grows through sharing." canonical="/join" />
     <SignupChat
       product="challenge"
       headline="Start building your AI-powered challenge"
@@ -26,6 +29,7 @@ const ChallengeSignup = () => {
         </>
       )}
     />
+    </>
   );
 };
 

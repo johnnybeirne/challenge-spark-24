@@ -4,6 +4,7 @@ import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
@@ -246,6 +247,8 @@ const Results = () => {
   
 
   return (
+    <>
+      <SEO title="Your Diagnosis Results" description="See your lead generation score, personalised diagnosis, and recommended next step." canonical="/results" />
     <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">
       <p className="mb-6 text-center text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
         Your Lead Generation Score
@@ -418,6 +421,7 @@ const Results = () => {
         })()}
       </div>
     </div>
+    </>
   );
 };
 

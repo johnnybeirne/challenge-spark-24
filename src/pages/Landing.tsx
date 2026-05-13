@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
@@ -46,7 +47,9 @@ const Landing = ({ variant = "default" }: LandingProps) => {
   };
 
   return (
-    <main className="min-h-screen bg-background pb-24 text-foreground">
+    <>
+      <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
+      <main className="min-h-screen bg-background pb-24 text-foreground">
       <HeroSection onStart={() => startQuiz("hero")} />
       <ProblemSection />
       <RevealSection />
@@ -57,6 +60,7 @@ const Landing = ({ variant = "default" }: LandingProps) => {
       <CTASection onStart={() => startQuiz("bottom")} />
       <StickyQuizButton onStart={() => startQuiz("sticky")} />
     </main>
+    </>
   );
 };
 

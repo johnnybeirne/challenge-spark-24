@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { SEO } from "@/components/SEO";
 import { usePremium } from "@/hooks/usePremium";
 import { setPremium, validateCoupon, redeemCoupon } from "@/lib/premium";
 import { toast } from "@/hooks/use-toast";
@@ -169,6 +170,8 @@ const Premium = () => {
   };
 
   return (
+    <>
+      <SEO title="Growth Accelerator Course" description="The full Leadio system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation." canonical="/premium" />
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <PaymentTestModeBanner />
 
@@ -835,6 +838,7 @@ const Premium = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

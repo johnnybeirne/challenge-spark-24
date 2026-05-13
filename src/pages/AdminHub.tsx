@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench } from "lucide-react";
 
 const sections = [
   {

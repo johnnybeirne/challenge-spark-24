@@ -333,7 +333,7 @@ const QaModePanel = () => {
       )}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-4 left-4 z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted"
+        className="fixed top-4 right-4 z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted"
         title="QA Mode"
       >
         <Beaker className="h-4 w-4" />

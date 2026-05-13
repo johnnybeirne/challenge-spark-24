@@ -254,12 +254,15 @@ const Premium = () => {
               </motion.div>
 
               {isPremium && (
-                <div className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm font-bold text-success">
-                  <Check className="h-4 w-4" /> Premium access confirmed.
-                  <Button asChild size="sm" variant="outline" className="ml-2">
-                    <Link to="/blueprint/dashboard">Open Course</Link>
-                  </Button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setAccessOpen(true)}
+                  className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm font-bold text-success shadow-sm transition hover:bg-success/15 hover:shadow-md"
+                >
+                  <Check className="h-4 w-4" />
+                  Premium access confirmed — Open Course
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               )}
             </motion.div>
 

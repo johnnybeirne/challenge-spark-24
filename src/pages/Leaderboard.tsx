@@ -170,12 +170,6 @@ const Leaderboard = () => {
                 {promoterEntries.map((entry: any, i: number) => {
                   const rank = i + 1;
                   const badge = getRankBadge(rank);
-                  const tierColor = {
-                    bronze: "text-amber-600",
-                    silver: "text-gray-400",
-                    gold: "text-yellow-500",
-                    elite: "text-purple-500",
-                  }[entry.tier] || "text-muted-foreground";
 
                   return (
                     <div
@@ -189,8 +183,12 @@ const Leaderboard = () => {
                           <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
                         ) : rank}
                       </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                        {(entry.name || "?").slice(0, 2).toUpperCase()}
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+                        {entry.avatar_url ? (
+                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          (entry.name || "?").slice(0, 2).toUpperCase()
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
@@ -201,14 +199,13 @@ const Leaderboard = () => {
                             <Badge className="text-xs bg-primary/10 text-primary">Founding</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Crown className={`h-3 w-3 ${tierColor}`} />
-                          <p className="text-xs text-muted-foreground capitalize">{entry.tier}</p>
-                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {entry.signups} attributed signup{entry.signups !== 1 ? "s" : ""}
+                        </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.conversions}</p>
-                        <p className="text-xs text-muted-foreground">conversions</p>
+                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
+                        <p className="text-xs text-muted-foreground">pts</p>
                       </div>
                     </div>
                   );

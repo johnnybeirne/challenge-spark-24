@@ -72,6 +72,7 @@ const PremiumAssessment = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

@@ -862,6 +862,11 @@ const UserFeaturesAudit = () => {
       {/* Core Entry Links — owner control hub */}
       <CoreEntryLinksSection />
 
+      {/* Partner Links — every partner-facing surface */}
+      <div className="mt-4">
+        <PartnerLinksSection />
+      </div>
+
       {/* Summary metrics */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {[

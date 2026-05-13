@@ -128,6 +128,7 @@ export function usePartner() {
         setAttributions([]);
         setSubAttributions([]);
         setSubPartners([]);
+        setCoupons([]);
         setTotals(ZERO_TOTALS);
         return;
       }

@@ -67,7 +67,6 @@ import InviteEntry from "@/pages/InviteEntry";
 
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
-import Upgrade from "@/pages/Upgrade";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
 import QaModePanel from "@/components/QaModePanel";

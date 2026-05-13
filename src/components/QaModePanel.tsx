@@ -385,6 +385,29 @@ const QaModePanel = () => {
               </div>
             </div>
 
+            <div className="space-y-1.5 rounded-md border border-amber-500/40 bg-amber-500/5 p-2">
+              <SectionLabel>Simulate Session</SectionLabel>
+              <div className="grid grid-cols-3 gap-1.5">
+                {(["free","paid","challenge"] as const).map((id) => (
+                  <button
+                    key={id}
+                    disabled={switching}
+                    onClick={() => simulateSession(id)}
+                    className={`rounded border border-border px-2 py-1.5 text-[11px] font-black uppercase tracking-wider transition ${
+                      qa.active && qa.tier === SIM_CONFIG[id].tier && qa.assessmentMode === SIM_CONFIG[id].assessmentMode
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "bg-background hover:bg-muted"
+                    } disabled:opacity-50`}
+                  >
+                    {SIM_CONFIG[id].label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Logs out, clears cached user/auth/profile/subscription/assessment/course state, then rehydrates the app as the selected user.
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <SectionLabel>Assessment Mode</SectionLabel>
               <div className="flex flex-wrap gap-1.5">

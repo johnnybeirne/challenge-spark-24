@@ -39,6 +39,13 @@ const sections = [
     color: "text-green-500",
   },
   {
+    title: "Partner Operations",
+    description: "Reassign attribution, revoke commissions, merge partners, adjust scores",
+    icon: Wrench,
+    to: "/owner-console/partner-ops",
+    color: "text-orange-500",
+  },
+  {
     title: "Activity Feed",
     description: "Manage simulated activity feed items",
     icon: Activity,

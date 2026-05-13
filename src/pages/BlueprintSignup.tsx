@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 
 const BlueprintSignup = () => (
+  <>
+    <SEO title="Get Free Training" description="3 short lessons on how challenges create engagement, leads, and growth — with a personalised AI insight. Free, no credit card." canonical="/blueprint-join" />
   <SignupChat
     product="blueprint"
     headline="Get your free Challenge Growth Blueprint"

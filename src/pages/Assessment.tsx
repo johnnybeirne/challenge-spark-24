@@ -17,6 +17,7 @@ const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;
 
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 interface AssessmentProps {
   mode?: EntryIntent;
@@ -27,6 +28,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const { setState } = useAppState();
   const { config } = useSiteConfig();
   const [searchParams] = useSearchParams();
+  const qa = useQaPreview();
 
   const [started, setStarted] = useState(true);
   const [current, setCurrent] = useState(0);
@@ -43,10 +45,13 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     }
   }, [started]);
 
-  // Set entry intent based on the route this component was rendered for
+  // Resolve effective mode: QA panel override wins over the route's mode prop.
+  const resolvedMode: EntryIntent | undefined =
+    qa.active && qa.assessmentMode ? qa.assessmentMode : mode;
+
   useEffect(() => {
-    if (mode) setEntryIntent(mode);
-  }, [mode]);
+    if (resolvedMode) setEntryIntent(resolvedMode);
+  }, [resolvedMode]);
 
   // Capture referral and pending coupon from URL
   useEffect(() => {

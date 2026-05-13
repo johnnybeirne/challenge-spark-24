@@ -13,11 +13,17 @@ import {
   type QaEntry,
   type QaTier,
 } from "@/lib/qaPreview";
-import { setEntryIntent } from "@/lib/entryIntent";
+import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },
   { id: "paid", label: "Paid" },
+];
+
+const ASSESSMENT_MODES: { id: EntryIntent; label: string }[] = [
+  { id: "free_training", label: "Free Training" },
+  { id: "premium_course", label: "Premium Course" },
+  { id: "challenge", label: "3-Day Challenge" },
 ];
 
 const ENTRIES: { id: QaEntry; label: string }[] = [
@@ -203,6 +209,25 @@ const QaModePanel = () => {
     } catch {}
   };
 
+  const setAssessmentMode = (assessmentMode: EntryIntent) => {
+    if (assessmentMode === "premium_course") {
+      updateQaState({
+        active: true,
+        assessmentMode,
+        tier: "paid",
+        flags: { premiumModulesEnabled: true } as any,
+      });
+    } else {
+      updateQaState({
+        active: true,
+        assessmentMode,
+        tier: "free",
+        flags: { premiumModulesEnabled: false } as any,
+      });
+    }
+    try { setEntryIntent(assessmentMode); } catch {}
+  };
+
   const enable = () => {
     if (!qa.active) updateQaState({ active: true });
   };
@@ -293,6 +318,24 @@ const QaModePanel = () => {
                   Reset
                 </button>
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <SectionLabel>Assessment Mode</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {ASSESSMENT_MODES.map((m) => (
+                  <Pill
+                    key={m.id}
+                    active={qa.active && qa.assessmentMode === m.id}
+                    onClick={() => setAssessmentMode(m.id)}
+                  >
+                    {m.label}
+                  </Pill>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Switches the unified Assessment's post-result destination. Active mode wins over the route.
+              </p>
             </div>
 
             <div className="space-y-1.5">

@@ -66,8 +66,6 @@ import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
 
-import ChallengeAssessment from "@/pages/ChallengeAssessment";
-import PremiumAssessment from "@/pages/PremiumAssessment";
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import NotFound from "@/pages/NotFound";
@@ -96,8 +94,6 @@ const App = () => (
               <Route element={<AppShell fullWidth />}>
                 {/* Canonical primary entry — assessment-first landing */}
                 <Route path="/" element={<Landing />} />
-                {/* Free Training funnel entry — same landing design, sets entryIntent=free_training */}
-                <Route path="/free-assessment" element={<Landing variant="free_training" />} />
                 {/* Direct challenge entry (high-intent users; does NOT force LMS) */}
                 <Route path="/challenge" element={<ChallengeLanding />} />
                 {/* Free Training (Blueprint LMS) entry */}
@@ -108,13 +104,11 @@ const App = () => (
 
               {/* Public routes – narrow mobile container */}
               <Route element={<AppShell />}>
-                {/* Canonical assessment route + legacy alias */}
-                {/* Assessment engine (one component, three entry routes) */}
-                <Route path="/assess" element={<Assessment />} />
-                <Route path="/assessment" element={<ChallengeAssessment />} />
-                {/* /free-assessment moved to full-width landing route above */}
-                {/* Premium course assessment entry — same engine, sets entryIntent=premium_course, preserves coupon */}
-                <Route path="/premium-assessment" element={<PremiumAssessment />} />
+                {/* Unified assessment engine — one component, three entry routes (mode controls post-result destination) */}
+                <Route path="/assess" element={<Assessment mode="challenge" />} />
+                <Route path="/assessment" element={<Assessment mode="challenge" />} />
+                <Route path="/free-assessment" element={<Assessment mode="free_training" />} />
+                <Route path="/premium-assessment" element={<Assessment mode="premium_course" />} />
                 {/* Direct enrolment aliases */}
                 <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
                 <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium-join" />} />

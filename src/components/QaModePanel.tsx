@@ -321,6 +321,24 @@ const QaModePanel = () => {
             </div>
 
             <div className="space-y-1.5">
+              <SectionLabel>Assessment Mode</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {ASSESSMENT_MODES.map((m) => (
+                  <Pill
+                    key={m.id}
+                    active={qa.active && qa.assessmentMode === m.id}
+                    onClick={() => setAssessmentMode(m.id)}
+                  >
+                    {m.label}
+                  </Pill>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Switches the unified Assessment's post-result destination. Active mode wins over the route.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
               <SectionLabel>User Type</SectionLabel>
               <div className="flex flex-wrap gap-1.5">
                 {TIERS.map((t) => (

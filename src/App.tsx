@@ -112,7 +112,7 @@ const App = () => (
                 <Route path="/premium-assessment" element={<Assessment mode="premium_course" />} />
                 {/* Direct enrolment aliases */}
                 <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
-                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium-join" />} />
+                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium" />} />
                 <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />

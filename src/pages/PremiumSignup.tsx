@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 import { getAppliedCoupon } from "@/lib/premium";
 import { setPendingCoupon, getPendingCoupon } from "@/lib/entryIntent";

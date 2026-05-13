@@ -120,6 +120,7 @@ const BlueprintLanding = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

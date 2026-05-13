@@ -106,26 +106,50 @@ test.describe("first-touch ?ref= attribution", () => {
     // Reload so the app's own Supabase client picks up the persisted session
     // and AuthProvider fires onAuthStateChange → bindAttributionToUser.
     await page.goto("/debug/attribution");
-    // Give the deferred bind a moment to round-trip to the DB.
-    await page.waitForTimeout(2500);
 
-    // ── Step C: assert exactly one referral_attributions row for this user.
-    const { data: rows, error } = await (admin.from("referral_attributions") as any)
-      .select("*")
-      .eq("user_id", userId);
-    expect(error).toBeNull();
-    expect(rows).toHaveLength(1);
-    expect(rows![0].partner_id).toBe(partnerId);
-    expect(rows![0].partner_slug).toBe(slug);
-    expect(rows![0].source).toBe("query_param");
+    // ── Step C: poll until the row appears (or timeout).
+    const pollRows = async (
+      expectedCount: number,
+      { timeoutMs = 10_000, intervalMs = 250 } = {}
+    ) => {
+      const deadline = Date.now() + timeoutMs;
+      let lastRows: any[] = [];
+      let lastErr: any = null;
+      while (Date.now() < deadline) {
+        const { data, error } = await (admin.from("referral_attributions") as any)
+          .select("*")
+          .eq("user_id", userId);
+        lastRows = (data as any[]) ?? [];
+        lastErr = error;
+        if (!error && lastRows.length === expectedCount) return lastRows;
+        await new Promise((r) => setTimeout(r, intervalMs));
+      }
+      throw new Error(
+        `Timed out waiting for ${expectedCount} row(s); got ${lastRows.length}` +
+          (lastErr ? ` (last error: ${lastErr.message})` : "")
+      );
+    };
+
+    const rows = await pollRows(1);
+    expect(rows[0].partner_id).toBe(partnerId);
+    expect(rows[0].partner_slug).toBe(slug);
+    expect(rows[0].source).toBe("query_param");
 
     // ── Step D: re-visit; the bind must remain idempotent.
+    // Poll for a short window to give any (incorrect) duplicate-insert a chance
+    // to appear, then assert the count is still exactly 1.
     await page.goto("/debug/attribution");
-    await page.waitForTimeout(1500);
-
-    const { data: rows2 } = await (admin.from("referral_attributions") as any)
-      .select("id")
-      .eq("user_id", userId);
+    const settleUntil = Date.now() + 3_000;
+    let rows2: any[] = [];
+    while (Date.now() < settleUntil) {
+      const { data } = await (admin.from("referral_attributions") as any)
+        .select("id")
+        .eq("user_id", userId);
+      rows2 = (data as any[]) ?? [];
+      if (rows2.length > 1) break; // fail fast on duplicate
+      await new Promise((r) => setTimeout(r, 250));
+    }
     expect(rows2, "second visit must not create a duplicate row").toHaveLength(1);
   });
+
 });

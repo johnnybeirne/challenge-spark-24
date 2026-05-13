@@ -60,6 +60,7 @@ const ChallengeAssessment = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

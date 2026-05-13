@@ -353,13 +353,6 @@ const Results = () => {
                   Enrol in Free Training
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button
-                  variant="outline"
-                  className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
-                  onClick={() => navigate("/join")}
-                >
-                  Explore the 3-Day Challenge
-                </Button>
                 <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "18px" }}>
                   Get your personalised starting point, then jump straight into the free Challenge Growth Blueprint.
                 </p>

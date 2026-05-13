@@ -21,6 +21,8 @@ const PremiumSignup = () => {
     : "Create your account to enroll in the Leadio Growth Accelerator and continue to checkout.";
 
   return (
+    <>
+      <SEO title="Enroll in Premium" description="Create your account to enroll in the Leadio Growth Accelerator — assessment-first funnels, AI challenges, and referral loops." canonical="/premium-join" />
     <SignupChat
       product="premium"
       headline="Enroll in Leadio Premium"

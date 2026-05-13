@@ -203,6 +203,7 @@ async function unlockAllForUser(userId: string) {
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const userId = session.metadata?.userId;
   const partnerCode = session.metadata?.partner_code as string | undefined;
+  const couponCode = (session.metadata?.coupon_code as string | undefined) ?? null;
   const customerId = session.customer as string | undefined;
   const sessionId = session.id;
   const amount = session.amount_total ?? 0;
@@ -214,7 +215,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   // 1. Insert purchase record (idempotent on stripe_session_id)
   if (userId) {
-    await sb.from("purchases").upsert(
+    const { data: purchaseRow } = await sb.from("purchases").upsert(
       {
         user_id: userId,
         stripe_session_id: sessionId,
@@ -224,11 +225,12 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
         currency,
         price_id: "leadio_premium_lifetime_usd",
         partner_code: partnerCode ?? null,
+        coupon_code: couponCode,
         status: "paid",
         environment: env,
       },
       { onConflict: "stripe_session_id" },
-    );
+    ).select("id").maybeSingle();
 
     // 2. Mark user premium
     await sb
@@ -243,14 +245,28 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
     // 3. Unlock all premium content
     await unlockAllForUser(userId);
+
+    // 4. Create commissions (L1 + L2) — idempotent
+    if (purchaseRow?.id) {
+      try {
+        await createCommissionsForPurchase({
+          purchaseId: purchaseRow.id as string,
+          userId,
+          amountCents: amount,
+          couponCode,
+        });
+      } catch (e) {
+        console.error("Commission creation failed:", e);
+      }
+    }
   }
 
-  // 4. Credit partner
+  // 5. Legacy promoter conversion counter (Phase 7 will retire this)
   if (partnerCode) {
     await sb.rpc("process_partner_referral", { p_partner_code: partnerCode });
   }
 
-  // 5. Send confirmation email
+  // 6. Send confirmation email
   if (customerEmail) await sendConfirmationEmail(customerEmail);
 }
 
@@ -261,7 +277,7 @@ async function handleRefund(charge: any, env: StripeEnv) {
 
   const { data: purchase } = await sb
     .from("purchases")
-    .select("user_id")
+    .select("id, user_id")
     .eq("stripe_payment_intent_id", paymentIntentId)
     .eq("environment", env)
     .maybeSingle();
@@ -278,6 +294,13 @@ async function handleRefund(charge: any, env: StripeEnv) {
     .from("profiles")
     .update({ is_premium: false })
     .eq("user_id", purchase.user_id);
+
+  // Revoke any pending/approved commissions for this purchase (leave already-paid alone)
+  await sb
+    .from("commissions")
+    .update({ status: "revoked", revoked_at: new Date().toISOString() })
+    .eq("purchase_id", purchase.id)
+    .in("status", ["pending", "approved"]);
 }
 
 Deno.serve(async (req) => {

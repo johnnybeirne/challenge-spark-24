@@ -50,7 +50,7 @@ function timeAgo(iso: string) {
 
 const PartnerDashboard = () => {
   const { state } = useAppState();
-  const { partner, loading, shareLink, attributions, subAttributions, subPartners, totals, refresh } = usePartner();
+  const { partner, loading, shareLink, attributions, subAttributions, subPartners, coupons, totals, refresh } = usePartner();
   const { promoter } = usePromoter();
   const navigate = useNavigate();
   const [topPartners, setTopPartners] = useState<LeaderEntry[]>([]);
@@ -286,7 +286,48 @@ const PartnerDashboard = () => {
           />
         )}
 
-        {/* VISIBILITY */}
+        {/* COUPONS */}
+        {coupons.length > 0 && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Gift className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Your coupon codes</h3>
+              </div>
+              <div className="space-y-0">
+                {coupons.map((c) => {
+                  const used = c.max_redemptions != null;
+                  return (
+                    <div key={c.id} className="flex items-center justify-between py-2 border-b border-border last:border-0 gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-sm text-foreground">{c.code}</span>
+                          {!c.is_active && <Badge className="text-[10px] bg-muted text-muted-foreground">Inactive</Badge>}
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {c.label || "—"} · €{c.final_price} (was €{c.original_price})
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs text-foreground">
+                          {c.redemption_count}{used ? `/${c.max_redemptions}` : ""} used
+                        </p>
+                        {c.commission_value != null && (
+                          <p className="text-[11px] text-primary">
+                            {c.commission_type === "percent" ? `${c.commission_value}%` : `€${c.commission_value}`} commission
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-3">
+                Coupon-driven sales credit your account at the rate shown above (overrides your default L1 rate).
+              </p>
+            </CardContent>
+          </Card>
+        )}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-3">

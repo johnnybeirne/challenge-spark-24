@@ -41,6 +41,20 @@ export interface SubPartner {
   created_at: string;
 }
 
+export interface PartnerCoupon {
+  id: string;
+  code: string;
+  label: string;
+  original_price: number;
+  final_price: number;
+  redemption_count: number;
+  max_redemptions: number | null;
+  is_active: boolean;
+  expires_at: string | null;
+  commission_type: "percent" | "fixed" | null;
+  commission_value: number | null;
+}
+
 export interface PartnerTotals {
   direct: number;
   indirect: number;
@@ -74,6 +88,7 @@ export function usePartner() {
   const [attributions, setAttributions] = useState<AttributionWithProfile[]>([]);
   const [subAttributions, setSubAttributions] = useState<AttributionWithProfile[]>([]);
   const [subPartners, setSubPartners] = useState<SubPartner[]>([]);
+  const [coupons, setCoupons] = useState<PartnerCoupon[]>([]);
   const [totals, setTotals] = useState<PartnerTotals>(ZERO_TOTALS);
 
   const ensurePartnerRow = useCallback(async (): Promise<PartnerRow | null> => {
@@ -113,11 +128,12 @@ export function usePartner() {
         setAttributions([]);
         setSubAttributions([]);
         setSubPartners([]);
+        setCoupons([]);
         setTotals(ZERO_TOTALS);
         return;
       }
 
-      const [directRes, indirectRes, commRes, payoutRes, subPartnerRes] = await Promise.all([
+      const [directRes, indirectRes, commRes, payoutRes, subPartnerRes, couponRes] = await Promise.all([
         (supabase.from("referral_attributions") as any)
           .select("id,user_id,partner_id,parent_partner_id,partner_slug,source,first_touch_at,bound_at,landing_path")
           .eq("partner_id", p.id)
@@ -135,7 +151,13 @@ export function usePartner() {
         (supabase.from("partners") as any)
           .select("id,slug,display_name,created_at")
           .eq("parent_partner_id", p.id),
+        (supabase.from("coupons") as any)
+          .select("id,code,label,original_price,final_price,redemption_count,max_redemptions,is_active,expires_at,commission_type,commission_value")
+          .eq("partner_id", p.id)
+          .order("created_at", { ascending: false }),
       ]);
+
+      setCoupons((couponRes.data || []) as PartnerCoupon[]);
 
       const direct = (directRes.data || []) as any[];
       const indirect = (indirectRes.data || []) as any[];
@@ -230,6 +252,7 @@ export function usePartner() {
     attributions,
     subAttributions,
     subPartners,
+    coupons,
     totals,
     refresh: fetchAll,
   };

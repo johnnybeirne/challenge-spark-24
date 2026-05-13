@@ -21,7 +21,12 @@ type Coupon = {
   is_active: boolean;
   notes: string | null;
   created_at: string;
+  partner_id: string | null;
+  commission_type: "percent" | "fixed" | null;
+  commission_value: number | null;
 };
+
+type PartnerOption = { id: string; slug: string; display_name: string | null };
 
 const emptyDraft = {
   code: "",
@@ -31,31 +36,42 @@ const emptyDraft = {
   max_redemptions: "" as string,
   expires_at: "" as string,
   notes: "",
+  partner_id: "" as string,
+  commission_type: "percent" as "percent" | "fixed",
+  commission_value: "" as string,
 };
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [partners, setPartners] = useState<PartnerOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState(emptyDraft);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("coupons")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const [{ data: cData, error }, { data: pData }] = await Promise.all([
+      supabase.from("coupons").select("*").order("created_at", { ascending: false }),
+      supabase.from("partners").select("id, slug, display_name").eq("status", "active").order("slug"),
+    ]);
     if (error) {
       toast({ title: "Failed to load coupons", description: error.message, variant: "destructive" });
     } else {
-      setCoupons(data as Coupon[]);
+      setCoupons(cData as Coupon[]);
     }
+    setPartners((pData as PartnerOption[]) ?? []);
     setLoading(false);
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  const partnerLabel = (id: string | null) => {
+    if (!id) return null;
+    const p = partners.find((x) => x.id === id);
+    return p ? p.display_name || `/${p.slug}` : id.slice(0, 8);
+  };
 
   const handleCreate = async () => {
     if (!draft.code.trim()) {
@@ -71,6 +87,9 @@ const AdminCoupons = () => {
       max_redemptions: draft.max_redemptions ? Number(draft.max_redemptions) : null,
       expires_at: draft.expires_at ? new Date(draft.expires_at).toISOString() : null,
       notes: draft.notes.trim() || null,
+      partner_id: draft.partner_id || null,
+      commission_type: draft.commission_value !== "" ? draft.commission_type : null,
+      commission_value: draft.commission_value !== "" ? Number(draft.commission_value) : null,
       is_active: true,
     });
     setSaving(false);
@@ -140,6 +159,44 @@ const AdminCoupons = () => {
             <Label>Expires at (optional)</Label>
             <Input type="datetime-local" value={draft.expires_at} onChange={(e) => setDraft({ ...draft, expires_at: e.target.value })} />
           </div>
+          <div>
+            <Label>Attributed partner (optional)</Label>
+            <select
+              value={draft.partner_id}
+              onChange={(e) => setDraft({ ...draft, partner_id: e.target.value })}
+              className="mt-2 block w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">— No partner —</option>
+              {partners.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.display_name || `/${p.slug}`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label>Commission type</Label>
+            <select
+              value={draft.commission_type}
+              onChange={(e) => setDraft({ ...draft, commission_type: e.target.value as "percent" | "fixed" })}
+              className="mt-2 block w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+              disabled={!draft.partner_id}
+            >
+              <option value="percent">Percent of sale (%)</option>
+              <option value="fixed">Fixed amount (€)</option>
+            </select>
+          </div>
+          <div>
+            <Label>Commission value</Label>
+            <Input
+              type="number"
+              step="0.5"
+              value={draft.commission_value}
+              onChange={(e) => setDraft({ ...draft, commission_value: e.target.value })}
+              placeholder={draft.commission_type === "percent" ? "30" : "50"}
+              disabled={!draft.partner_id}
+            />
+          </div>
           <div className="sm:col-span-2 lg:col-span-3">
             <Label>Notes</Label>
             <Input value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} placeholder="Internal note" />
@@ -175,6 +232,18 @@ const AdminCoupons = () => {
                   {c.redemption_count} {c.max_redemptions != null ? `/ ${c.max_redemptions}` : ""} used
                 </Badge>
               </div>
+              {c.partner_id && (
+                <div className="text-xs">
+                  <Badge className="bg-primary/10 text-primary">
+                    {partnerLabel(c.partner_id)}
+                    {c.commission_value != null && (
+                      <span className="ml-1 opacity-80">
+                        · {c.commission_type === "percent" ? `${c.commission_value}%` : `€${c.commission_value}`}
+                      </span>
+                    )}
+                  </Badge>
+                </div>
+              )}
               {c.expires_at && (
                 <div className="text-xs text-muted-foreground">
                   Expires {new Date(c.expires_at).toLocaleString()}

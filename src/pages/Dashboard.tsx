@@ -347,7 +347,7 @@ const Dashboard = () => {
                 </div>
                 <div className="min-w-0 pr-14">
                   <p className="text-xs font-black uppercase tracking-wide text-primary">Step 3</p>
-                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Tell us who you help and how</h2>
+                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Create Bio</h2>
                 </div>
               </div>
               <DictatedTextarea
@@ -368,39 +368,40 @@ const Dashboard = () => {
         </div>
 
 
-        <CreditStatusCard credits={state.credits?.total ?? 0} compact />
+        <section className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 shadow-sm sm:p-8">
+          <p className="text-xs font-black uppercase tracking-wider text-primary">Points Earned</p>
+          <div className="mt-2 flex items-end gap-3">
+            <span className="text-6xl font-black leading-none text-foreground sm:text-7xl">{state.credits?.total ?? 0}</span>
+            <span className="mb-2 text-sm font-semibold text-muted-foreground">points</span>
+          </div>
+          <p className="mt-3 text-sm font-medium text-muted-foreground">Earn more by completing steps and inviting builders.</p>
+        </section>
 
         <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>
-            {ctaLabel}
+            Unlock Rewards
             <ArrowRight className="h-5 w-5" />
           </Button>
           <p className="mt-3 text-sm font-medium text-muted-foreground">Takes 10–15 minutes</p>
         </section>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <Card className="border-border bg-card shadow-sm">
-            <CardContent className="p-5">
-              <h2 className="text-lg font-bold text-foreground">What You’re Building</h2>
-              <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
+        <Card className="border-border bg-card shadow-sm">
+          <CardContent className="p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-foreground">What You’re Building & What You’ll Have</h2>
+            <div className="mt-4 grid gap-5 sm:grid-cols-2">
+              <ol className="list-decimal space-y-2.5 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
                 <li>A simple challenge for your audience</li>
                 <li>A quiz that brings people in</li>
                 <li>A system that encourages sharing</li>
               </ol>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card shadow-sm">
-            <CardContent className="p-5">
-              <h2 className="text-lg font-bold text-foreground">By the End of This</h2>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>You’ll have a working version of your challenge</li>
-                <li>You’ll understand how it grows</li>
-                <li>You’ll be able to share it</li>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li>✓ A working version of your challenge</li>
+                <li>✓ A clear understanding of how it grows</li>
+                <li>✓ A shareable lead-flow asset</li>
               </ul>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </section>
     </main>
   );

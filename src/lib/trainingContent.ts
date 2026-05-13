@@ -38,7 +38,7 @@ export const defaultTrainingContent: TrainingContent = {
   dashboard: {
     enabled: true,
     title: "Watch this first",
-    videoTitle: "How Leadio works",
+    videoTitle: "Welcome to your challenge",
     subtitle: "Before you start Day 1, understand the system you’re building.",
     videoUrl: "",
     placeholderText: "Training video goes here",

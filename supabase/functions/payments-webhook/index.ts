@@ -66,7 +66,7 @@ function computeCommissionCents(
   if (type === "percent") {
     return Math.max(0, Math.round((purchaseAmountCents * value) / 100));
   }
-  if (type === "flat") {
+  if (type === "flat" || type === "fixed") {
     return Math.max(0, Math.round(value * 100));
   }
   return 0;

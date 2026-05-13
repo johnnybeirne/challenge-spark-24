@@ -20,7 +20,8 @@ const BlueprintSignup = () => (
     renderSuccessActions={({ goToRedirect }) => (
       <Button className="h-12" onClick={goToRedirect}>Open Lesson 1</Button>
     )}
-  />
+    />
+  </>
 );
 
 export default BlueprintSignup;

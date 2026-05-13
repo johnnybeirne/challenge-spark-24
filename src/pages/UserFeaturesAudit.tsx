@@ -337,6 +337,97 @@ const CoreEntryLinksSection = () => {
   );
 };
 
+// ───────── Partner Links (Prompt 49) ─────────
+type PartnerLink = {
+  title: string;
+  route: string;
+  description: string;
+  badge: string;
+  access: "Public" | "Partner only" | "Admin";
+};
+
+const PARTNER_LINKS: PartnerLink[] = [
+  { title: "Partner Acquisition", route: "/partners", description: "Public partner-recruitment landing — pitch, tiers, and signup CTA.", badge: "Public", access: "Public" },
+  { title: "Partner Sales (canonical)", route: "/p/:partnerCode", description: "Partner-branded sales page. Auto-applies partner coupon and attributes the sale.", badge: "Sales", access: "Public" },
+  { title: "Partner Sales (legacy alias)", route: "/partner/:partnerCode", description: "Legacy alias for /p/:partnerCode — kept for back-compat with existing links.", badge: "Sales", access: "Public" },
+  { title: "Premium JV Variant", route: "/premium/:partnerCode", description: "Premium course landing with JV partner code applied.", badge: "Premium", access: "Public" },
+  { title: "Promoter Dashboard", route: "/promoter", description: "Logged-in partner's home — links, conversions, payouts, assets.", badge: "Partner", access: "Partner only" },
+  { title: "Partner Performance", route: "/partner/performance", description: "Detailed conversion, EPC, and tier-progress analytics for the partner.", badge: "Partner", access: "Partner only" },
+  { title: "Partner Ops (Admin)", route: "/owner-console/partner-ops", description: "Coupons, payouts, ledger, and reconciliation tooling.", badge: "Admin", access: "Admin" },
+  { title: "Promoter Management (Admin)", route: "/owner-console/promoters", description: "Approve, tier, and manage partner accounts.", badge: "Admin", access: "Admin" },
+];
+
+const PartnerLinksSection = () => {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copyLink = async (route: string) => {
+    try {
+      await navigator.clipboard.writeText(`${PROD_ORIGIN}${route}`);
+      setCopied(route);
+      toast.success("Link copied");
+      setTimeout(() => setCopied(c => (c === route ? null : c)), 1500);
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+
+  return (
+    <Card className="border-border">
+      <CardContent className="p-5">
+        <div className="mb-1 flex items-center gap-2">
+          <Link2 className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-black">Partner Links</h2>
+          <Badge variant="outline" className="ml-auto text-[10px]">{PARTNER_LINKS.length} routes</Badge>
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Every partner-facing surface: acquisition, branded sales pages, promoter dashboards, and admin ops. Replace <code className="rounded bg-muted px-1 text-[11px]">:partnerCode</code> with the partner's slug.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {PARTNER_LINKS.map(link => (
+            <div key={link.title} className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-base font-black">{link.title}</h3>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                    <RouteCode route={link.route} />
+                    <Badge variant="outline" className="text-[10px]">{link.access}</Badge>
+                  </div>
+                </div>
+                <Badge className="shrink-0">{link.badge}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">{link.description}</p>
+              <div className="mt-auto flex flex-wrap gap-2">
+                {!link.route.includes(":") && (
+                  <>
+                    <Button asChild size="sm" variant="secondary" className="gap-1.5">
+                      <a
+                        href={`${typeof window !== "undefined" ? window.location.origin : ""}${link.route}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" /> Preview
+                      </a>
+                    </Button>
+                    <Button asChild size="sm" className="gap-1.5">
+                      <a href={`${PROD_ORIGIN}${link.route}`} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-3.5 w-3.5" /> Open Live
+                      </a>
+                    </Button>
+                  </>
+                )}
+                <Button size="sm" variant="outline" onClick={() => copyLink(link.route)} className="gap-1.5">
+                  {copied === link.route ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied === link.route ? "Copied" : "Copy Link"}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // ───────── Stage / Navigation cohesion checks (Prompt 47.6) ─────────
 type NavCheck = { label: string; status: Status; note?: string };
 const NAV_COHESION_CHECKS: NavCheck[] = [

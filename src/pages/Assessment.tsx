@@ -128,7 +128,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
       setState((prev) => ({
         ...prev,
-        assessment: result as any,
+        assessment: { ...result, mode: resolvedMode ?? "challenge" } as any,
         memory: mergeMemory(prev.memory, {
           audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
           challengeType: normalizeChallengeType(result.challengeType),

@@ -3,8 +3,10 @@
 // Overrides are non-destructive — never mutate Supabase / Stripe data.
 
 import { setPreviewTier as setLegacyPreviewTier } from "@/lib/previewTier";
+import type { EntryIntent } from "@/lib/entryIntent";
 
 export type QaTier = "free" | "trial" | "paid" | "admin";
+export type QaAssessmentMode = EntryIntent;
 export type QaEntry =
   | "free_training"
   | "standard_assessment"

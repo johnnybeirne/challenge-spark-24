@@ -373,13 +373,6 @@ const Results = () => {
                   Enrol in Leadio Growth Accelerator
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button
-                  variant="outline"
-                  className="h-[52px] w-full gap-2 rounded-xl text-base font-semibold"
-                  onClick={() => navigate("/premium")}
-                >
-                  View Premium Course Page
-                </Button>
                 {pendingCoupon && (
                   <p className="text-center text-sm font-bold text-success">
                     Coupon {pendingCoupon} will be applied at checkout.

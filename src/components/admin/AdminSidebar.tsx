@@ -1,5 +1,7 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +37,13 @@ export function AdminSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out");
+    navigate("/join", { replace: true });
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -85,6 +94,12 @@ export function AdminSidebar() {
                     <Home className="h-4 w-4" />
                     <span>Landing page</span>
                   </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
+                  <LogOut className="h-4 w-4" />
+                  <span>Log out</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

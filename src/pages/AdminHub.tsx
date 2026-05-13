@@ -32,6 +32,13 @@ const sections = [
     color: "text-amber-500",
   },
   {
+    title: "Payouts",
+    description: "Approve commissions, batch into payouts, mark as paid",
+    icon: Banknote,
+    to: "/owner-console/payouts",
+    color: "text-green-500",
+  },
+  {
     title: "Activity Feed",
     description: "Manage simulated activity feed items",
     icon: Activity,

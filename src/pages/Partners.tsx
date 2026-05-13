@@ -492,6 +492,7 @@ const Partners = () => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

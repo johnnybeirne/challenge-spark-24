@@ -50,28 +50,39 @@ const Leaderboard = () => {
         setEntries(mapped);
       }
 
-      // Load promoter leaderboard
-      const { data: promoters } = await (supabase.from("promoters") as any)
-        .select("partner_code, tier, conversions, assessment_starts, is_founding_partner, user_id")
-        .eq("is_approved", true)
-        .order("conversions", { ascending: false })
-        .limit(50);
+      // Load partner leaderboard from canonical view (attributed signups + manual adjustment)
+      const { data: rows } = await supabase.rpc("get_partner_leaderboard", { p_limit: 50 });
 
-      if (promoters) {
-        // Get names from profiles
-        const userIds = promoters.map((p: any) => p.user_id);
-        const { data: proProfiles } = await supabase
-          .from("profiles")
-          .select("user_id, name")
-          .in("user_id", userIds);
+      if (rows && rows.length > 0) {
+        const partnerIds = rows.map((r: any) => r.partner_id);
+        // Resolve user_id + founding badge per partner
+        const [{ data: partnerMeta }, { data: founders }] = await Promise.all([
+          supabase.from("partners").select("id, user_id").in("id", partnerIds),
+          supabase.from("promoters").select("user_id, is_founding_partner").eq("is_founding_partner", true),
+        ]);
+        const userByPartner = new Map((partnerMeta || []).map((p: any) => [p.id, p.user_id]));
+        const foundingSet = new Set((founders || []).map((f: any) => f.user_id));
 
-        const nameMap = new Map((proProfiles || []).map(p => [p.user_id, p.name]));
+        const userIds = Array.from(userByPartner.values()).filter(Boolean) as string[];
+        const { data: proProfiles } = userIds.length
+          ? await supabase.from("profiles").select("user_id, name").in("user_id", userIds)
+          : { data: [] as any[] };
+        const nameMap = new Map((proProfiles || []).map((p: any) => [p.user_id, p.name]));
 
-        setPromoterEntries(promoters.map((p: any) => ({
-          ...p,
-          name: nameMap.get(p.user_id) || "Partner",
-          isUser: p.user_id === authUser?.id,
-        })));
+        setPromoterEntries(rows.map((r: any) => {
+          const userId = userByPartner.get(r.partner_id) as string | undefined;
+          return {
+            partner_code: r.slug,
+            name: r.display_name || (userId && nameMap.get(userId)) || `/${r.slug}`,
+            avatar_url: r.avatar_url,
+            signups: r.signups,
+            score: r.total_score,
+            is_founding_partner: userId ? foundingSet.has(userId) : false,
+            isUser: userId ? userId === authUser?.id : false,
+          };
+        }));
+      } else {
+        setPromoterEntries([]);
       }
     } catch {}
     setLoading(false);
@@ -159,12 +170,6 @@ const Leaderboard = () => {
                 {promoterEntries.map((entry: any, i: number) => {
                   const rank = i + 1;
                   const badge = getRankBadge(rank);
-                  const tierColor = {
-                    bronze: "text-amber-600",
-                    silver: "text-gray-400",
-                    gold: "text-yellow-500",
-                    elite: "text-purple-500",
-                  }[entry.tier] || "text-muted-foreground";
 
                   return (
                     <div
@@ -178,8 +183,12 @@ const Leaderboard = () => {
                           <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
                         ) : rank}
                       </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                        {(entry.name || "?").slice(0, 2).toUpperCase()}
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+                        {entry.avatar_url ? (
+                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          (entry.name || "?").slice(0, 2).toUpperCase()
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
@@ -190,14 +199,13 @@ const Leaderboard = () => {
                             <Badge className="text-xs bg-primary/10 text-primary">Founding</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Crown className={`h-3 w-3 ${tierColor}`} />
-                          <p className="text-xs text-muted-foreground capitalize">{entry.tier}</p>
-                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {entry.signups} attributed signup{entry.signups !== 1 ? "s" : ""}
+                        </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.conversions}</p>
-                        <p className="text-xs text-muted-foreground">conversions</p>
+                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
+                        <p className="text-xs text-muted-foreground">pts</p>
                       </div>
                     </div>
                   );

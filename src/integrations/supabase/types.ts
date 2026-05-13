@@ -1354,6 +1354,18 @@ export type Database = {
         Args: { invite_count: number }
         Returns: string
       }
+      get_partner_leaderboard: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          manual_score_adjustment: number
+          partner_id: string
+          signups: number
+          slug: string
+          total_score: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

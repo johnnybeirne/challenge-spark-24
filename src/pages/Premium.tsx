@@ -170,6 +170,8 @@ const Premium = () => {
   };
 
   return (
+    <>
+      <SEO title="Growth Accelerator Course" description="The full Leadio system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation." canonical="/premium" />
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <PaymentTestModeBanner />
 

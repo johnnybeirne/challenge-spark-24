@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";

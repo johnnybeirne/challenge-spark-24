@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, BookOpen, Compass, Sparkles, Target, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { useAppState } from "@/context/AppContext";
 
 const BlueprintLanding = () => {
@@ -9,7 +10,9 @@ const BlueprintLanding = () => {
   const cta = state.user ? "/blueprint/dashboard" : "/blueprint-join?redirect=/blueprint/dashboard";
 
   return (
-    <main className="min-h-screen bg-background pb-24 text-foreground">
+    <>
+      <SEO title="Free Training" description="3 short lessons on how challenges create engagement, leads, and growth — with an AI-powered personalised insight." canonical="/free-training" />
+      <main className="min-h-screen bg-background pb-24 text-foreground">
       {/* Hero */}
       <section className="px-5 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">

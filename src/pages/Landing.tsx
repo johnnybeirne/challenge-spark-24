@@ -47,7 +47,9 @@ const Landing = ({ variant = "default" }: LandingProps) => {
   };
 
   return (
-    <main className="min-h-screen bg-background pb-24 text-foreground">
+    <>
+      <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
+      <main className="min-h-screen bg-background pb-24 text-foreground">
       <HeroSection onStart={() => startQuiz("hero")} />
       <ProblemSection />
       <RevealSection />

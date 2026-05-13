@@ -87,6 +87,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <AttributionCapture />
             <FreePreviewBadge />
             <QaModePanel />
             <ExperienceShell>

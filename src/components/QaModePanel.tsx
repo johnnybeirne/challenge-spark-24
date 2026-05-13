@@ -104,6 +104,7 @@ const QaModePanel = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
 
   const PANEL_W = 340;
   const PANEL_H_EST = 560;
@@ -228,6 +229,70 @@ const QaModePanel = () => {
     try { setEntryIntent(assessmentMode); } catch {}
   };
 
+  type SimTarget = "free" | "paid" | "challenge";
+  const SIM_CONFIG: Record<SimTarget, {
+    label: string;
+    tier: QaTier;
+    assessmentMode: EntryIntent;
+    premium: boolean;
+    route: string;
+  }> = {
+    free:      { label: "Free user",      tier: "free", assessmentMode: "free_training",  premium: false, route: "/user-dashboard" },
+    paid:      { label: "Paid user",      tier: "paid", assessmentMode: "premium_course", premium: true,  route: "/blueprint/dashboard" },
+    challenge: { label: "Challenge user", tier: "free", assessmentMode: "challenge",      premium: false, route: "/user-dashboard" },
+  };
+
+  // Storage key substrings to wipe on a session simulate
+  const WIPE_NEEDLES = [
+    "user", "auth", "profile", "subscription", "assessment", "course",
+    "onboarding", "result", "premium", "leadio", "challengeos", "blueprint",
+    "sb-", "supabase",
+  ];
+  // Keys we must preserve across the simulated reset
+  const PRESERVE_KEYS = new Set<string>([
+    "leadio_qa_panel_pos",
+    "leadio_qa_admin",
+    "leadioPreviewState", // QA state we will rewrite below
+  ]);
+
+  const wipeStorage = (storage: Storage) => {
+    try {
+      const toRemove: string[] = [];
+      for (let i = 0; i < storage.length; i++) {
+        const k = storage.key(i);
+        if (!k) continue;
+        if (PRESERVE_KEYS.has(k)) continue;
+        const lower = k.toLowerCase();
+        if (WIPE_NEEDLES.some((n) => lower.includes(n))) toRemove.push(k);
+      }
+      toRemove.forEach((k) => storage.removeItem(k));
+    } catch {}
+  };
+
+  const simulateSession = async (target: SimTarget) => {
+    if (switching) return;
+    setSwitching(true);
+    const cfg = SIM_CONFIG[target];
+    try {
+      try { await supabase.auth.signOut({ scope: "local" } as any); } catch {}
+      wipeStorage(window.localStorage);
+      wipeStorage(window.sessionStorage);
+      // Rewrite a clean QA state for the target
+      setQaState({
+        ...defaultQaState,
+        active: true,
+        tier: cfg.tier,
+        assessmentMode: cfg.assessmentMode,
+        flags: { ...defaultQaState.flags, premiumModulesEnabled: cfg.premium },
+      });
+      try { setEntryIntent(cfg.assessmentMode); } catch {}
+      // Full reload so AppContext, auth, and feature gates rehydrate from scratch
+      window.location.assign(cfg.route);
+    } catch {
+      setSwitching(false);
+    }
+  };
+
   const enable = () => {
     if (!qa.active) updateQaState({ active: true });
   };
@@ -258,6 +323,14 @@ const QaModePanel = () => {
   return (
     <>
       {banner}
+      {switching && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-background/85 backdrop-blur-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          <p className="text-sm font-black uppercase tracking-wider text-foreground">
+            Resetting session…
+          </p>
+        </div>
+      )}
       <button
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-4 left-4 z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted"
@@ -318,6 +391,29 @@ const QaModePanel = () => {
                   Reset
                 </button>
               </div>
+            </div>
+
+            <div className="space-y-1.5 rounded-md border border-amber-500/40 bg-amber-500/5 p-2">
+              <SectionLabel>Simulate Session</SectionLabel>
+              <div className="grid grid-cols-3 gap-1.5">
+                {(["free","paid","challenge"] as const).map((id) => (
+                  <button
+                    key={id}
+                    disabled={switching}
+                    onClick={() => simulateSession(id)}
+                    className={`rounded border border-border px-2 py-1.5 text-[11px] font-black uppercase tracking-wider transition ${
+                      qa.active && qa.tier === SIM_CONFIG[id].tier && qa.assessmentMode === SIM_CONFIG[id].assessmentMode
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "bg-background hover:bg-muted"
+                    } disabled:opacity-50`}
+                  >
+                    {SIM_CONFIG[id].label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Logs out, clears cached user/auth/profile/subscription/assessment/course state, then rehydrates the app as the selected user.
+              </p>
             </div>
 
             <div className="space-y-1.5">

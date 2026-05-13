@@ -32,6 +32,7 @@ export interface QaPreviewState {
   entry: QaEntry;
   auth: QaAuth;
   flags: QaFlags;
+  assessmentMode?: QaAssessmentMode;
 }
 
 const KEY = "leadioPreviewState";

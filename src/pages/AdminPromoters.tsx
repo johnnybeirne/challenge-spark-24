@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink, UserPlus } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 
@@ -74,6 +74,23 @@ const AdminPromoters = () => {
     await (supabase.from("promoters") as any).delete().eq("id", id);
     toast.success("Promoter deleted");
     loadData();
+  };
+
+  const promoteToPartner = async (p: any) => {
+    if (!p.partner_code || !p.user_id) { toast.error("Missing partner_code or user_id"); return; }
+    const { data: existing } = await (supabase.from("partners") as any)
+      .select("id, slug").eq("user_id", p.user_id).maybeSingle();
+    if (existing) { toast.info(`Already a partner (slug: ${existing.slug})`); return; }
+    const profile = profiles.get(p.user_id) || "";
+    const displayName = profile.split(" (")[0] || null;
+    const { error } = await (supabase.from("partners") as any).insert({
+      user_id: p.user_id,
+      slug: p.partner_code,
+      display_name: displayName,
+      status: "active",
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Promoted to partner (slug: ${p.partner_code})`);
   };
 
   const approveApplication = async (app: any) => {
@@ -285,6 +302,10 @@ const AdminPromoters = () => {
                     <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
                       onClick={() => { setEditingId(p.id); setEditConversions(String(p.conversions)); }}>
                       <Edit2 className="h-3 w-3" /> Adjust
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
+                      onClick={() => promoteToPartner(p)}>
+                      <UserPlus className="h-3 w-3" /> Promote to partner
                     </Button>
                   </div>
                 </CardContent>

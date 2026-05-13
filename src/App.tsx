@@ -55,6 +55,7 @@ import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";
 import AdminCoupons from "@/pages/AdminCoupons";
 import AdminPayouts from "@/pages/AdminPayouts";
+import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
@@ -183,6 +184,7 @@ const App = () => (
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="payouts" element={<AdminPayouts />} />
+                <Route path="partner-ops" element={<AdminPartnerOps />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

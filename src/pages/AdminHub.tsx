@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote } from "lucide-react";
+import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench } from "lucide-react";
 
 const sections = [
   {
@@ -37,6 +37,13 @@ const sections = [
     icon: Banknote,
     to: "/owner-console/payouts",
     color: "text-green-500",
+  },
+  {
+    title: "Partner Operations",
+    description: "Reassign attribution, revoke commissions, merge partners, adjust scores",
+    icon: Wrench,
+    to: "/owner-console/partner-ops",
+    color: "text-orange-500",
   },
   {
     title: "Activity Feed",

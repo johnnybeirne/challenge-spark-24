@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Target, Users, X, Zap } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -120,19 +120,25 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
         {[
-          { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, locked: false },
-          { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, locked: false },
-          { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, locked: false },
-          { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Lock, locked: true },
-          { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: Lock, locked: true },
-        ].map(({ n, path, label, Icon, locked }) => {
+          { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
+          { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
+          { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
+          { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
+          { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
+        ].map(({ n, path, label, Icon, premium }) => {
           const active = location.pathname === path;
+          // Paid users never see locks — premium modules feel "available", just softer if not yet active.
+          const locked = premium && !isPremiumUser;
+          const muted = !active && premium && isPremiumUser;
+          const DisplayIcon = locked ? Lock : Icon;
           return (
             <button
               key={path}
               onClick={() => go(path)}
               className={cn(
-                "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+                "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+                "border-border bg-background",
+                muted && "border-border/60 bg-muted/30",
                 collapsed ? "p-2" : "px-3 py-2",
                 active && "ring-2 ring-primary/20"
               )}
@@ -153,7 +159,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                     active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
                   )}>{n}</span>
                 )}
-                <Icon className={cn("h-4 w-4 shrink-0", locked ? "text-primary/60" : "text-muted-foreground")} />
+                <DisplayIcon className={cn(
+                  "h-4 w-4 shrink-0",
+                  locked ? "text-primary/60" : active ? "text-primary" : "text-muted-foreground"
+                )} />
               </div>
             </button>
           );

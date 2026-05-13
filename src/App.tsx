@@ -55,6 +55,7 @@ import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";
 import AdminCoupons from "@/pages/AdminCoupons";
 import AdminPayouts from "@/pages/AdminPayouts";
+import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";

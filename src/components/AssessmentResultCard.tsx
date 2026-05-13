@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, BookOpen, Crown, Sparkles, Target } from "lucide-react";
+import { ArrowRight, BookOpen, Crown, RotateCcw, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";

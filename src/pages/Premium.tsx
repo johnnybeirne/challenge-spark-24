@@ -855,6 +855,31 @@ const Premium = () => {
           </Reveal>
         </div>
       </section>
+
+      <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-success/30 bg-success/10 text-success">
+              <Check className="h-7 w-7" />
+            </div>
+            <DialogTitle className="text-center text-2xl font-black">Premium access confirmed</DialogTitle>
+            <DialogDescription className="text-center">
+              Your course area is ready. Jump in now to start the Premium Growth Accelerator.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="gap-2 font-black uppercase">
+              <Link to="/blueprint/dashboard" onClick={() => setAccessOpen(false)}>
+                Open Course
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => setAccessOpen(false)}>
+              Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
     </>
   );

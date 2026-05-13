@@ -50,7 +50,7 @@ function timeAgo(iso: string) {
 
 const PartnerDashboard = () => {
   const { state } = useAppState();
-  const { partner, loading, shareLink, attributions, subAttributions, subPartners, totals, refresh } = usePartner();
+  const { partner, loading, shareLink, attributions, subAttributions, subPartners, coupons, totals, refresh } = usePartner();
   const { promoter } = usePromoter();
   const navigate = useNavigate();
   const [topPartners, setTopPartners] = useState<LeaderEntry[]>([]);

@@ -8,6 +8,8 @@ const ChallengeSignup = () => {
   const navigate = useNavigate();
 
   return (
+    <>
+      <SEO title="Join the Challenge" description="Start building your AI-powered challenge in 3 days. Create a challenge that attracts leads and grows through sharing." canonical="/join" />
     <SignupChat
       product="challenge"
       headline="Start building your AI-powered challenge"

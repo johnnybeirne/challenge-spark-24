@@ -151,6 +151,7 @@ const Premium = () => {
     }
     setApplied({ code: result.code, finalPrice: result.finalPrice, originalPrice: result.originalPrice, label: result.label });
     toast({ title: "Coupon applied", description: `${result.code} — ${result.label}` });
+    if (result.finalPrice === 0) setCouponSuccessOpen(true);
   };
 
   const handlePrimaryCta = async () => {

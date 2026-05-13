@@ -182,6 +182,8 @@ const Waitlist = () => {
   const invitesNeeded = nextTier ? nextTier.min - (signedUp?.confirmed_invites || 0) : 0;
 
   return (
+    <>
+      <SEO title="Early Access Waitlist" description="Join the waitlist for Leadio — build a challenge that grows before it even launches. Climb the leaderboard with referrals." canonical="/waitlist" />
     <div className="min-h-screen">
       {showConfetti && <Confetti />}
 

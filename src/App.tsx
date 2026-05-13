@@ -128,9 +128,8 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
-                {/* Partner-branded landing — canonical + legacy alias */}
+                {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
-                <Route path="/partner/:partnerCode" element={<PartnerSales />} />
                 {/* Referral invite entry — stores code then funnels into assessment */}
                 <Route path="/invite/:referralCode" element={<InviteEntry />} />
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}

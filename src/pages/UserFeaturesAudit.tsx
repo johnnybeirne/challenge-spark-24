@@ -93,7 +93,7 @@ const ROUTES: RouteRow[] = [
   { route: "/promoter", purpose: "Partner / promoter dashboard", access: "Partner only", status: "Detected" },
   { route: "/partner/performance", purpose: "Partner performance", access: "Partner only", status: "Detected" },
   { route: "/p/:partnerCode", purpose: "Partner-branded sales landing (canonical)", access: "Public", status: "Detected", notes: "Auto-applies partner coupon" },
-  { route: "/partner/:partnerCode", purpose: "Partner-branded sales landing (legacy alias)", access: "Public", status: "Detected" },
+  
   { route: "/premium/:partnerCode", purpose: "Premium course JV partner variant", access: "Public", status: "Detected", notes: "Coupon via partner code" },
   { route: "/owner-console/partner-ops", purpose: "Partner ops (coupons, payouts, ledger)", access: "Admin", status: "Detected" },
   { route: "/owner-console", purpose: "Owner console hub", access: "Admin", status: "Detected" },
@@ -349,7 +349,7 @@ type PartnerLink = {
 const PARTNER_LINKS: PartnerLink[] = [
   { title: "Partner Acquisition", route: "/partners", description: "Public partner-recruitment landing — pitch, tiers, and signup CTA.", badge: "Public", access: "Public" },
   { title: "Partner Sales (canonical)", route: "/p/:partnerCode", description: "Partner-branded sales page. Auto-applies partner coupon and attributes the sale.", badge: "Sales", access: "Public" },
-  { title: "Partner Sales (legacy alias)", route: "/partner/:partnerCode", description: "Legacy alias for /p/:partnerCode — kept for back-compat with existing links.", badge: "Sales", access: "Public" },
+  
   { title: "Premium JV Variant", route: "/premium/:partnerCode", description: "Premium course landing with JV partner code applied.", badge: "Premium", access: "Public" },
   { title: "Promoter Dashboard", route: "/promoter", description: "Logged-in partner's home — links, conversions, payouts, assets.", badge: "Partner", access: "Partner only" },
   { title: "Partner Performance", route: "/partner/performance", description: "Detailed conversion, EPC, and tier-progress analytics for the partner.", badge: "Partner", access: "Partner only" },

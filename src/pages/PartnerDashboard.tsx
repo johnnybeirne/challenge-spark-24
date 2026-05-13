@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePartner } from "@/hooks/usePartner";
 import { usePromoter } from "@/hooks/usePromoter";
 import { useAppState } from "@/context/AppContext";
-import { useBadges } from "@/hooks/useBadges";
 import { supabase } from "@/integrations/supabase/client";
-import CrossPromoSlots from "@/components/CrossPromoSlots";
 import FoundingPartnerPanel from "@/components/FoundingPartnerPanel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,13 +12,14 @@ import { Progress } from "@/components/ui/progress";
 import {
   Crown, Users, TrendingUp, Globe, Copy, Share2, Eye,
   Gift, Trophy, Rocket, Shield, Zap, ArrowRight, BarChart3,
+  Wallet, GitBranch,
 } from "lucide-react";
 import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
 import Spinner from "@/components/Spinner";
+import { calculateLeaderboardScore, getVisibility } from "@/lib/scoring";
 
-/* ─── Leaderboard entry type ─── */
 interface LeaderEntry {
   name: string;
   score: number;
@@ -27,32 +27,39 @@ interface LeaderEntry {
   isUser?: boolean;
 }
 
-/* ─── Reward milestones ─── */
 const REWARD_MILESTONES = [
   { at: 10, name: "Partner Growth Kit", value: 197 },
   { at: 25, name: "Partner Accelerator Pack", value: 397 },
   { at: 50, name: "AI-powered challenge app", value: 5000 },
 ];
 
-import { calculateLeaderboardScore, getVisibility } from "@/lib/scoring";
+function formatEur(cents: number) {
+  return `€${(cents / 100).toFixed(2)}`;
+}
 
-function getVisibilityLocal(score: number) {
-  return getVisibility(score);
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
 }
 
 const PartnerDashboard = () => {
   const { state } = useAppState();
-  const { promoter, loading } = usePromoter();
-  const { badges } = useBadges();
+  const { partner, loading, shareLink, attributions, subAttributions, subPartners, totals } = usePartner();
+  const { promoter } = usePromoter();
   const navigate = useNavigate();
-  const [topPromoters, setTopPromoters] = useState<LeaderEntry[]>([]);
+  const [topPartners, setTopPartners] = useState<LeaderEntry[]>([]);
 
-  // Track page view
   useEffect(() => {
     trackEvent("promoter_dashboard_viewed");
   }, []);
 
-  // Load top 5 promoters for leaderboard preview
+  // Top 5 leaderboard preview from partners view (still uses promoters table for now — Phase 7 rewrites)
   useEffect(() => {
     (async () => {
       try {
@@ -70,7 +77,7 @@ const PartnerDashboard = () => {
             .in("user_id", userIds);
           const nameMap = new Map((profiles || []).map((p) => [p.user_id, p.name]));
 
-          setTopPromoters(
+          setTopPartners(
             promoters.map((p: any) => ({
               name: nameMap.get(p.user_id) || "Partner",
               score: p.conversions,
@@ -91,8 +98,7 @@ const PartnerDashboard = () => {
     );
   }
 
-  // Non-promoter redirect
-  if (!promoter) {
+  if (!partner) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         <Crown className="h-12 w-12 text-muted-foreground mb-4" />
@@ -105,24 +111,21 @@ const PartnerDashboard = () => {
     );
   }
 
-  const direct = promoter.conversions;
-  const indirect = Math.floor(direct * 0.4); // estimated from network
-  const totalNetwork = direct + indirect;
-  const estimatedReach = direct * 1 + indirect * 0.5;
-  const leaderboardScore = calculateLeaderboardScore(state);
-  const visibility = getVisibilityLocal(leaderboardScore);
-  const partnerLink = `${window.location.origin}/assess?ref=${promoter.partner_code}`;
+  const { direct, indirect, network, pendingCommissionsCents, approvedCommissionsCents, paidCommissionsCents } = totals;
 
-  // Next reward milestone
+  const leaderboardScore = calculateLeaderboardScore(state);
+  const visibility = getVisibility(leaderboardScore);
+
   const nextMilestone = REWARD_MILESTONES.find((m) => direct < m.at);
-  const prevMilestone = [...REWARD_MILESTONES].reverse().find((m) => direct >= m.at);
-  const progressToNext = nextMilestone
-    ? Math.min(100, (direct / nextMilestone.at) * 100)
-    : 100;
+  const progressToNext = nextMilestone ? Math.min(100, (direct / nextMilestone.at) * 100) : 100;
 
   const handleCopy = async () => {
+    if (!shareLink) {
+      toast.error("Your partner slug is missing. Contact admin.");
+      return;
+    }
     try {
-      await navigator.clipboard.writeText(partnerLink);
+      await navigator.clipboard.writeText(shareLink);
       toast.success("Partner link copied!");
       trackEvent("promoter_link_copied");
     } catch {
@@ -131,39 +134,48 @@ const PartnerDashboard = () => {
   };
 
   const handleShare = () => {
+    if (!shareLink) return;
     shareOrCopy({
       text: "I'm helping builders launch in 3 days — take the free assessment",
-      url: partnerLink,
+      url: shareLink,
     });
     trackEvent("promoter_shared");
   };
 
+  const hasAnyData = direct > 0 || indirect > 0;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-8 pb-24">
-        {/* ─── HEADER ─── */}
+        {/* HEADER */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <Crown className="h-5 w-5 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Promoter Dashboard</h1>
+            <h1 className="text-2xl font-bold text-foreground">Partner Dashboard</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            You're growing your audience through the challenge network.
+            {partner.display_name || "You're"} growing your audience through the challenge network.
           </p>
-          {promoter.is_founding_partner && (
-            <Badge className="mt-2 bg-primary/10 text-primary text-xs gap-1">
-              <Shield className="h-3 w-3" /> Founding Partner
-            </Badge>
-          )}
+          <div className="flex flex-wrap gap-2 mt-2">
+            <Badge className="bg-muted text-muted-foreground text-xs">/{partner.slug}</Badge>
+            {partner.status !== "active" && (
+              <Badge className="bg-amber-500/10 text-amber-600 text-xs">{partner.status}</Badge>
+            )}
+            {promoter?.is_founding_partner && (
+              <Badge className="bg-primary/10 text-primary text-xs gap-1">
+                <Shield className="h-3 w-3" /> Founding Partner
+              </Badge>
+            )}
+          </div>
         </div>
 
-        {/* ─── SECTION 1: CORE METRICS ─── */}
+        {/* CORE METRICS */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           {[
-            { icon: Users, label: "Direct Referrals", value: direct, sub: `You brought in ${direct} builder${direct !== 1 ? "s" : ""}` },
-            { icon: TrendingUp, label: "Indirect Referrals", value: indirect, sub: `They brought in ${indirect} more` },
-            { icon: Globe, label: "Total Network", value: totalNetwork, sub: `Your network size: ${totalNetwork}` },
-            { icon: Zap, label: "Estimated Reach", value: Math.round(estimatedReach), sub: `Estimated audience reach` },
+            { icon: Users, label: "Direct Referrals", value: direct, sub: `${direct} builder${direct !== 1 ? "s" : ""} attributed to you` },
+            { icon: TrendingUp, label: "Sub-partner Referrals", value: indirect, sub: `From your level-2 network` },
+            { icon: Globe, label: "Total Network", value: network, sub: `Direct + indirect attributions` },
+            { icon: Wallet, label: "Pending Commission", value: formatEur(pendingCommissionsCents), sub: `Awaiting payout` },
           ].map(({ icon: Icon, label, value, sub }) => (
             <Card key={label} className="border-border">
               <CardContent className="p-4">
@@ -176,30 +188,97 @@ const PartnerDashboard = () => {
           ))}
         </div>
 
-        {/* ─── SECTION 2: NETWORK GROWTH VISUAL ─── */}
+        {/* EMPTY STATE */}
+        {!hasAnyData && (
+          <Card className="border-primary/20 bg-primary/5 mb-6">
+            <CardContent className="p-5 text-center">
+              <Rocket className="h-8 w-8 text-primary mx-auto mb-2" />
+              <h3 className="text-sm font-semibold text-foreground mb-1">Share your link to start tracking</h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                Every signup that comes through your link will appear here in real time.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Button size="sm" onClick={handleCopy} className="gap-1"><Copy className="h-3 w-3" /> Copy link</Button>
+                <Button size="sm" variant="outline" onClick={handleShare} className="gap-1"><Share2 className="h-3 w-3" /> Share</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* RECENT REFERRALS */}
+        {attributions.length > 0 && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Recent referrals</h3>
+              </div>
+              <div className="space-y-0">
+                {attributions.slice(0, 10).map((a) => (
+                  <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                    <div className="min-w-0">
+                      <p className="text-sm text-foreground truncate">{a.profile_name}</p>
+                      <p className="text-xs text-muted-foreground">{timeAgo(a.first_touch_at)}</p>
+                    </div>
+                    <Badge className="text-xs bg-muted text-muted-foreground shrink-0">{a.source}</Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* COMMISSIONS SNAPSHOT */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Your network is compounding</h3>
-            <div className="space-y-2">
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">Direct</span>
-                  <span className="text-foreground font-medium">{direct}</span>
-                </div>
-                <Progress value={totalNetwork > 0 ? (direct / totalNetwork) * 100 : 0} className="h-2" />
-              </div>
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">Indirect</span>
-                  <span className="text-foreground font-medium">{indirect}</span>
-                </div>
-                <Progress value={totalNetwork > 0 ? (indirect / totalNetwork) * 100 : 0} className="h-2" />
-              </div>
+            <div className="flex items-center gap-2 mb-3">
+              <Wallet className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Commissions</h3>
             </div>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "Pending", value: pendingCommissionsCents },
+                { label: "Approved", value: approvedCommissionsCents },
+                { label: "Paid", value: paidCommissionsCents },
+              ].map((c) => (
+                <div key={c.label} className="text-center p-2 bg-muted/50 rounded-lg">
+                  <p className="text-base font-bold text-foreground">{formatEur(c.value)}</p>
+                  <p className="text-xs text-muted-foreground">{c.label}</p>
+                </div>
+              ))}
+            </div>
+            {pendingCommissionsCents + approvedCommissionsCents + paidCommissionsCents === 0 && (
+              <p className="text-xs text-muted-foreground mt-3 text-center">
+                Commissions appear here when a referred user purchases.
+              </p>
+            )}
           </CardContent>
         </Card>
 
-        {/* ─── SECTION 3: VISIBILITY & CROSS-PROMOTION ─── */}
+        {/* SUB-PARTNERS */}
+        {subPartners.length > 0 && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <GitBranch className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Your sub-partners</h3>
+              </div>
+              <div className="space-y-0">
+                {subPartners.map((s) => (
+                  <div key={s.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                    <div className="min-w-0">
+                      <p className="text-sm text-foreground truncate">{s.display_name || `/${s.slug}`}</p>
+                      <p className="text-xs text-muted-foreground">{s.direct_count} direct referral{s.direct_count !== 1 ? "s" : ""}</p>
+                    </div>
+                    <Badge className="text-xs bg-muted text-muted-foreground shrink-0">L2</Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* VISIBILITY */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-3">
@@ -207,9 +286,7 @@ const PartnerDashboard = () => {
               <h3 className="text-sm font-semibold text-foreground">Your visibility inside the network</h3>
             </div>
             <div className="flex items-center gap-2 mb-3">
-              <Badge className={`text-xs ${visibility.bg} ${visibility.color}`}>
-                {visibility.label}
-              </Badge>
+              <Badge className={`text-xs ${visibility.bg} ${visibility.color}`}>{visibility.label}</Badge>
               <span className="text-xs text-muted-foreground">Score: {leaderboardScore}</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -218,32 +295,7 @@ const PartnerDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* ─── YOUR EXPOSURE (Cross-promo stats) ─── */}
-        <Card className="border-border mb-6">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Zap className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Your exposure</h3>
-            </div>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              {[
-                { label: "Impressions", value: promoter.assessment_starts || 0 },
-                { label: "Clicks", value: promoter.conversions || 0 },
-                { label: "CTR", value: promoter.assessment_starts > 0 ? `${Math.round((promoter.conversions / promoter.assessment_starts) * 100)}%` : "0%" },
-              ].map(({ label, value }) => (
-                <div key={label} className="text-center p-2 bg-muted/50 rounded-lg">
-                  <p className="text-lg font-bold text-foreground">{value}</p>
-                  <p className="text-xs text-muted-foreground">{label}</p>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              The more you contribute, the more your challenge is shown across the network.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* ─── SECTION 4: REWARDS & PROGRESSION ─── */}
+        {/* REWARDS */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -274,7 +326,7 @@ const PartnerDashboard = () => {
                     <div className="ml-6">
                       <Progress value={progress} className="h-1.5" />
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {direct}/{m.at} conversions
+                        {direct}/{m.at} referrals
                       </p>
                     </div>
                   </div>
@@ -290,23 +342,21 @@ const PartnerDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* ─── SECTION 5: LEADERBOARD PREVIEW ─── */}
+        {/* LEADERBOARD PREVIEW */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-3">
               <Trophy className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Top promoters this week</h3>
+              <h3 className="text-sm font-semibold text-foreground">Top partners this week</h3>
             </div>
-            {topPromoters.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-4">No promoters yet</p>
+            {topPartners.length === 0 ? (
+              <p className="text-xs text-muted-foreground text-center py-4">No partners yet</p>
             ) : (
               <div className="space-y-0">
-                {topPromoters.map((entry, i) => (
+                {topPartners.map((entry, i) => (
                   <div
                     key={i}
-                    className={`flex items-center gap-3 py-2.5 ${
-                      i < topPromoters.length - 1 ? "border-b border-border" : ""
-                    } ${entry.isUser ? "bg-primary/5 -mx-2 px-2 rounded" : ""}`}
+                    className={`flex items-center gap-3 py-2.5 ${i < topPartners.length - 1 ? "border-b border-border" : ""} ${entry.isUser ? "bg-primary/5 -mx-2 px-2 rounded" : ""}`}
                   >
                     <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
                     <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
@@ -339,7 +389,7 @@ const PartnerDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* ─── SECTION 6: ACTIONS ─── */}
+        {/* ACTIONS */}
         <div className="grid gap-3 mb-6">
           <Button className="w-full gap-2 min-h-[48px]" onClick={handleCopy}>
             <Copy className="h-4 w-4" /> Copy my referral link
@@ -366,28 +416,10 @@ const PartnerDashboard = () => {
           </Button>
         </div>
 
-        {/* ─── SECTION 7: IMPACT ─── */}
-        <Card className="border-primary/20 bg-primary/5 mb-6">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Rocket className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Your impact</h3>
-            </div>
-            <div className="space-y-1 text-sm text-foreground">
-              <p>You introduced <span className="font-bold">{direct}</span> builder{direct !== 1 ? "s" : ""}</p>
-              <p>They introduced <span className="font-bold">{indirect}</span> more</p>
-              <p>You've helped grow the network by <span className="font-bold text-primary">{totalNetwork}</span> builders</p>
-            </div>
-            <p className="text-xs text-muted-foreground mt-3 italic">
-              This is how network-driven growth compounds.
-            </p>
-          </CardContent>
-        </Card>
+        {/* FOUNDING PARTNER PANEL (still uses promoters) */}
+        {promoter && <FoundingPartnerPanel promoter={promoter} />}
 
-        {/* ─── SECTION 8: FOUNDING PARTNER PANEL ─── */}
-        <FoundingPartnerPanel promoter={promoter} />
-
-        {/* ─── SECTION 9: PERFORMANCE NUDGE ─── */}
+        {/* PERFORMANCE NUDGE */}
         {direct < 3 && (
           <Card className="border-border mb-6">
             <CardContent className="p-5">
@@ -406,17 +438,10 @@ const PartnerDashboard = () => {
                   trackEvent("promoter_cta_clicked", { cta: "nudge_invite" });
                 }}
               >
-                Invite builders <ArrowRight className="h-3 w-3" />
+                <Share2 className="h-3 w-3" /> Share now
               </Button>
             </CardContent>
           </Card>
-        )}
-
-        {/* Partner since */}
-        {promoter.created_at && (
-          <p className="text-xs text-muted-foreground text-center">
-            Partner since {new Date(promoter.created_at).toLocaleDateString()}
-          </p>
         )}
       </div>
     </div>

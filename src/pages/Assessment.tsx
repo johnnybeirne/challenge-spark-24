@@ -12,6 +12,7 @@ import { questions, generateResult } from "@/lib/assessmentData";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+import Landing from "@/pages/Landing";
 
 const REF_SESSION_KEY = "challengeos_ref";
 const TOTAL_QUESTIONS = questions.length;

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { type StripeEnv, createStripeClient, verifyWebhook } from "../_shared/stripe.ts";
+import { type StripeEnv, verifyWebhook } from "../_shared/stripe.ts";
 
 let _supabase: ReturnType<typeof createClient> | null = null;
 function getSupabase() {
@@ -52,6 +52,141 @@ async function sendConfirmationEmail(toEmail: string) {
   }
 }
 
+/**
+ * Compute commission amount in cents.
+ * - percent: purchaseAmountCents * value / 100
+ * - flat:    value (in major currency units) * 100
+ */
+function computeCommissionCents(
+  type: string,
+  value: number,
+  purchaseAmountCents: number,
+): number {
+  if (!value || value <= 0) return 0;
+  if (type === "percent") {
+    return Math.max(0, Math.round((purchaseAmountCents * value) / 100));
+  }
+  if (type === "flat") {
+    return Math.max(0, Math.round(value * 100));
+  }
+  return 0;
+}
+
+/**
+ * Create commissions for a paid purchase.
+ * - L1: from referral_attributions.partner_id (or coupon.partner_id override)
+ * - L2: from referral_attributions.parent_partner_id, using parent's defaults
+ * Idempotent: skips if a commission already exists for (purchase_id, partner_id, level).
+ */
+async function createCommissionsForPurchase(opts: {
+  purchaseId: string;
+  userId: string;
+  amountCents: number;
+  couponCode: string | null;
+}) {
+  const sb = getSupabase();
+  const { purchaseId, userId, amountCents, couponCode } = opts;
+  if (!purchaseId || !userId || amountCents <= 0) return;
+
+  // 1. Resolve attribution
+  const { data: attribution } = await sb
+    .from("referral_attributions")
+    .select("partner_id, parent_partner_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  // 2. Optional coupon override (partner-tied coupon)
+  let couponPartnerId: string | null = null;
+  let couponType: string | null = null;
+  let couponValue: number | null = null;
+  if (couponCode) {
+    const { data: coupon } = await sb
+      .from("coupons")
+      .select("partner_id, commission_type, commission_value")
+      .ilike("code", couponCode)
+      .maybeSingle();
+    if (coupon?.partner_id) {
+      couponPartnerId = coupon.partner_id as string;
+      couponType = (coupon.commission_type as string) || null;
+      couponValue = (coupon.commission_value as number) || null;
+    }
+  }
+
+  // Effective L1 partner: coupon override wins over attribution
+  const l1PartnerId = couponPartnerId || attribution?.partner_id || null;
+  if (!l1PartnerId) return;
+
+  // 3. Load L1 partner defaults (used when coupon doesn't override)
+  const { data: l1Partner } = await sb
+    .from("partners")
+    .select("id, default_commission_type, default_commission_value, parent_partner_id")
+    .eq("id", l1PartnerId)
+    .maybeSingle();
+  if (!l1Partner) return;
+
+  const l1Type = couponType || (l1Partner.default_commission_type as string);
+  const l1Value = couponValue ?? (l1Partner.default_commission_value as number);
+  const l1Amount = computeCommissionCents(l1Type, l1Value, amountCents);
+
+  if (l1Amount > 0) {
+    const { data: existing } = await sb
+      .from("commissions")
+      .select("id")
+      .eq("purchase_id", purchaseId)
+      .eq("partner_id", l1PartnerId)
+      .eq("level", 1)
+      .maybeSingle();
+    if (!existing) {
+      await sb.from("commissions").insert({
+        purchase_id: purchaseId,
+        partner_id: l1PartnerId,
+        user_id: userId,
+        amount_cents: l1Amount,
+        commission_type: l1Type,
+        commission_value_snapshot: l1Value,
+        level: 1,
+        status: "pending",
+      });
+    }
+  }
+
+  // 4. Level-2 from attribution's parent (only when attribution drove L1, not coupon override)
+  const l2PartnerId = !couponPartnerId ? attribution?.parent_partner_id : null;
+  if (l2PartnerId) {
+    const { data: l2Partner } = await sb
+      .from("partners")
+      .select("id, default_commission_type, default_commission_value")
+      .eq("id", l2PartnerId)
+      .maybeSingle();
+    if (l2Partner) {
+      const l2Type = l2Partner.default_commission_type as string;
+      const l2Value = l2Partner.default_commission_value as number;
+      const l2Amount = computeCommissionCents(l2Type, l2Value, amountCents);
+      if (l2Amount > 0) {
+        const { data: existing } = await sb
+          .from("commissions")
+          .select("id")
+          .eq("purchase_id", purchaseId)
+          .eq("partner_id", l2PartnerId)
+          .eq("level", 2)
+          .maybeSingle();
+        if (!existing) {
+          await sb.from("commissions").insert({
+            purchase_id: purchaseId,
+            partner_id: l2PartnerId,
+            user_id: userId,
+            amount_cents: l2Amount,
+            commission_type: l2Type,
+            commission_value_snapshot: l2Value,
+            level: 2,
+            status: "pending",
+          });
+        }
+      }
+    }
+  }
+}
+
 async function unlockAllForUser(userId: string) {
   const sb = getSupabase();
   const unlocks = [
@@ -68,6 +203,7 @@ async function unlockAllForUser(userId: string) {
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const userId = session.metadata?.userId;
   const partnerCode = session.metadata?.partner_code as string | undefined;
+  const couponCode = (session.metadata?.coupon_code as string | undefined) ?? null;
   const customerId = session.customer as string | undefined;
   const sessionId = session.id;
   const amount = session.amount_total ?? 0;
@@ -79,7 +215,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   // 1. Insert purchase record (idempotent on stripe_session_id)
   if (userId) {
-    await sb.from("purchases").upsert(
+    const { data: purchaseRow } = await sb.from("purchases").upsert(
       {
         user_id: userId,
         stripe_session_id: sessionId,
@@ -89,11 +225,12 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
         currency,
         price_id: "leadio_premium_lifetime_usd",
         partner_code: partnerCode ?? null,
+        coupon_code: couponCode,
         status: "paid",
         environment: env,
       },
       { onConflict: "stripe_session_id" },
-    );
+    ).select("id").maybeSingle();
 
     // 2. Mark user premium
     await sb
@@ -108,14 +245,28 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
     // 3. Unlock all premium content
     await unlockAllForUser(userId);
+
+    // 4. Create commissions (L1 + L2) — idempotent
+    if (purchaseRow?.id) {
+      try {
+        await createCommissionsForPurchase({
+          purchaseId: purchaseRow.id as string,
+          userId,
+          amountCents: amount,
+          couponCode,
+        });
+      } catch (e) {
+        console.error("Commission creation failed:", e);
+      }
+    }
   }
 
-  // 4. Credit partner
+  // 5. Legacy promoter conversion counter (Phase 7 will retire this)
   if (partnerCode) {
     await sb.rpc("process_partner_referral", { p_partner_code: partnerCode });
   }
 
-  // 5. Send confirmation email
+  // 6. Send confirmation email
   if (customerEmail) await sendConfirmationEmail(customerEmail);
 }
 
@@ -126,7 +277,7 @@ async function handleRefund(charge: any, env: StripeEnv) {
 
   const { data: purchase } = await sb
     .from("purchases")
-    .select("user_id")
+    .select("id, user_id")
     .eq("stripe_payment_intent_id", paymentIntentId)
     .eq("environment", env)
     .maybeSingle();
@@ -143,6 +294,13 @@ async function handleRefund(charge: any, env: StripeEnv) {
     .from("profiles")
     .update({ is_premium: false })
     .eq("user_id", purchase.user_id);
+
+  // Revoke any pending/approved commissions for this purchase (leave already-paid alone)
+  await sb
+    .from("commissions")
+    .update({ status: "revoked", revoked_at: new Date().toISOString() })
+    .eq("purchase_id", purchase.id)
+    .in("status", ["pending", "approved"]);
 }
 
 Deno.serve(async (req) => {

@@ -838,6 +838,7 @@ const Premium = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 

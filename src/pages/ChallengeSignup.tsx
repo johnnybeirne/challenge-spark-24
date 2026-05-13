@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 import AddToCalendar from "@/components/AddToCalendar";
 

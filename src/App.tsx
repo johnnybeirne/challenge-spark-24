@@ -35,7 +35,6 @@ import Leaderboard from "@/pages/Leaderboard";
 import Rewards from "@/pages/Rewards";
 import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
-import Upgrade from "@/pages/Upgrade";
 import Mentor from "@/pages/Mentor";
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";
@@ -154,7 +153,7 @@ const App = () => (
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />
                 <Route path="/resources" element={<AuthGuard><ResourcesPage /></AuthGuard>} />
-                <Route path="/upgrade" element={<AuthGuard><Upgrade /></AuthGuard>} />
+                <Route path="/upgrade" element={<Navigate to="/premium" replace />} />
                 <Route path="/blueprint/dashboard" element={<AuthGuard><BlueprintDashboard /></AuthGuard>} />
                 <Route path="/blueprint/lesson/:day" element={<AuthGuard><BlueprintLesson /></AuthGuard>} />
                 <Route path="/blueprint/insight" element={<AuthGuard><BlueprintInsight /></AuthGuard>} />

@@ -278,7 +278,7 @@ const LockedModuleView = ({ lesson }: { lesson: PremiumModule }) => (
             {PREMIUM_LOCK_MESSAGE}
           </p>
           <Button asChild className="h-11 gap-2 px-6 text-sm font-black uppercase">
-            <Link to="/upgrade">
+            <Link to="/premium">
               <Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}
             </Link>
           </Button>

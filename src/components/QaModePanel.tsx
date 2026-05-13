@@ -46,7 +46,7 @@ const ROUTES: { label: string; path: string }[] = [
   { label: "Module 3", path: "/blueprint/lesson/3" },
   { label: "Module 4", path: "/blueprint/lesson/4" },
   { label: "Module 5", path: "/blueprint/lesson/5" },
-  { label: "Upgrade", path: "/upgrade" },
+  { label: "Premium", path: "/premium" },
   { label: "Referrals", path: "/referrals" },
   { label: "Waitlist", path: "/waitlist" },
 ];

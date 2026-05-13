@@ -11,6 +11,8 @@ export type LandingVariant = "default" | "free_training";
 
 interface LandingProps {
   variant?: LandingVariant;
+  /** Optional override for the start CTA. When provided, used instead of navigating to /assess. */
+  onStart?: (section: string) => void;
 }
 
 const PageSection = ({ children, className = "" }: { children: ReactNode; className?: string }) => (

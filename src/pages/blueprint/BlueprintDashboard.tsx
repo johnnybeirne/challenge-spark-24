@@ -56,7 +56,7 @@ const BlueprintDashboard = () => {
 
   const handleLockedClick = () => {
     toast.message(PREMIUM_LOCK_TITLE, { description: PREMIUM_LOCK_MESSAGE });
-    navigate("/upgrade");
+    navigate("/premium");
   };
 
   return (
@@ -271,7 +271,7 @@ export const UpgradeCard = () => {
         </div>
       </div>
       <Button asChild className="mt-5 h-12 w-full gap-2 text-base font-black uppercase sm:w-auto sm:px-8">
-        <Link to="/upgrade"><Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}</Link>
+        <Link to="/premium"><Rocket className="h-4 w-4" /> {PREMIUM_LOCK_CTA}</Link>
       </Button>
     </section>
   );

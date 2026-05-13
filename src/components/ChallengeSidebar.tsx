@@ -244,7 +244,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
         {!isPremiumUser && (
           <button
-            onClick={() => go("/upgrade")}
+            onClick={() => go("/premium")}
             className={cn(
               "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
               collapsed ? "p-2" : "px-3 py-2.5"

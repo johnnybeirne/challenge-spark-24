@@ -79,7 +79,7 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
   }
 
   // Paid
-  if (p === "/upgrade" || p.startsWith("/upgrade/") ||
+  if (p === "/premium" || p.startsWith("/premium/") ||
       p === "/checkout" || p.startsWith("/checkout/") ||
       p === "/course" || p.startsWith("/course/")) {
     return "paid";
@@ -124,7 +124,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
         { label: "Learn", to: "/blueprint/dashboard" },
         { label: "Build Challenge Framework", to: "/blueprint/insight" },
         { label: "Ask Johnny AI", to: "/mentor" },
-        { label: "Upgrade", to: "/upgrade" },
+        { label: "Upgrade", to: "/premium" },
       ];
     case "challenge":
       return [
@@ -137,7 +137,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
       return [
         { label: "Course", to: "/course" },
         { label: "Resources", to: "/resources" },
-        { label: "Upgrade", to: "/upgrade" },
+        { label: "Upgrade", to: "/premium" },
       ];
     case "partner":
       return [

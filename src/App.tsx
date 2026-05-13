@@ -68,6 +68,7 @@ import InviteEntry from "@/pages/InviteEntry";
 
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
+import Upgrade from "@/pages/Upgrade";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
 import QaModePanel from "@/components/QaModePanel";
@@ -154,7 +155,7 @@ const App = () => (
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />
                 <Route path="/resources" element={<AuthGuard><ResourcesPage /></AuthGuard>} />
-                <Route path="/upgrade" element={<AuthGuard><Upgrade /></AuthGuard>} />
+                <Route path="/upgrade" element={<Navigate to="/premium" replace />} />
                 <Route path="/blueprint/dashboard" element={<AuthGuard><BlueprintDashboard /></AuthGuard>} />
                 <Route path="/blueprint/lesson/:day" element={<AuthGuard><BlueprintLesson /></AuthGuard>} />
                 <Route path="/blueprint/insight" element={<AuthGuard><BlueprintInsight /></AuthGuard>} />

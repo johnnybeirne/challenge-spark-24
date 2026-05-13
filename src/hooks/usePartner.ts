@@ -12,6 +12,8 @@ export interface PartnerRow {
   status: string;
   default_commission_type: string;
   default_commission_value: number;
+  default_l2_commission_type: string;
+  default_l2_commission_value: number;
   manual_score_adjustment: number;
   parent_partner_id: string | null;
   created_at: string;

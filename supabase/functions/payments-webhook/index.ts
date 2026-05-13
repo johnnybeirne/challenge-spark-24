@@ -66,7 +66,7 @@ function computeCommissionCents(
   if (type === "percent") {
     return Math.max(0, Math.round((purchaseAmountCents * value) / 100));
   }
-  if (type === "flat") {
+  if (type === "flat" || type === "fixed") {
     return Math.max(0, Math.round(value * 100));
   }
   return 0;
@@ -155,12 +155,12 @@ async function createCommissionsForPurchase(opts: {
   if (l2PartnerId) {
     const { data: l2Partner } = await sb
       .from("partners")
-      .select("id, default_commission_type, default_commission_value")
+      .select("id, default_l2_commission_type, default_l2_commission_value")
       .eq("id", l2PartnerId)
       .maybeSingle();
     if (l2Partner) {
-      const l2Type = l2Partner.default_commission_type as string;
-      const l2Value = l2Partner.default_commission_value as number;
+      const l2Type = l2Partner.default_l2_commission_type as string;
+      const l2Value = l2Partner.default_l2_commission_value as number;
       const l2Amount = computeCommissionCents(l2Type, l2Value, amountCents);
       if (l2Amount > 0) {
         const { data: existing } = await sb

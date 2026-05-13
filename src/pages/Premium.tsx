@@ -99,6 +99,7 @@ const Premium = () => {
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [accessOpen, setAccessOpen] = useState(false);
+  const [couponSuccessOpen, setCouponSuccessOpen] = useState(false);
 
   // Auto-open the access popup once when premium is detected
   useEffect(() => {
@@ -150,6 +151,7 @@ const Premium = () => {
     }
     setApplied({ code: result.code, finalPrice: result.finalPrice, originalPrice: result.originalPrice, label: result.label });
     toast({ title: "Coupon applied", description: `${result.code} — ${result.label}` });
+    if (result.finalPrice === 0) setCouponSuccessOpen(true);
   };
 
   const handlePrimaryCta = async () => {
@@ -876,6 +878,37 @@ const Premium = () => {
             </Button>
             <Button variant="outline" size="lg" onClick={() => setAccessOpen(false)}>
               Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Coupon success modal */}
+      <Dialog open={couponSuccessOpen} onOpenChange={setCouponSuccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-success/30 bg-success/10 text-success">
+              <Tag className="h-7 w-7" />
+            </div>
+            <DialogTitle className="text-center text-2xl font-black">Coupon applied</DialogTitle>
+            <DialogDescription className="text-center">
+              Your access has been unlocked. Continue to enrol now.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Button
+              size="lg"
+              className="gap-2 font-black uppercase"
+              onClick={() => {
+                setCouponSuccessOpen(false);
+                handlePrimaryCta();
+              }}
+            >
+              <Rocket className="h-4 w-4" />
+              Continue to Enrol
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => setCouponSuccessOpen(false)}>
+              Close
             </Button>
           </div>
         </DialogContent>

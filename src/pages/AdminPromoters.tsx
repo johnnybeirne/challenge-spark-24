@@ -303,6 +303,10 @@ const AdminPromoters = () => {
                       onClick={() => { setEditingId(p.id); setEditConversions(String(p.conversions)); }}>
                       <Edit2 className="h-3 w-3" /> Adjust
                     </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
+                      onClick={() => promoteToPartner(p)}>
+                      <UserPlus className="h-3 w-3" /> Promote to partner
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

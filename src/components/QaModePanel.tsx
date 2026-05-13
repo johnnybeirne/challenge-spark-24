@@ -209,6 +209,25 @@ const QaModePanel = () => {
     } catch {}
   };
 
+  const setAssessmentMode = (assessmentMode: EntryIntent) => {
+    if (assessmentMode === "premium_course") {
+      updateQaState({
+        active: true,
+        assessmentMode,
+        tier: "paid",
+        flags: { premiumModulesEnabled: true } as any,
+      });
+    } else {
+      updateQaState({
+        active: true,
+        assessmentMode,
+        tier: "free",
+        flags: { premiumModulesEnabled: false } as any,
+      });
+    }
+    try { setEntryIntent(assessmentMode); } catch {}
+  };
+
   const enable = () => {
     if (!qa.active) updateQaState({ active: true });
   };

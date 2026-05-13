@@ -21,7 +21,6 @@ import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
 import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
-import PremiumSignup from "@/pages/PremiumSignup";
 import ResetPassword from "@/pages/ResetPassword";
 import Training from "@/pages/Training";
 import Dashboard from "@/pages/Dashboard";
@@ -112,7 +111,7 @@ const App = () => (
                 <Route path="/premium-assessment" element={<Assessment mode="premium_course" />} />
                 {/* Direct enrolment aliases */}
                 <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
-                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium-join" />} />
+                <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium" />} />
                 <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
@@ -120,7 +119,6 @@ const App = () => (
                 <Route path="/results/high" element={<Results />} />
                 <Route path="/join" element={<ChallengeSignup />} />
                 <Route path="/blueprint-join" element={<BlueprintSignup />} />
-                <Route path="/premium-join" element={<PremiumSignup />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />

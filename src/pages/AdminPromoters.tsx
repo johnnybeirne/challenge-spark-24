@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Crown, Users, Star, Edit2, Package, ExternalLink, UserPlus } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 

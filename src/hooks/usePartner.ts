@@ -132,7 +132,7 @@ export function usePartner() {
         return;
       }
 
-      const [directRes, indirectRes, commRes, payoutRes, subPartnerRes] = await Promise.all([
+      const [directRes, indirectRes, commRes, payoutRes, subPartnerRes, couponRes] = await Promise.all([
         (supabase.from("referral_attributions") as any)
           .select("id,user_id,partner_id,parent_partner_id,partner_slug,source,first_touch_at,bound_at,landing_path")
           .eq("partner_id", p.id)
@@ -150,7 +150,13 @@ export function usePartner() {
         (supabase.from("partners") as any)
           .select("id,slug,display_name,created_at")
           .eq("parent_partner_id", p.id),
+        (supabase.from("coupons") as any)
+          .select("id,code,label,original_price,final_price,redemption_count,max_redemptions,is_active,expires_at,commission_type,commission_value")
+          .eq("partner_id", p.id)
+          .order("created_at", { ascending: false }),
       ]);
+
+      setCoupons((couponRes.data || []) as PartnerCoupon[]);
 
       const direct = (directRes.data || []) as any[];
       const indirect = (indirectRes.data || []) as any[];

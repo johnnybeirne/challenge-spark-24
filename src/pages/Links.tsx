@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Tag } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 type Card = { title: string; route: string; description: string; badge?: string };
 

@@ -99,6 +99,7 @@ const Premium = () => {
   const [applied, setApplied] = useState<{ code: string; finalPrice: number; originalPrice: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [accessOpen, setAccessOpen] = useState(false);
+  const [couponSuccessOpen, setCouponSuccessOpen] = useState(false);
 
   // Auto-open the access popup once when premium is detected
   useEffect(() => {

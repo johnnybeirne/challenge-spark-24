@@ -140,3 +140,51 @@ export async function resolveAttributionPartner(): Promise<ResolvedPartner | nul
   if (!slug) return null;
   return resolvePartnerBySlug(slug);
 }
+
+// ── Phase 2: bind first-touch attribution to a signed-in user ──────────────
+
+const BOUND_FLAG_PREFIX = "leadio_attribution_bound_";
+
+/**
+ * Idempotently writes the user's first-touch attribution to
+ * `referral_attributions`. Safe to call on every auth state change — the
+ * unique (user_id) constraint plus an in-browser flag prevent dupes.
+ */
+export async function bindAttributionToUser(userId: string): Promise<void> {
+  if (!userId) return;
+
+  const flagKey = BOUND_FLAG_PREFIX + userId;
+  try {
+    if (localStorage.getItem(flagKey) === "1") return;
+  } catch {}
+
+  const stored = getStoredAttribution();
+  if (!stored?.slug) return;
+
+  const partner = await resolvePartnerBySlug(stored.slug);
+  if (!partner) {
+    // Slug doesn't match any partner — nothing to bind. Don't set the flag,
+    // in case the partner row is created later.
+    return;
+  }
+
+  const payload = {
+    user_id: userId,
+    partner_id: partner.id,
+    partner_slug: partner.slug,
+    parent_partner_id: partner.parent_partner_id,
+    landing_path: stored.path || null,
+    landing_query: stored.query || {},
+    first_touch_at: stored.ts ? new Date(stored.ts).toISOString() : new Date().toISOString(),
+    source: stored.source,
+  };
+
+  const { error } = await (supabase.from("referral_attributions") as any)
+    .insert(payload);
+
+  // 23505 = unique violation → already bound, treat as success.
+  if (!error || error.code === "23505") {
+    try { localStorage.setItem(flagKey, "1"); } catch {}
+  }
+}
+

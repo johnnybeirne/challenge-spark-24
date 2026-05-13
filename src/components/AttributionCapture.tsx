@@ -7,13 +7,12 @@ import { captureAttribution } from "@/lib/attribution";
  * first-touch referral attribution from:
  *   - ?ref=<slug>            on any route
  *   - /p/:partnerCode        partner-branded landing
- *   - /partner/:partnerCode  legacy alias
  *   - /premium/:partnerCode  JV premium variant
  *   - /invite/:referralCode  invite link
  *
  * First-touch wins — once captured, subsequent visits do not overwrite.
  */
-const PARTNER_PATH_PREFIXES = ["/p/", "/partner/", "/premium/"];
+const PARTNER_PATH_PREFIXES = ["/p/", "/premium/"];
 const INVITE_PREFIX = "/invite/";
 
 const AttributionCapture = () => {

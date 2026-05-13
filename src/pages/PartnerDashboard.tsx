@@ -278,6 +278,14 @@ const PartnerDashboard = () => {
           </Card>
         )}
 
+        {/* COMMISSION RATES */}
+        {partner && (
+          <CommissionRatesCard
+            partner={partner}
+            onSaved={refresh}
+          />
+        )}
+
         {/* VISIBILITY */}
         <Card className="border-border mb-6">
           <CardContent className="p-5">

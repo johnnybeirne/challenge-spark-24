@@ -29,7 +29,7 @@ const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: strin
   </div>
 );
 
-const Landing = ({ variant = "default" }: LandingProps) => {
+const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
@@ -44,6 +44,10 @@ const Landing = ({ variant = "default" }: LandingProps) => {
     trackEvent("landing_cta_clicked", { section, funnel, variant, entryIntent });
     if (variant === "free_training") {
       trackEvent("assessment_started" as any, { entry: "free_training", section });
+    }
+    if (onStart) {
+      onStart(section);
+      return;
     }
     navigate("/assess");
   };

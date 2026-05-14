@@ -31,6 +31,7 @@ type SortKey =
   | "referral_code"
   | "referred_by_code"
   | "confirmed_invites"
+  | "valid_referrals"
   | "current_tier"
   | "status"
   | "created_at";
@@ -40,8 +41,8 @@ const AdminWaitlist = () => {
   const [rows, setRows] = useState<WaitlistRow[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
-  const [sortKey, setSortKey] = useState<SortKey>("waitlist_position");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {

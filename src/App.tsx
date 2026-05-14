@@ -62,6 +62,7 @@ import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Waitlist from "@/pages/Waitlist";
+import WaitlistThanks from "@/pages/WaitlistThanks";
 import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";

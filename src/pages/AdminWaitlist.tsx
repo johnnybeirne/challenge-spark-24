@@ -350,7 +350,7 @@ const AdminWaitlist = () => {
                       ["waitlist_position", "#", "left"],
                       ["name", "Name", "left"],
                       ["email", "Email", "left"],
-                      ["referral_code", "Referral code", "left"],
+                      
                       ["referred_by_code", "Referred by", "left"],
                       ["confirmed_invites", "Invites", "center"],
                       ["current_tier", "Tier", "left"],
@@ -386,9 +386,6 @@ const AdminWaitlist = () => {
                     <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
                     <td className="px-4 py-3">
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referral_code}</code>
-                    </td>
-                    <td className="px-4 py-3">
                       {r.referred_by_code ? (
                         (() => {
                           const inviter = rows.find((x) => x.referral_code === r.referred_by_code);
@@ -418,7 +415,7 @@ const AdminWaitlist = () => {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

@@ -150,8 +150,17 @@ const Waitlist = () => {
               {!signedUp ? (
                 <form
                   onSubmit={handleSubmit}
-                  className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row lg:mx-0"
+                  className="mx-auto mt-8 flex w-full max-w-md flex-col gap-4 lg:mx-0"
                 >
+                  <Input
+                    type="text"
+                    required
+                    placeholder="First name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-14 rounded-xl border-border bg-card text-base"
+                    maxLength={80}
+                  />
                   <Input
                     type="email"
                     required
@@ -164,7 +173,7 @@ const Waitlist = () => {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
+                    className="mt-1 h-14 w-full gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
                   >
                     {loading ? "Joining…" : "Join Early Access"}
                     <ArrowRight className="h-4 w-4" />

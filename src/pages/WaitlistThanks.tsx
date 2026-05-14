@@ -162,18 +162,40 @@ const WaitlistThanks = () => {
       <main className="min-h-screen bg-background text-foreground">
         {/* SECTION 1 — SUCCESS */}
         <section className="px-5 pt-14 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">
-              <CheckCircle2 className="h-4 w-4" />
-              You're in
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">
+                <CheckCircle2 className="h-4 w-4" />
+                You're in
+              </div>
+              <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+                {firstName ? `${firstName}, you're on the waitlist.` : "You're on the waitlist."}
+              </h1>
+              <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
+                You'll be notified when the challenge opens.
+              </p>
             </div>
-            <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-              {firstName ? `${firstName}, you're on the waitlist.` : "You're on the waitlist."}
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl">
-              You'll be notified when the challenge opens.
-            </p>
-            <HostBadge className="mt-7" align="center" />
+
+            {/* HOST PORTRAIT */}
+            <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+              <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl ring-1 ring-border/60">
+                <img
+                  src={hostImage}
+                  alt="Johnny Beirne"
+                  loading="eager"
+                  className="block aspect-[4/5] w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border/60 bg-background/85 px-4 py-3 backdrop-blur-sm">
+                  <div className="leading-tight">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Hosted by
+                    </p>
+                    <p className="text-sm font-semibold text-foreground">Johnny Beirne</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

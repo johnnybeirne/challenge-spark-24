@@ -202,49 +202,30 @@ const Waitlist = () => {
                     <span className="text-sm font-black uppercase">You're on the list</span>
                   </div>
 
-                  <div className="mt-4 flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-foreground">
-                      #{signedUp.waitlist_position}
-                    </span>
-                    <span className="text-sm text-muted-foreground">in queue</span>
+                  <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-background p-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Inbox className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground">Check your inbox</p>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        We just sent your invite link to{" "}
+                        <span className="break-all font-medium text-foreground">{signedUp.email}</span>.
+                        Open it to share with friends and move up the queue.
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {signedUp.confirmed_invites > 0
-                      ? `${signedUp.confirmed_invites} invite${signedUp.confirmed_invites !== 1 ? "s" : ""} confirmed`
-                      : "Share your link to move up"}
-                  </p>
-
-                  <div className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background p-3">
-                    <input
-                      readOnly
-                      value={referralUrl}
-                      className="min-w-0 flex-1 truncate bg-transparent text-sm text-foreground outline-none"
-                    />
-                    <button
-                      onClick={handleCopy}
-                      className="shrink-0 rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                      aria-label="Copy invite link"
-                    >
-                      {copied ? (
-                        <CheckCircle2 className="h-4 w-4 text-success" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  <Button
-                    onClick={handleShare}
-                    variant="outline"
-                    className="mt-3 h-11 w-full rounded-xl text-sm font-black uppercase"
-                  >
-                    Share invite link
-                  </Button>
 
                   <p className="mt-4 text-center text-xs text-muted-foreground">
-                    Invite 3 people to unlock earlier access.
+                    Don't see it? Check spam or promotions.
                   </p>
+
+                  <button
+                    onClick={resetForm}
+                    className="mt-3 w-full text-center text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                  >
+                    Use a different email
+                  </button>
                 </div>
               )}
 

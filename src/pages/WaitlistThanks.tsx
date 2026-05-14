@@ -172,7 +172,7 @@ const WaitlistThanks = () => {
       <main className="min-h-screen bg-background text-foreground">
         {showConfetti && <Confetti />}
         {/* SECTION 1 — SUCCESS */}
-        <section className="bg-white px-5 pt-14 pb-0 sm:px-6 md:pt-20 lg:px-8">
+        <section className="bg-white px-5 pb-0 sm:px-6 lg:px-8" style={{ paddingTop: "10px" }}>
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
             <div className="pb-10 text-center md:pb-14 lg:pb-20 lg:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">

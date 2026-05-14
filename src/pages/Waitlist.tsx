@@ -111,20 +111,19 @@ const Waitlist = () => {
             .eq("email", trimmed)
             .single();
           if (existing) {
-            setSignedUp(existing);
             toast.info("You're already on the list — we re-sent your invite link.");
             sendInviteEmail(existing);
+            navigate(`/waitlist/thanks?ref=${existing.referral_code}`);
           }
         } else {
           toast.error("Something went wrong. Please try again.");
           console.error(error);
         }
       } else if (data) {
-        setSignedUp(data);
-        setShowConfetti(true);
         toast.success("You're in! Check your inbox.");
         loadCount();
         sendInviteEmail(data);
+        navigate(`/waitlist/thanks?ref=${data.referral_code}`);
       }
     } finally {
       setLoading(false);

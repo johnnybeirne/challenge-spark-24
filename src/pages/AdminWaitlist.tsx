@@ -389,10 +389,14 @@ const AdminWaitlist = () => {
                       {r.referred_by_code ? (
                         (() => {
                           const inviter = rows.find((x) => x.referral_code === r.referred_by_code);
-                          return inviter?.name ? (
-                            <span className="text-sm">{inviter.name}</span>
-                          ) : (
-                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referred_by_code}</code>
+                          if (!inviter) {
+                            return <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referred_by_code}</code>;
+                          }
+                          return (
+                            <div className="flex flex-col">
+                              {inviter.name && <span className="text-sm">{inviter.name}</span>}
+                              <span className="text-xs text-muted-foreground">{inviter.email}</span>
+                            </div>
                           );
                         })()
                       ) : (

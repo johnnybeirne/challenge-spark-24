@@ -313,13 +313,43 @@ const AdminWaitlist = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0 hover:bg-muted/20">
+                {filtered.map((r) => {
+                  const refs = validRefMap.get(r.id) || 0;
+                  const topRank = topFiveIds.indexOf(r.id);
+                  const isTop = topRank >= 0;
+                  const rowCls = isTop
+                    ? "border-b last:border-0 bg-amber-500/5 hover:bg-amber-500/10"
+                    : "border-b last:border-0 hover:bg-muted/20";
+                  const rankChipCls = [
+                    "bg-amber-400/20 text-amber-800 ring-amber-500/40",
+                    "bg-zinc-400/20 text-zinc-800 ring-zinc-500/40",
+                    "bg-orange-700/15 text-orange-900 ring-orange-700/40",
+                    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+                    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+                  ];
+                  return (
+                  <tr key={r.id} className={rowCls}>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {r.waitlist_position}
+                      {isTop ? (
+                        <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}>
+                          {topRank + 1}
+                        </span>
+                      ) : (
+                        r.waitlist_position
+                      )}
                     </td>
-                    <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <span className="inline-flex items-center gap-1.5">
+                        {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+                        {r.name || "—"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={isTop ? "font-semibold text-amber-700" : "font-semibold"}>
+                        {refs}
+                      </span>
+                    </td>
                     {(() => {
                       const inviter = r.referred_by_code
                         ? rows.find((x) => x.referral_code === r.referred_by_code)
@@ -377,10 +407,11 @@ const AdminWaitlist = () => {
                       {formatDate(r.created_at)}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={10} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

@@ -23,11 +23,33 @@ type WaitlistRow = {
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
+type SortKey =
+  | "waitlist_position"
+  | "name"
+  | "email"
+  | "referral_code"
+  | "referred_by_code"
+  | "confirmed_invites"
+  | "current_tier"
+  | "status"
+  | "created_at";
+
 const AdminWaitlist = () => {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<WaitlistRow[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
+  const [sortKey, setSortKey] = useState<SortKey>("waitlist_position");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -57,8 +79,26 @@ const AdminWaitlist = () => {
           (r.referred_by_code || "").toLowerCase().includes(q),
       );
     }
-    return list;
-  }, [rows, filter, search]);
+    const sorted = [...list].sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      const aEmpty = av === null || av === undefined || av === "";
+      const bEmpty = bv === null || bv === undefined || bv === "";
+      if (aEmpty && bEmpty) return 0;
+      if (aEmpty) return 1;
+      if (bEmpty) return -1;
+      let cmp: number;
+      if (typeof av === "number" && typeof bv === "number") {
+        cmp = av - bv;
+      } else if (sortKey === "created_at") {
+        cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+      } else {
+        cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return sorted;
+  }, [rows, filter, search, sortKey, sortDir]);
 
   const totals = useMemo(() => {
     const total = rows.length;

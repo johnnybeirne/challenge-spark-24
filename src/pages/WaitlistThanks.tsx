@@ -206,7 +206,7 @@ const WaitlistThanks = () => {
           <div className="mx-auto max-w-5xl">
             <div className="text-center">
               <p className="text-xs font-black uppercase tracking-wider text-primary">
-                A taste of what opens
+                A taste of what's to come
               </p>
               <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
                 Your 3-day challenge

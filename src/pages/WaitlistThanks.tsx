@@ -32,18 +32,18 @@ interface WaitlistEntry {
 const lockedDays = [
   {
     day: "Day 1",
-    title: "Define your offer",
-    body: "Lock in the audience, promise, and proof in under 30 minutes.",
+    title: "Clarify Your Challenge Concept",
+    body: "Turn your expertise into a simple challenge people want to join.",
   },
   {
     day: "Day 2",
-    title: "Build your first asset",
-    body: "Ship the page, post, or message that makes the offer real.",
+    title: "Create the Viral Invite Loop",
+    body: "Design the referral rewards, share prompts, and participant incentives.",
   },
   {
     day: "Day 3",
-    title: "Run your first launch",
-    body: "Drive your first invites, signups, or sales — live and tracked.",
+    title: "Launch Your First Growth Campaign",
+    body: "Map your launch, partner outreach, and first signup push.",
   },
 ];
 

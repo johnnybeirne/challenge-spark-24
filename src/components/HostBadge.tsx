@@ -7,6 +7,7 @@ interface HostBadgeProps {
   label?: string;
   className?: string;
   align?: "start" | "center";
+  size?: "sm" | "lg";
 }
 
 const HostBadge = ({
@@ -15,8 +16,30 @@ const HostBadge = ({
   label = "Hosted by",
   className = "",
   align = "start",
+  size = "sm",
 }: HostBadgeProps) => {
   const justify = align === "center" ? "justify-center" : "justify-start";
+
+  if (size === "lg") {
+    const itemsAlign = align === "center" ? "items-center text-center" : "items-start text-left";
+    return (
+      <div className={`flex flex-col gap-3 ${itemsAlign} ${className}`}>
+        <img
+          src={src}
+          alt={name}
+          loading="lazy"
+          className="h-24 w-24 rounded-3xl object-cover shadow-lg ring-1 ring-border sm:h-28 sm:w-28"
+        />
+        <div className="leading-tight">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {label}
+          </p>
+          <p className="text-base font-semibold text-foreground">{name}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`inline-flex items-center gap-3 ${justify} ${className}`}>
       <img

@@ -191,7 +191,7 @@ const Waitlist = () => {
                     disabled={loading}
                     className="mt-1 h-14 w-full gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
                   >
-                    {loading ? "Joining…" : "Join Early Access"}
+                    {loading ? "Joining…" : "Join the Waitlist"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </form>

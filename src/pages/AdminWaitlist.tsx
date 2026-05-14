@@ -148,13 +148,14 @@ const AdminWaitlist = () => {
   }, [rows]);
 
   const exportCsv = () => {
-    const header = ["position", "name", "email", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
+    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "confirmed_invites", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
       [
         r.waitlist_position,
         JSON.stringify(r.name || ""),
         r.email,
         r.referred_by_code || "",
+        validRefMap.get(r.id) || 0,
         r.confirmed_invites,
         r.current_tier,
         r.status,

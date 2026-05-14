@@ -232,9 +232,9 @@ const WaitlistThanks = () => {
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-xl font-black tracking-tight md:text-2xl">
-                  Invite 3 people to unlock priority access to bonus extras.
-                </h2>
+              <h2 className="text-xl font-black tracking-tight md:text-2xl">
+                Invite 3 people to unlock priority access and bonus extras.
+              </h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   Share your link with friends. Each confirmed invite counts.
                 </p>

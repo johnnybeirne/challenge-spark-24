@@ -394,6 +394,14 @@ const AdminWaitlist = () => {
                   ];
                   return (
                   <tr key={r.id} className={rowCls}>
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${r.email}`}
+                        checked={selected.has(r.id)}
+                        onChange={() => toggleOne(r.id)}
+                      />
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                       {isTop ? (
                         <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}>

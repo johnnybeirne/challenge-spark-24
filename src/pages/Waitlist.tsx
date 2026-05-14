@@ -176,7 +176,7 @@ const Waitlist = () => {
 
         {/* HERO */}
         <section className="bg-white px-5 py-10 sm:px-6 md:py-16 lg:px-8">
-          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
             <div className="text-center lg:text-left">
               <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-primary shadow-sm lg:mx-0">
                 Waitlist · Pre-launch

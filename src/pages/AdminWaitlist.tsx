@@ -195,9 +195,38 @@ const AdminWaitlist = () => {
           </h1>
           <p className="text-sm text-muted-foreground">Early-access signups and referral activity.</p>
         </div>
-        <Button onClick={exportCsv} variant="outline" size="sm" className="gap-2">
-          <Download className="h-4 w-4" /> Export CSV
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={exportCsv} variant="outline" size="sm" className="gap-2">
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+          <Button
+            onClick={async () => {
+              if (rows.length === 0) {
+                toast.info("Waitlist is already empty.");
+                return;
+              }
+              const ok = window.confirm(
+                `Delete all ${rows.length} waitlist signups? This cannot be undone.`,
+              );
+              if (!ok) return;
+              const { error } = await supabase
+                .from("waitlist_signups")
+                .delete()
+                .not("id", "is", null);
+              if (error) {
+                toast.error(`Failed to empty waitlist: ${error.message}`);
+                return;
+              }
+              setRows([]);
+              toast.success("Waitlist emptied.");
+            }}
+            variant="destructive"
+            size="sm"
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" /> Empty waitlist
+          </Button>
+        </div>
       </header>
 
       {/* Stats */}

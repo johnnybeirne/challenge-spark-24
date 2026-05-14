@@ -211,7 +211,7 @@ const WaitlistThanks = () => {
 
         {/* SECTION 2 — REFERRAL */}
         <section className="px-5 py-10 sm:px-6 md:py-14 lg:px-8">
-          <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+          <div id="invite-card" className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8 scroll-mt-20">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles className="h-5 w-5" />

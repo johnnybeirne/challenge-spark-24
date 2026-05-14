@@ -3,12 +3,11 @@ import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { shareOrCopy } from "@/lib/share";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
 import {
-  ArrowRight, Mail, Link2, Users, Copy, CheckCircle2,
+  ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -44,7 +43,6 @@ const Waitlist = () => {
   const [signedUp, setSignedUp] = useState<WaitlistEntry | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [totalSignups, setTotalSignups] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   const loadCount = useCallback(async () => {
     const { count } = await supabase
@@ -54,6 +52,34 @@ const Waitlist = () => {
   }, []);
 
   useEffect(() => { loadCount(); }, [loadCount]);
+
+  const sendInviteEmail = async (entry: WaitlistEntry) => {
+    const url = `${window.location.origin}/waitlist?ref=${entry.referral_code}`;
+    const greeting = entry.name?.trim() ? `Hi ${entry.name.trim()},` : "Hi there,";
+    const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ffffff;padding:32px 16px;color:#0f172a;">
+  <div style="max-width:520px;margin:0 auto;">
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">You're on the early access list</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#334155;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 24px;color:#334155;">Thanks for joining the early access list for the 3-day challenge. Here's your personal invite link:</p>
+    <p style="margin:0 0 24px;"><a href="${url}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;">Open your invite link</a></p>
+    <p style="font-size:13px;line-height:1.6;margin:0 0 8px;color:#475569;word-break:break-all;">Or share this URL directly:<br/><a href="${url}" style="color:#4f46e5;">${url}</a></p>
+    <p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:#334155;"><strong>Invite 3 people to unlock earlier access.</strong> Each confirmed invite moves you up the queue.</p>
+    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The Leadio team</p>
+  </div>
+</body></html>`;
+    try {
+      await supabase.functions.invoke("send-email", {
+        body: {
+          to: entry.email,
+          subject: "You're on the early access list",
+          html,
+        },
+      });
+    } catch (err) {
+      console.error("send-email failed", err);
+      toast.message("We saved your spot — if the email doesn't arrive, contact support.");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +111,8 @@ const Waitlist = () => {
             .single();
           if (existing) {
             setSignedUp(existing);
-            toast.info("You're already on the list! Here's your referral link.");
+            toast.info("You're already on the list — we re-sent your invite link.");
+            sendInviteEmail(existing);
           }
         } else {
           toast.error("Something went wrong. Please try again.");
@@ -94,31 +121,20 @@ const Waitlist = () => {
       } else if (data) {
         setSignedUp(data);
         setShowConfetti(true);
-        toast.success("You're in!");
+        toast.success("You're in! Check your inbox.");
         loadCount();
+        sendInviteEmail(data);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const referralUrl = signedUp
-    ? `${window.location.origin}/waitlist?ref=${signedUp.referral_code}`
-    : "";
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(referralUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    toast.success("Link copied");
-  };
-
-  const handleShare = () => {
-    shareOrCopy({
-      title: "Join Leadio Early Access",
-      text: "I just joined the Leadio early access list. Join me:",
-      url: referralUrl,
-    });
+  const resetForm = () => {
+    setSignedUp(null);
+    setShowConfetti(false);
+    setEmail("");
+    setName("");
   };
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
@@ -186,49 +202,30 @@ const Waitlist = () => {
                     <span className="text-sm font-black uppercase">You're on the list</span>
                   </div>
 
-                  <div className="mt-4 flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-foreground">
-                      #{signedUp.waitlist_position}
-                    </span>
-                    <span className="text-sm text-muted-foreground">in queue</span>
+                  <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-background p-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Inbox className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground">Check your inbox</p>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        We just sent your invite link to{" "}
+                        <span className="break-all font-medium text-foreground">{signedUp.email}</span>.
+                        Open it to share with friends and move up the queue.
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {signedUp.confirmed_invites > 0
-                      ? `${signedUp.confirmed_invites} invite${signedUp.confirmed_invites !== 1 ? "s" : ""} confirmed`
-                      : "Share your link to move up"}
-                  </p>
-
-                  <div className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background p-3">
-                    <input
-                      readOnly
-                      value={referralUrl}
-                      className="min-w-0 flex-1 truncate bg-transparent text-sm text-foreground outline-none"
-                    />
-                    <button
-                      onClick={handleCopy}
-                      className="shrink-0 rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                      aria-label="Copy invite link"
-                    >
-                      {copied ? (
-                        <CheckCircle2 className="h-4 w-4 text-success" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  <Button
-                    onClick={handleShare}
-                    variant="outline"
-                    className="mt-3 h-11 w-full rounded-xl text-sm font-black uppercase"
-                  >
-                    Share invite link
-                  </Button>
 
                   <p className="mt-4 text-center text-xs text-muted-foreground">
-                    Invite 3 people to unlock earlier access.
+                    Don't see it? Check spam or promotions.
                   </p>
+
+                  <button
+                    onClick={resetForm}
+                    className="mt-3 w-full text-center text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                  >
+                    Use a different email
+                  </button>
                 </div>
               )}
 
@@ -269,25 +266,27 @@ const Waitlist = () => {
         </section>
 
         {/* FINAL CTA */}
-        <Section className="border-t border-border">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">
-              The earlier you join, the stronger your starting position.
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Button
-                onClick={signedUp ? handleShare : scrollTop}
-                className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
-              >
-                {signedUp ? "Share invite link" : "Join Early Access"}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+        {!signedUp && (
+          <Section className="border-t border-border">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">
+                The earlier you join, the stronger your starting position.
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+                Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button
+                  onClick={scrollTop}
+                  className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
+                >
+                  Join Early Access
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-        </Section>
+          </Section>
+        )}
       </main>
     </>
   );

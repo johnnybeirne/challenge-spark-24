@@ -395,7 +395,26 @@ const AdminWaitlist = () => {
                           return (
                             <div className="flex flex-col">
                               {inviter.name && <span className="text-sm">{inviter.name}</span>}
-                              <span className="text-xs text-muted-foreground">{inviter.email}</span>
+                              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <span className="truncate">{inviter.email}</span>
+                                <button
+                                  type="button"
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    try {
+                                      await navigator.clipboard.writeText(inviter.email);
+                                      toast.success("Email copied");
+                                    } catch {
+                                      toast.error("Failed to copy");
+                                    }
+                                  }}
+                                  className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                  aria-label={`Copy ${inviter.email}`}
+                                  title="Copy email"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </button>
+                              </span>
                             </div>
                           );
                         })()

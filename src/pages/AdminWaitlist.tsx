@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown, Trophy } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 type WaitlistRow = {
@@ -108,6 +108,50 @@ const AdminWaitlist = () => {
     return { total, referred, inviters, totalInvites };
   }, [rows]);
 
+  // Referral leaderboard — count unique valid referrals per referral_code.
+  // Rules: dedupe by lowercase email, exclude self-referrals, exclude blank referred_by_code.
+  const leaderboard = useMemo(() => {
+    const byCode = new Map<string, WaitlistRow>();
+    rows.forEach((r) => {
+      if (r.referral_code) byCode.set(r.referral_code, r);
+    });
+    const seenEmailPerCode = new Map<string, Set<string>>();
+    rows.forEach((r) => {
+      const ref = r.referred_by_code;
+      if (!ref) return;
+      const inviter = byCode.get(ref);
+      if (!inviter) return;
+      const email = (r.email || "").toLowerCase().trim();
+      if (!email) return;
+      // exclude self-referrals
+      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
+      if (!seenEmailPerCode.has(ref)) seenEmailPerCode.set(ref, new Set());
+      seenEmailPerCode.get(ref)!.add(email);
+    });
+    const list = Array.from(seenEmailPerCode.entries())
+      .map(([code, set]) => {
+        const inviter = byCode.get(code)!;
+        const valid = set.size;
+        let reward: "none" | "bonus" | "review" = "none";
+        if (valid >= 3) reward = "bonus";
+        // Flag review if reported confirmed_invites disagrees significantly
+        if (Math.abs((inviter.confirmed_invites || 0) - valid) >= 2) reward = "review";
+        return { inviter, valid, reward };
+      })
+      .filter((x) => x.valid > 0)
+      .sort((a, b) => b.valid - a.valid || new Date(a.inviter.created_at).getTime() - new Date(b.inviter.created_at).getTime());
+    return list;
+  }, [rows]);
+
+  const firstName = (full: string | null | undefined) =>
+    (full || "").trim().split(/\s+/)[0] || "—";
+
+  const rewardBadge = (r: "none" | "bonus" | "review") => {
+    if (r === "bonus") return <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400">Bonus extras unlocked</Badge>;
+    if (r === "review") return <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-400">Review manually</Badge>;
+    return <Badge variant="secondary" className="text-xs">No reward yet</Badge>;
+  };
+
   const exportCsv = () => {
     const header = ["position", "name", "email", "referral_code", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
@@ -171,6 +215,66 @@ const AdminWaitlist = () => {
           </Card>
         ))}
       </div>
+
+      {/* Referral Leaderboard */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="flex items-center justify-between border-b px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-amber-500" />
+              <h2 className="text-sm font-semibold">Referral Leaderboard</h2>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Unique valid referrals · dedupes emails · excludes self-referrals
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3">Rank</th>
+                  <th className="px-4 py-3">First name</th>
+                  <th className="px-4 py-3">Email</th>
+                  <th className="px-4 py-3">Referral code</th>
+                  <th className="px-4 py-3 text-center">Valid referrals</th>
+                  <th className="px-4 py-3">Referred by</th>
+                  <th className="px-4 py-3">Joined</th>
+                  <th className="px-4 py-3">Reward status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboard.slice(0, 100).map((entry, idx) => (
+                  <tr key={entry.inviter.id} className="border-b last:border-0 hover:bg-muted/20">
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{idx + 1}</td>
+                    <td className="px-4 py-3 font-medium">{firstName(entry.inviter.name)}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{entry.inviter.email}</td>
+                    <td className="px-4 py-3">
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{entry.inviter.referral_code}</code>
+                    </td>
+                    <td className="px-4 py-3 text-center font-semibold">{entry.valid}</td>
+                    <td className="px-4 py-3">
+                      {entry.inviter.referred_by_code ? (
+                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{entry.inviter.referred_by_code}</code>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Direct</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(entry.inviter.created_at)}</td>
+                    <td className="px-4 py-3">{rewardBadge(entry.reward)}</td>
+                  </tr>
+                ))}
+                {leaderboard.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                      No valid referrals yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">

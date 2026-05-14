@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
+import HostBadge from "@/components/HostBadge";
 import { shareOrCopy } from "@/lib/share";
 import {
   CheckCircle2,

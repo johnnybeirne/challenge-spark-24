@@ -386,9 +386,6 @@ const AdminWaitlist = () => {
                     <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
                     <td className="px-4 py-3">
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referral_code}</code>
-                    </td>
-                    <td className="px-4 py-3">
                       {r.referred_by_code ? (
                         (() => {
                           const inviter = rows.find((x) => x.referral_code === r.referred_by_code);

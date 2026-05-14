@@ -142,8 +142,8 @@ const Waitlist = () => {
   return (
     <>
       <SEO
-        title="Early Access — Leadio"
-        description="Join early and get priority access when the 3-day challenge opens. Invite others to move up the queue."
+        title="Waitlist — Leadio"
+        description="Join the waitlist for the 3-day challenge. Invite others to move up the queue."
         canonical="/waitlist"
       />
       <main className="min-h-screen bg-background text-foreground">

@@ -209,9 +209,6 @@ const WaitlistThanks = () => {
               <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
                 Your 3-day challenge
               </h2>
-              <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-                A controlled preview. The full experience unlocks when the challenge opens.
-              </p>
             </div>
 
             <div className="mt-10 grid gap-5 md:grid-cols-3">

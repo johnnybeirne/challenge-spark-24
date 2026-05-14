@@ -394,7 +394,7 @@ const AdminWaitlist = () => {
                         </>
                       );
                     })()}
-                    <td className="px-4 py-3 text-center font-semibold">{r.confirmed_invites}</td>
+                    
                     <td className="px-4 py-3">
                       <Badge variant="secondary" className="text-xs">{r.current_tier}</Badge>
                     </td>

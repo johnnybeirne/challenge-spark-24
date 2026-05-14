@@ -43,6 +43,30 @@ const AdminWaitlist = () => {
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
   const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const deleteSelected = async () => {
+    if (selected.size === 0) return;
+    const ok = window.confirm(`Delete ${selected.size} selected signup${selected.size === 1 ? "" : "s"}? This cannot be undone.`);
+    if (!ok) return;
+    const ids = Array.from(selected);
+    const { error } = await supabase.from("waitlist_signups").delete().in("id", ids);
+    if (error) {
+      toast.error(`Failed to delete: ${error.message}`);
+      return;
+    }
+    setRows((prev) => prev.filter((r) => !selected.has(r.id)));
+    setSelected(new Set());
+    toast.success(`Deleted ${ids.length} signup${ids.length === 1 ? "" : "s"}.`);
+  };
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -211,6 +235,15 @@ const AdminWaitlist = () => {
             <Download className="h-4 w-4" /> Export CSV
           </Button>
           <Button
+            onClick={deleteSelected}
+            disabled={selected.size === 0}
+            variant="destructive"
+            size="sm"
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" /> Delete selected ({selected.size})
+          </Button>
+          <Button
             onClick={async () => {
               if (rows.length === 0) {
                 toast.info("Waitlist is already empty.");
@@ -296,6 +329,21 @@ const AdminWaitlist = () => {
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
+                  <th className="px-3 py-3 w-8">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      checked={filtered.length > 0 && filtered.every((r) => selected.has(r.id))}
+                      onChange={(e) => {
+                        setSelected((prev) => {
+                          const next = new Set(prev);
+                          if (e.target.checked) filtered.forEach((r) => next.add(r.id));
+                          else filtered.forEach((r) => next.delete(r.id));
+                          return next;
+                        });
+                      }}
+                    />
+                  </th>
                   {(
                     [
                       ["waitlist_position", "#", "left"],
@@ -346,6 +394,14 @@ const AdminWaitlist = () => {
                   ];
                   return (
                   <tr key={r.id} className={rowCls}>
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${r.email}`}
+                        checked={selected.has(r.id)}
+                        onChange={() => toggleOne(r.id)}
+                      />
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                       {isTop ? (
                         <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}>
@@ -428,7 +484,7 @@ const AdminWaitlist = () => {
                 })}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={11} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

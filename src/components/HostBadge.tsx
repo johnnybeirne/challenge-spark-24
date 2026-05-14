@@ -23,13 +23,16 @@ const HostBadge = ({
   if (size === "lg") {
     const itemsAlign = align === "center" ? "items-center text-center" : "items-start text-left";
     return (
-      <div className={`flex flex-col gap-3 ${itemsAlign} ${className}`}>
-        <img
-          src={src}
-          alt={name}
-          loading="lazy"
-          className="h-24 w-24 rounded-3xl object-cover shadow-lg ring-1 ring-border sm:h-28 sm:w-28"
-        />
+      <div className={`flex flex-col gap-4 ${itemsAlign} ${className}`}>
+        <div className="relative">
+          <div className="absolute -inset-1.5 rounded-[2rem] bg-gradient-to-br from-primary/20 via-primary/5 to-transparent blur-md" />
+          <img
+            src={src}
+            alt={name}
+            loading="lazy"
+            className="relative h-32 w-32 rounded-[1.75rem] object-cover shadow-xl ring-1 ring-border sm:h-36 sm:w-36 md:h-40 md:w-40"
+          />
+        </div>
         <div className="leading-tight">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {label}

@@ -90,12 +90,17 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-4px)" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 10px 25px -10px hsl(var(--primary) / 0.35)" },
+          "50%": { boxShadow: "0 14px 35px -8px hsl(var(--primary) / 0.6)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "bounce-in": "bounce-in 0.5s ease-out",
         "subtle-bounce": "subtle-bounce 2s ease-in-out 3",
+        "pulse-glow": "pulse-glow 2.5s ease-in-out infinite",
       },
     },
   },

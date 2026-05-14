@@ -280,7 +280,7 @@ const Waitlist = () => {
                   onClick={scrollTop}
                   className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
                 >
-                  Join Early Access
+                  Join the Waitlist
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>

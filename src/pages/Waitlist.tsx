@@ -64,10 +64,12 @@ const Waitlist = () => {
     try {
       const code = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
 
+      const trimmedName = name.trim();
       const { data, error } = await supabase
         .from("waitlist_signups")
         .insert({
           email: trimmed,
+          name: trimmedName || null,
           referral_code: code,
           referred_by_code: refCode || null,
         })

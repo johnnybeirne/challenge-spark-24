@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
+import HostBadge from "@/components/HostBadge";
 import {
   ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";

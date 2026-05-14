@@ -266,25 +266,27 @@ const Waitlist = () => {
         </section>
 
         {/* FINAL CTA */}
-        <Section className="border-t border-border">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">
-              The earlier you join, the stronger your starting position.
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Button
-                onClick={signedUp ? handleShare : scrollTop}
-                className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
-              >
-                {signedUp ? "Share invite link" : "Join Early Access"}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+        {!signedUp && (
+          <Section className="border-t border-border">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">
+                The earlier you join, the stronger your starting position.
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+                Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button
+                  onClick={scrollTop}
+                  className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
+                >
+                  Join Early Access
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-        </Section>
+          </Section>
+        )}
       </main>
     </>
   );

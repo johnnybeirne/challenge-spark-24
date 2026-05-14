@@ -5,8 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Save, RefreshCw, Send } from "lucide-react";
-import ReactQuill from "react-quill-new";
+import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+
+const FONT_SIZES = ["10px", "12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px", "36px", "48px"];
+const SizeStyle: any = (Quill as any).import("attributors/style/size");
+SizeStyle.whitelist = FONT_SIZES;
+(Quill as any).register(SizeStyle, true);
 
 const TEMPLATE_ID = "waitlist_invite";
 
@@ -158,7 +163,7 @@ const AdminWaitlistEmail = () => {
                 modules={{
                   toolbar: [
                     [{ header: [1, 2, 3, false] }],
-                    [{ size: ["small", false, "large", "huge"] }],
+                    [{ size: FONT_SIZES }],
                     ["bold", "italic", "underline", "strike"],
                     [{ color: [] }, { background: [] }],
                     [{ list: "ordered" }, { list: "bullet" }],
@@ -167,7 +172,7 @@ const AdminWaitlistEmail = () => {
                     ["clean"],
                   ],
                 }}
-                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-sm [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white"
+                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white"
               />
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">

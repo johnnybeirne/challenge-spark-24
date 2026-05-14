@@ -350,7 +350,7 @@ const AdminWaitlist = () => {
                       ["waitlist_position", "#", "left"],
                       ["name", "Name", "left"],
                       ["email", "Email", "left"],
-                      ["referral_code", "Referral code", "left"],
+                      
                       ["referred_by_code", "Referred by", "left"],
                       ["confirmed_invites", "Invites", "center"],
                       ["current_tier", "Tier", "left"],

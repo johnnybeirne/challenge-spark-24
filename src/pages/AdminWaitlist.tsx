@@ -181,6 +181,24 @@ const AdminWaitlist = () => {
 
   return (
     <div className="space-y-6 p-6 text-[14px] [&_*]:!text-[14px]">
+      <nav className="flex flex-wrap gap-2 border-b border-border pb-3">
+        {[
+          { label: "Waitlist (admin)", href: "/owner-console/waitlist" },
+          { label: "Waitlist Email", href: "/owner-console/waitlist-email" },
+          { label: "Public waitlist page", href: "/waitlist", external: true },
+          { label: "Thank-you page", href: "/waitlist/thanks", external: true },
+        ].map((l) => (
+          <a
+            key={l.href}
+            href={l.href}
+            target={l.external ? "_blank" : undefined}
+            rel={l.external ? "noreferrer" : undefined}
+            className="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium hover:bg-accent"
+          >
+            {l.label}
+          </a>
+        ))}
+      </nav>
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">

@@ -129,6 +129,7 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
+                <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />

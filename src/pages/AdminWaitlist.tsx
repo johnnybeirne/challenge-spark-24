@@ -108,6 +108,50 @@ const AdminWaitlist = () => {
     return { total, referred, inviters, totalInvites };
   }, [rows]);
 
+  // Referral leaderboard — count unique valid referrals per referral_code.
+  // Rules: dedupe by lowercase email, exclude self-referrals, exclude blank referred_by_code.
+  const leaderboard = useMemo(() => {
+    const byCode = new Map<string, WaitlistRow>();
+    rows.forEach((r) => {
+      if (r.referral_code) byCode.set(r.referral_code, r);
+    });
+    const seenEmailPerCode = new Map<string, Set<string>>();
+    rows.forEach((r) => {
+      const ref = r.referred_by_code;
+      if (!ref) return;
+      const inviter = byCode.get(ref);
+      if (!inviter) return;
+      const email = (r.email || "").toLowerCase().trim();
+      if (!email) return;
+      // exclude self-referrals
+      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
+      if (!seenEmailPerCode.has(ref)) seenEmailPerCode.set(ref, new Set());
+      seenEmailPerCode.get(ref)!.add(email);
+    });
+    const list = Array.from(seenEmailPerCode.entries())
+      .map(([code, set]) => {
+        const inviter = byCode.get(code)!;
+        const valid = set.size;
+        let reward: "none" | "bonus" | "review" = "none";
+        if (valid >= 3) reward = "bonus";
+        // Flag review if reported confirmed_invites disagrees significantly
+        if (Math.abs((inviter.confirmed_invites || 0) - valid) >= 2) reward = "review";
+        return { inviter, valid, reward };
+      })
+      .filter((x) => x.valid > 0)
+      .sort((a, b) => b.valid - a.valid || new Date(a.inviter.created_at).getTime() - new Date(b.inviter.created_at).getTime());
+    return list;
+  }, [rows]);
+
+  const firstName = (full: string | null | undefined) =>
+    (full || "").trim().split(/\s+/)[0] || "—";
+
+  const rewardBadge = (r: "none" | "bonus" | "review") => {
+    if (r === "bonus") return <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400">Bonus extras unlocked</Badge>;
+    if (r === "review") return <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-400">Review manually</Badge>;
+    return <Badge variant="secondary" className="text-xs">No reward yet</Badge>;
+  };
+
   const exportCsv = () => {
     const header = ["position", "name", "email", "referral_code", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>

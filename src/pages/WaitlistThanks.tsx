@@ -199,47 +199,8 @@ const WaitlistThanks = () => {
           </div>
         </section>
 
-        {/* SECTION 2 — TEASER */}
-        <section className="border-t border-border bg-muted/30 px-5 py-14 sm:px-6 md:py-20 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="text-center">
-              <p className="text-xs font-black uppercase tracking-wider text-primary">
-                A taste of what's to come
-              </p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-                Your 3-day challenge
-              </h2>
-            </div>
-
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {lockedDays.map((d) => (
-                <article
-                  key={d.day}
-                  className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm"
-                >
-                  <div className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-bold uppercase text-muted-foreground">
-                    <Lock className="h-3 w-3" /> Locked
-                  </div>
-                  <p className="text-xs font-black uppercase text-primary">{d.day}</p>
-                  <h3 className="mt-2 text-xl font-black">{d.title}</h3>
-                  <div className="relative mt-3">
-                    <p className="text-sm leading-relaxed text-muted-foreground blur-[2px]">
-                      {d.body}
-                    </p>
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-card/40 to-card" />
-                  </div>
-                  <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Coming soon
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 3 — REFERRAL */}
-        <section className="px-5 py-14 sm:px-6 md:py-20 lg:px-8">
+        {/* SECTION 2 — REFERRAL */}
+        <section className="px-5 py-10 sm:px-6 md:py-14 lg:px-8">
           <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -287,6 +248,44 @@ const WaitlistThanks = () => {
                 of 3 confirmed invites
               </span>
               <span>No spam. Waitlist updates only.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border bg-muted/30 px-5 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <p className="text-xs font-black uppercase tracking-wider text-primary">
+                A taste of what's to come
+              </p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+                Your 3-day challenge
+              </h2>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {lockedDays.map((d) => (
+                <article
+                  key={d.day}
+                  className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm"
+                >
+                  <div className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-bold uppercase text-muted-foreground">
+                    <Lock className="h-3 w-3" /> Locked
+                  </div>
+                  <p className="text-xs font-black uppercase text-primary">{d.day}</p>
+                  <h3 className="mt-2 text-xl font-black">{d.title}</h3>
+                  <div className="relative mt-3">
+                    <p className="text-sm leading-relaxed text-muted-foreground blur-[2px]">
+                      {d.body}
+                    </p>
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-card/40 to-card" />
+                  </div>
+                  <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3.5 w-3.5" />
+                    Coming soon
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>

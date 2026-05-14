@@ -285,8 +285,6 @@ const Waitlist = () => {
             ))}
           </div>
         </Section>
-          </div>
-        </section>
 
         {/* FINAL CTA */}
         {!signedUp && (

@@ -211,14 +211,36 @@ const AdminWaitlist = () => {
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3">Name / Email</th>
-                  <th className="px-4 py-3">Referral code</th>
-                  <th className="px-4 py-3">Referred by</th>
-                  <th className="px-4 py-3 text-center">Invites</th>
-                  <th className="px-4 py-3">Tier</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Joined</th>
+                  {(
+                    [
+                      ["waitlist_position", "#", "left"],
+                      ["name", "Name", "left"],
+                      ["email", "Email", "left"],
+                      ["referral_code", "Referral code", "left"],
+                      ["referred_by_code", "Referred by", "left"],
+                      ["confirmed_invites", "Invites", "center"],
+                      ["current_tier", "Tier", "left"],
+                      ["status", "Status", "left"],
+                      ["created_at", "Joined", "left"],
+                    ] as Array<[SortKey, string, "left" | "center"]>
+                  ).map(([key, label, align]) => {
+                    const active = sortKey === key;
+                    const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+                    return (
+                      <th key={key} className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(key)}
+                          className={`inline-flex items-center gap-1 uppercase tracking-wider transition-colors hover:text-foreground ${
+                            active ? "text-foreground" : ""
+                          } ${align === "center" ? "mx-auto" : ""}`}
+                        >
+                          {label}
+                          <Icon className="h-3 w-3" />
+                        </button>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

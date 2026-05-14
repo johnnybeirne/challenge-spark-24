@@ -154,13 +154,13 @@ const Waitlist = () => {
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="text-center lg:text-left">
               <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-primary shadow-sm lg:mx-0">
-                Early access · Pre-launch
+                Waitlist · Pre-launch
               </p>
               <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
                 Run a 3-day challenge people want to share
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                Join early and get priority access when the challenge opens. Invite others to move up the queue.
+                Join the waitlist before the challenge opens. Invite others to move up the queue.
               </p>
 
               {!signedUp ? (

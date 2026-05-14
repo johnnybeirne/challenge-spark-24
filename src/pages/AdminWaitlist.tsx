@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown, Trophy, Trash2 } from "lucide-react";
+import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown, Trophy, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 

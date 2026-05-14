@@ -189,7 +189,7 @@ const WaitlistThanks = () => {
 
             {/* HOST PORTRAIT */}
             <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
-              <div className="relative overflow-hidden rounded-[2rem] bg-muted">
+              <div className="relative overflow-hidden rounded-[2rem]">
                 <img
                   src={hostImage}
                   alt="Johnny Beirne"

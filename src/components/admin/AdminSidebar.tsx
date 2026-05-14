@@ -24,6 +24,7 @@ const items = [
   
   { title: "Signups", url: "/owner-console/signups", icon: UserPlus },
   { title: "Waitlist", url: "/owner-console/waitlist", icon: Mail },
+  { title: "Waitlist Email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Mail } from "lucide-react";
+import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 type WaitlistRow = {
@@ -23,11 +23,33 @@ type WaitlistRow = {
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
+type SortKey =
+  | "waitlist_position"
+  | "name"
+  | "email"
+  | "referral_code"
+  | "referred_by_code"
+  | "confirmed_invites"
+  | "current_tier"
+  | "status"
+  | "created_at";
+
 const AdminWaitlist = () => {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<WaitlistRow[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
+  const [sortKey, setSortKey] = useState<SortKey>("waitlist_position");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -57,8 +79,26 @@ const AdminWaitlist = () => {
           (r.referred_by_code || "").toLowerCase().includes(q),
       );
     }
-    return list;
-  }, [rows, filter, search]);
+    const sorted = [...list].sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      const aEmpty = av === null || av === undefined || av === "";
+      const bEmpty = bv === null || bv === undefined || bv === "";
+      if (aEmpty && bEmpty) return 0;
+      if (aEmpty) return 1;
+      if (bEmpty) return -1;
+      let cmp: number;
+      if (typeof av === "number" && typeof bv === "number") {
+        cmp = av - bv;
+      } else if (sortKey === "created_at") {
+        cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+      } else {
+        cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return sorted;
+  }, [rows, filter, search, sortKey, sortDir]);
 
   const totals = useMemo(() => {
     const total = rows.length;
@@ -171,14 +211,36 @@ const AdminWaitlist = () => {
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3">Name / Email</th>
-                  <th className="px-4 py-3">Referral code</th>
-                  <th className="px-4 py-3">Referred by</th>
-                  <th className="px-4 py-3 text-center">Invites</th>
-                  <th className="px-4 py-3">Tier</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Joined</th>
+                  {(
+                    [
+                      ["waitlist_position", "#", "left"],
+                      ["name", "Name", "left"],
+                      ["email", "Email", "left"],
+                      ["referral_code", "Referral code", "left"],
+                      ["referred_by_code", "Referred by", "left"],
+                      ["confirmed_invites", "Invites", "center"],
+                      ["current_tier", "Tier", "left"],
+                      ["status", "Status", "left"],
+                      ["created_at", "Joined", "left"],
+                    ] as Array<[SortKey, string, "left" | "center"]>
+                  ).map(([key, label, align]) => {
+                    const active = sortKey === key;
+                    const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+                    return (
+                      <th key={key} className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(key)}
+                          className={`inline-flex items-center gap-1 uppercase tracking-wider transition-colors hover:text-foreground ${
+                            active ? "text-foreground" : ""
+                          } ${align === "center" ? "mx-auto" : ""}`}
+                        >
+                          {label}
+                          <Icon className="h-3 w-3" />
+                        </button>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -187,10 +249,8 @@ const AdminWaitlist = () => {
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                       {r.waitlist_position}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium">{r.name || "—"}</div>
-                      <div className="text-xs text-muted-foreground">{r.email}</div>
-                    </td>
+                    <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
                     <td className="px-4 py-3">
                       <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referral_code}</code>
                     </td>
@@ -217,7 +277,7 @@ const AdminWaitlist = () => {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

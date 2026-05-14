@@ -82,7 +82,10 @@ const Waitlist = () => {
         .eq("id", "waitlist_invite")
         .maybeSingle();
       if (tpl) {
-        subject = tpl.subject;
+        subject = tpl.subject
+          .split("{{greeting}}").join(greeting)
+          .split("{{url}}").join(url)
+          .split("{{name}}").join(firstName);
         html = tpl.html_body
           .split("{{greeting}}").join(greeting)
           .split("{{url}}").join(url)

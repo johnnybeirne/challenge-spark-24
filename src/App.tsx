@@ -62,6 +62,7 @@ import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Waitlist from "@/pages/Waitlist";
+import WaitlistThanks from "@/pages/WaitlistThanks";
 import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
@@ -128,6 +129,7 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
+                <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />

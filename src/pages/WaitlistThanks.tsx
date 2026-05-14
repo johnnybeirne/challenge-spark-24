@@ -1,0 +1,362 @@
+import { useEffect, useState } from "react";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SEO } from "@/components/SEO";
+import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
+import { shareOrCopy } from "@/lib/share";
+import {
+  CheckCircle2,
+  Copy,
+  Check,
+  Share2,
+  Lock,
+  Sparkles,
+  Calendar,
+  ArrowLeft,
+} from "lucide-react";
+import { toast } from "sonner";
+
+interface WaitlistEntry {
+  id: string;
+  email: string;
+  name: string | null;
+  referral_code: string;
+  confirmed_invites: number;
+  waitlist_position: number;
+}
+
+const lockedDays = [
+  {
+    day: "Day 1",
+    title: "Define your offer",
+    body: "Lock in the audience, promise, and proof in under 30 minutes.",
+  },
+  {
+    day: "Day 2",
+    title: "Build your first asset",
+    body: "Ship the page, post, or message that makes the offer real.",
+  },
+  {
+    day: "Day 3",
+    title: "Run your first launch",
+    body: "Drive your first invites, signups, or sales — live and tracked.",
+  },
+];
+
+const challengeIdeas = [
+  "Build my first lead magnet",
+  "Launch a paid offer",
+  "Grow my audience",
+  "Test a new business idea",
+  "Something else",
+];
+
+const WaitlistThanks = () => {
+  const [params] = useSearchParams();
+  const ref = params.get("ref");
+  const navigate = useNavigate();
+
+  const [entry, setEntry] = useState<WaitlistEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [pickedIdea, setPickedIdea] = useState<string | null>(null);
+  const [otherIdea, setOtherIdea] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!ref) {
+        setLoading(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("waitlist_signups")
+        .select("id,email,name,referral_code,confirmed_invites,waitlist_position")
+        .eq("referral_code", ref)
+        .maybeSingle();
+      if (!cancelled) {
+        setEntry(data ?? null);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [ref]);
+
+  const inviteUrl = entry
+    ? `${window.location.origin}/waitlist?ref=${entry.referral_code}`
+    : "";
+
+  const copyLink = async () => {
+    if (!inviteUrl) return;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+      toast.success("Invite link copied");
+    } catch {
+      toast.error("Couldn't copy — try selecting the link manually.");
+    }
+  };
+
+  const share = () => {
+    if (!inviteUrl) return;
+    shareOrCopy({
+      title: "Join me on the waitlist",
+      text: "I just joined this 3-day challenge waitlist — thought you'd want in too:",
+      url: inviteUrl,
+    });
+  };
+
+  const submitIdea = () => {
+    const value = pickedIdea === "Something else" ? otherIdea.trim() : pickedIdea;
+    if (!value) return;
+    try {
+      sessionStorage.setItem("waitlist:challenge_idea", value);
+    } catch {
+      // ignore storage errors
+    }
+    toast.success("Got it — we'll keep that in mind.");
+  };
+
+  if (loading) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-background text-foreground">
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      </main>
+    );
+  }
+
+  if (!entry) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-background px-6 text-center text-foreground">
+        <div className="max-w-md">
+          <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Link expired
+          </p>
+          <h1 className="mt-3 text-2xl font-black">We couldn't find that signup.</h1>
+          <p className="mt-3 text-muted-foreground">
+            Head back to the waitlist to join again.
+          </p>
+          <Button onClick={() => navigate("/waitlist")} className="mt-6 gap-2 rounded-xl">
+            <ArrowLeft className="h-4 w-4" /> Back to waitlist
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  const firstName = entry.name?.trim()?.split(" ")[0];
+
+  return (
+    <>
+      <SEO
+        title="You're on the waitlist — Leadio"
+        description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to bonus extras."
+        canonical="/waitlist/thanks"
+      />
+      <main className="min-h-screen bg-background text-foreground">
+        {/* SECTION 1 — SUCCESS */}
+        <section className="px-5 pt-14 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">
+              <CheckCircle2 className="h-4 w-4" />
+              You're in
+            </div>
+            <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+              {firstName ? `${firstName}, you're on the waitlist.` : "You're on the waitlist."}
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl">
+              You'll be notified when the challenge opens.
+            </p>
+          </div>
+        </section>
+
+        {/* SECTION 2 — REFERRAL */}
+        <section className="px-5 pb-14 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black tracking-tight md:text-2xl">
+                  Invite 3 people to unlock priority access to bonus extras.
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Share your link with friends. Each confirmed invite counts.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+              <div className="flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground">
+                {inviteUrl}
+              </div>
+              <Button
+                onClick={copyLink}
+                variant="outline"
+                className="h-12 gap-2 rounded-xl px-4"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" /> Copy
+                  </>
+                )}
+              </Button>
+              <Button onClick={share} className="h-12 gap-2 rounded-xl px-4 font-black uppercase">
+                <Share2 className="h-4 w-4" /> Share
+              </Button>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
+              <span>
+                <span className="font-semibold text-foreground">
+                  {entry.confirmed_invites}
+                </span>{" "}
+                of 3 confirmed invites
+              </span>
+              <span>No spam. Waitlist updates only.</span>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3 — TEASER */}
+        <section className="border-t border-border bg-muted/30 px-5 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <p className="text-xs font-black uppercase tracking-wider text-primary">
+                A taste of what opens
+              </p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+                Your 3-day challenge
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
+                A controlled preview. The full experience unlocks when the challenge opens.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {lockedDays.map((d) => (
+                <article
+                  key={d.day}
+                  className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm"
+                >
+                  <div className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-bold uppercase text-muted-foreground">
+                    <Lock className="h-3 w-3" /> Locked
+                  </div>
+                  <p className="text-xs font-black uppercase text-primary">{d.day}</p>
+                  <h3 className="mt-2 text-xl font-black">{d.title}</h3>
+                  <div className="relative mt-3">
+                    <p className="text-sm leading-relaxed text-muted-foreground blur-[2px]">
+                      {d.body}
+                    </p>
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-card/40 to-card" />
+                  </div>
+                  <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3.5 w-3.5" />
+                    Coming soon
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4 — SOCIAL MOMENTUM */}
+        <section className="px-5 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div className="mx-auto max-w-2xl">
+            <div className="text-center">
+              <h2 className="text-2xl font-black tracking-tight sm:text-3xl">
+                You're not alone on the list
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                A quiet pulse of people joining and inviting their friends.
+              </p>
+            </div>
+            <WaitlistActivityFeed
+              title="Live waitlist momentum"
+              className="mt-8 text-left"
+            />
+          </div>
+        </section>
+
+        {/* SECTION 5 — OPTIONAL QUESTION */}
+        <section className="border-t border-border px-5 py-14 sm:px-6 md:py-20 lg:px-8">
+          <div className="mx-auto max-w-2xl">
+            <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+              Optional
+            </p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">
+              What kind of challenge would you most want to run?
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              No pressure — just helps us shape what opens first.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {challengeIdeas.map((idea) => {
+                const active = pickedIdea === idea;
+                return (
+                  <button
+                    key={idea}
+                    type="button"
+                    onClick={() => setPickedIdea(idea)}
+                    className={`rounded-full border px-4 py-2 text-sm transition ${
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {idea}
+                  </button>
+                );
+              })}
+            </div>
+
+            {pickedIdea === "Something else" && (
+              <Input
+                value={otherIdea}
+                onChange={(e) => setOtherIdea(e.target.value)}
+                placeholder="Describe it in a few words…"
+                className="mt-4 h-12 rounded-xl border-border bg-card"
+                maxLength={120}
+              />
+            )}
+
+            <div className="mt-5">
+              <Button
+                onClick={submitIdea}
+                disabled={
+                  !pickedIdea ||
+                  (pickedIdea === "Something else" && !otherIdea.trim())
+                }
+                className="h-12 gap-2 rounded-xl px-6 font-black uppercase"
+              >
+                Send
+              </Button>
+            </div>
+
+            <div className="mt-10 text-center text-sm">
+              <Link
+                to="/waitlist"
+                className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+              >
+                Back to waitlist
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+};
+
+export default WaitlistThanks;

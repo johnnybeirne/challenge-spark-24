@@ -329,6 +329,21 @@ const AdminWaitlist = () => {
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
+                  <th className="px-3 py-3 w-8">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      checked={filtered.length > 0 && filtered.every((r) => selected.has(r.id))}
+                      onChange={(e) => {
+                        setSelected((prev) => {
+                          const next = new Set(prev);
+                          if (e.target.checked) filtered.forEach((r) => next.add(r.id));
+                          else filtered.forEach((r) => next.delete(r.id));
+                          return next;
+                        });
+                      }}
+                    />
+                  </th>
                   {(
                     [
                       ["waitlist_position", "#", "left"],

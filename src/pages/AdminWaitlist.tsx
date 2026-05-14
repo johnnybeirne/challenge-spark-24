@@ -249,10 +249,8 @@ const AdminWaitlist = () => {
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
                       {r.waitlist_position}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium">{r.name || "—"}</div>
-                      <div className="text-xs text-muted-foreground">{r.email}</div>
-                    </td>
+                    <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
                     <td className="px-4 py-3">
                       <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referral_code}</code>
                     </td>

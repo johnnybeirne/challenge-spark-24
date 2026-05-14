@@ -235,6 +235,15 @@ const AdminWaitlist = () => {
             <Download className="h-4 w-4" /> Export CSV
           </Button>
           <Button
+            onClick={deleteSelected}
+            disabled={selected.size === 0}
+            variant="destructive"
+            size="sm"
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" /> Delete selected ({selected.size})
+          </Button>
+          <Button
             onClick={async () => {
               if (rows.length === 0) {
                 toast.info("Waitlist is already empty.");

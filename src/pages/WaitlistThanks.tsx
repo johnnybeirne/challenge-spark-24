@@ -172,9 +172,9 @@ const WaitlistThanks = () => {
       <main className="min-h-screen bg-background text-foreground">
         {showConfetti && <Confetti />}
         {/* SECTION 1 — SUCCESS */}
-        <section className="bg-white px-5 pt-14 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
-          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div className="text-center lg:text-left">
+        <section className="bg-white px-5 pt-14 pb-0 sm:px-6 md:pt-20 lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+            <div className="pb-10 text-center md:pb-14 lg:pb-20 lg:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">
                 <CheckCircle2 className="h-4 w-4" />
                 You're in
@@ -188,15 +188,13 @@ const WaitlistThanks = () => {
             </div>
 
             {/* HOST PORTRAIT */}
-            <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
-              <div className="relative overflow-hidden rounded-[2rem]">
-                <img
-                  src={hostImage}
-                  alt="Johnny Beirne"
-                  loading="eager"
-                  className="block aspect-[4/5] w-full object-contain object-bottom"
-                />
-              </div>
+            <div className="relative mx-auto -mb-px w-full max-w-md lg:mx-0 lg:max-w-none">
+              <img
+                src={hostImage}
+                alt="Johnny Beirne"
+                loading="eager"
+                className="block h-auto w-full object-contain object-bottom"
+              />
             </div>
           </div>
         </section>

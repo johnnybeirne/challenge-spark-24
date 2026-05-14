@@ -186,7 +186,7 @@ const AdminWaitlist = () => {
           { label: "Waitlist (admin)", href: "/owner-console/waitlist" },
           { label: "Waitlist Email", href: "/owner-console/waitlist-email" },
           { label: "Public waitlist page", href: "/waitlist", external: true },
-          { label: "Thank-you page", href: "/waitlist/thanks", external: true },
+          { label: "Thank-you page", href: "/waitlist/thanks?preview=1", external: true },
         ].map((l) => (
           <a
             key={l.href}

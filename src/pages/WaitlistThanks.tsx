@@ -173,6 +173,7 @@ const WaitlistThanks = () => {
             <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl">
               You'll be notified when the challenge opens.
             </p>
+            <HostBadge className="mt-7" align="center" />
           </div>
         </section>
 

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
+import HostBadge from "@/components/HostBadge";
 import {
   ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";
@@ -162,6 +163,7 @@ const Waitlist = () => {
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 Join the waitlist before the challenge opens. Invite others to unlock priority access to bonus extras.
               </p>
+              <HostBadge className="mx-auto mt-6 lg:mx-0" />
 
               {!signedUp ? (
                 <form

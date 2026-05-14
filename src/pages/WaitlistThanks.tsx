@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
+import HostBadge from "@/components/HostBadge";
 import { shareOrCopy } from "@/lib/share";
 import {
   CheckCircle2,
@@ -172,6 +173,7 @@ const WaitlistThanks = () => {
             <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl">
               You'll be notified when the challenge opens.
             </p>
+            <HostBadge className="mt-7" align="center" />
           </div>
         </section>
 

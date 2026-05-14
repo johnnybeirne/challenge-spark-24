@@ -55,9 +55,19 @@ const challengeIdeas = [
   "Something else",
 ];
 
+const PREVIEW_ENTRY: WaitlistEntry = {
+  id: "preview",
+  email: "preview@example.com",
+  name: "Johnny",
+  referral_code: "PREVIEW",
+  confirmed_invites: 1,
+  waitlist_position: 42,
+};
+
 const WaitlistThanks = () => {
   const [params] = useSearchParams();
   const ref = params.get("ref");
+  const isPreview = params.get("preview") === "1";
   const location = useLocation();
   const stateName = (location.state as { name?: string | null } | null)?.name ?? null;
   const navigate = useNavigate();
@@ -72,6 +82,11 @@ const WaitlistThanks = () => {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      if (isPreview) {
+        setEntry(PREVIEW_ENTRY);
+        setLoading(false);
+        return;
+      }
       if (!ref) {
         setLoading(false);
         return;
@@ -89,7 +104,7 @@ const WaitlistThanks = () => {
     return () => {
       cancelled = true;
     };
-  }, [ref]);
+  }, [ref, isPreview]);
 
   const inviteUrl = entry
     ? `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`

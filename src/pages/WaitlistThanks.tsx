@@ -162,6 +162,7 @@ const WaitlistThanks = () => {
         canonical="/waitlist/thanks"
       />
       <main className="min-h-screen bg-background text-foreground">
+        {showConfetti && <Confetti />}
         {/* SECTION 1 — SUCCESS */}
         <section className="px-5 pt-14 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +58,8 @@ const challengeIdeas = [
 const WaitlistThanks = () => {
   const [params] = useSearchParams();
   const ref = params.get("ref");
+  const location = useLocation();
+  const stateName = (location.state as { name?: string | null } | null)?.name ?? null;
   const navigate = useNavigate();
 
   const [entry, setEntry] = useState<WaitlistEntry | null>(null);
@@ -152,7 +154,13 @@ const WaitlistThanks = () => {
     );
   }
 
-  const firstName = entry.name?.trim()?.split(" ")[0];
+  let storedName: string | null = null;
+  try { storedName = sessionStorage.getItem("waitlist:name"); } catch {}
+  const rawName = (entry.name || stateName || storedName || "").trim();
+  const firstNameRaw = rawName.split(" ")[0];
+  const firstName = firstNameRaw
+    ? firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1)
+    : "";
 
   return (
     <>

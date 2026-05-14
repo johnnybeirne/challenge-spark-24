@@ -133,7 +133,8 @@ const Waitlist = () => {
           if (existing) {
             toast.info("You're already on the list — we re-sent your invite link.");
             sendInviteEmail(existing);
-            navigate(`/waitlist/thanks?ref=${existing.referral_code}`);
+            try { sessionStorage.setItem("waitlist:name", existing.name || trimmedName || ""); } catch {}
+            navigate(`/waitlist/thanks?ref=${existing.referral_code}`, { state: { name: existing.name || trimmedName || null } });
           }
         } else {
           toast.error("Something went wrong. Please try again.");
@@ -143,7 +144,8 @@ const Waitlist = () => {
         toast.success("You're in! Check your inbox.");
         loadCount();
         sendInviteEmail(data);
-        navigate(`/waitlist/thanks?ref=${data.referral_code}`);
+        try { sessionStorage.setItem("waitlist:name", trimmedName || ""); } catch {}
+        navigate(`/waitlist/thanks?ref=${data.referral_code}`, { state: { name: trimmedName || null } });
       }
     } finally {
       setLoading(false);

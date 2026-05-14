@@ -185,6 +185,16 @@ const WaitlistThanks = () => {
               <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 You've successfully joined the waitlist.
               </p>
+              <div className="mt-6 flex justify-center lg:justify-start">
+                <Button
+                  onClick={() => {
+                    document.getElementById("invite-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="h-12 gap-2 rounded-xl px-6 font-black uppercase shadow-lg shadow-primary/20"
+                >
+                  <Sparkles className="h-4 w-4" /> Unlock priority access
+                </Button>
+              </div>
             </div>
 
             {/* HOST PORTRAIT */}
@@ -201,7 +211,7 @@ const WaitlistThanks = () => {
 
         {/* SECTION 2 — REFERRAL */}
         <section className="px-5 py-10 sm:px-6 md:py-14 lg:px-8">
-          <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+          <div id="invite-card" className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8 scroll-mt-20">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles className="h-5 w-5" />

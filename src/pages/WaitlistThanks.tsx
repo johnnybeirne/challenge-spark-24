@@ -238,59 +238,6 @@ const WaitlistThanks = () => {
           </div>
         </section>
 
-        {/* SECTION 3 — REFERRAL */}
-        <section className="px-5 py-14 sm:px-6 md:py-20 lg:px-8">
-          <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black tracking-tight md:text-2xl">
-                  Invite 3 people to unlock priority access to bonus extras.
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Share your link with friends. Each confirmed invite counts.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <div className="flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground">
-                {inviteUrl}
-              </div>
-              <Button
-                onClick={copyLink}
-                variant="outline"
-                className="h-12 gap-2 rounded-xl px-4"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" /> Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" /> Copy
-                  </>
-                )}
-              </Button>
-              <Button onClick={share} className="h-12 gap-2 rounded-xl px-4 font-black uppercase">
-                <Share2 className="h-4 w-4" /> Share
-              </Button>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                <span className="font-semibold text-foreground">
-                  {entry.confirmed_invites}
-                </span>{" "}
-                of 3 confirmed invites
-              </span>
-              <span>No spam. Waitlist updates only.</span>
-            </div>
-          </div>
-        </section>
-
         {/* SECTION 4 — SOCIAL MOMENTUM */}
         <section className="px-5 py-14 sm:px-6 md:py-20 lg:px-8">
           <div className="mx-auto max-w-2xl">

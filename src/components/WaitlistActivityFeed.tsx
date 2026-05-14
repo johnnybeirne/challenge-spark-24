@@ -17,18 +17,18 @@ interface ActivityItem {
 }
 
 const ITEMS: ActivityItem[] = [
-  { name: "Sarah", action: "joined early access", time: "1m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
-  { name: "Daniel", action: "unlocked earlier access", time: "4m ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Sarah", action: "joined the waitlist", time: "1m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
+  { name: "Daniel", action: "unlocked earlier entry", time: "4m ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Emma", action: "invited 3 people", time: "9m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarLily },
   { name: "Chris", action: "moved up the queue", time: "12m ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarOwen },
-  { name: "Priya", action: "joined early access", time: "18m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarMaria },
+  { name: "Priya", action: "joined the waitlist", time: "18m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarMaria },
   { name: "Jonas", action: "moved up 12 spots", time: "27m ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Mia", action: "invited 5 people", time: "41m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarTara },
-  { name: "Noah", action: "unlocked earlier access", time: "1h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
-  { name: "Aiko", action: "joined early access", time: "1h ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
+  { name: "Noah", action: "unlocked earlier entry", time: "1h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Aiko", action: "joined the waitlist", time: "1h ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
   { name: "Felix", action: "moved up the queue", time: "2h ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarOwen },
   { name: "Hannah", action: "invited 4 people", time: "3h ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarLily },
-  { name: "Marco", action: "unlocked earlier access", time: "5h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarAlex },
+  { name: "Marco", action: "unlocked earlier entry", time: "5h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarAlex },
 ];
 
 interface Props {

@@ -28,9 +28,9 @@ const Section = ({ children, className = "" }: { children: ReactNode; className?
 );
 
 const steps = [
-  { icon: Mail, title: "Join the list", body: "Reserve your place with your email — takes a few seconds." },
+  { icon: Mail, title: "Join the waitlist", body: "Reserve your place with your email — takes a few seconds." },
   { icon: Link2, title: "Get your invite link", body: "We send you a unique link to share with friends." },
-  { icon: Users, title: "Invite 3 people", body: "Each confirmed invite moves you up. Three unlocks earlier access." },
+  { icon: Users, title: "Invite 3 people to move up the waitlist", body: "Each confirmed invite moves you up. Three unlocks earlier access." },
 ];
 
 const Waitlist = () => {
@@ -142,8 +142,8 @@ const Waitlist = () => {
   return (
     <>
       <SEO
-        title="Early Access — Leadio"
-        description="Join early and get priority access when the 3-day challenge opens. Invite others to move up the queue."
+        title="Waitlist — Leadio"
+        description="Join the waitlist for the 3-day challenge. Invite others to move up the queue."
         canonical="/waitlist"
       />
       <main className="min-h-screen bg-background text-foreground">
@@ -154,13 +154,13 @@ const Waitlist = () => {
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="text-center lg:text-left">
               <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-primary shadow-sm lg:mx-0">
-                Early access · Pre-launch
+                Waitlist · Pre-launch
               </p>
               <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
                 Run a 3-day challenge people want to share
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                Join early and get priority access when the challenge opens. Invite others to move up the queue.
+                Join the waitlist before the challenge opens. Invite others to move up the queue.
               </p>
 
               {!signedUp ? (
@@ -191,7 +191,7 @@ const Waitlist = () => {
                     disabled={loading}
                     className="mt-1 h-14 w-full gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
                   >
-                    {loading ? "Joining…" : "Join Early Access"}
+                    {loading ? "Joining…" : "Join the Waitlist"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </form>
@@ -230,7 +230,7 @@ const Waitlist = () => {
               )}
 
               <p className="mt-4 text-xs text-muted-foreground">
-                No spam. Early access only.
+                No spam. Waitlist updates only.
                 {totalSignups > 0 && (
                   <> · <span className="font-medium text-foreground">{totalSignups.toLocaleString()}</span> joined already</>
                 )}
@@ -270,7 +270,7 @@ const Waitlist = () => {
           <Section className="border-t border-border">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">
-                The earlier you join, the stronger your starting position.
+                The earlier you join the waitlist, the stronger your starting position.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
                 Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
@@ -280,7 +280,7 @@ const Waitlist = () => {
                   onClick={scrollTop}
                   className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20"
                 >
-                  Join Early Access
+                  Join the Waitlist
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>

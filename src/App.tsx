@@ -57,6 +57,7 @@ import AdminCoupons from "@/pages/AdminCoupons";
 import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
+import AdminWaitlist from "@/pages/AdminWaitlist";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";

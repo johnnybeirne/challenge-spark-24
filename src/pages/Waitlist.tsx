@@ -58,7 +58,9 @@ const Waitlist = () => {
   const sendInviteEmail = async (entry: WaitlistEntry) => {
     const url = `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`;
     const greeting = entry.name?.trim() ? `Hi ${entry.name.trim()},` : "Hi there,";
-    const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ffffff;padding:32px 16px;color:#0f172a;">
+    const firstName = entry.name?.trim()?.split(" ")[0] || "there";
+
+    const fallbackHtml = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ffffff;padding:32px 16px;color:#0f172a;">
   <div style="max-width:520px;margin:0 auto;">
     <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">You're on the waitlist</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#334155;">${greeting}</p>
@@ -69,13 +71,30 @@ const Waitlist = () => {
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The Leadio team</p>
   </div>
 </body></html>`;
+
+    let subject = "You're on the waitlist";
+    let html = fallbackHtml;
+
+    try {
+      const { data: tpl } = await supabase
+        .from("email_templates")
+        .select("subject,html_body")
+        .eq("id", "waitlist_invite")
+        .maybeSingle();
+      if (tpl) {
+        subject = tpl.subject;
+        html = tpl.html_body
+          .split("{{greeting}}").join(greeting)
+          .split("{{url}}").join(url)
+          .split("{{name}}").join(firstName);
+      }
+    } catch (err) {
+      console.error("template load failed, using fallback", err);
+    }
+
     try {
       await supabase.functions.invoke("send-email", {
-        body: {
-          to: entry.email,
-          subject: "You're on the waitlist",
-          html,
-        },
+        body: { to: entry.email, subject, html },
       });
     } catch (err) {
       console.error("send-email failed", err);

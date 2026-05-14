@@ -5,8 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Save, RefreshCw, Send } from "lucide-react";
-import ReactQuill from "react-quill-new";
+import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+
+const FONT_SIZES = ["10px", "12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px", "36px", "48px"];
+const SizeStyle: any = (Quill as any).import("attributors/style/size");
+SizeStyle.whitelist = FONT_SIZES;
+(Quill as any).register(SizeStyle, true);
 
 const TEMPLATE_ID = "waitlist_invite";
 

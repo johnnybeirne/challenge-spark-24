@@ -374,14 +374,6 @@ const WaitlistThanks = () => {
               </Button>
             </div>
 
-            <div className="mt-10 text-center text-sm">
-              <Link
-                to="/waitlist"
-                className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-              >
-                Back to waitlist
-              </Link>
-            </div>
           </div>
         </section>
       </main>

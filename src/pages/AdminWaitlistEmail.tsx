@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Save, RefreshCw, Send } from "lucide-react";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 const TEMPLATE_ID = "waitlist_invite";
 

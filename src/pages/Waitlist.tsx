@@ -43,7 +43,6 @@ const Waitlist = () => {
   const [signedUp, setSignedUp] = useState<WaitlistEntry | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [totalSignups, setTotalSignups] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   const loadCount = useCallback(async () => {
     const { count } = await supabase

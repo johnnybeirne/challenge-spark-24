@@ -148,7 +148,7 @@ const AdminWaitlist = () => {
   }, [rows]);
 
   const exportCsv = () => {
-    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "confirmed_invites", "tier", "status", "created_at"];
+    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
       [
         r.waitlist_position,

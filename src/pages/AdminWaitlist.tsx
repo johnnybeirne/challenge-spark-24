@@ -352,16 +352,17 @@ const AdminWaitlist = () => {
                       ["email", "Email", "left"],
                       
                       ["referred_by_code", "Referred by", "left"],
+                      ["referred_by_code", "Referrer email", "left"],
                       ["confirmed_invites", "Invites", "center"],
                       ["current_tier", "Tier", "left"],
                       ["status", "Status", "left"],
                       ["created_at", "Joined", "left"],
                     ] as Array<[SortKey, string, "left" | "center"]>
-                  ).map(([key, label, align]) => {
+                  ).map(([key, label, align], idx) => {
                     const active = sortKey === key;
                     const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
                     return (
-                      <th key={key} className="px-4 py-3">
+                      <th key={`${key}-${idx}`} className="px-4 py-3">
                         <button
                           type="button"
                           onClick={() => toggleSort(key)}
@@ -385,16 +386,25 @@ const AdminWaitlist = () => {
                     </td>
                     <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
-                    <td className="px-4 py-3">
-                      {r.referred_by_code ? (
-                        (() => {
-                          const inviter = rows.find((x) => x.referral_code === r.referred_by_code);
-                          if (!inviter) {
-                            return <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referred_by_code}</code>;
-                          }
-                          return (
-                            <div className="flex flex-col">
-                              {inviter.name && <span className="text-sm">{inviter.name}</span>}
+                    {(() => {
+                      const inviter = r.referred_by_code
+                        ? rows.find((x) => x.referral_code === r.referred_by_code)
+                        : null;
+                      return (
+                        <>
+                          <td className="px-4 py-3">
+                            {r.referred_by_code ? (
+                              inviter?.name ? (
+                                <span className="text-sm">{inviter.name}</span>
+                              ) : (
+                                <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referred_by_code}</code>
+                              )
+                            ) : (
+                              <span className="text-xs text-muted-foreground">Direct</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            {inviter?.email ? (
                               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <span className="truncate">{inviter.email}</span>
                                 <button
@@ -415,13 +425,13 @@ const AdminWaitlist = () => {
                                   <Copy className="h-3 w-3" />
                                 </button>
                               </span>
-                            </div>
-                          );
-                        })()
-                      ) : (
-                        <span className="text-xs text-muted-foreground">Direct</span>
-                      )}
-                    </td>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+                        </>
+                      );
+                    })()}
                     <td className="px-4 py-3 text-center font-semibold">{r.confirmed_invites}</td>
                     <td className="px-4 py-3">
                       <Badge variant="secondary" className="text-xs">{r.current_tier}</Badge>
@@ -438,7 +448,7 @@ const AdminWaitlist = () => {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

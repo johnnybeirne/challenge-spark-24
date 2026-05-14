@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Save, RefreshCw, Send } from "lucide-react";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 const TEMPLATE_ID = "waitlist_invite";
 
@@ -147,15 +148,30 @@ const AdminWaitlistEmail = () => {
             />
           </div>
           <div>
-            <Label htmlFor="html">HTML body</Label>
-            <Textarea
-              id="html"
-              value={html}
-              onChange={(e) => setHtml(e.target.value)}
-              disabled={loading}
-              rows={20}
-              className="mt-1.5 font-mono text-xs"
-            />
+            <Label htmlFor="html">Email body</Label>
+            <div className="mt-1.5 rounded-md border border-input bg-background">
+              <ReactQuill
+                theme="snow"
+                value={html}
+                onChange={setHtml}
+                readOnly={loading}
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ color: [] }, { background: [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    [{ align: [] }],
+                    ["link"],
+                    ["clean"],
+                  ],
+                }}
+                className="bg-background [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-sm"
+              />
+            </div>
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              Use the placeholders <code>{"{{greeting}}"}</code>, <code>{"{{name}}"}</code>, <code>{"{{url}}"}</code> anywhere in the body. To insert your invite link as a button, add a hyperlink with URL <code>{"{{url}}"}</code>.
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={save} disabled={saving || loading} className="gap-2">

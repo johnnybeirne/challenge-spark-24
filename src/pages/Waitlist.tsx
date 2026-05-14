@@ -182,7 +182,7 @@ const Waitlist = () => {
                 Run a 3-day challenge people want to share
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                Join the waitlist before the challenge opens. Invite others to unlock priority access to bonus extras.
+                Join the waitlist before the challenge opens. Invite others to unlock priority access to extra bonues
               </p>
 
               {!signedUp ? (

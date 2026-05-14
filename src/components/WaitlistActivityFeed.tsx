@@ -18,16 +18,16 @@ interface ActivityItem {
 
 const ITEMS: ActivityItem[] = [
   { name: "Emma", action: "joined the waitlist", time: "1m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
-  { name: "Patrick", action: "unlocked earlier entry", time: "4m ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Patrick", action: "shared his invite link", time: "4m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Hiro", action: "invited 3 people", time: "9m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarAlex },
-  { name: "Aoife", action: "moved up the queue", time: "12m ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarLily },
+  { name: "Aoife", action: "unlocked bonus extras", time: "12m ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarLily },
   { name: "Sofia", action: "joined the waitlist", time: "18m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarMaria },
-  { name: "Liam", action: "moved up 12 spots", time: "27m ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarOwen },
+  { name: "Liam", action: "shared his invite link", time: "27m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarOwen },
   { name: "Sarah", action: "invited 5 people", time: "41m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarTara },
-  { name: "Michael", action: "unlocked earlier entry", time: "1h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Michael", action: "unlocked bonus extras", time: "1h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "John", action: "joined the waitlist", time: "1h ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarOwen },
   { name: "Aoife", action: "invited 3 people", time: "2h ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarLily },
-  { name: "Hiro", action: "moved up the queue", time: "3h ago", icon: <ArrowUp className="h-3.5 w-3.5" />, avatar: avatarAlex },
+  { name: "Hiro", action: "unlocked bonus extras", time: "3h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Patrick", action: "joined the waitlist", time: "5h ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarJames },
 ];
 

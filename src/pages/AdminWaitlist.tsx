@@ -386,11 +386,9 @@ const AdminWaitlist = () => {
                         <>
                           <td className="px-4 py-3">
                             {r.referred_by_code ? (
-                              inviter?.name ? (
-                                <span className="text-sm">{inviter.name}</span>
-                              ) : (
-                                <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{r.referred_by_code}</code>
-                              )
+                              <span className="text-sm">
+                                {inviter?.name || inviter?.email || r.referred_by_code}
+                              </span>
                             ) : (
                               <span className="text-xs text-muted-foreground">Direct</span>
                             )}

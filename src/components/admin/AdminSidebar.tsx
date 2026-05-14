@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -23,6 +23,7 @@ const items = [
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   
   { title: "Signups", url: "/owner-console/signups", icon: UserPlus },
+  { title: "Waitlist", url: "/owner-console/waitlist", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },

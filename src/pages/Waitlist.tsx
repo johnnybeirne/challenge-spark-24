@@ -203,6 +203,10 @@ const Waitlist = () => {
               >
                 Share invite link
               </Button>
+
+              <p className="mt-4 text-center text-xs text-muted-foreground">
+                Invite 3 people to unlock earlier access.
+              </p>
             </div>
           )}
 

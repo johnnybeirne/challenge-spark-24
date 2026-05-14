@@ -253,9 +253,6 @@ const AdminWaitlist = () => {
               <Trophy className="h-4 w-4 text-amber-500" />
               <h2 className="text-sm font-semibold">Referral Leaderboard</h2>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Unique valid referrals · dedupes emails · excludes self-referrals
-            </p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

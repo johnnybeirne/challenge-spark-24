@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, UserPlus } from "lucide-react";
+import { Download, Search, UserPlus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 
 type Profile = {
@@ -149,7 +150,36 @@ const AdminSignups = () => {
           <h1 className="text-2xl font-bold flex items-center gap-2"><UserPlus className="h-6 w-6" /> Signups</h1>
           <p className="text-sm text-muted-foreground">Where they came from, and where they are now.</p>
         </div>
-        <Button onClick={exportCSV} variant="outline" size="sm"><Download className="h-4 w-4 mr-2" /> Export CSV</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={exportCSV} variant="outline" size="sm"><Download className="h-4 w-4 mr-2" /> Export CSV</Button>
+          <Button
+            onClick={async () => {
+              if (rows.length === 0) {
+                toast.info("No signups to clear.");
+                return;
+              }
+              const ok = window.confirm(
+                `Are you sure you want to delete all ${rows.length} signups? This cannot be undone.`,
+              );
+              if (!ok) return;
+              await supabase.from("challenge_progress").delete().not("id", "is", null);
+              await supabase.from("training_progress").delete().not("id", "is", null);
+              const { error } = await supabase.from("profiles").delete().not("id", "is", null);
+              if (error) {
+                toast.error(`Failed to empty signups: ${error.message}`);
+                return;
+              }
+              setRows([]);
+              setChallenge(new Map());
+              setTraining(new Map());
+              toast.success("Signups emptied.");
+            }}
+            variant="destructive"
+            size="sm"
+          >
+            <Trash2 className="h-4 w-4 mr-2" /> Empty signups
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">

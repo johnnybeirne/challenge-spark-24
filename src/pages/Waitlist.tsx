@@ -163,9 +163,6 @@ const Waitlist = () => {
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 Join the waitlist before the challenge opens. Invite others to unlock priority access to bonus extras.
               </p>
-              <div className="mt-7 flex justify-center lg:justify-start">
-                <HostBadge size="lg" align="center" className="lg:items-start lg:text-left" />
-              </div>
 
               {!signedUp ? (
                 <form

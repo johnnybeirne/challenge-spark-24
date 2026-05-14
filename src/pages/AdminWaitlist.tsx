@@ -287,7 +287,7 @@ const AdminWaitlist = () => {
                       ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],
                       ["referred_by_code", "Referrer email", "left"],
-                      ["confirmed_invites", "Invites", "center"],
+                      
                       ["current_tier", "Tier", "left"],
                       ["status", "Status", "left"],
                       ["created_at", "Joined", "left"],

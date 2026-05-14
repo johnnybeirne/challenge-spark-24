@@ -3,12 +3,11 @@ import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { shareOrCopy } from "@/lib/share";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
 import {
-  ArrowRight, Mail, Link2, Users, Copy, CheckCircle2,
+  ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 

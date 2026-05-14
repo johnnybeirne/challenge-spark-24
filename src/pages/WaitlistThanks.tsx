@@ -189,22 +189,13 @@ const WaitlistThanks = () => {
 
             {/* HOST PORTRAIT */}
             <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
-              <div className="relative overflow-hidden rounded-[2rem]">
+              <div className="relative overflow-hidden rounded-[2rem] bg-muted">
                 <img
                   src={hostImage}
                   alt="Johnny Beirne"
                   loading="eager"
                   className="block aspect-[4/5] w-full object-cover"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/70 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border/60 bg-background/85 px-4 py-3 backdrop-blur-sm">
-                  <div className="leading-tight">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Hosted by
-                    </p>
-                    <p className="text-sm font-semibold text-foreground">Johnny Beirne</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

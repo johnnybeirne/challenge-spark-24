@@ -43,6 +43,30 @@ const AdminWaitlist = () => {
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
   const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const deleteSelected = async () => {
+    if (selected.size === 0) return;
+    const ok = window.confirm(`Delete ${selected.size} selected signup${selected.size === 1 ? "" : "s"}? This cannot be undone.`);
+    if (!ok) return;
+    const ids = Array.from(selected);
+    const { error } = await supabase.from("waitlist_signups").delete().in("id", ids);
+    if (error) {
+      toast.error(`Failed to delete: ${error.message}`);
+      return;
+    }
+    setRows((prev) => prev.filter((r) => !selected.has(r.id)));
+    setSelected(new Set());
+    toast.success(`Deleted ${ids.length} signup${ids.length === 1 ? "" : "s"}.`);
+  };
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {

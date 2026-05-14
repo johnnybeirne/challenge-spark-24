@@ -194,7 +194,7 @@ const WaitlistThanks = () => {
                   src={hostImage}
                   alt="Johnny Beirne"
                   loading="eager"
-                  className="block aspect-[4/5] w-full object-cover"
+                  className="block aspect-[4/5] w-full object-contain object-bottom"
                 />
               </div>
             </div>

@@ -25,9 +25,9 @@ const renderPreview = (html: string, name: string) => {
   const greeting = name.trim() ? `Hi ${name.trim()},` : "Hi there,";
   const url = "https://leadio.johnnybeirne.com/waitlist?ref=PREVIEW123";
   return html
-    .replaceAll("{{greeting}}", greeting)
-    .replaceAll("{{url}}", url)
-    .replaceAll("{{name}}", name.trim() || "there");
+    .split("{{greeting}}").join(greeting)
+    .split("{{url}}").join(url)
+    .split("{{name}}").join(name.trim() || "there");
 };
 
 const AdminWaitlistEmail = () => {

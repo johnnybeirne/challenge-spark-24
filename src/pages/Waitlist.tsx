@@ -270,7 +270,7 @@ const Waitlist = () => {
                 The earlier you join the waitlist, the stronger your starting position.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-                Priority access opens in waves. Joining now — and inviting a few friends — secures your spot in the first one.
+                Invite a few friends after you join to unlock priority access to bonus extras.
               </p>
               <div className="mt-8 flex justify-center">
                 <Button

@@ -171,10 +171,10 @@ const WaitlistThanks = () => {
                 You're in
               </div>
               <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-                {firstName ? `${firstName}, you're on the waitlist.` : "You're on the waitlist."}
+                {firstName ? `Congratulations, ${firstName}!` : "Congratulations!"}
               </h1>
               <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                You'll be notified when the challenge opens.
+                You've successfully joined the waitlist.
               </p>
             </div>
 

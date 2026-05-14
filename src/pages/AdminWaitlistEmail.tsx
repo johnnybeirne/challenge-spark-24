@@ -172,7 +172,7 @@ const AdminWaitlistEmail = () => {
                     ["clean"],
                   ],
                 }}
-                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white [&_.ql-editor_*]:!text-black"
+                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white"
               />
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">

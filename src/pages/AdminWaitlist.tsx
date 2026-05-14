@@ -82,25 +82,29 @@ const AdminWaitlist = () => {
       );
     }
     const sorted = [...list].sort((a, b) => {
-      const av = a[sortKey];
-      const bv = b[sortKey];
-      const aEmpty = av === null || av === undefined || av === "";
-      const bEmpty = bv === null || bv === undefined || bv === "";
-      if (aEmpty && bEmpty) return 0;
-      if (aEmpty) return 1;
-      if (bEmpty) return -1;
       let cmp: number;
-      if (typeof av === "number" && typeof bv === "number") {
-        cmp = av - bv;
-      } else if (sortKey === "created_at") {
-        cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+      if (sortKey === "valid_referrals") {
+        cmp = (validRefMap.get(a.id) || 0) - (validRefMap.get(b.id) || 0);
       } else {
-        cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+        const av = a[sortKey];
+        const bv = b[sortKey];
+        const aEmpty = av === null || av === undefined || av === "";
+        const bEmpty = bv === null || bv === undefined || bv === "";
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return 1;
+        if (bEmpty) return -1;
+        if (typeof av === "number" && typeof bv === "number") {
+          cmp = av - bv;
+        } else if (sortKey === "created_at") {
+          cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+        } else {
+          cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+        }
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
     return sorted;
-  }, [rows, filter, search, sortKey, sortDir]);
+  }, [rows, filter, search, sortKey, sortDir, validRefMap]);
 
   const totals = useMemo(() => {
     const total = rows.length;

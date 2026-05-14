@@ -185,6 +185,16 @@ const WaitlistThanks = () => {
               <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 You've successfully joined the waitlist.
               </p>
+              <div className="mt-6 flex justify-center lg:justify-start">
+                <Button
+                  onClick={() => {
+                    document.getElementById("invite-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="h-12 gap-2 rounded-xl px-6 font-black uppercase shadow-lg shadow-primary/20"
+                >
+                  <Sparkles className="h-4 w-4" /> Unlock priority access
+                </Button>
+              </div>
             </div>
 
             {/* HOST PORTRAIT */}

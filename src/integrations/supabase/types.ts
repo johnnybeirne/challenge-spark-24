@@ -1266,6 +1266,7 @@ export type Database = {
           name: string | null
           referral_code: string
           referred_by_code: string | null
+          status: string
           updated_at: string
           waitlist_position: number
         }
@@ -1278,6 +1279,7 @@ export type Database = {
           name?: string | null
           referral_code: string
           referred_by_code?: string | null
+          status?: string
           updated_at?: string
           waitlist_position?: number
         }
@@ -1290,6 +1292,7 @@ export type Database = {
           name?: string | null
           referral_code?: string
           referred_by_code?: string | null
+          status?: string
           updated_at?: string
           waitlist_position?: number
         }

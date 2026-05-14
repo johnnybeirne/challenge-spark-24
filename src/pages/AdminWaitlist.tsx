@@ -66,6 +66,39 @@ const AdminWaitlist = () => {
     })();
   }, []);
 
+  // Valid referral counts per inviter (deduped by email, no self-referrals).
+  const validRefMap = useMemo(() => {
+    const byCode = new Map<string, WaitlistRow>();
+    rows.forEach((r) => {
+      if (r.referral_code) byCode.set(r.referral_code, r);
+    });
+    const seenEmailPerCode = new Map<string, Set<string>>();
+    rows.forEach((r) => {
+      const ref = r.referred_by_code;
+      if (!ref) return;
+      const inviter = byCode.get(ref);
+      if (!inviter) return;
+      const email = (r.email || "").toLowerCase().trim();
+      if (!email) return;
+      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
+      if (!seenEmailPerCode.has(ref)) seenEmailPerCode.set(ref, new Set());
+      seenEmailPerCode.get(ref)!.add(email);
+    });
+    const map = new Map<string, number>();
+    seenEmailPerCode.forEach((set, code) => {
+      const inviter = byCode.get(code);
+      if (inviter) map.set(inviter.id, set.size);
+    });
+    return map;
+  }, [rows]);
+
+  const topFiveIds = useMemo(() => {
+    const entries = Array.from(validRefMap.entries())
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1]);
+    return entries.slice(0, 5).map(([id]) => id);
+  }, [validRefMap]);
+
   const filtered = useMemo(() => {
     let list = rows;
     if (filter === "referred") list = list.filter((r) => !!r.referred_by_code);

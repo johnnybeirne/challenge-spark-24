@@ -148,7 +148,7 @@ const AdminWaitlist = () => {
   }, [rows]);
 
   const exportCsv = () => {
-    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "confirmed_invites", "tier", "status", "created_at"];
+    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
       [
         r.waitlist_position,
@@ -156,7 +156,6 @@ const AdminWaitlist = () => {
         r.email,
         r.referred_by_code || "",
         validRefMap.get(r.id) || 0,
-        r.confirmed_invites,
         r.current_tier,
         r.status,
         r.created_at,
@@ -287,7 +286,7 @@ const AdminWaitlist = () => {
                       ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],
                       ["referred_by_code", "Referrer email", "left"],
-                      ["confirmed_invites", "Invites", "center"],
+                      
                       ["current_tier", "Tier", "left"],
                       ["status", "Status", "left"],
                       ["created_at", "Joined", "left"],
@@ -394,7 +393,7 @@ const AdminWaitlist = () => {
                         </>
                       );
                     })()}
-                    <td className="px-4 py-3 text-center font-semibold">{r.confirmed_invites}</td>
+                    
                     <td className="px-4 py-3">
                       <Badge variant="secondary" className="text-xs">{r.current_tier}</Badge>
                     </td>

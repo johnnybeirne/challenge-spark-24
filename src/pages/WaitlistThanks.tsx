@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
+import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
 import hostImage from "@/assets/johnny-beirne-thanks.png";
 import { shareOrCopy } from "@/lib/share";
@@ -64,6 +65,7 @@ const WaitlistThanks = () => {
   const [copied, setCopied] = useState(false);
   const [pickedIdea, setPickedIdea] = useState<string | null>(null);
   const [otherIdea, setOtherIdea] = useState("");
+  const [showConfetti] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,6 +162,7 @@ const WaitlistThanks = () => {
         canonical="/waitlist/thanks"
       />
       <main className="min-h-screen bg-background text-foreground">
+        {showConfetti && <Confetti />}
         {/* SECTION 1 — SUCCESS */}
         <section className="px-5 pt-14 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
@@ -169,10 +172,10 @@ const WaitlistThanks = () => {
                 You're in
               </div>
               <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-                {firstName ? `${firstName}, you're on the waitlist.` : "You're on the waitlist."}
+                {firstName ? `Congratulations, ${firstName}!` : "Congratulations!"}
               </h1>
               <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                You'll be notified when the challenge opens.
+                You've successfully joined the waitlist.
               </p>
             </div>
 

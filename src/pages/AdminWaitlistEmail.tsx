@@ -21,10 +21,10 @@ const DEFAULT_HTML = `<!doctype html><html><body style="font-family:-apple-syste
   </div>
 </body></html>`;
 
-const renderPreview = (html: string, name: string) => {
+const renderTemplate = (template: string, name: string) => {
   const greeting = name.trim() ? `Hi ${name.trim()},` : "Hi there,";
   const url = "https://leadio.johnnybeirne.com/waitlist?ref=PREVIEW123";
-  return html
+  return template
     .split("{{greeting}}").join(greeting)
     .split("{{url}}").join(url)
     .split("{{name}}").join(name.trim() || "there");
@@ -92,9 +92,10 @@ const AdminWaitlistEmail = () => {
     }
     setSending(true);
     try {
-      const rendered = renderPreview(html, previewName);
+      const renderedSubject = renderTemplate(subject, previewName);
+      const rendered = renderTemplate(html, previewName);
       const { error } = await supabase.functions.invoke("send-email", {
-        body: { to, subject, html: rendered },
+        body: { to, subject: renderedSubject, html: rendered },
       });
       if (error) throw error;
       toast.success(`Test email sent to ${to}`);
@@ -106,7 +107,8 @@ const AdminWaitlistEmail = () => {
     }
   };
 
-  const preview = useMemo(() => renderPreview(html, previewName), [html, previewName]);
+  const previewSubject = useMemo(() => renderTemplate(subject, previewName), [subject, previewName]);
+  const preview = useMemo(() => renderTemplate(html, previewName), [html, previewName]);
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 p-6">
@@ -194,7 +196,7 @@ const AdminWaitlistEmail = () => {
           <div className="overflow-hidden rounded-lg border border-border bg-background">
             <div className="border-b border-border bg-muted/40 px-4 py-2 text-xs">
               <span className="font-semibold text-foreground">Subject:</span>{" "}
-              <span className="text-muted-foreground">{subject || "—"}</span>
+              <span className="text-muted-foreground">{previewSubject || "—"}</span>
             </div>
             <iframe
               title="Email preview"

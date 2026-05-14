@@ -154,7 +154,13 @@ const WaitlistThanks = () => {
     );
   }
 
-  const firstName = entry.name?.trim()?.split(" ")[0];
+  let storedName: string | null = null;
+  try { storedName = sessionStorage.getItem("waitlist:name"); } catch {}
+  const rawName = (entry.name || stateName || storedName || "").trim();
+  const firstNameRaw = rawName.split(" ")[0];
+  const firstName = firstNameRaw
+    ? firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1)
+    : "";
 
   return (
     <>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
-import HostBadge from "@/components/HostBadge";
+import hostImage from "@/assets/johnny-beirne.png";
 import {
   ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";
@@ -163,9 +163,6 @@ const Waitlist = () => {
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
                 Join the waitlist before the challenge opens. Invite others to unlock priority access to bonus extras.
               </p>
-              <div className="mt-7 flex justify-center lg:justify-start">
-                <HostBadge size="lg" align="center" className="lg:items-start lg:text-left" />
-              </div>
 
               {!signedUp ? (
                 <form
@@ -243,28 +240,51 @@ const Waitlist = () => {
               />
             </div>
 
-            {/* HOW IT WORKS — mirrors AnimatedDayCards layout */}
-            <div className="relative space-y-4">
-              {steps.map((step, index) => (
-                <article
-                  key={step.title}
-                  className="relative z-10 rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <step.icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-black uppercase text-primary">Step {index + 1}</p>
-                      <h2 className="mt-1 text-xl font-black text-foreground">{step.title}</h2>
-                      <p className="mt-2 leading-7 text-muted-foreground">{step.body}</p>
-                    </div>
+            {/* HOST PORTRAIT */}
+            <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+              <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl ring-1 ring-border/60">
+                <img
+                  src={hostImage}
+                  alt="Johnny Beirne"
+                  loading="eager"
+                  className="block aspect-[4/5] w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border/60 bg-background/85 px-4 py-3 backdrop-blur-sm">
+                  <div className="leading-tight">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Hosted by
+                    </p>
+                    <p className="text-sm font-semibold text-foreground">Johnny Beirne</p>
                   </div>
-                </article>
-              ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* HOW IT WORKS */}
+        <Section className="border-t border-border pt-12 md:pt-16">
+          <div className="grid gap-4 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <article
+                key={step.title}
+                className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <step.icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-black uppercase text-primary">Step {index + 1}</p>
+                    <h2 className="mt-1 text-lg font-black text-foreground">{step.title}</h2>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.body}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </Section>
 
         {/* FINAL CTA */}
         {!signedUp && (

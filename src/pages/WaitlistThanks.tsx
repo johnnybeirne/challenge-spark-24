@@ -173,7 +173,7 @@ const WaitlistThanks = () => {
         {showConfetti && <Confetti />}
         {/* SECTION 1 — SUCCESS */}
         <section className="bg-white px-5 pb-0 sm:px-6 lg:px-8" style={{ paddingTop: "10px" }}>
-          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
             <div className="pb-10 text-center md:pb-14 lg:pb-20 lg:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-success shadow-sm">
                 <CheckCircle2 className="h-4 w-4" />
@@ -188,7 +188,7 @@ const WaitlistThanks = () => {
             </div>
 
             {/* HOST PORTRAIT */}
-            <div className="relative mx-auto -mb-px w-full max-w-md lg:mx-0 lg:max-w-none">
+            <div className="relative mx-auto -mb-px w-full max-w-xs lg:mx-0 lg:ml-auto lg:max-w-sm">
               <img
                 src={hostImage}
                 alt="Johnny Beirne"

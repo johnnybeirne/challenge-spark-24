@@ -230,7 +230,7 @@ const Waitlist = () => {
               )}
 
               <p className="mt-4 text-xs text-muted-foreground">
-                No spam. Early access only.
+                No spam. Waitlist updates only.
                 {totalSignups > 0 && (
                   <> · <span className="font-medium text-foreground">{totalSignups.toLocaleString()}</span> joined already</>
                 )}

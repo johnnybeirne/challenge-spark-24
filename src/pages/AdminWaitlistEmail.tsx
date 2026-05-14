@@ -163,7 +163,7 @@ const AdminWaitlistEmail = () => {
                 modules={{
                   toolbar: [
                     [{ header: [1, 2, 3, false] }],
-                    [{ size: ["small", false, "large", "huge"] }],
+                    [{ size: FONT_SIZES }],
                     ["bold", "italic", "underline", "strike"],
                     [{ color: [] }, { background: [] }],
                     [{ list: "ordered" }, { list: "bullet" }],
@@ -172,7 +172,7 @@ const AdminWaitlistEmail = () => {
                     ["clean"],
                   ],
                 }}
-                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-sm [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white"
+                className="bg-white [&_.ql-editor]:min-h-[420px] [&_.ql-editor]:text-black [&_.ql-editor]:bg-white [&_.ql-toolbar]:bg-white [&_.ql-editor_*]:!text-black"
               />
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">

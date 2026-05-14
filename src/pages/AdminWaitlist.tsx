@@ -156,7 +156,6 @@ const AdminWaitlist = () => {
         r.email,
         r.referred_by_code || "",
         validRefMap.get(r.id) || 0,
-        validRefMap.get(r.id) || 0,
         r.current_tier,
         r.status,
         r.created_at,

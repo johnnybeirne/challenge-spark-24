@@ -358,11 +358,11 @@ const AdminWaitlist = () => {
                       ["status", "Status", "left"],
                       ["created_at", "Joined", "left"],
                     ] as Array<[SortKey, string, "left" | "center"]>
-                  ).map(([key, label, align]) => {
+                  ).map(([key, label, align], idx) => {
                     const active = sortKey === key;
                     const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
                     return (
-                      <th key={key} className="px-4 py-3">
+                      <th key={`${key}-${idx}`} className="px-4 py-3">
                         <button
                           type="button"
                           onClick={() => toggleSort(key)}

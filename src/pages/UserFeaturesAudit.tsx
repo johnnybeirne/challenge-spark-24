@@ -889,6 +889,24 @@ const UserFeaturesAudit = () => {
       </section>
 
       <div className="space-y-4">
+        {/* Journey map */}
+        <Section title="Current User Journey Map">
+          <ol className="space-y-3">
+            {JOURNEY_STAGES.map((s, i) => (
+              <li key={s.stage} className="rounded-xl border border-border p-4">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">{i + 1}</span>
+                  <h3 className="text-sm font-black">{s.stage}</h3>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {s.routes.map(r => <RouteCode key={r} route={r} />)}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{s.notes}</p>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
         {/* Experience Separation */}
         <ExperienceSeparationSection />
         <NavCohesionSection />
@@ -913,24 +931,6 @@ const UserFeaturesAudit = () => {
               </div>
             ))}
           </div>
-        </Section>
-
-        {/* Journey map */}
-        <Section title="Current User Journey Map">
-          <ol className="space-y-3">
-            {JOURNEY_STAGES.map((s, i) => (
-              <li key={s.stage} className="rounded-xl border border-border p-4">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">{i + 1}</span>
-                  <h3 className="text-sm font-black">{s.stage}</h3>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {s.routes.map(r => <RouteCode key={r} route={r} />)}
-                </div>
-                <p className="mt-2 text-xs text-muted-foreground">{s.notes}</p>
-              </li>
-            ))}
-          </ol>
         </Section>
 
         {/* Entry points */}

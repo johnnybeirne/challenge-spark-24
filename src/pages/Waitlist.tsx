@@ -28,9 +28,9 @@ const Section = ({ children, className = "" }: { children: ReactNode; className?
 );
 
 const steps = [
-  { icon: Mail, title: "Join the list", body: "Reserve your place with your email — takes a few seconds." },
+  { icon: Mail, title: "Join the waitlist", body: "Reserve your place with your email — takes a few seconds." },
   { icon: Link2, title: "Get your invite link", body: "We send you a unique link to share with friends." },
-  { icon: Users, title: "Invite 3 people", body: "Each confirmed invite moves you up. Three unlocks earlier access." },
+  { icon: Users, title: "Invite 3 people to move up the waitlist", body: "Each confirmed invite moves you up. Three unlocks earlier access." },
 ];
 
 const Waitlist = () => {

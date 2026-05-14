@@ -58,6 +58,8 @@ const challengeIdeas = [
 const WaitlistThanks = () => {
   const [params] = useSearchParams();
   const ref = params.get("ref");
+  const location = useLocation();
+  const stateName = (location.state as { name?: string | null } | null)?.name ?? null;
   const navigate = useNavigate();
 
   const [entry, setEntry] = useState<WaitlistEntry | null>(null);

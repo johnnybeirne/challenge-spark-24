@@ -205,7 +205,7 @@ const WaitlistThanks = () => {
                   onClick={() => {
                     document.getElementById("invite-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className="group h-12 gap-2 rounded-xl px-6 font-black uppercase shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30 animate-[pulse-glow_2.5s_ease-in-out_infinite]"
+                  className="group h-12 gap-2 rounded-xl px-6 font-black uppercase shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30 animate-[pulse-glow_5s_ease-in-out_infinite]"
                 >
                   <Sparkles className="h-4 w-4 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" /> Unlock priority access
                 </Button>

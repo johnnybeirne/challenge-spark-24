@@ -484,7 +484,7 @@ const AdminWaitlist = () => {
                 })}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={11} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

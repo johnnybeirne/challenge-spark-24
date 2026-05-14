@@ -35,6 +35,7 @@ const steps = [
 
 const Waitlist = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const refCode = searchParams.get("ref");
 
   const [name, setName] = useState("");

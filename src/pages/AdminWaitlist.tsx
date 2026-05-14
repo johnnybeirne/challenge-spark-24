@@ -31,6 +31,7 @@ type SortKey =
   | "referral_code"
   | "referred_by_code"
   | "confirmed_invites"
+  | "valid_referrals"
   | "current_tier"
   | "status"
   | "created_at";
@@ -40,8 +41,8 @@ const AdminWaitlist = () => {
   const [rows, setRows] = useState<WaitlistRow[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
-  const [sortKey, setSortKey] = useState<SortKey>("waitlist_position");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -65,6 +66,39 @@ const AdminWaitlist = () => {
     })();
   }, []);
 
+  // Valid referral counts per inviter (deduped by email, no self-referrals).
+  const validRefMap = useMemo(() => {
+    const byCode = new Map<string, WaitlistRow>();
+    rows.forEach((r) => {
+      if (r.referral_code) byCode.set(r.referral_code, r);
+    });
+    const seenEmailPerCode = new Map<string, Set<string>>();
+    rows.forEach((r) => {
+      const ref = r.referred_by_code;
+      if (!ref) return;
+      const inviter = byCode.get(ref);
+      if (!inviter) return;
+      const email = (r.email || "").toLowerCase().trim();
+      if (!email) return;
+      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
+      if (!seenEmailPerCode.has(ref)) seenEmailPerCode.set(ref, new Set());
+      seenEmailPerCode.get(ref)!.add(email);
+    });
+    const map = new Map<string, number>();
+    seenEmailPerCode.forEach((set, code) => {
+      const inviter = byCode.get(code);
+      if (inviter) map.set(inviter.id, set.size);
+    });
+    return map;
+  }, [rows]);
+
+  const topFiveIds = useMemo(() => {
+    const entries = Array.from(validRefMap.entries())
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1]);
+    return entries.slice(0, 5).map(([id]) => id);
+  }, [validRefMap]);
+
   const filtered = useMemo(() => {
     let list = rows;
     if (filter === "referred") list = list.filter((r) => !!r.referred_by_code);
@@ -81,25 +115,29 @@ const AdminWaitlist = () => {
       );
     }
     const sorted = [...list].sort((a, b) => {
-      const av = a[sortKey];
-      const bv = b[sortKey];
-      const aEmpty = av === null || av === undefined || av === "";
-      const bEmpty = bv === null || bv === undefined || bv === "";
-      if (aEmpty && bEmpty) return 0;
-      if (aEmpty) return 1;
-      if (bEmpty) return -1;
       let cmp: number;
-      if (typeof av === "number" && typeof bv === "number") {
-        cmp = av - bv;
-      } else if (sortKey === "created_at") {
-        cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+      if (sortKey === "valid_referrals") {
+        cmp = (validRefMap.get(a.id) || 0) - (validRefMap.get(b.id) || 0);
       } else {
-        cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+        const av = a[sortKey];
+        const bv = b[sortKey];
+        const aEmpty = av === null || av === undefined || av === "";
+        const bEmpty = bv === null || bv === undefined || bv === "";
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return 1;
+        if (bEmpty) return -1;
+        if (typeof av === "number" && typeof bv === "number") {
+          cmp = av - bv;
+        } else if (sortKey === "created_at") {
+          cmp = new Date(av as string).getTime() - new Date(bv as string).getTime();
+        } else {
+          cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+        }
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
     return sorted;
-  }, [rows, filter, search, sortKey, sortDir]);
+  }, [rows, filter, search, sortKey, sortDir, validRefMap]);
 
   const totals = useMemo(() => {
     const total = rows.length;
@@ -109,58 +147,15 @@ const AdminWaitlist = () => {
     return { total, referred, inviters, totalInvites };
   }, [rows]);
 
-  // Referral leaderboard — count unique valid referrals per referral_code.
-  // Rules: dedupe by lowercase email, exclude self-referrals, exclude blank referred_by_code.
-  const leaderboard = useMemo(() => {
-    const byCode = new Map<string, WaitlistRow>();
-    rows.forEach((r) => {
-      if (r.referral_code) byCode.set(r.referral_code, r);
-    });
-    const seenEmailPerCode = new Map<string, Set<string>>();
-    rows.forEach((r) => {
-      const ref = r.referred_by_code;
-      if (!ref) return;
-      const inviter = byCode.get(ref);
-      if (!inviter) return;
-      const email = (r.email || "").toLowerCase().trim();
-      if (!email) return;
-      // exclude self-referrals
-      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
-      if (!seenEmailPerCode.has(ref)) seenEmailPerCode.set(ref, new Set());
-      seenEmailPerCode.get(ref)!.add(email);
-    });
-    const list = Array.from(seenEmailPerCode.entries())
-      .map(([code, set]) => {
-        const inviter = byCode.get(code)!;
-        const valid = set.size;
-        let reward: "none" | "bonus" | "review" = "none";
-        if (valid >= 3) reward = "bonus";
-        // Flag review if reported confirmed_invites disagrees significantly
-        if (Math.abs((inviter.confirmed_invites || 0) - valid) >= 2) reward = "review";
-        return { inviter, valid, reward };
-      })
-      .filter((x) => x.valid > 0)
-      .sort((a, b) => b.valid - a.valid || new Date(a.inviter.created_at).getTime() - new Date(b.inviter.created_at).getTime());
-    return list;
-  }, [rows]);
-
-  const firstName = (full: string | null | undefined) =>
-    (full || "").trim().split(/\s+/)[0] || "—";
-
-  const rewardBadge = (r: "none" | "bonus" | "review") => {
-    if (r === "bonus") return <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400">Bonus extras unlocked</Badge>;
-    if (r === "review") return <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-400">Review manually</Badge>;
-    return <Badge variant="secondary" className="text-xs">No reward yet</Badge>;
-  };
-
   const exportCsv = () => {
-    const header = ["position", "name", "email", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
+    const header = ["position", "name", "email", "referred_by_code", "valid_referrals", "confirmed_invites", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
       [
         r.waitlist_position,
         JSON.stringify(r.name || ""),
         r.email,
         r.referred_by_code || "",
+        validRefMap.get(r.id) || 0,
         r.confirmed_invites,
         r.current_tier,
         r.status,
@@ -245,59 +240,6 @@ const AdminWaitlist = () => {
         ))}
       </div>
 
-      {/* Referral Leaderboard */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="flex items-center justify-between border-b px-4 py-3">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-amber-500" />
-              <h2 className="text-sm font-semibold">Referral Leaderboard</h2>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Rank</th>
-                  <th className="px-4 py-3">First name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3 text-center">Valid referrals</th>
-                  <th className="px-4 py-3">Referred by</th>
-                  <th className="px-4 py-3">Joined</th>
-                  <th className="px-4 py-3">Reward status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.slice(0, 100).map((entry, idx) => (
-                  <tr key={entry.inviter.id} className="border-b last:border-0 hover:bg-muted/20">
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{idx + 1}</td>
-                    <td className="px-4 py-3 font-medium">{firstName(entry.inviter.name)}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{entry.inviter.email}</td>
-                    <td className="px-4 py-3 text-center font-semibold">{entry.valid}</td>
-                    <td className="px-4 py-3">
-                      {entry.inviter.referred_by_code ? (
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{entry.inviter.referred_by_code}</code>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">Direct</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(entry.inviter.created_at)}</td>
-                    <td className="px-4 py-3">{rewardBadge(entry.reward)}</td>
-                  </tr>
-                ))}
-                {leaderboard.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                      No valid referrals yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
@@ -342,7 +284,7 @@ const AdminWaitlist = () => {
                       ["waitlist_position", "#", "left"],
                       ["name", "Name", "left"],
                       ["email", "Email", "left"],
-                      
+                      ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],
                       ["referred_by_code", "Referrer email", "left"],
                       ["confirmed_invites", "Invites", "center"],
@@ -371,13 +313,43 @@ const AdminWaitlist = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0 hover:bg-muted/20">
+                {filtered.map((r) => {
+                  const refs = validRefMap.get(r.id) || 0;
+                  const topRank = topFiveIds.indexOf(r.id);
+                  const isTop = topRank >= 0;
+                  const rowCls = isTop
+                    ? "border-b last:border-0 bg-amber-500/5 hover:bg-amber-500/10"
+                    : "border-b last:border-0 hover:bg-muted/20";
+                  const rankChipCls = [
+                    "bg-amber-400/20 text-amber-800 ring-amber-500/40",
+                    "bg-zinc-400/20 text-zinc-800 ring-zinc-500/40",
+                    "bg-orange-700/15 text-orange-900 ring-orange-700/40",
+                    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+                    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+                  ];
+                  return (
+                  <tr key={r.id} className={rowCls}>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {r.waitlist_position}
+                      {isTop ? (
+                        <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}>
+                          {topRank + 1}
+                        </span>
+                      ) : (
+                        r.waitlist_position
+                      )}
                     </td>
-                    <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <span className="inline-flex items-center gap-1.5">
+                        {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+                        {r.name || "—"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={isTop ? "font-semibold text-amber-700" : "font-semibold"}>
+                        {refs}
+                      </span>
+                    </td>
                     {(() => {
                       const inviter = r.referred_by_code
                         ? rows.find((x) => x.referral_code === r.referred_by_code)
@@ -435,10 +407,11 @@ const AdminWaitlist = () => {
                       {formatDate(r.created_at)}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={10} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No signups match these filters.
                     </td>
                   </tr>

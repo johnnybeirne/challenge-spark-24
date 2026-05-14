@@ -508,6 +508,30 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          html_body: string
+          id: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          html_body: string
+          id: string
+          subject: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          html_body?: string
+          id?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       founding_config: {
         Row: {
           created_at: string

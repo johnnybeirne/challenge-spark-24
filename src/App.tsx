@@ -58,6 +58,7 @@ import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlist from "@/pages/AdminWaitlist";
+import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -180,6 +181,7 @@ const App = () => (
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="signups" element={<AdminSignups />} />
                 <Route path="waitlist" element={<AdminWaitlist />} />
+                <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

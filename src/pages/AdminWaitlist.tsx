@@ -239,59 +239,6 @@ const AdminWaitlist = () => {
         ))}
       </div>
 
-      {/* Referral Leaderboard */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="flex items-center justify-between border-b px-4 py-3">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-amber-500" />
-              <h2 className="text-sm font-semibold">Referral Leaderboard</h2>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Rank</th>
-                  <th className="px-4 py-3">First name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3 text-center">Valid referrals</th>
-                  <th className="px-4 py-3">Referred by</th>
-                  <th className="px-4 py-3">Joined</th>
-                  <th className="px-4 py-3">Reward status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.slice(0, 100).map((entry, idx) => (
-                  <tr key={entry.inviter.id} className="border-b last:border-0 hover:bg-muted/20">
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{idx + 1}</td>
-                    <td className="px-4 py-3 font-medium">{firstName(entry.inviter.name)}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{entry.inviter.email}</td>
-                    <td className="px-4 py-3 text-center font-semibold">{entry.valid}</td>
-                    <td className="px-4 py-3">
-                      {entry.inviter.referred_by_code ? (
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{entry.inviter.referred_by_code}</code>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">Direct</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(entry.inviter.created_at)}</td>
-                    <td className="px-4 py-3">{rewardBadge(entry.reward)}</td>
-                  </tr>
-                ))}
-                {leaderboard.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                      No valid referrals yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">

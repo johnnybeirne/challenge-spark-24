@@ -154,13 +154,12 @@ const AdminWaitlist = () => {
   };
 
   const exportCsv = () => {
-    const header = ["position", "name", "email", "referral_code", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
+    const header = ["position", "name", "email", "referred_by_code", "confirmed_invites", "tier", "status", "created_at"];
     const lines = filtered.map((r) =>
       [
         r.waitlist_position,
         JSON.stringify(r.name || ""),
         r.email,
-        r.referral_code,
         r.referred_by_code || "",
         r.confirmed_invites,
         r.current_tier,
@@ -265,7 +264,6 @@ const AdminWaitlist = () => {
                   <th className="px-4 py-3">Rank</th>
                   <th className="px-4 py-3">First name</th>
                   <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Referral code</th>
                   <th className="px-4 py-3 text-center">Valid referrals</th>
                   <th className="px-4 py-3">Referred by</th>
                   <th className="px-4 py-3">Joined</th>
@@ -278,9 +276,6 @@ const AdminWaitlist = () => {
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{idx + 1}</td>
                     <td className="px-4 py-3 font-medium">{firstName(entry.inviter.name)}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{entry.inviter.email}</td>
-                    <td className="px-4 py-3">
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{entry.inviter.referral_code}</code>
-                    </td>
                     <td className="px-4 py-3 text-center font-semibold">{entry.valid}</td>
                     <td className="px-4 py-3">
                       {entry.inviter.referred_by_code ? (
@@ -295,7 +290,7 @@ const AdminWaitlist = () => {
                 ))}
                 {leaderboard.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                    <td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No valid referrals yet.
                     </td>
                   </tr>

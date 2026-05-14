@@ -88,7 +88,7 @@ const WaitlistThanks = () => {
   }, [ref]);
 
   const inviteUrl = entry
-    ? `${window.location.origin}/waitlist?ref=${entry.referral_code}`
+    ? `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`
     : "";
 
   const copyLink = async () => {

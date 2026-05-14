@@ -65,6 +65,7 @@ const WaitlistThanks = () => {
   const [copied, setCopied] = useState(false);
   const [pickedIdea, setPickedIdea] = useState<string | null>(null);
   const [otherIdea, setOtherIdea] = useState("");
+  const [showConfetti] = useState(true);
 
   useEffect(() => {
     let cancelled = false;

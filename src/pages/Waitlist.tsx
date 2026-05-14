@@ -53,6 +53,34 @@ const Waitlist = () => {
 
   useEffect(() => { loadCount(); }, [loadCount]);
 
+  const sendInviteEmail = async (entry: WaitlistEntry) => {
+    const url = `${window.location.origin}/waitlist?ref=${entry.referral_code}`;
+    const greeting = entry.name?.trim() ? `Hi ${entry.name.trim()},` : "Hi there,";
+    const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ffffff;padding:32px 16px;color:#0f172a;">
+  <div style="max-width:520px;margin:0 auto;">
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">You're on the early access list</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#334155;">${greeting}</p>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 24px;color:#334155;">Thanks for joining the early access list for the 3-day challenge. Here's your personal invite link:</p>
+    <p style="margin:0 0 24px;"><a href="${url}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;">Open your invite link</a></p>
+    <p style="font-size:13px;line-height:1.6;margin:0 0 8px;color:#475569;word-break:break-all;">Or share this URL directly:<br/><a href="${url}" style="color:#4f46e5;">${url}</a></p>
+    <p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:#334155;"><strong>Invite 3 people to unlock earlier access.</strong> Each confirmed invite moves you up the queue.</p>
+    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The Leadio team</p>
+  </div>
+</body></html>`;
+    try {
+      await supabase.functions.invoke("send-email", {
+        body: {
+          to: entry.email,
+          subject: "You're on the early access list",
+          html,
+        },
+      });
+    } catch (err) {
+      console.error("send-email failed", err);
+      toast.message("We saved your spot — if the email doesn't arrive, contact support.");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = email.trim().toLowerCase();
@@ -83,7 +111,8 @@ const Waitlist = () => {
             .single();
           if (existing) {
             setSignedUp(existing);
-            toast.info("You're already on the list! Here's your referral link.");
+            toast.info("You're already on the list — we re-sent your invite link.");
+            sendInviteEmail(existing);
           }
         } else {
           toast.error("Something went wrong. Please try again.");
@@ -92,31 +121,20 @@ const Waitlist = () => {
       } else if (data) {
         setSignedUp(data);
         setShowConfetti(true);
-        toast.success("You're in!");
+        toast.success("You're in! Check your inbox.");
         loadCount();
+        sendInviteEmail(data);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const referralUrl = signedUp
-    ? `${window.location.origin}/waitlist?ref=${signedUp.referral_code}`
-    : "";
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(referralUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    toast.success("Link copied");
-  };
-
-  const handleShare = () => {
-    shareOrCopy({
-      title: "Join Leadio Early Access",
-      text: "I just joined the Leadio early access list. Join me:",
-      url: referralUrl,
-    });
+  const resetForm = () => {
+    setSignedUp(null);
+    setShowConfetti(false);
+    setEmail("");
+    setName("");
   };
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });

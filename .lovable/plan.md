@@ -1,56 +1,34 @@
 ## Goal
 
-After someone joins the waitlist, do NOT show their referral link on screen. Instead, show a calm "Check your inbox" confirmation, and email them their personal invite link.
+Text-only copy refresh on `/waitlist`: replace "early access" with "waitlist" language. No layout, styling, logic, or component changes.
 
-## Scope
+## Files
 
-Only `/waitlist`. No changes to other pages, the admin console, or the database schema. Reuses the existing `send-email` Edge Function (Resend) that the project already runs.
+1. **`src/pages/Waitlist.tsx`**
+   - Eyebrow chip: "Early access · Pre-launch" → "Waitlist · Pre-launch"
+   - Subheadline: "Join early and get priority access when the challenge opens. Invite others to move up the queue." → "Join the waitlist before the challenge opens. Invite others to move up the queue."
+   - Primary CTA button: "Join Early Access" → "Join the Waitlist"
+   - Loading state stays "Joining…"
+   - Trust line: "No spam. Early access only." → "No spam. Waitlist updates only."
+   - How it works step 1 title: "Join the list" → "Join the waitlist"
+   - How it works step 3 title: "Invite 3 people" → "Invite 3 people to move up the waitlist" (keep the body copy as-is)
+   - Success card heading "You're on the list" stays (it's accurate). "We just sent your invite link to {email}. Open it to share with friends and move up the queue." stays.
+   - Toasts:
+     - "You're in! Check your inbox." stays
+     - "You're already on the list — we re-sent your invite link." stays
+   - Final CTA headline: "The earlier you join, the stronger your starting position." → "The earlier you join the waitlist, the stronger your starting position."
+   - Final CTA button: "Join Early Access" → "Join the Waitlist"
+   - SEO title: "Early Access — Leadio" → "Waitlist — Leadio"
+   - SEO description: "Join early and get priority access when the 3-day challenge opens. Invite others to move up the queue." → "Join the waitlist for the 3-day challenge. Invite others to move up the queue."
 
-## UX changes (`src/pages/Waitlist.tsx`)
+2. **`src/components/WaitlistActivityFeed.tsx`** (the in-page momentum feed)
+   - Replace "joined early access" → "joined the waitlist"
+   - Replace "unlocked earlier access" → "unlocked earlier entry"
+   - Keep "moved up the queue" / "moved up 12 spots" / "invited N people" lines as they already match the spec
+   - Keep avatars, timing, count, and animation untouched
 
-After a successful signup (new or already-existing email), replace the current success card with a simpler "check your inbox" state:
+## Out of scope
 
-- Headline: "You're on the list"
-- Body: "We just sent your invite link to **{email}**. Open it to share with friends and move up the queue."
-- Small line: "Don't see it? Check spam or promotions."
-- Optional secondary action: "Use a different email" (resets the form)
-
-Remove from the post-signup view:
-- The position number badge
-- The visible referral URL field + copy button
-- The "Share invite link" button
-- The inline "Invite 3 people to unlock earlier access" line (now lives in the email)
-
-The pre-signup hero (name + email + "Join Early Access" button + trust line + activity feed) and the "How it works" cards stay exactly as they are.
-
-The Final CTA section keeps its current behavior:
-- If not signed up: "Join Early Access" scrolls to top
-- If signed up: hide the section (no share button without the link visible)
-
-## Email (uses existing `send-email` function)
-
-After the insert succeeds (or duplicate is detected), invoke `send-email` with:
-- `to`: signup email
-- `subject`: "You're on the early access list"
-- `html`: a clean branded message containing
-  - greeting (uses first name if provided)
-  - confirmation they're on the list
-  - their personal invite link `https://.../waitlist?ref={code}`
-  - one-line "Invite 3 people to unlock earlier access"
-  - signature
-
-If the email send fails, the user still sees the "check your inbox" state (we don't want to block confirmation), but we log the error and show a quiet toast: "We saved your spot — if the email doesn't arrive, contact support." Idempotent for duplicates: the existing user gets the same email re-sent so they always have their link in their inbox.
-
-## What does NOT change
-
-- Database schema, RLS, position/invite counts, admin page
-- `/challenge` page and shared `ActivityFeed`
-- `WaitlistActivityFeed` component
-- Referral code generation and `referred_by_code` capture from `?ref=`
-- Confetti trigger on first successful signup
-
-## Technical notes
-
-- Reuses `supabase.functions.invoke('send-email', { body: { to, subject, html } })` — no new Edge Function, no new secrets, no migration.
-- Drops unused imports (`Copy`, share helper) from `Waitlist.tsx`.
-- Keeps `signedUp` state so the form swap still works; we just render the new minimal confirmation card instead of the link card.
+- Email HTML body copy (sent by `send-email`) — not on the page
+- Admin pages, schema, components elsewhere
+- Any layout, styling, animation, or logic changes

@@ -56,7 +56,7 @@ const Waitlist = () => {
   useEffect(() => { loadCount(); }, [loadCount]);
 
   const sendInviteEmail = async (entry: WaitlistEntry) => {
-    const url = `${window.location.origin}/waitlist?ref=${entry.referral_code}`;
+    const url = `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`;
     const greeting = entry.name?.trim() ? `Hi ${entry.name.trim()},` : "Hi there,";
     const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ffffff;padding:32px 16px;color:#0f172a;">
   <div style="max-width:520px;margin:0 auto;">

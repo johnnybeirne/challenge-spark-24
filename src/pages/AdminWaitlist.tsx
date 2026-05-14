@@ -284,7 +284,7 @@ const AdminWaitlist = () => {
                       ["waitlist_position", "#", "left"],
                       ["name", "Name", "left"],
                       ["email", "Email", "left"],
-                      
+                      ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],
                       ["referred_by_code", "Referrer email", "left"],
                       ["confirmed_invites", "Invites", "center"],

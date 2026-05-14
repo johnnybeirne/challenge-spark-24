@@ -107,6 +107,8 @@ const ROUTES: RouteRow[] = [
   { route: "/owner-console/view-as-user", purpose: "Impersonation", access: "Admin", status: "Detected" },
   { route: "/owner-console/diagnostic-responses", purpose: "Assessment responses", access: "Admin", status: "Detected" },
   { route: "/owner-console/features", purpose: "Internal feature overview", access: "Admin", status: "Detected" },
+  { route: "/owner-console/waitlist", purpose: "Waitlist admin (entries + referrer)", access: "Admin", status: "Detected" },
+  { route: "/owner-console/waitlist-email", purpose: "Waitlist email composer", access: "Admin", status: "Detected" },
   { route: "/user-features", purpose: "This audit page", access: "Admin", status: "Detected" },
   { route: "/learn", purpose: "Generic LMS index", access: "Unknown", status: "Not detected", notes: "Use /blueprint instead" },
   { route: "/learn/module/:n", purpose: "Generic LMS modules", access: "Unknown", status: "Not detected", notes: "Use /blueprint/lesson/:day" },

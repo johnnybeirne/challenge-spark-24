@@ -263,6 +263,7 @@ const AdminNewsletter = () => {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="compose">Compose &amp; send</TabsTrigger>
+          <TabsTrigger value="templates">Templates ({templates.length})</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns ({campaigns.length})</TabsTrigger>
           <TabsTrigger value="unsubscribes">Unsubscribes ({suppressions.length})</TabsTrigger>
         </TabsList>
@@ -270,6 +271,34 @@ const AdminNewsletter = () => {
         {/* COMPOSE */}
         <TabsContent value="compose" className="space-y-6">
           <Card><CardContent className="p-6 space-y-4">
+            {templates.length > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div className="flex-1">
+                  <Label className="text-xs">Load saved template</Label>
+                  <Select onValueChange={loadTemplate}>
+                    <SelectTrigger><SelectValue placeholder="Pick a template…" /></SelectTrigger>
+                    <SelectContent>
+                      {templates.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.name}{t.is_welcome ? " — Welcome" : ""}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                  <Save className="h-4 w-4 mr-2" /> Save as template
+                </Button>
+              </div>
+            )}
+            {templates.length === 0 && (
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                  <Save className="h-4 w-4 mr-2" /> Save as template
+                </Button>
+              </div>
+            )}
+
             <div>
               <Label>Subject</Label>
               <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" maxLength={200} />

@@ -193,7 +193,7 @@ const AdminNewsletter = () => {
             <div>
               <Label>Body</Label>
               <p className="text-xs text-muted-foreground mb-2">
-                Tokens: <code>{"{{name}}"}</code>, <code>{"{{email}}"}</code>, <code>{"{{unsubscribe_url}}"}</code>. An unsubscribe link is auto-appended if you don't include one.
+                Tokens: <code>{"{{name}}"}</code>, <code>{"{{email}}"}</code>, <code>{"{{referral_url}}"}</code>, <code>{"{{referral_code}}"}</code>, <code>{"{{unsubscribe_url}}"}</code>. An unsubscribe link is auto-appended if you don't include one.
               </p>
               <div className="bg-background border rounded-md">
                 <ReactQuill theme="snow" value={html} onChange={setHtml} modules={quillModules} />

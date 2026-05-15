@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");
       const token = genToken();
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
-      const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl };
+      const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl, referral_url: `${APP_BASE_URL}/waitlist?ref=PREVIEW123`, referral_code: "PREVIEW123" };
       const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
       const subject = `[TEST] ${substitute(campaign.subject, vars)}`;
       const r = await fetch("https://api.resend.com/emails", {
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     // Build recipient list from audience
     const audience = (campaign.audience ?? {}) as { mode: string; tiers?: string[]; minInvites?: number; ids?: string[] };
-    let q = admin.from("waitlist_signups").select("id,email,name,confirmed_invites,current_tier,status").eq("status", "active");
+    let q = admin.from("waitlist_signups").select("id,email,name,confirmed_invites,current_tier,status,referral_code").eq("status", "active");
     if (audience.mode === "manual" && audience.ids?.length) {
       q = q.in("id", audience.ids);
     } else if (audience.mode === "filter") {
@@ -132,10 +132,14 @@ Deno.serve(async (req) => {
         await admin.from("newsletter_unsubscribe_tokens").insert({ token, email: emailLower });
       }
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
+      const referralCode = (r as any).referral_code ?? "";
+      const referralUrl = referralCode ? `${APP_BASE_URL}/waitlist?ref=${referralCode}` : `${APP_BASE_URL}/waitlist`;
       const vars = {
         name: r.name?.trim() || "there",
         email: r.email,
         unsubscribe_url: unsubscribeUrl,
+        referral_url: referralUrl,
+        referral_code: referralCode,
       };
       const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
       const subject = substitute(campaign.subject, vars);

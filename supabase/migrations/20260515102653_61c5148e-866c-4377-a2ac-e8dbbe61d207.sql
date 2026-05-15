@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.trigger_welcome_email() FROM PUBLIC, anon, authenticated;

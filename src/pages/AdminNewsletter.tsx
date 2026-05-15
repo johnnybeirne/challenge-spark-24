@@ -447,8 +447,8 @@ const AdminNewsletter = () => {
                 <Label>Test email</Label>
                 <Input type="email" placeholder="you@example.com" value={testEmail} onChange={(e) => setTestEmail(e.target.value)} />
               </div>
-              <Button variant="outline" onClick={sendTest} disabled={sending || !subject.trim()}>
-                {sending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              <Button variant="outline" onClick={sendTest} disabled={sendingTest || !subject.trim()}>
+                {sendingTest ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
                 Send test
               </Button>
             </div>

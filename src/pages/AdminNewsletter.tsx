@@ -55,6 +55,7 @@ const AdminNewsletter = () => {
   const [audienceMode, setAudienceMode] = useState<"all" | "filter" | "manual">("all");
   const [tierFilter, setTierFilter] = useState<string[]>([]);
   const [minInvites, setMinInvites] = useState<number>(0);
+  const [signedUpAfter, setSignedUpAfter] = useState<string>(""); // datetime-local value (local time)
   const [manualIds, setManualIds] = useState<Set<string>>(new Set());
   const [waitlist, setWaitlist] = useState<WaitlistRow[]>([]);
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());

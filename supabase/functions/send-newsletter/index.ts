@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");
       const token = genToken();
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
-      const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl };
+      const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl, referral_url: `${APP_BASE_URL}/waitlist?ref=PREVIEW123`, referral_code: "PREVIEW123" };
       const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
       const subject = `[TEST] ${substitute(campaign.subject, vars)}`;
       const r = await fetch("https://api.resend.com/emails", {

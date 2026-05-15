@@ -62,6 +62,7 @@ const AdminNewsletter = () => {
   const [testEmail, setTestEmail] = useState("");
   const [testName, setTestName] = useState("");
   const [sending, setSending] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   // Campaigns / suppressions / templates
@@ -230,13 +231,13 @@ const AdminNewsletter = () => {
 
   const sendTest = async () => {
     if (!testEmail.includes("@")) { toast.error("Enter a valid test email"); return; }
-    setSending(true);
+    setSendingTest(true);
     const id = await createCampaign();
-    if (!id) { setSending(false); return; }
+    if (!id) { setSendingTest(false); return; }
     const { data, error } = await supabase.functions.invoke("send-newsletter", {
       body: { campaignId: id, mode: "test", testEmail, testName: testName.trim() || undefined },
     });
-    setSending(false);
+    setSendingTest(false);
     if (error || (data as any)?.error) {
       toast.error((data as any)?.error ?? error?.message ?? "Test failed");
     } else {
@@ -446,8 +447,8 @@ const AdminNewsletter = () => {
                 <Label>Test email</Label>
                 <Input type="email" placeholder="you@example.com" value={testEmail} onChange={(e) => setTestEmail(e.target.value)} />
               </div>
-              <Button variant="outline" onClick={sendTest} disabled={sending || !subject.trim()}>
-                {sending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              <Button variant="outline" onClick={sendTest} disabled={sendingTest || !subject.trim()}>
+                {sendingTest ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
                 Send test
               </Button>
             </div>

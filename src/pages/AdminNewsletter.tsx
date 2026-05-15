@@ -322,9 +322,17 @@ const AdminNewsletter = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
-                  <Save className="h-4 w-4 mr-2" /> Save as template
-                </Button>
+                <div className="flex items-center gap-2">
+                  {editingTemplateId !== "__new__" && (
+                    <>
+                      <Badge variant="secondary">Editing: {templates.find((x) => x.id === editingTemplateId)?.name ?? "—"}</Badge>
+                      <Button variant="ghost" size="sm" onClick={() => setEditingTemplateId("__new__")}>Stop editing</Button>
+                    </>
+                  )}
+                  <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                    <Save className="h-4 w-4 mr-2" /> {editingTemplateId !== "__new__" ? "Save changes" : "Save as template"}
+                  </Button>
+                </div>
               </div>
             )}
             {templates.length === 0 && (

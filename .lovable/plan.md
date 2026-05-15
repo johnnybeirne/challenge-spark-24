@@ -1,74 +1,53 @@
 ## Goal
-A simple newsletter system to compose, send, and track broadcast emails to your waitlist — using the existing Resend setup, with one-click unsubscribe and full send history.
 
-## What you'll get
+Figure out why `{{name}}` in the Subject field isn't being replaced when you send a test, and make the result obvious so we can confirm a fix.
 
-A new admin page at `/owner-console/newsletter` linked from the existing waitlist admin nav, with three tabs:
+## What's correct already
 
-1. **Compose & send** — write a one-off broadcast and send it now.
-2. **Campaigns** — history of past campaigns with stats (sent / failed / unsubscribes).
-3. **Unsubscribes** — list of emails who opted out.
+- The token to use is **`{{name}}`** — exactly two opening braces, the word `name`, two closing braces, no spaces.
+- Other supported tokens: `{{email}}`, `{{referral_url}}`, `{{referral_code}}`, `{{unsubscribe_url}}`.
+- Single-brace `{name}` is **not** supported and will never substitute. We can add it as an alias if you want (see optional step below).
+- The `send-newsletter` Edge Function already calls the substitution on both the subject and the body for test sends and live sends. So in theory, typing `{{name}}` in Subject and `Jane` in the Test name field should produce a subject like `[TEST] Jane`.
 
-### Compose & send tab
-- **Subject** input.
-- **Rich text editor** (same TipTap/Quill setup as the existing Waitlist Email page, with the font-size dropdown you just got fixed).
-- **Personalisation tokens** auto-substituted per recipient: `{{name}}`, `{{email}}`, `{{unsubscribe_url}}`.
-- **Audience picker** with three modes:
-  - All active waitlist signups
-  - Filter by tier (Founder / Accelerator / Builder / Mover / Starter / Joined) and/or "has 1+ invites"
-  - Manually selected — opens a checkbox table of waitlist rows (reuses the AdminWaitlist row data)
-- **Live recipient count** updates as you change the audience.
-- **Send test** button — sends to one email address you specify.
-- **Send campaign** button — confirmation modal showing recipient count, then dispatches.
-- Suppressed (unsubscribed) emails are always excluded.
+## Likely culprits
 
-### Campaigns tab
-- Table of past sends: subject, sent date, recipients, sent count, failed count, unsubscribe count.
-- Click a row to see per-recipient delivery status and any error messages.
+1. **Edge Function in Test wasn't redeployed** after the recent edits adding `testName` and the referral tokens, so the old code (which didn't substitute the subject) is still running. Logs show it booted recently, but a forced redeploy will rule this out.
+2. **Smart-quote / Unicode braces** snuck in if you copy-pasted the token. `{{` and `}}` must be plain ASCII.
+3. **Test name field empty** — if blank, the substitution still runs but replaces `{{name}}` with the literal word `there`, which can look like nothing happened.
 
-### Unsubscribes tab
-- List of unsubscribed emails with date and which campaign triggered it.
-- Manual "remove from suppression" admin action.
+## Plan
 
-### Unsubscribe page
-- New public route `/unsubscribe?token=...` — branded page that confirms opt-out in one click and shows a success message. No login required.
+### Step 1 — Force-redeploy the Edge Function
+Redeploy `send-newsletter` so we are 100% sure the latest substitution code is live in Test.
 
-## How the sending works
+### Step 2 — Echo the rendered subject back to the UI
+Update `send-newsletter` test mode to include the **final substituted subject** in the JSON response, e.g. `{ ok: true, test: true, renderedSubject: "[TEST] Jane" }`.
 
-- Reuses the existing `send-email` Edge Function and `RESEND_API_KEY` — no DNS or provider changes.
-- A new Edge Function `send-newsletter` accepts `{ campaignId }`, loads the campaign + recipients, filters out suppressed addresses, then loops through them server-side. For each recipient it:
-  1. Substitutes personalisation tokens (including a unique unsubscribe URL with that recipient's token).
-  2. Calls Resend.
-  3. Logs the result to `newsletter_sends`.
-- A small in-function delay (e.g. 100ms between sends) keeps us under Resend's free-tier rate limit. For a small waitlist this completes well within the Edge Function timeout.
-- A second Edge Function `newsletter-unsubscribe` handles the public unsubscribe page (validates token → marks suppressed → returns success).
+Update `AdminNewsletter.tsx` `sendTest()` to show that rendered subject in the success toast, e.g.
+`Test sent to you@x.com — Subject: [TEST] Jane`.
 
-## Database (new tables)
+This way you can immediately see whether the server rendered it correctly, separate from any inbox / preview-pane weirdness.
 
-- **`newsletter_campaigns`** — one row per broadcast: `subject`, `html_body`, `audience` (jsonb: mode + filters/ids), `status` (draft/sending/sent/failed), `recipient_count`, `sent_count`, `failed_count`, `unsubscribe_count`, `created_by`, timestamps.
-- **`newsletter_sends`** — one row per recipient per campaign: `campaign_id`, `email`, `name`, `status` (pending/sent/failed/skipped_suppressed), `error_message`, `resend_id`, `sent_at`. Used for the per-campaign drill-down.
-- **`newsletter_suppressions`** — `email` (unique), `unsubscribed_at`, `source_campaign_id`. Always checked before sending.
-- **`newsletter_unsubscribe_tokens`** — `token` (unique), `email`, `created_at`. One token per email; reused across campaigns so unsubscribing once kills all future sends.
+### Step 3 — Server-side input normalisation
+In `send-newsletter`, before calling `substitute()`:
+- Normalise common Unicode look-alikes for `{` and `}` (e.g. `｛`, `｝`) to plain ASCII braces.
+- Collapse `{{ name }}` (with spaces) to `{{name}}` so spaces inside braces still work.
 
-All four tables get RLS:
-- Admin-only read/write for campaigns, sends, suppressions.
-- `newsletter_unsubscribe_tokens`: no client read — Edge Function only (service role).
+This fixes the most common silent-failure causes.
 
-## Files to add / change
+### Step 4 — Live test
+Send a test to your own address with subject `Hi {{name}} 👋` and Test name `Jane`.
+Expected: toast shows `Subject: [TEST] Hi Jane 👋`, and the email arrives with that subject.
 
-**New**
-- `supabase/functions/send-newsletter/index.ts` — dispatcher.
-- `supabase/functions/newsletter-unsubscribe/index.ts` — public token validator.
-- `src/pages/AdminNewsletter.tsx` — the 3-tab admin page.
-- `src/pages/Unsubscribe.tsx` — public unsubscribe confirmation page.
+### Optional — Support single-brace `{name}` as an alias
+If you'd prefer the shorter syntax, we can add `{name}`, `{email}`, etc. as aliases that resolve to the same values. Flag if you want this; otherwise we stick with `{{name}}` only (safer because single braces show up in normal copy more often).
 
-**Edited**
-- `src/App.tsx` — add `/owner-console/newsletter` (admin-guarded) and `/unsubscribe` (public) routes.
-- `src/pages/AdminWaitlist.tsx` — add a "Newsletter" link to the existing admin nav strip (alongside "Waitlist Email").
+## Files to change
 
-## Out of scope (flag if you want them later)
-- Scheduled / future-dated sends
-- Drip sequences or automations
-- Open / click tracking pixels
-- A/B subject testing
-- Reusable saved templates (current scope: one-off composer per campaign)
+- `supabase/functions/send-newsletter/index.ts` — normalise input, return `renderedSubject` in test response.
+- `src/pages/AdminNewsletter.tsx` — show `renderedSubject` in the test success toast.
+
+## Out of scope
+
+- Changes to the body substitution (already working; the editor wraps tokens in `<span>` which the current splitter handles fine because both halves of the token end up inside the same text node).
+- Per-recipient subject preview for live sends (we're only debugging the composer flow).

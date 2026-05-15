@@ -625,6 +625,145 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_campaigns: {
+        Row: {
+          audience: Json
+          created_at: string
+          created_by: string | null
+          failed_count: number
+          html_body: string
+          id: string
+          recipient_count: number
+          sent_at: string | null
+          sent_count: number
+          status: string
+          subject: string
+          unsubscribe_count: number
+          updated_at: string
+        }
+        Insert: {
+          audience?: Json
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          html_body: string
+          id?: string
+          recipient_count?: number
+          sent_at?: string | null
+          sent_count?: number
+          status?: string
+          subject: string
+          unsubscribe_count?: number
+          updated_at?: string
+        }
+        Update: {
+          audience?: Json
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          html_body?: string
+          id?: string
+          recipient_count?: number
+          sent_at?: string | null
+          sent_count?: number
+          status?: string
+          subject?: string
+          unsubscribe_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      newsletter_sends: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          email: string
+          error_message: string | null
+          id: string
+          name: string | null
+          resend_id: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          email: string
+          error_message?: string | null
+          id?: string
+          name?: string | null
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          email?: string
+          error_message?: string | null
+          id?: string
+          name?: string | null
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "newsletter_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_suppressions: {
+        Row: {
+          email: string
+          id: string
+          source_campaign_id: string | null
+          unsubscribed_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          source_campaign_id?: string | null
+          unsubscribed_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          source_campaign_id?: string | null
+          unsubscribed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_suppressions_source_campaign_id_fkey"
+            columns: ["source_campaign_id"]
+            isOneToOne: false
+            referencedRelation: "newsletter_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_unsubscribe_tokens: {
+        Row: {
+          created_at: string
+          email: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          token?: string
+        }
+        Relationships: []
+      }
       partner_contributions: {
         Row: {
           contribution_description: string

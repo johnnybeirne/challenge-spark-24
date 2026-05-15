@@ -59,6 +59,8 @@ import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlist from "@/pages/AdminWaitlist";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
+import AdminNewsletter from "@/pages/AdminNewsletter";
+import Unsubscribe from "@/pages/Unsubscribe";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -131,6 +133,7 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
@@ -182,6 +185,7 @@ const App = () => (
                 <Route path="signups" element={<AdminSignups />} />
                 <Route path="waitlist" element={<AdminWaitlist />} />
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
+                <Route path="newsletter" element={<AdminNewsletter />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

@@ -56,6 +56,7 @@ const AdminNewsletter = () => {
   const [waitlist, setWaitlist] = useState<WaitlistRow[]>([]);
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
   const [testEmail, setTestEmail] = useState("");
+  const [testName, setTestName] = useState("");
   const [sending, setSending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 

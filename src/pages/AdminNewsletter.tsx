@@ -109,7 +109,7 @@ const AdminNewsletter = () => {
     setSuppressedSet(new Set((s ?? []).map((r: any) => (r.email as string).toLowerCase())));
   };
 
-  useEffect(() => { loadAll(); }, []);
+  useEffect(() => { loadAll(); loadAutoSend(); }, []);
 
   const loadTemplate = (id: string) => {
     const t = templates.find((x) => x.id === id);

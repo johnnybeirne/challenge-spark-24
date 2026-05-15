@@ -29,6 +29,7 @@ type Campaign = {
 };
 type SendRow = { id: string; email: string; name: string | null; status: string; error_message: string | null; sent_at: string | null };
 type Suppression = { id: string; email: string; unsubscribed_at: string; source_campaign_id: string | null };
+type Template = { id: string; name: string; subject: string; html_body: string; is_welcome: boolean; updated_at: string };
 
 const DEFAULT_HTML = `<p>Hi {{name}},</p><p>Quick update from the team...</p><p>— Johnny</p>`;
 

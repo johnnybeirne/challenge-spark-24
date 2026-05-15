@@ -62,6 +62,7 @@ const AdminNewsletter = () => {
   const [testEmail, setTestEmail] = useState("");
   const [testName, setTestName] = useState("");
   const [sending, setSending] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   // Campaigns / suppressions / templates

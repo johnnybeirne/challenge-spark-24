@@ -133,6 +133,7 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />

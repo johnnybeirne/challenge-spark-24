@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,6 +77,24 @@ const AdminNewsletter = () => {
   const [saveAsWelcome, setSaveAsWelcome] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
 
+  // Welcome auto-send toggle
+  const [autoSendEnabled, setAutoSendEnabled] = useState<boolean>(false);
+  const [autoSendLoading, setAutoSendLoading] = useState(false);
+
+  const loadAutoSend = async () => {
+    const { data, error } = await supabase.rpc("get_welcome_auto_send");
+    if (!error) setAutoSendEnabled(Boolean(data));
+  };
+
+  const toggleAutoSend = async (next: boolean) => {
+    setAutoSendLoading(true);
+    const { error } = await supabase.rpc("set_welcome_auto_send", { p_enabled: next });
+    setAutoSendLoading(false);
+    if (error) { toast.error("Could not update setting"); return; }
+    setAutoSendEnabled(next);
+    toast.success(next ? "Welcome auto-send enabled" : "Welcome auto-send paused");
+  };
+
   const loadAll = async () => {
     const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
       supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),
@@ -90,7 +109,7 @@ const AdminNewsletter = () => {
     setSuppressedSet(new Set((s ?? []).map((r: any) => (r.email as string).toLowerCase())));
   };
 
-  useEffect(() => { loadAll(); }, []);
+  useEffect(() => { loadAll(); loadAutoSend(); }, []);
 
   const loadTemplate = (id: string) => {
     const t = templates.find((x) => x.id === id);
@@ -492,9 +511,24 @@ const AdminNewsletter = () => {
         {/* TEMPLATES */}
         <TabsContent value="templates">
           <Card><CardContent className="p-0">
-            <div className="p-4 border-b text-xs text-muted-foreground flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5" />
-              The template marked <strong>Welcome</strong> is automatically sent to every new waitlist signup.
+            <div className="p-4 border-b flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>
+                  When enabled, the template marked <strong>Welcome</strong> is sent automatically to every new waitlist signup.
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="auto-send-toggle" className="text-xs font-medium">
+                  Auto-send {autoSendEnabled ? "on" : "off"}
+                </Label>
+                <Switch
+                  id="auto-send-toggle"
+                  checked={autoSendEnabled}
+                  disabled={autoSendLoading}
+                  onCheckedChange={toggleAutoSend}
+                />
+              </div>
             </div>
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs uppercase">

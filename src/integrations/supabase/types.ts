@@ -1568,6 +1568,7 @@ export type Database = {
           total_score: number
         }[]
       }
+      get_welcome_auto_send: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1580,6 +1581,7 @@ export type Database = {
         Returns: undefined
       }
       redeem_coupon: { Args: { p_code: string }; Returns: Json }
+      set_welcome_auto_send: { Args: { p_enabled: boolean }; Returns: boolean }
       track_partner_assessment: {
         Args: { p_partner_code: string }
         Returns: undefined

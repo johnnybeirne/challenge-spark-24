@@ -22,7 +22,7 @@ SizeStyle.whitelist = FONT_SIZES;
 
 const TIERS = ["Founder", "Accelerator", "Builder", "Mover", "Starter", "Joined"];
 
-type WaitlistRow = { id: string; email: string; name: string | null; current_tier: string; confirmed_invites: number };
+type WaitlistRow = { id: string; email: string; name: string | null; current_tier: string; confirmed_invites: number; created_at: string };
 type Campaign = {
   id: string; subject: string; status: string;
   recipient_count: number; sent_count: number; failed_count: number; unsubscribe_count: number;
@@ -55,6 +55,7 @@ const AdminNewsletter = () => {
   const [audienceMode, setAudienceMode] = useState<"all" | "filter" | "manual">("all");
   const [tierFilter, setTierFilter] = useState<string[]>([]);
   const [minInvites, setMinInvites] = useState<number>(0);
+  const [signedUpAfter, setSignedUpAfter] = useState<string>(""); // datetime-local value (local time)
   const [manualIds, setManualIds] = useState<Set<string>>(new Set());
   const [waitlist, setWaitlist] = useState<WaitlistRow[]>([]);
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
@@ -97,7 +98,7 @@ const AdminNewsletter = () => {
 
   const loadAll = async () => {
     const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
-      supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),
+      supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites,created_at").eq("status", "active").order("created_at", { ascending: false }),
       supabase.from("newsletter_campaigns").select("*").order("created_at", { ascending: false }),
       supabase.from("newsletter_suppressions").select("*").order("unsubscribed_at", { ascending: false }),
       supabase.from("newsletter_templates").select("*").order("updated_at", { ascending: false }),
@@ -183,20 +184,26 @@ const AdminNewsletter = () => {
     loadAll();
   };
 
+  const signedUpAfterIso = useMemo(
+    () => (signedUpAfter ? new Date(signedUpAfter).toISOString() : null),
+    [signedUpAfter],
+  );
+
   const filteredAudience = useMemo(() => {
     let rows = waitlist.filter((r) => r.email && !suppressedSet.has(r.email.toLowerCase()));
     if (audienceMode === "filter") {
       if (tierFilter.length) rows = rows.filter((r) => tierFilter.includes(r.current_tier));
       if (minInvites > 0) rows = rows.filter((r) => r.confirmed_invites >= minInvites);
+      if (signedUpAfterIso) rows = rows.filter((r) => r.created_at > signedUpAfterIso);
     } else if (audienceMode === "manual") {
       rows = rows.filter((r) => manualIds.has(r.id));
     }
     return rows;
-  }, [waitlist, suppressedSet, audienceMode, tierFilter, minInvites, manualIds]);
+  }, [waitlist, suppressedSet, audienceMode, tierFilter, minInvites, signedUpAfterIso, manualIds]);
 
   const buildAudience = () => {
     if (audienceMode === "all") return { mode: "all" };
-    if (audienceMode === "filter") return { mode: "filter", tiers: tierFilter, minInvites };
+    if (audienceMode === "filter") return { mode: "filter", tiers: tierFilter, minInvites, signedUpAfter: signedUpAfterIso };
     return { mode: "manual", ids: Array.from(manualIds) };
   };
 
@@ -370,6 +377,29 @@ const AdminNewsletter = () => {
                 <div className="flex items-center gap-2">
                   <Label className="text-xs">Min confirmed invites:</Label>
                   <Input type="number" min={0} value={minInvites} onChange={(e) => setMinInvites(parseInt(e.target.value || "0", 10))} className="w-24" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Signed up after (optional)</Label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      type="datetime-local"
+                      value={signedUpAfter}
+                      onChange={(e) => setSignedUpAfter(e.target.value)}
+                      className="w-auto"
+                    />
+                    <Button type="button" size="sm" variant="outline" onClick={() => {
+                      const d = new Date();
+                      d.setSeconds(0, 0);
+                      const pad = (n: number) => String(n).padStart(2, "0");
+                      setSignedUpAfter(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                    }}>Just now</Button>
+                    {signedUpAfter && (
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setSignedUpAfter("")}>Clear</Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Only includes waitlist signups created after this moment. Use this to send a follow-up to new joiners.
+                  </p>
                 </div>
               </div>
             )}

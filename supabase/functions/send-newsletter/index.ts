@@ -144,13 +144,14 @@ Deno.serve(async (req) => {
     }
 
     // Build recipient list from audience
-    const audience = (campaign.audience ?? {}) as { mode: string; tiers?: string[]; minInvites?: number; ids?: string[] };
+    const audience = (campaign.audience ?? {}) as { mode: string; tiers?: string[]; minInvites?: number; ids?: string[]; signedUpAfter?: string | null };
     let q = admin.from("waitlist_signups").select("id,email,name,confirmed_invites,current_tier,status,referral_code").eq("status", "active");
     if (audience.mode === "manual" && audience.ids?.length) {
       q = q.in("id", audience.ids);
     } else if (audience.mode === "filter") {
       if (audience.tiers?.length) q = q.in("current_tier", audience.tiers);
       if (audience.minInvites && audience.minInvites > 0) q = q.gte("confirmed_invites", audience.minInvites);
+      if (audience.signedUpAfter) q = q.gt("created_at", audience.signedUpAfter);
     }
     const { data: signups, error: sErr } = await q;
     if (sErr) throw sErr;

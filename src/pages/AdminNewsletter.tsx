@@ -511,9 +511,24 @@ const AdminNewsletter = () => {
         {/* TEMPLATES */}
         <TabsContent value="templates">
           <Card><CardContent className="p-0">
-            <div className="p-4 border-b text-xs text-muted-foreground flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5" />
-              The template marked <strong>Welcome</strong> is automatically sent to every new waitlist signup.
+            <div className="p-4 border-b flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>
+                  When enabled, the template marked <strong>Welcome</strong> is sent automatically to every new waitlist signup.
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="auto-send-toggle" className="text-xs font-medium">
+                  Auto-send {autoSendEnabled ? "on" : "off"}
+                </Label>
+                <Switch
+                  id="auto-send-toggle"
+                  checked={autoSendEnabled}
+                  disabled={autoSendLoading}
+                  onCheckedChange={toggleAutoSend}
+                />
+              </div>
             </div>
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs uppercase">

@@ -412,9 +412,35 @@ const AdminWaitlist = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 font-medium">
-                      <span className="inline-flex items-center gap-1.5">
-                        {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
-                        {r.name || "—"}
+                      <span className="inline-flex items-center gap-1.5 w-full">
+                        {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                        <Input
+                          defaultValue={r.name || ""}
+                          placeholder="—"
+                          className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent"
+                          onBlur={async (e) => {
+                            const newName = e.target.value.trim();
+                            const current = (r.name || "").trim();
+                            if (newName === current) return;
+                            const { error } = await supabase
+                              .from("waitlist_signups")
+                              .update({ name: newName || null })
+                              .eq("id", r.id);
+                            if (error) {
+                              toast.error(`Failed to update name: ${error.message}`);
+                              return;
+                            }
+                            setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, name: newName || null } : x)));
+                            toast.success("Name updated.");
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                            if (e.key === "Escape") {
+                              (e.target as HTMLInputElement).value = r.name || "";
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }}
+                        />
                       </span>
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>

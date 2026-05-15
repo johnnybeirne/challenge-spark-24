@@ -34,6 +34,24 @@ function substitute(html: string, vars: Record<string, string>) {
   return out;
 }
 
+function autolinkUrlTokens(html: string): string {
+  // Wrap bare {{referral_url}} / {{unsubscribe_url}} (not already in href="..." or inside an <a>) with an <a>.
+  const tokens = ["referral_url", "unsubscribe_url"];
+  let out = html ?? "";
+  for (const t of tokens) {
+    const token = `{{${t}}}`;
+    // Skip if no occurrence
+    if (!out.includes(token)) continue;
+    // Replace only occurrences NOT preceded by =" or =' (i.e. not inside an attribute value)
+    // and NOT already inside an <a>...</a> wrapping just this token.
+    const re = new RegExp(`(^|[^"'=])\\{\\{${t}\\}\\}`, "g");
+    out = out.replace(re, (_m, prefix) =>
+      `${prefix}<a href="${token}" style="color:#4f46e5;text-decoration:underline;" target="_blank" rel="noopener">${token}</a>`,
+    );
+  }
+  return out;
+}
+
 function ensureUnsubscribeFooter(html: string, unsubscribeUrl: string): string {
   if (html.includes("{{unsubscribe_url}}") || html.toLowerCase().includes("unsubscribe")) {
     return html;

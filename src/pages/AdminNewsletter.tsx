@@ -59,8 +59,8 @@ const AdminNewsletter = () => {
   const [manualIds, setManualIds] = useState<Set<string>>(new Set());
   const [waitlist, setWaitlist] = useState<WaitlistRow[]>([]);
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
-  const [testEmail, setTestEmail] = useState("");
-  const [testName, setTestName] = useState("");
+  const [testEmail, setTestEmail] = useState("johnny@johnnybeirne.com");
+  const [testName, setTestName] = useState("Linda");
   const [sending, setSending] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);

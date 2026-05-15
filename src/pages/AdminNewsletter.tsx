@@ -112,19 +112,29 @@ const AdminNewsletter = () => {
 
   useEffect(() => { loadAll(); loadAutoSend(); }, []);
 
-  const loadTemplate = (id: string) => {
+  const [editingTemplateId, setEditingTemplateId] = useState<string>("__new__");
+
+  const loadTemplate = (id: string, opts?: { edit?: boolean }) => {
     const t = templates.find((x) => x.id === id);
     if (!t) return;
     setSubject(t.subject);
     setHtml(t.html_body);
-    toast.success(`Loaded template: ${t.name}`);
+    setEditingTemplateId(opts?.edit ? t.id : "__new__");
+    toast.success(opts?.edit ? `Editing template: ${t.name}` : `Loaded template: ${t.name}`);
   };
 
   const openSaveDialog = () => {
     if (!subject.trim() || !html.trim()) { toast.error("Subject and body required"); return; }
-    setSaveTargetId("__new__");
-    setSaveName("");
-    setSaveAsWelcome(false);
+    const target = templates.find((x) => x.id === editingTemplateId);
+    if (target) {
+      setSaveTargetId(target.id);
+      setSaveName(target.name);
+      setSaveAsWelcome(target.is_welcome);
+    } else {
+      setSaveTargetId("__new__");
+      setSaveName("");
+      setSaveAsWelcome(false);
+    }
     setSaveOpen(true);
   };
 
@@ -312,9 +322,17 @@ const AdminNewsletter = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
-                  <Save className="h-4 w-4 mr-2" /> Save as template
-                </Button>
+                <div className="flex items-center gap-2">
+                  {editingTemplateId !== "__new__" && (
+                    <>
+                      <Badge variant="secondary">Editing: {templates.find((x) => x.id === editingTemplateId)?.name ?? "—"}</Badge>
+                      <Button variant="ghost" size="sm" onClick={() => setEditingTemplateId("__new__")}>Stop editing</Button>
+                    </>
+                  )}
+                  <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                    <Save className="h-4 w-4 mr-2" /> {editingTemplateId !== "__new__" ? "Save changes" : "Save as template"}
+                  </Button>
+                </div>
               </div>
             )}
             {templates.length === 0 && (
@@ -586,6 +604,7 @@ const AdminNewsletter = () => {
                     <td className="p-3 text-muted-foreground text-xs">{new Date(t.updated_at).toLocaleString()}</td>
                     <td className="p-3 text-right space-x-1">
                       <Button size="sm" variant="ghost" onClick={() => { loadTemplate(t.id); setTab("compose"); }}>Load</Button>
+                      <Button size="sm" variant="outline" onClick={() => { loadTemplate(t.id, { edit: true }); setTab("compose"); }}>Edit</Button>
                       <Button size="sm" variant="ghost" onClick={() => setAsWelcome(t.id, !t.is_welcome)}>
                         {t.is_welcome ? "Unset welcome" : "Set as welcome"}
                       </Button>

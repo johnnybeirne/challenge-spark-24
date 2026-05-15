@@ -596,6 +596,7 @@ const AdminNewsletter = () => {
                     <td className="p-3 text-muted-foreground text-xs">{new Date(t.updated_at).toLocaleString()}</td>
                     <td className="p-3 text-right space-x-1">
                       <Button size="sm" variant="ghost" onClick={() => { loadTemplate(t.id); setTab("compose"); }}>Load</Button>
+                      <Button size="sm" variant="outline" onClick={() => { loadTemplate(t.id, { edit: true }); setTab("compose"); }}>Edit</Button>
                       <Button size="sm" variant="ghost" onClick={() => setAsWelcome(t.id, !t.is_welcome)}>
                         {t.is_welcome ? "Unset welcome" : "Set as welcome"}
                       </Button>

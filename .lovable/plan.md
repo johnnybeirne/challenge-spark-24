@@ -1,53 +1,42 @@
-## Goal
+## Problem
 
-Figure out why `{{name}}` in the Subject field isn't being replaced when you send a test, and make the result obvious so we can confirm a fix.
+In the email body, `{{referral_url}}` (and `{{unsubscribe_url}}`) get text-substituted to a URL, but if you typed the token as **plain text** in the editor, the result is plain text in the email — not a clickable link. That's what your screenshot shows.
 
-## What's correct already
+There are two ways to make a link today, and only one of them currently works without changes:
 
-- The token to use is **`{{name}}`** — exactly two opening braces, the word `name`, two closing braces, no spaces.
-- Other supported tokens: `{{email}}`, `{{referral_url}}`, `{{referral_code}}`, `{{unsubscribe_url}}`.
-- Single-brace `{name}` is **not** supported and will never substitute. We can add it as an alias if you want (see optional step below).
-- The `send-newsletter` Edge Function already calls the substitution on both the subject and the body for test sends and live sends. So in theory, typing `{{name}}` in Subject and `Jane` in the Test name field should produce a subject like `[TEST] Jane`.
-
-## Likely culprits
-
-1. **Edge Function in Test wasn't redeployed** after the recent edits adding `testName` and the referral tokens, so the old code (which didn't substitute the subject) is still running. Logs show it booted recently, but a forced redeploy will rule this out.
-2. **Smart-quote / Unicode braces** snuck in if you copy-pasted the token. `{{` and `}}` must be plain ASCII.
-3. **Test name field empty** — if blank, the substitution still runs but replaces `{{name}}` with the literal word `there`, which can look like nothing happened.
+1. **Hyperlink with URL `{{referral_url}}`** (Quill toolbar → link icon → paste `{{referral_url}}` as the URL). This works now — Quill stores `href="{{referral_url}}"`, the substitution swaps the URL, and the email arrives clickable.
+2. **Plain text `{{referral_url}}` in the body.** Substitutes correctly but renders as flat text. This is what bit you.
 
 ## Plan
 
-### Step 1 — Force-redeploy the Edge Function
-Redeploy `send-newsletter` so we are 100% sure the latest substitution code is live in Test.
+Make plain-text URL tokens auto-clickable so option 2 also "just works".
 
-### Step 2 — Echo the rendered subject back to the UI
-Update `send-newsletter` test mode to include the **final substituted subject** in the JSON response, e.g. `{ ok: true, test: true, renderedSubject: "[TEST] Jane" }`.
+### Step 1 — Auto-linkify URL tokens in the body
+In `supabase/functions/send-newsletter/index.ts`, before running token substitution on `campaign.html_body`:
 
-Update `AdminNewsletter.tsx` `sendTest()` to show that rendered subject in the success toast, e.g.
-`Test sent to you@x.com — Subject: [TEST] Jane`.
+- Find any **bare** `{{referral_url}}` or `{{unsubscribe_url}}` (i.e. not already inside an `href="..."` attribute, and not already wrapped in an `<a>`).
+- Wrap each with `<a href="{{referral_url}}" style="color:#4f46e5;text-decoration:underline;">{{referral_url}}</a>`.
 
-This way you can immediately see whether the server rendered it correctly, separate from any inbox / preview-pane weirdness.
+Then run substitution as normal. Result: the URL renders as a styled, clickable link.
 
-### Step 3 — Server-side input normalisation
-In `send-newsletter`, before calling `substitute()`:
-- Normalise common Unicode look-alikes for `{` and `}` (e.g. `｛`, `｝`) to plain ASCII braces.
-- Collapse `{{ name }}` (with spaces) to `{{name}}` so spaces inside braces still work.
+The detection uses a regex pass that skips tokens already inside an attribute (`="...{{referral_url}}..."`) so we don't double-wrap when the user used the proper hyperlink option.
 
-This fixes the most common silent-failure causes.
+### Step 2 — Update the helper text on the Compose tab
+Change the token tip line to:
 
-### Step 4 — Live test
-Send a test to your own address with subject `Hi {{name}} 👋` and Test name `Jane`.
-Expected: toast shows `Subject: [TEST] Hi Jane 👋`, and the email arrives with that subject.
+> Tokens: `{{name}}`, `{{email}}`, `{{referral_url}}`, `{{referral_code}}`, `{{unsubscribe_url}}`. URL tokens become clickable links automatically — or use the link button in the toolbar to wrap your own text.
 
-### Optional — Support single-brace `{name}` as an alias
-If you'd prefer the shorter syntax, we can add `{name}`, `{email}`, etc. as aliases that resolve to the same values. Flag if you want this; otherwise we stick with `{{name}}` only (safer because single braces show up in normal copy more often).
+### Step 3 — Redeploy `send-newsletter`
 
-## Files to change
+### Step 4 — Verify
+Send a test with body containing a plain `{{referral_url}}` line. Confirm the test inbox shows it as an underlined clickable link pointing to `https://leadio.johnnybeirne.com/waitlist?ref=PREVIEW123`.
 
-- `supabase/functions/send-newsletter/index.ts` — normalise input, return `renderedSubject` in test response.
-- `src/pages/AdminNewsletter.tsx` — show `renderedSubject` in the test success toast.
+## Files
+
+- `supabase/functions/send-newsletter/index.ts` — add `autolinkUrlTokens()` helper, call it on `campaign.html_body` for both test and live sends.
+- `src/pages/AdminNewsletter.tsx` — update the token-help paragraph.
 
 ## Out of scope
 
-- Changes to the body substitution (already working; the editor wraps tokens in `<span>` which the current splitter handles fine because both halves of the token end up inside the same text node).
-- Per-recipient subject preview for live sends (we're only debugging the composer flow).
+- `{{referral_code}}` stays plain text (it's a code, not a URL). If you want the code itself to act as a link to the referral URL, flag it and I'll add a separate `{{referral_code_link}}` token.
+- No body-content rewriting beyond URL tokens.

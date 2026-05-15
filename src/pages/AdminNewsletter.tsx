@@ -346,7 +346,35 @@ const AdminNewsletter = () => {
 
             <div>
               <Label>Subject</Label>
-              <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" maxLength={200} />
+              <div className="flex gap-2">
+                <Input
+                  id="newsletter-subject-input"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Subject line"
+                  maxLength={200}
+                />
+                <Select
+                  value=""
+                  onValueChange={(token) => {
+                    const el = document.getElementById("newsletter-subject-input") as HTMLInputElement | null;
+                    const start = el?.selectionStart ?? subject.length;
+                    const end = el?.selectionEnd ?? subject.length;
+                    const next = subject.slice(0, start) + token + subject.slice(end);
+                    setSubject(next.slice(0, 200));
+                    requestAnimationFrame(() => {
+                      el?.focus();
+                      const pos = start + token.length;
+                      el?.setSelectionRange(pos, pos);
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-40 shrink-0"><SelectValue placeholder="Insert token" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="{{name}}">{"{{name}}"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div>

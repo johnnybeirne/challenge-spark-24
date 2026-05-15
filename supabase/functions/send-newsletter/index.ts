@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
       });
       const data = await r.json();
       if (!r.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);
-      return new Response(JSON.stringify({ ok: true, test: true, id: data.id }), {
+      return new Response(JSON.stringify({ ok: true, test: true, id: data.id, renderedSubject: subject }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

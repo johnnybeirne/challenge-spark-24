@@ -675,7 +675,7 @@ export type Database = {
       }
       newsletter_sends: {
         Row: {
-          campaign_id: string
+          campaign_id: string | null
           created_at: string
           email: string
           error_message: string | null
@@ -684,9 +684,10 @@ export type Database = {
           resend_id: string | null
           sent_at: string | null
           status: string
+          template_id: string | null
         }
         Insert: {
-          campaign_id: string
+          campaign_id?: string | null
           created_at?: string
           email: string
           error_message?: string | null
@@ -695,9 +696,10 @@ export type Database = {
           resend_id?: string | null
           sent_at?: string | null
           status?: string
+          template_id?: string | null
         }
         Update: {
-          campaign_id?: string
+          campaign_id?: string | null
           created_at?: string
           email?: string
           error_message?: string | null
@@ -706,6 +708,7 @@ export type Database = {
           resend_id?: string | null
           sent_at?: string | null
           status?: string
+          template_id?: string | null
         }
         Relationships: [
           {
@@ -745,6 +748,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      newsletter_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          html_body: string
+          id: string
+          is_welcome: boolean
+          name: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          html_body: string
+          id?: string
+          is_welcome?: boolean
+          name: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          html_body?: string
+          id?: string
+          is_welcome?: boolean
+          name?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       newsletter_unsubscribe_tokens: {
         Row: {

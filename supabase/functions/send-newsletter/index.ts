@@ -132,14 +132,13 @@ Deno.serve(async (req) => {
         await admin.from("newsletter_unsubscribe_tokens").insert({ token, email: emailLower });
       }
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
-      const html = ensureUnsubscribeFooter(
-        substitute(campaign.html_body, {
-          name: r.name?.trim() || "there",
-          email: r.email,
-          unsubscribe_url: unsubscribeUrl,
-        }),
-        unsubscribeUrl,
-      );
+      const vars = {
+        name: r.name?.trim() || "there",
+        email: r.email,
+        unsubscribe_url: unsubscribeUrl,
+      };
+      const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
+      const subject = substitute(campaign.subject, vars);
 
       try {
         const res = await fetch("https://api.resend.com/emails", {
@@ -148,7 +147,7 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             from: FROM,
             to: [r.email],
-            subject: campaign.subject,
+            subject,
             html,
             headers: {
               "List-Unsubscribe": `<${unsubscribeUrl}>`,

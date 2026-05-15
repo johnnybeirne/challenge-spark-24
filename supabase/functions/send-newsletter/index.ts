@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     // Build recipient list from audience
     const audience = (campaign.audience ?? {}) as { mode: string; tiers?: string[]; minInvites?: number; ids?: string[] };
-    let q = admin.from("waitlist_signups").select("id,email,name,confirmed_invites,current_tier,status").eq("status", "active");
+    let q = admin.from("waitlist_signups").select("id,email,name,confirmed_invites,current_tier,status,referral_code").eq("status", "active");
     if (audience.mode === "manual" && audience.ids?.length) {
       q = q.in("id", audience.ids);
     } else if (audience.mode === "filter") {

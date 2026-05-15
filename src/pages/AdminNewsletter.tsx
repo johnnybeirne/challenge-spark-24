@@ -231,13 +231,13 @@ const AdminNewsletter = () => {
 
   const sendTest = async () => {
     if (!testEmail.includes("@")) { toast.error("Enter a valid test email"); return; }
-    setSending(true);
+    setSendingTest(true);
     const id = await createCampaign();
-    if (!id) { setSending(false); return; }
+    if (!id) { setSendingTest(false); return; }
     const { data, error } = await supabase.functions.invoke("send-newsletter", {
       body: { campaignId: id, mode: "test", testEmail, testName: testName.trim() || undefined },
     });
-    setSending(false);
+    setSendingTest(false);
     if (error || (data as any)?.error) {
       toast.error((data as any)?.error ?? error?.message ?? "Test failed");
     } else {

@@ -62,25 +62,107 @@ const AdminNewsletter = () => {
   const [sending, setSending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  // Campaigns / suppressions
+  // Campaigns / suppressions / templates
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [suppressions, setSuppressions] = useState<Suppression[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [drillCampaign, setDrillCampaign] = useState<Campaign | null>(null);
   const [drillRows, setDrillRows] = useState<SendRow[]>([]);
 
+  // Save-template dialog
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveTargetId, setSaveTargetId] = useState<string>("__new__");
+  const [saveName, setSaveName] = useState("");
+  const [saveAsWelcome, setSaveAsWelcome] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
   const loadAll = async () => {
-    const [{ data: w }, { data: c }, { data: s }] = await Promise.all([
+    const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
       supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),
       supabase.from("newsletter_campaigns").select("*").order("created_at", { ascending: false }),
       supabase.from("newsletter_suppressions").select("*").order("unsubscribed_at", { ascending: false }),
+      supabase.from("newsletter_templates").select("*").order("updated_at", { ascending: false }),
     ]);
     setWaitlist((w ?? []) as WaitlistRow[]);
     setCampaigns((c ?? []) as Campaign[]);
     setSuppressions((s ?? []) as Suppression[]);
+    setTemplates((t ?? []) as Template[]);
     setSuppressedSet(new Set((s ?? []).map((r: any) => (r.email as string).toLowerCase())));
   };
 
   useEffect(() => { loadAll(); }, []);
+
+  const loadTemplate = (id: string) => {
+    const t = templates.find((x) => x.id === id);
+    if (!t) return;
+    setSubject(t.subject);
+    setHtml(t.html_body);
+    toast.success(`Loaded template: ${t.name}`);
+  };
+
+  const openSaveDialog = () => {
+    if (!subject.trim() || !html.trim()) { toast.error("Subject and body required"); return; }
+    setSaveTargetId("__new__");
+    setSaveName("");
+    setSaveAsWelcome(false);
+    setSaveOpen(true);
+  };
+
+  const onSaveTargetChange = (val: string) => {
+    setSaveTargetId(val);
+    if (val === "__new__") {
+      setSaveName("");
+      setSaveAsWelcome(false);
+    } else {
+      const t = templates.find((x) => x.id === val);
+      if (t) { setSaveName(t.name); setSaveAsWelcome(t.is_welcome); }
+    }
+  };
+
+  const saveTemplate = async () => {
+    if (!saveName.trim()) { toast.error("Name required"); return; }
+    setSavingTemplate(true);
+    const { data: userRes } = await supabase.auth.getUser();
+
+    // If marking as welcome, first clear any existing welcome flag (unique partial index)
+    if (saveAsWelcome) {
+      await supabase.from("newsletter_templates").update({ is_welcome: false }).eq("is_welcome", true);
+    }
+
+    if (saveTargetId === "__new__") {
+      const { error } = await supabase.from("newsletter_templates").insert({
+        name: saveName.trim(), subject: subject.trim(), html_body: html,
+        is_welcome: saveAsWelcome, created_by: userRes?.user?.id ?? null,
+      });
+      if (error) { toast.error(error.message); setSavingTemplate(false); return; }
+    } else {
+      const { error } = await supabase.from("newsletter_templates").update({
+        name: saveName.trim(), subject: subject.trim(), html_body: html, is_welcome: saveAsWelcome,
+      }).eq("id", saveTargetId);
+      if (error) { toast.error(error.message); setSavingTemplate(false); return; }
+    }
+    setSavingTemplate(false);
+    setSaveOpen(false);
+    toast.success(saveAsWelcome ? "Saved — now the welcome email" : "Template saved");
+    loadAll();
+  };
+
+  const setAsWelcome = async (id: string, value: boolean) => {
+    if (value) {
+      await supabase.from("newsletter_templates").update({ is_welcome: false }).eq("is_welcome", true);
+    }
+    const { error } = await supabase.from("newsletter_templates").update({ is_welcome: value }).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(value ? "Set as welcome email" : "Removed welcome flag");
+    loadAll();
+  };
+
+  const deleteTemplate = async (id: string) => {
+    const { error } = await supabase.from("newsletter_templates").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Template deleted");
+    loadAll();
+  };
 
   const filteredAudience = useMemo(() => {
     let rows = waitlist.filter((r) => r.email && !suppressedSet.has(r.email.toLowerCase()));

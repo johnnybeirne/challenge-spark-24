@@ -120,7 +120,8 @@ const AdminNewsletter = () => {
     if (error || (data as any)?.error) {
       toast.error((data as any)?.error ?? error?.message ?? "Test failed");
     } else {
-      toast.success(`Test sent to ${testEmail}`);
+      const rendered = (data as any)?.renderedSubject;
+      toast.success(`Test sent to ${testEmail}`, rendered ? { description: `Subject: ${rendered}` } : undefined);
     }
     // delete the draft test campaign so it doesn't clutter history
     await supabase.from("newsletter_campaigns").delete().eq("id", id);

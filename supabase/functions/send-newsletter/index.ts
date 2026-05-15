@@ -16,8 +16,18 @@ function genToken() {
   return crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
 }
 
+function normalizeBraces(input: string): string {
+  // Map common Unicode look-alikes to ASCII { and }
+  let out = input
+    .replace(/[｛❴⦃⟮⦗]/g, "{")
+    .replace(/[｝❵⦄⟯⦘]/g, "}");
+  // Collapse spaces inside double braces: {{  name  }} -> {{name}}
+  out = out.replace(/\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}/g, "{{$1}}");
+  return out;
+}
+
 function substitute(html: string, vars: Record<string, string>) {
-  let out = html;
+  let out = normalizeBraces(html ?? "");
   for (const [k, v] of Object.entries(vars)) {
     out = out.split(`{{${k}}}`).join(v);
   }
@@ -84,7 +94,7 @@ Deno.serve(async (req) => {
       });
       const data = await r.json();
       if (!r.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);
-      return new Response(JSON.stringify({ ok: true, test: true, id: data.id }), {
+      return new Response(JSON.stringify({ ok: true, test: true, id: data.id, renderedSubject: subject }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

@@ -48,6 +48,7 @@ const quillModules = {
 
 const AdminNewsletter = () => {
   const [tab, setTab] = useState("compose");
+  const quillRef = useRef<any>(null);
 
   // Compose state
   const [subject, setSubject] = useState("");

@@ -184,20 +184,26 @@ const AdminNewsletter = () => {
     loadAll();
   };
 
+  const signedUpAfterIso = useMemo(
+    () => (signedUpAfter ? new Date(signedUpAfter).toISOString() : null),
+    [signedUpAfter],
+  );
+
   const filteredAudience = useMemo(() => {
     let rows = waitlist.filter((r) => r.email && !suppressedSet.has(r.email.toLowerCase()));
     if (audienceMode === "filter") {
       if (tierFilter.length) rows = rows.filter((r) => tierFilter.includes(r.current_tier));
       if (minInvites > 0) rows = rows.filter((r) => r.confirmed_invites >= minInvites);
+      if (signedUpAfterIso) rows = rows.filter((r) => r.created_at > signedUpAfterIso);
     } else if (audienceMode === "manual") {
       rows = rows.filter((r) => manualIds.has(r.id));
     }
     return rows;
-  }, [waitlist, suppressedSet, audienceMode, tierFilter, minInvites, manualIds]);
+  }, [waitlist, suppressedSet, audienceMode, tierFilter, minInvites, signedUpAfterIso, manualIds]);
 
   const buildAudience = () => {
     if (audienceMode === "all") return { mode: "all" };
-    if (audienceMode === "filter") return { mode: "filter", tiers: tierFilter, minInvites };
+    if (audienceMode === "filter") return { mode: "filter", tiers: tierFilter, minInvites, signedUpAfter: signedUpAfterIso };
     return { mode: "manual", ids: Array.from(manualIds) };
   };
 

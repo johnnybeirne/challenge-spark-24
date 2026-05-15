@@ -404,10 +404,13 @@ const AdminNewsletter = () => {
               </Button>
             </div>
 
-            <div className="flex justify-end pt-2 border-t">
+            <div className="flex justify-start pt-2 border-t">
               <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <DialogTrigger asChild>
-                  <Button disabled={sending || !subject.trim() || filteredAudience.length === 0}>
+                  <Button
+                    variant="destructive"
+                    disabled={sending || !subject.trim() || filteredAudience.length === 0}
+                  >
                     {sending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
                     Send to {filteredAudience.length} recipient{filteredAudience.length === 1 ? "" : "s"}
                   </Button>

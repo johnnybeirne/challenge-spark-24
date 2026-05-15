@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { campaignId, mode, testEmail } = body as { campaignId: string; mode?: "test" | "send"; testEmail?: string };
+    const { campaignId, mode, testEmail, testName } = body as { campaignId: string; mode?: "test" | "send"; testEmail?: string; testName?: string };
 
     if (!campaignId) throw new Error("campaignId required");
 
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");
       const token = genToken();
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
-      const vars = { name: "there", email: testEmail, unsubscribe_url: unsubscribeUrl };
+      const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl };
       const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
       const subject = `[TEST] ${substitute(campaign.subject, vars)}`;
       const r = await fetch("https://api.resend.com/emails", {

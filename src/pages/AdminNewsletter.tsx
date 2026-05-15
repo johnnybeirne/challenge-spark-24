@@ -112,19 +112,29 @@ const AdminNewsletter = () => {
 
   useEffect(() => { loadAll(); loadAutoSend(); }, []);
 
-  const loadTemplate = (id: string) => {
+  const [editingTemplateId, setEditingTemplateId] = useState<string>("__new__");
+
+  const loadTemplate = (id: string, opts?: { edit?: boolean }) => {
     const t = templates.find((x) => x.id === id);
     if (!t) return;
     setSubject(t.subject);
     setHtml(t.html_body);
-    toast.success(`Loaded template: ${t.name}`);
+    setEditingTemplateId(opts?.edit ? t.id : "__new__");
+    toast.success(opts?.edit ? `Editing template: ${t.name}` : `Loaded template: ${t.name}`);
   };
 
   const openSaveDialog = () => {
     if (!subject.trim() || !html.trim()) { toast.error("Subject and body required"); return; }
-    setSaveTargetId("__new__");
-    setSaveName("");
-    setSaveAsWelcome(false);
+    const target = templates.find((x) => x.id === editingTemplateId);
+    if (target) {
+      setSaveTargetId(target.id);
+      setSaveName(target.name);
+      setSaveAsWelcome(target.is_welcome);
+    } else {
+      setSaveTargetId("__new__");
+      setSaveName("");
+      setSaveAsWelcome(false);
+    }
     setSaveOpen(true);
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -378,12 +378,39 @@ const AdminNewsletter = () => {
             </div>
 
             <div>
-              <Label>Body</Label>
-              <p className="text-xs text-muted-foreground mb-2">
-                Tokens: <code>{"{{name}}"}</code>, <code>{"{{email}}"}</code>, <code>{"{{referral_url}}"}</code>, <code>{"{{referral_code}}"}</code>, <code>{"{{unsubscribe_url}}"}</code>. URL tokens become clickable links automatically — or use the link button in the toolbar to wrap your own text.
-              </p>
+              <div className="flex items-end justify-between gap-2 mb-2">
+                <div>
+                  <Label>Body</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Tokens: <code>{"{{name}}"}</code>, <code>{"{{email}}"}</code>, <code>{"{{referral_url}}"}</code>, <code>{"{{referral_code}}"}</code>, <code>{"{{unsubscribe_url}}"}</code>. URL tokens become clickable links automatically — or use the link button in the toolbar to wrap your own text.
+                  </p>
+                </div>
+                <Select
+                  value=""
+                  onValueChange={(token) => {
+                    const editor = quillRef.current?.getEditor?.();
+                    if (editor) {
+                      const range = editor.getSelection(true) ?? { index: editor.getLength(), length: 0 };
+                      editor.insertText(range.index, token, "user");
+                      editor.setSelection(range.index + token.length, 0, "user");
+                      setHtml(editor.root.innerHTML);
+                    } else {
+                      setHtml((h) => h + token);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-44 shrink-0"><SelectValue placeholder="Insert token" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="{{name}}">{"{{name}}"}</SelectItem>
+                    <SelectItem value="{{email}}">{"{{email}}"}</SelectItem>
+                    <SelectItem value="{{referral_url}}">{"{{referral_url}}"}</SelectItem>
+                    <SelectItem value="{{referral_code}}">{"{{referral_code}}"}</SelectItem>
+                    <SelectItem value="{{unsubscribe_url}}">{"{{unsubscribe_url}}"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="bg-background border rounded-md">
-                <ReactQuill theme="snow" value={html} onChange={setHtml} modules={quillModules} />
+                <ReactQuill ref={quillRef} theme="snow" value={html} onChange={setHtml} modules={quillModules} />
               </div>
             </div>
           </CardContent></Card>

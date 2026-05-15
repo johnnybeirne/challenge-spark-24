@@ -132,10 +132,14 @@ Deno.serve(async (req) => {
         await admin.from("newsletter_unsubscribe_tokens").insert({ token, email: emailLower });
       }
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
+      const referralCode = (r as any).referral_code ?? "";
+      const referralUrl = referralCode ? `${APP_BASE_URL}/waitlist?ref=${referralCode}` : `${APP_BASE_URL}/waitlist`;
       const vars = {
         name: r.name?.trim() || "there",
         email: r.email,
         unsubscribe_url: unsubscribeUrl,
+        referral_url: referralUrl,
+        referral_code: referralCode,
       };
       const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
       const subject = substitute(campaign.subject, vars);

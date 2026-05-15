@@ -488,7 +488,102 @@ const AdminNewsletter = () => {
             </table>
           </CardContent></Card>
         </TabsContent>
+
+        {/* TEMPLATES */}
+        <TabsContent value="templates">
+          <Card><CardContent className="p-0">
+            <div className="p-4 border-b text-xs text-muted-foreground flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              The template marked <strong>Welcome</strong> is automatically sent to every new waitlist signup.
+            </div>
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-xs uppercase">
+                <tr>
+                  <th className="text-left p-3">Name</th>
+                  <th className="text-left p-3">Subject</th>
+                  <th className="text-left p-3">Updated</th>
+                  <th className="text-right p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {templates.map((t) => (
+                  <tr key={t.id} className="border-t">
+                    <td className="p-3 font-medium">
+                      <span className="inline-flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        {t.name}
+                        {t.is_welcome && <Badge variant="default" className="ml-1">Welcome</Badge>}
+                      </span>
+                    </td>
+                    <td className="p-3 text-muted-foreground truncate max-w-xs">{t.subject}</td>
+                    <td className="p-3 text-muted-foreground text-xs">{new Date(t.updated_at).toLocaleString()}</td>
+                    <td className="p-3 text-right space-x-1">
+                      <Button size="sm" variant="ghost" onClick={() => { loadTemplate(t.id); setTab("compose"); }}>Load</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setAsWelcome(t.id, !t.is_welcome)}>
+                        {t.is_welcome ? "Unset welcome" : "Set as welcome"}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => deleteTemplate(t.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {templates.length === 0 && (
+                  <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">
+                    No templates yet. Compose an email and click "Save as template" to create one.
+                  </td></tr>
+                )}
+              </tbody>
+            </table>
+          </CardContent></Card>
+        </TabsContent>
       </Tabs>
+
+      {/* SAVE TEMPLATE DIALOG */}
+      <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save template</DialogTitle>
+            <DialogDescription>Save the current subject + body so you can reuse it later.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            {templates.length > 0 && (
+              <div>
+                <Label className="text-xs">Save as</Label>
+                <Select value={saveTargetId} onValueChange={onSaveTargetChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__new__">New template…</SelectItem>
+                    {templates.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>Overwrite: {t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <div>
+              <Label className="text-xs">Template name</Label>
+              <Input value={saveName} onChange={(e) => setSaveName(e.target.value)} placeholder="e.g. Welcome to the waitlist" />
+            </div>
+            <label className="flex items-start gap-2 text-sm cursor-pointer">
+              <Checkbox checked={saveAsWelcome} onCheckedChange={(v) => setSaveAsWelcome(!!v)} className="mt-0.5" />
+              <span>
+                <strong>Use as the welcome email</strong> for new waitlist signups.
+                <span className="block text-xs text-muted-foreground">
+                  Replaces any existing welcome template. Sends automatically on signup.
+                </span>
+              </span>
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveOpen(false)} disabled={savingTemplate}>Cancel</Button>
+            <Button onClick={saveTemplate} disabled={savingTemplate || !saveName.trim()}>
+              {savingTemplate ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

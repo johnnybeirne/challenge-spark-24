@@ -1,65 +1,55 @@
 ## Goal
 
-Add two capabilities to the Newsletter admin:
-
-1. **Save & reuse templates** — store named drafts (subject + body) you can load into Compose with one click.
-2. **Welcome automation** — designate one template as the "Welcome email"; every new waitlist signup automatically receives it (with `{{name}}`, `{{referral_url}}`, `{{unsubscribe_url}}` filled in).
+Add a **"Signed up after"** date filter to the newsletter audience picker so the second send (tomorrow) only goes to people who joined the waitlist after a chosen cutoff.
 
 ---
 
-## Database changes
+## UI changes — `src/pages/AdminNewsletter.tsx` (Audience tab, `filter` mode)
 
-**New table `newsletter_templates`**
-- `name` (label shown in the picker)
-- `subject`
-- `html_body`
-- `is_welcome` (boolean — only one row may be `true` at a time, enforced by partial unique index)
-- standard id / created_at / updated_at / created_by
-- Admin-only RLS (manage), authenticated read.
+Add one new control alongside the existing tier / minimum-invites filters:
 
-**New trigger on `waitlist_signups`**
-- After-insert trigger calls `pg_net.http_post` to a new edge function `send-welcome-email`, passing the new signup's id.
-- Skips if no template has `is_welcome = true`, or if the email is in `newsletter_suppressions`.
+- **"Signed up after"** date+time picker (shadcn Popover + Calendar, plus a time input).
+  - Optional — leave empty to include everyone (current behaviour).
+  - Stored in the campaign's `audience` JSON as `signedUpAfter: ISO string`.
+  - Helper buttons: **"Just now"** (sets to current timestamp) and **Clear**.
+  - Small hint under it: *"Only includes waitlist signups created after this moment. Use this to send a follow-up to new joiners."*
 
-(`pg_net` extension is already available on Lovable Cloud; no migration risk.)
+The recipient-count preview already re-runs when audience changes, so the count will live-update as soon as a date is picked.
 
 ---
 
-## Edge function
+## Send logic — `supabase/functions/send-newsletter/index.ts`
 
-**New `send-welcome-email`**
-- Input: `{ signupId }`.
-- Loads the row, the welcome template, checks suppression, generates an unsubscribe token, runs the same `normalizeBraces → autolinkUrlTokens → substitute` pipeline already used by `send-newsletter`, and sends through Resend.
-- Logs into a lightweight `newsletter_sends` row (campaign_id null, so we'll add a nullable `template_id` column on `newsletter_sends` for traceability).
-- `verify_jwt = false` (called by DB trigger, not user) — gated by a shared secret header checked against `WELCOME_HOOK_SECRET`.
+In the audience query (the `filter` branch), add:
 
----
+```ts
+if (audience.signedUpAfter) {
+  q = q.gt("created_at", audience.signedUpAfter);
+}
+```
 
-## UI changes (`AdminNewsletter.tsx`)
-
-Add a fourth tab **Templates**:
-
-- List of saved templates (name, subject, "Welcome" badge if active, last updated).
-- Row actions: **Load into compose**, **Set as welcome / Unset**, **Delete**.
-- Compose tab gains:
-  - "Load template…" dropdown at the top of the editor.
-  - **Save as template** button next to *Send test* — opens a small dialog asking for a name (or pick existing to overwrite) and a checkbox "Use as welcome email for new signups".
-
-No change to existing campaign send flow.
+No other change needed — suppressions, tier, min-invites all keep working.
 
 ---
 
-## Verification
+## Workflow this enables
 
-1. Create a template, mark it as welcome.
-2. Insert a test waitlist signup → confirm welcome email arrives with `{{name}}` / `{{referral_url}}` substituted and clickable.
-3. Unset welcome → next signup gets no auto email.
-4. Suppressed email signing up again → no auto email, no error.
+1. **Today** — compose the bonus reminder, audience = `filter` with no date → 9 recipients → Send.
+2. **Save the campaign as a template** (already supported) so you can reuse the body verbatim.
+3. **Tomorrow** — duplicate / new campaign from that template, set **Signed up after = yesterday's send time** → only new signups receive it. Repeat any day with a fresh cutoff.
 
 ---
 
 ## Out of scope
 
-- Scheduling / drip sequences (only single welcome email).
-- Per-tier welcome variants.
-- Editing welcome content from a separate "Automations" screen — the Templates tab is the single source of truth.
+- Auto-exclude based on `newsletter_sends` history (you chose date filter only).
+- Recurring/scheduled sends.
+- Storing "last sent at" per template.
+
+---
+
+## Verification
+
+1. Pick a date in the future → recipient count = 0.
+2. Pick a date 1 minute ago → count matches signups since then.
+3. Send a test campaign with the filter → only matching rows appear in `newsletter_sends`.

@@ -74,23 +74,13 @@ Deno.serve(async (req) => {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");
       const token = genToken();
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
-      const html = ensureUnsubscribeFooter(
-        substitute(campaign.html_body, {
-          name: "there",
-          email: testEmail,
-          unsubscribe_url: unsubscribeUrl,
-        }),
-        unsubscribeUrl,
-      );
+      const vars = { name: "there", email: testEmail, unsubscribe_url: unsubscribeUrl };
+      const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
+      const subject = `[TEST] ${substitute(campaign.subject, vars)}`;
       const r = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: FROM,
-          to: [testEmail],
-          subject: `[TEST] ${campaign.subject}`,
-          html,
-        }),
+        body: JSON.stringify({ from: FROM, to: [testEmail], subject, html }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);

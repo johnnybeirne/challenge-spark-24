@@ -56,6 +56,7 @@ const AdminNewsletter = () => {
   const [waitlist, setWaitlist] = useState<WaitlistRow[]>([]);
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
   const [testEmail, setTestEmail] = useState("");
+  const [testName, setTestName] = useState("");
   const [sending, setSending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -113,7 +114,7 @@ const AdminNewsletter = () => {
     const id = await createCampaign();
     if (!id) { setSending(false); return; }
     const { data, error } = await supabase.functions.invoke("send-newsletter", {
-      body: { campaignId: id, mode: "test", testEmail },
+      body: { campaignId: id, mode: "test", testEmail, testName: testName.trim() || undefined },
     });
     setSending(false);
     if (error || (data as any)?.error) {
@@ -257,7 +258,11 @@ const AdminNewsletter = () => {
           <Card><CardContent className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
               <div className="flex-1">
-                <Label>Send a test</Label>
+                <Label>Test name <span className="text-muted-foreground font-normal">(used for {"{{name}}"})</span></Label>
+                <Input placeholder="Jane" value={testName} onChange={(e) => setTestName(e.target.value)} />
+              </div>
+              <div className="flex-1">
+                <Label>Test email</Label>
                 <Input type="email" placeholder="you@example.com" value={testEmail} onChange={(e) => setTestEmail(e.target.value)} />
               </div>
               <Button variant="outline" onClick={sendTest} disabled={sending || !subject.trim()}>

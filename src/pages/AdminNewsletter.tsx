@@ -22,7 +22,7 @@ SizeStyle.whitelist = FONT_SIZES;
 
 const TIERS = ["Founder", "Accelerator", "Builder", "Mover", "Starter", "Joined"];
 
-type WaitlistRow = { id: string; email: string; name: string | null; current_tier: string; confirmed_invites: number };
+type WaitlistRow = { id: string; email: string; name: string | null; current_tier: string; confirmed_invites: number; created_at: string };
 type Campaign = {
   id: string; subject: string; status: string;
   recipient_count: number; sent_count: number; failed_count: number; unsubscribe_count: number;

@@ -185,6 +185,7 @@ const App = () => (
                 <Route path="signups" element={<AdminSignups />} />
                 <Route path="waitlist" element={<AdminWaitlist />} />
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
+                <Route path="newsletter" element={<AdminNewsletter />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

@@ -1,42 +1,65 @@
-## Problem
+## Goal
 
-In the email body, `{{referral_url}}` (and `{{unsubscribe_url}}`) get text-substituted to a URL, but if you typed the token as **plain text** in the editor, the result is plain text in the email — not a clickable link. That's what your screenshot shows.
+Add two capabilities to the Newsletter admin:
 
-There are two ways to make a link today, and only one of them currently works without changes:
+1. **Save & reuse templates** — store named drafts (subject + body) you can load into Compose with one click.
+2. **Welcome automation** — designate one template as the "Welcome email"; every new waitlist signup automatically receives it (with `{{name}}`, `{{referral_url}}`, `{{unsubscribe_url}}` filled in).
 
-1. **Hyperlink with URL `{{referral_url}}`** (Quill toolbar → link icon → paste `{{referral_url}}` as the URL). This works now — Quill stores `href="{{referral_url}}"`, the substitution swaps the URL, and the email arrives clickable.
-2. **Plain text `{{referral_url}}` in the body.** Substitutes correctly but renders as flat text. This is what bit you.
+---
 
-## Plan
+## Database changes
 
-Make plain-text URL tokens auto-clickable so option 2 also "just works".
+**New table `newsletter_templates`**
+- `name` (label shown in the picker)
+- `subject`
+- `html_body`
+- `is_welcome` (boolean — only one row may be `true` at a time, enforced by partial unique index)
+- standard id / created_at / updated_at / created_by
+- Admin-only RLS (manage), authenticated read.
 
-### Step 1 — Auto-linkify URL tokens in the body
-In `supabase/functions/send-newsletter/index.ts`, before running token substitution on `campaign.html_body`:
+**New trigger on `waitlist_signups`**
+- After-insert trigger calls `pg_net.http_post` to a new edge function `send-welcome-email`, passing the new signup's id.
+- Skips if no template has `is_welcome = true`, or if the email is in `newsletter_suppressions`.
 
-- Find any **bare** `{{referral_url}}` or `{{unsubscribe_url}}` (i.e. not already inside an `href="..."` attribute, and not already wrapped in an `<a>`).
-- Wrap each with `<a href="{{referral_url}}" style="color:#4f46e5;text-decoration:underline;">{{referral_url}}</a>`.
+(`pg_net` extension is already available on Lovable Cloud; no migration risk.)
 
-Then run substitution as normal. Result: the URL renders as a styled, clickable link.
+---
 
-The detection uses a regex pass that skips tokens already inside an attribute (`="...{{referral_url}}..."`) so we don't double-wrap when the user used the proper hyperlink option.
+## Edge function
 
-### Step 2 — Update the helper text on the Compose tab
-Change the token tip line to:
+**New `send-welcome-email`**
+- Input: `{ signupId }`.
+- Loads the row, the welcome template, checks suppression, generates an unsubscribe token, runs the same `normalizeBraces → autolinkUrlTokens → substitute` pipeline already used by `send-newsletter`, and sends through Resend.
+- Logs into a lightweight `newsletter_sends` row (campaign_id null, so we'll add a nullable `template_id` column on `newsletter_sends` for traceability).
+- `verify_jwt = false` (called by DB trigger, not user) — gated by a shared secret header checked against `WELCOME_HOOK_SECRET`.
 
-> Tokens: `{{name}}`, `{{email}}`, `{{referral_url}}`, `{{referral_code}}`, `{{unsubscribe_url}}`. URL tokens become clickable links automatically — or use the link button in the toolbar to wrap your own text.
+---
 
-### Step 3 — Redeploy `send-newsletter`
+## UI changes (`AdminNewsletter.tsx`)
 
-### Step 4 — Verify
-Send a test with body containing a plain `{{referral_url}}` line. Confirm the test inbox shows it as an underlined clickable link pointing to `https://leadio.johnnybeirne.com/waitlist?ref=PREVIEW123`.
+Add a fourth tab **Templates**:
 
-## Files
+- List of saved templates (name, subject, "Welcome" badge if active, last updated).
+- Row actions: **Load into compose**, **Set as welcome / Unset**, **Delete**.
+- Compose tab gains:
+  - "Load template…" dropdown at the top of the editor.
+  - **Save as template** button next to *Send test* — opens a small dialog asking for a name (or pick existing to overwrite) and a checkbox "Use as welcome email for new signups".
 
-- `supabase/functions/send-newsletter/index.ts` — add `autolinkUrlTokens()` helper, call it on `campaign.html_body` for both test and live sends.
-- `src/pages/AdminNewsletter.tsx` — update the token-help paragraph.
+No change to existing campaign send flow.
+
+---
+
+## Verification
+
+1. Create a template, mark it as welcome.
+2. Insert a test waitlist signup → confirm welcome email arrives with `{{name}}` / `{{referral_url}}` substituted and clickable.
+3. Unset welcome → next signup gets no auto email.
+4. Suppressed email signing up again → no auto email, no error.
+
+---
 
 ## Out of scope
 
-- `{{referral_code}}` stays plain text (it's a code, not a URL). If you want the code itself to act as a link to the referral URL, flag it and I'll add a separate `{{referral_code_link}}` token.
-- No body-content rewriting beyond URL tokens.
+- Scheduling / drip sequences (only single welcome email).
+- Per-tier welcome variants.
+- Editing welcome content from a separate "Automations" screen — the Templates tab is the single source of truth.

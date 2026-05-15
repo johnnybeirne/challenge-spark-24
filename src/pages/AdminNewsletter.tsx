@@ -7,9 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Mail, Send, Users, Trash2, Loader2 } from "lucide-react";
+import { Mail, Send, Users, Trash2, Loader2, FileText, Save, Sparkles } from "lucide-react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -28,6 +29,7 @@ type Campaign = {
 };
 type SendRow = { id: string; email: string; name: string | null; status: string; error_message: string | null; sent_at: string | null };
 type Suppression = { id: string; email: string; unsubscribed_at: string; source_campaign_id: string | null };
+type Template = { id: string; name: string; subject: string; html_body: string; is_welcome: boolean; updated_at: string };
 
 const DEFAULT_HTML = `<p>Hi {{name}},</p><p>Quick update from the team...</p><p>— Johnny</p>`;
 
@@ -60,25 +62,107 @@ const AdminNewsletter = () => {
   const [sending, setSending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  // Campaigns / suppressions
+  // Campaigns / suppressions / templates
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [suppressions, setSuppressions] = useState<Suppression[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [drillCampaign, setDrillCampaign] = useState<Campaign | null>(null);
   const [drillRows, setDrillRows] = useState<SendRow[]>([]);
 
+  // Save-template dialog
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveTargetId, setSaveTargetId] = useState<string>("__new__");
+  const [saveName, setSaveName] = useState("");
+  const [saveAsWelcome, setSaveAsWelcome] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
   const loadAll = async () => {
-    const [{ data: w }, { data: c }, { data: s }] = await Promise.all([
+    const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
       supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),
       supabase.from("newsletter_campaigns").select("*").order("created_at", { ascending: false }),
       supabase.from("newsletter_suppressions").select("*").order("unsubscribed_at", { ascending: false }),
+      supabase.from("newsletter_templates").select("*").order("updated_at", { ascending: false }),
     ]);
     setWaitlist((w ?? []) as WaitlistRow[]);
     setCampaigns((c ?? []) as Campaign[]);
     setSuppressions((s ?? []) as Suppression[]);
+    setTemplates((t ?? []) as Template[]);
     setSuppressedSet(new Set((s ?? []).map((r: any) => (r.email as string).toLowerCase())));
   };
 
   useEffect(() => { loadAll(); }, []);
+
+  const loadTemplate = (id: string) => {
+    const t = templates.find((x) => x.id === id);
+    if (!t) return;
+    setSubject(t.subject);
+    setHtml(t.html_body);
+    toast.success(`Loaded template: ${t.name}`);
+  };
+
+  const openSaveDialog = () => {
+    if (!subject.trim() || !html.trim()) { toast.error("Subject and body required"); return; }
+    setSaveTargetId("__new__");
+    setSaveName("");
+    setSaveAsWelcome(false);
+    setSaveOpen(true);
+  };
+
+  const onSaveTargetChange = (val: string) => {
+    setSaveTargetId(val);
+    if (val === "__new__") {
+      setSaveName("");
+      setSaveAsWelcome(false);
+    } else {
+      const t = templates.find((x) => x.id === val);
+      if (t) { setSaveName(t.name); setSaveAsWelcome(t.is_welcome); }
+    }
+  };
+
+  const saveTemplate = async () => {
+    if (!saveName.trim()) { toast.error("Name required"); return; }
+    setSavingTemplate(true);
+    const { data: userRes } = await supabase.auth.getUser();
+
+    // If marking as welcome, first clear any existing welcome flag (unique partial index)
+    if (saveAsWelcome) {
+      await supabase.from("newsletter_templates").update({ is_welcome: false }).eq("is_welcome", true);
+    }
+
+    if (saveTargetId === "__new__") {
+      const { error } = await supabase.from("newsletter_templates").insert({
+        name: saveName.trim(), subject: subject.trim(), html_body: html,
+        is_welcome: saveAsWelcome, created_by: userRes?.user?.id ?? null,
+      });
+      if (error) { toast.error(error.message); setSavingTemplate(false); return; }
+    } else {
+      const { error } = await supabase.from("newsletter_templates").update({
+        name: saveName.trim(), subject: subject.trim(), html_body: html, is_welcome: saveAsWelcome,
+      }).eq("id", saveTargetId);
+      if (error) { toast.error(error.message); setSavingTemplate(false); return; }
+    }
+    setSavingTemplate(false);
+    setSaveOpen(false);
+    toast.success(saveAsWelcome ? "Saved — now the welcome email" : "Template saved");
+    loadAll();
+  };
+
+  const setAsWelcome = async (id: string, value: boolean) => {
+    if (value) {
+      await supabase.from("newsletter_templates").update({ is_welcome: false }).eq("is_welcome", true);
+    }
+    const { error } = await supabase.from("newsletter_templates").update({ is_welcome: value }).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(value ? "Set as welcome email" : "Removed welcome flag");
+    loadAll();
+  };
+
+  const deleteTemplate = async (id: string) => {
+    const { error } = await supabase.from("newsletter_templates").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Template deleted");
+    loadAll();
+  };
 
   const filteredAudience = useMemo(() => {
     let rows = waitlist.filter((r) => r.email && !suppressedSet.has(r.email.toLowerCase()));
@@ -179,6 +263,7 @@ const AdminNewsletter = () => {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="compose">Compose &amp; send</TabsTrigger>
+          <TabsTrigger value="templates">Templates ({templates.length})</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns ({campaigns.length})</TabsTrigger>
           <TabsTrigger value="unsubscribes">Unsubscribes ({suppressions.length})</TabsTrigger>
         </TabsList>
@@ -186,6 +271,34 @@ const AdminNewsletter = () => {
         {/* COMPOSE */}
         <TabsContent value="compose" className="space-y-6">
           <Card><CardContent className="p-6 space-y-4">
+            {templates.length > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div className="flex-1">
+                  <Label className="text-xs">Load saved template</Label>
+                  <Select onValueChange={loadTemplate}>
+                    <SelectTrigger><SelectValue placeholder="Pick a template…" /></SelectTrigger>
+                    <SelectContent>
+                      {templates.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.name}{t.is_welcome ? " — Welcome" : ""}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                  <Save className="h-4 w-4 mr-2" /> Save as template
+                </Button>
+              </div>
+            )}
+            {templates.length === 0 && (
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={openSaveDialog} disabled={!subject.trim()}>
+                  <Save className="h-4 w-4 mr-2" /> Save as template
+                </Button>
+              </div>
+            )}
+
             <div>
               <Label>Subject</Label>
               <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" maxLength={200} />
@@ -375,7 +488,102 @@ const AdminNewsletter = () => {
             </table>
           </CardContent></Card>
         </TabsContent>
+
+        {/* TEMPLATES */}
+        <TabsContent value="templates">
+          <Card><CardContent className="p-0">
+            <div className="p-4 border-b text-xs text-muted-foreground flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              The template marked <strong>Welcome</strong> is automatically sent to every new waitlist signup.
+            </div>
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-xs uppercase">
+                <tr>
+                  <th className="text-left p-3">Name</th>
+                  <th className="text-left p-3">Subject</th>
+                  <th className="text-left p-3">Updated</th>
+                  <th className="text-right p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {templates.map((t) => (
+                  <tr key={t.id} className="border-t">
+                    <td className="p-3 font-medium">
+                      <span className="inline-flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        {t.name}
+                        {t.is_welcome && <Badge variant="default" className="ml-1">Welcome</Badge>}
+                      </span>
+                    </td>
+                    <td className="p-3 text-muted-foreground truncate max-w-xs">{t.subject}</td>
+                    <td className="p-3 text-muted-foreground text-xs">{new Date(t.updated_at).toLocaleString()}</td>
+                    <td className="p-3 text-right space-x-1">
+                      <Button size="sm" variant="ghost" onClick={() => { loadTemplate(t.id); setTab("compose"); }}>Load</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setAsWelcome(t.id, !t.is_welcome)}>
+                        {t.is_welcome ? "Unset welcome" : "Set as welcome"}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => deleteTemplate(t.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {templates.length === 0 && (
+                  <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">
+                    No templates yet. Compose an email and click "Save as template" to create one.
+                  </td></tr>
+                )}
+              </tbody>
+            </table>
+          </CardContent></Card>
+        </TabsContent>
       </Tabs>
+
+      {/* SAVE TEMPLATE DIALOG */}
+      <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save template</DialogTitle>
+            <DialogDescription>Save the current subject + body so you can reuse it later.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            {templates.length > 0 && (
+              <div>
+                <Label className="text-xs">Save as</Label>
+                <Select value={saveTargetId} onValueChange={onSaveTargetChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__new__">New template…</SelectItem>
+                    {templates.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>Overwrite: {t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <div>
+              <Label className="text-xs">Template name</Label>
+              <Input value={saveName} onChange={(e) => setSaveName(e.target.value)} placeholder="e.g. Welcome to the waitlist" />
+            </div>
+            <label className="flex items-start gap-2 text-sm cursor-pointer">
+              <Checkbox checked={saveAsWelcome} onCheckedChange={(v) => setSaveAsWelcome(!!v)} className="mt-0.5" />
+              <span>
+                <strong>Use as the welcome email</strong> for new waitlist signups.
+                <span className="block text-xs text-muted-foreground">
+                  Replaces any existing welcome template. Sends automatically on signup.
+                </span>
+              </span>
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveOpen(false)} disabled={savingTemplate}>Cancel</Button>
+            <Button onClick={saveTemplate} disabled={savingTemplate || !saveName.trim()}>
+              {savingTemplate ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

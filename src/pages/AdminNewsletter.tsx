@@ -378,6 +378,29 @@ const AdminNewsletter = () => {
                   <Label className="text-xs">Min confirmed invites:</Label>
                   <Input type="number" min={0} value={minInvites} onChange={(e) => setMinInvites(parseInt(e.target.value || "0", 10))} className="w-24" />
                 </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Signed up after (optional)</Label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      type="datetime-local"
+                      value={signedUpAfter}
+                      onChange={(e) => setSignedUpAfter(e.target.value)}
+                      className="w-auto"
+                    />
+                    <Button type="button" size="sm" variant="outline" onClick={() => {
+                      const d = new Date();
+                      d.setSeconds(0, 0);
+                      const pad = (n: number) => String(n).padStart(2, "0");
+                      setSignedUpAfter(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                    }}>Just now</Button>
+                    {signedUpAfter && (
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setSignedUpAfter("")}>Clear</Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Only includes waitlist signups created after this moment. Use this to send a follow-up to new joiners.
+                  </p>
+                </div>
               </div>
             )}
 

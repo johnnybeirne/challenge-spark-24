@@ -98,7 +98,7 @@ const AdminNewsletter = () => {
 
   const loadAll = async () => {
     const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
-      supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),
+      supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites,created_at").eq("status", "active").order("created_at", { ascending: false }),
       supabase.from("newsletter_campaigns").select("*").order("created_at", { ascending: false }),
       supabase.from("newsletter_suppressions").select("*").order("unsubscribed_at", { ascending: false }),
       supabase.from("newsletter_templates").select("*").order("updated_at", { ascending: false }),

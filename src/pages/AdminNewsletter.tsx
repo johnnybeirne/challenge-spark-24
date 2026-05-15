@@ -114,7 +114,7 @@ const AdminNewsletter = () => {
     const id = await createCampaign();
     if (!id) { setSending(false); return; }
     const { data, error } = await supabase.functions.invoke("send-newsletter", {
-      body: { campaignId: id, mode: "test", testEmail },
+      body: { campaignId: id, mode: "test", testEmail, testName: testName.trim() || undefined },
     });
     setSending(false);
     if (error || (data as any)?.error) {

@@ -77,6 +77,24 @@ const AdminNewsletter = () => {
   const [saveAsWelcome, setSaveAsWelcome] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
 
+  // Welcome auto-send toggle
+  const [autoSendEnabled, setAutoSendEnabled] = useState<boolean>(false);
+  const [autoSendLoading, setAutoSendLoading] = useState(false);
+
+  const loadAutoSend = async () => {
+    const { data, error } = await supabase.rpc("get_welcome_auto_send");
+    if (!error) setAutoSendEnabled(Boolean(data));
+  };
+
+  const toggleAutoSend = async (next: boolean) => {
+    setAutoSendLoading(true);
+    const { error } = await supabase.rpc("set_welcome_auto_send", { p_enabled: next });
+    setAutoSendLoading(false);
+    if (error) { toast.error("Could not update setting"); return; }
+    setAutoSendEnabled(next);
+    toast.success(next ? "Welcome auto-send enabled" : "Welcome auto-send paused");
+  };
+
   const loadAll = async () => {
     const [{ data: w }, { data: c }, { data: s }, { data: t }] = await Promise.all([
       supabase.from("waitlist_signups").select("id,email,name,current_tier,confirmed_invites").eq("status", "active").order("created_at", { ascending: false }),

@@ -59,6 +59,8 @@ import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlist from "@/pages/AdminWaitlist";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
+import AdminNewsletter from "@/pages/AdminNewsletter";
+import Unsubscribe from "@/pages/Unsubscribe";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";

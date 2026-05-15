@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
         referral_url: referralUrl,
         referral_code: referralCode,
       };
-      const html = ensureUnsubscribeFooter(substitute(campaign.html_body, vars), unsubscribeUrl);
+      const html = ensureUnsubscribeFooter(substitute(autolinkUrlTokens(campaign.html_body), vars), unsubscribeUrl);
       const subject = substitute(campaign.subject, vars);
 
       try {

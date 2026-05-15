@@ -35,21 +35,42 @@ function substitute(html: string, vars: Record<string, string>) {
 }
 
 function autolinkUrlTokens(html: string): string {
-  // Wrap bare {{referral_url}} / {{unsubscribe_url}} (not already in href="..." or inside an <a>) with an <a>.
+  // Wrap bare {{referral_url}} / {{unsubscribe_url}} that appear as plain text
+  // (i.e., not inside any tag attribute and not already inside an <a>...</a>) with an <a>.
   const tokens = ["referral_url", "unsubscribe_url"];
-  let out = html ?? "";
-  for (const t of tokens) {
-    const token = `{{${t}}}`;
-    // Skip if no occurrence
-    if (!out.includes(token)) continue;
-    // Replace only occurrences NOT preceded by =" or =' (i.e. not inside an attribute value)
-    // and NOT already inside an <a>...</a> wrapping just this token.
-    const re = new RegExp(`(^|[^"'=])\\{\\{${t}\\}\\}`, "g");
-    out = out.replace(re, (_m, prefix) =>
-      `${prefix}<a href="${token}" style="color:#4f46e5;text-decoration:underline;" target="_blank" rel="noopener">${token}</a>`,
-    );
+  const input = html ?? "";
+
+  // Step 1: protect existing <a>...</a> blocks (any token inside stays untouched).
+  const anchorRe = /<a\b[^>]*>[\s\S]*?<\/a>/gi;
+  const segments: { text: string; isAnchor: boolean }[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = anchorRe.exec(input)) !== null) {
+    if (m.index > last) segments.push({ text: input.slice(last, m.index), isAnchor: false });
+    segments.push({ text: m[0], isAnchor: true });
+    last = m.index + m[0].length;
   }
-  return out;
+  if (last < input.length) segments.push({ text: input.slice(last), isAnchor: false });
+
+  // Step 2: in non-anchor segments, walk tag-by-tag so we only mutate text nodes,
+  // never attribute values inside tags like href="{{referral_url}}".
+  return segments
+    .map((seg) => {
+      if (seg.isAnchor) return seg.text;
+      return seg.text.replace(/(<[^>]+>)|([^<]+)/g, (_full, tag: string | undefined, text: string | undefined) => {
+        if (tag) return tag;
+        let t = text ?? "";
+        for (const tok of tokens) {
+          const token = `{{${tok}}}`;
+          if (!t.includes(token)) continue;
+          t = t.split(token).join(
+            `<a href="${token}" style="color:#4f46e5;text-decoration:underline;" target="_blank" rel="noopener">${token}</a>`,
+          );
+        }
+        return t;
+      });
+    })
+    .join("");
 }
 
 function ensureUnsubscribeFooter(html: string, unsubscribeUrl: string): string {

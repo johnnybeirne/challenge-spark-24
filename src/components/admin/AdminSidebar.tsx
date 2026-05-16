@@ -18,6 +18,7 @@ import {
 
 const items = [
   { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
+  { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Challenge Days", url: "/owner-console/challenge-days", icon: ListChecks },
@@ -34,7 +35,6 @@ const items = [
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Feature Overview", url: "/owner-console/features", icon: FileText },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
-  { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
 ];
 
 export function AdminSidebar() {

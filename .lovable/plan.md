@@ -1,52 +1,56 @@
 ## Goal
 
-Give you one unique URL to put on johnnybeirne.com so every signup that comes from it is tagged and countable in your admin.
+Give you a single admin page where you can mint JV partner tracking codes today, and let JV partners self-register on a public page later — all reusing the existing `partners` + `referral_attributions` plumbing.
 
-## How the system already works
+## How it slots into what's already there
 
-The app already has full referral attribution built in:
-
-- Any visit to `?ref=<slug>` or `/p/<slug>` is captured first-touch into localStorage + cookie (`src/components/AttributionCapture.tsx` + `src/lib/attribution.ts`).
-- On signup, that slug is resolved against the `partners` table and a row is written to `referral_attributions` (binding user → partner).
-- The Admin → Signups page (`src/pages/AdminSignups.tsx`) already shows a "Partner: <slug>" badge per signup and has a "Via partner" filter + count tile.
-- The partner leaderboard RPC `get_partner_leaderboard` already aggregates signup counts per partner slug.
-
-So we don't need to build tracking — we just need to **create one partner row for your website** and hand you the URL.
+- `partners` table already supports slug, display name, commission defaults, status (`active` / `suspended`), and `user_id`.
+- `?ref=<slug>` / `/p/<slug>` capture is already wired (AttributionCapture + `src/lib/attribution.ts`).
+- `get_partner_leaderboard` already counts signups per partner.
+- `AdminPartnerOps` exists for reassigns/merges/score — but there's no place to **create** partners. We'll add that.
 
 ## Plan
 
-1. **Create a partner row** in the `partners` table via a data insert:
-   - `slug`: `website` (short, clean, easy to read in URLs)
-   - `display_name`: `Johnny Beirne Website`
-   - `status`: `active`
-   - `user_id`: your admin user id
-   - Commission fields: leave at defaults (won't be used unless you wire payouts to it).
+### 1. New admin page: `/owner-console/jv-partners` (`src/pages/AdminJvPartners.tsx`)
 
-2. **Your tracking URL** becomes:
-   ```
-   https://leadio.johnnybeirne.com/?ref=website
-   ```
-   (also works on any route, e.g. `/waitlist?ref=website` or `/assess?ref=website` — first-touch wins, so whichever landing page you point at is fine)
+Single page with two stacked cards:
 
-3. **Where you see the results:**
-   - Admin → Signups: filter by "Via partner" or search `website` → each row shows a `Partner: website` badge.
-   - Admin → Partner Ops / Leaderboard: `website` appears with its signup count.
+**Create JV partner code**
+- Inputs: `slug` (required, lowercased + slugified on blur, uniqueness checked), `display_name`, `landing_path` selector (`/`, `/waitlist`, `/assess`, `/premium`), commission % (default 30), notes.
+- "Create" inserts a row into `partners` with `status = 'active'`, `user_id = <your admin id>` (acts as owner placeholder until a real JV user claims it).
+- After create: shows the generated tracking URL (`https://leadio.johnnybeirne.com<landing>?ref=<slug>`) with copy button + a "Copy /p/ link" alt.
 
-## Optional extras (say the word and I'll add)
+**All JV partners (table)**
+- Columns: slug, display name, status, signups (from `get_partner_leaderboard`), commission %, tracking URL (copy), actions.
+- Actions per row: Copy URL, Edit (display name / commission / landing path stored in `notes` as JSON or a tiny new column), Suspend/Activate (toggle `status`), Open `/p/<slug>` in new tab.
+- Search box filters by slug or display name.
 
-- A second slug like `website-hero` vs `website-footer` so you can A/B which placement on your site converts better.
-- A small "Website signups" KPI tile on the admin dashboard for at-a-glance count.
-- A QR code generator for the URL.
+### 2. Sidebar entry
 
-## Technical notes
+Add "JV Partners" link in `src/components/admin/AdminSidebar.tsx` next to "Partner Ops" + route in `src/App.tsx` under `/owner-console`.
 
-- No code changes needed for tracking — only a single `INSERT INTO partners` migration/insert.
-- The `referred_by_code` flow on the waitlist also reads `?ref=`, so waitlist signups from the same URL will be attributed too.
+### 3. Schema touch-up (small migration)
+
+Add two optional columns to `partners` so the admin page is self-contained:
+- `landing_path text default '/'` — where the tracking URL drops visitors.
+- `notes text` — admin-only notes.
+
+No RLS changes needed; existing admin policies already allow insert/update/delete.
+
+### 4. Future-proofing for JV self-signup (scaffold only — not built yet)
+
+- Add a `pending` value to the existing `partner_status` enum.
+- A public `/partners/apply` page can later insert a row with `status = 'pending'` + the applicant's `user_id`; admin approves from the same JV Partners table by flipping status to `active`.
+
+I'll only add the enum value in this round (cheap, unblocks the next step). The application form itself is a separate follow-up so we don't bloat this change.
+
+### What stays untouched
+
+- Existing `/partners` marketing page, `AdminPartnerOps`, coupon attribution, leaderboard RPC.
+- `usePromoter` / `promoters` table (that's the in-product viral loop, distinct from JV partners).
 
 ## What I need from you to proceed
 
-1. Confirm the slug — default suggestion: `website`. Want something else (e.g. `jb`, `site`, `johnnyb`)?
-2. Which landing page should the URL drop visitors on? Options:
-   - `/` (Landing)
-   - `/waitlist` (current waitlist page)
-   - `/assess` (assessment funnel)
+1. Confirm the route name `/owner-console/jv-partners` and sidebar label "JV Partners".
+2. Default commission % for new JV codes — `30` (current partner default) OK, or different?
+3. Should the landing URL default to `/` or `/premium`?

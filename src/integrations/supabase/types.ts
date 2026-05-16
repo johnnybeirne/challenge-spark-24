@@ -909,7 +909,9 @@ export type Database = {
           default_l2_commission_value: number
           display_name: string | null
           id: string
+          landing_path: string
           manual_score_adjustment: number
+          notes: string | null
           parent_partner_id: string | null
           slug: string
           status: Database["public"]["Enums"]["partner_status"]
@@ -926,7 +928,9 @@ export type Database = {
           default_l2_commission_value?: number
           display_name?: string | null
           id?: string
+          landing_path?: string
           manual_score_adjustment?: number
+          notes?: string | null
           parent_partner_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["partner_status"]
@@ -943,7 +947,9 @@ export type Database = {
           default_l2_commission_value?: number
           display_name?: string | null
           id?: string
+          landing_path?: string
           manual_score_adjustment?: number
+          notes?: string | null
           parent_partner_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["partner_status"]

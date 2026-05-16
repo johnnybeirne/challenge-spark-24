@@ -56,6 +56,7 @@ import AdminChallengeDays from "@/pages/AdminChallengeDays";
 import AdminCoupons from "@/pages/AdminCoupons";
 import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
+import AdminJvPartners from "@/pages/AdminJvPartners";
 import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlist from "@/pages/AdminWaitlist";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
@@ -194,6 +195,7 @@ const App = () => (
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="payouts" element={<AdminPayouts />} />
                 <Route path="partner-ops" element={<AdminPartnerOps />} />
+                <Route path="jv-partners" element={<AdminJvPartners />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

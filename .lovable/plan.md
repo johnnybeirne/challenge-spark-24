@@ -1,55 +1,52 @@
 ## Goal
 
-Add a **"Signed up after"** date filter to the newsletter audience picker so the second send (tomorrow) only goes to people who joined the waitlist after a chosen cutoff.
+Give you one unique URL to put on johnnybeirne.com so every signup that comes from it is tagged and countable in your admin.
 
----
+## How the system already works
 
-## UI changes — `src/pages/AdminNewsletter.tsx` (Audience tab, `filter` mode)
+The app already has full referral attribution built in:
 
-Add one new control alongside the existing tier / minimum-invites filters:
+- Any visit to `?ref=<slug>` or `/p/<slug>` is captured first-touch into localStorage + cookie (`src/components/AttributionCapture.tsx` + `src/lib/attribution.ts`).
+- On signup, that slug is resolved against the `partners` table and a row is written to `referral_attributions` (binding user → partner).
+- The Admin → Signups page (`src/pages/AdminSignups.tsx`) already shows a "Partner: <slug>" badge per signup and has a "Via partner" filter + count tile.
+- The partner leaderboard RPC `get_partner_leaderboard` already aggregates signup counts per partner slug.
 
-- **"Signed up after"** date+time picker (shadcn Popover + Calendar, plus a time input).
-  - Optional — leave empty to include everyone (current behaviour).
-  - Stored in the campaign's `audience` JSON as `signedUpAfter: ISO string`.
-  - Helper buttons: **"Just now"** (sets to current timestamp) and **Clear**.
-  - Small hint under it: *"Only includes waitlist signups created after this moment. Use this to send a follow-up to new joiners."*
+So we don't need to build tracking — we just need to **create one partner row for your website** and hand you the URL.
 
-The recipient-count preview already re-runs when audience changes, so the count will live-update as soon as a date is picked.
+## Plan
 
----
+1. **Create a partner row** in the `partners` table via a data insert:
+   - `slug`: `website` (short, clean, easy to read in URLs)
+   - `display_name`: `Johnny Beirne Website`
+   - `status`: `active`
+   - `user_id`: your admin user id
+   - Commission fields: leave at defaults (won't be used unless you wire payouts to it).
 
-## Send logic — `supabase/functions/send-newsletter/index.ts`
+2. **Your tracking URL** becomes:
+   ```
+   https://leadio.johnnybeirne.com/?ref=website
+   ```
+   (also works on any route, e.g. `/waitlist?ref=website` or `/assess?ref=website` — first-touch wins, so whichever landing page you point at is fine)
 
-In the audience query (the `filter` branch), add:
+3. **Where you see the results:**
+   - Admin → Signups: filter by "Via partner" or search `website` → each row shows a `Partner: website` badge.
+   - Admin → Partner Ops / Leaderboard: `website` appears with its signup count.
 
-```ts
-if (audience.signedUpAfter) {
-  q = q.gt("created_at", audience.signedUpAfter);
-}
-```
+## Optional extras (say the word and I'll add)
 
-No other change needed — suppressions, tier, min-invites all keep working.
+- A second slug like `website-hero` vs `website-footer` so you can A/B which placement on your site converts better.
+- A small "Website signups" KPI tile on the admin dashboard for at-a-glance count.
+- A QR code generator for the URL.
 
----
+## Technical notes
 
-## Workflow this enables
+- No code changes needed for tracking — only a single `INSERT INTO partners` migration/insert.
+- The `referred_by_code` flow on the waitlist also reads `?ref=`, so waitlist signups from the same URL will be attributed too.
 
-1. **Today** — compose the bonus reminder, audience = `filter` with no date → 9 recipients → Send.
-2. **Save the campaign as a template** (already supported) so you can reuse the body verbatim.
-3. **Tomorrow** — duplicate / new campaign from that template, set **Signed up after = yesterday's send time** → only new signups receive it. Repeat any day with a fresh cutoff.
+## What I need from you to proceed
 
----
-
-## Out of scope
-
-- Auto-exclude based on `newsletter_sends` history (you chose date filter only).
-- Recurring/scheduled sends.
-- Storing "last sent at" per template.
-
----
-
-## Verification
-
-1. Pick a date in the future → recipient count = 0.
-2. Pick a date 1 minute ago → count matches signups since then.
-3. Send a test campaign with the filter → only matching rows appear in `newsletter_sends`.
+1. Confirm the slug — default suggestion: `website`. Want something else (e.g. `jb`, `site`, `johnnyb`)?
+2. Which landing page should the URL drop visitors on? Options:
+   - `/` (Landing)
+   - `/waitlist` (current waitlist page)
+   - `/assess` (assessment funnel)

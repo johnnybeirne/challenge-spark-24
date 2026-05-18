@@ -271,6 +271,7 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Free Training Entry", route: "/free-training", description: "Free AI-guided free course used as a lead magnet before challenge entry.", badge: "Free Training" },
   { title: "Premium Course", route: "/premium", description: "Public premium landing page (Leadio Growth Accelerator) with coupon input (FOUNDING497), pricing card, modules, ascension path, and partner/JV-ready section.", badge: "Premium" },
   { title: "Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the free course.", badge: "LMS" },
+  { title: "Waitlist Thank You", route: "/waitlist/thanks", description: "Post-signup thank-you page with referral sharing for waitlist members.", badge: "Waitlist" },
 ];
 
 const CoreEntryLinksSection = () => {

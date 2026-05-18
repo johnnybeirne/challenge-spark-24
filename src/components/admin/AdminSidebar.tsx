@@ -101,6 +101,14 @@ export function AdminSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Waitlist thanks preview">
+                  <a href="/waitlist/thanks?preview=1" target="_blank" rel="noopener noreferrer">
+                    <Eye className="h-4 w-4" />
+                    <span>Waitlist Thanks (Preview)</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
                   <LogOut className="h-4 w-4" />
                   <span>Log out</span>

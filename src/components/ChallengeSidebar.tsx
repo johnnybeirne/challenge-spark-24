@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, CalendarDays, Camera, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
+import { BookOpen, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Compass, Flag, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -116,6 +116,56 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           </div>
         )}
       </div>
+
+      {hasJoinedChallenge && (
+        <section className="space-y-1.5">
+          {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
+          {[
+            { n: 1, label: "Foundations", Icon: Zap },
+            { n: 2, label: "Build", Icon: Target },
+            { n: 3, label: "Launch", Icon: Rocket },
+          ].map(({ n, label, Icon }) => {
+            const path = `/day/${n}`;
+            const active = location.pathname === path;
+            const currentDay = state.challenge.currentDay ?? 1;
+            const challengeCompleted = !!state.challenge.completed;
+            const complete = challengeCompleted || currentDay > n;
+            const locked = !complete && currentDay < n;
+            const DisplayIcon = locked ? Lock : complete ? CheckCircle2 : Icon;
+            return (
+              <button
+                key={path}
+                onClick={() => go(path)}
+                className={cn(
+                  "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
+                  locked && "border-border/60 bg-muted/30",
+                  collapsed ? "p-2" : "px-3 py-2",
+                  active && "ring-2 ring-primary/20"
+                )}
+                title={`Day ${n} – ${label}`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  {!collapsed ? (
+                    <div className="min-w-0 flex-1">
+                      <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Day {n}</p>
+                      <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                    </div>
+                  ) : (
+                    <span className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
+                      active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : complete ? "bg-success/15 text-success" : "bg-primary/10 text-primary"
+                    )}>{n}</span>
+                  )}
+                  <DisplayIcon className={cn(
+                    "h-4 w-4 shrink-0",
+                    locked ? "text-muted-foreground" : complete ? "text-success" : active ? "text-primary" : "text-muted-foreground"
+                  )} />
+                </div>
+              </button>
+            );
+          })}
+        </section>
+      )}
 
       {(() => {
         const midChallenge = hasJoinedChallenge && !state.challenge.completed;

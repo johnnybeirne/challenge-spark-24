@@ -140,11 +140,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </button>
             ) : (
               [
-                { n: 1, path: "/blueprint/lesson/1", label: "Module 1 – Foundations", Icon: Zap, premium: false },
-                { n: 2, path: "/blueprint/lesson/2", label: "Module 2 – Growth Opportunity", Icon: Target, premium: false },
-                { n: 3, path: "/blueprint/lesson/3", label: "Module 3 – Referral Loops", Icon: Users, premium: false },
-                { n: 4, path: "/blueprint/lesson/4", label: "Module 4 – Advanced Systems", Icon: Workflow, premium: true },
-                { n: 5, path: "/blueprint/lesson/5", label: "Module 5 – Scaling With Leadio", Icon: TrendingUp, premium: true },
+                { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
+                { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
+                { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
+                { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
+                { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
               ].map(({ n, path, label, Icon, premium }) => {
                 const active = location.pathname === path;
                 const locked = premium && !isPremiumUser;
@@ -160,11 +160,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       collapsed ? "p-2" : "px-3 py-2",
                       active && "ring-2 ring-primary/20"
                     )}
-                    title={label}
+                    title={`Module ${n} – ${label}`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       {!collapsed ? (
-                        <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Module {n}</p>
+                          <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                        </div>
                       ) : (
                         <span className={cn(
                           "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",

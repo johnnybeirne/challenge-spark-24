@@ -45,6 +45,41 @@ const AdminJvPartners = () => {
   const [saving, setSaving] = useState(false);
   const [draft, setDraft] = useState(emptyDraft);
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<{ display_name: string; commission: number; landing_path: string; notes: string; slug: string }>({ display_name: "", commission: 30, landing_path: "/", notes: "", slug: "" });
+
+  const startEdit = (p: Partner) => {
+    setEditingId(p.id);
+    setEditDraft({
+      slug: p.slug,
+      display_name: p.display_name || "",
+      commission: p.default_commission_value,
+      landing_path: p.landing_path || "/",
+      notes: p.notes || "",
+    });
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  const saveEdit = async (p: Partner) => {
+    const slug = slugify(editDraft.slug);
+    if (!slug) return toast.error("Slug required");
+    if (slug !== p.slug && partners.some((x) => x.slug === slug)) return toast.error("Slug already in use");
+    const { error } = await supabase
+      .from("partners")
+      .update({
+        slug,
+        display_name: editDraft.display_name.trim() || slug,
+        default_commission_value: Number(editDraft.commission) || 0,
+        landing_path: editDraft.landing_path || "/",
+        notes: editDraft.notes.trim() || null,
+      } as any)
+      .eq("id", p.id);
+    if (error) return toast.error(error.message);
+    toast.success("Partner updated");
+    setEditingId(null);
+    load();
+  };
 
   const load = async () => {
     setLoading(true);

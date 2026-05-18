@@ -10,10 +10,14 @@ interface SitemapEntry {
   priority?: string;
 }
 
+// Only public, indexable marketing routes.
+// Excluded: thank-you pages, auth/utility, post-action results,
+// signup gates, internal feature overviews, and the admin/owner/debug routes
+// disallowed in robots.txt.
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
-  { path: "/free-assessment", changefreq: "weekly", priority: "0.9" },
   { path: "/challenge", changefreq: "weekly", priority: "0.9" },
+  { path: "/free-assessment", changefreq: "weekly", priority: "0.9" },
   { path: "/free-training", changefreq: "weekly", priority: "0.9" },
   { path: "/premium", changefreq: "weekly", priority: "0.9" },
   { path: "/assess", changefreq: "weekly", priority: "0.8" },
@@ -21,13 +25,6 @@ const entries: SitemapEntry[] = [
   { path: "/premium-assessment", changefreq: "weekly", priority: "0.8" },
   { path: "/partners", changefreq: "monthly", priority: "0.7" },
   { path: "/waitlist", changefreq: "monthly", priority: "0.6" },
-  { path: "/links", changefreq: "monthly", priority: "0.6" },
-  { path: "/join", changefreq: "monthly", priority: "0.6" },
-  { path: "/blueprint-join", changefreq: "monthly", priority: "0.6" },
-  { path: "/waitlist/thanks", changefreq: "monthly", priority: "0.5" },
-  { path: "/results", changefreq: "monthly", priority: "0.5" },
-  { path: "/app/features", changefreq: "monthly", priority: "0.5" },
-  { path: "/reset-password", changefreq: "yearly", priority: "0.3" },
 ];
 
 function generateSitemap(entries: SitemapEntry[]) {

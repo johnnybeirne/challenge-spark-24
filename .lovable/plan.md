@@ -1,32 +1,19 @@
 ## Goal
+When a user starts the 3-day challenge, automatically scroll the left-hand ChallengeSidebar back to the top so the Challenge section (Day 1 / Day 2 / Day 3) is visible first.
 
-When a user has joined the 3-Day Challenge, show Day 1, Day 2, and Day 3 nav items in the sidebar — placed **above** the "Learn" section.
+## Why
+Users may have scrolled the sidebar deep into the Learn or Tools sections. Upon starting the challenge, the newly revealed Challenge section appears above those sections, but the scroll position stays put — users can miss it and feel lost.
 
-## Current behavior
+## Approach
+1. Add a `useRef` to the scrollable `<aside>` element inside `ChallengeSidebar.tsx`.
+2. Track the previous value of `hasJoinedChallenge` (from `useUserState`) using a ref.
+3. In a `useEffect`, when `hasJoinedChallenge` transitions from `false` to `true`, call `asideRef.current.scrollTo({ top: 0, behavior: 'smooth' })`.
 
-In `src/components/ChallengeSidebar.tsx`, when `midChallenge` is true (joined + not completed), the Learn section collapses to a single "Training" button linking to `/blueprint/dashboard`. There are no direct links to Day 1/2/3 (`/day/1`, `/day/2`, `/day/3`).
+## Scope
+- Single file change: `src/components/ChallengeSidebar.tsx`
+- No backend, route, or state changes.
+- Applies whenever the user "enters" the challenge (BlueprintBridge CTA or ChallengeSignup success).
 
-## Change
-
-Add a new sidebar section above the existing Learn block, rendered only when `hasJoinedChallenge` is true:
-
-- Section label: "Challenge"
-- Three items: Day 1, Day 2, Day 3 → routes `/day/1`, `/day/2`, `/day/3`
-- Each item shows day number, short label (e.g. "Foundations" / "Build" / "Launch" — pulled from existing day metadata if present, otherwise generic), and a state badge:
-  - **Locked** (lock icon, muted) if `state.challenge.currentDay < n`
-  - **Active** (ring + primary) if currently on that route or `currentDay === n`
-  - **Complete** (check icon) if `aiOutputs[day${n}_completed_at]` or equivalent completion flag is set
-- Collapsed sidebar variant: show just the number badge with state styling, matching existing module items
-- Active route gets `ring-2 ring-primary/20` like other nav items
-
-The Learn section keeps its current behavior (single "Training" button while mid-challenge).
-
-## Files
-
-- `src/components/ChallengeSidebar.tsx` — add the new Challenge section before the Learn IIFE block; reuse existing styling tokens and `go()` helper.
-
-## Out of scope
-
-- No changes to `/day/:day` page itself
-- No changes to unlock logic or `useUserState`
-- No changes to bottom nav
+## Edge cases handled
+- Already-in-challenge users on reload: no transition, no forced scroll.
+- Smooth scroll keeps it feel polished, not jarring.

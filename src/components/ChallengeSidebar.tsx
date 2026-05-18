@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BookOpen, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Compass, Flag, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";

@@ -182,6 +182,19 @@ const BlueprintLesson = () => {
 
       {unlocked ? (
         <>
+          <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="relative aspect-video w-full bg-gradient-to-br from-muted via-background to-muted">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/20">
+                  <PlayCircle className="h-8 w-8" />
+                </div>
+                <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Module {lesson.n} Video · Coming Soon
+                </p>
+              </div>
+            </div>
+          </div>
+
           <article className="mt-6 rounded-2xl border border-border bg-card p-6 sm:p-8">
             <p className="text-base leading-8 text-foreground">{lesson.intro}</p>
           </article>

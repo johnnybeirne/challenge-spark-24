@@ -9,10 +9,10 @@ import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
-  const { state } = useAppState();
+  const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const authenticated = !!state.user;
+  const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const hideCopilotRoutes = ["/assess"];

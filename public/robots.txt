@@ -14,7 +14,6 @@ User-agent: *
 Allow: /
 Disallow: /owner-console/
 Disallow: /admin/
-Disallow: /user-features/
 Disallow: /user-features
 Disallow: /debug/
 Disallow: /app/features
@@ -25,6 +24,8 @@ Disallow: /join
 Disallow: /blueprint-join
 Disallow: /links
 Disallow: /redeem
+Disallow: /unsubscribe
+Disallow: /checkout/return
 Disallow: /user-dashboard
 Disallow: /training
 Disallow: /day/
@@ -42,4 +43,7 @@ Disallow: /upgrade
 Disallow: /blueprint/
 Disallow: /promoter
 Disallow: /partner/
+Disallow: /p/
+Disallow: /invite/
+Disallow: /premium/
 Sitemap: https://leadio.johnnybeirne.com/sitemap.xml

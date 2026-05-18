@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Copy, ExternalLink, Handshake, Plus, Power } from "lucide-react";
+import { Copy, ExternalLink, Handshake, Pencil, Plus, Power, X, Check } from "lucide-react";
 
 type Partner = {
   id: string;

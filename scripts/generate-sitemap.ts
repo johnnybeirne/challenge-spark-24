@@ -1,34 +1,30 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
+import { PUBLIC_ENTRIES, HIDDEN_PATHS } from "./seo-config";
 
 const BASE_URL = "https://leadio.johnnybeirne.com";
 
-interface SitemapEntry {
-  path: string;
-  lastmod?: string;
-  changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority?: string;
+function isHidden(path: string): boolean {
+  return HIDDEN_PATHS.some((hidden) => {
+    if (hidden.endsWith("/")) {
+      return path.startsWith(hidden);
+    }
+    return path === hidden || path.startsWith(hidden + "/");
+  });
 }
 
-// Only public, indexable marketing routes.
-// Excluded: thank-you pages, auth/utility, post-action results,
-// signup gates, internal feature overviews, and the admin/owner/debug routes
-// disallowed in robots.txt.
-const entries: SitemapEntry[] = [
-  { path: "/", changefreq: "weekly", priority: "1.0" },
-  { path: "/challenge", changefreq: "weekly", priority: "0.9" },
-  { path: "/free-assessment", changefreq: "weekly", priority: "0.9" },
-  { path: "/free-training", changefreq: "weekly", priority: "0.9" },
-  { path: "/premium", changefreq: "weekly", priority: "0.9" },
-  { path: "/assess", changefreq: "weekly", priority: "0.8" },
-  { path: "/assessment", changefreq: "weekly", priority: "0.8" },
-  { path: "/premium-assessment", changefreq: "weekly", priority: "0.8" },
-  { path: "/partners", changefreq: "monthly", priority: "0.7" },
-  { path: "/waitlist", changefreq: "monthly", priority: "0.6" },
-];
+// Validate: no public entry may match a hidden route
+const conflicts = PUBLIC_ENTRIES.filter((e) => isHidden(e.path));
+if (conflicts.length > 0) {
+  console.error(
+    "Sitemap validation failed: the following public entries match hidden routes:",
+    conflicts.map((c) => c.path).join(", ")
+  );
+  process.exit(1);
+}
 
-function generateSitemap(entries: SitemapEntry[]) {
-  const urls = entries.map((e) =>
+function generateSitemap() {
+  const urls = PUBLIC_ENTRIES.map((e) =>
     [
       `  <url>`,
       `    <loc>${BASE_URL}${e.path}</loc>`,
@@ -49,5 +45,5 @@ function generateSitemap(entries: SitemapEntry[]) {
   ].join("\n");
 }
 
-writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
-console.log(`sitemap.xml written (${entries.length} entries)`);
+writeFileSync(resolve("public/sitemap.xml"), generateSitemap());
+console.log(`sitemap.xml written (${PUBLIC_ENTRIES.length} entries)`);

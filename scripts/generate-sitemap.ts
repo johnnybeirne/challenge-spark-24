@@ -24,7 +24,7 @@ const entries: SitemapEntry[] = [
   { path: "/links", changefreq: "monthly", priority: "0.6" },
   { path: "/join", changefreq: "monthly", priority: "0.6" },
   { path: "/blueprint-join", changefreq: "monthly", priority: "0.6" },
-  { path: "/premium-join", changefreq: "monthly", priority: "0.6" },
+  { path: "/waitlist/thanks", changefreq: "monthly", priority: "0.5" },
   { path: "/results", changefreq: "monthly", priority: "0.5" },
   { path: "/app/features", changefreq: "monthly", priority: "0.5" },
   { path: "/reset-password", changefreq: "yearly", priority: "0.3" },

@@ -1,5 +1,5 @@
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, Rocket, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, PlayCircle, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { toast } from "sonner";

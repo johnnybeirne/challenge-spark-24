@@ -66,9 +66,9 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://leadio.johnnybeirne.com/premium-join</loc>
+    <loc>https://leadio.johnnybeirne.com/waitlist/thanks</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://leadio.johnnybeirne.com/results</loc>

@@ -242,36 +242,105 @@ const AdminJvPartners = () => {
           )}
           {filtered.map((p) => {
             const url = trackingUrl(p.slug, p.landing_path);
+            const isEditing = editingId === p.id;
             return (
               <div key={p.id} className="p-4 space-y-3">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="min-w-[160px]">
-                    <div className="font-mono font-bold">/{p.slug}</div>
-                    <div className="text-xs text-muted-foreground">{p.display_name || "—"}</div>
+                {isEditing ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      <div>
+                        <Label className="text-xs">Slug</Label>
+                        <Input
+                          value={editDraft.slug}
+                          onChange={(e) => setEditDraft({ ...editDraft, slug: e.target.value })}
+                          onBlur={(e) => setEditDraft({ ...editDraft, slug: slugify(e.target.value) })}
+                          className="font-mono h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Display name</Label>
+                        <Input
+                          value={editDraft.display_name}
+                          onChange={(e) => setEditDraft({ ...editDraft, display_name: e.target.value })}
+                          className="h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Commission %</Label>
+                        <Input
+                          type="number"
+                          value={editDraft.commission}
+                          onChange={(e) => setEditDraft({ ...editDraft, commission: Number(e.target.value) })}
+                          className="h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Landing page</Label>
+                        <select
+                          value={editDraft.landing_path}
+                          onChange={(e) => setEditDraft({ ...editDraft, landing_path: e.target.value })}
+                          className="mt-2 block w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          {LANDING_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Notes (internal)</Label>
+                      <Textarea
+                        value={editDraft.notes}
+                        onChange={(e) => setEditDraft({ ...editDraft, notes: e.target.value })}
+                        rows={2}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" onClick={() => saveEdit(p)}>
+                        <Check className="h-4 w-4 mr-1" /> Save
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit}>
+                        <X className="h-4 w-4 mr-1" /> Cancel
+                      </Button>
+                    </div>
                   </div>
-                  <Badge variant={p.status === "active" ? "default" : "secondary"}>
-                    {p.status}
-                  </Badge>
-                  <Badge variant="secondary">{signups[p.id] ?? 0} signups</Badge>
-                  <Badge variant="outline">{p.default_commission_value}%</Badge>
-                  <div className="ml-auto flex items-center gap-2">
-                    <Button size="sm" variant="ghost" onClick={() => copy(url, "Tracking URL")}>
-                      <Copy className="h-4 w-4 mr-1" /> Copy
-                    </Button>
-                    <Button size="sm" variant="ghost" asChild>
-                      <a href={`/p/${p.slug}`} target="_blank" rel="noreferrer">
-                        <ExternalLink className="h-4 w-4 mr-1" /> Open
-                      </a>
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => toggleStatus(p)}>
-                      <Power className="h-4 w-4 mr-1" />
-                      {p.status === "active" ? "Suspend" : "Activate"}
-                    </Button>
-                  </div>
-                </div>
-                <div className="text-xs font-mono text-muted-foreground break-all bg-muted/40 rounded px-3 py-2">
-                  {url}
-                </div>
+                ) : (
+                  <>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="min-w-[160px]">
+                        <div className="font-mono font-bold">/{p.slug}</div>
+                        <div className="text-xs text-muted-foreground">{p.display_name || "—"}</div>
+                      </div>
+                      <Badge variant={p.status === "active" ? "default" : "secondary"}>
+                        {p.status}
+                      </Badge>
+                      <Badge variant="secondary">{signups[p.id] ?? 0} signups</Badge>
+                      <Badge variant="outline">{p.default_commission_value}%</Badge>
+                      <Badge variant="outline" className="font-mono">{p.landing_path || "/"}</Badge>
+                      <div className="ml-auto flex items-center gap-2">
+                        <Button size="sm" variant="ghost" onClick={() => startEdit(p)}>
+                          <Pencil className="h-4 w-4 mr-1" /> Edit
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => copy(url, "Tracking URL")}>
+                          <Copy className="h-4 w-4 mr-1" /> Copy
+                        </Button>
+                        <Button size="sm" variant="ghost" asChild>
+                          <a href={`/p/${p.slug}`} target="_blank" rel="noreferrer">
+                            <ExternalLink className="h-4 w-4 mr-1" /> Open
+                          </a>
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => toggleStatus(p)}>
+                          <Power className="h-4 w-4 mr-1" />
+                          {p.status === "active" ? "Suspend" : "Activate"}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-xs font-mono text-muted-foreground break-all bg-muted/40 rounded px-3 py-2">
+                      {url}
+                    </div>
+                    {p.notes && (
+                      <div className="text-xs text-muted-foreground italic">{p.notes}</div>
+                    )}
+                  </>
+                )}
               </div>
             );
           })}

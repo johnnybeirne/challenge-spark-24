@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BookOpen, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Compass, Flag, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +20,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const location = useLocation();
   const [photoUploading, setPhotoUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const asideRef = useRef<HTMLElement>(null);
+  const prevJoinedRef = useRef(hasJoinedChallenge);
+  useEffect(() => {
+    if (!prevJoinedRef.current && hasJoinedChallenge) {
+      asideRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    prevJoinedRef.current = hasJoinedChallenge;
+  }, [hasJoinedChallenge]);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||
@@ -52,7 +60,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const hasAvatar = Boolean(state.user?.avatarUrl);
 
   return (
-    <aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
+    <aside ref={asideRef} className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
       <input
         ref={photoInputRef}
         type="file"

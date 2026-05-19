@@ -181,7 +181,7 @@ const WaitlistThanks = () => {
     <>
       <SEO
         title="You're on the waitlist — Leadio"
-        description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to bonus extras."
+        description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to extra bonuses."
         canonical="/waitlist/thanks"
       />
       <main className="min-h-screen bg-background text-foreground">

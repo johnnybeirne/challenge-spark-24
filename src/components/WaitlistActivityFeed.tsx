@@ -20,14 +20,14 @@ const ITEMS: ActivityItem[] = [
   { name: "Emma", action: "joined the waitlist", time: "12m ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarSarah },
   { name: "Patrick", action: "shared his invite link", time: "47m ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "Hiro", action: "invited 3 people", time: "2h ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarAlex },
-  { name: "Aoife", action: "unlocked bonus extras", time: "5h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarLily },
+  { name: "Aoife", action: "unlocked extra bonuses", time: "5h ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarLily },
   { name: "Sofia", action: "joined the waitlist", time: "9h ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarMaria },
   { name: "Liam", action: "shared his invite link", time: "1d ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarOwen },
   { name: "Sarah", action: "invited 5 people", time: "2d ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarTara },
-  { name: "Michael", action: "unlocked bonus extras", time: "3d ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
+  { name: "Michael", action: "unlocked extra bonuses", time: "3d ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarJames },
   { name: "John", action: "joined the waitlist", time: "4d ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarOwen },
   { name: "Aoife", action: "invited 3 people", time: "5d ago", icon: <Send className="h-3.5 w-3.5" />, avatar: avatarLily },
-  { name: "Hiro", action: "unlocked bonus extras", time: "1w ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarAlex },
+  { name: "Hiro", action: "unlocked extra bonuses", time: "1w ago", icon: <Sparkles className="h-3.5 w-3.5" />, avatar: avatarAlex },
   { name: "Patrick", action: "joined the waitlist", time: "2w ago", icon: <UserPlus className="h-3.5 w-3.5" />, avatar: avatarJames },
 ];
 

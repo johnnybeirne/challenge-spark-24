@@ -31,7 +31,7 @@ const Section = ({ children, className = "" }: { children: ReactNode; className?
 const steps = [
   { icon: Mail, title: "Join the waitlist", body: "Reserve your place with your email — takes a few seconds." },
   { icon: Link2, title: "Get your invite link", body: "We send you a unique link to share with friends." },
-  { icon: Users, title: "Invite 3 people to unlock priority access to bonus extras", body: "Each confirmed invite counts. Three unlocks priority access to bonus extras." },
+  { icon: Users, title: "Invite 3 people to unlock priority access to extra bonuses", body: "Each confirmed invite counts. Three unlocks priority access to extra bonuses." },
 ];
 
 const Waitlist = () => {
@@ -67,7 +67,7 @@ const Waitlist = () => {
     <p style="font-size:15px;line-height:1.6;margin:0 0 24px;color:#334155;">Thanks for joining the waitlist for the 3-day challenge. Here's your personal invite link:</p>
     <p style="margin:0 0 24px;"><a href="${url}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;">Open your invite link</a></p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 8px;color:#475569;word-break:break-all;">Or share this URL directly:<br/><a href="${url}" style="color:#4f46e5;">${url}</a></p>
-    <p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:#334155;"><strong>Invite 3 people to unlock priority access to bonus extras.</strong></p>
+    <p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:#334155;"><strong>Invite 3 people to unlock priority access to extra bonuses.</strong></p>
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The Leadio team</p>
   </div>
 </body></html>`;
@@ -168,7 +168,7 @@ const Waitlist = () => {
     <>
       <SEO
         title="Waitlist — Leadio"
-        description="Join the waitlist for the 3-day challenge. Invite others to unlock priority access to bonus extras."
+        description="Join the waitlist for the 3-day challenge. Invite others to unlock priority access to extra bonuses."
         canonical="/waitlist"
       />
       <main className="min-h-screen bg-background text-foreground">
@@ -185,7 +185,7 @@ const Waitlist = () => {
                 Run a 3-day challenge people want to share
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-                Join the waitlist before the challenge opens. Invite others to unlock priority access to extra bonues
+                Join the waitlist before the challenge opens. Invite others to unlock priority access to extra bonuses
               </p>
 
               {!signedUp ? (
@@ -236,7 +236,7 @@ const Waitlist = () => {
                       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         We just sent your invite link to{" "}
                         <span className="break-all font-medium text-foreground">{signedUp.email}</span>.
-                        Open it to share with friends and unlock priority access to bonus extras.
+                        Open it to share with friends and unlock priority access to extra bonuses.
                       </p>
                     </div>
                   </div>
@@ -318,7 +318,7 @@ const Waitlist = () => {
                 The earlier you join the waitlist, the stronger your starting position.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-                Invite a few friends after you join to unlock priority access to bonus extras.
+                Invite a few friends after you join to unlock priority access to extra bonuses.
               </p>
               <div className="mt-8 flex justify-center">
                 <Button

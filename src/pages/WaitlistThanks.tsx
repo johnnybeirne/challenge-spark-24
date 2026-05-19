@@ -181,7 +181,7 @@ const WaitlistThanks = () => {
     <>
       <SEO
         title="You're on the waitlist — Leadio"
-        description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to bonus extras."
+        description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to extra bonuses."
         canonical="/waitlist/thanks"
       />
       <main className="min-h-screen bg-background text-foreground">
@@ -233,7 +233,7 @@ const WaitlistThanks = () => {
               </div>
               <div>
               <h2 className="text-xl font-black tracking-tight md:text-2xl">
-                Invite 3 people to unlock priority access and bonus extras.
+                Invite 3 people to unlock priority access and extra bonuses.
               </h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   Share your link with friends. Each confirmed invite counts.

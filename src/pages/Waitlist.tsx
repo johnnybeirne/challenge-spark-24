@@ -236,7 +236,7 @@ const Waitlist = () => {
                       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         We just sent your invite link to{" "}
                         <span className="break-all font-medium text-foreground">{signedUp.email}</span>.
-                        Open it to share with friends and unlock priority access to bonus extras.
+                        Open it to share with friends and unlock priority access to extra bonuses.
                       </p>
                     </div>
                   </div>

@@ -31,7 +31,7 @@ const Section = ({ children, className = "" }: { children: ReactNode; className?
 const steps = [
   { icon: Mail, title: "Join the waitlist", body: "Reserve your place with your email — takes a few seconds." },
   { icon: Link2, title: "Get your invite link", body: "We send you a unique link to share with friends." },
-  { icon: Users, title: "Invite 3 people to unlock priority access to bonus extras", body: "Each confirmed invite counts. Three unlocks priority access to bonus extras." },
+  { icon: Users, title: "Invite 3 people to unlock priority access to extra bonuses", body: "Each confirmed invite counts. Three unlocks priority access to extra bonuses." },
 ];
 
 const Waitlist = () => {

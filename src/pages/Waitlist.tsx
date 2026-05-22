@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
-import hostImage from "@/assets/johnny-beirne-waitlist.png";
+import hostImage from "@/assets/johnny-beirne-waitlist-sitting.png";
 import {
   ArrowRight, Mail, Link2, Users, CheckCircle2, Inbox,
 } from "lucide-react";

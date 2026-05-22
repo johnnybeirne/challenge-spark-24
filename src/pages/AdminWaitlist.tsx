@@ -131,6 +131,7 @@ const AdminWaitlist = () => {
     if (filter === "referred") list = list.filter((r) => !!r.referred_by_code);
     if (filter === "direct") list = list.filter((r) => !r.referred_by_code);
     if (filter === "active_inviters") list = list.filter((r) => r.confirmed_invites > 0);
+    if (filter === "flagged") list = list.filter((r) => r.suspected_self_referral);
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(

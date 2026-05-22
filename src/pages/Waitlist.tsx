@@ -109,47 +109,44 @@ const Waitlist = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = email.trim().toLowerCase();
-    if (!trimmed) return;
+    const trimmedFirst = firstName.trim();
+    const trimmedSurname = surname.trim();
+    if (!trimmed || !trimmedFirst || !trimmedSurname) return;
 
     setLoading(true);
     try {
-      const code = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
-
-      const trimmedName = name.trim();
-      const { data, error } = await supabase
-        .from("waitlist_signups")
-        .insert({
+      const { data: resp, error: fnErr } = await supabase.functions.invoke("waitlist-join", {
+        body: {
+          first_name: trimmedFirst,
+          surname: trimmedSurname,
           email: trimmed,
-          name: trimmedName || null,
-          referral_code: code,
           referred_by_code: refCode || null,
-        })
-        .select()
-        .single();
+        },
+      });
 
-      if (error) {
-        if (error.code === "23505") {
-          const { data: existing } = await supabase
-            .from("waitlist_signups")
-            .select("*")
-            .eq("email", trimmed)
-            .single();
-          if (existing) {
-            toast.info("You're already on the list — we re-sent your invite link.");
-            sendInviteEmail(existing);
-            try { sessionStorage.setItem("waitlist:name", existing.name || trimmedName || ""); } catch {}
-            navigate(`/waitlist/thanks?ref=${existing.referral_code}`, { state: { name: existing.name || trimmedName || null } });
-          }
-        } else {
-          toast.error("Something went wrong. Please try again.");
-          console.error(error);
-        }
+      if (fnErr) {
+        toast.error("Something went wrong. Please try again.");
+        console.error(fnErr);
+        return;
+      }
+
+      const trimmedName = `${trimmedFirst} ${trimmedSurname}`.trim();
+      const existing = (resp as { existing?: WaitlistEntry })?.existing;
+      const data = (resp as { data?: WaitlistEntry })?.data;
+
+      if (existing) {
+        toast.info("You're already on the list — we re-sent your invite link.");
+        sendInviteEmail(existing);
+        try { sessionStorage.setItem("waitlist:name", existing.name || trimmedName || ""); } catch {}
+        navigate(`/waitlist/thanks?ref=${existing.referral_code}`, { state: { name: existing.name || trimmedName || null } });
       } else if (data) {
         toast.success("You're in! Check your inbox.");
         loadCount();
         sendInviteEmail(data);
-        try { sessionStorage.setItem("waitlist:name", trimmedName || ""); } catch {}
+        try { sessionStorage.setItem("waitlist:name", trimmedName); } catch {}
         navigate(`/waitlist/thanks?ref=${data.referral_code}`, { state: { name: trimmedName || null } });
+      } else {
+        toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setLoading(false);

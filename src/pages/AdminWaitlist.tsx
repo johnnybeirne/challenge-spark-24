@@ -312,6 +312,7 @@ const AdminWaitlist = () => {
               ["referred", "Referred"],
               ["direct", "Direct"],
               ["active_inviters", "Inviters"],
+              ["flagged", "⚠ Flagged"],
             ] as const
           ).map(([key, label]) => (
             <Button

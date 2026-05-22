@@ -1467,11 +1467,16 @@ export type Database = {
           created_at: string
           current_tier: string
           email: string
+          first_name: string | null
           id: string
           name: string | null
           referral_code: string
           referred_by_code: string | null
+          self_referral_reasons: string[]
+          signup_ip: string | null
           status: string
+          surname: string | null
+          suspected_self_referral: boolean
           updated_at: string
           waitlist_position: number
         }
@@ -1480,11 +1485,16 @@ export type Database = {
           created_at?: string
           current_tier?: string
           email: string
+          first_name?: string | null
           id?: string
           name?: string | null
           referral_code: string
           referred_by_code?: string | null
+          self_referral_reasons?: string[]
+          signup_ip?: string | null
           status?: string
+          surname?: string | null
+          suspected_self_referral?: boolean
           updated_at?: string
           waitlist_position?: number
         }
@@ -1493,11 +1503,16 @@ export type Database = {
           created_at?: string
           current_tier?: string
           email?: string
+          first_name?: string | null
           id?: string
           name?: string | null
           referral_code?: string
           referred_by_code?: string | null
+          self_referral_reasons?: string[]
+          signup_ip?: string | null
           status?: string
+          surname?: string | null
+          suspected_self_referral?: boolean
           updated_at?: string
           waitlist_position?: number
         }
@@ -1531,6 +1546,10 @@ export type Database = {
         Args: { p_partner_id: string }
         Returns: number
       }
+      admin_clear_self_referral_flag: {
+        Args: { p_signup_id: string }
+        Returns: undefined
+      }
       admin_create_payout: {
         Args: {
           p_commission_ids: string[]
@@ -1558,6 +1577,10 @@ export type Database = {
         Returns: undefined
       }
       admin_void_payout: { Args: { p_payout_id: string }; Returns: undefined }
+      admin_void_waitlist_referral: {
+        Args: { p_signup_id: string }
+        Returns: undefined
+      }
       calculate_waitlist_tier: {
         Args: { invite_count: number }
         Returns: string

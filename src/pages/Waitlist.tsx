@@ -157,7 +157,8 @@ const Waitlist = () => {
     setSignedUp(null);
     setShowConfetti(false);
     setEmail("");
-    setName("");
+    setFirstName("");
+    setSurname("");
   };
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });

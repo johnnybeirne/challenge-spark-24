@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import Confetti from "@/components/Confetti";
 import WaitlistActivityFeed from "@/components/WaitlistActivityFeed";
-import hostImage from "@/assets/johnny-beirne-thanks.png";
+import hostImage from "@/assets/johnny-beirne-thanks-grateful.png";
 import { shareOrCopy } from "@/lib/share";
 import {
   CheckCircle2,

@@ -4,9 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown, Trophy, Trash2, Copy } from "lucide-react";
+import { Download, Search, Mail, ArrowUp, ArrowDown, ArrowUpDown, Trophy, Trash2, Copy, AlertTriangle, ShieldCheck, Ban } from "lucide-react";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type WaitlistRow = {
   id: string;
@@ -19,6 +20,8 @@ type WaitlistRow = {
   status: string;
   current_tier: string;
   created_at: string;
+  suspected_self_referral: boolean;
+  self_referral_reasons: string[] | null;
 };
 
 const formatDate = (iso: string) =>

@@ -360,6 +360,7 @@ const AdminWaitlist = () => {
                       
                       ["current_tier", "Tier", "left"],
                       ["status", "Status", "left"],
+                      ["status", "Flag", "left"],
                       ["created_at", "Joined", "left"],
                     ] as Array<[SortKey, string, "left" | "center"]>
                   ).map(([key, label, align], idx) => {

@@ -535,6 +535,59 @@ const AdminWaitlist = () => {
                         {r.status}
                       </Badge>
                     </td>
+                    <td className="px-4 py-3">
+                      {r.suspected_self_referral ? (
+                        <TooltipProvider>
+                          <div className="flex items-center gap-1">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-500/40">
+                                  <AlertTriangle className="h-3 w-3" /> Flag
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-xs">
+                                  <div className="mb-1 font-semibold">Suspected self-referral</div>
+                                  <ul className="list-disc pl-4">
+                                    {(r.self_referral_reasons || []).map((reason) => (
+                                      <li key={reason}>{reason.replace(/_/g, " ")}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  onClick={() => clearFlag(r.id)}
+                                  className="rounded p-1 text-emerald-700 hover:bg-emerald-500/10"
+                                  aria-label="Mark valid"
+                                >
+                                  <ShieldCheck className="h-3.5 w-3.5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>Mark as valid</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  onClick={() => voidReferral(r)}
+                                  className="rounded p-1 text-destructive hover:bg-destructive/10"
+                                  aria-label="Void referral"
+                                >
+                                  <Ban className="h-3.5 w-3.5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>Void referral</TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </TooltipProvider>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">
                       {formatDate(r.created_at)}
                     </td>

@@ -192,15 +192,26 @@ const Waitlist = () => {
                   onSubmit={handleSubmit}
                   className="mx-auto mt-8 flex w-full max-w-md flex-col gap-4 lg:mx-0"
                 >
-                  <Input
-                    type="text"
-                    required
-                    placeholder="First name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="h-14 rounded-xl border-border bg-card text-base"
-                    maxLength={80}
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      type="text"
+                      required
+                      placeholder="First name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="h-14 rounded-xl border-border bg-card text-base"
+                      maxLength={80}
+                    />
+                    <Input
+                      type="text"
+                      required
+                      placeholder="Surname"
+                      value={surname}
+                      onChange={(e) => setSurname(e.target.value)}
+                      className="h-14 rounded-xl border-border bg-card text-base"
+                      maxLength={80}
+                    />
+                  </div>
                   <Input
                     type="email"
                     required

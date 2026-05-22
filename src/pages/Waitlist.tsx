@@ -39,7 +39,8 @@ const Waitlist = () => {
   const navigate = useNavigate();
   const refCode = searchParams.get("ref");
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [signedUp, setSignedUp] = useState<WaitlistEntry | null>(null);

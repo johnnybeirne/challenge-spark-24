@@ -43,7 +43,7 @@ const AdminWaitlist = () => {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<WaitlistRow[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters">("all");
+  const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters" | "flagged">("all");
   const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selected, setSelected] = useState<Set<string>>(new Set());

@@ -71,6 +71,33 @@ const AdminWaitlist = () => {
     toast.success(`Deleted ${ids.length} signup${ids.length === 1 ? "" : "s"}.`);
   };
 
+  const clearFlag = async (id: string) => {
+    const { error } = await supabase.rpc("admin_clear_self_referral_flag", { p_signup_id: id });
+    if (error) {
+      toast.error(`Failed: ${error.message}`);
+      return;
+    }
+    setRows((prev) => prev.map((x) => (x.id === id ? { ...x, suspected_self_referral: false, self_referral_reasons: [] } : x)));
+    toast.success("Marked as valid.");
+  };
+
+  const voidReferral = async (row: WaitlistRow) => {
+    if (!window.confirm(`Void referral from ${row.email}? This will decrement the referrer's invite count.`)) return;
+    const { error } = await supabase.rpc("admin_void_waitlist_referral", { p_signup_id: row.id });
+    if (error) {
+      toast.error(`Failed: ${error.message}`);
+      return;
+    }
+    setRows((prev) => prev.map((x) => {
+      if (x.id === row.id) return { ...x, referred_by_code: null, suspected_self_referral: false, self_referral_reasons: [] };
+      if (row.referred_by_code && x.referral_code === row.referred_by_code) {
+        return { ...x, confirmed_invites: Math.max(0, x.confirmed_invites - 1) };
+      }
+      return x;
+    }));
+    toast.success("Referral voided.");
+  };
+
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));

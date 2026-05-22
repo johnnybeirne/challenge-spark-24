@@ -218,7 +218,7 @@ const WaitlistThanks = () => {
                 src={hostImage}
                 alt="Johnny Beirne"
                 loading="eager"
-                className="block h-auto w-full object-contain object-bottom"
+                className="block h-auto w-full rounded-2xl object-contain object-bottom"
               />
             </div>
           </div>

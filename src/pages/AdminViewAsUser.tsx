@@ -7,7 +7,7 @@ import Spinner from "@/components/Spinner";
 const DEMO_USER_KEY = "leadio_view_as_user";
 const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
 
-const AdminViewAsUser = ({ redirectTo = "/day/1" }: { redirectTo?: string }) => {
+const AdminViewAsUser = ({ redirectTo = "/challenge/day-1" }: { redirectTo?: string }) => {
   const { setState } = useAppState();
   const navigate = useNavigate();
 

@@ -54,8 +54,8 @@ const LockedCommunity = () => {
   const hasPromotion = state.network.direct >= 3;
 
   const getCtaAction = () => {
-    if (!day3Done) return { label: "Finish the challenge", path: "/day/3" };
-    if (!hasUrl) return { label: "Submit your live challenge", path: "/day/3" };
+    if (!day3Done) return { label: "Finish the challenge", path: "/challenge/day-3" };
+    if (!hasUrl) return { label: "Submit your live challenge", path: "/challenge/day-3" };
     return { label: "Unlock Builder Circle", path: "/referrals" };
   };
 

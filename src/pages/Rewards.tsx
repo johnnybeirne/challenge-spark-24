@@ -172,7 +172,7 @@ const Rewards = () => {
                       <h3 className="mt-2 font-semibold text-foreground">{asset.contribution_title}</h3>
                       <p className="mt-3 text-sm font-medium text-foreground">What this helps you achieve</p>
                       <p className="mt-1 text-sm text-muted-foreground">{asset.contribution_description}</p>
-                      <Button className="mt-5 w-full gap-2" variant={unlocked ? "default" : "outline"} onClick={() => unlocked ? navigate(`/reward/${asset.id}`) : navigate(index < 3 ? "/referrals" : "/day/2")}>
+                      <Button className="mt-5 w-full gap-2" variant={unlocked ? "default" : "outline"} onClick={() => unlocked ? navigate(`/reward/${asset.id}`) : navigate(index < 3 ? "/referrals" : "/challenge/day-2")}>
                         {unlocked ? <ExternalLink className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
                         {unlocked ? "Access bonus" : requirement}
                       </Button>

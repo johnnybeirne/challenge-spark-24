@@ -344,7 +344,7 @@ function applyCreditRules(state: AppState): AppState {
   const completedDays = new Set(current.completedDays);
 
   if (updated.user) {
-    updated = awardCredits(updated, "challenge_signup", "Congratulations — you earned 100 credits for signing up to the challenge", 100);
+    updated = awardCredits(updated, "challenge_signup", "You earned 50 points just for starting the challenge", 50);
   }
 
   if (updated.challenge.currentDay > 1) {

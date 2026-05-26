@@ -142,7 +142,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                 key={path}
                 onClick={() => go(path)}
                 className={cn(
-                  "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
+                  "w-full rounded-xl border-2 border-black text-left transition-all hover:bg-primary/5 bg-background",
                   locked && "border-border/60 bg-muted/30",
                   collapsed ? "p-2" : "px-3 py-2",
                   active && "ring-2 ring-primary/20"

@@ -28,7 +28,11 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("blueprint-insight", {
-        body: { problem: problem.trim(), audience: audience.trim(), result: result.trim() },
+        body: {
+          problem: problem.trim(),
+          audience: audience.trim(),
+          method: result.trim(),
+        },
       });
       if (error) throw error;
       const text = data?.insight as string;
@@ -46,7 +50,7 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
           },
         },
       }));
-      toast.success("Your challenge framework is ready");
+      toast.success("Your challenge strategy is ready");
       onDone?.();
     } catch (err: any) {
       toast.error(err?.message || "Could not generate challenge. Please try again.");
@@ -57,29 +61,31 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
 
   return (
     <section className="mt-6 rounded-2xl border border-border bg-background p-6">
-      <h2 className="text-xl font-black">Build Your Challenge</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Answer 3 quick questions to create your challenge structure.</p>
+      <h2 className="text-xl font-black">Tell the AI strategist about your work</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Three short answers. The AI will design the right challenge for your audience.
+      </p>
 
       <div className="mt-6 space-y-5">
         <div>
-          <Label htmlFor="problem" className="text-sm font-bold">What problem does your audience want to solve?</Label>
+          <Label htmlFor="problem" className="text-sm font-bold">What problem do you solve?</Label>
           <DictatedTextarea id="problem" value={problem} onChange={(e) => setProblem(e.target.value)}
-            placeholder="People struggle with…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="Generate leads, lose weight, improve confidence, grow a business…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="audience" className="text-sm font-bold">Who is this challenge for?</Label>
+          <Label htmlFor="audience" className="text-sm font-bold">Who do you solve it for?</Label>
           <DictatedTextarea id="audience" value={audience} onChange={(e) => setAudience(e.target.value)}
-            placeholder="Coaches, consultants, creators, business owners…" rows={2} maxLength={300} className="mt-2 resize-none" />
+            placeholder="Coaches, consultants, creators, local businesses…" rows={2} maxLength={300} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="result" className="text-sm font-bold">What transformation or outcome do they want?</Label>
+          <Label htmlFor="result" className="text-sm font-bold">How do you solve it?</Label>
           <DictatedTextarea id="result" value={result} onChange={(e) => setResult(e.target.value)}
-            placeholder="Generate leads, lose weight, improve confidence, get clients…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="Through challenges, coaching, systems, accountability, AI…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
       </div>
 
       <Button onClick={generate} disabled={!canSubmit} className="mt-6 h-12 w-full gap-2 text-sm font-black uppercase">
-        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Sparkles className="h-4 w-4" /> Generate My Challenge</>}
+        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Designing your challenge…</> : <><Sparkles className="h-4 w-4" /> Design My Challenge</>}
       </Button>
     </section>
   );
@@ -102,11 +108,11 @@ const BlueprintInsight = () => {
         <TrainingHomeLink />
         <header className="mt-4">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
+            <Sparkles className="h-3.5 w-3.5" /> AI Challenge Strategist
           </span>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Build Your Challenge</h1>
+          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Design the right challenge for your audience</h1>
           <p className="mt-2 text-base text-muted-foreground">
-            Describe the problem you solve, who you help, and the result they want — and we'll help you create a simple challenge framework designed to drive engagement and momentum.
+            Tell the AI what you do and who you serve. It will recommend the best type of challenge to run — built on the Leadio methodology for engagement, momentum, implementation, and referrals.
           </p>
         </header>
         <InsightForm onDone={() => setEditing(false)} />
@@ -124,7 +130,7 @@ const BlueprintInsight = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("blueprint-insight", {
-        body: { problem, audience, result },
+        body: { problem, audience, method: result },
       });
       if (error) throw error;
       const text = data?.insight as string;
@@ -150,16 +156,16 @@ const BlueprintInsight = () => {
 
       <header className="mt-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-          <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
+          <Sparkles className="h-3.5 w-3.5" /> AI Challenge Strategist
         </span>
-        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Challenge Framework</h1>
+        <h1 className="mt-3 text-3xl font-black sm:text-4xl">Your Recommended Challenge</h1>
       </header>
 
       <section className="mt-6 grid gap-3 sm:grid-cols-3">
         {[
-          { label: "Problem", value: problem },
-          { label: "Audience", value: audience },
-          { label: "Desired outcome", value: result },
+          { label: "Problem you solve", value: problem },
+          { label: "Who you solve it for", value: audience },
+          { label: "How you solve it", value: result },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-2xl border border-border bg-card p-4">
             <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{label}</p>

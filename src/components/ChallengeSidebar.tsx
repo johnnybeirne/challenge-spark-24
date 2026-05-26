@@ -245,18 +245,19 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         
         {[
-          { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass },
-          { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle },
-          { path: "/referrals", label: "Referrals", Icon: Share2 },
-          { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays },
-        ].map(({ path, label, Icon }) => {
+          { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass, tint: "bg-indigo-100 text-indigo-700", accent: "hover:border-indigo-400" },
+          { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
+          { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
+          { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
+        ].map(({ path, label, Icon, tint, accent }) => {
           const active = location.pathname === path;
           return (
             <button
               key={path}
               onClick={() => go(path)}
               className={cn(
-                "w-full rounded-xl border border-border bg-background text-left transition-all hover:border-primary/60 hover:bg-primary/5",
+                "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
+                accent,
                 collapsed ? "p-2" : "px-3 py-2",
                 active && "ring-2 ring-primary/20"
               )}
@@ -264,12 +265,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             >
               <div className="flex items-center justify-between gap-2">
                 {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
-                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", tint)}>
+                  <Icon className="h-4 w-4" />
+                </span>
               </div>
             </button>
           );
         })}
       </section>
+
 
       <section className="space-y-1.5">
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}

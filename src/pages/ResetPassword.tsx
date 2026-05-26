@@ -30,7 +30,7 @@ const ResetPassword = () => {
     setLoading(false);
     if (error) return toast.error(error.message || "Could not update password");
     toast.success("Password updated. You can sign in now.");
-    navigate("/join", { state: { mode: "login" } });
+    navigate("/challenge/join", { state: { mode: "login" } });
   };
 
   return (

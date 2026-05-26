@@ -98,7 +98,7 @@ const AdminHub = () => {
           {[1, 2, 3].map((d) => (
             <Link
               key={d}
-              to={`/day/${d}`}
+              to={`/challenge/day-${d}`}
               className="px-4 py-2 rounded-md border border-border bg-background hover:bg-primary/10 hover:border-primary text-sm font-medium transition-colors"
             >
               Day {d}

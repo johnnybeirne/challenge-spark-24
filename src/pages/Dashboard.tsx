@@ -180,7 +180,6 @@ const Dashboard = () => {
                 ctaLabel="Mark as watched"
                 onMarkWatched={markDashboardWatched}
                 primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => navigate("/day/1") }}
-                secondaryCta={{ label: cfg.secondaryCtaText, onClick: () => navigate("/referrals") }}
               />
               <p className="text-xs text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
             </>

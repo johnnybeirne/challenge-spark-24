@@ -49,7 +49,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
       onStart(section);
       return;
     }
-    navigate("/assess");
+    navigate("/assessment");
   };
 
   return (

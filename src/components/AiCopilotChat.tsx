@@ -36,7 +36,7 @@ const AiCopilotChat = () => {
   const [starters, setStarters] = useState<string[]>([]);
   const [fallback, setFallback] = useState<string>(DEFAULT_FALLBACK);
   const messagesRef = useRef<HTMLDivElement | null>(null);
-  const firstName = state.user?.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || "";
   const personalisedWelcome = welcome === DEFAULT_WELCOME ? `What do you want to work on next, ${firstName}?` : welcome;
 
   useEffect(() => {

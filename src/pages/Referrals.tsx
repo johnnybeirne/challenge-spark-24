@@ -116,12 +116,14 @@ const Referrals = () => {
             <p className="text-xs text-muted-foreground mt-2">
               This is what network-based growth looks like when builders help builders.
             </p>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">
-                Network score: <strong className="text-foreground">{score}</strong>{" "}
-                <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
-              </p>
-            </div>
+            {showGamification && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-xs text-muted-foreground">
+                  Network score: <strong className="text-foreground">{score}</strong>{" "}
+                  <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

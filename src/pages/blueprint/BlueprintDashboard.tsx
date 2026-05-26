@@ -87,17 +87,18 @@ const BlueprintDashboard = () => {
           <Progress value={pct} className="mt-2 h-2" />
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
           <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-            <Link to={`/blueprint/lesson/${nextModule.slug}`}>
-              Continue Learning <ArrowRight className="h-4 w-4" />
+            <Link to="/join">
+              Take the Challenge <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild variant="outline" className="h-12 gap-2 px-6 text-sm font-black uppercase">
-            <Link to="/blueprint/insight">
-              <Compass className="h-4 w-4" /> Build Challenge Framework
-            </Link>
-          </Button>
+          <Link
+            to={`/blueprint/lesson/${nextModule.slug}`}
+            className="text-xs font-bold uppercase tracking-wide text-muted-foreground hover:text-primary sm:ml-2"
+          >
+            or continue learning →
+          </Link>
         </div>
       </div>
 

@@ -8,7 +8,7 @@ import { trackEvent } from "@/lib/analytics";
 
 const AddToCalendar = ({ variant = "default", className = "", firstNameOverride }: { variant?: "default" | "secondary" | "outline"; className?: string; firstNameOverride?: string }) => {
   const { state, setState } = useAppState();
-  const firstName = firstNameOverride || state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
+  const firstName = firstNameOverride || state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
   const events = buildChallengeEvents(firstName, state.memory, state.challenge.startedAt);
 
   const markAdded = () => {

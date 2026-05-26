@@ -240,6 +240,14 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
+        <section className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center shadow-md sm:p-6">
+          <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-black uppercase tracking-wide sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>
+            {ctaLabel}
+            <ArrowRight className="h-5 w-5" />
+          </Button>
+          <p className="mt-2 text-xs font-bold uppercase tracking-wider text-primary">10–15 min · earn points · unlock rewards</p>
+        </section>
+
         <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -375,34 +383,10 @@ const Dashboard = () => {
         </div>
 
 
-        <section className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center shadow-sm sm:p-8">
-          <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-bold sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>
-            Unlock Rewards
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-          <p className="mt-3 text-sm font-medium text-muted-foreground">Takes 10–15 minutes</p>
-        </section>
-
-        <Card className="border-border bg-card shadow-sm">
-          <CardContent className="p-5 sm:p-6">
-            <h2 className="text-lg font-bold text-foreground">What You’re Building & What You’ll Have</h2>
-            <div className="mt-4 grid gap-5 sm:grid-cols-2">
-              <ol className="list-decimal space-y-2.5 pl-5 text-sm text-muted-foreground marker:font-semibold marker:text-foreground">
-                <li>A simple challenge for your audience</li>
-                <li>A quiz that brings people in</li>
-                <li>A system that encourages sharing</li>
-              </ol>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li>✓ A working version of your challenge</li>
-                <li>✓ A clear understanding of how it grows</li>
-                <li>✓ A shareable lead-flow asset</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
       </section>
     </main>
   );
 };
 
 export default Dashboard;
+

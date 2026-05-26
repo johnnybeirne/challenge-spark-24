@@ -9,6 +9,7 @@ import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 

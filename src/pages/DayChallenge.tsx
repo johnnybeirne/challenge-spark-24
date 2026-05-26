@@ -385,7 +385,7 @@ const DayChallenge = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
-        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Action tasks</p>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : "Action tasks"}</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">

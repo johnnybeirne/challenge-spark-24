@@ -14,6 +14,7 @@ import {
 } from "@/hooks/useModuleAccess";
 import { getEntryIntent } from "@/lib/entryIntent";
 import RolePrimaryCta from "@/components/RolePrimaryCta";
+import { useUserRole } from "@/hooks/useUserRole";
 
 type ModuleEntry = {
   n: number;

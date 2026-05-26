@@ -132,16 +132,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </div>
 
-      {showChallengeNav && (
-        <section className="space-y-1.5">
-          {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
-          {[
-            { n: 1, label: "Foundations", Icon: Zap },
-            { n: 2, label: "Build", Icon: Target },
-            { n: 3, label: "Launch", Icon: Rocket },
-          ].map(({ n, label, Icon }) => {
-            const path = `/day/${n}`;
-            const active = location.pathname === path;
+      <section className="space-y-1.5">
+        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
+        {[
+          { n: 1, label: "Foundations", Icon: Zap },
+          { n: 2, label: "Build", Icon: Target },
+          { n: 3, label: "Launch", Icon: Rocket },
+        ].map(({ n, label, Icon }) => {
+          const path = `/challenge/day-${n}`;
+          const active = location.pathname === path || location.pathname === `/day/${n}` || location.pathname === `/challenge/day/${n}`;
             const currentDay = state.challenge.currentDay ?? 1;
             const challengeCompleted = !!state.challenge.completed;
             const complete = challengeCompleted || currentDay > n;

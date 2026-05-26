@@ -65,7 +65,7 @@ function escapeIcs(value: string) {
 
 export function buildChallengeEvents(firstName: string, memory: UserMemory, startedAt?: string): CalendarEvent[] {
   const start = nextEastern11(startedAt);
-  const safeName = firstName || memory.name?.split(" ")[0] || "there";
+  const safeName = firstName || memory.name?.split(" ")[0] || "";
   return eventTitles.map((title, index) => {
     const startsAt = addDays(start, index);
     const endsAt = new Date(startsAt.getTime() + 60 * 60 * 1000);

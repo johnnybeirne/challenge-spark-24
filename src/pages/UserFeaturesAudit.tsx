@@ -495,16 +495,14 @@ const NavCohesionSection = () => (
 );
 
 const RECOMMENDATIONS = [
-  "Clarify whether assessment is always outside the challenge.",
-  "Separate free training navigation from challenge navigation.",
-  "Ensure referral invite pages route users into assessment first.",
-  "Keep Day 1 / Day 2 / Day 3 language only inside the challenge experience.",
-  "Use Leadio as the platform name consistently across copy and memory.",
-  "Pick one primary landing route and redirect the others.",
-  "Decide a primary 'completion' destination (Insight, Bonus Vault, or Upgrade).",
-  "Either implement locked paid modules or remove the paid-course suggestion from the LMS.",
-  "Retire the legacy /admin path once all bookmarks are migrated.",
-  "Differentiate the participant vs paid-course UX explicitly.",
+  "Build out Builder Circle (/community) — unlock works but feed is placeholder.",
+  "Ship Premium modules 4 & 5 (Advanced Systems, Scaling With Leadio) — currently stub only.",
+  "Wire live Stripe checkout for /premium (CheckoutReturn route exists).",
+  "Implement asset delivery for Bonus Vault redemptions.",
+  "Replace Live Session Calendar placeholder with a real schedule source.",
+  "Build Day 1/2/3 transactional email drip via the existing Resend edge function.",
+  "Add Supabase realtime subscription to the leaderboard.",
+  "Decide whether to retire the legacy /admin alias once all bookmarks are migrated.",
 ];
 
 type NotShippedItem = {

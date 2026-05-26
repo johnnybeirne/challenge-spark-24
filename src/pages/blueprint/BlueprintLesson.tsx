@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Lock, PlayCircle, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
@@ -139,7 +139,7 @@ const BlueprintLesson = () => {
 
   const { state, setState } = useAppState();
   const { allowed, isPremiumModule } = useModuleAccess(lesson.n);
-  const navigate = useNavigate();
+  
   const taskKey = `blueprint_lesson_${lesson.n}`;
   const completed = !!state.challenge.tasks[taskKey];
   const unlocked = allowed;

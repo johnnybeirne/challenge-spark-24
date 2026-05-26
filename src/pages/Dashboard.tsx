@@ -250,6 +250,7 @@ const Dashboard = () => {
           <p className="mt-2 text-xs font-bold uppercase tracking-wider text-primary">10–15 min · earn points · unlock rewards</p>
         </section>
 
+        {permissions.showChallengeGamification && (
         <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -271,6 +272,7 @@ const Dashboard = () => {
             </div>
           </div>
         </section>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && (() => {

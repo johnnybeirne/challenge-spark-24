@@ -46,7 +46,7 @@ export function AdminSidebar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success("Logged out");
-    navigate("/join", { replace: true });
+    navigate("/challenge/join", { replace: true });
   };
 
   return (

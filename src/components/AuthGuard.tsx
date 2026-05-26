@@ -16,7 +16,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (!user) {
     if (state.assessment) return <Navigate to="/results" replace />;
-    return <Navigate to="/join" replace />;
+    return <Navigate to="/challenge/join" replace />;
   }
 
   return <>{children}</>;
@@ -29,7 +29,7 @@ export const PartnerGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) return <Spinner />;
   if (!user && state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1") return <>{children}</>;
-  if (!user) return <Navigate to="/join" replace />;
+  if (!user) return <Navigate to="/challenge/join" replace />;
 
   const role = state.user?.role;
   if (role !== "promoter" && role !== "admin") {

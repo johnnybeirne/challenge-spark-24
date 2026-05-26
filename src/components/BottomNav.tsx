@@ -3,7 +3,7 @@ import { LayoutDashboard, Flame, Gift, Users } from "lucide-react";
 
 const tabs = [
   { to: "/challenger-dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/day/1", label: "Challenge", icon: Flame },
+  { to: "/challenge/day-1", label: "Challenge", icon: Flame },
   { to: "/unlocks", label: "Unlocks", icon: Gift },
   { to: "/referrals", label: "Referrals", icon: Users },
 ];

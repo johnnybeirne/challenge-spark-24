@@ -135,7 +135,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
     case "challenge":
       return [
         { label: "Dashboard", to: "/challenger-dashboard" },
-        { label: "Today", to: "/day/1" },
+        { label: "Today", to: "/challenge/day-1" },
         { label: "Referrals", to: "/referrals" },
         { label: "Unlocks", to: "/unlocks" },
       ];

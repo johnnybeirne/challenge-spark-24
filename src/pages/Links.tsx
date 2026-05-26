@@ -12,7 +12,7 @@ const ASSESSMENT_CARDS: Card[] = [
 ];
 
 const ENROLMENT_CARDS: Card[] = [
-  { title: "Join the 3-Day Challenge", route: "/join", description: "Direct challenge signup." },
+  { title: "Join the 3-Day Challenge", route: "/challenge/join", description: "Direct challenge signup." },
   { title: "Enrol in Free Training", route: "/free-training/enrol", description: "Direct free course enrolment." },
   { title: "Enrol in Premium", route: "/premium/enrol", description: "Direct premium course enrolment." },
 ];

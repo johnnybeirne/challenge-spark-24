@@ -58,7 +58,7 @@ export const useUserState = (): UserStateFlags => {
       primaryCta = { label: "Continue Free Training", href: "/blueprint/dashboard" };
       secondaryCta = { label: "Start the 3-Day Challenge", href: "/blueprint/bridge" };
     } else {
-      primaryCta = { label: "Take the Assessment", href: "/assess" };
+      primaryCta = { label: "Take the Assessment", href: "/assessment" };
       secondaryCta = null;
     }
 

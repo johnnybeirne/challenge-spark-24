@@ -40,7 +40,7 @@ const STAGE_LABELS: Record<UserStage, string> = {
 };
 
 const NEXT_STEP: Record<UserStage, { label: string; href: string }> = {
-  cold: { label: "Take the Assessment", href: "/assess" },
+  cold: { label: "Take the Assessment", href: "/assessment" },
   diagnosed: { label: "Continue to Free Training", href: "/blueprint/dashboard" },
   learning: { label: "Continue Learning", href: "/blueprint/dashboard" },
   ready: { label: "Start the 3-Day Challenge", href: "/blueprint/bridge" },

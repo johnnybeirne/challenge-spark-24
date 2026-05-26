@@ -89,7 +89,7 @@ const BlueprintDashboard = () => {
 
         <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
           <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-            <Link to="/join">
+            <Link to="/challenge/join">
               Take the Challenge <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>

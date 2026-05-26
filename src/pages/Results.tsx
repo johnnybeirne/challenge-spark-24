@@ -192,7 +192,7 @@ const Results = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-xl font-bold text-foreground">No results yet</h1>
-        <Button onClick={() => navigate("/assess")}>Take the quiz</Button>
+        <Button onClick={() => navigate("/assessment")}>Take the quiz</Button>
       </div>
     );
   }
@@ -392,7 +392,7 @@ const Results = () => {
             <>
               <Button
                 className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                onClick={() => navigate("/join")}
+                onClick={() => navigate("/challenge/join")}
               >
                 {ctaCopy.button}
                 <ArrowRight className="w-5 h-5" />

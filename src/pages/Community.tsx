@@ -54,8 +54,8 @@ const LockedCommunity = () => {
   const hasPromotion = state.network.direct >= 3;
 
   const getCtaAction = () => {
-    if (!day3Done) return { label: "Finish the challenge", path: "/day/3" };
-    if (!hasUrl) return { label: "Submit your live challenge", path: "/day/3" };
+    if (!day3Done) return { label: "Finish the challenge", path: "/challenge/day-3" };
+    if (!hasUrl) return { label: "Submit your live challenge", path: "/challenge/day-3" };
     return { label: "Unlock Builder Circle", path: "/referrals" };
   };
 
@@ -275,7 +275,7 @@ const UnlockedCommunity = () => {
                 <p className="text-xs text-muted-foreground mb-3">
                   To get visibility inside Builder Circle, add your live challenge URL.
                 </p>
-                <Button size="sm" onClick={() => navigate("/day/3")} className="gap-1">
+                <Button size="sm" onClick={() => navigate("/challenge/day-3")} className="gap-1">
                   <Globe className="h-3 w-3" /> Add live URL
                 </Button>
               </>

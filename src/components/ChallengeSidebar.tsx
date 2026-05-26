@@ -238,7 +238,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       })()}
 
       <section className="space-y-1.5">
-        {(hasJoinedChallenge
+        {(showChallengeNav
           ? [
               { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
               { path: "/unlocks", label: "Rewards", Icon: Sparkles, tint: "bg-rose-100 text-rose-700", accent: "hover:border-rose-400" },

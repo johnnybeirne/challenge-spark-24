@@ -258,7 +258,6 @@ const Dashboard = () => {
                   Earn more points to unlock rewards and bonus training
                 </p>
               </div>
-              </div>
             </div>
           </div>
         </section>

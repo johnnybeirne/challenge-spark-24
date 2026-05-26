@@ -503,6 +503,63 @@ const RECOMMENDATIONS = [
   "Differentiate the participant vs paid-course UX explicitly.",
 ];
 
+type NotShippedItem = {
+  name: string;
+  area: "Challenge" | "Training" | "Community" | "Partner" | "Payments" | "Admin" | "Notifications" | "Mobile";
+  state: "Planned" | "In progress" | "Stub only" | "Blocked";
+  note?: string;
+};
+
+const NOT_SHIPPED: NotShippedItem[] = [
+  { name: "Premium training modules 4 & 5 (Advanced Systems, Scaling With Leadio)", area: "Training", state: "Stub only", note: "Sidebar entries exist; lessons gated behind isPremiumUser with no real content." },
+  { name: "Builder Circle community feed", area: "Community", state: "Planned", note: "Unlock gate works (Day 3 + URL + 3 referrals) but /community is a placeholder." },
+  { name: "Bonus Vault rewards delivery", area: "Challenge", state: "In progress", note: "Vault listing renders; no actual file/asset delivery on redeem." },
+  { name: "Live Session Calendar — real events", area: "Training", state: "Stub only", note: "/calendar shows static placeholder; no live schedule source." },
+  { name: "Ask Johnny AI — production model wiring", area: "Training", state: "In progress", note: "UI shipped; backend prompt + model not finalised." },
+  { name: "Partner payouts & ledger", area: "Partner", state: "Planned", note: "PartnerPerformance shows metrics; no payout pipeline." },
+  { name: "Stripe checkout for paid upgrade", area: "Payments", state: "Planned", note: "CheckoutReturn route exists; live Stripe products not wired." },
+  { name: "Email transactional drip (Day 1/2/3 nudges)", area: "Notifications", state: "Planned", note: "Resend edge function ready; sequence templates not built." },
+  { name: "Push / in-app notifications", area: "Notifications", state: "Planned" },
+  { name: "Admin content editor for daily challenges", area: "Admin", state: "Stub only", note: "/admin-content scaffolded; no write path." },
+  { name: "Mobile install / PWA polish", area: "Mobile", state: "Planned", note: "Responsive works; no manifest/install prompt." },
+  { name: "Leaderboard real-time updates", area: "Challenge", state: "In progress", note: "Static query; needs Supabase realtime subscription." },
+];
+
+const NOT_SHIPPED_STATE_STYLES: Record<NotShippedItem["state"], string> = {
+  "Planned": "bg-muted text-muted-foreground border-border",
+  "In progress": "bg-amber-500/15 text-amber-600 border-amber-500/30",
+  "Stub only": "bg-purple-500/15 text-purple-600 border-purple-500/30",
+  "Blocked": "bg-destructive/15 text-destructive border-destructive/30",
+};
+
+const NotShippedSection = () => (
+  <Card className="mb-4 border-amber-500/40 bg-amber-500/5">
+    <CardContent className="p-5">
+      <div className="mb-3 flex items-center gap-2">
+        <AlertTriangle className="h-5 w-5 text-amber-600" />
+        <h2 className="text-lg font-black">Not Shipped Yet</h2>
+        <Badge variant="outline" className="ml-2 border-amber-500/40 text-amber-700">{NOT_SHIPPED.length} items</Badge>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">Features that are planned, scaffolded, or partially built — but not live for users.</p>
+      <ul className="space-y-2">
+        {NOT_SHIPPED.map(item => (
+          <li key={item.name} className="flex flex-col gap-1 rounded-xl border border-border bg-background p-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold">{item.name}</p>
+              {item.note && <p className="mt-0.5 text-xs text-muted-foreground">{item.note}</p>}
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <Badge variant="outline" className="text-[10px]">{item.area}</Badge>
+              <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${NOT_SHIPPED_STATE_STYLES[item.state]}`}>{item.state}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+);
+
+
 const countByStatus = (items: { status: Status }[], s: Status) => items.filter(i => i.status === s).length;
 
 const Section = ({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) => {
@@ -880,6 +937,9 @@ const UserFeaturesAudit = () => {
           <Button onClick={exportJson} size="sm" variant="outline" className="gap-2"><Download className="h-4 w-4" /> Export JSON</Button>
         </div>
       </div>
+
+      {/* Not shipped yet — roadmap snapshot */}
+      <NotShippedSection />
 
       {/* Core Entry Links — owner control hub */}
       <CoreEntryLinksSection />

@@ -205,3 +205,32 @@
     padding-right: 10%;
   }
 }
+
+/* ───── Experience mode separation ─────
+   A subtle visual signal of which "mode" of Leadio the user is in.
+   - Top accent bar across the viewport
+   - Mode-specific sidebar tint
+   Routes, layout, and components are untouched. */
+.experience-root { position: relative; }
+.experience-root::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 60;
+  background: transparent;
+  pointer-events: none;
+}
+.experience-root[data-experience="assessment"]::before { background: hsl(215 16% 60%); }
+.experience-root[data-experience="lms"]::before        { background: hsl(217 91% 60%); }
+.experience-root[data-experience="challenge"]::before  { background: hsl(160 84% 39%); }
+.experience-root[data-experience="paid"]::before       { background: linear-gradient(90deg, hsl(38 92% 50%), hsl(20 90% 55%)); }
+.experience-root[data-experience="partner"]::before    { background: hsl(262 83% 58%); }
+
+/* Sidebar tint per mode (kept very subtle so density/layout don't shift). */
+.experience-root[data-experience="lms"]       [data-mode-aside] { background-color: hsl(217 91% 60% / 0.06); }
+.experience-root[data-experience="challenge"] [data-mode-aside] { background-color: hsl(160 84% 39% / 0.07); }
+.experience-root[data-experience="paid"]      [data-mode-aside] { background-color: hsl(38 92% 50% / 0.08); }
+

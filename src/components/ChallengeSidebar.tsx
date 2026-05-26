@@ -177,7 +177,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         const learnActive = location.pathname.startsWith("/blueprint");
         return (
           <section className="space-y-1.5">
-            {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Learn</p>}
+            
             {midChallenge ? (
               <button
                 onClick={() => go("/blueprint/dashboard")}
@@ -243,7 +243,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       })()}
 
       <section className="space-y-1.5">
-        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tools</p>}
+        
         {[
           { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass },
           { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle },

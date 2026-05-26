@@ -66,21 +66,24 @@ export function useUserRole(): UseUserRoleResult {
     }
     let cancelled = false;
     setAdminChecked(false);
-    supabase
-      .rpc("has_role", { _user_id: user.id, _role: "admin" })
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase.rpc("has_role", {
+          _user_id: user.id,
+          _role: "admin",
+        });
         if (cancelled) return;
         const result = !!data;
         adminCache.set(user.id, result);
         setIsAdmin(result);
-        setAdminChecked(true);
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) return;
         adminCache.set(user.id, false);
         setIsAdmin(false);
-        setAdminChecked(true);
-      });
+      } finally {
+        if (!cancelled) setAdminChecked(true);
+      }
+    })();
     return () => {
       cancelled = true;
     };

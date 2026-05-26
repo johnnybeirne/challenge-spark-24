@@ -10,12 +10,14 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useUserState } from "@/hooks/useUserState";
+import { useUserRole } from "@/hooks/useUserRole";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
   const { hasJoinedChallenge, isPremiumUser } = useUserState();
+  const { permissions } = useUserRole();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -267,7 +269,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         })}
       </section>
 
-      {!hasJoinedChallenge && (
+      {!hasJoinedChallenge && permissions.showUpgradePrompts && (
         <section className="space-y-1.5">
           {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
           <button

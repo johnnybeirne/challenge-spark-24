@@ -35,7 +35,7 @@ const FreePreviewBadge = () => {
       url.searchParams.delete("previewTier");
       window.history.replaceState({}, "", url.toString());
     } catch {}
-    navigate("/user-dashboard", { replace: true });
+    navigate("/challenger-dashboard", { replace: true });
   };
 
   const isFree = tier === "free";

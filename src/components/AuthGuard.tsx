@@ -33,7 +33,7 @@ export const PartnerGuard = ({ children }: { children: React.ReactNode }) => {
 
   const role = state.user?.role;
   if (role !== "promoter" && role !== "admin") {
-    return <Navigate to="/user-dashboard" replace />;
+    return <Navigate to="/challenger-dashboard" replace />;
   }
 
   return <>{children}</>;

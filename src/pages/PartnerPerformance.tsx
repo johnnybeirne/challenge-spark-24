@@ -116,7 +116,7 @@ const PartnerPerformance = () => {
         <p className="text-sm text-muted-foreground mb-4 max-w-xs">
           This dashboard is available for active partners.
         </p>
-        <Button onClick={() => navigate("/user-dashboard")}>Go to Dashboard</Button>
+        <Button onClick={() => navigate("/challenger-dashboard")}>Go to Dashboard</Button>
       </div>
     );
   }

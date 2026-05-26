@@ -39,7 +39,7 @@ const CheckoutReturn = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" className="h-12 gap-2 px-6">
-              <Link to="/user-dashboard">
+              <Link to="/challenger-dashboard">
                 <Sparkles className="h-4 w-4" /> Back to Dashboard
               </Link>
             </Button>

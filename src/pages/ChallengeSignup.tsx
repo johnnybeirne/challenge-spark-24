@@ -21,7 +21,7 @@ const ChallengeSignup = () => {
       }}
       successHeadline={(first) => `Your 3-day challenge is ready, ${first}.`}
       successSubcopy="Set aside 60 minutes each day to complete your challenge."
-      defaultRedirect="/user-dashboard"
+      defaultRedirect="/challenger-dashboard"
       renderSuccessActions={({ firstName, goToRedirect }) => (
         <>
           <AddToCalendar firstNameOverride={firstName || ""} className="h-12" />

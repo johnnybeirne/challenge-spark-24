@@ -44,9 +44,9 @@ const NEXT_STEP: Record<UserStage, { label: string; href: string }> = {
   diagnosed: { label: "Continue to Free Training", href: "/blueprint/dashboard" },
   learning: { label: "Continue Learning", href: "/blueprint/dashboard" },
   ready: { label: "Start the 3-Day Challenge", href: "/blueprint/bridge" },
-  implementing: { label: "Open Today's Challenge", href: "/user-dashboard" },
+  implementing: { label: "Open Today's Challenge", href: "/challenger-dashboard" },
   completed: { label: "Upgrade Your System", href: "/premium" },
-  premium: { label: "Apply What You Learned", href: "/user-dashboard" },
+  premium: { label: "Apply What You Learned", href: "/challenger-dashboard" },
 };
 
 export const useUserStage = (): StageFlags => {

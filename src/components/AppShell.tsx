@@ -7,6 +7,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
+import { getExperienceFromPath } from "@/lib/experienceShell";
 
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();
@@ -17,9 +18,13 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const hideCopilotRoutes = ["/assess"];
   const showCopilotChat = authenticated && !hideCopilotRoutes.includes(pathname);
+  const mode = getExperienceFromPath(pathname);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div
+      data-experience={mode}
+      className="experience-root min-h-screen bg-background overflow-x-hidden"
+    >
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
       <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         <Outlet />

@@ -342,58 +342,29 @@ const DayChallenge = () => {
       </div>
 
       <div className="mb-4">
+        {dayNum === 1 && (
+          <p className="mb-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">Day 1 Training</p>
+        )}
         <DayTrainingCard dayNum={dayNum} />
       </div>
 
-      {dayNum === 1 && !state.challenge.calendarAdded && (
+      {dayNum !== 1 && (
         <Card className="mb-4 border-primary/20 bg-primary/5">
-          <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-semibold text-foreground">Set your 3-day build time</p>
-              <p className="mt-1 text-sm text-muted-foreground">Set aside 60 minutes each day to complete your challenge.</p>
-            </div>
-            <AddToCalendar className="w-full sm:w-auto" />
-          </CardContent>
-        </Card>
-      )}
-
-      <Card className="mb-4 border-primary/20 bg-primary/5">
-        <CardContent className="p-5">
-          <div className="mb-3 flex items-center gap-2 text-primary">
-            <PlayCircle className="h-4 w-4" />
-            <p className="text-xs font-mono uppercase tracking-wider">Training</p>
-          </div>
-          <p className="text-sm text-foreground leading-relaxed">
-            {dayNum === 1
-              ? config.lesson
-              : dayNum === 2
-                ? config.lesson
-                : config.lesson}
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-            {dayNum === 1 && memory.desiredOutcome
-              ? `Your goal is: ${memory.desiredOutcome}`
-              : config.reinforcement}
-          </p>
-        </CardContent>
-      </Card>
-
-
-      {dayNum === 1 && (
-        <Card className="mb-4 border-border bg-muted/30">
           <CardContent className="p-5">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-              Why this works
-            </p>
+            <div className="mb-3 flex items-center gap-2 text-primary">
+              <PlayCircle className="h-4 w-4" />
+              <p className="text-xs font-mono uppercase tracking-wider">Training</p>
+            </div>
             <p className="text-sm text-foreground leading-relaxed">
-              This isn't a one-time challenge. Once you build it, it keeps running.
+              {config.lesson}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              And as people go through it, they invite others to unlock more — so it grows on its own.
+              {config.reinforcement}
             </p>
           </CardContent>
         </Card>
       )}
+
 
       {dayNum === 2 && (
         <Card className="mb-4 border-border">

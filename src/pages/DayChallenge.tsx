@@ -466,12 +466,6 @@ const DayChallenge = () => {
         </Card>
       )}
 
-      <Card className="mt-4 border-dashed bg-muted/30">
-        <CardContent className="flex items-center gap-3 p-5 text-sm text-muted-foreground">
-          <Lock className="h-4 w-4 shrink-0" />
-          <span>Unlock this when you’re ready to go deeper, {firstName}.</span>
-        </CardContent>
-      </Card>
 
       <div className="mt-6">
         <CrossPromoSpotlight

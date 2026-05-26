@@ -158,11 +158,8 @@ const BlueprintLesson = () => {
       },
     }));
     toast.success(`Module ${lesson.n} complete`);
-    if (lesson.n === 3) {
-      // Bridge experience — do not auto-redirect, navigate intentionally.
-      navigate("/blueprint/bridge");
-    }
   };
+
 
   const nextHref = lesson.n < 5 ? `/blueprint/lesson/${lesson.n + 1}` : "/blueprint/dashboard";
 
@@ -233,22 +230,6 @@ const BlueprintLesson = () => {
             )}
           </div>
 
-          {/* After Module 3, show challenge CTA */}
-          {lesson.n === 3 && (
-            <section className="mt-10 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8">
-              <h3 className="text-xl font-black sm:text-2xl">You understand the system. Now implement it.</h3>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                The free course shows you how trust-based growth works. The 3-Day Challenge helps you build it.
-              </p>
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-                  <Link to="/blueprint/bridge">
-                    Continue to Implementation <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </section>
-          )}
         </>
       ) : (
         <LockedModuleView lesson={lesson as PremiumModule} />

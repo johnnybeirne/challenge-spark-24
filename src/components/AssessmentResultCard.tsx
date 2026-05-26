@@ -12,7 +12,7 @@ const MODE_CONFIG: Record<EntryIntent, { label: string; cta: string; href: strin
   challenge: {
     label: "3-Day Challenge",
     cta: "Continue 3-Day Challenge",
-    href: "/day/1",
+    href: "/challenge/day-1",
     nextStep: "Build your AI-powered challenge in 3 days.",
     retakeHref: "/assessment",
     Icon: Target,

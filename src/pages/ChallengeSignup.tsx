@@ -25,7 +25,7 @@ const ChallengeSignup = () => {
 
   return (
     <>
-      <SEO title="Join the Challenge" description="Start building your AI-powered challenge in 3 days. Create a challenge that attracts leads and grows through sharing." canonical="/join" />
+      <SEO title="Join the Challenge" description="Start building your AI-powered challenge in 3 days. Create a challenge that attracts leads and grows through sharing." canonical="/challenge/join" />
     <SignupChat
       product="challenge"
       headline="Start building your AI-powered challenge"

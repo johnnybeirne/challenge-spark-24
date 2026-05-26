@@ -269,7 +269,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         })}
       </section>
 
-      {!hasJoinedChallenge && (
+      {!hasJoinedChallenge && permissions.showUpgradePrompts && (
         <section className="space-y-1.5">
           {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
           <button

@@ -98,7 +98,7 @@ const App = () => (
             <ScrollToTop />
             <AttributionCapture />
             <FreePreviewBadge />
-            <QaModePanel />
+            
             <ExperienceShell>
             <Routes>
               {/* Landing – full-width layout */}

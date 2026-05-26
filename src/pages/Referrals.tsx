@@ -144,6 +144,7 @@ const Referrals = () => {
           </Card>
         )}
 
+        {showGamification && (
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="mb-3 flex items-center gap-2">
@@ -160,10 +161,12 @@ const Referrals = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">You’ll see points momentum here as referrals join and take action.</p>
+              <p className="text-sm text-muted-foreground">You'll see points momentum here as referrals join and take action.</p>
             )}
           </CardContent>
         </Card>
+        )}
+
 
         </div>
         <div>

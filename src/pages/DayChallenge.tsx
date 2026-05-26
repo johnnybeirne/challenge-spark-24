@@ -40,17 +40,17 @@ const diagnosticQuestions = [
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; inputType?: "input" | "textarea"; placeholder?: string; helper?: string }[] }> = {
   1: {
-    title: "Day 1: Define Your Challenge",
-    intro: "Today you’ll define the challenge you want to create.",
-    lesson: "By the end of this step, you should know who your challenge is for, what problem it helps solve, what simple outcome people should get, and why people would want to share it.",
-    reinforcement: "Keep it clear and practical. You are learning by doing.",
+    title: "Define Your Challenge",
+    intro: "Today you’ll decide who your challenge is for, what problem it solves, and the simple result people should get.",
+    lesson: "Watch the short training, then complete the action tasks below.",
+    reinforcement: "",
     aiPrompt: "Let’s define your challenge clearly.",
-    completion: "Your challenge is defined. Keep the momentum going.",
+    completion: "Finish your answers to unlock Day 2.",
     tasks: [
-      { key: "define_app", label: "Who is your challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads" },
-      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach" },
-      { key: "result", label: "What result should they get from your challenge?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently" },
-      { key: "share_reason", label: "Why would someone invite a friend to this challenge?", hasTextarea: true, inputType: "input", placeholder: "It helps them spot what’s missing and improve faster" },
+      { key: "define_app", label: "Who is this challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads", helper: "Example answer: Coaches, consultants, or experts who want more qualified leads." },
+      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach", helper: "Example answer: Their growth depends on constant content or outreach." },
+      { key: "result", label: "What result should they get?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently", helper: "Example answer: A simple system to generate leads more consistently." },
+      { key: "share_reason", label: "Why would someone invite a friend?", hasTextarea: true, inputType: "input", placeholder: "It helps them identify what’s missing and improve faster", helper: "Example answer: It helps them identify what’s missing and improve faster." },
     ],
   },
   2: {

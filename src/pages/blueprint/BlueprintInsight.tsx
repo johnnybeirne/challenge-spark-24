@@ -130,7 +130,7 @@ const BlueprintInsight = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("blueprint-insight", {
-        body: { problem, audience, result },
+        body: { problem, audience, method: result },
       });
       if (error) throw error;
       const text = data?.insight as string;

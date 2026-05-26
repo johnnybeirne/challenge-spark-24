@@ -40,17 +40,17 @@ const diagnosticQuestions = [
 
 const dayConfig: Record<number, { title: string; intro: string; lesson: string; reinforcement: string; aiPrompt: string; completion: string; nudge?: string; tasks: { key: string; label: string; hasTextarea: boolean; inputType?: "input" | "textarea"; placeholder?: string; helper?: string }[] }> = {
   1: {
-    title: "Day 1: Define Your Challenge",
-    intro: "Today you’ll define the challenge you want to create.",
-    lesson: "By the end of this step, you should know who your challenge is for, what problem it helps solve, what simple outcome people should get, and why people would want to share it.",
-    reinforcement: "Keep it clear and practical. You are learning by doing.",
+    title: "Define Your Challenge",
+    intro: "Today you’ll decide who your challenge is for, what problem it solves, and the simple result people should get.",
+    lesson: "Watch the short training, then complete the action tasks below.",
+    reinforcement: "",
     aiPrompt: "Let’s define your challenge clearly.",
-    completion: "Your challenge is defined. Keep the momentum going.",
+    completion: "Finish your answers to unlock Day 2.",
     tasks: [
-      { key: "define_app", label: "Who is your challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads" },
-      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach" },
-      { key: "result", label: "What result should they get from your challenge?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently" },
-      { key: "share_reason", label: "Why would someone invite a friend to this challenge?", hasTextarea: true, inputType: "input", placeholder: "It helps them spot what’s missing and improve faster" },
+      { key: "define_app", label: "Who is this challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads", helper: "Example answer: Coaches, consultants, or experts who want more qualified leads." },
+      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach", helper: "Example answer: Their growth depends on constant content or outreach." },
+      { key: "result", label: "What result should they get?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently", helper: "Example answer: A simple system to generate leads more consistently." },
+      { key: "share_reason", label: "Why would someone invite a friend?", hasTextarea: true, inputType: "input", placeholder: "It helps them identify what’s missing and improve faster", helper: "Example answer: It helps them identify what’s missing and improve faster." },
     ],
   },
   2: {
@@ -342,58 +342,29 @@ const DayChallenge = () => {
       </div>
 
       <div className="mb-4">
+        {dayNum === 1 && (
+          <p className="mb-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">Day 1 Training</p>
+        )}
         <DayTrainingCard dayNum={dayNum} />
       </div>
 
-      {dayNum === 1 && !state.challenge.calendarAdded && (
+      {dayNum !== 1 && (
         <Card className="mb-4 border-primary/20 bg-primary/5">
-          <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-semibold text-foreground">Set your 3-day build time</p>
-              <p className="mt-1 text-sm text-muted-foreground">Set aside 60 minutes each day to complete your challenge.</p>
-            </div>
-            <AddToCalendar className="w-full sm:w-auto" />
-          </CardContent>
-        </Card>
-      )}
-
-      <Card className="mb-4 border-primary/20 bg-primary/5">
-        <CardContent className="p-5">
-          <div className="mb-3 flex items-center gap-2 text-primary">
-            <PlayCircle className="h-4 w-4" />
-            <p className="text-xs font-mono uppercase tracking-wider">Training</p>
-          </div>
-          <p className="text-sm text-foreground leading-relaxed">
-            {dayNum === 1
-              ? config.lesson
-              : dayNum === 2
-                ? config.lesson
-                : config.lesson}
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-            {dayNum === 1 && memory.desiredOutcome
-              ? `Your goal is: ${memory.desiredOutcome}`
-              : config.reinforcement}
-          </p>
-        </CardContent>
-      </Card>
-
-
-      {dayNum === 1 && (
-        <Card className="mb-4 border-border bg-muted/30">
           <CardContent className="p-5">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-              Why this works
-            </p>
+            <div className="mb-3 flex items-center gap-2 text-primary">
+              <PlayCircle className="h-4 w-4" />
+              <p className="text-xs font-mono uppercase tracking-wider">Training</p>
+            </div>
             <p className="text-sm text-foreground leading-relaxed">
-              This isn't a one-time challenge. Once you build it, it keeps running.
+              {config.lesson}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              And as people go through it, they invite others to unlock more — so it grows on its own.
+              {config.reinforcement}
             </p>
           </CardContent>
         </Card>
       )}
+
 
       {dayNum === 2 && (
         <Card className="mb-4 border-border">
@@ -414,7 +385,7 @@ const DayChallenge = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
-        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Action tasks</p>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : "Action tasks"}</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">
@@ -492,7 +463,7 @@ const DayChallenge = () => {
             </p>
             <Button className="w-full gap-2" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum === 1 ? "Continue to Day 2" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
+              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
             </Button>
           </CardContent>
         </Card>

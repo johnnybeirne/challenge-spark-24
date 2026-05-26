@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, BookOpen, CheckCircle2, Compass, Crown, Lock, MessageCircle, Rocket, Sparkles, Target, Users, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, Crown, Lock, MessageCircle, Rocket, Sparkles, Target, Users, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";

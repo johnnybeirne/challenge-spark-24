@@ -151,6 +151,7 @@ const App = () => (
                 <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/challenger-dashboard" />} />
                 <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />

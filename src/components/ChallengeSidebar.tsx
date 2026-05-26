@@ -17,6 +17,7 @@ import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
   const { hasJoinedChallenge, isPremiumUser } = useUserState();
+  const { permissions } = useUserRole();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

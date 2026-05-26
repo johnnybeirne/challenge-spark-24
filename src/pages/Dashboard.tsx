@@ -255,9 +255,8 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm font-black text-foreground sm:text-base">
-                  Earn <span className="text-primary">150 points</span> for all 3 steps
+                  Earn more points to unlock rewards and bonus training
                 </p>
-                <p className="text-xs font-medium text-muted-foreground">+50 per step · unlocks bonus rewards</p>
               </div>
             </div>
           </div>

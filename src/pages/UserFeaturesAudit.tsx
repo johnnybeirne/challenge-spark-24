@@ -274,6 +274,22 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Waitlist", route: "/waitlist", description: "Public waitlist signup page with host portrait, referral capture, and live momentum feed.", badge: "Waitlist" },
   { title: "Waitlist Thank You", route: "/waitlist/thanks?preview=1", description: "Post-signup thank-you page with referral sharing for waitlist members.", badge: "Waitlist" },
   { title: "Challenge Dashboard", route: "/challenger-dashboard", description: "Logged-in challenge dashboard with Day 1, Day 2, Day 3 sidebar — the main builder workspace.", badge: "Challenge" },
+  { title: "Challenge Signup", route: "/join", description: "Direct challenge signup form (skips assessment).", badge: "Signup" },
+  { title: "Day 1", route: "/day/1", description: "Define your challenge — audience, problem, result, share reason.", badge: "Day" },
+  { title: "Day 2", route: "/day/2", description: "Build your lead magnet quiz.", badge: "Day" },
+  { title: "Day 3", route: "/day/3", description: "Build and launch your AI-powered challenge.", badge: "Day" },
+  { title: "Training Hub", route: "/training", description: "Onboarding hub with intro training videos.", badge: "Training" },
+  { title: "Unlocks", route: "/unlocks", description: "Progressive unlock tracker for tools, bonuses, and Builder Circle access.", badge: "Unlocks" },
+  { title: "Referrals", route: "/referrals", description: "Share & invite hub — referral link, share targets, network stats.", badge: "Referrals" },
+  { title: "Community / Builder Circle", route: "/community", description: "Unlocked builder community feed (requires Day 3 + URL + 3 direct referrals).", badge: "Community" },
+  { title: "Bonus Vault", route: "/bonus-vault", description: "Reward catalog unlocked via points (replaces /rewards).", badge: "Rewards" },
+  { title: "Leaderboard", route: "/leaderboard", description: "Public leaderboard of top builders by visibility score.", badge: "Leaderboard" },
+  { title: "Calendar", route: "/calendar", description: "3-day calendar add reminders to scheduler.", badge: "Tool" },
+  { title: "Ask Johnny AI", route: "/mentor", description: "AI mentor chat for the logged-in builder.", badge: "AI" },
+  { title: "Prompt Library", route: "/prompt-library", description: "Reusable AI prompt pack unlocked at higher tiers.", badge: "Resource" },
+  { title: "Resources", route: "/resources", description: "Downloadable resources and templates.", badge: "Resource" },
+  { title: "Partner Acquisition", route: "/partners", description: "Public partner-recruitment landing page.", badge: "Partner" },
+  { title: "Promoter Dashboard", route: "/promoter", description: "Logged-in partner home — links, conversions, payouts.", badge: "Partner" },
 ];
 
 const CoreEntryLinksSection = () => {

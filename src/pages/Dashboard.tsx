@@ -19,6 +19,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const stage = useUserStage();
   const trainingContent = useTrainingContent();
+  const { permissions } = useUserRole();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
@@ -248,6 +250,7 @@ const Dashboard = () => {
           <p className="mt-2 text-xs font-bold uppercase tracking-wider text-primary">10–15 min · earn points · unlock rewards</p>
         </section>
 
+        {permissions.showChallengeGamification && (
         <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -269,6 +272,7 @@ const Dashboard = () => {
             </div>
           </div>
         </section>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-3">
           {authUser && (() => {

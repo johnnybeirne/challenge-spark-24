@@ -11,7 +11,7 @@ const BlueprintLanding = () => {
 
   return (
     <>
-      <SEO title="Free Training" description="3 short lessons on how challenges create engagement, leads, and growth — with an AI-powered personalised insight." canonical="/free-training" />
+      <SEO title="Free Training" description="3 short lessons on how challenges create engagement, leads, and growth — with an AI-powered personalised insight." canonical="/blueprint" />
       <main className="min-h-screen bg-background pb-24 text-foreground">
       {/* Hero */}
       <section className="px-5 py-16 sm:px-6 md:py-24 lg:px-8">

@@ -19,6 +19,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },

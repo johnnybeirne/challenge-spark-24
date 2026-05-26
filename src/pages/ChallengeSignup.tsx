@@ -24,7 +24,7 @@ const ChallengeSignup = () => {
       defaultRedirect="/user-dashboard"
       renderSuccessActions={({ firstName, goToRedirect }) => (
         <>
-          <AddToCalendar firstNameOverride={firstName || "there"} className="h-12" />
+          <AddToCalendar firstNameOverride={firstName || ""} className="h-12" />
           <Button variant="secondary" className="h-12" onClick={goToRedirect}>Continue</Button>
         </>
       )}

@@ -183,8 +183,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       )}
 
       {(() => {
-        // Hide the LMS "Learn" section entirely once the user is in the challenge.
-        if (hasJoinedChallenge) return null;
+        // LMS "Learn" modules only appear for free_student. Challengers,
+        // premium users, partners, and admins never see the course sidebar.
+        if (role !== "free_student") return null;
         const learnActive = location.pathname.startsWith("/blueprint");
         return (
           <section className="space-y-1.5">

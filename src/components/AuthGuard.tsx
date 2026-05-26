@@ -16,7 +16,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (!user) {
     if (state.assessment) return <Navigate to="/results" replace />;
-    return <Navigate to="/join" replace />;
+    return <Navigate to="/challenge/join" replace />;
   }
 
   return <>{children}</>;

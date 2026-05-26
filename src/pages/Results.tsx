@@ -392,7 +392,7 @@ const Results = () => {
             <>
               <Button
                 className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                onClick={() => navigate("/join")}
+                onClick={() => navigate("/challenge/join")}
               >
                 {ctaCopy.button}
                 <ArrowRight className="w-5 h-5" />

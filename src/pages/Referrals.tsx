@@ -7,9 +7,12 @@ import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 import EmptyState from "@/components/EmptyState";
 import { memoryShareText } from "@/lib/personalisation";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const Referrals = () => {
   const { state } = useAppState();
+  const { permissions } = useUserRole();
+  const showGamification = permissions.showChallengeGamification;
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "builder";
@@ -66,9 +69,9 @@ const Referrals = () => {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(320px,0.45fr)] lg:items-start">
         <div>
-        {/* Stats */}
+        {/* Stats — simplified for free students, full gamification for challengers+ */}
         <Card className="border-border mb-4">
-          <CardContent className="grid gap-4 p-5 sm:grid-cols-3">
+          <CardContent className={`grid gap-4 p-5 ${showGamification ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             <div className="rounded-full bg-primary/10 p-3">
               <Users className="h-6 w-6 text-primary" />
             </div>
@@ -80,14 +83,18 @@ const Referrals = () => {
                 {direct} direct · {indirect} indirect builders
               </p>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
-              <p className="text-xs text-muted-foreground">points earned from referrals</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
-              <p className="text-xs text-muted-foreground">pending referral points</p>
-            </div>
+            {showGamification && (
+              <div>
+                <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
+                <p className="text-xs text-muted-foreground">points earned from referrals</p>
+              </div>
+            )}
+            {showGamification && (
+              <div>
+                <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
+                <p className="text-xs text-muted-foreground">pending referral points</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -109,12 +116,14 @@ const Referrals = () => {
             <p className="text-xs text-muted-foreground mt-2">
               This is what network-based growth looks like when builders help builders.
             </p>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">
-                Network score: <strong className="text-foreground">{score}</strong>{" "}
-                <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
-              </p>
-            </div>
+            {showGamification && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-xs text-muted-foreground">
+                  Network score: <strong className="text-foreground">{score}</strong>{" "}
+                  <span className="opacity-60">({direct}×3 + {indirect}×1)</span>
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -135,6 +144,7 @@ const Referrals = () => {
           </Card>
         )}
 
+        {showGamification && (
         <Card className="border-border mb-6">
           <CardContent className="p-5">
             <div className="mb-3 flex items-center gap-2">
@@ -151,10 +161,12 @@ const Referrals = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">You’ll see points momentum here as referrals join and take action.</p>
+              <p className="text-sm text-muted-foreground">You'll see points momentum here as referrals join and take action.</p>
             )}
           </CardContent>
         </Card>
+        )}
+
 
         </div>
         <div>

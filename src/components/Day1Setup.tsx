@@ -60,7 +60,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>("");
   const { isListening: isDictating, toggle: toggleDictation } = useDictation();
-  const firstName = state.user?.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || "";
 
   useEffect(() => {
     trackEvent("onboarding_viewed", { step });

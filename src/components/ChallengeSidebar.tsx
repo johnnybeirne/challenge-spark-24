@@ -179,7 +179,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             );
           })}
         </section>
-      )}
 
       {(() => {
         // LMS "Learn" modules only appear for free_student. Challengers,

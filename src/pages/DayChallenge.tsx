@@ -463,7 +463,7 @@ const DayChallenge = () => {
             </p>
             <Button className="w-full gap-2" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum === 1 ? "Continue to Day 2" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
+              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
             </Button>
           </CardContent>
         </Card>

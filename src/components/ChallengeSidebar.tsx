@@ -17,7 +17,13 @@ import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
   const { hasJoinedChallenge, isPremiumUser } = useUserState();
-  const { permissions } = useUserRole();
+  const { permissions, role } = useUserRole();
+  const showChallengeNav =
+    hasJoinedChallenge ||
+    role === "challenger" ||
+    role === "premium_user" ||
+    role === "partner" ||
+    role === "admin";
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -126,7 +132,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </div>
 
-      {hasJoinedChallenge && (
+      {showChallengeNav && (
         <section className="space-y-1.5">
           {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
           {[
@@ -177,8 +183,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       )}
 
       {(() => {
-        // Hide the LMS "Learn" section entirely once the user is in the challenge.
-        if (hasJoinedChallenge) return null;
+        // LMS "Learn" modules only appear for free_student. Challengers,
+        // premium users, partners, and admins never see the course sidebar.
+        if (role !== "free_student") return null;
         const learnActive = location.pathname.startsWith("/blueprint");
         return (
           <section className="space-y-1.5">
@@ -231,7 +238,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       })()}
 
       <section className="space-y-1.5">
-        {(hasJoinedChallenge
+        {(showChallengeNav
           ? [
               { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
               { path: "/unlocks", label: "Rewards", Icon: Sparkles, tint: "bg-rose-100 text-rose-700", accent: "hover:border-rose-400" },
@@ -269,7 +276,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         })}
       </section>
 
-      {!hasJoinedChallenge && permissions.showUpgradePrompts && (
+      {role === "free_student" && permissions.showUpgradePrompts && (
         <section className="space-y-1.5">
           {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
           <button

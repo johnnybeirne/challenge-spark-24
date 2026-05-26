@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useUserState } from "@/hooks/useUserState";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();

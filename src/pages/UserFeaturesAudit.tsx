@@ -273,6 +273,7 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the free course.", badge: "LMS" },
   { title: "Waitlist", route: "/waitlist", description: "Public waitlist signup page with host portrait, referral capture, and live momentum feed.", badge: "Waitlist" },
   { title: "Waitlist Thank You", route: "/waitlist/thanks?preview=1", description: "Post-signup thank-you page with referral sharing for waitlist members.", badge: "Waitlist" },
+  { title: "Challenge Dashboard", route: "/user-dashboard", description: "Logged-in challenge dashboard with Day 1, Day 2, Day 3 sidebar — the main builder workspace.", badge: "Challenge" },
 ];
 
 const CoreEntryLinksSection = () => {

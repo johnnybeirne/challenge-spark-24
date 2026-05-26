@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Copy, Loader2, RefreshCcw, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Copy, Loader2, RefreshCcw, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,6 @@ import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useUserState } from "@/hooks/useUserState";
 
 const InsightForm = ({ onDone }: { onDone?: () => void }) => {
   const { state, setState } = useAppState();

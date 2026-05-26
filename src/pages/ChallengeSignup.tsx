@@ -13,7 +13,7 @@ const ChallengeSignup = () => {
   //   dashboard so they see their tailored invitation/onboarding hub.
   // - Direct challenge signup (no intent): drop straight into Day 1.
   const cameFromAssessment = getEntryIntent() === "challenge";
-  const defaultRedirect = cameFromAssessment ? "/challenger-dashboard" : "/day/1";
+  const defaultRedirect = cameFromAssessment ? "/challenger-dashboard" : "/challenge/day-1";
 
   const successHeadline = cameFromAssessment
     ? (first: string) => `Your 3-day challenge is ready, ${first}.`

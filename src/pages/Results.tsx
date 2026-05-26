@@ -9,6 +9,7 @@ import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
@@ -68,11 +69,14 @@ const Results = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useAppState();
+  const qa = useQaPreview();
+  const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const previewTier = (() => {
     const p = location.pathname.toLowerCase();
     if (p.endsWith("/low")) return "low";
     if (p.endsWith("/med") || p.endsWith("/mid")) return "mid";
     if (p.endsWith("/high")) return "high";
+    if (qaPreviewActive) return "mid";
     return null;
   })();
   const previewScore = previewTier === "low" ? 2 : previewTier === "mid" ? 5 : previewTier === "high" ? 8 : 0;

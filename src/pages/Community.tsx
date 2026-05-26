@@ -275,7 +275,7 @@ const UnlockedCommunity = () => {
                 <p className="text-xs text-muted-foreground mb-3">
                   To get visibility inside Builder Circle, add your live challenge URL.
                 </p>
-                <Button size="sm" onClick={() => navigate("/day/3")} className="gap-1">
+                <Button size="sm" onClick={() => navigate("/challenge/day-3")} className="gap-1">
                   <Globe className="h-3 w-3" /> Add live URL
                 </Button>
               </>

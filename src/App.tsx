@@ -165,6 +165,8 @@ const App = () => (
                 <Route path="/challenge/day-:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+                {/* Slash-form alias — accepts /challenge/day/1|2|3 */}
+                <Route path="/challenge/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
                 <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />

@@ -7,10 +7,10 @@ import { getEntryIntent } from "@/lib/entryIntent";
 
 const FREE_MODULES = new Set([1, 2, 3]);
 
-export const PREMIUM_LOCK_TITLE = "Premium Module Locked";
+export const PREMIUM_LOCK_TITLE = "VIP Training Locked";
 export const PREMIUM_LOCK_MESSAGE =
-  "This module is part of the premium Leadio growth system. Upgrade to unlock Advanced Challenge Systems, Scaling With Leadio, AI implementation systems, and advanced referral mechanics.";
-export const PREMIUM_LOCK_CTA = "Unlock Premium";
+  "This module is part of the VIP Leadio growth system. Unlock VIP Training to access Advanced Challenge Systems, Scaling With Leadio, AI implementation systems, and advanced referral mechanics.";
+export const PREMIUM_LOCK_CTA = "Unlock VIP Training";
 
 export const isModulePremium = (moduleNumber: number) =>
   !FREE_MODULES.has(moduleNumber);

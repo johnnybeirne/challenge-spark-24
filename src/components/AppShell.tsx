@@ -16,7 +16,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
-  const hideCopilotRoutes = ["/assess"];
+  const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
 

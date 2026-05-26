@@ -204,9 +204,12 @@ const BlueprintDashboard = () => {
 
 export const UpgradeCard = () => {
   const { isPremium } = usePremium();
+  const { permissions } = useUserRole();
   const isFreeTraining = getEntryIntent() === "free_training";
   // Treat free_training funnel as free-tier even if a stale premium flag exists.
   const showUnlocked = isPremium && !isFreeTraining;
+  // Premium / partner / admin: never show upgrade walls.
+  if (!permissions.showUpgradePrompts && !showUnlocked) return null;
   if (showUnlocked) {
     return (
       <section className="mt-6 rounded-3xl border border-success/30 bg-success/5 p-6 sm:p-8">

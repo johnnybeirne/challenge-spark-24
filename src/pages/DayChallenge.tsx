@@ -332,7 +332,7 @@ const DayChallenge = () => {
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3
         </p>
-        <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {config.intro}
         </p>
@@ -342,9 +342,6 @@ const DayChallenge = () => {
       </div>
 
       <div className="mb-4">
-        {dayNum === 1 && (
-          <p className="mb-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">Day 1 Training</p>
-        )}
         <DayTrainingCard dayNum={dayNum} />
       </div>
 

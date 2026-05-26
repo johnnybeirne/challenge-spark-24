@@ -132,7 +132,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         )}
       </div>
 
-      {hasJoinedChallenge && (
+      {showChallengeNav && (
         <section className="space-y-1.5">
           {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
           {[

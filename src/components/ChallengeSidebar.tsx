@@ -173,83 +173,74 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       )}
 
       {(() => {
-        const midChallenge = hasJoinedChallenge && !state.challenge.completed;
+        // Hide the LMS "Learn" section entirely once the user is in the challenge.
+        if (hasJoinedChallenge) return null;
         const learnActive = location.pathname.startsWith("/blueprint");
         return (
           <section className="space-y-1.5">
-            
-            {midChallenge ? (
-              <button
-                onClick={() => go("/blueprint/dashboard")}
-                className={cn(
-                  "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
-                  collapsed ? "p-2" : "px-3 py-2",
-                  learnActive && "ring-2 ring-primary/20"
-                )}
-                title="Training"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  {!collapsed && <p className="text-sm font-semibold text-foreground">Training</p>}
-                  <BookOpen className="h-4 w-4 shrink-0 text-muted-foreground" />
-                </div>
-              </button>
-            ) : (
-              [
-                { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
-                { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
-                { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
-                { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
-                { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
-              ].map(({ n, path, label, Icon, premium }) => {
-                const active = location.pathname === path;
-                const locked = premium && !isPremiumUser;
-                const muted = !active && premium && isPremiumUser;
-                const DisplayIcon = locked ? Lock : Icon;
-                return (
-                  <button
-                    key={path}
-                    onClick={() => go(path)}
-                    className={cn(
-                      "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
-                      muted && "border-border/60 bg-muted/30",
-                      collapsed ? "p-2" : "px-3 py-2",
-                      active && "ring-2 ring-primary/20"
+            {[
+              { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
+              { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
+              { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
+              { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
+              { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
+            ].map(({ n, path, label, Icon, premium }) => {
+              const active = location.pathname === path;
+              const locked = premium && !isPremiumUser;
+              const muted = !active && premium && isPremiumUser;
+              const DisplayIcon = locked ? Lock : Icon;
+              return (
+                <button
+                  key={path}
+                  onClick={() => go(path)}
+                  className={cn(
+                    "w-full rounded-xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 border-border bg-background",
+                    muted && "border-border/60 bg-muted/30",
+                    collapsed ? "p-2" : "px-3 py-2",
+                    active && "ring-2 ring-primary/20"
+                  )}
+                  title={`Module ${n} – ${label}`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    {!collapsed ? (
+                      <div className="min-w-0 flex-1">
+                        <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Module {n}</p>
+                        <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                      </div>
+                    ) : (
+                      <span className={cn(
+                        "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
+                        active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
+                      )}>{n}</span>
                     )}
-                    title={`Module ${n} – ${label}`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      {!collapsed ? (
-                        <div className="min-w-0 flex-1">
-                          <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Module {n}</p>
-                          <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
-                        </div>
-                      ) : (
-                        <span className={cn(
-                          "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
-                          active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
-                        )}>{n}</span>
-                      )}
-                      <DisplayIcon className={cn(
-                        "h-4 w-4 shrink-0",
-                        locked ? "text-primary/60" : active ? "text-primary" : "text-muted-foreground"
-                      )} />
-                    </div>
-                  </button>
-                );
-              })
-            )}
+                    <DisplayIcon className={cn(
+                      "h-4 w-4 shrink-0",
+                      locked ? "text-primary/60" : active ? "text-primary" : "text-muted-foreground"
+                    )} />
+                  </div>
+                </button>
+              );
+            })}
+            <span className="sr-only">{learnActive ? "Learn active" : ""}</span>
           </section>
         );
       })()}
 
       <section className="space-y-1.5">
-        
-        {[
-          { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass, tint: "bg-indigo-100 text-indigo-700", accent: "hover:border-indigo-400" },
-          { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
-          { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
-          { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
-        ].map(({ path, label, Icon, tint, accent }) => {
+        {(hasJoinedChallenge
+          ? [
+              { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
+              { path: "/unlocks", label: "Rewards", Icon: Sparkles, tint: "bg-rose-100 text-rose-700", accent: "hover:border-rose-400" },
+              { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
+              { path: "/calendar", label: "Live Sessions", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
+            ]
+          : [
+              { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass, tint: "bg-indigo-100 text-indigo-700", accent: "hover:border-indigo-400" },
+              { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
+              { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
+              { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
+            ]
+        ).map(({ path, label, Icon, tint, accent }) => {
           const active = location.pathname === path;
           return (
             <button
@@ -274,24 +265,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         })}
       </section>
 
-
-      <section className="space-y-1.5">
-        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
-        {hasJoinedChallenge ? (
-          <button
-            onClick={() => go("/challenger-dashboard")}
-            className={cn(
-              "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
-              collapsed ? "p-2" : "px-3 py-2.5"
-            )}
-            title="Continue Your Challenge"
-          >
-            <div className="flex items-center justify-between gap-2">
-              {!collapsed && <p className="text-sm font-black text-primary">Continue Your Challenge</p>}
-              <Sparkles className="h-4 w-4 shrink-0 text-primary" />
-            </div>
-          </button>
-        ) : (
+      {!hasJoinedChallenge && (
+        <section className="space-y-1.5">
+          {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
           <button
             onClick={() => go("/blueprint/bridge")}
             className={cn(
@@ -320,8 +296,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <Sparkles className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             </div>
           </button>
-        )}
-      </section>
+        </section>
+      )}
+
 
       <button
         onClick={async () => {

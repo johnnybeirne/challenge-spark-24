@@ -93,7 +93,7 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
 
   // Challenge
   if (p === "/dashboard" ||
-      p === "/user-dashboard" ||
+      p === "/challenger-dashboard" ||
       p.startsWith("/day/") ||
       p === "/unlocks" ||
       p === "/referrals" ||
@@ -128,7 +128,7 @@ export function getNavigationForExperience(experience: ExperienceType): NavItem[
       ];
     case "challenge":
       return [
-        { label: "Dashboard", to: "/user-dashboard" },
+        { label: "Dashboard", to: "/challenger-dashboard" },
         { label: "Today", to: "/day/1" },
         { label: "Referrals", to: "/referrals" },
         { label: "Unlocks", to: "/unlocks" },

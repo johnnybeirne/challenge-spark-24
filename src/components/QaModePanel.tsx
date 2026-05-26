@@ -39,7 +39,7 @@ const ROUTES: { label: string; path: string }[] = [
   { label: "Free Assessment", path: "/free-assessment" },
   { label: "Assessment Q's", path: "/assess" },
   { label: "Results", path: "/results" },
-  { label: "Dashboard", path: "/user-dashboard" },
+  { label: "Dashboard", path: "/challenger-dashboard" },
   { label: "Course Home", path: "/free-training" },
   { label: "Module 1", path: "/blueprint/lesson/1" },
   { label: "Module 2", path: "/blueprint/lesson/2" },
@@ -237,9 +237,9 @@ const QaModePanel = () => {
     premium: boolean;
     route: string;
   }> = {
-    free:      { label: "Free user",      tier: "free", assessmentMode: "free_training",  premium: false, route: "/user-dashboard" },
+    free:      { label: "Free user",      tier: "free", assessmentMode: "free_training",  premium: false, route: "/challenger-dashboard" },
     paid:      { label: "Paid user",      tier: "paid", assessmentMode: "premium_course", premium: true,  route: "/blueprint/dashboard" },
-    challenge: { label: "Challenge user", tier: "free", assessmentMode: "challenge",      premium: false, route: "/user-dashboard" },
+    challenge: { label: "Challenge user", tier: "free", assessmentMode: "challenge",      premium: false, route: "/challenger-dashboard" },
   };
 
   // Storage key substrings to wipe on a session simulate

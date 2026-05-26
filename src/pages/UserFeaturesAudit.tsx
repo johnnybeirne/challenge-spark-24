@@ -72,7 +72,7 @@ const ROUTES: RouteRow[] = [
   { route: "/waitlist", purpose: "Waitlist signup", access: "Public", status: "Detected" },
   { route: "/waitlist/thanks", purpose: "Waitlist thank-you + referral share", access: "Public", status: "Detected" },
   { route: "/app/features", purpose: "Public feature overview", access: "Public", status: "Detected" },
-  { route: "/user-dashboard", purpose: "Challenge dashboard", access: "Authenticated", status: "Detected" },
+  { route: "/challenger-dashboard", purpose: "Challenge dashboard", access: "Authenticated", status: "Detected" },
   { route: "/training", purpose: "Pre-challenge training", access: "Authenticated", status: "Detected" },
   { route: "/day/:day", purpose: "3-day challenge (Day 1/2/3)", access: "Authenticated", status: "Detected" },
   { route: "/unlocks", purpose: "Unlocks / rewards", access: "Authenticated", status: "Detected" },
@@ -112,7 +112,7 @@ const ROUTES: RouteRow[] = [
   { route: "/user-features", purpose: "This audit page", access: "Admin", status: "Detected" },
   { route: "/learn", purpose: "Generic LMS index", access: "Unknown", status: "Not detected", notes: "Use /blueprint instead" },
   { route: "/learn/module/:n", purpose: "Generic LMS modules", access: "Unknown", status: "Not detected", notes: "Use /blueprint/lesson/:day" },
-  { route: "/dashboard", purpose: "Generic dashboard alias", access: "Unknown", status: "Not detected", notes: "Use /user-dashboard" },
+  { route: "/dashboard", purpose: "Generic dashboard alias", access: "Unknown", status: "Not detected", notes: "Use /challenger-dashboard" },
   { route: "/admin", purpose: "Legacy admin", access: "Admin", status: "Conflicting", notes: "Kept as redirect to /owner-console" },
 ];
 
@@ -218,7 +218,7 @@ const ENTRY_POINTS = [
   { name: "Free free training entry", route: "/blueprint", status: "Detected" as Status, next: "/blueprint-join → /blueprint/dashboard", clear: true },
   { name: "Paid course entry", route: "/upgrade", status: "Partially detected" as Status, next: "External / TBD", clear: false },
   { name: "Waitlist entry", route: "/waitlist", status: "Detected" as Status, next: "(captures email)", clear: true },
-  { name: "Challenge direct entry", route: "/challenge → /join", status: "Detected" as Status, next: "/user-dashboard", clear: true },
+  { name: "Challenge direct entry", route: "/challenge → /join", status: "Detected" as Status, next: "/challenger-dashboard", clear: true },
 ];
 
 const JOURNEY_STAGES = [
@@ -226,7 +226,7 @@ const JOURNEY_STAGES = [
   { stage: "Assessment / Diagnosis", routes: ["/assess", "/results"], notes: "Should this always precede the challenge?" },
   { stage: "Free Education / Training", routes: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/:day"], notes: "Now repositioned as 'Blueprint' — verify language." },
   { stage: "Challenge Enrollment", routes: ["/join", "/challenge"], notes: "Single signup endpoint, two landing entry points." },
-  { stage: "Three-Day Challenge Execution", routes: ["/user-dashboard", "/day/1", "/day/2", "/day/3"], notes: "Sidebar no longer surfaces day links — handoff via dashboard CTA." },
+  { stage: "Three-Day Challenge Execution", routes: ["/challenger-dashboard", "/day/1", "/day/2", "/day/3"], notes: "Sidebar no longer surfaces day links — handoff via dashboard CTA." },
   { stage: "Referral / Trust Engine", routes: ["/referrals", "/unlocks"], notes: "Community unlock requires 3 direct referrals." },
   { stage: "Paid Course / Locked Content", routes: ["/upgrade"], notes: "No locked-module UI detected; coupon-only flow." },
   { stage: "Partner / Promoter Layer", routes: ["/partners", "/promoter", "/partner/performance"], notes: "Partner role bypasses bottom nav." },
@@ -273,7 +273,7 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Course Dashboard", route: "/blueprint/dashboard", description: "Internal LMS dashboard experience for users already inside the free course.", badge: "LMS" },
   { title: "Waitlist", route: "/waitlist", description: "Public waitlist signup page with host portrait, referral capture, and live momentum feed.", badge: "Waitlist" },
   { title: "Waitlist Thank You", route: "/waitlist/thanks?preview=1", description: "Post-signup thank-you page with referral sharing for waitlist members.", badge: "Waitlist" },
-  { title: "Challenge Dashboard", route: "/user-dashboard", description: "Logged-in challenge dashboard with Day 1, Day 2, Day 3 sidebar — the main builder workspace.", badge: "Challenge" },
+  { title: "Challenge Dashboard", route: "/challenger-dashboard", description: "Logged-in challenge dashboard with Day 1, Day 2, Day 3 sidebar — the main builder workspace.", badge: "Challenge" },
 ];
 
 const CoreEntryLinksSection = () => {
@@ -440,7 +440,7 @@ const NAV_COHESION_CHECKS: NavCheck[] = [
   { label: "BottomNav hidden inside LMS routes", status: "Detected", note: "AppShell switches to ChallengeSidebar (LMS variant) for /blueprint/*" },
   { label: "Sidebar adapts: LMS items vs Challenge items", status: "Detected", note: "ChallengeSidebar renders LEARN / TOOLS / NEXT STEP for /blueprint/*" },
   { label: "Assessment routes free of challenge gamification", status: "Detected", note: "/assess uses showNav=false in App routing" },
-  { label: "Single 'start here' journey: /assess → /blueprint → /blueprint/bridge → /user-dashboard", status: "Detected" },
+  { label: "Single 'start here' journey: /assess → /blueprint → /blueprint/bridge → /challenger-dashboard", status: "Detected" },
   { label: "Stage indicator visible on Challenge dashboard", status: "Detected", note: "useUserStage().stageLabel rendered in Dashboard header" },
   { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "src/lib/calendarSchedule.ts, src/pages/ResetPassword.tsx renamed to Leadio" },
   { label: "Premium and challenge remain separate", status: "Detected", note: "/upgrade does not redirect to challenge; challenge does not require premium" },
@@ -511,7 +511,7 @@ const EXPERIENCE_ORDER: ExperienceType[] = ["assessment", "lms", "challenge", "p
 const EXPERIENCE_ROUTE_SAMPLES: Record<Exclude<ExperienceType, "unknown">, string[]> = {
   assessment: ["/", "/assess", "/results", "/results/low", "/results/med", "/results/high", "/invite/abc"],
   lms: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/1", "/blueprint/insight", "/learn", "/learn/module/1"],
-  challenge: ["/user-dashboard", "/dashboard", "/day/1", "/day/2", "/day/3", "/unlocks", "/referrals", "/community", "/calendar"],
+  challenge: ["/challenger-dashboard", "/dashboard", "/day/1", "/day/2", "/day/3", "/unlocks", "/referrals", "/community", "/calendar"],
   paid: ["/upgrade", "/checkout", "/course", "/course/module/1"],
   partner: ["/promoter", "/partner/performance", "/partners"],
   admin: ["/admin", "/admin/analytics", "/owner-console", "/owner-console/analytics", "/user-features"],
@@ -704,7 +704,7 @@ const BRIDGE_CHECKS: BridgeCheck[] = [
   { label: "Module 3 completion bridge route exists", status: "Detected", note: "/blueprint/bridge" },
   { label: "LMS Module 3 routes to bridge (no auto Day 1 redirect)", status: "Detected", note: "Manual navigation only" },
   { label: "Bridge shows 3-day challenge preview", status: "Detected", note: "Day 1 / Day 2 / Day 3 cards on bridge" },
-  { label: "Bridge has primary 'Start The 3-Day Challenge' CTA", status: "Detected", note: "→ /user-dashboard" },
+  { label: "Bridge has primary 'Start The 3-Day Challenge' CTA", status: "Detected", note: "→ /challenger-dashboard" },
   { label: "Bridge has secondary 'Continue Learning' CTA", status: "Detected", note: "→ /blueprint/dashboard" },
   { label: "Bridge sets enteredChallengeFromLMS flag", status: "Detected", note: "aiOutputs.entered_challenge_from_lms" },
   { label: "Bridge captures optional build intent", status: "Detected", note: "aiOutputs.lms_build_intent" },

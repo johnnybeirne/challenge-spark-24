@@ -193,7 +193,7 @@ const BlueprintInsight = () => {
 const ImplementInsightCta = () => {
   const { hasJoinedChallenge } = useUserState();
   const label = hasJoinedChallenge ? "Continue Your Challenge" : "Start the 3-Day Challenge";
-  const href = hasJoinedChallenge ? "/user-dashboard" : "/blueprint/bridge";
+  const href = hasJoinedChallenge ? "/challenger-dashboard" : "/blueprint/bridge";
   const heading = hasJoinedChallenge
     ? "Your 3-Day Challenge is in progress"
     : "Ready to put this into action?";

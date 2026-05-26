@@ -19,7 +19,7 @@ const PAGES: { id: string; label: string; previewUrl?: string; description: stri
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page hero, social proof, FAQ" },
   { id: "signup", label: "Signup (/join)", previewUrl: "/join", description: "Account creation page" },
   { id: "results", label: "Results", previewUrl: "/results", description: "Static surrounding copy on the diagnostic results page" },
-  { id: "dashboard", label: "Dashboard", previewUrl: "/user-dashboard", description: "Authenticated user dashboard" },
+  { id: "dashboard", label: "Dashboard", previewUrl: "/challenger-dashboard", description: "Authenticated user dashboard" },
   // "Challenge Days" has its own dedicated editor at /owner-console/challenge-days
   // (matches the live Day page layout with task editor + live preview).
   { id: "unlocks", label: "Unlocks", previewUrl: "/unlocks", description: "Unlocks page copy" },

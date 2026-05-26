@@ -84,7 +84,7 @@ const BlueprintBridge = () => {
         },
       },
     }));
-    navigate("/user-dashboard");
+    navigate("/challenger-dashboard");
   };
 
   return (

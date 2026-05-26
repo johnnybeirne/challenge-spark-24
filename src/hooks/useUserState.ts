@@ -49,10 +49,10 @@ export const useUserState = (): UserStateFlags => {
     if (enrolledInPremiumCourse) {
       primaryCta = { label: "Continue Premium Course", href: "/blueprint/dashboard" };
       secondaryCta = hasJoinedChallenge
-        ? { label: "Continue Your Challenge", href: "/user-dashboard" }
+        ? { label: "Continue Your Challenge", href: "/challenger-dashboard" }
         : { label: "Apply This In The 3-Day Challenge", href: "/blueprint/bridge" };
     } else if (hasJoinedChallenge) {
-      primaryCta = { label: "Continue Your Challenge", href: "/user-dashboard" };
+      primaryCta = { label: "Continue Your Challenge", href: "/challenger-dashboard" };
       secondaryCta = { label: "View Training", href: "/blueprint/dashboard" };
     } else if (enrolledInFreeTraining) {
       primaryCta = { label: "Continue Free Training", href: "/blueprint/dashboard" };

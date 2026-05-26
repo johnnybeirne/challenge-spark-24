@@ -18,7 +18,7 @@ const Training = () => {
       training: { ...prev.training, hubCompleted: true, preChallengeWatched: true },
     }));
     trackEvent("training_hub_completed");
-    navigate("/user-dashboard");
+    navigate("/challenger-dashboard");
   };
 
   return (

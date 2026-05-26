@@ -9,5 +9,5 @@ export function getExperience(role?: string): Experience {
 export function getRoleHome(role?: string): string {
   if (role === "admin") return "/admin/analytics";
   if (role === "promoter") return "/promoter";
-  return "/user-dashboard";
+  return "/challenger-dashboard";
 }

@@ -79,7 +79,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       >
         {collapsed ? (
           <button
-            onClick={() => authUser ? photoInputRef.current?.click() : go("/user-dashboard")}
+            onClick={() => authUser ? photoInputRef.current?.click() : go("/challenger-dashboard")}
             className="relative mx-auto block h-9 w-9"
             title={hasAvatar ? "Change photo" : "Add your photo"}
             disabled={photoUploading}
@@ -112,7 +112,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                 <Camera className="h-3 w-3" />
               </span>
             </button>
-            <button onClick={() => go("/user-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
+            <button onClick={() => go("/challenger-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
               <p className="truncate text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {photoUploading ? "Uploading…" : hasAvatar ? "Dashboard" : "Tap photo to add yours"}
@@ -278,7 +278,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next Step</p>}
         {hasJoinedChallenge ? (
           <button
-            onClick={() => go("/user-dashboard")}
+            onClick={() => go("/challenger-dashboard")}
             className={cn(
               "w-full rounded-xl border border-primary/40 bg-primary/5 text-left transition-all hover:border-primary hover:bg-primary/10",
               collapsed ? "p-2" : "px-3 py-2.5"

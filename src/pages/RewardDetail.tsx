@@ -101,7 +101,7 @@ const RewardDetail = () => {
         <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
         <h1 className="text-xl font-bold text-foreground mb-2">Reward not available</h1>
         <p className="text-sm text-muted-foreground mb-4">This resource may have been removed or is no longer active.</p>
-        <Button onClick={() => navigate("/user-dashboard")}>Return to dashboard</Button>
+        <Button onClick={() => navigate("/challenger-dashboard")}>Return to dashboard</Button>
       </div>
     );
   }

@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithMagicLink = async (email: string, metadata?: Record<string, string>) => {
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { data: metadata, emailRedirectTo: window.location.origin + "/user-dashboard" },
+      options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
     });
     return { error };
   };
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: metadata, emailRedirectTo: window.location.origin + "/user-dashboard" },
+      options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
     });
     return { data, error };
   };

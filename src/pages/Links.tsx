@@ -60,13 +60,13 @@ const Links = () => {
   const enablePaidPreview = () => {
     import("@/lib/previewTier").then(({ setPreviewTier }) => {
       setPreviewTier("paid");
-      window.location.href = "/user-dashboard?previewTier=paid";
+      window.location.href = "/challenger-dashboard?previewTier=paid";
     });
   };
   const clearPreview = () => {
     import("@/lib/previewTier").then(({ setPreviewTier }) => {
       setPreviewTier(null);
-      window.location.href = "/user-dashboard";
+      window.location.href = "/challenger-dashboard";
     });
   };
   return (

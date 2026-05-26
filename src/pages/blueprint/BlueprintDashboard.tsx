@@ -211,7 +211,7 @@ const ImplementCta = () => {
         title: "Your 3-Day Challenge is in progress",
         body: "Pick up where you left off and keep building your trust-based growth system.",
         ctaLabel: "Continue Your Challenge",
-        ctaHref: "/user-dashboard",
+        ctaHref: "/challenger-dashboard",
       }
     : isPremiumUser
     ? {

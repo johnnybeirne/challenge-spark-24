@@ -77,7 +77,7 @@ import Premium from "@/pages/Premium";
 import DebugAttribution from "@/pages/DebugAttribution";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
-import QaModePanel from "@/components/QaModePanel";
+
 import ScrollToTop from "@/components/ScrollToTop";
 import AttributionCapture from "@/components/AttributionCapture";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";

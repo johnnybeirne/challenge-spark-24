@@ -99,9 +99,7 @@ const BlueprintInsight = () => {
   if (!insight || editing) {
     return (
       <main className="mx-auto w-full max-w-3xl px-4 py-8 lg:py-12">
-        <Link to="/blueprint/dashboard" className="inline-flex items-center gap-1 text-xs font-bold uppercase text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-3 w-3" /> Course Home
-        </Link>
+        <TrainingHomeLink />
         <header className="mt-4">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
             <Sparkles className="h-3.5 w-3.5" /> Challenge Builder

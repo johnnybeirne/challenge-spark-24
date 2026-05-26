@@ -8,6 +8,7 @@ import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import TrainingHomeLink from "@/components/TrainingHomeLink";
 
 const InsightForm = ({ onDone }: { onDone?: () => void }) => {
   const { state, setState } = useAppState();

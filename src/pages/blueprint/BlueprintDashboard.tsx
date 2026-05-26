@@ -13,6 +13,7 @@ import {
   PREMIUM_LOCK_CTA,
 } from "@/hooks/useModuleAccess";
 import { getEntryIntent } from "@/lib/entryIntent";
+import RolePrimaryCta from "@/components/RolePrimaryCta";
 
 type ModuleEntry = {
   n: number;

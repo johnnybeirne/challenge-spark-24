@@ -215,48 +215,44 @@ const CATEGORIES: Category[] = [
 ];
 
 const ENTRY_POINTS = [
-  { name: "Direct assessment entry", route: "/assess", status: "Detected" as Status, next: "/results", clear: true },
-  { name: "Referral invite into assessment", route: "/?ref=…", status: "Partially detected" as Status, next: "/assess", clear: false },
-  { name: "Partner invite into assessment", route: "/partners", status: "Partially detected" as Status, next: "/assess", clear: false },
-  { name: "Free free training entry", route: "/blueprint", status: "Detected" as Status, next: "/blueprint-join → /blueprint/dashboard", clear: true },
-  { name: "Paid course entry", route: "/upgrade", status: "Partially detected" as Status, next: "External / TBD", clear: false },
-  { name: "Waitlist entry", route: "/waitlist", status: "Detected" as Status, next: "(captures email)", clear: true },
-  { name: "Challenge direct entry", route: "/challenge → /join", status: "Detected" as Status, next: "/challenger-dashboard", clear: true },
+  { name: "Direct assessment entry", route: "/assessment", status: "Detected" as Status, next: "/results → /challenge/join", clear: true },
+  { name: "Referral invite into assessment", route: "/?ref=…", status: "Detected" as Status, next: "/assessment", clear: true },
+  { name: "Partner invite into sales page", route: "/p/:partnerCode", status: "Detected" as Status, next: "/premium (coupon auto-applied)", clear: true },
+  { name: "Blueprint free training entry", route: "/blueprint", status: "Detected" as Status, next: "/blueprint/join → /blueprint/dashboard", clear: true },
+  { name: "Premium / VIP entry", route: "/premium", status: "Detected" as Status, next: "Stripe checkout (planned)", clear: true },
+  { name: "Waitlist entry", route: "/waitlist", status: "Detected" as Status, next: "/waitlist/thanks", clear: true },
+  { name: "Challenge direct entry", route: "/challenge → /challenge/join", status: "Detected" as Status, next: "/challenger-dashboard", clear: true },
 ];
 
 const JOURNEY_STAGES = [
-  { stage: "Entry Points", routes: ["/", "/challenge", "/blueprint", "/partners", "/waitlist"], notes: "Multiple front doors. Confirm intended funnel order." },
-  { stage: "Assessment / Diagnosis", routes: ["/assess", "/results"], notes: "Should this always precede the challenge?" },
-  { stage: "Free Education / Training", routes: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/:day"], notes: "Now repositioned as 'Blueprint' — verify language." },
-  { stage: "Challenge Enrollment", routes: ["/join", "/challenge"], notes: "Single signup endpoint, two landing entry points." },
-  { stage: "Three-Day Challenge Execution", routes: ["/challenger-dashboard", "/day/1", "/day/2", "/day/3"], notes: "Sidebar no longer surfaces day links — handoff via dashboard CTA." },
-  { stage: "Referral / Trust Engine", routes: ["/referrals", "/unlocks"], notes: "Community unlock requires 3 direct referrals." },
-  { stage: "Paid Course / Locked Content", routes: ["/upgrade"], notes: "No locked-module UI detected; coupon-only flow." },
-  { stage: "Partner / Promoter Layer", routes: ["/partners", "/promoter", "/partner/performance"], notes: "Partner role bypasses bottom nav." },
+  { stage: "Entry Points", routes: ["/", "/challenge", "/blueprint", "/premium", "/partners", "/waitlist"], notes: "Four distinct experiences — each has its own canonical entry." },
+  { stage: "Assessment / Diagnosis", routes: ["/assessment", "/results"], notes: "Minimal diagnostic UI; routes into Challenge invitation after Johnny B insight." },
+  { stage: "Blueprint Free Training", routes: ["/blueprint", "/blueprint/dashboard", "/blueprint/lesson/:day", "/blueprint/insight"], notes: "Calm LMS mode — educational, structured." },
+  { stage: "Challenge Enrollment", routes: ["/challenge", "/challenge/join"], notes: "Single canonical signup; legacy /join redirects." },
+  { stage: "Three-Day Challenge Execution", routes: ["/challenger-dashboard", "/challenge/day-1", "/challenge/day-2", "/challenge/day-3"], notes: "Action-focused mode with progress + reward emphasis." },
+  { stage: "Referral / Trust Engine", routes: ["/referrals", "/unlocks"], notes: "Community unlock requires Day 3 + URL + 3 direct referrals." },
+  { stage: "Premium / VIP", routes: ["/premium", "/premium/:partnerCode"], notes: "Elite mode — Invite Others / Become a Partner as primary CTA." },
+  { stage: "Partner / Promoter Layer", routes: ["/partners", "/promoter", "/partner/performance"], notes: "Partner role bypasses consumer bottom nav." },
   { stage: "Community / Builder Circle", routes: ["/community", "/leaderboard"], notes: "Gated by Day 3 + URL + 3 referrals." },
-  { stage: "Completion / Upgrade / Monetisation", routes: ["/bonus-vault", "/upgrade", "/blueprint/insight"], notes: "Multiple completion endpoints — clarify primary." },
   { stage: "Admin / Owner Oversight", routes: ["/owner-console", "/user-features"], notes: "Owner-only review surfaces." },
 ];
 
 const ROLES = [
-  { role: "Visitor", sees: "/, /challenge, /blueprint, /assess, /results, /partners, /waitlist", hidden: "Authenticated areas", journey: "Landing → assess or blueprint", confusion: "Multiple landings (/, /challenge, /blueprint) compete." },
-  { role: "Lead", sees: "Public + assessment results", hidden: "Dashboard, challenge, referrals", journey: "Assess → Results → Join", confusion: "Results CTA path could vary by score." },
-  { role: "Participant", sees: "All authenticated routes", hidden: "Partner & admin", journey: "Dashboard → Day 1-3 → Unlocks → Community", confusion: "Sidebar shows Blueprint nav while bottom nav still shows Challenge." },
-  { role: "Paid course user", sees: "Same as participant + (planned) locked modules", hidden: "Partner & admin", journey: "Not yet differentiated", confusion: "No paid-state UI distinction detected." },
-  { role: "Partner / Promoter", sees: "Promoter dashboard + performance + shared routes", hidden: "Bottom consumer nav", journey: "Partners → Promoter dashboard", confusion: "Overlap with consumer experience for cross-promo." },
-  { role: "Admin / Owner", sees: "/owner-console/* + /user-features", hidden: "—", journey: "Console hub → analytics / content / training", confusion: "Legacy /admin path still mounts the console." },
+  { role: "Visitor", sees: "/, /challenge, /blueprint, /assessment, /results, /premium, /partners, /waitlist", hidden: "Authenticated areas", journey: "Landing → assessment, blueprint, or challenge", confusion: "Four front doors by design — each has a distinct experience mode + badge." },
+  { role: "Lead", sees: "Public + assessment results", hidden: "Dashboard, challenge, referrals", journey: "Assessment → Results → Join the 3-Day Challenge", confusion: "Single primary CTA per score tier." },
+  { role: "Participant", sees: "All authenticated challenge routes", hidden: "Partner & admin", journey: "Dashboard → Day 1-3 → Unlocks → Community", confusion: "Challenge sidebar + bottom nav now both scoped to challenge." },
+  { role: "Premium user", sees: "Same as participant + premium modules", hidden: "Partner & admin", journey: "Premium → Invite Others / Become a Partner", confusion: "Modules 4 & 5 still stub only." },
+  { role: "Partner / Promoter", sees: "Promoter dashboard + performance + shared routes", hidden: "Consumer bottom nav", journey: "Partners → Promoter dashboard", confusion: "Overlap with consumer experience for cross-promo." },
+  { role: "Admin / Owner", sees: "/owner-console/* + /user-features", hidden: "—", journey: "Console hub → analytics / content / training", confusion: "Legacy /admin still mounts the console (intentional alias)." },
 ];
 
 const CONFLICTS = [
-  { flag: "Day 1 / Day 2 / Day 3 language inside Blueprint free training", severity: "warn" },
-  { flag: "Two landing pages for the same product (/ vs /challenge)", severity: "warn" },
-  { flag: "Two signup routes (/join and /blueprint-join) — same component", severity: "info" },
-  { flag: "Legacy /admin path still mounts AdminLayout alongside /owner-console", severity: "warn" },
-  { flag: "Sidebar (Blueprint) and BottomNav (Challenge) surface different products to the same user", severity: "warn" },
-  { flag: "Reward / gamification UI (points, unlocks) appears for users still in free free training scope", severity: "warn" },
-  { flag: "Referral invite path does not clearly route through assessment", severity: "info" },
-  { flag: "Multiple completion endpoints (bonus vault, blueprint insight, upgrade) — primary unclear", severity: "info" },
-  { flag: "Product naming: 'ChallengeOS' references replaced with 'Leadio' across UI + utilities", severity: "info" },
+  { flag: "Premium modules 4 & 5 (Advanced Systems, Scaling With Leadio) are stub only", severity: "warn" },
+  { flag: "Builder Circle (/community) is a placeholder — unlock works but feed is not built", severity: "warn" },
+  { flag: "Stripe checkout for /premium not yet wired (CheckoutReturn route exists)", severity: "warn" },
+  { flag: "Bonus Vault redemption has no asset delivery yet", severity: "info" },
+  { flag: "Live Session Calendar shows static placeholder", severity: "info" },
+  { flag: "Legacy /admin still mounts AdminLayout alongside /owner-console (intentional alias)", severity: "info" },
 ];
 
 // ───────── Core Entry Links (Prompt 48.3) ─────────

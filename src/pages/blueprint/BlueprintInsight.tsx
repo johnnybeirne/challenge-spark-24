@@ -108,11 +108,11 @@ const BlueprintInsight = () => {
         <TrainingHomeLink />
         <header className="mt-4">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Challenge Builder
+            <Sparkles className="h-3.5 w-3.5" /> AI Challenge Strategist
           </span>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Build Your Challenge</h1>
+          <h1 className="mt-3 text-3xl font-black sm:text-4xl">Design the right challenge for your audience</h1>
           <p className="mt-2 text-base text-muted-foreground">
-            Describe the problem you solve, who you help, and the result they want — and we'll help you create a simple challenge framework designed to drive engagement and momentum.
+            Tell the AI what you do and who you serve. It will recommend the best type of challenge to run — built on the Leadio methodology for engagement, momentum, implementation, and referrals.
           </p>
         </header>
         <InsightForm onDone={() => setEditing(false)} />

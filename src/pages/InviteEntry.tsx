@@ -22,7 +22,7 @@ const InviteEntry = () => {
     }
   }, [referralCode]);
 
-  return <Navigate to="/assess" replace />;
+  return <Navigate to="/assessment" replace />;
 };
 
 export default InviteEntry;

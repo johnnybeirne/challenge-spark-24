@@ -305,7 +305,7 @@ export const defaultSiteConfig: SiteConfig = {
     heroSupportingLine: "Most people discover an idea they hadn't even considered.",
     heroMicroProof: "3 days. Not 3 months.",
     primaryCtaText: "Discover what to build",
-    primaryCtaLink: "/assess",
+    primaryCtaLink: "/assessment",
     heroBelowCtaText: "Free • Takes 90 seconds • No signup required",
 
     showFeatures: true,

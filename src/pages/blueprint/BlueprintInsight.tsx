@@ -28,7 +28,11 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("blueprint-insight", {
-        body: { problem: problem.trim(), audience: audience.trim(), result: result.trim() },
+        body: {
+          problem: problem.trim(),
+          audience: audience.trim(),
+          method: result.trim(),
+        },
       });
       if (error) throw error;
       const text = data?.insight as string;
@@ -46,7 +50,7 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
           },
         },
       }));
-      toast.success("Your challenge framework is ready");
+      toast.success("Your challenge strategy is ready");
       onDone?.();
     } catch (err: any) {
       toast.error(err?.message || "Could not generate challenge. Please try again.");
@@ -57,29 +61,31 @@ const InsightForm = ({ onDone }: { onDone?: () => void }) => {
 
   return (
     <section className="mt-6 rounded-2xl border border-border bg-background p-6">
-      <h2 className="text-xl font-black">Build Your Challenge</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Answer 3 quick questions to create your challenge structure.</p>
+      <h2 className="text-xl font-black">Tell the AI strategist about your work</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Three short answers. The AI will design the right challenge for your audience.
+      </p>
 
       <div className="mt-6 space-y-5">
         <div>
-          <Label htmlFor="problem" className="text-sm font-bold">What problem does your audience want to solve?</Label>
+          <Label htmlFor="problem" className="text-sm font-bold">What problem do you solve?</Label>
           <DictatedTextarea id="problem" value={problem} onChange={(e) => setProblem(e.target.value)}
-            placeholder="People struggle with…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="Generate leads, lose weight, improve confidence, grow a business…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="audience" className="text-sm font-bold">Who is this challenge for?</Label>
+          <Label htmlFor="audience" className="text-sm font-bold">Who do you solve it for?</Label>
           <DictatedTextarea id="audience" value={audience} onChange={(e) => setAudience(e.target.value)}
-            placeholder="Coaches, consultants, creators, business owners…" rows={2} maxLength={300} className="mt-2 resize-none" />
+            placeholder="Coaches, consultants, creators, local businesses…" rows={2} maxLength={300} className="mt-2 resize-none" />
         </div>
         <div>
-          <Label htmlFor="result" className="text-sm font-bold">What transformation or outcome do they want?</Label>
+          <Label htmlFor="result" className="text-sm font-bold">How do you solve it?</Label>
           <DictatedTextarea id="result" value={result} onChange={(e) => setResult(e.target.value)}
-            placeholder="Generate leads, lose weight, improve confidence, get clients…" rows={3} maxLength={500} className="mt-2 resize-none" />
+            placeholder="Through challenges, coaching, systems, accountability, AI…" rows={3} maxLength={500} className="mt-2 resize-none" />
         </div>
       </div>
 
       <Button onClick={generate} disabled={!canSubmit} className="mt-6 h-12 w-full gap-2 text-sm font-black uppercase">
-        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Sparkles className="h-4 w-4" /> Generate My Challenge</>}
+        {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Designing your challenge…</> : <><Sparkles className="h-4 w-4" /> Design My Challenge</>}
       </Button>
     </section>
   );

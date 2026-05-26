@@ -108,10 +108,13 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
   // Assessment (broad — keep last)
   if (p === "/" ||
       p === "/assess" || p.startsWith("/assess/") ||
+      p === "/assessment" || p.startsWith("/assessment/") ||
+      p === "/free-assessment" || p === "/premium-assessment" ||
       p === "/results" || p.startsWith("/results/") ||
       p.startsWith("/invite/")) {
     return "assessment";
   }
+
 
   return "unknown";
 }

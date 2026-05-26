@@ -205,10 +205,11 @@ const Results = () => {
     deadline.setDate(deadline.getDate() + 2);
     const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long" });
     const sub = `Create a simple version of your lead system and see it working by ${deadlineLabel}.`;
+    const button = "Join the 3-Day Challenge";
     const tier = tierData?.tier;
     if (tier === "high") {
       return {
-        button: "Scale your challenge in 3 days",
+        button,
         sub,
         stageLabel: "Operator Stage",
         nextStep: "Scale",
@@ -222,7 +223,7 @@ const Results = () => {
     }
     if (tier === "mid") {
       return {
-        button: "Turn this into a working system in 3 days",
+        button,
         sub,
         stageLabel: "Builder Stage",
         nextStep: "Consistency",
@@ -235,7 +236,7 @@ const Results = () => {
       };
     }
     return {
-      button: "Build your challenge in 3 days",
+      button,
       sub,
       stageLabel: "Starter Stage",
       nextStep: "Foundation",

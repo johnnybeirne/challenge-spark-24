@@ -13,6 +13,7 @@ import {
   PREMIUM_LOCK_CTA,
 } from "@/hooks/useModuleAccess";
 import { getEntryIntent } from "@/lib/entryIntent";
+import RolePrimaryCta from "@/components/RolePrimaryCta";
 
 type ModuleEntry = {
   n: number;
@@ -88,11 +89,7 @@ const BlueprintDashboard = () => {
         </div>
 
         <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Button asChild className="h-12 gap-2 px-6 text-sm font-black uppercase">
-            <Link to="/challenge/join">
-              Take the Challenge <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+          <RolePrimaryCta className="h-12 px-6 text-sm" size="lg" />
           <Link
             to={`/blueprint/lesson/${nextModule.slug}`}
             className="text-xs font-bold uppercase tracking-wide text-muted-foreground hover:text-primary sm:ml-2"

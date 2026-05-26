@@ -10,6 +10,7 @@ import {
   PREMIUM_LOCK_MESSAGE,
   PREMIUM_LOCK_CTA,
 } from "@/hooks/useModuleAccess";
+import TrainingHomeLink from "@/components/TrainingHomeLink";
 
 type ModuleSlug = "1" | "2" | "3" | "4" | "5";
 

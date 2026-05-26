@@ -32,6 +32,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const stage = useUserStage();
   const trainingContent = useTrainingContent();
+  const { permissions } = useUserRole();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");

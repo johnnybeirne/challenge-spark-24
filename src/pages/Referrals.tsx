@@ -69,9 +69,9 @@ const Referrals = () => {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(320px,0.45fr)] lg:items-start">
         <div>
-        {/* Stats */}
+        {/* Stats — simplified for free students, full gamification for challengers+ */}
         <Card className="border-border mb-4">
-          <CardContent className="grid gap-4 p-5 sm:grid-cols-3">
+          <CardContent className={`grid gap-4 p-5 ${showGamification ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             <div className="rounded-full bg-primary/10 p-3">
               <Users className="h-6 w-6 text-primary" />
             </div>
@@ -83,14 +83,18 @@ const Referrals = () => {
                 {direct} direct · {indirect} indirect builders
               </p>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
-              <p className="text-xs text-muted-foreground">points earned from referrals</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
-              <p className="text-xs text-muted-foreground">pending referral points</p>
-            </div>
+            {showGamification && (
+              <div>
+                <p className="text-3xl font-bold text-foreground">{referralCredits}</p>
+                <p className="text-xs text-muted-foreground">points earned from referrals</p>
+              </div>
+            )}
+            {showGamification && (
+              <div>
+                <p className="text-3xl font-bold text-foreground">{pendingReferralCredits}</p>
+                <p className="text-xs text-muted-foreground">pending referral points</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

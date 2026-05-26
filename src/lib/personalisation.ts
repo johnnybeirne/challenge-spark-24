@@ -60,7 +60,7 @@ export const deriveChallengeName = (value: string) => {
 
 export function personalise(text: string, memory?: Partial<UserMemory> | null): string {
   const safe = {
-    firstName: memory?.name?.split(" ")[0] || "there",
+    firstName: memory?.name?.split(" ")[0] || "",
     audienceType: audienceLabel(memory?.audienceType),
     challengeType: challengeTypeLabel(memory?.challengeType),
     topic: memory?.topic || "",

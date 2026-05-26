@@ -28,7 +28,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     }
     prevJoinedRef.current = hasJoinedChallenge;
   }, [hasJoinedChallenge]);
-  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||
     state.challenge.completed ||

@@ -117,7 +117,7 @@ const DayChallenge = () => {
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
   // Setup state moved to /training hub
-  const firstName = state.user?.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || "";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });

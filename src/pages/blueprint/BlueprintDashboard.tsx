@@ -52,7 +52,7 @@ const BlueprintDashboard = () => {
   const completed = freeModules.filter((m) => tasks[`blueprint_lesson_${m.n}`]).length;
   const pct = Math.round((completed / freeModules.length) * 100);
   const nextModule = freeModules.find((m) => !tasks[`blueprint_lesson_${m.n}`]) ?? freeModules[freeModules.length - 1];
-  const firstName = state.user?.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || "";
 
   const handleLockedClick = () => {
     toast.message(PREMIUM_LOCK_TITLE, { description: PREMIUM_LOCK_MESSAGE });

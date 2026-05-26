@@ -39,7 +39,7 @@ const Rewards = () => {
   const [assets, setAssets] = useState<PartnerAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [creditUnlocked, setCreditUnlocked] = useState<string[]>([]);
-  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "there";
+  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
   const direct = state.network.direct;
   const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);
   const unlockedChallengeBonuses = challengeBonuses.filter((b) => completedDay >= b.day).length;

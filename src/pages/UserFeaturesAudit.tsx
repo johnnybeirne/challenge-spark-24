@@ -453,13 +453,17 @@ const PartnerLinksSection = () => {
 // ───────── Stage / Navigation cohesion checks (Prompt 47.6) ─────────
 type NavCheck = { label: string; status: Status; note?: string };
 const NAV_COHESION_CHECKS: NavCheck[] = [
+  { label: "Four distinct experience modes (Assessment / Blueprint / Challenge / VIP)", status: "Detected", note: "ExperienceModeBadge + accent bars via src/lib/experienceShell.ts" },
+  { label: "One primary CTA per experience", status: "Detected", note: "Assessment→'Join the 3-Day Challenge', Blueprint→'Take the Challenge', Challenge→'Unlock VIP Training', VIP→'Invite Others / Become a Partner'" },
   { label: "BottomNav hidden inside LMS routes", status: "Detected", note: "AppShell switches to ChallengeSidebar (LMS variant) for /blueprint/*" },
   { label: "Sidebar adapts: LMS items vs Challenge items", status: "Detected", note: "ChallengeSidebar renders LEARN / TOOLS / NEXT STEP for /blueprint/*" },
-  { label: "Assessment routes free of challenge gamification", status: "Detected", note: "/assess uses showNav=false in App routing" },
-  { label: "Single 'start here' journey: /assess → /blueprint → /blueprint/bridge → /challenger-dashboard", status: "Detected" },
+  { label: "Assessment routes free of challenge gamification", status: "Detected", note: "/assessment uses showNav=false; minimal diagnostic UI" },
+  { label: "Canonical route structure with legacy redirects", status: "Detected", note: "/assess, /join, /blueprint-join, /day/:day, /free-training, /upgrade, /vip all redirect with query preserved" },
+  { label: "In-app links migrated to canonical paths", status: "Detected", note: "navigate() calls updated across 18 files; legacy paths now unused except via direct URL" },
+  { label: "Differentiated onboarding by entry intent", status: "Detected", note: "Assessment→results+Johnny B; Blueprint→LMS+mentor; Challenge→Day 1 directly" },
   { label: "Stage indicator visible on Challenge dashboard", status: "Detected", note: "useUserStage().stageLabel rendered in Dashboard header" },
-  { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "src/lib/calendarSchedule.ts, src/pages/ResetPassword.tsx renamed to Leadio" },
-  { label: "Premium and challenge remain separate", status: "Detected", note: "/upgrade does not redirect to challenge; challenge does not require premium" },
+  { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "Renamed to Leadio across calendar, reset-password, etc." },
+  { label: "Premium and challenge remain separate", status: "Detected", note: "/premium does not redirect to challenge; challenge does not require premium" },
   { label: "Community gated until challenge entry", status: "Detected", note: "Community unlock requires Day 3 + URL + 3 referrals (canonical rule)" },
   { label: "User stage hook available", status: "Detected", note: "src/hooks/useUserStage.ts — stage, nextLabel, nextHref" },
 ];

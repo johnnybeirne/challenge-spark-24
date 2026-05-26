@@ -146,11 +146,11 @@ export const ROLE_PERMISSIONS: Record<LeadioRole, RolePermissions> = {
 };
 
 export const ROLE_PRIMARY_CTA: Record<LeadioRole, RoleCta> = {
-  visitor:      { label: "Join the 3-Day Challenge", href: "/challenge/join" },
+  visitor:      { label: "Join Free Training",       href: "/blueprint/join" },
   free_student: { label: "Take the Challenge",       href: "/challenge/join" },
   challenger:   { label: "Unlock VIP Training",      href: "/premium" },
   premium_user: { label: "Invite Others",            href: "/referrals" },
-  partner:      { label: "Open Partner Dashboard",   href: "/promoter" },
+  partner:      { label: "Promote the Challenge",    href: "/promoter" },
   admin:        { label: "Open Owner Console",       href: "/owner-console" },
 };
 

@@ -146,12 +146,12 @@ const ChallengeLanding = () => {
 
   const joinChallenge = (section: string) => {
     trackEvent("landing_cta_clicked", { section });
-    navigate("/assess");
+    navigate("/assessment");
   };
 
   const startQuiz = () => {
     trackEvent("landing_cta_clicked", { section: "challenge_assessment" });
-    navigate("/assess");
+    navigate("/assessment");
   };
 
   return (

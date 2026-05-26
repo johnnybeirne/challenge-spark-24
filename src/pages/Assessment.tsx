@@ -143,7 +143,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
   return (
     <>
-      <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assess" />
+      <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
     <div className="mx-auto flex min-h-screen w-[80vw] max-w-[60vw] flex-col p-6 max-md:max-w-[80vw]">
       <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
         <span>{current + 1} / {TOTAL_QUESTIONS}</span>

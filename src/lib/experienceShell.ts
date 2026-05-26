@@ -94,6 +94,8 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
   // Challenge
   if (p === "/dashboard" ||
       p === "/challenger-dashboard" ||
+      p === "/challenge" ||
+      p.startsWith("/challenge/") ||
       p.startsWith("/day/") ||
       p === "/unlocks" ||
       p === "/referrals" ||
@@ -102,13 +104,17 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
     return "challenge";
   }
 
+
   // Assessment (broad — keep last)
   if (p === "/" ||
       p === "/assess" || p.startsWith("/assess/") ||
+      p === "/assessment" || p.startsWith("/assessment/") ||
+      p === "/free-assessment" || p === "/premium-assessment" ||
       p === "/results" || p.startsWith("/results/") ||
       p.startsWith("/invite/")) {
     return "assessment";
   }
+
 
   return "unknown";
 }

@@ -105,31 +105,40 @@ const App = () => (
               <Route element={<AppShell fullWidth />}>
                 {/* Canonical primary entry — assessment-first landing */}
                 <Route path="/" element={<Landing />} />
-                {/* Direct challenge entry (high-intent users; does NOT force LMS) */}
+                {/* Challenge: canonical /challenge marketing entry */}
                 <Route path="/challenge" element={<ChallengeLanding />} />
-                {/* Free Training (Blueprint LMS) entry */}
-                <Route path="/blueprint" element={<Navigate to="/free-training" replace />} />
-                <Route path="/free-training" element={<BlueprintLanding />} />
+                {/* Blueprint: canonical /blueprint marketing entry */}
+                <Route path="/blueprint" element={<BlueprintLanding />} />
+                {/* Legacy alias kept for inbound links */}
+                <Route path="/free-training" element={<RedirectKeepingQuery to="/blueprint" />} />
+                {/* VIP: /premium canonical, /vip alias */}
                 <Route path="/premium" element={<Premium />} />
+                <Route path="/vip" element={<RedirectKeepingQuery to="/premium" />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}
               <Route element={<AppShell />}>
-                {/* Unified assessment engine — one component, three entry routes (mode controls post-result destination) */}
-                <Route path="/assess" element={<Assessment mode="challenge" />} />
+                {/* Canonical assessment route */}
                 <Route path="/assessment" element={<Assessment mode="challenge" />} />
+                {/* Legacy alias */}
+                <Route path="/assess" element={<RedirectKeepingQuery to="/assessment" />} />
+                {/* Mode-specific assessment entries (different post-result destination) */}
                 <Route path="/free-assessment" element={<Assessment mode="free_training" />} />
                 <Route path="/premium-assessment" element={<Assessment mode="premium_course" />} />
                 {/* Direct enrolment aliases */}
-                <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint-join" />} />
+                <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint/join" />} />
                 <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium" />} />
                 <Route path="/links" element={<Links />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />
                 <Route path="/results/high" element={<Results />} />
-                <Route path="/join" element={<ChallengeSignup />} />
-                <Route path="/blueprint-join" element={<BlueprintSignup />} />
+                {/* Canonical signup routes */}
+                <Route path="/challenge/join" element={<ChallengeSignup />} />
+                <Route path="/blueprint/join" element={<BlueprintSignup />} />
+                {/* Legacy signup aliases — redirect to canonical, preserve query (?redirect=, ?ref=, etc.) */}
+                <Route path="/join" element={<RedirectKeepingQuery to="/challenge/join" />} />
+                <Route path="/blueprint-join" element={<RedirectKeepingQuery to="/blueprint/join" />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
@@ -152,6 +161,9 @@ const App = () => (
                 <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
+                {/* Canonical day route */}
+                <Route path="/challenge/day-:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+                {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
@@ -175,6 +187,7 @@ const App = () => (
                 <Route path="/promoter" element={<PartnerGuard><PartnerDashboard /></PartnerGuard>} />
                 <Route path="/partner/performance" element={<PartnerGuard><PartnerPerformance /></PartnerGuard>} />
               </Route>
+
 
               {/* Owner console — sidebar layout, password-protected */}
               <Route path="/owner-console" element={<AdminLayout />}>

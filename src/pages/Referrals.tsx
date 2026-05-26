@@ -7,9 +7,12 @@ import { toast } from "sonner";
 import { shareOrCopy } from "@/lib/share";
 import EmptyState from "@/components/EmptyState";
 import { memoryShareText } from "@/lib/personalisation";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const Referrals = () => {
   const { state } = useAppState();
+  const { permissions } = useUserRole();
+  const showGamification = permissions.showChallengeGamification;
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "builder";

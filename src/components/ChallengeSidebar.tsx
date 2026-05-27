@@ -105,10 +105,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             </span>
           </button>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center gap-2 py-1">
             <button
               onClick={() => authUser && photoInputRef.current?.click()}
-              className="relative h-11 w-11 shrink-0"
+              className="relative h-16 w-16 shrink-0"
               title={hasAvatar ? "Change photo" : "Add your photo"}
               disabled={photoUploading || !authUser}
             >
@@ -119,24 +119,24 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                   if (e.currentTarget.src !== avatarPlaceholder) e.currentTarget.src = avatarPlaceholder;
                 }}
                 className={cn(
-                  "h-11 w-11 rounded-full object-cover transition-opacity hover:opacity-80",
+                  "h-16 w-16 rounded-full object-cover transition-opacity hover:opacity-80",
                   !hasAvatar && "border-2 border-dashed border-primary/50"
                 )}
               />
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
-                <Camera className="h-3 w-3" />
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
+                <Camera className="h-3.5 w-3.5" />
               </span>
             </button>
-            <button onClick={() => go("/challenger-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {hasSavedProgress ? `Welcome back, ${displayName}` : `Welcome, ${displayName}`}
+            <button onClick={() => go("/challenger-dashboard")} className="w-full text-center" title="Back to dashboard">
+              <p className="truncate text-lg font-bold text-foreground">
+                {hasSavedProgress ? `Welcome back ${displayName}` : `Welcome ${displayName}`}
               </p>
               {photoUploading ? (
                 <p className="truncate text-xs text-muted-foreground">Uploading…</p>
               ) : hasAvatar && hasName ? (
                 <p className="truncate text-xs text-muted-foreground">Dashboard</p>
               ) : (
-                <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary-foreground shadow-sm">
+                <span className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black uppercase tracking-wider text-primary-foreground shadow-md">
                   👉 Start here
                 </span>
               )}

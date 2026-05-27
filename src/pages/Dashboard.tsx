@@ -200,7 +200,7 @@ const Dashboard = () => {
                 <Play className="h-4 w-4" fill="currentColor" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-foreground">
+                <p className="truncate text-[20pt] font-bold text-foreground leading-tight">
                   {cfg.videoTitle || "Watch this first"}
                 </p>
                 <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>

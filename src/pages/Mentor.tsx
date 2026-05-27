@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
-import { copilotMemoryContext } from "@/lib/personalisation";
+import { challengerCoachContext, copilotMemoryContext } from "@/lib/personalisation";
+import { useUserRole } from "@/hooks/useUserRole";
+import { useUserStage } from "@/hooks/useUserStage";
 import TypingDots from "@/components/TypingDots";
 import { toast } from "sonner";
 

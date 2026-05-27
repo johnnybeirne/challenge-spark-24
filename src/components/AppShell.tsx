@@ -7,9 +7,11 @@ import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
 import TopBar from "./TopBar";
 import RightRail from "./RightRail";
+import BottomNav from "./BottomNav";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();

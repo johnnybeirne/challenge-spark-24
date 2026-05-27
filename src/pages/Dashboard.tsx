@@ -598,7 +598,7 @@ const Dashboard = () => {
 
           {!state.challenge.calendarAdded && (
           <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
               +50 <Zap className="h-3 w-3" fill="currentColor" />
             </span>
             <div className="flex h-full flex-col gap-4">

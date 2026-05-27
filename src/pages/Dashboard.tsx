@@ -275,7 +275,7 @@ const Dashboard = () => {
                   <div className="flex items-start gap-2.5">
                     <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Day 3</p>
+                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">{day3Date.toLocaleDateString(undefined, { weekday: "long" })}</p>
                       <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(day3Date)}</p>
                       <p className="mt-1 truncate text-sm text-muted-foreground">{day3Meta.title}</p>
                     </div>

@@ -63,7 +63,7 @@ const DayCopilot = ({
       if (error) throw error;
       const response = data?.response ?? "No response received.";
       setHistory((prev) => [...prev, { prompt, response }]);
-      trackEvent("copilot_prompt_sent", { day: dayNum, surface: outputKeyPrefix });
+      trackEvent("day_training_viewed", { day: dayNum, surface: outputKeyPrefix, mode: "copilot_prompt" });
       setState((prev) => ({
         ...prev,
         challenge: {

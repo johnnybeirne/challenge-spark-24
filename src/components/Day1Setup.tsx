@@ -260,7 +260,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 2 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold tracking-tight">What result do they want?</h2>
+              <h2 className="text-2xl font-bold tracking-tight">What result do you want them to achieve with your challenge?</h2>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {challengeOptions.map((opt) => (

@@ -187,7 +187,7 @@ const Dashboard = () => {
           {/* 1+2. VIDEO (LEFT) + CURRENT ACTION HERO (RIGHT) */}
           <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-stretch">
 
-          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
+          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8 lg:order-2">
             {identity.isPersonalised && (
               <p className="mb-1.5 truncate text-sm font-black uppercase tracking-[0.14em] text-foreground/70">
                 {identity.title}

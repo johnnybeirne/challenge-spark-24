@@ -185,7 +185,7 @@ const Dashboard = () => {
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
           {/* 1+2. VIDEO (LEFT) + CURRENT ACTION HERO (RIGHT) */}
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-stretch">
+          <div className="grid gap-5 lg:grid-cols-2 lg:items-stretch">
 
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8 lg:order-2">
             {identity.isPersonalised && (
@@ -263,7 +263,7 @@ const Dashboard = () => {
           </section>
 
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
-          <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <section className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Play className="h-4 w-4" fill="currentColor" />
@@ -280,7 +280,7 @@ const Dashboard = () => {
                 </span>
               )}
             </div>
-            <div className="h-[200px] w-full bg-black sm:h-[260px]">
+            <div className="aspect-video w-full flex-1 bg-black lg:aspect-auto">
               {cfg.videoUrl ? (
                 <iframe
                   src={cfg.videoUrl}

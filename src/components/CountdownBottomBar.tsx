@@ -47,9 +47,9 @@ const CountdownBottomBar = () => {
   if (remaining <= 0) return null;
 
   const { days, hours, minutes, seconds } = formatRemaining(remaining);
-  const totalHours = days * 24 + hours;
   const urgent = remaining < 6 * 60 * 60 * 1000;
   const pad = (n: number) => n.toString().padStart(2, "0");
+  const sep = <span className="opacity-60">·</span>;
 
   return (
     <div
@@ -72,7 +72,8 @@ const CountdownBottomBar = () => {
       >
         <Clock className="h-3.5 w-3.5" />
         <span className="tabular-nums">
-          {totalHours}h <span className="opacity-60">·</span> {pad(minutes)}m <span className="opacity-60">·</span> {pad(seconds)}s left
+          {days > 0 && <>{days}d {sep} </>}
+          {hours}h {sep} {pad(minutes)}m {sep} {pad(seconds)}s left
         </span>
       </div>
     </div>

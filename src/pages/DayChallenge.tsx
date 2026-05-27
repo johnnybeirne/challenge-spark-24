@@ -425,6 +425,9 @@ const DayChallenge = () => {
   return (
     <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
       <TaskCompleteAnim show={showTaskAnim} />
+      <div className="mb-4">
+        <ChallengeCountdown />
+      </div>
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3

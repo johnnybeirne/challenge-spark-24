@@ -53,6 +53,7 @@ const DictatedTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
               className="flex h-8 items-center justify-center gap-1 rounded-full border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <RotateCcw className="h-3.5 w-3.5" />
+              <span>Start again</span>
             </button>
           )}
           {isSupported && (

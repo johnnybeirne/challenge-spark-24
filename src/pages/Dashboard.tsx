@@ -523,7 +523,7 @@ const Dashboard = () => {
             {ctaLabel}
             <ArrowRight className="h-5 w-5" />
           </Button>
-          <p className="mt-2 text-xs font-bold uppercase tracking-wider text-primary">10–15 min · earn points · unlock rewards</p>
+          <p className="mt-3 text-sm font-bold uppercase tracking-[0.12em] text-primary">10–15 min · earn points · unlock rewards</p>
         </section>
 
         {permissions.showChallengeGamification && (

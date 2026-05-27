@@ -12,6 +12,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useUserState } from "@/hooks/useUserState";
 import { useUserRole } from "@/hooks/useUserRole";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
@@ -65,8 +66,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Points earned.");
   };
 
-  const avatarSrc = state.user?.avatarUrl || avatarPlaceholder;
   const hasAvatar = Boolean(state.user?.avatarUrl);
+  const hasName = Boolean(firstName);
+  // Sample placeholders when the user hasn't added their photo/name yet.
+  const avatarSrc = state.user?.avatarUrl || (hasName ? avatarPlaceholder : sampleUserAvatar);
+  const displayName = hasName ? firstName : "Alex";
+
 
   return (
     <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
@@ -123,10 +128,18 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </span>
             </button>
             <button onClick={() => go("/challenger-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
-              <p className="truncate text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
-              <p className="truncate text-xs text-muted-foreground">
-                {photoUploading ? "Uploading…" : hasAvatar ? "Dashboard" : "Tap photo to add yours"}
+              <p className="truncate text-sm font-semibold text-foreground">
+                {hasSavedProgress ? `Welcome back, ${displayName}` : `Welcome, ${displayName}`}
               </p>
+              {photoUploading ? (
+                <p className="truncate text-xs text-muted-foreground">Uploading…</p>
+              ) : hasAvatar && hasName ? (
+                <p className="truncate text-xs text-muted-foreground">Dashboard</p>
+              ) : (
+                <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary-foreground shadow-sm">
+                  👉 Start here
+                </span>
+              )}
             </button>
           </div>
         )}

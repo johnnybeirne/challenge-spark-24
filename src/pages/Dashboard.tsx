@@ -141,15 +141,16 @@ const Dashboard = () => {
       <header className="mb-6 flex flex-col gap-4 pb-2 lg:flex-row lg:items-center lg:justify-end">
         {(authUser || sessionStorage.getItem(DEMO_USER_KEY) === "1") && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            className="w-fit text-muted-foreground"
+            className="w-fit gap-2 border-border shadow-sm hover:bg-muted"
             onClick={async () => {
               sessionStorage.removeItem(DEMO_USER_KEY);
               await signOut();
               window.location.href = "/";
             }}
           >
+            <LogOut className="h-4 w-4" />
             {authUser ? "Log out" : "Exit user view"}
           </Button>
         )}

@@ -196,7 +196,14 @@ const AiCopilotChat = () => {
         >
           <span className="relative flex h-12 w-12 shrink-0 pointer-events-none">
             <img src={aiAvatar} alt="Johnny B AI" draggable={false} className="relative h-12 w-12 rounded-full object-cover border-2 border-background pointer-events-none" />
+            <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-primary border-2 border-card flex items-center justify-center pointer-events-none shadow-md">
+              <Move className="h-3 w-3 text-primary-foreground" />
+            </span>
             <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-primary border-2 border-card flex items-center justify-center pointer-events-none">
+              <MessageCircle className="h-3 w-3 text-primary-foreground" />
+            </span>
+          </span>
+          <span className="text-base font-semibold text-foreground pointer-events-none">Chat</span>
               <MessageCircle className="h-3 w-3 text-primary-foreground" />
             </span>
           </span>

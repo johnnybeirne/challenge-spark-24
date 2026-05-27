@@ -73,6 +73,206 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const displayName = hasName ? firstName : "Alex";
 
 
+  // ────────────────────────────────────────────────────────────────────────
+  // CHALLENGER-ONLY LAYOUT
+  // Only `challenger` role gets the journey-style sidebar.
+  // Free Student / Premium / Partner / Admin keep the existing layout below.
+  // ────────────────────────────────────────────────────────────────────────
+  if (role === "challenger") {
+    const currentDay = state.challenge.currentDay ?? 1;
+    const challengeCompleted = !!state.challenge.completed;
+    const dashboardActive = location.pathname === "/challenger-dashboard";
+
+    const days = [1, 2, 3].map((n) => {
+      const path = `/challenge/day-${n}`;
+      const active =
+        location.pathname === path ||
+        location.pathname === `/day/${n}` ||
+        location.pathname === `/challenge/day/${n}`;
+      const complete = challengeCompleted || currentDay > n;
+      const inProgress = !complete && currentDay === n;
+      const locked = !complete && !inProgress;
+      const status = complete ? "Complete" : inProgress ? "In Progress" : "Locked";
+      return { n, path, active, complete, inProgress, locked, status };
+    });
+
+    const tools = [
+      { path: "/referrals", label: "Invites", Icon: Share2 },
+      { path: "/unlocks", label: "Rewards", Icon: Gift },
+      { path: "/resources", label: "Resources", Icon: BookOpen },
+    ];
+
+    const bottom = [
+      { path: "/challenger-dashboard", label: "Profile", Icon: UserIcon, onClick: () => authUser && photoInputRef.current?.click() },
+      { path: "/challenger-dashboard", label: "Settings", Icon: Settings },
+      { path: "/mentor", label: "Support", Icon: HelpCircle },
+    ];
+
+    return (
+      <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-3 p-2" : "gap-4 p-4")}>
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            void handlePhotoUpload(e.target.files?.[0]);
+            e.currentTarget.value = "";
+          }}
+        />
+
+        {/* Brand */}
+        {!collapsed ? (
+          <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
+            <p className="text-xl font-black tracking-tight text-foreground">LEADIO</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Challenger</p>
+          </button>
+        ) : (
+          <p className="text-center text-xs font-black tracking-tight text-foreground">L</p>
+        )}
+
+        {/* Dashboard */}
+        <button
+          onClick={() => go("/challenger-dashboard")}
+          className={cn(
+            "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
+            collapsed ? "p-2" : "px-3 py-2.5",
+            dashboardActive && "ring-2 ring-primary/20 border-primary/40"
+          )}
+          title="Dashboard"
+        >
+          <div className="flex items-center gap-2">
+            <Compass className={cn("h-4 w-4 shrink-0", dashboardActive ? "text-primary" : "text-muted-foreground")} />
+            {!collapsed && <span className="text-sm font-semibold text-foreground">Dashboard</span>}
+          </div>
+        </button>
+
+        {/* DAYS — journey */}
+        <section className="space-y-1.5">
+          {!collapsed && (
+            <p className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Days</p>
+          )}
+          <div className="relative">
+            {!collapsed && (
+              <span className="pointer-events-none absolute left-[1.05rem] top-3 bottom-3 w-px bg-border" />
+            )}
+            <div className="space-y-1.5">
+              {days.map(({ n, path, active, complete, inProgress, locked, status }) => {
+                const Dot = complete ? CheckCircle2 : inProgress ? PlayCircle : locked ? Lock : Circle;
+                return (
+                  <button
+                    key={path}
+                    onClick={() => !locked && go(path)}
+                    disabled={locked}
+                    className={cn(
+                      "relative w-full rounded-xl text-left transition-all",
+                      collapsed ? "p-2" : "px-3 py-2",
+                      locked ? "cursor-not-allowed opacity-60" : "hover:bg-primary/5",
+                      active && "bg-background ring-2 ring-primary/20"
+                    )}
+                    title={`Day ${n} — ${status}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Dot
+                        className={cn(
+                          "h-4 w-4 shrink-0 bg-muted/60 rounded-full",
+                          complete && "text-success",
+                          inProgress && "text-primary",
+                          locked && "text-muted-foreground"
+                        )}
+                      />
+                      {!collapsed && (
+                        <div className="min-w-0 flex-1">
+                          <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
+                            Day {n}
+                          </p>
+                          <p className={cn(
+                            "text-[11px] font-semibold",
+                            complete ? "text-success" : inProgress ? "text-primary" : "text-muted-foreground"
+                          )}>
+                            {status}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* TOOLS */}
+        <section className="space-y-1.5">
+          {!collapsed && (
+            <p className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Tools</p>
+          )}
+          {tools.map(({ path, label, Icon }) => {
+            const active = location.pathname === path;
+            return (
+              <button
+                key={path}
+                onClick={() => go(path)}
+                className={cn(
+                  "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
+                  collapsed ? "p-2" : "px-3 py-2",
+                  active && "ring-2 ring-primary/20 border-primary/40"
+                )}
+                title={label}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary" : "text-muted-foreground")} />
+                  {!collapsed && <span className="text-sm font-semibold text-foreground">{label}</span>}
+                </div>
+              </button>
+            );
+          })}
+        </section>
+
+        {/* Bottom: Profile / Settings / Support + Logout */}
+        <div className="mt-auto space-y-1.5 pt-2">
+          {bottom.map(({ path, label, Icon, onClick }) => (
+            <button
+              key={label}
+              onClick={() => (onClick ? onClick() : go(path))}
+              className={cn(
+                "w-full rounded-xl text-left text-muted-foreground transition-all hover:bg-background hover:text-foreground",
+                collapsed ? "p-2" : "px-3 py-2"
+              )}
+              title={label}
+            >
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 shrink-0" />
+                {!collapsed && <span className="text-sm font-semibold">{label}</span>}
+              </div>
+            </button>
+          ))}
+          <button
+            onClick={async () => {
+              await signOut();
+              onNavigate?.();
+              navigate("/");
+              toast.success("Signed out");
+            }}
+            className={cn(
+              "w-full rounded-xl text-left text-muted-foreground transition-all hover:bg-destructive/5 hover:text-destructive",
+              collapsed ? "p-2" : "px-3 py-2"
+            )}
+            title="Log out"
+          >
+            <div className="flex items-center gap-2">
+              <LogOut className="h-4 w-4 shrink-0" />
+              {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+            </div>
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  // ────────────────────────────────────────────────────────────────────────
+  // Default layout (Free Student / Premium / Partner / Admin) — unchanged
+  // ────────────────────────────────────────────────────────────────────────
   return (
     <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
       

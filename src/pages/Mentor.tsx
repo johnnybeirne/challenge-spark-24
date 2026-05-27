@@ -78,9 +78,27 @@ const Mentor = () => {
     setInput("");
     setLoading(true);
     try {
-      const memoryContext = copilotMemoryContext(state.memory);
+      const ch = state.challenge;
+      const isComplete = ch.completed || ch.currentDay > 3;
+      const unlockMap: Record<number, string> = {
+        1: "AI Prompt Pack",
+        2: "Lead Magnet Templates",
+        3: "Community Access",
+      };
+      const memoryContext = isChallenger
+        ? challengerCoachContext(state.memory, {
+            currentDay,
+            completed: isComplete,
+            problem: ch.aiOutputs?.[`day1_problem`] || state.memory.topic,
+            audience: ch.aiOutputs?.[`day1_define_app`],
+            method: ch.aiOutputs?.[`day1_result`] || state.memory.desiredOutcome,
+            unlockedNext: isComplete ? "Community Access" : unlockMap[currentDay],
+            hasUrl: !!ch.url,
+            directReferrals: state.referrals?.directCount ?? 0,
+          })
+        : copilotMemoryContext(state.memory);
       const { data, error } = await supabase.functions.invoke("copilot", {
-        body: { prompt, memory: state.memory, memoryContext },
+        body: { prompt, memory: state.memory, memoryContext, stage },
       });
       if (error) throw error;
       const response = data?.response ?? "No response received.";

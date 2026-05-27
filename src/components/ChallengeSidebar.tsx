@@ -168,7 +168,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <span className="pointer-events-none absolute left-[1.05rem] top-3 bottom-3 w-px bg-border" />
             )}
             <div className="space-y-1.5">
-              {days.map(({ n, path, active, complete, inProgress, locked, status }) => {
+              {days.map(({ n, path, active, complete, inProgress, locked, status, dateLabel }) => {
                 const Dot = complete ? CheckCircle2 : inProgress ? PlayCircle : locked ? Lock : Circle;
                 return (
                   <button
@@ -181,7 +181,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       locked ? "cursor-not-allowed opacity-60" : "hover:bg-primary/5",
                       active && "bg-background ring-2 ring-primary/20"
                     )}
-                    title={`Day ${n} — ${status}`}
+                    title={`Day ${n} — ${dateLabel} — ${status}`}
                   >
                     <div className="flex items-center gap-3">
                       <Dot
@@ -194,9 +194,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       />
                       {!collapsed && (
                         <div className="min-w-0 flex-1">
-                          <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
-                            Day {n}
-                          </p>
+                          <div className="flex items-baseline justify-between gap-2">
+                            <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
+                              Day {n}
+                            </p>
+                            <p className={cn("text-[10px] font-bold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
+                              {dateLabel}
+                            </p>
+                          </div>
                           <p className={cn(
                             "text-[11px] font-semibold",
                             complete ? "text-success" : inProgress ? "text-primary" : "text-muted-foreground"

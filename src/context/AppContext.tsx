@@ -86,6 +86,7 @@ export interface AppState {
   challenge: {
     currentDay: number;
     startedAt: string;
+    endsAt: string;
     tasks: Record<string, boolean>;
     aiOutputs: Record<string, string>;
     launchUrl: string;

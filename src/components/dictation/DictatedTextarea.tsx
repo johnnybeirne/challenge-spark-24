@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Mic, Square } from "lucide-react";
+import { Mic, RotateCcw, Square } from "lucide-react";
 import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 import { useDictation } from "@/hooks/useDictation";
 import { cn } from "@/lib/utils";
+
 
 interface Props extends Omit<TextareaProps, "onChange"> {
   value: string;

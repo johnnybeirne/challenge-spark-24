@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save, RotateCcw } from "lucide-react";
+import { Camera, Loader2, Link as LinkIcon, Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -316,7 +316,7 @@ const Profile = () => {
                 Your answers from the Day 1 assessment. These power the AI Coach.
               </p>
             </div>
-            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart Day 1" />
+            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" />
           </div>
           <div className="space-y-4">
             {[

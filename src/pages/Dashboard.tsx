@@ -345,7 +345,7 @@ const Dashboard = () => {
                     <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">Your challenge profile</p>
                     <h2 className="mt-1.5 text-xl font-bold text-foreground">Saved answers powering your AI Coach</h2>
                   </div>
-                  <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Edit" />
+                  <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" />
                 </div>
                 <dl className="mt-4 space-y-3">
                   {rows.map((r) => (

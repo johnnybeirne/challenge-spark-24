@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
+import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 
 // Global right rail — momentum, social proof, rewards.
 // Read-only surface: derives from existing state, mutates nothing.
@@ -12,6 +13,7 @@ const RightRail = () => {
   const isChallengerShell = useIsChallengerShell();
   const { state } = useAppState();
   const [collapsed, setCollapsed] = useState(false);
+  const pulse = usePulseOnLogin();
   if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;
@@ -57,7 +59,7 @@ const RightRail = () => {
         <Button
           size="sm"
           variant="default"
-          className="h-10 w-10 rounded-full p-0 shadow-lg"
+          className={cn("h-10 w-10 rounded-full p-0 shadow-lg", pulse && "animate-attention-pulse")}
           onClick={() => setCollapsed(false)}
           aria-label="Expand stats panel"
           title="Expand stats"
@@ -77,7 +79,10 @@ const RightRail = () => {
       <Button
         size="sm"
         variant="default"
-        className="absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl"
+        className={cn(
+          "absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl",
+          pulse && "animate-attention-pulse"
+        )}
         onClick={() => setCollapsed(true)}
         aria-label="Collapse stats panel"
         title="Collapse stats"

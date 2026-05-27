@@ -34,6 +34,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Defer to avoid running inside the auth callback context
           setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
         }
+        if (_event === "SIGNED_IN") {
+          try { sessionStorage.setItem("leadio_just_logged_in", "1"); } catch {}
+        }
       }
     );
 

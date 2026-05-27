@@ -319,8 +319,8 @@ const Dashboard = () => {
                     <p className="text-[11px] text-muted-foreground">Done</p>
                   ) : (
                     <AddToCalendar
-                      variant="link"
-                      className="!h-auto !px-0 !py-0 text-[11px] font-bold text-primary hover:underline"
+                      variant="secondary"
+                      className="mt-1 !h-8 !px-2.5 text-[11px] font-bold"
                     />
                   )}
                 </div>

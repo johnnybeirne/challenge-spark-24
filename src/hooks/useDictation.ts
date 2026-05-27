@@ -17,6 +17,8 @@ export function useDictation() {
   const finalRef = useRef<string>("");
   const manualStopRef = useRef<boolean>(false);
   const shouldRunRef = useRef<boolean>(false);
+  const restartTimerRef = useRef<number | null>(null);
+  const startingRef = useRef<boolean>(false);
 
   const isSupported =
     typeof window !== "undefined" &&
@@ -25,6 +27,11 @@ export function useDictation() {
   const stop = useCallback(() => {
     manualStopRef.current = true;
     shouldRunRef.current = false;
+    startingRef.current = false;
+    if (restartTimerRef.current) {
+      window.clearTimeout(restartTimerRef.current);
+      restartTimerRef.current = null;
+    }
     try {
       recognitionRef.current?.stop();
     } catch {}
@@ -48,6 +55,30 @@ export function useDictation() {
       finalRef.current = "";
       manualStopRef.current = false;
       shouldRunRef.current = true;
+
+      const startRecognizer = (rec: any) => {
+        if (!shouldRunRef.current || startingRef.current) return;
+        startingRef.current = true;
+        try {
+          rec.start();
+          setIsListening(true);
+        } catch (err: any) {
+          if (shouldRunRef.current) {
+            restartTimerRef.current = window.setTimeout(() => {
+              restartTimerRef.current = null;
+              const next = buildRecognizer();
+              recognitionRef.current = next;
+              startingRef.current = false;
+              startRecognizer(next);
+            }, 350);
+            return;
+          }
+          toast.error(err?.message || "Couldn't start dictation.");
+          setIsListening(false);
+        } finally {
+          startingRef.current = false;
+        }
+      };
 
       const buildRecognizer = () => {
         const rec = new Ctor();
@@ -83,30 +114,25 @@ export function useDictation() {
             toast.error("No microphone found. Connect a mic and try again.");
             shouldRunRef.current = false;
             setIsListening(false);
-          } else if (e.error === "no-speech" || e.error === "aborted") {
+          } else if (e.error === "no-speech" || e.error === "aborted" || e.error === "network") {
             // Benign — onend will auto-restart if we're still meant to be running.
           } else {
-            toast.error(`Couldn't capture audio (${e.error}). Please try again.`);
-            shouldRunRef.current = false;
-            setIsListening(false);
+            // Some browsers emit transient speech-service errors mid-session.
+            // Keep the session alive and let onend rebuild the recognizer.
+            if (!shouldRunRef.current) return;
           }
         };
         rec.onend = () => {
           // Chrome ends the session after silence even with continuous=true.
           // Restart transparently unless the user pressed Stop.
           if (shouldRunRef.current && !manualStopRef.current) {
-            try {
-              rec.start();
-              return;
-            } catch {
-              // If we can't reuse it, swap in a fresh recognizer.
-              try {
-                const next = buildRecognizer();
-                recognitionRef.current = next;
-                next.start();
-                return;
-              } catch {}
-            }
+            restartTimerRef.current = window.setTimeout(() => {
+              restartTimerRef.current = null;
+              const next = buildRecognizer();
+              recognitionRef.current = next;
+              startRecognizer(next);
+            }, 250);
+            return;
           }
           setIsListening(false);
         };
@@ -121,14 +147,7 @@ export function useDictation() {
       // permission has been granted. Explicitly request the mic first — this
       // call MUST stay inside the user-gesture click handler.
       const begin = () => {
-        try {
-          rec.start();
-          setIsListening(true);
-        } catch (err: any) {
-          shouldRunRef.current = false;
-          setIsListening(false);
-          toast.error(err?.message || "Couldn't start dictation.");
-        }
+        startRecognizer(rec);
       };
 
       if (navigator.mediaDevices?.getUserMedia) {

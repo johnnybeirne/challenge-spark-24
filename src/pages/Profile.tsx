@@ -138,9 +138,9 @@ const Profile = () => {
       if (path) {
         await supabase
           .from("profiles")
-          // @ts-expect-error new column on regenerated types
-          .update({ avatar_url: path })
+          .update({ avatar_url: path } as never)
           .eq("user_id", profile.user_id);
+
         setAvatarUrl(path);
         setAvatarSigned(signedUrl ?? null);
         toast.success("Photo updated");
@@ -159,7 +159,6 @@ const Profile = () => {
       const fullName = [firstName.trim(), surname.trim()].filter(Boolean).join(" ");
       const { error } = await supabase
         .from("profiles")
-        // @ts-expect-error new columns
         .update({
           first_name: firstName.trim() || null,
           surname: surname.trim() || null,
@@ -169,8 +168,9 @@ const Profile = () => {
           instagram_url: instagram.trim() || null,
           youtube_url: youtube.trim() || null,
           website_url: website.trim() || null,
-        })
+        } as never)
         .eq("user_id", profile.user_id);
+
       if (error) throw error;
 
       // Update locally-saved challenge foundation answers too.

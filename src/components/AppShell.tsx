@@ -5,6 +5,8 @@ import PromoterNav from "./PromoterNav";
 import Footer from "./Footer";
 import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
+import TopBar from "./TopBar";
+import RightRail from "./RightRail";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";

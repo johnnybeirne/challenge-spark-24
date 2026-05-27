@@ -93,8 +93,8 @@ const Mentor = () => {
             audience: ch.aiOutputs?.[`day1_define_app`],
             method: ch.aiOutputs?.[`day1_result`] || state.memory.desiredOutcome,
             unlockedNext: isComplete ? "Community Access" : unlockMap[currentDay],
-            hasUrl: !!ch.url,
-            directReferrals: state.referrals?.directCount ?? 0,
+            hasUrl: !!ch.launchUrl,
+            directReferrals: state.referrals?.count ?? 0,
           })
         : copilotMemoryContext(state.memory);
       const { data, error } = await supabase.functions.invoke("copilot", {

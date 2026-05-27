@@ -315,7 +315,7 @@ const Dashboard = () => {
 
           {/* 4. MOMENTUM ACTIONS */}
           <section>
-            <p className="mb-3 px-1 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="mb-3 px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
               Momentum
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -339,12 +339,12 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Camera className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">Add Profile Photo</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 text-sm text-muted-foreground">
                     {photoDone ? "Done" : photoUploading ? "Uploading…" : "+50 points"}
                   </p>
                 </div>
@@ -357,17 +357,17 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <CalendarPlus className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-foreground">Add Challenge To Calendar</p>
                   {calendarDone ? (
-                    <p className="text-[11px] text-muted-foreground">Done</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">Done</p>
                   ) : (
                     <AddToCalendar
                       variant="secondary"
-                      className="mt-1 !h-8 !px-2.5 text-[11px] font-bold"
+                      className="mt-1.5 !h-9 !px-3 text-sm font-bold"
                     />
                   )}
                 </div>
@@ -382,12 +382,12 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Sparkles className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">Create Bio With AI</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 text-sm text-muted-foreground">
                     {bioDone ? "Done" : "+50 points"}
                   </p>
                 </div>

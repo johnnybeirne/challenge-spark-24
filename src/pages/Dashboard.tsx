@@ -180,18 +180,10 @@ const Dashboard = () => {
     };
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
-    const buildStamp = new Date().toISOString().replace("T", " ").slice(0, 16);
     return (
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
         <section className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
-          {/* TEMP DEPLOY-VERIFICATION BANNER — remove after confirmation */}
-          <div className="rounded-2xl border-4 border-dashed border-rose-500 bg-rose-500/10 p-5 text-center">
-            <p className="text-base font-black uppercase tracking-[0.18em] text-rose-600">
-              Layout Test — Dashboard Component Is Updating
-            </p>
-            <p className="mt-1 text-lg font-black text-rose-700">UPDATED LAYOUT VERSION 2</p>
-            <p className="mt-1 text-sm font-bold text-rose-700/80">Updated: {buildStamp}</p>
-          </div>
+
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
             {identity.isPersonalised && (

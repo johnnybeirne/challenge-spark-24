@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,10 +23,19 @@ const Leaderboard = () => {
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("participants");
+  const [searchParams] = useSearchParams();
+  const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
+  const focusRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     loadLeaderboard();
   }, []);
+
+  useEffect(() => {
+    if (!loading && focus && focusRef.current) {
+      focusRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [loading, focus, entries.length]);
 
   const loadLeaderboard = async () => {
     setLoading(true);
@@ -127,12 +137,14 @@ const Leaderboard = () => {
                 {entries.map((entry, i) => {
                   const rank = i + 1;
                   const badge = getRankBadge(rank);
+                  const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
                   return (
                     <div
                       key={entry.invite_code}
+                      ref={isFocus && !focusRef.current ? focusRef : undefined}
                       className={`flex items-center gap-3 px-4 py-3 ${
                         i < entries.length - 1 ? "border-b border-border" : ""
-                      } ${entry.isUser ? "bg-primary/5" : ""}`}
+                      } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
                     >
                       <span className="text-xs font-bold text-muted-foreground w-6 text-right">
                         {badge ? (

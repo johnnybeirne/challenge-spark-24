@@ -124,13 +124,16 @@ const RightRail = () => {
         <ol className="mt-3 space-y-2">
           {topChallengers.map((c, i) => (
             <li key={c.name} className="flex items-center justify-between gap-2">
-              <span className="flex min-w-0 items-center gap-2">
+              <Link
+                to={`/leaderboard?focus=${encodeURIComponent(c.name)}`}
+                className="flex min-w-0 items-center gap-2 group"
+                title={`View ${c.name} on the leaderboard`}
+              >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
                   {i + 1}
                 </span>
-                <span className="truncate text-sm font-semibold text-foreground">{c.name}</span>
-              </span>
-              
+                <span className="truncate text-sm font-semibold text-foreground group-hover:text-primary group-hover:underline">{c.name}</span>
+              </Link>
             </li>
           ))}
         </ol>

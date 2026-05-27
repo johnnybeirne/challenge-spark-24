@@ -66,6 +66,7 @@ import Unsubscribe from "@/pages/Unsubscribe";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import Waitlist from "@/pages/Waitlist";
 import WaitlistThanks from "@/pages/WaitlistThanks";
 import UserFeaturesAudit from "@/pages/UserFeaturesAudit";

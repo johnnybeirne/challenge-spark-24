@@ -46,8 +46,8 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Foundation (1-3) → Refinement (4-7) → AI Builder (8)
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+// Intro (0) → Foundation (1-3) → Refinement (4-7) → AI Builder (8)
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / professionals", icon: Briefcase },
@@ -84,14 +84,16 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
-  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 1 as Step; } })();
+  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
+    if (persistedStep >= 0 && persistedStep <= 8) return persistedStep as Step;
     if (saved?.audienceType) return 8;
     if (hasFoundation) return 4;
-    return 1;
+    if (saved?.problem || saved?.audience || saved?.how) return 1;
+    return 0;
   })();
+
 
   const [step, setStep] = useState<Step>(initialStep);
 
@@ -302,10 +304,10 @@ const Day1Setup = ({ onComplete }: Props) => {
   }) => (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">Foundation · {n} of 3</p>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-sm text-muted-foreground">{helper}</p>
       </div>
+
       <DictatedTextarea
         autoFocus
         value={value}
@@ -329,16 +331,12 @@ const Day1Setup = ({ onComplete }: Props) => {
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
-        {/* Day 1 header — persistent across steps */}
-        <div className="mb-5 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation</p>
-            <p className="mt-1 text-sm text-muted-foreground">Let's shape your challenge.</p>
-          </div>
-          {(saved?.audienceType || step > 1) && (
+        {/* Persistent restart + back controls */}
+        {(saved?.audienceType || step > 0) && (
+          <div className="mb-5 flex justify-end">
             <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart" />
-          )}
-        </div>
+          </div>
+        )}
 
         {step > 1 && step < 8 && (
           <button
@@ -349,6 +347,40 @@ const Day1Setup = ({ onComplete }: Props) => {
             Back
           </button>
         )}
+
+        {step === 0 && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="space-y-3">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
+              <p className="text-base md:text-lg text-muted-foreground">
+                Define the transformation your challenge takers will achieve.
+              </p>
+            </div>
+            <ul className="space-y-3">
+              {[
+                "What problem do you solve?",
+                "Who do you solve it for?",
+                "How do you solve it?",
+              ].map((q, i) => (
+                <li key={q} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+                    {i + 1}
+                  </span>
+                  <span className="text-base font-semibold text-foreground">{q}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              size="lg"
+              onClick={() => setStep(1)}
+              className="w-full h-12 text-base font-semibold"
+            >
+              Start
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
 
         {step === 1 && (
           <FoundationStep

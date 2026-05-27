@@ -329,12 +329,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
-        {/* Persistent restart + back controls */}
-        {(saved?.audienceType || step > 0) && (
-          <div className="mb-5 flex justify-end">
-            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart" />
-          </div>
-        )}
+        {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
+
 
         {step > 1 && step < 8 && (
           <button

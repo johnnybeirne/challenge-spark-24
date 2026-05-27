@@ -33,11 +33,54 @@ const RightRail = () => {
     </p>
   );
 
+  // Lightweight top-3 sample so the rail always shows social proof,
+  // even before live leaderboard data lands. Replace with live data when wired.
+  const topChallengers = [
+    { name: "Alex R.", pts: Math.max(points + 120, 320) },
+    { name: "Priya S.", pts: Math.max(points + 60, 260) },
+    { name: "Marcus T.", pts: Math.max(points + 20, 210) },
+  ];
+  const nextUnlockLabel = completed
+    ? "Community Access"
+    : currentDay === 1
+    ? "AI Prompt Pack"
+    : currentDay === 2
+    ? "Lead Magnet Templates"
+    : "Community Access";
+
   return (
     <aside className="hidden h-[calc(100vh-3rem)] w-[300px] shrink-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted/30 p-4 xl:flex">
+      {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Momentum</Eyebrow>
+          <Eyebrow>Top Challengers</Eyebrow>
+          <Trophy className="h-4 w-4 text-amber-500" />
+        </div>
+        <ol className="mt-3 space-y-2">
+          {topChallengers.map((c, i) => (
+            <li key={c.name} className="flex items-center justify-between gap-2">
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+                  {i + 1}
+                </span>
+                <span className="truncate text-sm font-semibold text-foreground">{c.name}</span>
+              </span>
+              <span className="text-sm font-bold tabular-nums text-muted-foreground">{c.pts}</span>
+            </li>
+          ))}
+        </ol>
+        <Link
+          to="/leaderboard"
+          className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline"
+        >
+          View leaderboard <ChevronRight className="h-4 w-4" />
+        </Link>
+      </Card>
+
+      {/* 2. YOUR MOMENTUM */}
+      <Card>
+        <div className="flex items-center justify-between">
+          <Eyebrow>Your Momentum</Eyebrow>
           <Flame className="h-4 w-4 text-orange-500" />
         </div>
         <p className="mt-3 text-2xl font-black text-foreground">{points} pts</p>
@@ -52,36 +95,22 @@ const RightRail = () => {
         </p>
       </Card>
 
+      {/* 3. INVITE PROGRESS */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Rewards</Eyebrow>
-          <Sparkles className="h-4 w-4 text-rose-500" />
-        </div>
-        <p className="mt-2 text-base font-bold text-foreground">
-          {unlocksCount} unlocked
-        </p>
-        {recentUnlock && (
-          <p className="mt-1 truncate text-sm text-muted-foreground">
-            Latest: {recentUnlock.name}
-          </p>
-        )}
-        <Link
-          to="/unlocks"
-          className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline"
-        >
-          View vault <ChevronRight className="h-4 w-4" />
-        </Link>
-      </Card>
-
-      <Card>
-        <div className="flex items-center justify-between">
-          <Eyebrow>Network</Eyebrow>
+          <Eyebrow>Invite Progress</Eyebrow>
           <Users className="h-4 w-4 text-emerald-500" />
         </div>
         <p className="mt-2 text-base font-bold text-foreground">
-          {directReferrals} {directReferrals === 1 ? "builder" : "builders"} invited
+          {directReferrals} of 3 builders invited
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full bg-emerald-500 transition-all"
+            style={{ width: `${Math.min(100, (directReferrals / 3) * 100)}%` }}
+          />
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
           {directReferrals >= 3 ? "Community unlocked" : `${3 - directReferrals} to community access`}
         </p>
         <Link
@@ -92,19 +121,26 @@ const RightRail = () => {
         </Link>
       </Card>
 
+      {/* 4. NEXT UNLOCK */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Leaderboard</Eyebrow>
-          <Trophy className="h-4 w-4 text-amber-500" />
+          <Eyebrow>Next Unlock</Eyebrow>
+          <Sparkles className="h-4 w-4 text-rose-500" />
         </div>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          See how you rank against this week's builders.
+        <p className="mt-2 text-base font-bold text-foreground">{nextUnlockLabel}</p>
+        {recentUnlock && (
+          <p className="mt-1 truncate text-sm text-muted-foreground">
+            Latest: {recentUnlock.name}
+          </p>
+        )}
+        <p className="mt-1 text-sm text-muted-foreground">
+          {unlocksCount} reward{unlocksCount === 1 ? "" : "s"} unlocked
         </p>
         <Link
-          to="/leaderboard"
+          to="/unlocks"
           className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline"
         >
-          View leaderboard <ChevronRight className="h-4 w-4" />
+          View vault <ChevronRight className="h-4 w-4" />
         </Link>
       </Card>
     </aside>

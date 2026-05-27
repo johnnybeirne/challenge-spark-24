@@ -24,6 +24,12 @@ const HIDE_ON_EXACT = new Set<string>([
   "/let-me-in",
 ]);
 
+// Pattern matches for routes with dynamic segments where the page itself owns its back UX.
+const HIDE_ON_PATTERN: RegExp[] = [
+  /^\/challenge\/day-\d+$/,
+  /^\/day\/\d+$/,
+];
+
 interface Props {
   className?: string;
   fallback?: string;
@@ -39,6 +45,7 @@ const BackButton = ({ className, fallback = "/challenger-dashboard", label = "Ba
   const { pathname } = useLocation();
 
   if (HIDE_ON_EXACT.has(pathname)) return null;
+  if (HIDE_ON_PATTERN.some((re) => re.test(pathname))) return null;
 
   const handleClick = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {

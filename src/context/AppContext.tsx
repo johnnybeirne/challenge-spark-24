@@ -340,6 +340,11 @@ function awardCredits(state: AppState, id: string, label: string, credits: numbe
 
 function applyCreditRules(state: AppState): AppState {
   const current = { ...defaultCredits, ...(state.credits ?? {}) };
+  // Self-heal: if the signup bonus was previously recorded but total drifted below 50,
+  // drop the guard so the 50pt joining bonus is re-awarded.
+  if (current.awardedActions.includes("challenge_signup") && (current.total ?? 0) < 50) {
+    current.awardedActions = current.awardedActions.filter((a) => a !== "challenge_signup");
+  }
   let updated: AppState = { ...state, credits: current };
   const completedDays = new Set(current.completedDays);
 
@@ -431,6 +436,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               partnerPerformance: prev.partnerPerformance,
             }));
           prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
+        } else {
+          // New user with no remote state — still award the signup bonus & run unlock rules.
+          setStateRaw((prev) => checkAndTriggerUnlocks(prev));
         }
         setHydrated(true);
       })();

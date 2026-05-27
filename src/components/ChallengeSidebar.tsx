@@ -12,6 +12,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useUserState } from "@/hooks/useUserState";
 import { useUserRole } from "@/hooks/useUserRole";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {

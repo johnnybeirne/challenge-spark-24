@@ -316,7 +316,7 @@ const Profile = () => {
                 Your answers from the Day 1 assessment. These power the AI Coach.
               </p>
             </div>
-            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart Day 1" />
+            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" />
           </div>
           <div className="space-y-4">
             {[

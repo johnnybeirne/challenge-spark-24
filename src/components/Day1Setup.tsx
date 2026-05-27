@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
 import { mergeMemory, normalizeChallengeType, copilotMemoryContext } from "@/lib/personalisation";
@@ -22,6 +23,10 @@ export interface SetupData {
   challengeType: string;
   topicHint: string;
   desiredOutcome?: string;
+  // Foundation answers — captured first, drive every downstream AI prompt.
+  problem?: string;
+  audience?: string;
+  how?: string;
 }
 
 export const getSetup = (): SetupData | null => {
@@ -39,8 +44,8 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// 1-4 = In-Challenge Assessment, 5 = AI-Guided Challenge Builder
-type Step = 1 | 2 | 3 | 4 | 5;
+// Foundation (1-3) → Refinement (4-7) → AI Builder (8)
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / professionals", icon: Briefcase },
@@ -57,7 +62,7 @@ const challengeOptions = [
 const challengeLabel = (v: string) =>
   challengeOptions.find((o) => o.value === v)?.label.toLowerCase().replace(/^a /, "") ?? v;
 
-const audienceLabel = (v: "b2b" | "b2c") =>
+const audienceLabelShort = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
 
 interface ChatEntry {
@@ -78,9 +83,22 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 1 as Step; } })();
-  const initialStep: Step = (persistedStep >= 1 && persistedStep <= 5 ? persistedStep : (saved?.audienceType ? 5 : 1)) as Step;
+  const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
+  const initialStep: Step = (() => {
+    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
+    if (saved?.audienceType) return 8;
+    if (hasFoundation) return 4;
+    return 1;
+  })();
 
   const [step, setStep] = useState<Step>(initialStep);
+
+  // Foundation answers
+  const [problem, setProblem] = useState<string>(saved?.problem ?? "");
+  const [audience, setAudience] = useState<string>(saved?.audience ?? "");
+  const [how, setHow] = useState<string>(saved?.how ?? "");
+
+  // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(saved?.audienceType ?? null);
   const [challengeType, setChallengeType] = useState<string>(saved?.challengeType ?? "");
   const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
@@ -103,13 +121,57 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(2); };
-  const handleChallenge = (v: string) => { setChallengeType(v); advance(3); };
-  const handleTopicNext = () => setStep(4);
   const goBack = () => setStep(Math.max(1, (step as number) - 1) as Step);
 
-  // STEP 1 COMPLETE → save the assessment, persist to memory + aiOutputs,
-  // and advance to the AI-guided builder (Step 2 of Day 1).
+  // Persist foundation answers progressively so refresh doesn't wipe them.
+  const persistFoundation = (patch: Partial<SetupData>) => {
+    try {
+      const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
+      localStorage.setItem(SETUP_KEY, JSON.stringify({ ...current, ...patch }));
+    } catch {}
+  };
+
+  const handleFoundationNext = (current: 1 | 2 | 3) => {
+    if (current === 1) {
+      if (!problem.trim()) return;
+      persistFoundation({ problem: problem.trim() });
+      setStep(2);
+    } else if (current === 2) {
+      if (!audience.trim()) return;
+      persistFoundation({ audience: audience.trim() });
+      setStep(3);
+    } else {
+      if (!how.trim()) return;
+      persistFoundation({ how: how.trim() });
+      // Save into memory + aiOutputs so AI uses these as foundational context.
+      setState((prev) => ({
+        ...prev,
+        memory: mergeMemory(prev.memory, {
+          topic: problem.trim(),
+          desiredOutcome: how.trim(),
+        }),
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day1_foundation: JSON.stringify({
+              problem: problem.trim(),
+              audience: audience.trim(),
+              how: how.trim(),
+            }),
+          },
+        },
+      }));
+      trackEvent("memory_created", { source: "day1_foundation" });
+      setStep(4);
+    }
+  };
+
+  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
+  const handleChallenge = (v: string) => { setChallengeType(v); advance(6); };
+  const handleTopicNext = () => setStep(7);
+
+  // Step 7 → save the refinement, advance to the AI-guided builder (step 8).
   const handleSaveAssessment = () => {
     if (!audienceType || !challengeType) return;
     const data: SetupData = {
@@ -118,6 +180,9 @@ const Day1Setup = ({ onComplete }: Props) => {
       challengeType,
       topicHint: topicHint.trim(),
       desiredOutcome: topicHint.trim(),
+      problem: problem.trim(),
+      audience: audience.trim(),
+      how: how.trim(),
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 
@@ -127,15 +192,17 @@ const Day1Setup = ({ onComplete }: Props) => {
         name: prev.user?.name || prev.memory.name,
         audienceType,
         challengeType: normalizeChallengeType(challengeType),
-        desiredOutcome: topicHint,
-        topic: topicHint,
+        desiredOutcome: topicHint || how,
+        topic: topicHint || problem,
       }),
       challenge: {
         ...prev.challenge,
-        // Persist assessment answers so Day 1 reads "In Progress" everywhere.
         aiOutputs: {
           ...prev.challenge.aiOutputs,
           day1_assessment: JSON.stringify({
+            problem: problem.trim(),
+            audience: audience.trim(),
+            how: how.trim(),
             audienceType,
             challengeType,
             transformation: topicHint,
@@ -146,10 +213,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
-    setStep(5);
+    setStep(8);
   };
 
-  // STEP 2 COMPLETE → finalise Day 1 (Training.tsx bumps currentDay to 2 + marks day1Watched)
+  // Step 8 → finalise Day 1 (Training.tsx bumps currentDay to 2 + marks day1Watched)
   const handleFinishDay1 = () => {
     if (!audienceType || !challengeType) return;
     const data: SetupData = {
@@ -158,6 +225,9 @@ const Day1Setup = ({ onComplete }: Props) => {
       challengeType,
       topicHint: topicHint.trim(),
       desiredOutcome: topicHint.trim(),
+      problem: problem.trim(),
+      audience: audience.trim(),
+      how: how.trim(),
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });
@@ -171,8 +241,13 @@ const Day1Setup = ({ onComplete }: Props) => {
     setBuilderInput("");
     try {
       const memoryContext = copilotMemoryContext(state.memory);
+      const foundationLine = `Foundation answers — Problem: ${problem}. Audience: ${audience}. How they solve it: ${how}.`;
       const { data, error } = await supabase.functions.invoke("copilot", {
-        body: { prompt, memory: state.memory, memoryContext },
+        body: {
+          prompt,
+          memory: state.memory,
+          memoryContext: `${memoryContext}\n${foundationLine}`,
+        },
       });
       if (error) throw error;
       const response = data?.response ?? "No response received.";
@@ -194,7 +269,47 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  
+  const FoundationStep = ({
+    n,
+    title,
+    helper,
+    value,
+    setValue,
+    placeholder,
+    onNext,
+  }: {
+    n: 1 | 2 | 3;
+    title: string;
+    helper: string;
+    value: string;
+    setValue: (v: string) => void;
+    placeholder: string;
+    onNext: () => void;
+  }) => (
+    <div className="space-y-6 animate-fade-in">
+      <div className="space-y-2">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">Foundation · {n} of 3</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+        <p className="text-sm text-muted-foreground">{helper}</p>
+      </div>
+      <Textarea
+        autoFocus
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={placeholder}
+        className="min-h-[140px] text-base"
+      />
+      <Button
+        size="lg"
+        onClick={onNext}
+        disabled={!value.trim()}
+        className="w-full h-12 text-base font-semibold"
+      >
+        Continue
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
+    </div>
+  );
 
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">
@@ -203,14 +318,14 @@ const Day1Setup = ({ onComplete }: Props) => {
         <div className="mb-5 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation</p>
-            <p className="mt-1 text-sm text-muted-foreground">Let’s shape your challenge.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Let's shape your challenge.</p>
           </div>
           {(saved?.audienceType || step > 1) && (
             <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart" />
           )}
         </div>
 
-        {step > 1 && step < 5 && (
+        {step > 1 && step < 8 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -221,6 +336,42 @@ const Day1Setup = ({ onComplete }: Props) => {
         )}
 
         {step === 1 && (
+          <FoundationStep
+            n={1}
+            title="What problem do you solve?"
+            helper="In your own words — the pain, frustration, or gap your work removes."
+            value={problem}
+            setValue={setProblem}
+            placeholder="e.g. Coaches struggle to package what they know into something people will pay for."
+            onNext={() => handleFoundationNext(1)}
+          />
+        )}
+
+        {step === 2 && (
+          <FoundationStep
+            n={2}
+            title="Who do you solve it for?"
+            helper="Be specific — who is this person, what stage are they in, what do they want?"
+            value={audience}
+            setValue={setAudience}
+            placeholder="e.g. New coaches, 0–12 months in, who have expertise but no offer."
+            onNext={() => handleFoundationNext(2)}
+          />
+        )}
+
+        {step === 3 && (
+          <FoundationStep
+            n={3}
+            title="How do you solve it?"
+            helper="Your method, framework, or approach — what makes the result happen."
+            value={how}
+            setValue={setHow}
+            placeholder="e.g. A 3-step packaging system that turns expertise into a signature offer."
+            onNext={() => handleFoundationNext(3)}
+          />
+        )}
+
+        {step === 4 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h1 className="text-3xl font-bold tracking-tight">Who is your challenge for?</h1>
@@ -257,7 +408,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 2 && (
+        {step === 5 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="text-2xl font-bold tracking-tight">What result do you want them to achieve with your challenge?</h2>
@@ -281,7 +432,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 6 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="text-2xl font-bold tracking-tight">What transformation will they experience?</h2>
@@ -305,14 +456,14 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 4 && audienceType && (
+        {step === 7 && audienceType && (
           <div className="space-y-6 animate-fade-in text-center">
             <div className="space-y-3">
               <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Here's what you're building</p>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
                 You're building a{" "}
                 <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
-                <span className="text-primary">{audienceLabel(audienceType)}</span>
+                <span className="text-primary">{audienceLabelShort(audienceType)}</span>
               </h2>
             </div>
             {topicHint && (
@@ -335,22 +486,29 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 5 && (
+        {step === 8 && (
           <div className="space-y-5 animate-fade-in">
             <div className="space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Build it with your AI co-pilot</h2>
               <p className="text-muted-foreground">
-                Ask anything to refine your positioning, structure, hook, or transformation. Your assessment is already loaded as context.
+                Ask anything to refine your positioning, structure, hook, or transformation. Your foundation answers are already loaded as context.
               </p>
             </div>
 
             {/* Snapshot */}
-            <div className="rounded-xl border border-border bg-card/60 p-4 text-sm">
+            <div className="rounded-xl border border-border bg-card/60 p-4 text-sm space-y-2">
               <p className="font-semibold text-foreground">
                 A <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
-                <span className="text-primary">{audienceLabel(audienceType as "b2b" | "b2c")}</span>
+                <span className="text-primary">{audienceLabelShort(audienceType as "b2b" | "b2c")}</span>
                 {topicHint && <> — <span className="text-muted-foreground">{topicHint}</span></>}
               </p>
+              {(problem || audience || how) && (
+                <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  {problem && <p><span className="font-semibold text-foreground">Problem:</span> {problem}</p>}
+                  {audience && <p><span className="font-semibold text-foreground">For:</span> {audience}</p>}
+                  {how && <p><span className="font-semibold text-foreground">How:</span> {how}</p>}
+                </div>
+              )}
             </div>
 
             {/* Chat thread */}

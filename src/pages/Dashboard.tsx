@@ -471,7 +471,7 @@ const Dashboard = () => {
                 videoUrl={cfg.videoUrl}
                 watched={t.dashboardVideoWatched}
                 watchedLabel="Intro training complete"
-                primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => { markDashboardWatched(); navigate("/challenge/day-1"); } }}
+                primaryCta={{ label: ctaLabel, onClick: () => { markDashboardWatched(); navigate(`/challenge/day-${ctaDay}`); } }}
                 
               />
               

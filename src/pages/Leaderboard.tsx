@@ -23,10 +23,19 @@ const Leaderboard = () => {
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("participants");
+  const [searchParams] = useSearchParams();
+  const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
+  const focusRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     loadLeaderboard();
   }, []);
+
+  useEffect(() => {
+    if (!loading && focus && focusRef.current) {
+      focusRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [loading, focus, entries.length]);
 
   const loadLeaderboard = async () => {
     setLoading(true);

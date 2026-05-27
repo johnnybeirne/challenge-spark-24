@@ -194,7 +194,7 @@ const EarnRewards = () => {
           const nextReward = getNextReward(points);
           const threshold = nextReward?.credits ?? points;
           const prevThreshold = (() => {
-            const earned = [...(creditRewardsThresholds)].filter((c) => c <= points);
+            const earned = creditRewards.map((r) => r.credits).filter((c) => c <= points);
             return earned.length ? earned[earned.length - 1] : 0;
           })();
           const pct = nextReward

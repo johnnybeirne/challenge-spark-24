@@ -182,10 +182,12 @@ const Dashboard = () => {
 
     return (
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
-        <section className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
+        <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
-          {/* 1. CURRENT ACTION HERO */}
-          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
+          {/* 1+2. VIDEO (LEFT) + CURRENT ACTION HERO (RIGHT) */}
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-stretch">
+
+          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8 lg:order-2">
             {identity.isPersonalised && (
               <p className="mb-1.5 truncate text-sm font-black uppercase tracking-[0.14em] text-foreground/70">
                 {identity.title}
@@ -308,6 +310,9 @@ const Dashboard = () => {
               )}
             </div>
           </section>
+          </div>
+
+
 
 
 

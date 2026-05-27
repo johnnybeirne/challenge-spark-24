@@ -33,12 +33,23 @@ interface PartnerAsset {
   partner_name?: string;
 }
 
-// Reward ladder — milestones unlocked by direct invites.
-const ladder = [
-  { invites: 1, title: "Launch Checklist", desc: "A printable plan for shipping your challenge cleanly." },
-  { invites: 3, title: "Partner Bonus Vault", desc: "Access curated bonuses from other builders." },
-  { invites: 5, title: "AI Prompt Pack", desc: "Battle-tested prompts to sharpen your challenge." },
-  { invites: 10, title: "Builder Circle Access", desc: "Join the private promotion network." },
+// Reward ladder — points-based milestones.
+// `major: true` marks headline rewards used for "next major" emphasis.
+interface Rung {
+  points: number;
+  title: string;
+  desc?: string;
+  major?: boolean;
+}
+const ladder: Rung[] = [
+  { points: 100, title: "Starter Resource Kit" },
+  { points: 200, title: "Advanced Challenge Training" },
+  { points: 300, title: "VIP Implementation Workshop" },
+  { points: 400, title: "Private Community Access" },
+  { points: 500, title: "Challenge Promotion Spotlight", desc: "We'll help showcase and promote your challenge to the LEADIO audience and ecosystem.", major: true },
+  { points: 600, title: "Partner Bonus Training" },
+  { points: 750, title: "Founder Inner Circle Session" },
+  { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADIO network.", major: true },
 ];
 
 /**

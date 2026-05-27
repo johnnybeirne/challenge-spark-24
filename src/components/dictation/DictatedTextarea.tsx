@@ -36,29 +36,32 @@ const DictatedTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
           ref={ref}
           value={value}
           onChange={onChange}
-          className={cn(isSupported && "pr-12", className)}
+          className={cn(isSupported && "pr-24", className)}
           {...props}
         />
         {isSupported && (
           <button
             type="button"
             onClick={handleToggle}
-            title={isListening ? "Stop dictation" : "Dictate with your voice"}
-            aria-label={isListening ? "Stop dictation" : "Start dictation"}
+            title={isListening ? "Stop dictation" : "Speak"}
+            aria-label={isListening ? "Stop dictation" : "Speak"}
             className={cn(
-              "absolute bottom-2 right-2 flex items-center justify-center rounded-full transition-colors",
+              "absolute bottom-2 right-2 flex items-center justify-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors",
               isListening
-                ? "h-8 px-2.5 gap-1.5 bg-destructive text-destructive-foreground animate-pulse"
-                : "h-8 w-8 bg-primary/10 text-primary hover:bg-primary/20"
+                ? "bg-destructive text-destructive-foreground animate-pulse"
+                : "bg-orange-500 text-white hover:bg-orange-600"
             )}
           >
             {isListening ? (
               <>
-                <span className="text-xs font-semibold">Stop</span>
+                <span>Stop</span>
                 <Square className="h-3 w-3" fill="currentColor" />
               </>
             ) : (
-              <Mic className="h-4 w-4" />
+              <>
+                <Mic className="h-3.5 w-3.5" />
+                <span>Speak</span>
+              </>
             )}
           </button>
         )}

@@ -21,6 +21,7 @@ import { memoryShareText } from "@/lib/personalisation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
+import { getNextReward, creditRewards } from "@/lib/credits";
 
 interface PartnerAsset {
   id: string;
@@ -187,36 +188,42 @@ const EarnRewards = () => {
           </p>
         </section>
 
-        {/* 2. YOUR PROGRESS — light, no big numbers */}
-        <section className="mb-14">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Your progress</h2>
-          <div className="grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border">
-            {[
-              { label: "Invited", value: direct },
-              { label: "Their invites", value: indirect },
-              { label: "Network", value: totalNetwork },
-            ].map((s) => (
-              <div key={s.label} className="bg-card px-4 py-5 text-center">
-                <p className="text-2xl font-semibold text-foreground tabular-nums">{s.value}</p>
-                <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{s.label}</p>
+        {/* 2. YOUR PROGRESS — simple clarity */}
+        {(() => {
+          const points = state.credits?.total ?? 0;
+          const nextReward = getNextReward(points);
+          const threshold = nextReward?.credits ?? points;
+          const prevThreshold = (() => {
+            const earned = creditRewards.map((r) => r.credits).filter((c) => c <= points);
+            return earned.length ? earned[earned.length - 1] : 0;
+          })();
+          const pct = nextReward
+            ? Math.min(100, Math.max(0, ((points - prevThreshold) / Math.max(1, threshold - prevThreshold)) * 100))
+            : 100;
+          return (
+            <section className="mb-14">
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Your progress</h2>
+              <div className="rounded-xl border border-border bg-card px-5 py-5">
+                <div className="space-y-1.5">
+                  <p className="text-sm text-foreground">
+                    <span className="font-semibold tabular-nums">{direct}</span>{" "}
+                    <span className="text-muted-foreground">successful invite{direct === 1 ? "" : "s"}</span>
+                  </p>
+                  <p className="text-sm text-foreground">
+                    <span className="font-semibold tabular-nums">{points}</span>{" "}
+                    <span className="text-muted-foreground">points earned</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {nextReward
+                      ? <>Next unlock at <span className="font-semibold text-foreground tabular-nums">{threshold}</span> points</>
+                      : "You've unlocked every reward."}
+                  </p>
+                </div>
+                <Progress value={pct} className="mt-4 h-1.5" />
               </div>
-            ))}
-          </div>
-
-          <div className="mt-5">
-            <div className="mb-2 flex items-baseline justify-between text-sm">
-              <span className="text-muted-foreground">
-                {direct >= nextRung.invites
-                  ? "You've reached the top rung."
-                  : <>Next reward: <span className="font-medium text-foreground">{nextRung.title}</span></>}
-              </span>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {Math.min(direct, nextRung.invites)} / {nextRung.invites}
-              </span>
-            </div>
-            <Progress value={progressPct} className="h-1.5" />
-          </div>
-        </section>
+            </section>
+          );
+        })()}
 
         {/* 3. REWARD LADDER — list, not a card grid */}
         <section className="mb-14">

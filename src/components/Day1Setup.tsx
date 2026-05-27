@@ -123,40 +123,6 @@ const Day1Setup = ({ onComplete }: Props) => {
             Back
           </button>
         )}
-        {step === 0 && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="space-y-2 text-center">
-              
-              <h1 className="text-3xl font-bold tracking-tight">How this challenge works</h1>
-              <p className="text-muted-foreground">Let’s get you set up, {firstName}.</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-              <div className="flex aspect-video items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <PlayCircle className="h-14 w-14" />
-              </div>
-              <h2 className="mt-4 text-lg font-bold text-foreground">The 3-day challenge growth system</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                You’re going to build something real over the next 3 days, {firstName}.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {[
-                ["Build once", "Create an evergreen challenge that keeps working after the launch."],
-                ["Unlock more", "Invite people who join to unlock extra training and rewards."],
-                ["Launch fast", `By Day 3, you’ll have a live challenge, ${firstName}.`],
-              ].map(([title, body]) => (
-                <div key={title} className="rounded-xl border border-border bg-card/70 p-4">
-                  <p className="font-semibold text-foreground">{title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{body}</p>
-                </div>
-              ))}
-            </div>
-            <Button size="lg" onClick={() => setStep(1)} className="w-full h-14 text-base font-semibold">
-              Start Day 1
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        )}
 
         {step === 1 && (
           <div className="space-y-6 animate-fade-in">

@@ -94,6 +94,7 @@ export function getExperienceFromPath(pathname: string): ExperienceType {
   // Challenge
   if (p === "/dashboard" ||
       p === "/challenger-dashboard" ||
+      p === "/profile" ||
       p === "/challenge" ||
       p.startsWith("/challenge/") ||
       p.startsWith("/day/") ||

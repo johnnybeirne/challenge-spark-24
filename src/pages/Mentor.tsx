@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { challengerCoachContext, copilotMemoryContext } from "@/lib/personalisation";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useUserStage } from "@/hooks/useUserStage";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import TypingDots from "@/components/TypingDots";
 import { toast } from "sonner";
 

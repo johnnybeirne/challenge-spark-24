@@ -30,7 +30,7 @@ const BottomNav = () => {
             <Link
               key={label}
               to={to}
-              className={`flex min-h-[48px] min-w-[56px] flex-col items-center justify-center gap-0.5 px-2 text-[10px] font-semibold transition-colors ${
+              className={`flex min-h-[52px] min-w-[60px] flex-col items-center justify-center gap-1 px-2 text-sm font-semibold leading-none transition-colors ${
                 active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >

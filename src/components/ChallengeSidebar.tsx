@@ -139,14 +139,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
             <p className="text-xl font-black tracking-tight text-foreground">LEADIO</p>
             <p
-              className="mt-0.5 truncate text-[10px] font-black uppercase tracking-[0.18em] text-primary"
+              className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"
               title={identity.title}
             >
               {identity.isPersonalised ? identity.shortTitle : "Challenger"}
             </p>
           </button>
         ) : (
-          <p className="text-center text-xs font-black tracking-tight text-foreground">L</p>
+          <p className="text-center text-base font-black tracking-tight text-foreground">L</p>
         )}
 
         {/* Dashboard */}
@@ -168,7 +168,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* DAYS — journey */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Days</p>
+            <p className="px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">Days</p>
           )}
           <div className="relative">
             {!collapsed && (
@@ -184,7 +184,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                     disabled={locked}
                     className={cn(
                       "relative w-full rounded-xl text-left transition-all",
-                      collapsed ? "p-2" : "px-3 py-2",
+                      collapsed ? "p-2" : "px-3 py-2.5",
                       locked ? "cursor-not-allowed opacity-60" : "hover:bg-primary/5",
                       active && "bg-background ring-2 ring-primary/20"
                     )}
@@ -205,12 +205,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                             <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
                               Day {n}
                             </p>
-                            <p className={cn("text-[10px] font-bold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
+                            <p className={cn("text-sm font-semibold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
                               {dateLabel}
                             </p>
                           </div>
                           <p className={cn(
-                            "text-[11px] font-semibold",
+                            "mt-0.5 text-sm font-semibold",
                             complete ? "text-success" : inProgress ? "text-primary" : "text-muted-foreground"
                           )}>
                             {status}
@@ -228,7 +228,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* TOOLS */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Tools</p>
+            <p className="px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">Tools</p>
           )}
           {tools.map(({ path, label, Icon }) => {
             const active = location.pathname === path;

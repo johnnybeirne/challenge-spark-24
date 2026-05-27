@@ -183,23 +183,23 @@ const Dashboard = () => {
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
             {identity.isPersonalised && (
-              <p className="mb-1 truncate text-[11px] font-black uppercase tracking-[0.18em] text-foreground/70">
+              <p className="mb-1.5 truncate text-sm font-black uppercase tracking-[0.14em] text-foreground/70">
                 {identity.title}
               </p>
             )}
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary sm:text-[11px]">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
               {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
             </p>
             <h1 className="mt-2 text-xl font-black leading-tight text-foreground sm:text-3xl">
               Today: {meta.title}
             </h1>
-            <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            <p className="mt-2 max-w-2xl text-base text-muted-foreground">
               {meta.outcome}
             </p>
             {/* Desktop CTA — mobile uses sticky bottom CTA */}
             <Button
               size="lg"
-              className="mt-5 hidden h-12 gap-2 px-6 text-sm font-black uppercase tracking-wider sm:inline-flex sm:text-base"
+              className="mt-5 hidden h-12 gap-2 px-6 text-base font-black uppercase tracking-wider sm:inline-flex"
               onClick={() => navigate(`/challenge/day-${ctaDay}`)}
             >
               {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
@@ -207,21 +207,21 @@ const Dashboard = () => {
             </Button>
 
             {/* Today → Tomorrow → Next Unlock — compact stacked rows on mobile, 3-col on desktop */}
-            <div className="mt-5 grid gap-2 border-t border-primary/20 pt-4 sm:mt-6 sm:gap-2 sm:pt-5 sm:grid-cols-3">
+            <div className="mt-5 grid gap-3 border-t border-primary/20 pt-4 sm:mt-6 sm:pt-5 sm:grid-cols-3">
               <div className="flex items-center gap-2.5 sm:items-start">
                 <CircleDot className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Today</p>
-                  <p className="truncate text-sm font-bold text-foreground">{meta.title}</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Today</p>
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{meta.title}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2.5 sm:items-start">
                 <Circle className="h-4 w-4 shrink-0 text-muted-foreground/60 sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
                     {tomorrowMeta ? "Tomorrow" : "After this"}
                   </p>
-                  <p className="truncate text-sm font-bold text-foreground">
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">
                     {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
                   </p>
                 </div>
@@ -229,8 +229,8 @@ const Dashboard = () => {
               <div className="flex items-center gap-2.5 sm:items-start">
                 <Zap className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Next Unlock</p>
-                  <p className="truncate text-sm font-bold text-foreground">{nextUnlock}</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Next Unlock</p>
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{nextUnlock}</p>
                 </div>
               </div>
             </div>
@@ -239,16 +239,16 @@ const Dashboard = () => {
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
           {cfg.enabled && cfg.videoUrl && (
             <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Play className="h-3.5 w-3.5" fill="currentColor" />
+              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Play className="h-4 w-4" fill="currentColor" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-foreground">{cfg.videoTitle}</p>
-                  <p className="truncate text-[11px] text-muted-foreground">Quick briefing · ~2 min</p>
+                  <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
                 </div>
                 {state.training.dashboardVideoWatched && (
-                  <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+                  <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
                     Watched
                   </span>
                 )}
@@ -280,29 +280,29 @@ const Dashboard = () => {
 
           {/* 3. TODAY'S TASK */}
           <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
               Today's task
             </p>
             <h2 className="mt-1.5 text-xl font-bold text-foreground">
               Answer 3 questions about your challenge
             </h2>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4 space-y-3">
               {[
                 "What problem do you solve?",
                 "Who do you solve it for?",
                 "How do you solve it?",
               ].map((q, i) => (
                 <li key={q} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
                     {i + 1}
                   </span>
-                  <span className="text-sm font-semibold text-foreground sm:text-base">{q}</span>
+                  <span className="text-base font-semibold text-foreground">{q}</span>
                 </li>
               ))}
             </ul>
             <Button
               size="lg"
-              className="mt-5 h-12 w-full gap-2 text-sm font-black uppercase tracking-wider sm:w-auto"
+              className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
               onClick={() => {
                 trackEvent("dashboard_training_viewed");
                 navigate("/mentor");
@@ -315,7 +315,7 @@ const Dashboard = () => {
 
           {/* 4. MOMENTUM ACTIONS */}
           <section>
-            <p className="mb-3 px-1 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="mb-3 px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
               Momentum
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -339,12 +339,12 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Camera className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">Add Profile Photo</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 text-sm text-muted-foreground">
                     {photoDone ? "Done" : photoUploading ? "Uploading…" : "+50 points"}
                   </p>
                 </div>
@@ -357,17 +357,17 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <CalendarPlus className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-foreground">Add Challenge To Calendar</p>
                   {calendarDone ? (
-                    <p className="text-[11px] text-muted-foreground">Done</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">Done</p>
                   ) : (
                     <AddToCalendar
                       variant="secondary"
-                      className="mt-1 !h-8 !px-2.5 text-[11px] font-bold"
+                      className="mt-1.5 !h-9 !px-3 text-sm font-bold"
                     />
                   )}
                 </div>
@@ -382,12 +382,12 @@ const Dashboard = () => {
                     : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Sparkles className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">Create Bio With AI</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 text-sm text-muted-foreground">
                     {bioDone ? "Done" : "+50 points"}
                   </p>
                 </div>
@@ -400,7 +400,7 @@ const Dashboard = () => {
         <div className="fixed inset-x-0 bottom-[64px] z-30 border-t border-border bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
           <Button
             size="lg"
-            className="h-12 w-full gap-2 text-sm font-black uppercase tracking-wider"
+            className="h-12 w-full gap-2 text-base font-black uppercase tracking-wider"
             onClick={() => navigate(`/challenge/day-${ctaDay}`)}
           >
             {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
@@ -459,7 +459,7 @@ const Dashboard = () => {
                 onMarkWatched={markDashboardWatched}
                 primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => navigate("/challenge/day-1") }}
               />
-              <p className="text-xs text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
+              <p className="text-sm text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
             </>
           );
         })()}
@@ -470,7 +470,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
-            <div className="mb-2 flex justify-between px-0.5 text-xs font-semibold text-muted-foreground sm:text-sm">
+            <div className="mb-3 flex justify-between px-0.5 text-sm font-semibold text-muted-foreground">
               {challengeSteps.map((step) => {
                 const status = getStepStatus(step.day);
                 const dim = status === "Locked";
@@ -479,9 +479,9 @@ const Dashboard = () => {
                     key={step.day}
                     className={`flex flex-col ${step.day === 1 ? "items-start" : step.day === 2 ? "items-center" : "items-end"}`}
                   >
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${dim ? "text-muted-foreground/60" : "text-primary"}`}>Day {step.day}</span>
+                    <span className={`text-sm font-black uppercase tracking-[0.12em] ${dim ? "text-muted-foreground/70" : "text-primary"}`}>Day {step.day}</span>
                     {getDayDate(step.day) && (
-                      <span className={`text-xs sm:text-sm ${dim ? "text-muted-foreground/70" : "text-foreground"}`}>{getDayDate(step.day)}</span>
+                      <span className={`mt-0.5 text-sm ${dim ? "text-muted-foreground/70" : "text-foreground"}`}>{getDayDate(step.day)}</span>
                     )}
                   </div>
                 );
@@ -507,9 +507,9 @@ const Dashboard = () => {
                   >
                     <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
-                      <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
-                      <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
+                      <p className={`text-sm font-black uppercase tracking-[0.12em] ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <p className={`mt-0.5 text-base font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
+                      <p className={`mt-1 text-sm font-medium ${isActive || isComplete ? "text-primary" : "text-muted-foreground"}`}>{status}</p>
                     </div>
                   </div>
                 );
@@ -523,14 +523,14 @@ const Dashboard = () => {
             {ctaLabel}
             <ArrowRight className="h-5 w-5" />
           </Button>
-          <p className="mt-2 text-xs font-bold uppercase tracking-wider text-primary">10–15 min · earn points · unlock rewards</p>
+          <p className="mt-3 text-sm font-bold uppercase tracking-[0.12em] text-primary">10–15 min · earn points · unlock rewards</p>
         </section>
 
         {permissions.showChallengeGamification && (
         <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-wider text-primary">Points Earned</p>
+              <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Points Earned</p>
               <div className="mt-1 flex items-end gap-2">
                 <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
                 <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>
@@ -555,7 +555,7 @@ const Dashboard = () => {
             const photoDone = !!state.user?.avatarUrl;
             return (
             <section className={`relative rounded-2xl border p-5 shadow-sm sm:p-6 ${photoDone ? "border-border bg-muted/40 opacity-60" : "border-border bg-card"}`}>
-              <span className={`pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
+              <span className={`pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full px-3 py-1 text-sm font-bold ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
                 {photoDone ? <><Lock className="h-3 w-3" /> Done</> : <>+50 <Zap className="h-3 w-3" fill="currentColor" /></>}
               </span>
               <div className="flex h-full flex-col gap-4">
@@ -574,7 +574,7 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className="min-w-0 pr-14">
-                    <p className={`text-xs font-black uppercase tracking-wide ${photoDone ? "text-muted-foreground" : "text-primary"}`}>Step 1</p>
+                    <p className={`text-sm font-black uppercase tracking-[0.12em] ${photoDone ? "text-muted-foreground" : "text-primary"}`}>Step 1</p>
                     <h2 className={`mt-0.5 text-lg font-bold ${photoDone ? "text-muted-foreground" : "text-foreground"}`}>Add your challenge photo</h2>
                   </div>
                 </div>
@@ -598,7 +598,7 @@ const Dashboard = () => {
 
           {!state.challenge.calendarAdded && (
           <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
               +50 <Zap className="h-3 w-3" fill="currentColor" />
             </span>
             <div className="flex h-full flex-col gap-4">
@@ -617,7 +617,7 @@ const Dashboard = () => {
                   </span>
                 </div>
                 <div className="min-w-0 pr-14">
-                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Step 2</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
                 </div>
               </div>
@@ -627,7 +627,7 @@ const Dashboard = () => {
           )}
 
           <section className="relative rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+            <span className="pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
               +50 <Zap className="h-3 w-3" fill="currentColor" />
             </span>
             <div className="flex h-full flex-col gap-4">
@@ -641,7 +641,7 @@ const Dashboard = () => {
                   </span>
                 </div>
                 <div className="min-w-0 pr-14">
-                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 3</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Step 3</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Create Bio</h2>
                 </div>
               </div>
@@ -653,7 +653,7 @@ const Dashboard = () => {
                 maxLength={500}
               />
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
+                <span className="text-sm text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
                 <Button type="button" variant="secondary" className="h-10 gap-2" disabled={bioSaving} onClick={handleBioSave}>
                   {bioSaving ? "Saving…" : state.user?.bio ? "Update bio" : "Save bio"}
                 </Button>

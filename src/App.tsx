@@ -161,14 +161,18 @@ const App = () => (
                 <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
-                {/* Canonical day route (slash form) */}
+                {/* Day 1 — canonical experience lives at /training (Day1Setup with assessment + setup + AI positioning). All Day 1 aliases redirect here. */}
+                <Route path="/challenge/day/1" element={<RedirectKeepingQuery to="/training" />} />
+                <Route path="/challenge/day-1" element={<RedirectKeepingQuery to="/training" />} />
+                <Route path="/day/1" element={<RedirectKeepingQuery to="/training" />} />
+                {/* Canonical day route (slash form) — handles Day 2 & 3 */}
                 <Route path="/challenge/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 {/* Hyphen-form aliases — React Router v6 needs explicit static paths (no partial dynamic segments) */}
-                <Route path="/challenge/day-1" element={<RedirectKeepingQuery to="/challenge/day/1" />} />
                 <Route path="/challenge/day-2" element={<RedirectKeepingQuery to="/challenge/day/2" />} />
                 <Route path="/challenge/day-3" element={<RedirectKeepingQuery to="/challenge/day/3" />} />
                 {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
                 <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />

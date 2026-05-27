@@ -104,7 +104,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       const active =
         location.pathname === path ||
         location.pathname === `/day/${n}` ||
-        location.pathname === `/challenge/day/${n}`;
+        location.pathname === `/challenge/day/${n}` ||
+        (n === 1 && location.pathname === "/training");
+
       const complete = challengeCompleted || currentDay > n;
       const inProgress = !complete && currentDay === n;
       const locked = !complete && !inProgress;
@@ -383,7 +385,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           { n: 3, label: "Launch", Icon: Rocket },
         ].map(({ n, label, Icon }) => {
           const path = `/challenge/day-${n}`;
-          const active = location.pathname === path || location.pathname === `/day/${n}` || location.pathname === `/challenge/day/${n}`;
+          const active = location.pathname === path || location.pathname === `/day/${n}` || location.pathname === `/challenge/day/${n}` || (n === 1 && location.pathname === "/training");
             const currentDay = state.challenge.currentDay ?? 1;
             const challengeCompleted = !!state.challenge.completed;
             const complete = challengeCompleted || currentDay > n;

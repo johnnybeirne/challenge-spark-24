@@ -15,11 +15,16 @@ const Training = () => {
   const handleComplete = () => {
     setState((prev) => ({
       ...prev,
-      training: { ...prev.training, hubCompleted: true, preChallengeWatched: true },
+      training: { ...prev.training, hubCompleted: true, preChallengeWatched: true, day1Watched: true },
+      challenge: {
+        ...prev.challenge,
+        currentDay: Math.max(prev.challenge.currentDay || 1, 2),
+      },
     }));
     trackEvent("training_hub_completed");
     navigate("/challenger-dashboard");
   };
+
 
   return (
     <div className="min-h-screen bg-background">

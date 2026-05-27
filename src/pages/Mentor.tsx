@@ -134,7 +134,7 @@ const Mentor = () => {
         </header>
 
 
-      <section className="flex-1 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4">
+      <section className="min-h-[50vh] flex-1 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4">
         {messages.length === 0 && (
           <div className="py-8 text-center">
             <p className="text-sm text-muted-foreground">Try a starter prompt:</p>

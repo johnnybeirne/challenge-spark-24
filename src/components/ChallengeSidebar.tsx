@@ -232,8 +232,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* TOOLS */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">Tools</p>
+            <p className="flex items-center gap-1.5 px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+              <Rocket className="h-3.5 w-3.5" /> Build Momentum
+            </p>
           )}
+
           {tools.map(({ path, label, Icon }) => {
             const active = location.pathname === path;
             return (

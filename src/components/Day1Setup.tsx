@@ -226,21 +226,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               <h1 className="text-3xl font-bold tracking-tight">Who is your challenge for?</h1>
               <p className="text-muted-foreground">Let's clarify the audience first.</p>
             </div>
-            <div className="space-y-3">
-              {audienceOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleAudience(opt.value)}
-                  className={`w-full flex items-center gap-4 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
-                    audienceType === opt.value ? "border-primary bg-primary/10" : "border-border bg-card"
-                  }`}
-                >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <opt.icon className="h-6 w-6" />
-                  </div>
-                  <span className="font-semibold">{opt.label}</span>
-                </button>
-              ))}
+            <div role="radiogroup" aria-label="Audience" className="grid grid-cols-2 gap-3">
+              {audienceOptions.map((opt) => {
+                const selected = audienceType === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => handleAudience(opt.value)}
+                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-xl border-2 text-center transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                      selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
+                        selected ? "border-primary" : "border-border"
+                      }`}
+                    >
+                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                    </span>
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <opt.icon className="h-6 w-6" />
+                    </div>
+                    <span className="font-semibold">{opt.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

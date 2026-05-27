@@ -555,7 +555,7 @@ const Dashboard = () => {
             const photoDone = !!state.user?.avatarUrl;
             return (
             <section className={`relative rounded-2xl border p-5 shadow-sm sm:p-6 ${photoDone ? "border-border bg-muted/40 opacity-60" : "border-border bg-card"}`}>
-              <span className={`pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
+              <span className={`pointer-events-none absolute right-3 top-3 inline-flex select-none items-center gap-1 rounded-full px-3 py-1 text-sm font-bold ${photoDone ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
                 {photoDone ? <><Lock className="h-3 w-3" /> Done</> : <>+50 <Zap className="h-3 w-3" fill="currentColor" /></>}
               </span>
               <div className="flex h-full flex-col gap-4">

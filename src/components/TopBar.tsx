@@ -13,7 +13,7 @@ const TopBar = () => {
   const isAdminLike = role === "admin" || role === "partner";
 
   const tools = [
-    { to: "/mentor", label: "Ask AI", Icon: MessageCircle },
+    { to: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle },
     { to: "/calendar", label: "Live", Icon: CalendarDays },
     { to: "/prompt-library", label: "Prompts", Icon: BookOpen },
     { to: "/bonus-vault", label: "Rewards", Icon: Sparkles },

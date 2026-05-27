@@ -128,10 +128,18 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </span>
             </button>
             <button onClick={() => go("/challenger-dashboard")} className="min-w-0 flex-1 text-left" title="Back to dashboard">
-              <p className="truncate text-sm font-semibold text-foreground">{hasSavedProgress ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`}</p>
-              <p className="truncate text-xs text-muted-foreground">
-                {photoUploading ? "Uploading…" : hasAvatar ? "Dashboard" : "Tap photo to add yours"}
+              <p className="truncate text-sm font-semibold text-foreground">
+                {hasSavedProgress ? `Welcome back, ${displayName}` : `Welcome, ${displayName}`}
               </p>
+              {photoUploading ? (
+                <p className="truncate text-xs text-muted-foreground">Uploading…</p>
+              ) : hasAvatar && hasName ? (
+                <p className="truncate text-xs text-muted-foreground">Dashboard</p>
+              ) : (
+                <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary-foreground shadow-sm">
+                  👉 Start here
+                </span>
+              )}
             </button>
           </div>
         )}

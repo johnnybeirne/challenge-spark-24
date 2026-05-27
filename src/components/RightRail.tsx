@@ -49,7 +49,7 @@ const RightRail = () => {
     : "Community Access";
 
   return (
-    <aside className="hidden w-[300px] shrink-0 flex-col gap-3 overflow-visible border-l border-border bg-muted/30 p-4 xl:flex">
+    <aside className="hidden w-[300px] shrink-0 flex-col gap-3 overflow-visible border-l border-border bg-muted/30 p-4 lg:flex">
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">

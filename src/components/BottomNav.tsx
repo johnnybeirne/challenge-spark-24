@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Flame, Gift, Users } from "lucide-react";
+import { LayoutDashboard, Flame, Gift, Sparkles } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 
 const BottomNav = () => {
@@ -15,7 +15,7 @@ const BottomNav = () => {
     { to: "/challenger-dashboard", label: "Dashboard", icon: LayoutDashboard, match: ["/challenger-dashboard"] },
     { to: challengePath, label: "Challenge", icon: Flame, match: ["/challenge/"] },
     { to: "/unlocks", label: "Unlocks", icon: Gift, match: ["/unlocks"] },
-    { to: "/referrals", label: "Referrals", icon: Users, match: ["/referrals"] },
+    { to: "/earn", label: "Earn Rewards", icon: Sparkles, match: ["/earn", "/referrals", "/rewards", "/bonus-vault"] },
   ];
 
   return (

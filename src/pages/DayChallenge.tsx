@@ -25,6 +25,7 @@ import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",

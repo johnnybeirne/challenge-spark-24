@@ -331,16 +331,12 @@ const Day1Setup = ({ onComplete }: Props) => {
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
-        {/* Day 1 header — persistent across steps */}
-        <div className="mb-5 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation</p>
-            <p className="mt-1 text-sm text-muted-foreground">Let's shape your challenge.</p>
-          </div>
-          {(saved?.audienceType || step > 1) && (
+        {/* Persistent restart + back controls */}
+        {(saved?.audienceType || step > 0) && (
+          <div className="mb-5 flex justify-end">
             <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart" />
-          )}
-        </div>
+          </div>
+        )}
 
         {step > 1 && step < 8 && (
           <button
@@ -351,6 +347,40 @@ const Day1Setup = ({ onComplete }: Props) => {
             Back
           </button>
         )}
+
+        {step === 0 && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="space-y-3">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
+              <p className="text-base md:text-lg text-muted-foreground">
+                Define the transformation your challenge takers will achieve.
+              </p>
+            </div>
+            <ul className="space-y-3">
+              {[
+                "What problem do you solve?",
+                "Who do you solve it for?",
+                "How do you solve it?",
+              ].map((q, i) => (
+                <li key={q} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+                    {i + 1}
+                  </span>
+                  <span className="text-base font-semibold text-foreground">{q}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              size="lg"
+              onClick={() => setStep(1)}
+              className="w-full h-12 text-base font-semibold"
+            >
+              Start
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
 
         {step === 1 && (
           <FoundationStep

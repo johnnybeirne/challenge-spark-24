@@ -165,16 +165,26 @@ const Dashboard = () => {
     const calendarDone = !!state.challenge.calendarAdded;
     const bioDone = !!state.user?.bio;
 
+    // Dynamic "Today" system — what's now, next, and the next unlock
+    const nextDay = !isComplete && ctaDay < 3 ? ctaDay + 1 : null;
+    const tomorrowMeta = nextDay ? dayMeta[nextDay] : null;
+    const unlockMap: Record<number, string> = {
+      1: "AI Prompt Pack",
+      2: "Lead Magnet Templates",
+      3: "Community Access",
+    };
+    const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
+
     return (
       <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
         <section className="mx-auto max-w-3xl space-y-6">
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 shadow-md sm:p-8">
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
-              Day {ctaDay} · Your next action
+              {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
             </p>
             <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
-              Day {ctaDay} — {meta.title}
+              Today: {meta.title}
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
               {meta.outcome}
@@ -187,6 +197,35 @@ const Dashboard = () => {
               {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
               <ArrowRight className="h-4 w-4" />
             </Button>
+
+            {/* Today → Tomorrow → Next Unlock strip */}
+            <div className="mt-6 grid gap-2 border-t border-primary/20 pt-5 sm:grid-cols-3">
+              <div className="flex items-start gap-2.5">
+                <CircleDot className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Today</p>
+                  <p className="truncate text-sm font-bold text-foreground">{meta.title}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
+                    {tomorrowMeta ? "Tomorrow" : "After this"}
+                  </p>
+                  <p className="truncate text-sm font-bold text-foreground">
+                    {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Zap className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Next Unlock</p>
+                  <p className="truncate text-sm font-bold text-foreground">{nextUnlock}</p>
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}

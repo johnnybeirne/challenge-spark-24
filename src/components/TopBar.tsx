@@ -6,6 +6,7 @@ import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import NotificationsBell from "@/components/NotificationsBell";
 import GlobalSearch from "@/components/GlobalSearch";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 

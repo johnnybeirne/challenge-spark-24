@@ -653,7 +653,7 @@ const Dashboard = () => {
                 maxLength={500}
               />
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
+                <span className="text-sm text-muted-foreground">{bioDraft.trim().length}/500 · min 20</span>
                 <Button type="button" variant="secondary" className="h-10 gap-2" disabled={bioSaving} onClick={handleBioSave}>
                   {bioSaving ? "Saving…" : state.user?.bio ? "Update bio" : "Save bio"}
                 </Button>

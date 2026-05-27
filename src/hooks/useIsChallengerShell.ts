@@ -26,6 +26,8 @@ const CHALLENGER_ROUTE_PREFIXES = [
   "/referrals",
   "/bonus-vault",
   "/rewards",
+  "/mentor",
+
 ];
 
 const isChallengerRoute = (pathname: string) =>

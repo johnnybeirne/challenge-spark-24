@@ -459,7 +459,7 @@ const Dashboard = () => {
                 onMarkWatched={markDashboardWatched}
                 primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => navigate("/challenge/day-1") }}
               />
-              <p className="text-xs text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
+              <p className="text-sm text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
             </>
           );
         })()}

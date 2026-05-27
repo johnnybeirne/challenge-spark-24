@@ -11,8 +11,8 @@ interface Props {
   lesson: string;
   watched: boolean;
   watchedLabel?: string;
-  ctaLabel: string;
-  onMarkWatched: () => void;
+  ctaLabel?: string;
+  onMarkWatched?: () => void;
   videoUrl?: string;
   primaryCta?: { label: string; onClick: () => void };
   secondaryCta?: { label: string; onClick: () => void };
@@ -108,15 +108,17 @@ const TrainingVideoCard = ({
               {secondaryCta.label}
             </Button>
           )}
-          <Button
-            variant={watched ? "secondary" : "ghost"}
-            size="sm"
-            onClick={onMarkWatched}
-            className="sm:ml-auto"
-          >
-            <CheckCircle2 className="mr-1.5 h-4 w-4" />
-            {watched ? "Marked watched" : ctaLabel}
-          </Button>
+          {ctaLabel && onMarkWatched && (
+            <Button
+              variant={watched ? "secondary" : "ghost"}
+              size="sm"
+              onClick={onMarkWatched}
+              className="sm:ml-auto"
+            >
+              <CheckCircle2 className="mr-1.5 h-4 w-4" />
+              {watched ? "Marked watched" : ctaLabel}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

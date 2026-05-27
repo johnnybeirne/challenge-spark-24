@@ -206,7 +206,7 @@ const EarnRewards = () => {
           </div>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Share your link → invite people → unlock rewards.
+            The fastest way to unlock rewards is by sharing your invite link.
           </p>
         </section>
 
@@ -243,6 +243,9 @@ const EarnRewards = () => {
                 </div>
                 <Progress value={pct} className="mt-4 h-1.5" />
               </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Most users unlock their first reward by inviting 2–3 people.
+              </p>
             </section>
           );
         })()}
@@ -303,7 +306,11 @@ const EarnRewards = () => {
 
           return (
             <section className="mb-14">
-              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
+              <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
+              <p className="mb-4 text-xs text-muted-foreground">
+                Some rewards include visibility and promotion opportunities.
+              </p>
+
 
               <div className="space-y-3">
                 {justUnlocked && <FeaturedCard rung={justUnlocked} kind="unlocked" />}
@@ -385,6 +392,9 @@ const EarnRewards = () => {
                   );
                 })}
               </ul>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Partner bonuses are added regularly.
+              </p>
             </section>
           );
         })()}

@@ -193,7 +193,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const stepLabel = step === 5 ? "Step 2 of 2 — AI-guided challenge builder" : `Step 1 of 2 — In-challenge assessment (${step}/4)`;
+  const stepLabel = step === 5 ? "" : `Step 1 of 2 — In-challenge assessment (${step}/4)`;
 
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">
@@ -202,7 +202,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         <div className="mb-5">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation Your Challenge Creates</p>
           <p className="mt-1 text-sm text-muted-foreground">Before building your challenge, get clear on who it’s for, the result they want, and the transformation they’ll experience.</p>
-          <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stepLabel}</p>
+          {stepLabel && <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stepLabel}</p>}
         </div>
 
         {step > 1 && step < 5 && (

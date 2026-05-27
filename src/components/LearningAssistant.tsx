@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 export type Turn = { role: "user" | "ai"; text: string };
 

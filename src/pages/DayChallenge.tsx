@@ -25,6 +25,7 @@ import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
@@ -113,6 +114,7 @@ const DayChallenge = () => {
   const challengeType = challengeTypeLabel(memory.challengeType);
   const audience = audienceLabel(memory.audienceType);
   const challengeName = memory.challengeName || "your challenge";
+  const identity = useChallengeIdentity();
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
@@ -276,7 +278,7 @@ const DayChallenge = () => {
               {completedLine}
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              {dayNum} of 3 days done · Momentum is building.
+              {dayNum} of 3 days done · Momentum is building{identity.isPersonalised ? ` in ${identity.shortTitle}` : ""}.
             </p>
           </div>
 

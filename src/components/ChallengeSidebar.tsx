@@ -14,6 +14,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
@@ -79,6 +80,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   // Free Student / Premium / Partner / Admin keep the existing layout below.
   // ────────────────────────────────────────────────────────────────────────
   if (role === "challenger") {
+    const identity = useChallengeIdentity();
     const currentDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
@@ -136,7 +138,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {!collapsed ? (
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
             <p className="text-xl font-black tracking-tight text-foreground">LEADIO</p>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Challenger</p>
+            <p
+              className="mt-0.5 truncate text-[10px] font-black uppercase tracking-[0.18em] text-primary"
+              title={identity.title}
+            >
+              {identity.isPersonalised ? identity.shortTitle : "Challenger"}
+            </p>
           </button>
         ) : (
           <p className="text-center text-xs font-black tracking-tight text-foreground">L</p>

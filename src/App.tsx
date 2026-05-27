@@ -164,9 +164,9 @@ const App = () => (
                 {/* Canonical day route (slash form) */}
                 <Route path="/challenge/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 {/* Hyphen-form aliases — React Router v6 needs explicit static paths (no partial dynamic segments) */}
-                <Route path="/challenge/day-1" element={<AuthGuard><DayChallenge /></AuthGuard>} />
-                <Route path="/challenge/day-2" element={<AuthGuard><DayChallenge /></AuthGuard>} />
-                <Route path="/challenge/day-3" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+                <Route path="/challenge/day-1" element={<RedirectKeepingQuery to="/challenge/day/1" />} />
+                <Route path="/challenge/day-2" element={<RedirectKeepingQuery to="/challenge/day/2" />} />
+                <Route path="/challenge/day-3" element={<RedirectKeepingQuery to="/challenge/day/3" />} />
                 {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />

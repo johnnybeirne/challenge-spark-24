@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import RestartDay1Button from "@/components/RestartDay1Button";
+import LearningAssistant from "@/components/LearningAssistant";
 
 import { pushNotification } from "@/lib/notifications";
 
@@ -251,11 +252,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     onComplete(data);
   };
 
-  const askBuilder = async (overridePrompt?: string) => {
-    const prompt = (overridePrompt ?? builderInput).trim();
-    if (!prompt || builderLoading) return;
-    setBuilderLoading(true);
-    setBuilderInput("");
+  const askBuilder = async (prompt: string): Promise<string> => {
     try {
       const memoryContext = copilotMemoryContext(state.memory);
       const foundationLine = `Foundation answers — Problem: ${problem}. Audience: ${audience}. How they solve it: ${how}.`;
@@ -268,7 +265,6 @@ const Day1Setup = ({ onComplete }: Props) => {
       });
       if (error) throw error;
       const response = data?.response ?? "No response received.";
-      setBuilderHistory((prev) => [...prev, { prompt, response }]);
       setState((prev) => ({
         ...prev,
         challenge: {
@@ -279,10 +275,11 @@ const Day1Setup = ({ onComplete }: Props) => {
           },
         },
       }));
+      return response;
     } catch (err: any) {
-      toast.error(err?.message || "Couldn't reach the AI right now.");
-    } finally {
-      setBuilderLoading(false);
+      const msg = err?.message || "Couldn't reach the AI right now.";
+      toast.error(msg);
+      return `_${msg}_`;
     }
   };
 
@@ -559,69 +556,12 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
             </div>
 
-            {/* Chat thread */}
-            <div
-              ref={messagesRef}
-              className="rounded-xl border border-border bg-background p-4 min-h-[220px] max-h-[420px] overflow-y-auto space-y-4"
-            >
-              {builderHistory.length === 0 && !builderLoading && (
-                <p className="text-sm text-muted-foreground text-center py-6">
-                  Pick a starter below or type your own question to begin.
-                </p>
-              )}
-              {builderHistory.map((entry, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2 text-sm text-primary-foreground">
-                      {entry.prompt}
-                    </div>
-                  </div>
-                  <div className="flex justify-start">
-                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground prose prose-sm max-w-none">
-                      <ReactMarkdown>{entry.response}</ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {builderLoading && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Thinking…
-                </div>
-              )}
-            </div>
-
-            {/* Starter prompts */}
-            <div className="flex flex-wrap gap-2">
-              {BUILDER_STARTERS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => askBuilder(s)}
-                  disabled={builderLoading}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-50"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-
-            {/* Input */}
-            <div className="rounded-xl border border-border bg-card p-3">
-              <DictatedTextarea
-                value={builderInput}
-                onChange={(e) => setBuilderInput(e.target.value)}
-                placeholder="Ask your AI co-pilot anything about your challenge…"
-                className="min-h-[64px] border-0 focus-visible:ring-0 resize-none"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); askBuilder(); }
-                }}
-              />
-              <div className="mt-2 flex justify-end">
-                <Button size="sm" onClick={() => askBuilder()} disabled={builderLoading || !builderInput.trim()}>
-                  <Send className="h-4 w-4 mr-1.5" />
-                  Send
-                </Button>
-              </div>
-            </div>
+            {/* Learning assistant — prompt pills + accordion chat + freeform */}
+            <LearningAssistant
+              topic={topicHint || challengeLabel(challengeType)}
+              prompts={BUILDER_STARTERS}
+              ask={askBuilder}
+            />
 
             {/* Finish Day 1 */}
             <div className="pt-2">

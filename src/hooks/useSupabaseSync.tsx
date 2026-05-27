@@ -82,6 +82,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
       challenge: {
         currentDay: progress?.current_day ?? 1,
         startedAt: ensureStartedAt(progress?.started_at),
+        endsAt: getChallengeEndsAt(progress?.started_at, progress?.ends_at),
         tasks: progress?.tasks ?? {},
         aiOutputs: progress?.ai_outputs ?? {},
         launchUrl: progress?.launch_url ?? "",

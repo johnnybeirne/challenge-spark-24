@@ -206,7 +206,7 @@ const EarnRewards = () => {
           </div>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Share your link → invite people → unlock rewards.
+            The fastest way to unlock rewards is by sharing your invite link.
           </p>
         </section>
 

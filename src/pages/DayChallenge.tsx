@@ -113,6 +113,7 @@ const DayChallenge = () => {
   const challengeType = challengeTypeLabel(memory.challengeType);
   const audience = audienceLabel(memory.audienceType);
   const challengeName = memory.challengeName || "your challenge";
+  const identity = useChallengeIdentity();
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskAnim, setShowTaskAnim] = useState(false);
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);

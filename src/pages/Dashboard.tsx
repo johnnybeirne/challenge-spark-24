@@ -182,7 +182,7 @@ const Dashboard = () => {
 
     return (
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
-        <section className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
+        <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 export type Turn = { role: "user" | "ai"; text: string };
 
@@ -214,9 +215,11 @@ const Bubble = ({ turn }: { turn: Turn }) => {
   }
   return (
     <div className="flex justify-start gap-2">
-      <div className="h-7 w-7 shrink-0 rounded-full bg-primary/15 text-[10px] font-semibold text-primary grid place-items-center">
-        AI
-      </div>
+      <img
+        src={johnnyAvatar}
+        alt="Johnny AI"
+        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+      />
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground prose prose-sm max-w-none dark:prose-invert">
         <ReactMarkdown>{turn.text}</ReactMarkdown>
       </div>
@@ -226,7 +229,7 @@ const Bubble = ({ turn }: { turn: Turn }) => {
 
 const Typing = () => (
   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-    <div className="h-7 w-7 rounded-full bg-primary/15 text-[10px] font-semibold text-primary grid place-items-center">AI</div>
+    <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
     <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
       <Loader2 className="h-4 w-4 animate-spin" />
     </div>

@@ -23,6 +23,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
+import RestartDay1Button from "@/components/RestartDay1Button";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },

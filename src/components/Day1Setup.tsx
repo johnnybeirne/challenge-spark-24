@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
-import RestartDay1Button from "@/components/RestartDay1Button";
+
 import LearningAssistant from "@/components/LearningAssistant";
 
 import { pushNotification } from "@/lib/notifications";

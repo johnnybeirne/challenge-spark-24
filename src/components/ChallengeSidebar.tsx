@@ -21,6 +21,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const { state, setState, authUser } = useAppState();
   const { hasJoinedChallenge, isPremiumUser } = useUserState();
   const { permissions, role } = useUserRole();
+  const isChallengerShell = useIsChallengerShell();
   const showChallengeNav =
     hasJoinedChallenge ||
     role === "challenger" ||

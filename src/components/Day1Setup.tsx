@@ -221,6 +221,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
+    pushNotification({
+      title: "Challenge direction saved",
+      message: "We've updated your profile with your challenge answers.",
+      href: "/challenger-dashboard",
+      dedupeKey: "day1_assessment_saved",
+    });
     setStep(8);
   };
 

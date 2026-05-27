@@ -251,11 +251,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     onComplete(data);
   };
 
-  const askBuilder = async (overridePrompt?: string) => {
-    const prompt = (overridePrompt ?? builderInput).trim();
-    if (!prompt || builderLoading) return;
-    setBuilderLoading(true);
-    setBuilderInput("");
+  const askBuilder = async (prompt: string): Promise<string> => {
     try {
       const memoryContext = copilotMemoryContext(state.memory);
       const foundationLine = `Foundation answers — Problem: ${problem}. Audience: ${audience}. How they solve it: ${how}.`;
@@ -268,7 +264,6 @@ const Day1Setup = ({ onComplete }: Props) => {
       });
       if (error) throw error;
       const response = data?.response ?? "No response received.";
-      setBuilderHistory((prev) => [...prev, { prompt, response }]);
       setState((prev) => ({
         ...prev,
         challenge: {
@@ -279,10 +274,11 @@ const Day1Setup = ({ onComplete }: Props) => {
           },
         },
       }));
+      return response;
     } catch (err: any) {
-      toast.error(err?.message || "Couldn't reach the AI right now.");
-    } finally {
-      setBuilderLoading(false);
+      const msg = err?.message || "Couldn't reach the AI right now.";
+      toast.error(msg);
+      return `_${msg}_`;
     }
   };
 

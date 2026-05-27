@@ -31,8 +31,8 @@ const TopBar = () => {
   const avatarSrc = state.user?.avatarUrl || (hasName ? avatarPlaceholder : sampleUserAvatar);
 
   return (
-    <header className="sticky top-0 z-30 hidden h-12 w-full items-center justify-between gap-3 border-b border-border bg-background/80 px-3 backdrop-blur lg:flex">
-      <nav className="flex min-w-0 items-center gap-0.5 overflow-x-auto">
+    <header className="sticky top-0 z-30 hidden h-14 w-full items-center justify-between gap-3 border-b border-border bg-background/80 px-3 backdrop-blur lg:flex">
+      <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
         {tools.map(({ to, label, Icon }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);
           return (
@@ -40,13 +40,13 @@ const TopBar = () => {
               key={to}
               to={to}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors hover:bg-muted",
+                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-muted",
                 active
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground"
               )}
             >
-              <Icon className="h-3.5 w-3.5" />
+              <Icon className="h-4 w-4" />
               <span className="whitespace-nowrap">{label}</span>
             </Link>
           );

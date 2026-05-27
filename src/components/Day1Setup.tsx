@@ -285,7 +285,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="text-2xl font-bold tracking-tight">What transformation will they experience?</h2>
-              <p className="text-sm text-muted-foreground">Optional — you can skip this</p>
+              <p className="text-sm text-muted-foreground">Describe how they will feel, what they will know, or what they will be able to do after they complete your challenge.</p>
             </div>
             <div className="relative">
               <Input

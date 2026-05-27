@@ -264,10 +264,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
         {/* Bottom: Profile / Settings / Support + Logout */}
         <div className="mt-auto space-y-1.5 pt-2">
-          {bottom.map(({ path, label, Icon, onClick }) => (
+          {bottom.map(({ path, label, Icon }) => (
             <button
               key={label}
-              onClick={() => (onClick ? onClick() : go(path))}
+              onClick={() => go(path)}
+
               className={cn(
                 "w-full rounded-xl text-left text-muted-foreground transition-all hover:bg-background hover:text-foreground",
                 collapsed ? "p-2" : "px-3 py-2"

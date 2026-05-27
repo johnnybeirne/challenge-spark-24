@@ -19,7 +19,7 @@ const TopBar = () => {
     { to: "/bonus-vault", label: "Rewards", Icon: Sparkles },
   ];
 
-  const points = state.credits?.balance ?? 0;
+  const points = state.credits?.total ?? 0;
 
   return (
     <header className="sticky top-0 z-30 hidden h-12 w-full items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur lg:flex">

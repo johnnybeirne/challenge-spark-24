@@ -435,26 +435,59 @@ const DayChallenge = () => {
         )}
       </div>
 
-      <div className="mb-4">
-        <DayTrainingCard dayNum={dayNum} />
-      </div>
-
-      {dayNum !== 1 && (
-        <Card className="mb-4 border-primary/20 bg-primary/5">
-          <CardContent className="p-5">
-            <div className="mb-3 flex items-center gap-2 text-primary">
-              <PlayCircle className="h-4 w-4" />
-              <p className="text-xs font-mono uppercase tracking-wider">Training</p>
-            </div>
-            <p className="text-sm text-foreground leading-relaxed">
-              {config.lesson}
-            </p>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              {config.reinforcement}
-            </p>
-          </CardContent>
-        </Card>
+      {/* AI-guided training (primary). Video kept below as optional briefing. */}
+      {dayNum === 2 && (
+        <div className="mb-6">
+          <DayCopilot
+            dayNum={2}
+            eyebrow="Day 2 · AI-guided training"
+            focus="Build the diagnostic quiz that becomes the entry point into your challenge."
+            focusSubtitle="A great diagnostic surfaces the gap, creates urgency, and earns the right to invite people in."
+            outputKeyPrefix="day2_copilot"
+            starters={[
+              "Draft 5 diagnostic questions that surface the gap my audience feels.",
+              "Rewrite my diagnostic so it feels insight-driven, not generic.",
+              "Suggest a results screen that makes people want to join my challenge.",
+              "How do I score the diagnostic so the result feels personal?",
+            ]}
+          />
+        </div>
       )}
+
+      {dayNum === 3 && (
+        <div className="mb-6">
+          <DayCopilot
+            dayNum={3}
+            eyebrow="Day 3 · AI-guided training"
+            focus="Design the challenge experience, momentum systems, and referral flow."
+            focusSubtitle="Lock in the daily cadence, the unlock moments, and the reasons people invite others in."
+            outputKeyPrefix="day3_copilot"
+            starters={[
+              "Map a 3-day momentum arc that keeps people moving.",
+              "Suggest 3 unlocks I can tie to participant referrals.",
+              "Write a Day 3 invite message my audience will actually send.",
+              "What's the smallest viable launch I can ship this week?",
+            ]}
+          />
+        </div>
+      )}
+
+      {/* Optional supporting briefing — video stays available, not primary */}
+      <details className="mb-4 rounded-lg border border-border bg-card/60">
+        <summary className="cursor-pointer list-none px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground">
+          Optional briefing video
+        </summary>
+        <div className="px-4 pb-4">
+          <DayTrainingCard dayNum={dayNum} />
+          {dayNum !== 1 && (
+            <div className="mt-3 rounded-md border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground leading-relaxed">{config.lesson}</p>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{config.reinforcement}</p>
+            </div>
+          )}
+        </div>
+      </details>
+
 
 
       {dayNum === 2 && (

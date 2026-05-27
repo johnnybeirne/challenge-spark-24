@@ -17,6 +17,8 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
+
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();
@@ -183,12 +185,13 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* DAYS — journey */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">Days</p>
+            <ChallengeCountdown compact className="mx-1 w-full justify-center text-[11px]" />
           )}
           <div className="relative">
             {!collapsed && (
               <span className="pointer-events-none absolute left-[1.05rem] top-3 bottom-3 w-px bg-border" />
             )}
+
             <div className="space-y-1.5">
               {days.map(({ n, path, active, complete, inProgress, locked, status, dateLabel }) => {
                 const Dot = complete ? CheckCircle2 : inProgress ? PlayCircle : locked ? Lock : Circle;

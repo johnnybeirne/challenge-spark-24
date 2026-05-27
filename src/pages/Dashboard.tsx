@@ -142,10 +142,11 @@ const Dashboard = () => {
   };
 
   // ──────────────────────────────────────────────────────────────────────
-  // CHALLENGER-ONLY focused dashboard
+  // CHALLENGER SHELL focused dashboard
   // One clear next action. Left sidebar already owns Day 1/2/3 progression.
+  // Active for real challengers AND admins previewing the experience.
   // ──────────────────────────────────────────────────────────────────────
-  if (role === "challenger") {
+  if (isChallengerShell) {
     const dayMeta: Record<number, { title: string; outcome: string }> = {
       1: {
         title: "Define Your Challenge",

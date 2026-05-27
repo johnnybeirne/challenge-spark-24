@@ -18,6 +18,8 @@ import PostActionPromo from "@/components/PostActionPromo";
 // Day1Setup moved to /training hub
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
+import { isChallengeExpired } from "@/lib/challengeWindow";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";

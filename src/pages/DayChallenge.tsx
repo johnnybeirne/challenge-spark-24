@@ -435,6 +435,33 @@ const DayChallenge = () => {
         )}
       </div>
 
+      {dayNum === 1 && (
+        <div className="mb-6 rounded-2xl border border-border bg-card p-6 md:p-8 shadow-sm">
+          <div className="space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Let's Shape Your Challenge</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Define the transformation your challenge takers will achieve.
+            </p>
+          </div>
+          <ul className="mt-5 space-y-3">
+            {[
+              "What problem do you solve?",
+              "Who do you solve it for?",
+              "How do you solve it?",
+            ].map((q, i) => (
+              <li key={q} className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+                  {i + 1}
+                </span>
+                <span className="text-base font-semibold text-foreground">{q}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+
+
       {/* AI-guided training (primary). Video kept below as optional briefing. */}
       {dayNum === 2 && (
         <div className="mb-6">

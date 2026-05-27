@@ -228,7 +228,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* TOOLS */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Tools</p>
+            <p className="px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">Tools</p>
           )}
           {tools.map(({ path, label, Icon }) => {
             const active = location.pathname === path;

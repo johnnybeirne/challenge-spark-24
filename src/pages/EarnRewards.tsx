@@ -52,6 +52,24 @@ const ladder: Rung[] = [
   { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADIO network.", major: true },
 ];
 
+// Partner bonuses — placeholder data (safe defaults until real partners are wired).
+interface PartnerBonus {
+  partner: string;
+  title: string;
+  description: string;
+  threshold: number; // points required to unlock
+}
+const partnerBonuses: PartnerBonus[] = [
+  { partner: "Notion Templates Co.", title: "Challenge Operating System Template", description: "A complete Notion workspace for planning, running, and reviewing your challenge.", threshold: 100 },
+  { partner: "Lead Magnet Lab", title: "Audience Growth Playbook", description: "A short playbook on turning a 3-day challenge into a long-term audience asset.", threshold: 200 },
+  { partner: "Funnel Studio", title: "Post-Challenge Funnel Map", description: "A visual map of what to offer participants after the challenge ends.", threshold: 300 },
+  { partner: "Creator Coaching Collective", title: "Group Coaching Drop-In", description: "An invite to a live drop-in session with experienced challenge creators.", threshold: 500 },
+  { partner: "LEADIO Studio", title: "Brand & Positioning Teardown", description: "A recorded teardown reviewing your positioning, hook, and challenge promise.", threshold: 750 },
+];
+
+const partnerInitials = (name: string) =>
+  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("");
+
 /**
  * Earn Rewards — single, focused destination.
  * Section order is fixed: Invite, Progress, Ladder, Partner Bonuses, Leaderboard.
@@ -314,43 +332,62 @@ const EarnRewards = () => {
         })()}
 
         {/* 4. PARTNER BONUSES */}
-        <section className="mb-14">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Partner bonuses</h2>
-          {assets.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-8 text-center">
-              <Gift className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Partner bonuses are coming soon.</p>
-            </div>
-          ) : (
-            <ul className="overflow-hidden rounded-xl border border-border">
-              {assets.map((asset, index) => {
-                const unlocked = index < unlockedPartnerCount;
-                return (
-                  <li
-                    key={asset.id}
-                    className={`flex items-center gap-4 px-5 py-4 ${index > 0 ? "border-t border-border" : ""} ${unlocked ? "bg-card" : "bg-muted/30"}`}
-                  >
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${unlocked ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                      {unlocked ? <Gift className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className={`truncate text-sm font-semibold ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>{asset.contribution_title}</p>
-                      <p className="mt-0.5 truncate text-xs text-muted-foreground">By {asset.partner_name}</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant={unlocked ? "ghost" : "ghost"}
-                      className="shrink-0 gap-1 text-xs"
-                      onClick={() => unlocked ? navigate(`/reward/${asset.id}`) : copyLink()}
+        {(() => {
+          const points = state.credits?.total ?? 0;
+          return (
+            <section className="mb-14">
+              <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Partner bonuses</h2>
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+                Exclusive rewards, tools, training, and opportunities contributed by LEADIO partners and experts.
+              </p>
+              <ul className="overflow-hidden rounded-xl border border-border">
+                {partnerBonuses.map((bonus, i) => {
+                  const unlocked = points >= bonus.threshold;
+                  return (
+                    <li
+                      key={bonus.partner + bonus.title}
+                      className={`flex items-start gap-4 px-5 py-4 ${i > 0 ? "border-t border-border" : ""} ${unlocked ? "bg-card" : "bg-muted/20"}`}
                     >
-                      {unlocked ? <>Open <ExternalLink className="h-3 w-3" /></> : "Invite to unlock"}
-                    </Button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold tracking-wide ${
+                          unlocked ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                        }`}
+                        aria-hidden
+                      >
+                        {partnerInitials(bonus.partner)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                          {bonus.partner}
+                        </p>
+                        <p className={`mt-0.5 text-sm font-semibold ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>
+                          {bonus.title}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {bonus.description}
+                        </p>
+                      </div>
+                      <div className="ml-2 flex shrink-0 flex-col items-end gap-1">
+                        {unlocked ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                            <Gift className="h-3.5 w-3.5" /> Unlocked
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                            <Lock className="h-3 w-3" /> Locked
+                          </span>
+                        )}
+                        <span className="text-[11px] text-muted-foreground tabular-nums">
+                          {bonus.threshold} pts
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })()}
 
         {/* 5. LEADERBOARD */}
         <section>

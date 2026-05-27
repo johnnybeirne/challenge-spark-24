@@ -83,7 +83,17 @@ const NotificationsBell = ({ className }: Props) => {
                       {n.title && (
                         <p className="text-sm font-bold text-foreground">{n.title}</p>
                       )}
-                      <p className="text-sm text-foreground">{n.message}</p>
+                      <p className="text-sm text-foreground">
+                        {n.message}
+                        {n.href && (
+                          <>
+                            {" "}
+                            <span className="font-medium text-primary underline-offset-2 hover:underline">
+                              {n.href === "/profile" ? "View Profile" : "View"}
+                            </span>
+                          </>
+                        )}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {formatRelative(n.timestamp)}
                       </p>

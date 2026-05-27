@@ -79,7 +79,10 @@ const RightRail = () => {
       <Button
         size="sm"
         variant="default"
-        className="absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl"
+        className={cn(
+          "absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl",
+          pulse && "animate-attention-pulse"
+        )}
         onClick={() => setCollapsed(true)}
         aria-label="Collapse stats panel"
         title="Collapse stats"

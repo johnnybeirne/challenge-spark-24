@@ -202,9 +202,8 @@ const Day1Setup = ({ onComplete }: Props) => {
         {/* Day 1 header — persistent across steps */}
         <div className="mb-5 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation Your Challenge Creates</p>
-            <p className="mt-1 text-sm text-muted-foreground">Before building your challenge, get clear on who it’s for, the result they want, and the transformation they’ll experience.</p>
-            {stepLabel && <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stepLabel}</p>}
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Day 1 · Define the Transformation</p>
+            <p className="mt-1 text-sm text-muted-foreground">Let’s shape your challenge.</p>
           </div>
           {(saved?.audienceType || step > 1) && (
             <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Restart" />

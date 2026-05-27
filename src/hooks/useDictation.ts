@@ -87,19 +87,20 @@ export function useDictation() {
       }
 
       const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Ctor) return;
 
       onUpdateRef.current = onUpdate;
       finalRef.current = "";
       manualStopRef.current = false;
       shouldRunRef.current = true;
 
-      const startRecognizer = (rec: any) => {
+      const startRecognizer = (rec: SpeechRecognitionLike) => {
         if (!shouldRunRef.current || startingRef.current) return;
         startingRef.current = true;
         try {
           rec.start();
           setIsListening(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
           if (shouldRunRef.current) {
             restartTimerRef.current = window.setTimeout(() => {
               restartTimerRef.current = null;
@@ -110,7 +111,7 @@ export function useDictation() {
             }, 350);
             return;
           }
-          toast.error(err?.message || "Couldn't start dictation.");
+          toast.error(err instanceof Error ? err.message : "Couldn't start dictation.");
           setIsListening(false);
         } finally {
           startingRef.current = false;
@@ -124,7 +125,7 @@ export function useDictation() {
         rec.continuous = true;
         rec.maxAlternatives = 1;
 
-        rec.onresult = (e: any) => {
+        rec.onresult = (e) => {
           let interim = "";
           let newFinal = "";
           for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -140,7 +141,7 @@ export function useDictation() {
           const combined = (finalRef.current + " " + interim).trim();
           if (combined) onUpdateRef.current?.(combined, false);
         };
-        rec.onerror = (e: any) => {
+        rec.onerror = (e) => {
           if (e.error === "not-allowed" || e.error === "service-not-allowed") {
             toast.error(
               "Microphone access was blocked. Click the mic icon in your browser's address bar and allow microphone, then try again."

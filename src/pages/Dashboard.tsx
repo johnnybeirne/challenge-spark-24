@@ -180,18 +180,10 @@ const Dashboard = () => {
     };
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
-    const buildStamp = new Date().toISOString().replace("T", " ").slice(0, 16);
     return (
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
         <section className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
-          {/* TEMP DEPLOY-VERIFICATION BANNER — remove after confirmation */}
-          <div className="rounded-2xl border-4 border-dashed border-rose-500 bg-rose-500/10 p-5 text-center">
-            <p className="text-base font-black uppercase tracking-[0.18em] text-rose-600">
-              Layout Test — Dashboard Component Is Updating
-            </p>
-            <p className="mt-1 text-lg font-black text-rose-700">UPDATED LAYOUT VERSION 2</p>
-            <p className="mt-1 text-sm font-bold text-rose-700/80">Updated: {buildStamp}</p>
-          </div>
+
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
             {identity.isPersonalised && (
@@ -249,26 +241,28 @@ const Dashboard = () => {
           </section>
 
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
-          {cfg.enabled && cfg.videoUrl && (
-            <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Play className="h-4 w-4" fill="currentColor" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-foreground">{cfg.videoTitle}</p>
-                  <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
-                </div>
-                {state.training.dashboardVideoWatched && (
-                  <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
-                    Watched
-                  </span>
-                )}
+          <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+            <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Play className="h-4 w-4" fill="currentColor" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-foreground">
+                  {cfg.videoTitle || "Watch this first"}
+                </p>
+                <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
               </div>
-              <div className="h-[200px] w-full bg-black sm:h-[260px]">
+              {state.training.dashboardVideoWatched && cfg.videoUrl && (
+                <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
+                  Watched
+                </span>
+              )}
+            </div>
+            <div className="h-[200px] w-full bg-black sm:h-[260px]">
+              {cfg.videoUrl ? (
                 <iframe
                   src={cfg.videoUrl}
-                  title={cfg.videoTitle}
+                  title={cfg.videoTitle || "Watch this first"}
                   className="h-full w-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -286,9 +280,22 @@ const Dashboard = () => {
                     }
                   }}
                 />
-              </div>
-            </section>
-          )}
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted/40 to-muted/10 text-center">
+                  <button
+                    type="button"
+                    aria-label="Play training video"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition hover:scale-105"
+                  >
+                    <Play className="h-6 w-6" fill="currentColor" />
+                  </button>
+                  <p className="text-sm font-bold text-muted-foreground">Training video goes here</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+
 
           {/* 3. TODAY'S TASK */}
           <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">

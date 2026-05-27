@@ -137,12 +137,14 @@ const Leaderboard = () => {
                 {entries.map((entry, i) => {
                   const rank = i + 1;
                   const badge = getRankBadge(rank);
+                  const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
                   return (
                     <div
                       key={entry.invite_code}
+                      ref={isFocus && !focusRef.current ? focusRef : undefined}
                       className={`flex items-center gap-3 px-4 py-3 ${
                         i < entries.length - 1 ? "border-b border-border" : ""
-                      } ${entry.isUser ? "bg-primary/5" : ""}`}
+                      } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
                     >
                       <span className="text-xs font-bold text-muted-foreground w-6 text-right">
                         {badge ? (

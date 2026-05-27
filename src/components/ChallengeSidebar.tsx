@@ -146,7 +146,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       </div>
 
       <section className="space-y-1.5">
-        {!collapsed && <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Challenge</p>}
+        
         {[
           { n: 1, label: "Foundations", Icon: Zap },
           { n: 2, label: "Build", Icon: Target },

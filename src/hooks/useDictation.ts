@@ -195,18 +195,20 @@ export function useDictation() {
             stream.getTracks().forEach((t) => t.stop());
             begin();
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             shouldRunRef.current = false;
-            if (err?.name === "NotAllowedError") {
+            const errorName = err instanceof DOMException ? err.name : "";
+            const errorMessage = err instanceof Error ? err.message : "Couldn't access microphone.";
+            if (errorName === "NotAllowedError") {
               toast.error(
                 "Microphone permission denied. Allow microphone access for this site and try again."
               );
-            } else if (err?.name === "NotFoundError") {
+            } else if (errorName === "NotFoundError") {
               toast.error("No microphone found.");
-            } else if (err?.name === "NotReadableError") {
+            } else if (errorName === "NotReadableError") {
               toast.error("Microphone is in use by another app.");
             } else {
-              toast.error(err?.message || "Couldn't access microphone.");
+              toast.error(errorMessage);
             }
             setIsListening(false);
           });

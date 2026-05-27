@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
+import RestartDay1Button from "@/components/RestartDay1Button";
 
 export const SETUP_KEY = "leadio_setup";
 const DAY1_STEP_KEY = "leadio_day1_step";

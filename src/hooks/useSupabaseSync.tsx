@@ -131,11 +131,14 @@ export async function saveChallengeProgress(
   challenge: AppState["challenge"]
 ) {
   try {
+    // NOTE: deliberately omit `started_at` here. The DB column defaults to now()
+    // on insert and we never want to overwrite it on subsequent saves — Day 1's
+    // date must stay anchored to when the user actually started the challenge,
+    // not to whenever they last logged in.
     await (supabase.from("challenge_progress") as any).upsert(
       {
         user_id: userId,
         current_day: challenge.currentDay,
-        started_at: challenge.startedAt,
         tasks: challenge.tasks,
         ai_outputs: challenge.aiOutputs,
         launch_url: challenge.launchUrl,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Sparkles, Trophy, Users, ChevronRight, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
+import { supabase } from "@/integrations/supabase/client";
+
 
 // Global right rail — momentum, social proof, rewards.
 // Read-only surface: derives from existing state, mutates nothing.
@@ -38,13 +40,37 @@ const RightRail = () => {
     </p>
   );
 
-  // Lightweight top-3 sample so the rail always shows social proof,
-  // even before live leaderboard data lands. Replace with live data when wired.
-  const topChallengers = [
-    { name: "Alex R.", pts: Math.max(points + 120, 320) },
-    { name: "Priya S.", pts: Math.max(points + 60, 260) },
-    { name: "Marcus T.", pts: Math.max(points + 20, 210) },
-  ];
+  // Live top challengers — pulled from waitlist referral leaders.
+  // Falls back to a sample only when no one has confirmed referrals yet.
+  const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("waitlist_signups")
+        .select("name, confirmed_invites")
+        .gt("confirmed_invites", 0)
+        .order("confirmed_invites", { ascending: false })
+        .order("created_at", { ascending: true })
+        .limit(3);
+      if (cancelled) return;
+      const rows = (data ?? []).map((r: { name: string | null; confirmed_invites: number | null }) => ({
+        name: (r.name || "Builder").split(" ")[0],
+        pts: r.confirmed_invites ?? 0,
+      }));
+      if (rows.length > 0) {
+        setTopChallengers(rows);
+      } else {
+        setTopChallengers([
+          { name: "Alex R.", pts: Math.max(points + 120, 320) },
+          { name: "Priya S.", pts: Math.max(points + 60, 260) },
+          { name: "Marcus T.", pts: Math.max(points + 20, 210) },
+        ]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [points]);
+
   const nextUnlockLabel = completed
     ? "Community Access"
     : currentDay === 1

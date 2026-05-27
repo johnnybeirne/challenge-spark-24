@@ -66,8 +66,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     toast.success(alreadyUploaded ? "Photo updated." : "Photo added. +50 Points earned.");
   };
 
-  const avatarSrc = state.user?.avatarUrl || avatarPlaceholder;
   const hasAvatar = Boolean(state.user?.avatarUrl);
+  const hasName = Boolean(firstName);
+  // Sample placeholders when the user hasn't added their photo/name yet.
+  const avatarSrc = state.user?.avatarUrl || (hasName ? avatarPlaceholder : sampleUserAvatar);
+  const displayName = hasName ? firstName : "Alex";
+
 
   return (
     <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>

@@ -617,7 +617,7 @@ const Dashboard = () => {
                   </span>
                 </div>
                 <div className="min-w-0 pr-14">
-                  <p className="text-xs font-black uppercase tracking-wide text-primary">Step 2</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Step 2</p>
                   <h2 className="mt-0.5 text-lg font-bold text-foreground">Add the challenge to your calendar</h2>
                 </div>
               </div>

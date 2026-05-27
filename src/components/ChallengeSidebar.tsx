@@ -185,13 +185,13 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* DAYS — journey */}
         <section className="space-y-1.5">
           {!collapsed && (
-          {!collapsed && (
             <ChallengeCountdown compact className="mx-1 w-full justify-center text-[11px]" />
           )}
-
+          <div className="relative">
             {!collapsed && (
               <span className="pointer-events-none absolute left-[1.05rem] top-3 bottom-3 w-px bg-border" />
             )}
+
             <div className="space-y-1.5">
               {days.map(({ n, path, active, complete, inProgress, locked, status, dateLabel }) => {
                 const Dot = complete ? CheckCircle2 : inProgress ? PlayCircle : locked ? Lock : Circle;

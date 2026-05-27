@@ -137,7 +137,7 @@ const RightRail = () => {
       {/* 3. INVITE PROGRESS */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Invite Progress</Eyebrow>
+          <Eyebrow>Earn Referral Rewards</Eyebrow>
           <Users className="h-4 w-4 text-emerald-500" />
         </div>
         <p className="mt-2 text-base font-bold text-foreground">

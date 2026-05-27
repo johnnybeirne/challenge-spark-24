@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useUserState } from "@/hooks/useUserState";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";

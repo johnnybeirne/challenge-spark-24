@@ -23,6 +23,7 @@ import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
 import ResetPassword from "@/pages/ResetPassword";
 import Training from "@/pages/Training";
+import Day1 from "@/pages/Day1";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import Unlocks from "@/pages/Unlocks";

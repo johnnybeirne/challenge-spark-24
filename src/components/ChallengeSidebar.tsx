@@ -104,8 +104,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       const active =
         location.pathname === path ||
         location.pathname === `/day/${n}` ||
-        location.pathname === `/challenge/day/${n}` ||
-        (n === 1 && location.pathname === "/training");
+        location.pathname === `/challenge/day/${n}`;
 
       const complete = challengeCompleted || currentDay > n;
       const inProgress = !complete && currentDay === n;

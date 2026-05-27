@@ -184,86 +184,8 @@ const Dashboard = () => {
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
-          {/* 1+2. VIDEO (LEFT) + CURRENT ACTION HERO (RIGHT) */}
-          <div className="grid gap-5 lg:grid-cols-2 lg:items-stretch">
-
-          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8 lg:order-2">
-            {identity.isPersonalised && (
-              <p className="mb-1.5 truncate text-sm font-black uppercase tracking-[0.14em] text-foreground/70">
-                {identity.title}
-              </p>
-            )}
-            {isComplete && (
-              <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
-                Challenge complete
-              </p>
-            )}
-
-            <h1 className="mt-2 text-xl font-black leading-tight text-foreground sm:text-3xl">
-              Today: {meta.title}
-            </h1>
-            <p className="mt-2 max-w-2xl text-base text-muted-foreground">
-              {meta.outcome}
-            </p>
-            {/* Desktop CTA — mobile uses sticky bottom CTA */}
-            <Button
-              size="lg"
-              className="mt-5 hidden h-12 gap-2 px-6 text-base font-black uppercase tracking-wider sm:inline-flex"
-              onClick={() => navigate(`/challenge/day-${ctaDay}`)}
-            >
-              {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-
-            {/* Today → Tomorrow → Day 3 — label on top, date below, title under */}
-            {(() => {
-              const fmt = (d: Date) =>
-                d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
-              const base = startedAt ?? new Date();
-              const todayDate = new Date(base);
-              todayDate.setDate(todayDate.getDate() + (ctaDay - 1));
-              const tomorrowDate = new Date(todayDate);
-              tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-              const day3Date = new Date(base);
-              day3Date.setDate(day3Date.getDate() + 2);
-              const day3Meta = dayMeta[3];
-              return (
-                <div className="mt-5 grid gap-3 border-t border-primary/20 pt-4 sm:mt-6 sm:pt-5 sm:grid-cols-3">
-                  <div className="flex items-start gap-2.5">
-                    <CircleDot className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Today</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(todayDate)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">{meta.title}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Tomorrow</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(tomorrowDate)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">
-                        {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Day 3</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(day3Date)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">{day3Meta.title}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-
-          </section>
-
-          {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
-          <section className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          {/* INTRO VIDEO — welcome briefing */}
+          <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Play className="h-4 w-4" fill="currentColor" />
@@ -280,7 +202,7 @@ const Dashboard = () => {
                 </span>
               )}
             </div>
-            <div className="aspect-video w-full flex-1 bg-black lg:aspect-auto">
+            <div className="aspect-video w-full bg-black">
               {cfg.videoUrl ? (
                 <iframe
                   src={cfg.videoUrl}
@@ -316,7 +238,6 @@ const Dashboard = () => {
               )}
             </div>
           </section>
-          </div>
 
 
 

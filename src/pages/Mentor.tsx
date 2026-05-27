@@ -197,9 +197,11 @@ const Mentor = () => {
           <Button onClick={() => ask()} disabled={!input.trim() || loading} size="icon" className="shrink-0">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
+          </div>
         </div>
-      </div>
+      </section>
     </main>
+
   );
 };
 

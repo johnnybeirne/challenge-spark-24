@@ -27,8 +27,16 @@ const CHALLENGER_ROUTE_PREFIXES = [
   "/bonus-vault",
   "/rewards",
   "/mentor",
-
+  "/training",
+  "/community",
+  "/calendar",
+  "/leaderboard",
+  "/prompt-library",
+  "/resources",
+  "/redeem",
+  "/reward/",
 ];
+
 
 const isChallengerRoute = (pathname: string) =>
   CHALLENGER_ROUTE_PREFIXES.some(

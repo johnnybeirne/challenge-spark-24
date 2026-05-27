@@ -219,9 +219,11 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
     const training = trainingRaw ? JSON.parse(trainingRaw) : null;
 
     if (challenge) {
+      const startedAt = ensureStartedAt(challenge.startedAt);
       await saveChallengeProgress(userId, {
         currentDay: challenge.currentDay ?? 1,
-        startedAt: ensureStartedAt(challenge.startedAt),
+        startedAt,
+        endsAt: getChallengeEndsAt(startedAt, challenge.endsAt),
         tasks: challenge.tasks ?? {},
         aiOutputs: challenge.aiOutputs ?? {},
         launchUrl: challenge.launchUrl ?? "",

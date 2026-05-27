@@ -193,9 +193,12 @@ const Dashboard = () => {
                 {identity.title}
               </p>
             )}
-            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
-              {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
-            </p>
+            {isComplete && (
+              <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
+                Challenge complete
+              </p>
+            )}
+
             <h1 className="mt-2 text-xl font-black leading-tight text-foreground sm:text-3xl">
               Today: {meta.title}
             </h1>

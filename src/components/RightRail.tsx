@@ -59,7 +59,7 @@ const RightRail = () => {
         <Button
           size="sm"
           variant="default"
-          className="h-10 w-10 rounded-full p-0 shadow-lg"
+          className={cn("h-10 w-10 rounded-full p-0 shadow-lg", pulse && "animate-attention-pulse")}
           onClick={() => setCollapsed(false)}
           aria-label="Expand stats panel"
           title="Expand stats"

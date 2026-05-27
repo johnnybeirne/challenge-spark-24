@@ -265,7 +265,7 @@ const Dashboard = () => {
                   </span>
                 )}
               </div>
-              <div className="aspect-video w-full bg-black">
+              <div className="h-[200px] w-full bg-black sm:h-[260px]">
                 <iframe
                   src={cfg.videoUrl}
                   title={cfg.videoTitle}

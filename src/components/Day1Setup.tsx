@@ -194,7 +194,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const stepLabel = step === 5 ? "" : `Step 1 of 2 — In-challenge assessment (${step}/4)`;
+  
 
   return (
     <div className="app-page-container pt-6 pb-8 animate-fade-in">

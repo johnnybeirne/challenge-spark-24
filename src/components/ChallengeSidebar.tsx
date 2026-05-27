@@ -160,7 +160,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
         {/* Dashboard */}
         <button
-          onClick={() => go("/challenger-dashboard")}
+          onClick={() => {
+            go("/challenger-dashboard");
+            // Scroll the main content area back to the top so the dashboard
+            // always opens at the hero, not wherever the user left off.
+            requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+          }}
           className={cn(
             "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
             collapsed ? "p-2" : "px-3 py-2.5",

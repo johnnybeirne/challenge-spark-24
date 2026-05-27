@@ -20,6 +20,7 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 
@@ -36,6 +37,7 @@ const Dashboard = () => {
   const trainingContent = useTrainingContent();
   const { permissions, role } = useUserRole();
   const identity = useChallengeIdentity();
+  const isChallengerShell = useIsChallengerShell();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
@@ -140,10 +142,11 @@ const Dashboard = () => {
   };
 
   // ──────────────────────────────────────────────────────────────────────
-  // CHALLENGER-ONLY focused dashboard
+  // CHALLENGER SHELL focused dashboard
   // One clear next action. Left sidebar already owns Day 1/2/3 progression.
+  // Active for real challengers AND admins previewing the experience.
   // ──────────────────────────────────────────────────────────────────────
-  if (role === "challenger") {
+  if (isChallengerShell) {
     const dayMeta: Record<number, { title: string; outcome: string }> = {
       1: {
         title: "Define Your Challenge",

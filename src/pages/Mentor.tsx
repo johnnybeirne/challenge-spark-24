@@ -87,7 +87,7 @@ const Mentor = () => {
         2: "Lead Magnet Templates",
         3: "Community Access",
       };
-      const memoryContext = isChallenger
+      const baseContext = isChallenger
         ? challengerCoachContext(state.memory, {
             currentDay,
             completed: isComplete,
@@ -99,6 +99,9 @@ const Mentor = () => {
             directReferrals: state.referrals?.count ?? 0,
           })
         : copilotMemoryContext(state.memory);
+      const memoryContext = isChallenger && identity.isPersonalised
+        ? `The user calls this "${identity.title}". Refer to it by that name when natural. ${baseContext}`
+        : baseContext;
       const { data, error } = await supabase.functions.invoke("copilot", {
         body: { prompt, memory: state.memory, memoryContext, stage },
       });

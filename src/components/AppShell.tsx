@@ -83,6 +83,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
         {showChallengeSidebar && <TopBar />}
         <div className={showChallengeSidebar ? "flex w-full" : undefined}>
           <div className="min-w-0 flex-1">
+            {showNav && authenticated && <BackButton />}
             <Outlet />
             <Footer />
           </div>

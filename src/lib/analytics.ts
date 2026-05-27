@@ -73,7 +73,9 @@ export type AnalyticsEvent =
   | "admin_training_updated"
   | "training_video_url_added"
   | "training_section_disabled"
-  | "training_section_enabled";
+  | "training_section_enabled"
+  | "profile_updated";
+
 
 export async function trackEvent(
   event: AnalyticsEvent,

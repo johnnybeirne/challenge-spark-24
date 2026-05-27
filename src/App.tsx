@@ -36,6 +36,8 @@ import Rewards from "@/pages/Rewards";
 import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
+import Profile from "@/pages/Profile";
+
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";
 import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
@@ -161,6 +163,8 @@ const App = () => (
               <Route element={<AppShell showNav />}>
                 <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
                 <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />

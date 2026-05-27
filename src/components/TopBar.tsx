@@ -81,7 +81,7 @@ const TopBar = () => {
         <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
         <NotificationsBell />
         <Link
-          to="/challenger-dashboard"
+          to="/profile"
           aria-label="Profile"
           title="Profile"
           className="ml-1 block h-7 w-7 overflow-hidden rounded-full ring-1 ring-border transition hover:ring-primary/40"

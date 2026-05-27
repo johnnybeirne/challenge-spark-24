@@ -183,23 +183,23 @@ const Dashboard = () => {
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
             {identity.isPersonalised && (
-              <p className="mb-1 truncate text-[11px] font-black uppercase tracking-[0.18em] text-foreground/70">
+              <p className="mb-1.5 truncate text-sm font-black uppercase tracking-[0.14em] text-foreground/70">
                 {identity.title}
               </p>
             )}
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary sm:text-[11px]">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
               {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
             </p>
             <h1 className="mt-2 text-xl font-black leading-tight text-foreground sm:text-3xl">
               Today: {meta.title}
             </h1>
-            <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            <p className="mt-2 max-w-2xl text-base text-muted-foreground">
               {meta.outcome}
             </p>
             {/* Desktop CTA — mobile uses sticky bottom CTA */}
             <Button
               size="lg"
-              className="mt-5 hidden h-12 gap-2 px-6 text-sm font-black uppercase tracking-wider sm:inline-flex sm:text-base"
+              className="mt-5 hidden h-12 gap-2 px-6 text-base font-black uppercase tracking-wider sm:inline-flex"
               onClick={() => navigate(`/challenge/day-${ctaDay}`)}
             >
               {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
@@ -207,21 +207,21 @@ const Dashboard = () => {
             </Button>
 
             {/* Today → Tomorrow → Next Unlock — compact stacked rows on mobile, 3-col on desktop */}
-            <div className="mt-5 grid gap-2 border-t border-primary/20 pt-4 sm:mt-6 sm:gap-2 sm:pt-5 sm:grid-cols-3">
+            <div className="mt-5 grid gap-3 border-t border-primary/20 pt-4 sm:mt-6 sm:pt-5 sm:grid-cols-3">
               <div className="flex items-center gap-2.5 sm:items-start">
                 <CircleDot className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Today</p>
-                  <p className="truncate text-sm font-bold text-foreground">{meta.title}</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Today</p>
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{meta.title}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2.5 sm:items-start">
                 <Circle className="h-4 w-4 shrink-0 text-muted-foreground/60 sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
                     {tomorrowMeta ? "Tomorrow" : "After this"}
                   </p>
-                  <p className="truncate text-sm font-bold text-foreground">
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">
                     {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
                   </p>
                 </div>
@@ -229,8 +229,8 @@ const Dashboard = () => {
               <div className="flex items-center gap-2.5 sm:items-start">
                 <Zap className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Next Unlock</p>
-                  <p className="truncate text-sm font-bold text-foreground">{nextUnlock}</p>
+                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Next Unlock</p>
+                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{nextUnlock}</p>
                 </div>
               </div>
             </div>

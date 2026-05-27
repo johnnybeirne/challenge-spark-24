@@ -52,6 +52,24 @@ const ladder: Rung[] = [
   { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADIO network.", major: true },
 ];
 
+// Partner bonuses — placeholder data (safe defaults until real partners are wired).
+interface PartnerBonus {
+  partner: string;
+  title: string;
+  description: string;
+  threshold: number; // points required to unlock
+}
+const partnerBonuses: PartnerBonus[] = [
+  { partner: "Notion Templates Co.", title: "Challenge Operating System Template", description: "A complete Notion workspace for planning, running, and reviewing your challenge.", threshold: 100 },
+  { partner: "Lead Magnet Lab", title: "Audience Growth Playbook", description: "A short playbook on turning a 3-day challenge into a long-term audience asset.", threshold: 200 },
+  { partner: "Funnel Studio", title: "Post-Challenge Funnel Map", description: "A visual map of what to offer participants after the challenge ends.", threshold: 300 },
+  { partner: "Creator Coaching Collective", title: "Group Coaching Drop-In", description: "An invite to a live drop-in session with experienced challenge creators.", threshold: 500 },
+  { partner: "LEADIO Studio", title: "Brand & Positioning Teardown", description: "A recorded teardown reviewing your positioning, hook, and challenge promise.", threshold: 750 },
+];
+
+const partnerInitials = (name: string) =>
+  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("");
+
 /**
  * Earn Rewards — single, focused destination.
  * Section order is fixed: Invite, Progress, Ladder, Partner Bonuses, Leaderboard.

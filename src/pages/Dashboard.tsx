@@ -182,6 +182,11 @@ const Dashboard = () => {
         <section className="mx-auto max-w-3xl space-y-6">
           {/* 1. CURRENT ACTION HERO */}
           <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 shadow-md sm:p-8">
+            {identity.isPersonalised && (
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-foreground/70">
+                {identity.title}
+              </p>
+            )}
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
               {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
             </p>

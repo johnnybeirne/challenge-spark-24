@@ -1,7 +1,35 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Day1Setup from "@/components/Day1Setup";
+import { useAppState } from "@/context/AppContext";
+import { trackEvent } from "@/lib/analytics";
 
-// Day 1 entry — routes users into the assessment flow (business/professional
-// assessment + quiz). After results, the user lands in the challenge setup.
-const Training = () => <Navigate to="/assessment" replace />;
+const Training = () => {
+  const navigate = useNavigate();
+  const { setState } = useAppState();
+
+  useEffect(() => {
+    trackEvent("training_hub_viewed");
+  }, []);
+
+  const handleComplete = () => {
+    setState((prev) => ({
+      ...prev,
+      training: { ...prev.training, hubCompleted: true, preChallengeWatched: true, day1Watched: true },
+      challenge: {
+        ...prev.challenge,
+        currentDay: Math.max(prev.challenge.currentDay || 1, 2),
+      },
+    }));
+    trackEvent("training_hub_completed");
+    navigate("/challenger-dashboard");
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Day1Setup onComplete={handleComplete} />
+    </div>
+  );
+};
 
 export default Training;

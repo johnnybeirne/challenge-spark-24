@@ -84,10 +84,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   // Free Student / Premium / Partner keep the existing layout below.
   // ────────────────────────────────────────────────────────────────────────
   if (isChallengerShell) {
-    const identity = useChallengeIdentity();
     const currentDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
+
 
     // Per-user personalised day dates derived from challenge.startedAt
     // (persisted in challenge_progress.started_at). If somehow missing,

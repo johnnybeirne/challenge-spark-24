@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { Flame, Sparkles, Trophy, Users, ChevronRight } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
 
 // Global right rail — momentum, social proof, rewards.
 // Read-only surface: derives from existing state, mutates nothing.
 const RightRail = () => {
+  const isChallengerShell = useIsChallengerShell();
   const { state } = useAppState();
+  if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;
   const completed = !!state.challenge?.completed;

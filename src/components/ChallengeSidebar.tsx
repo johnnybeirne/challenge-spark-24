@@ -83,6 +83,16 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
 
+    // Per-user personalised day dates derived from challenge.startedAt
+    // (persisted in challenge_progress.started_at). If somehow missing,
+    // fall back to today so the UI never shows "—".
+    const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : new Date();
+    const formatDayDate = (offset: number) => {
+      const d = new Date(startedAt);
+      d.setDate(d.getDate() + offset);
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    };
+
     const days = [1, 2, 3].map((n) => {
       const path = `/challenge/day-${n}`;
       const active =
@@ -93,7 +103,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       const inProgress = !complete && currentDay === n;
       const locked = !complete && !inProgress;
       const status = complete ? "Complete" : inProgress ? "In Progress" : "Locked";
-      return { n, path, active, complete, inProgress, locked, status };
+      const dateLabel = formatDayDate(n - 1);
+      return { n, path, active, complete, inProgress, locked, status, dateLabel };
     });
 
     const tools = [
@@ -157,7 +168,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               <span className="pointer-events-none absolute left-[1.05rem] top-3 bottom-3 w-px bg-border" />
             )}
             <div className="space-y-1.5">
-              {days.map(({ n, path, active, complete, inProgress, locked, status }) => {
+              {days.map(({ n, path, active, complete, inProgress, locked, status, dateLabel }) => {
                 const Dot = complete ? CheckCircle2 : inProgress ? PlayCircle : locked ? Lock : Circle;
                 return (
                   <button
@@ -170,7 +181,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       locked ? "cursor-not-allowed opacity-60" : "hover:bg-primary/5",
                       active && "bg-background ring-2 ring-primary/20"
                     )}
-                    title={`Day ${n} — ${status}`}
+                    title={`Day ${n} — ${dateLabel} — ${status}`}
                   >
                     <div className="flex items-center gap-3">
                       <Dot
@@ -183,9 +194,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       />
                       {!collapsed && (
                         <div className="min-w-0 flex-1">
-                          <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
-                            Day {n}
-                          </p>
+                          <div className="flex items-baseline justify-between gap-2">
+                            <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
+                              Day {n}
+                            </p>
+                            <p className={cn("text-[10px] font-bold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
+                              {dateLabel}
+                            </p>
+                          </div>
                           <p className={cn(
                             "text-[11px] font-semibold",
                             complete ? "text-success" : inProgress ? "text-primary" : "text-muted-foreground"

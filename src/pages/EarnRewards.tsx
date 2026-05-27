@@ -306,7 +306,11 @@ const EarnRewards = () => {
 
           return (
             <section className="mb-14">
-              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
+              <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
+              <p className="mb-4 text-xs text-muted-foreground">
+                Some rewards include visibility and promotion opportunities.
+              </p>
+
 
               <div className="space-y-3">
                 {justUnlocked && <FeaturedCard rung={justUnlocked} kind="unlocked" />}

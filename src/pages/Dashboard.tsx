@@ -280,29 +280,29 @@ const Dashboard = () => {
 
           {/* 3. TODAY'S TASK */}
           <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
               Today's task
             </p>
             <h2 className="mt-1.5 text-xl font-bold text-foreground">
               Answer 3 questions about your challenge
             </h2>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4 space-y-3">
               {[
                 "What problem do you solve?",
                 "Who do you solve it for?",
                 "How do you solve it?",
               ].map((q, i) => (
                 <li key={q} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
                     {i + 1}
                   </span>
-                  <span className="text-sm font-semibold text-foreground sm:text-base">{q}</span>
+                  <span className="text-base font-semibold text-foreground">{q}</span>
                 </li>
               ))}
             </ul>
             <Button
               size="lg"
-              className="mt-5 h-12 w-full gap-2 text-sm font-black uppercase tracking-wider sm:w-auto"
+              className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
               onClick={() => {
                 trackEvent("dashboard_training_viewed");
                 navigate("/mentor");

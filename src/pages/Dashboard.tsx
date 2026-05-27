@@ -20,6 +20,7 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import { useUserRole } from "@/hooks/useUserRole";
+import { Play } from "lucide-react";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -32,7 +33,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const stage = useUserStage();
   const trainingContent = useTrainingContent();
-  const { permissions } = useUserRole();
+  const { permissions, role } = useUserRole();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
@@ -135,6 +136,221 @@ const Dashboard = () => {
     if (status === "In progress") return <CircleDot className="h-5 w-5 text-primary" />;
     return <Circle className="h-5 w-5 text-muted-foreground/50" />;
   };
+
+  // ──────────────────────────────────────────────────────────────────────
+  // CHALLENGER-ONLY focused dashboard
+  // One clear next action. Left sidebar already owns Day 1/2/3 progression.
+  // ──────────────────────────────────────────────────────────────────────
+  if (role === "challenger") {
+    const dayMeta: Record<number, { title: string; outcome: string }> = {
+      1: {
+        title: "Define Your Challenge",
+        outcome:
+          "Before anything else, clarify the problem, audience, and method behind your challenge.",
+      },
+      2: {
+        title: "Build Your Lead Magnet Quiz",
+        outcome:
+          "Turn your challenge into a quiz that captures qualified leads on autopilot.",
+      },
+      3: {
+        title: "Build Your AI-Powered Challenge",
+        outcome:
+          "Launch the AI-powered challenge that nurtures your audience automatically.",
+      },
+    };
+    const meta = dayMeta[ctaDay] ?? dayMeta[1];
+    const cfg = trainingContent.dashboard;
+    const photoDone = !!state.user?.avatarUrl;
+    const calendarDone = !!state.challenge.calendarAdded;
+    const bioDone = !!state.user?.bio;
+
+    return (
+      <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
+        <section className="mx-auto max-w-3xl space-y-6">
+          {/* 1. CURRENT ACTION HERO */}
+          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 shadow-md sm:p-8">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+              Day {ctaDay} · Your next action
+            </p>
+            <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+              Day {ctaDay} — {meta.title}
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+              {meta.outcome}
+            </p>
+            <Button
+              size="lg"
+              className="mt-5 h-12 gap-2 px-6 text-sm font-black uppercase tracking-wider sm:text-base"
+              onClick={() => navigate(`/challenge/day-${ctaDay}`)}
+            >
+              {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </section>
+
+          {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
+          {cfg.enabled && cfg.videoUrl && (
+            <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-2.5">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Play className="h-3.5 w-3.5" fill="currentColor" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-foreground">{cfg.videoTitle}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">Quick briefing · ~2 min</p>
+                </div>
+                {state.training.dashboardVideoWatched && (
+                  <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+                    Watched
+                  </span>
+                )}
+              </div>
+              <div className="aspect-video w-full bg-black">
+                <iframe
+                  src={cfg.videoUrl}
+                  title={cfg.videoTitle}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  onLoad={() => {
+                    if (!state.training.dashboardVideoWatched) {
+                      setState((prev) => ({
+                        ...prev,
+                        training: {
+                          ...prev.training,
+                          dashboardVideoWatched: true,
+                          preChallengeWatched: true,
+                        },
+                      }));
+                      trackEvent("dashboard_training_marked_watched");
+                    }
+                  }}
+                />
+              </div>
+            </section>
+          )}
+
+          {/* 3. TODAY'S TASK */}
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+              Today's task
+            </p>
+            <h2 className="mt-1.5 text-xl font-bold text-foreground">
+              Answer 3 questions about your challenge
+            </h2>
+            <ul className="mt-4 space-y-2.5">
+              {[
+                "What problem do you solve?",
+                "Who do you solve it for?",
+                "How do you solve it?",
+              ].map((q, i) => (
+                <li key={q} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm font-semibold text-foreground sm:text-base">{q}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              size="lg"
+              className="mt-5 h-12 w-full gap-2 text-sm font-black uppercase tracking-wider sm:w-auto"
+              onClick={() => {
+                trackEvent("dashboard_training_viewed");
+                navigate("/mentor");
+              }}
+            >
+              <Sparkles className="h-4 w-4" />
+              Generate My Challenge With AI
+            </Button>
+          </section>
+
+          {/* 4. MOMENTUM ACTIONS */}
+          <section>
+            <p className="mb-3 px-1 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+              Momentum
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  void handlePhotoUpload(event.target.files?.[0]);
+                  event.currentTarget.value = "";
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => !photoDone && photoInputRef.current?.click()}
+                disabled={photoDone || photoUploading}
+                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+                  photoDone
+                    ? "border-border bg-muted/30 opacity-60"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
+                }`}
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Camera className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-foreground">Add Profile Photo</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {photoDone ? "Done" : photoUploading ? "Uploading…" : "+50 points"}
+                  </p>
+                </div>
+              </button>
+
+              <div
+                className={`flex items-start gap-3 rounded-xl border p-4 transition-all ${
+                  calendarDone
+                    ? "border-border bg-muted/30 opacity-60"
+                    : "border-border bg-background hover:border-primary/40"
+                }`}
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <CalendarPlus className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-foreground">Add Challenge To Calendar</p>
+                  {calendarDone ? (
+                    <p className="text-[11px] text-muted-foreground">Done</p>
+                  ) : (
+                    <AddToCalendar
+                      variant="secondary"
+                      className="mt-1 !h-8 !px-2.5 text-[11px] font-bold"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => navigate("/mentor")}
+                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+                  bioDone
+                    ? "border-border bg-muted/30 opacity-60"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
+                }`}
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Sparkles className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-foreground">Create Bio With AI</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {bioDone ? "Done" : "+50 points"}
+                  </p>
+                </div>
+              </button>
+            </div>
+          </section>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">

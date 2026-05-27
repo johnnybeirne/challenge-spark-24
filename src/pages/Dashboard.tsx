@@ -574,7 +574,7 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className="min-w-0 pr-14">
-                    <p className={`text-xs font-black uppercase tracking-wide ${photoDone ? "text-muted-foreground" : "text-primary"}`}>Step 1</p>
+                    <p className={`text-sm font-black uppercase tracking-[0.12em] ${photoDone ? "text-muted-foreground" : "text-primary"}`}>Step 1</p>
                     <h2 className={`mt-0.5 text-lg font-bold ${photoDone ? "text-muted-foreground" : "text-foreground"}`}>Add your challenge photo</h2>
                   </div>
                 </div>

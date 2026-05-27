@@ -6,27 +6,56 @@ import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
-import { copilotMemoryContext } from "@/lib/personalisation";
+import { challengerCoachContext, copilotMemoryContext } from "@/lib/personalisation";
+import { useUserRole } from "@/hooks/useUserRole";
+import { useUserStage } from "@/hooks/useUserStage";
 import TypingDots from "@/components/TypingDots";
 import { toast } from "sonner";
 
 interface ChatMsg { role: "user" | "assistant"; content: string; }
 
-const SUGGESTED = [
+const DEFAULT_SUGGESTED = [
   "Help me choose a challenge idea",
   "Create a 5-day challenge structure",
   "What mistakes should I avoid?",
   "Give me challenge name ideas",
 ];
 
+const DAY_SUGGESTED: Record<number, string[]> = {
+  1: [
+    "Sharpen my problem statement",
+    "Make my audience more specific",
+    "Reframe my challenge positioning",
+    "What's a strong Day 1 outcome?",
+  ],
+  2: [
+    "Improve my quiz questions",
+    "Make my quiz more engaging",
+    "Map quiz results to next steps",
+    "How do I build Day 2 momentum?",
+  ],
+  3: [
+    "Tighten my launch checklist",
+    "Write a referral invite message",
+    "Boost completion-to-referral conversion",
+    "What should I do after Day 3?",
+  ],
+};
+
 const Mentor = () => {
   const { state } = useAppState();
+  const { role } = useUserRole();
+  const { stage } = useUserStage();
   const [params, setParams] = useSearchParams();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const isChallenger = role === "challenger";
+  const currentDay = Math.min(Math.max(state.challenge.currentDay || 1, 1), 3);
+  const SUGGESTED = isChallenger ? DAY_SUGGESTED[currentDay] ?? DEFAULT_SUGGESTED : DEFAULT_SUGGESTED;
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
   useEffect(() => { textareaRef.current?.focus(); }, [messages.length]);
@@ -49,9 +78,27 @@ const Mentor = () => {
     setInput("");
     setLoading(true);
     try {
-      const memoryContext = copilotMemoryContext(state.memory);
+      const ch = state.challenge;
+      const isComplete = ch.completed || ch.currentDay > 3;
+      const unlockMap: Record<number, string> = {
+        1: "AI Prompt Pack",
+        2: "Lead Magnet Templates",
+        3: "Community Access",
+      };
+      const memoryContext = isChallenger
+        ? challengerCoachContext(state.memory, {
+            currentDay,
+            completed: isComplete,
+            problem: ch.aiOutputs?.[`day1_problem`] || state.memory.topic,
+            audience: ch.aiOutputs?.[`day1_define_app`],
+            method: ch.aiOutputs?.[`day1_result`] || state.memory.desiredOutcome,
+            unlockedNext: isComplete ? "Community Access" : unlockMap[currentDay],
+            hasUrl: !!ch.launchUrl,
+            directReferrals: state.referrals?.count ?? 0,
+          })
+        : copilotMemoryContext(state.memory);
       const { data, error } = await supabase.functions.invoke("copilot", {
-        body: { prompt, memory: state.memory, memoryContext },
+        body: { prompt, memory: state.memory, memoryContext, stage },
       });
       if (error) throw error;
       const response = data?.response ?? "No response received.";

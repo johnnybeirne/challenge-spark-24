@@ -101,3 +101,70 @@ export const copilotMemoryContext = (memory: UserMemory) => {
   ].filter(Boolean);
   return parts.join(" ");
 };
+
+// ──────────────────────────────────────────────────────────────────────
+// Challenger-aware coaching context
+// Layered on top of copilotMemoryContext — gives Johnny AI live awareness
+// of which day the user is on, their progress, their answers, and unlocks.
+// ──────────────────────────────────────────────────────────────────────
+const DAY_FOCUS: Record<number, { headline: string; focus: string[] }> = {
+  1: {
+    headline: "Day 1 — Define the challenge",
+    focus: [
+      "challenge positioning",
+      "problem clarity",
+      "audience clarity",
+    ],
+  },
+  2: {
+    headline: "Day 2 — Build the lead magnet quiz",
+    focus: [
+      "engagement",
+      "momentum",
+      "challenge structure",
+    ],
+  },
+  3: {
+    headline: "Day 3 — Launch the AI-powered challenge",
+    focus: [
+      "delivery",
+      "conversion",
+      "referral activation",
+    ],
+  },
+};
+
+export interface ChallengerCoachContext {
+  currentDay: number;
+  completed: boolean;
+  problem?: string;
+  audience?: string;
+  method?: string;
+  unlockedNext?: string;
+  hasUrl?: boolean;
+  directReferrals?: number;
+}
+
+export const challengerCoachContext = (
+  memory: UserMemory,
+  ctx: ChallengerCoachContext,
+): string => {
+  const day = Math.min(Math.max(ctx.currentDay || 1, 1), 3);
+  const meta = DAY_FOCUS[day];
+  const base = copilotMemoryContext(memory);
+  const lines = [
+    base,
+    ctx.completed
+      ? "The user has completed all 3 days of the challenge — coach toward refinement, launch, and referral activation."
+      : `${meta.headline}. Coach with a focus on: ${meta.focus.join(", ")}.`,
+    ctx.problem ? `Their challenge problem: ${ctx.problem}.` : "",
+    ctx.audience ? `Their audience: ${ctx.audience}.` : "",
+    ctx.method ? `Their method: ${ctx.method}.` : "",
+    typeof ctx.directReferrals === "number"
+      ? `They have ${ctx.directReferrals} direct referral${ctx.directReferrals === 1 ? "" : "s"}${ctx.hasUrl ? " and a live challenge URL" : ""}.`
+      : "",
+    ctx.unlockedNext ? `Next unlock waiting for them: ${ctx.unlockedNext}.` : "",
+    "Always tie advice back to the user's current day and their next concrete action — speak as a live challenge strategist, not a generic chatbot.",
+  ].filter(Boolean);
+  return lines.join(" ");
+};

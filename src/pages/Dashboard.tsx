@@ -507,9 +507,9 @@ const Dashboard = () => {
                   >
                     <div className="mt-0.5 shrink-0">{getStepIcon(step.day)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[11px] font-bold uppercase tracking-wide ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
-                      <p className={`text-sm font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
-                      <p className={`mt-0.5 text-xs ${isActive || isComplete ? "text-primary font-medium" : "text-muted-foreground"}`}>{status}</p>
+                      <p className={`text-sm font-black uppercase tracking-[0.12em] ${isLocked ? "text-muted-foreground" : "text-primary"}`}>Day {step.day}</p>
+                      <p className={`mt-0.5 text-base font-semibold leading-tight ${isLocked ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</p>
+                      <p className={`mt-1 text-sm font-medium ${isActive || isComplete ? "text-primary" : "text-muted-foreground"}`}>{status}</p>
                     </div>
                   </div>
                 );

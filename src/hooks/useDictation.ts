@@ -1,22 +1,59 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-type SR = any;
+interface SpeechRecognitionAlternativeLike {
+  transcript?: string;
+}
+
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  [index: number]: SpeechRecognitionAlternativeLike | undefined;
+}
+
+interface SpeechRecognitionResultListLike {
+  length: number;
+  [index: number]: SpeechRecognitionResultLike;
+}
+
+interface SpeechRecognitionEventLike {
+  resultIndex: number;
+  results: SpeechRecognitionResultListLike;
+}
+
+interface SpeechRecognitionErrorEventLike {
+  error?: string;
+}
+
+interface SpeechRecognitionLike {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  maxAlternatives: number;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
 
 declare global {
   interface Window {
-    SpeechRecognition?: SR;
-    webkitSpeechRecognition?: SR;
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
   }
 }
 
 export function useDictation() {
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const onUpdateRef = useRef<((text: string, isFinal: boolean) => void) | null>(null);
   const finalRef = useRef<string>("");
   const manualStopRef = useRef<boolean>(false);
   const shouldRunRef = useRef<boolean>(false);
+  const restartTimerRef = useRef<number | null>(null);
+  const startingRef = useRef<boolean>(false);
 
   const isSupported =
     typeof window !== "undefined" &&
@@ -25,9 +62,16 @@ export function useDictation() {
   const stop = useCallback(() => {
     manualStopRef.current = true;
     shouldRunRef.current = false;
+    startingRef.current = false;
+    if (restartTimerRef.current) {
+      window.clearTimeout(restartTimerRef.current);
+      restartTimerRef.current = null;
+    }
     try {
       recognitionRef.current?.stop();
-    } catch {}
+    } catch {
+      void 0;
+    }
     setIsListening(false);
   }, []);
 
@@ -43,11 +87,36 @@ export function useDictation() {
       }
 
       const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Ctor) return;
 
       onUpdateRef.current = onUpdate;
       finalRef.current = "";
       manualStopRef.current = false;
       shouldRunRef.current = true;
+
+      const startRecognizer = (rec: SpeechRecognitionLike) => {
+        if (!shouldRunRef.current || startingRef.current) return;
+        startingRef.current = true;
+        try {
+          rec.start();
+          setIsListening(true);
+        } catch (err: unknown) {
+          if (shouldRunRef.current) {
+            restartTimerRef.current = window.setTimeout(() => {
+              restartTimerRef.current = null;
+              const next = buildRecognizer();
+              recognitionRef.current = next;
+              startingRef.current = false;
+              startRecognizer(next);
+            }, 350);
+            return;
+          }
+          toast.error(err instanceof Error ? err.message : "Couldn't start dictation.");
+          setIsListening(false);
+        } finally {
+          startingRef.current = false;
+        }
+      };
 
       const buildRecognizer = () => {
         const rec = new Ctor();
@@ -56,7 +125,7 @@ export function useDictation() {
         rec.continuous = true;
         rec.maxAlternatives = 1;
 
-        rec.onresult = (e: any) => {
+        rec.onresult = (e) => {
           let interim = "";
           let newFinal = "";
           for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -72,7 +141,7 @@ export function useDictation() {
           const combined = (finalRef.current + " " + interim).trim();
           if (combined) onUpdateRef.current?.(combined, false);
         };
-        rec.onerror = (e: any) => {
+        rec.onerror = (e) => {
           if (e.error === "not-allowed" || e.error === "service-not-allowed") {
             toast.error(
               "Microphone access was blocked. Click the mic icon in your browser's address bar and allow microphone, then try again."
@@ -83,30 +152,25 @@ export function useDictation() {
             toast.error("No microphone found. Connect a mic and try again.");
             shouldRunRef.current = false;
             setIsListening(false);
-          } else if (e.error === "no-speech" || e.error === "aborted") {
+          } else if (e.error === "no-speech" || e.error === "aborted" || e.error === "network") {
             // Benign — onend will auto-restart if we're still meant to be running.
           } else {
-            toast.error(`Couldn't capture audio (${e.error}). Please try again.`);
-            shouldRunRef.current = false;
-            setIsListening(false);
+            // Some browsers emit transient speech-service errors mid-session.
+            // Keep the session alive and let onend rebuild the recognizer.
+            if (!shouldRunRef.current) return;
           }
         };
         rec.onend = () => {
           // Chrome ends the session after silence even with continuous=true.
           // Restart transparently unless the user pressed Stop.
           if (shouldRunRef.current && !manualStopRef.current) {
-            try {
-              rec.start();
-              return;
-            } catch {
-              // If we can't reuse it, swap in a fresh recognizer.
-              try {
-                const next = buildRecognizer();
-                recognitionRef.current = next;
-                next.start();
-                return;
-              } catch {}
-            }
+            restartTimerRef.current = window.setTimeout(() => {
+              restartTimerRef.current = null;
+              const next = buildRecognizer();
+              recognitionRef.current = next;
+              startRecognizer(next);
+            }, 250);
+            return;
           }
           setIsListening(false);
         };
@@ -121,14 +185,7 @@ export function useDictation() {
       // permission has been granted. Explicitly request the mic first — this
       // call MUST stay inside the user-gesture click handler.
       const begin = () => {
-        try {
-          rec.start();
-          setIsListening(true);
-        } catch (err: any) {
-          shouldRunRef.current = false;
-          setIsListening(false);
-          toast.error(err?.message || "Couldn't start dictation.");
-        }
+        startRecognizer(rec);
       };
 
       if (navigator.mediaDevices?.getUserMedia) {
@@ -138,18 +195,20 @@ export function useDictation() {
             stream.getTracks().forEach((t) => t.stop());
             begin();
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             shouldRunRef.current = false;
-            if (err?.name === "NotAllowedError") {
+            const errorName = err instanceof DOMException ? err.name : "";
+            const errorMessage = err instanceof Error ? err.message : "Couldn't access microphone.";
+            if (errorName === "NotAllowedError") {
               toast.error(
                 "Microphone permission denied. Allow microphone access for this site and try again."
               );
-            } else if (err?.name === "NotFoundError") {
+            } else if (errorName === "NotFoundError") {
               toast.error("No microphone found.");
-            } else if (err?.name === "NotReadableError") {
+            } else if (errorName === "NotReadableError") {
               toast.error("Microphone is in use by another app.");
             } else {
-              toast.error(err?.message || "Couldn't access microphone.");
+              toast.error(errorMessage);
             }
             setIsListening(false);
           });

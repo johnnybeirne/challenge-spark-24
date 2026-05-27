@@ -470,7 +470,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
-            <div className="mb-2 flex justify-between px-0.5 text-xs font-semibold text-muted-foreground sm:text-sm">
+            <div className="mb-3 flex justify-between px-0.5 text-sm font-semibold text-muted-foreground">
               {challengeSteps.map((step) => {
                 const status = getStepStatus(step.day);
                 const dim = status === "Locked";
@@ -479,9 +479,9 @@ const Dashboard = () => {
                     key={step.day}
                     className={`flex flex-col ${step.day === 1 ? "items-start" : step.day === 2 ? "items-center" : "items-end"}`}
                   >
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${dim ? "text-muted-foreground/60" : "text-primary"}`}>Day {step.day}</span>
+                    <span className={`text-sm font-black uppercase tracking-[0.12em] ${dim ? "text-muted-foreground/70" : "text-primary"}`}>Day {step.day}</span>
                     {getDayDate(step.day) && (
-                      <span className={`text-xs sm:text-sm ${dim ? "text-muted-foreground/70" : "text-foreground"}`}>{getDayDate(step.day)}</span>
+                      <span className={`mt-0.5 text-sm ${dim ? "text-muted-foreground/70" : "text-foreground"}`}>{getDayDate(step.day)}</span>
                     )}
                   </div>
                 );

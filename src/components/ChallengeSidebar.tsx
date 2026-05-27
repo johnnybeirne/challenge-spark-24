@@ -581,6 +581,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapsed: boolean) => void }) => {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const pulse = usePulseOnLogin();
   const toggleCollapsed = () => {
     setCollapsed((value) => {
       onCollapsedChange?.(!value);
@@ -593,7 +594,10 @@ const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapse
         <Button
           size="sm"
           variant="default"
-          className="absolute -right-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl"
+          className={cn(
+            "absolute -right-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl",
+            pulse && "animate-attention-pulse"
+          )}
           onClick={toggleCollapsed}
           aria-label={collapsed ? "Expand dashboard sidebar" : "Collapse dashboard sidebar"}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}

@@ -95,7 +95,7 @@ const RestartDay1Button = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={variant} size={size} className={className}>
+        <Button variant={variant} size={size} className={`text-orange-600 hover:text-orange-700 hover:bg-orange-50 ${className ?? ""}`}>
           <RotateCcw className="h-3.5 w-3.5" />
           {label}
         </Button>

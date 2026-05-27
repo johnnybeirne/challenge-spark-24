@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
 import Footer from "./Footer";
@@ -12,6 +13,9 @@ import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
 import { useUserRole } from "@/hooks/useUserRole";
+import { trackEvent } from "@/lib/analytics";
+
+const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();

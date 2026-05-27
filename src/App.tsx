@@ -28,11 +28,10 @@ import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import Unlocks from "@/pages/Unlocks";
 import RedeemCredits from "@/pages/RedeemCredits";
-import Referrals from "@/pages/Referrals";
+import EarnRewards from "@/pages/EarnRewards";
 import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
 import Leaderboard from "@/pages/Leaderboard";
-import Rewards from "@/pages/Rewards";
 import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
@@ -182,12 +181,14 @@ const App = () => (
 
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
-                <Route path="/referrals" element={<AuthGuard><Referrals /></AuthGuard>} />
+                <Route path="/earn" element={<AuthGuard><EarnRewards /></AuthGuard>} />
+                {/* Legacy routes — redirect to the unified Earn Rewards page */}
+                <Route path="/referrals" element={<Navigate to="/earn" replace />} />
                 <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
-                <Route path="/bonus-vault" element={<AuthGuard><Rewards /></AuthGuard>} />
-                <Route path="/rewards" element={<Navigate to="/bonus-vault" replace />} />
+                <Route path="/bonus-vault" element={<Navigate to="/earn" replace />} />
+                <Route path="/rewards" element={<Navigate to="/earn" replace />} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />

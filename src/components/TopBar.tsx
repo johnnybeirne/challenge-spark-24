@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import NotificationsBell from "@/components/NotificationsBell";
+import GlobalSearch from "@/components/GlobalSearch";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 
@@ -14,8 +16,21 @@ const TopBar = () => {
   const { pathname } = useLocation();
   const { state } = useAppState();
   const isChallengerShell = useIsChallengerShell();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   if (!isChallengerShell) return null;
+
 
   const tools = [
     { to: "/training", label: "Training", Icon: GraduationCap },
@@ -56,12 +71,14 @@ const TopBar = () => {
       <div className="flex shrink-0 items-center gap-1">
         <button
           type="button"
+          onClick={() => setSearchOpen(true)}
           className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted"
           aria-label="Search"
           title="Search"
         >
           <Search className="h-4 w-4" />
         </button>
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
         <NotificationsBell />
         <Link
           to="/challenger-dashboard"

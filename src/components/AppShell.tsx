@@ -57,7 +57,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
       description: "Momentum is now live. Keep going on Day 1.",
       duration: 4500,
     });
-    trackEvent("dashboard_training_marked_watched"); // existing safe event; signup reward visibility is read from state
+    trackEvent("signup_completed");
   }, [authenticated, signupAwarded]);
 
 

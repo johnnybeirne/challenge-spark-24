@@ -171,11 +171,12 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             collapsed ? "p-2" : "px-3 py-2.5",
             dashboardActive && "ring-2 ring-primary/20 border-primary/40"
           )}
-          title="Dashboard"
+          title="Your Dashboard"
         >
           <div className="flex items-center gap-2">
             <Compass className={cn("h-4 w-4 shrink-0", dashboardActive ? "text-primary" : "text-muted-foreground")} />
-            {!collapsed && <span className="text-sm font-semibold text-foreground">Dashboard</span>}
+            {!collapsed && <span className="text-sm font-semibold text-foreground">Your Dashboard</span>}
+
           </div>
         </button>
 

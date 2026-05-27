@@ -304,10 +304,10 @@ const Day1Setup = ({ onComplete }: Props) => {
   }) => (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">Foundation · {n} of 3</p>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-sm text-muted-foreground">{helper}</p>
       </div>
+
       <DictatedTextarea
         autoFocus
         value={value}

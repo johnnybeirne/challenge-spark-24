@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Sparkles, Trophy, Users, ChevronRight, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
+import { supabase } from "@/integrations/supabase/client";
+
 
 // Global right rail — momentum, social proof, rewards.
 // Read-only surface: derives from existing state, mutates nothing.

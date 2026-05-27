@@ -316,17 +316,22 @@ const Dashboard = () => {
                 </li>
               ))}
             </ul>
-            <Button
-              size="lg"
-              className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
-              onClick={() => {
-                trackEvent("dashboard_training_viewed");
-                navigate(`/challenge/day-${ctaDay}`);
-              }}
-            >
-              <Sparkles className="h-4 w-4" />
-              {ctaLabel}
-            </Button>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Button
+                size="lg"
+                className="h-12 gap-2 text-base font-black uppercase tracking-wider"
+                onClick={() => {
+                  trackEvent("dashboard_training_viewed");
+                  navigate(`/challenge/day-${ctaDay}`);
+                }}
+              >
+                <Sparkles className="h-4 w-4" />
+                {ctaLabel}
+              </Button>
+              {isDay1InProgress && (
+                <RestartDay1Button variant="ghost" size="sm" className="text-muted-foreground" />
+              )}
+            </div>
           </section>
 
 

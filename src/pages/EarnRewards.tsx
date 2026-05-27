@@ -229,32 +229,89 @@ const EarnRewards = () => {
           );
         })()}
 
-        {/* 3. REWARD LADDER — list, not a card grid */}
-        <section className="mb-14">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
-          <ol className="overflow-hidden rounded-xl border border-border">
-            {ladder.map((rung, i) => {
-              const unlocked = direct >= rung.invites;
-              return (
-                <li
-                  key={rung.invites}
-                  className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-border" : ""} ${unlocked ? "bg-card" : "bg-muted/30"}`}
-                >
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums ${unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                    {unlocked ? <CheckCircle className="h-4 w-4" /> : rung.invites}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-semibold ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>{rung.title}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{rung.desc}</p>
-                  </div>
-                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                    {unlocked ? "Unlocked" : `${rung.invites} invite${rung.invites === 1 ? "" : "s"}`}
+        {/* 3. REWARD LADDER — emphasise current + next + next major */}
+        {(() => {
+          const points = state.credits?.total ?? 0;
+          const unlockedRungs = ladder.filter((r) => points >= r.points);
+          const lockedRungs = ladder.filter((r) => points < r.points);
+          const justUnlocked = unlockedRungs[unlockedRungs.length - 1];
+          const nextUp = lockedRungs[0];
+          const nextMajor = lockedRungs.find((r) => r.major && r !== nextUp);
+          const featuredKeys = new Set(
+            [justUnlocked, nextUp, nextMajor].filter(Boolean).map((r) => r!.points),
+          );
+          const otherLocked = lockedRungs.filter((r) => !featuredKeys.has(r.points));
+
+          const FeaturedCard = ({
+            rung, kind,
+          }: { rung: Rung; kind: "unlocked" | "next" | "major" }) => {
+            const label =
+              kind === "unlocked" ? "Just unlocked" :
+              kind === "next" ? "Next unlock" : "Next major reward";
+            const accent =
+              kind === "next"
+                ? "border-primary/40 bg-primary/5"
+                : kind === "unlocked"
+                  ? "border-border bg-card"
+                  : "border-border bg-card";
+            const pillCls =
+              kind === "next"
+                ? "bg-primary text-primary-foreground"
+                : kind === "unlocked"
+                  ? "bg-foreground/90 text-background"
+                  : "bg-muted text-muted-foreground";
+            return (
+              <div className={`rounded-xl border ${accent} px-5 py-4`}>
+                <div className="mb-2 flex items-center gap-2">
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${pillCls}`}>
+                    {label}
                   </span>
-                </li>
-              );
-            })}
-          </ol>
-        </section>
+                  <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                    {rung.points} pts
+                  </span>
+                </div>
+                <p className="text-base font-semibold text-foreground">{rung.title}</p>
+                {rung.desc && (
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{rung.desc}</p>
+                )}
+                {kind === "next" && (
+                  <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+                    {Math.max(0, rung.points - points)} points to go
+                  </p>
+                )}
+              </div>
+            );
+          };
+
+          return (
+            <section className="mb-14">
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
+
+              <div className="space-y-3">
+                {justUnlocked && <FeaturedCard rung={justUnlocked} kind="unlocked" />}
+                {nextUp && <FeaturedCard rung={nextUp} kind="next" />}
+                {nextMajor && <FeaturedCard rung={nextMajor} kind="major" />}
+              </div>
+
+              {otherLocked.length > 0 && (
+                <ol className="mt-4 overflow-hidden rounded-xl border border-border">
+                  {otherLocked.map((rung, i) => (
+                    <li
+                      key={rung.points}
+                      className={`flex items-center gap-4 px-5 py-3 bg-muted/20 ${i > 0 ? "border-t border-border" : ""}`}
+                    >
+                      <span className="w-12 shrink-0 text-xs font-semibold text-muted-foreground tabular-nums">
+                        {rung.points}
+                      </span>
+                      <span className="flex-1 truncate text-sm text-muted-foreground">{rung.title}</span>
+                      <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+          );
+        })()}
 
         {/* 4. PARTNER BONUSES */}
         <section className="mb-14">

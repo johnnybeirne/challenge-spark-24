@@ -243,6 +243,9 @@ const EarnRewards = () => {
                 </div>
                 <Progress value={pct} className="mt-4 h-1.5" />
               </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Most users unlock their first reward by inviting 2–3 people.
+              </p>
             </section>
           );
         })()}

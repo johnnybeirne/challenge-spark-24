@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Bell, CalendarDays, MessageCircle, Search, Trophy, Users } from "lucide-react";
+import { Bell, CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";

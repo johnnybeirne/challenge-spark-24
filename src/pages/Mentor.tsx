@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { Copy, Loader2, Send, Sparkles } from "lucide-react";
+import { Copy, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
@@ -11,9 +11,11 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useUserStage } from "@/hooks/useUserStage";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import TypingDots from "@/components/TypingDots";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { toast } from "sonner";
 
-interface ChatMsg { role: "user" | "assistant"; content: string; }
+interface ChatMsg { role: "user" | "assistant"; content: string; typed?: boolean; }
+
 
 const DEFAULT_SUGGESTED = [
   "Help me choose a challenge idea",
@@ -52,6 +54,7 @@ const Mentor = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [typedCount, setTypedCount] = useState<Record<number, number>>({});
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -59,8 +62,26 @@ const Mentor = () => {
   const currentDay = Math.min(Math.max(state.challenge.currentDay || 1, 1), 3);
   const SUGGESTED = isChallenger ? DAY_SUGGESTED[currentDay] ?? DEFAULT_SUGGESTED : DEFAULT_SUGGESTED;
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading, typedCount]);
   useEffect(() => { textareaRef.current?.focus(); }, [messages.length]);
+
+  // Typewriter effect for the most recent assistant message
+  useEffect(() => {
+    const lastIdx = messages.length - 1;
+    const last = messages[lastIdx];
+    if (!last || last.role !== "assistant" || last.typed) return;
+    const current = typedCount[lastIdx] ?? 0;
+    if (current >= last.content.length) {
+      setMessages((m) => m.map((msg, i) => (i === lastIdx ? { ...msg, typed: true } : msg)));
+      return;
+    }
+    const step = Math.max(2, Math.ceil(last.content.length / 200));
+    const t = setTimeout(() => {
+      setTypedCount((tc) => ({ ...tc, [lastIdx]: Math.min(last.content.length, current + step) }));
+    }, 18);
+    return () => clearTimeout(t);
+  }, [messages, typedCount]);
+
 
   useEffect(() => {
     const seed = params.get("prompt");
@@ -150,32 +171,46 @@ const Mentor = () => {
         )}
 
         <div className="space-y-4">
-          {messages.map((m, i) => (
-            <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
-              {m.role === "user" ? (
-                <p className="max-w-[85%] rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground">{m.content}</p>
-              ) : (
-                <div className="group max-w-[90%]">
-                  <div className="prose prose-sm max-w-none text-foreground dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                    <ReactMarkdown>{m.content}</ReactMarkdown>
+          {messages.map((m, i) => {
+            const isLast = i === messages.length - 1;
+            const visible = m.role === "assistant" && !m.typed && isLast
+              ? m.content.slice(0, typedCount[i] ?? 0)
+              : m.content;
+            const fullyTyped = m.role !== "assistant" || m.typed || visible.length >= m.content.length;
+            return (
+              <div key={i} className={m.role === "user" ? "flex justify-end" : "flex items-start justify-start gap-3"}>
+                {m.role === "assistant" && (
+                  <img src={johnnyAvatar} alt="Johnny" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
+                )}
+                {m.role === "user" ? (
+                  <p className="max-w-[85%] rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground">{m.content}</p>
+                ) : (
+                  <div className="group max-w-[85%]">
+                    <div className="prose prose-sm max-w-none text-foreground dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                      <ReactMarkdown>{visible || "\u200B"}</ReactMarkdown>
+                    </div>
+                    {fullyTyped && (
+                      <button
+                        onClick={() => copy(m.content)}
+                        className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
+                      >
+                        <Copy className="h-3 w-3" /> Copy
+                      </button>
+                    )}
                   </div>
-                  <button
-                    onClick={() => copy(m.content)}
-                    className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
-                  >
-                    <Copy className="h-3 w-3" /> Copy
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
           {loading && (
-            <div className="flex justify-start">
+            <div className="flex items-start justify-start gap-3">
+              <img src={johnnyAvatar} alt="Johnny" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
               <div className="rounded-2xl bg-muted px-4 py-2.5"><TypingDots /></div>
             </div>
           )}
           <div ref={endRef} />
         </div>
+
       </section>
 
       <div className="mt-4 rounded-2xl border border-border bg-card p-3">

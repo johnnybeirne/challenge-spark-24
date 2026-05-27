@@ -150,7 +150,7 @@ const Dashboard = () => {
               window.location.href = "/";
             }}
           >
-            {authUser ? "Sign out" : "Exit user view"}
+            {authUser ? "Log out" : "Exit user view"}
           </Button>
         )}
       </header>

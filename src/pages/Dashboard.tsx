@@ -300,24 +300,7 @@ const Dashboard = () => {
             <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
               Today's task
             </p>
-            <h2 className="mt-1.5 text-xl font-bold text-foreground">
-              Answer 3 questions about your challenge
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {[
-                "What problem do you solve?",
-                "Who do you solve it for?",
-                "How do you solve it?",
-              ].map((q, i) => (
-                <li key={q} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="text-base font-semibold text-foreground">{q}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <Button
                 size="lg"
                 className="h-12 gap-2 text-base font-black uppercase tracking-wider"
@@ -334,6 +317,7 @@ const Dashboard = () => {
               )}
             </div>
           </section>
+
 
           {/* 3b. CHALLENGE PROFILE — answers from the Day 1 assessment */}
           {(() => {

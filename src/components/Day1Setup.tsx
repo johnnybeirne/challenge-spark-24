@@ -165,6 +165,12 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
+      pushNotification({
+        title: "Profile updated",
+        message: "We've updated your profile with your challenge answers.",
+        href: "/challenger-dashboard",
+        dedupeKey: "day1_foundation_saved",
+      });
       setStep(4);
     }
   };

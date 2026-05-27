@@ -419,7 +419,7 @@ const Dashboard = () => {
             className="h-12 w-full gap-2 text-base font-black uppercase tracking-wider"
             onClick={() => navigate(`/challenge/day-${ctaDay}`)}
           >
-            {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
+            {ctaLabel}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

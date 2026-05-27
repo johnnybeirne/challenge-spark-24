@@ -186,12 +186,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                 return (
                   <button
                     key={path}
-                    onClick={() => !locked && go(path)}
-                    disabled={locked}
+                    onClick={() => go(path)}
                     className={cn(
-                      "relative w-full rounded-xl text-left transition-all",
+                      "relative w-full rounded-xl text-left transition-all hover:bg-primary/5",
                       collapsed ? "p-2" : "px-3 py-2.5",
-                      locked ? "cursor-not-allowed opacity-60" : "hover:bg-primary/5",
+                      locked && "opacity-70",
                       active && "bg-background ring-2 ring-primary/20"
                     )}
                     title={`Day ${n} — ${dateLabel} — ${status}`}

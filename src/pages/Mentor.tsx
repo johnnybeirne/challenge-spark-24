@@ -54,6 +54,7 @@ const Mentor = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [typedCount, setTypedCount] = useState<Record<number, number>>({});
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -61,8 +62,26 @@ const Mentor = () => {
   const currentDay = Math.min(Math.max(state.challenge.currentDay || 1, 1), 3);
   const SUGGESTED = isChallenger ? DAY_SUGGESTED[currentDay] ?? DEFAULT_SUGGESTED : DEFAULT_SUGGESTED;
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading, typedCount]);
   useEffect(() => { textareaRef.current?.focus(); }, [messages.length]);
+
+  // Typewriter effect for the most recent assistant message
+  useEffect(() => {
+    const lastIdx = messages.length - 1;
+    const last = messages[lastIdx];
+    if (!last || last.role !== "assistant" || last.typed) return;
+    const current = typedCount[lastIdx] ?? 0;
+    if (current >= last.content.length) {
+      setMessages((m) => m.map((msg, i) => (i === lastIdx ? { ...msg, typed: true } : msg)));
+      return;
+    }
+    const step = Math.max(2, Math.ceil(last.content.length / 200));
+    const t = setTimeout(() => {
+      setTypedCount((tc) => ({ ...tc, [lastIdx]: Math.min(last.content.length, current + step) }));
+    }, 18);
+    return () => clearTimeout(t);
+  }, [messages, typedCount]);
+
 
   useEffect(() => {
     const seed = params.get("prompt");

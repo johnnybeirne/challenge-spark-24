@@ -46,8 +46,8 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Foundation (1-3) → Refinement (4-7) → AI Builder (8)
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+// Intro (0) → Foundation (1-3) → Refinement (4-7) → AI Builder (8)
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / professionals", icon: Briefcase },
@@ -84,14 +84,16 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
-  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 1 as Step; } })();
+  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
+    if (persistedStep >= 0 && persistedStep <= 8) return persistedStep as Step;
     if (saved?.audienceType) return 8;
     if (hasFoundation) return 4;
-    return 1;
+    if (saved?.problem || saved?.audience || saved?.how) return 1;
+    return 0;
   })();
+
 
   const [step, setStep] = useState<Step>(initialStep);
 

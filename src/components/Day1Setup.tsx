@@ -80,6 +80,48 @@ const BUILDER_STARTERS = [
   "Give me 3 ways to make the result feel tangible by Day 3.",
 ];
 
+const FoundationStep = ({
+  title,
+  helper,
+  value,
+  setValue,
+  placeholder,
+  onNext,
+}: {
+  n?: 1 | 2 | 3;
+  title: string;
+  helper: string;
+  value: string;
+  setValue: (v: string) => void;
+  placeholder: string;
+  onNext: () => void;
+}) => (
+  <div className="space-y-6 animate-fade-in">
+    <div className="space-y-2">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+      <p className="text-sm text-muted-foreground">{helper}</p>
+    </div>
+
+    <DictatedTextarea
+      autoFocus
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      placeholder={placeholder}
+      className="min-h-[140px] text-base"
+    />
+
+    <Button
+      size="lg"
+      onClick={onNext}
+      disabled={!value.trim()}
+      className="w-full h-12 text-base font-semibold"
+    >
+      Continue
+      <ArrowRight className="ml-2 h-5 w-5" />
+    </Button>
+  </div>
+);
+
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState } = useAppState();
 

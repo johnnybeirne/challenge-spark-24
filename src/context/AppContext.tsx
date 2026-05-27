@@ -431,6 +431,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               partnerPerformance: prev.partnerPerformance,
             }));
           prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
+        } else {
+          // New user with no remote state — still award the signup bonus & run unlock rules.
+          setStateRaw((prev) => checkAndTriggerUnlocks(prev));
         }
         setHydrated(true);
       })();

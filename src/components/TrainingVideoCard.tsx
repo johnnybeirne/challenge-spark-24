@@ -11,8 +11,8 @@ interface Props {
   lesson: string;
   watched: boolean;
   watchedLabel?: string;
-  ctaLabel: string;
-  onMarkWatched: () => void;
+  ctaLabel?: string;
+  onMarkWatched?: () => void;
   videoUrl?: string;
   primaryCta?: { label: string; onClick: () => void };
   secondaryCta?: { label: string; onClick: () => void };

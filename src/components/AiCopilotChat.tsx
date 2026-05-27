@@ -154,49 +154,49 @@ const AiCopilotChat = () => {
       {!open && (
         <button
           onPointerDown={(e) => {
+            e.preventDefault();
             const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-            dragRef.current = {
-              startX: e.clientX, startY: e.clientY,
-              origX: rect.left, origY: rect.top,
-              moved: false, pointerId: e.pointerId,
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const origX = rect.left;
+            const origY = rect.top;
+            let moved = false;
+
+            const onMove = (ev: PointerEvent) => {
+              const dx = ev.clientX - startX;
+              const dy = ev.clientY - startY;
+              if (!moved && Math.hypot(dx, dy) < 5) return;
+              moved = true;
+              setPos(clampPos(origX + dx, origY + dy));
             };
-            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-          }}
-          onPointerMove={(e) => {
-            const d = dragRef.current;
-            if (!d || d.pointerId !== e.pointerId) return;
-            const dx = e.clientX - d.startX, dy = e.clientY - d.startY;
-            if (!d.moved && Math.hypot(dx, dy) < 5) return;
-            d.moved = true;
-            setPos(clampPos(d.origX + dx, d.origY + dy));
-          }}
-          onPointerUp={(e) => {
-            const d = dragRef.current;
-            if (!d) return;
-            try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-            if (d.moved) {
-              try {
-                const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                localStorage.setItem("chat_bubble_pos", JSON.stringify({ x: rect.left, y: rect.top }));
-              } catch {}
-            } else {
-              handleOpen();
-            }
-            dragRef.current = null;
+            const onUp = (ev: PointerEvent) => {
+              document.removeEventListener("pointermove", onMove);
+              document.removeEventListener("pointerup", onUp);
+              document.removeEventListener("pointercancel", onUp);
+              if (moved) {
+                const finalPos = clampPos(origX + (ev.clientX - startX), origY + (ev.clientY - startY));
+                try { localStorage.setItem("chat_bubble_pos", JSON.stringify(finalPos)); } catch {}
+              } else {
+                handleOpen();
+              }
+            };
+            document.addEventListener("pointermove", onMove);
+            document.addEventListener("pointerup", onUp);
+            document.addEventListener("pointercancel", onUp);
           }}
           style={
             pos
               ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto", touchAction: "none" }
               : { touchAction: "none" }
           }
-          className={`fixed ${pos ? "" : "bottom-6 right-6"} z-50 group flex items-center gap-3 pl-2 pr-5 py-2 rounded-full bg-card border-2 border-primary shadow-xl hover:shadow-2xl hover:scale-105 active:cursor-grabbing cursor-grab transition-transform select-none ${
+          className={`fixed ${pos ? "" : "bottom-6 right-6"} z-50 group flex items-center gap-3 pl-2 pr-5 py-2 rounded-full bg-card border-2 border-primary shadow-xl hover:shadow-2xl active:cursor-grabbing cursor-grab select-none ${
             !hasOpened ? "animate-bounce-in" : ""
           }`}
           aria-label="Open chat with Johnny B AI (drag to move)"
         >
-          <span className="relative flex h-12 w-12 shrink-0">
+          <span className="relative flex h-12 w-12 shrink-0 pointer-events-none">
             <img src={aiAvatar} alt="Johnny B AI" draggable={false} className="relative h-12 w-12 rounded-full object-cover border-2 border-background pointer-events-none" />
-            <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-primary border-2 border-card flex items-center justify-center">
+            <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-primary border-2 border-card flex items-center justify-center pointer-events-none">
               <MessageCircle className="h-3 w-3 text-primary-foreground" />
             </span>
           </span>

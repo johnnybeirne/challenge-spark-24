@@ -51,7 +51,6 @@ const RightRail = () => {
     ? "Lead Magnet Templates"
     : "Community Access";
 
-  return (
   if (collapsed) {
     return (
       <aside className="relative hidden w-[56px] shrink-0 flex-col items-center gap-3 border-l border-border bg-muted/30 p-3 lg:flex">

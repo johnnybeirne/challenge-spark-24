@@ -17,7 +17,6 @@ const TopBar = () => {
   if (!isChallengerShell) return null;
 
   const tools = [
-    { to: "/training", label: "Training", Icon: GraduationCap },
     { to: "/community", label: "Community", Icon: Users },
     { to: "/calendar", label: "Events", Icon: CalendarDays },
     { to: "/mentor", label: "AI Coach", Icon: MessageCircle },

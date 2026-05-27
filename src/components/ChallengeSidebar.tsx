@@ -83,6 +83,16 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
 
+    // Per-user personalised day dates derived from challenge.startedAt
+    // (persisted in challenge_progress.started_at). If somehow missing,
+    // fall back to today so the UI never shows "—".
+    const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : new Date();
+    const formatDayDate = (offset: number) => {
+      const d = new Date(startedAt);
+      d.setDate(d.getDate() + offset);
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    };
+
     const days = [1, 2, 3].map((n) => {
       const path = `/challenge/day-${n}`;
       const active =
@@ -93,7 +103,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       const inProgress = !complete && currentDay === n;
       const locked = !complete && !inProgress;
       const status = complete ? "Complete" : inProgress ? "In Progress" : "Locked";
-      return { n, path, active, complete, inProgress, locked, status };
+      const dateLabel = formatDayDate(n - 1);
+      return { n, path, active, complete, inProgress, locked, status, dateLabel };
     });
 
     const tools = [

@@ -141,7 +141,7 @@ const RightRail = () => {
           <Users className="h-4 w-4 text-emerald-500" />
         </div>
         <p className="mt-2 text-base font-bold text-foreground">
-          {directReferrals} of 3 builders invited
+          Inviting people is the fastest way to earn reward points.
         </p>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
           <div

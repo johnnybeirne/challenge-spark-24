@@ -306,13 +306,14 @@ const Day1Setup = ({ onComplete }: Props) => {
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-sm text-muted-foreground">{helper}</p>
       </div>
-      <Textarea
+      <DictatedTextarea
         autoFocus
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         className="min-h-[140px] text-base"
       />
+
       <Button
         size="lg"
         onClick={onNext}

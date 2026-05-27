@@ -9,6 +9,7 @@ import ChallengeSidebar from "./ChallengeSidebar";
 import TopBar from "./TopBar";
 import RightRail from "./RightRail";
 import BottomNav from "./BottomNav";
+import BackButton from "./BackButton";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
@@ -82,6 +83,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
         {showChallengeSidebar && <TopBar />}
         <div className={showChallengeSidebar ? "flex w-full" : undefined}>
           <div className="min-w-0 flex-1">
+            {showNav && authenticated && <BackButton />}
             <Outlet />
             <Footer />
           </div>

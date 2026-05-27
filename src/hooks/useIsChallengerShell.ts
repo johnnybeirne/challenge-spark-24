@@ -14,6 +14,7 @@
 
 import { useLocation } from "react-router-dom";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAppState } from "@/context/AppContext";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 
 const CHALLENGER_ROUTE_PREFIXES = [
@@ -44,6 +45,7 @@ const hasDemoFlag = (): boolean => {
 export function useIsChallengerShell(): boolean {
   const { role } = useUserRole();
   const { pathname } = useLocation();
+  const { authUser, state } = useAppState();
 
   // Partners always get the partner shell — never the challenger one.
   if (role === "partner") return false;
@@ -52,10 +54,10 @@ export function useIsChallengerShell(): boolean {
   if (hasDemoFlag()) return true;
 
   // Any authenticated non-partner user on a challenger-owned route sees the
-  // canonical Challenger shell. This includes free_student, premium_user,
-  // and admin — so refreshing /challenger-dashboard works without needing
-  // /let-me-in first.
-  if (role !== "visitor" && isChallengerRoute(pathname)) return true;
+  // canonical Challenger shell — even before app state / profile hydrates.
+  const authed = !!authUser || !!state.user;
+  if (authed && isChallengerRoute(pathname)) return true;
 
   return false;
 }
+

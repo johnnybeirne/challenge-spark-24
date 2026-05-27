@@ -77,13 +77,12 @@ const RightRail = () => {
       <Button
         size="sm"
         variant="default"
-        className="absolute -left-5 top-6 z-50 h-10 rounded-full px-3 shadow-lg hover:shadow-xl gap-1.5"
+        className="absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl"
         onClick={() => setCollapsed(true)}
         aria-label="Collapse stats panel"
         title="Collapse stats"
       >
         <ChevronRight className="h-5 w-5" />
-        <span className="text-xs font-semibold">Collapse</span>
       </Button>
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>

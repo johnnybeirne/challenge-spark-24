@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import DictatedInput from "@/components/dictation/DictatedInput";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Brain, CheckCircle, Lock, PlayCircle, Rocket, Users, Share2, UserPlus } from "lucide-react";
+import { ArrowRight, Brain, CheckCircle, Gift, Lock, PlayCircle, Rocket, Sparkles, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";

@@ -225,10 +225,9 @@ const Profile = () => {
       <div className="w-full max-w-3xl mx-auto space-y-6">
         <header className="space-y-1">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Profile</p>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Your Profile</h1>
-          <p className="text-sm text-muted-foreground">
-            The source of truth for your challenge answers, AI-generated direction and how others find you.
-          </p>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            {firstName ? `${firstName}'s Profile` : "Your Profile"}
+          </h1>
         </header>
 
         {/* Basic details */}

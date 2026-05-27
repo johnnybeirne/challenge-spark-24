@@ -41,6 +41,7 @@ const Training = () => {
             videoTitle={content.dashboard.videoTitle}
             subtitle={content.dashboard.subtitle}
             placeholderLabel={content.dashboard.placeholderText}
+            watched={false}
             lesson={content.dashboard.supportingText}
             videoUrl={content.dashboard.videoUrl}
           />
@@ -57,6 +58,7 @@ const Training = () => {
                 videoTitle={cfg.videoTitle}
                 subtitle={cfg.subtitle}
                 placeholderLabel={cfg.placeholderText}
+                watched={false}
                 lesson={cfg.keyLesson}
                 videoUrl={cfg.videoUrl}
               />

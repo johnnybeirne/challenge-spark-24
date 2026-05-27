@@ -77,13 +77,6 @@ const EarnRewards = () => {
   const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);
   const unlockedPartnerCount = direct >= 10 ? assets.length : direct >= 5 ? 5 : direct >= 3 ? 3 : Math.min(1, assets.length);
 
-  // Next milestone for the progress strip.
-  const nextRung = ladder.find((r) => direct < r.invites) ?? ladder[ladder.length - 1];
-  const prevRungInvites = (() => {
-    const idx = ladder.indexOf(nextRung);
-    return idx > 0 ? ladder[idx - 1].invites : 0;
-  })();
-  const progressPct = Math.min(100, Math.max(0, ((direct - prevRungInvites) / Math.max(1, nextRung.invites - prevRungInvites)) * 100));
 
   useEffect(() => { trackEvent("reward_accessed"); }, []);
 

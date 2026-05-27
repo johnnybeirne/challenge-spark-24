@@ -456,7 +456,7 @@ const Dashboard = () => {
                 watched={t.dashboardVideoWatched}
                 watchedLabel="Intro training complete"
                 primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => { markDashboardWatched(); navigate("/challenge/day-1"); } }}
-                primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => navigate("/challenge/day-1") }}
+                
               />
               <p className="text-sm text-muted-foreground text-center">Training progress: {watchedCount} / 4 watched</p>
             </>

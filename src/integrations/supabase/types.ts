@@ -1044,10 +1044,14 @@ export type Database = {
           direct_referral_count: number
           email: string | null
           entry_intent: string | null
+          facebook_url: string | null
+          first_name: string | null
           id: string
           indirect_referral_count: number
+          instagram_url: string | null
           invite_code: string
           is_premium: boolean
+          linkedin_url: string | null
           name: string | null
           partner_code_used: string | null
           premium_since: string | null
@@ -1055,8 +1059,11 @@ export type Database = {
           referred_by_parent: string | null
           signup_product: string | null
           stripe_customer_id: string | null
+          surname: string | null
           updated_at: string
           user_id: string
+          website_url: string | null
+          youtube_url: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -1065,10 +1072,14 @@ export type Database = {
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null
+          facebook_url?: string | null
+          first_name?: string | null
           id?: string
           indirect_referral_count?: number
+          instagram_url?: string | null
           invite_code: string
           is_premium?: boolean
+          linkedin_url?: string | null
           name?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
@@ -1076,8 +1087,11 @@ export type Database = {
           referred_by_parent?: string | null
           signup_product?: string | null
           stripe_customer_id?: string | null
+          surname?: string | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
+          youtube_url?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -1086,10 +1100,14 @@ export type Database = {
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null
+          facebook_url?: string | null
+          first_name?: string | null
           id?: string
           indirect_referral_count?: number
+          instagram_url?: string | null
           invite_code?: string
           is_premium?: boolean
+          linkedin_url?: string | null
           name?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
@@ -1097,8 +1115,11 @@ export type Database = {
           referred_by_parent?: string | null
           signup_product?: string | null
           stripe_customer_id?: string | null
+          surname?: string | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
+          youtube_url?: string | null
         }
         Relationships: [
           {

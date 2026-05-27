@@ -139,14 +139,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
             <p className="text-xl font-black tracking-tight text-foreground">LEADIO</p>
             <p
-              className="mt-0.5 truncate text-[10px] font-black uppercase tracking-[0.18em] text-primary"
+              className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"
               title={identity.title}
             >
               {identity.isPersonalised ? identity.shortTitle : "Challenger"}
             </p>
           </button>
         ) : (
-          <p className="text-center text-xs font-black tracking-tight text-foreground">L</p>
+          <p className="text-center text-base font-black tracking-tight text-foreground">L</p>
         )}
 
         {/* Dashboard */}

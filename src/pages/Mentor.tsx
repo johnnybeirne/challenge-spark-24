@@ -47,6 +47,7 @@ const Mentor = () => {
   const { state } = useAppState();
   const { role } = useUserRole();
   const { stage } = useUserStage();
+  const identity = useChallengeIdentity();
   const [params, setParams] = useSearchParams();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");

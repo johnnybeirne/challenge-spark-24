@@ -257,7 +257,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               { path: "/calendar", label: "Live Sessions", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
             ]
           : [
-              { path: "/blueprint/insight", label: "Build Challenge Framework", Icon: Compass, tint: "bg-indigo-100 text-indigo-700", accent: "hover:border-indigo-400" },
               { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
               { path: "/referrals", label: "Referrals", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
               { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },

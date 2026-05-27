@@ -97,6 +97,8 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
         {showChallengerMobileNav && <BottomNav />}
       </div>
       {showCopilotChat && <AiCopilotChat />}
+      {showChallengeSidebar && isChallengerShell && <CountdownBottomBar />}
+
     </div>
   );
 };

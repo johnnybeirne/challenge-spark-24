@@ -263,7 +263,7 @@ const Dashboard = () => {
           </section>
 
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
-          <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <section className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Play className="h-4 w-4" fill="currentColor" />

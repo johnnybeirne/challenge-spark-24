@@ -313,11 +313,11 @@ const Dashboard = () => {
               className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
               onClick={() => {
                 trackEvent("dashboard_training_viewed");
-                navigate("/mentor");
+                navigate("/training");
               }}
             >
               <Sparkles className="h-4 w-4" />
-              Generate My Challenge With AI
+              Start Day 1
             </Button>
           </section>
 

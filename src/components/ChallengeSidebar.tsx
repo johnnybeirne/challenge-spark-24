@@ -592,13 +592,14 @@ const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapse
       <div className={cn("fixed left-0 top-0 z-40 hidden h-screen border-r border-border bg-muted/60 transition-[width] duration-300 lg:block", collapsed ? "w-[84px]" : "w-[260px]") }>
         <Button
           size="sm"
-          variant="outline"
-          className="absolute -right-4 top-4 z-50 h-8 w-8 rounded-full p-0 shadow-md"
+          variant="default"
+          className="absolute -right-5 top-6 z-50 h-10 rounded-full px-3 shadow-lg hover:shadow-xl gap-1.5"
           onClick={toggleCollapsed}
           aria-label={collapsed ? "Expand dashboard sidebar" : "Collapse dashboard sidebar"}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          <span className="text-xs font-semibold">{collapsed ? "Expand" : "Collapse"}</span>
         </Button>
         <SidebarContent collapsed={collapsed} />
       </div>

@@ -1,68 +1,90 @@
 import { Link, useLocation } from "react-router-dom";
-import { Bell, CalendarDays, MessageCircle, Sparkles, BookOpen, Crown } from "lucide-react";
+import { Bell, CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 
-// Global top utility bar — ecosystem tools/shortcuts.
-// Purely additive: does not change routes, auth, or business logic.
+// Global top utility bar — ecosystem tools, NOT progression.
+// Persistent across Challenger pages. Other roles see the legacy/no top bar.
 const TopBar = () => {
   const { pathname } = useLocation();
   const { state } = useAppState();
   const { role } = useUserRole();
-  const isAdminLike = role === "admin" || role === "partner";
+
+  // Only the Challenger experience uses this refreshed nav for now.
+  // Other roles fall back to no top nav so we don't regress their layouts.
+  if (role !== "challenger") return null;
 
   const tools = [
-    { to: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle },
-    { to: "/calendar", label: "Live", Icon: CalendarDays },
-    { to: "/prompt-library", label: "Prompts", Icon: BookOpen },
-    { to: "/bonus-vault", label: "Rewards", Icon: Sparkles },
+    { to: "/training", label: "Training", Icon: GraduationCap },
+    { to: "/community", label: "Community", Icon: Users },
+    { to: "/calendar", label: "Events", Icon: CalendarDays },
+    { to: "/mentor", label: "AI Coach", Icon: MessageCircle },
+    { to: "/leaderboard", label: "Leaderboard", Icon: Trophy },
   ];
 
-  const points = state.credits?.total ?? 0;
+  const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
+  const hasAvatar = Boolean(state.user?.avatarUrl);
+  const hasName = Boolean(firstName);
+  const avatarSrc = state.user?.avatarUrl || (hasName ? avatarPlaceholder : sampleUserAvatar);
 
   return (
-    <header className="sticky top-0 z-30 hidden h-12 w-full items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur lg:flex">
-      <nav className="flex items-center gap-1">
+    <header className="sticky top-0 z-30 hidden h-12 w-full items-center justify-between gap-3 border-b border-border bg-background/80 px-3 backdrop-blur lg:flex">
+      <nav className="flex min-w-0 items-center gap-0.5 overflow-x-auto">
         {tools.map(({ to, label, Icon }) => {
-          const active = pathname === to;
+          const active = pathname === to || pathname.startsWith(`${to}/`);
           return (
             <Link
               key={to}
               to={to}
               className={cn(
                 "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors hover:bg-muted",
-                active ? "bg-muted text-foreground" : "text-muted-foreground"
+                active
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground"
               )}
             >
               <Icon className="h-3.5 w-3.5" />
-              <span>{label}</span>
+              <span className="whitespace-nowrap">{label}</span>
             </Link>
           );
         })}
       </nav>
-      <div className="flex items-center gap-2">
-        {points > 0 && (
-          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
-            <Sparkles className="h-3 w-3" />
-            {points} pts
-          </span>
-        )}
-        {!isAdminLike && role !== "premium_user" && (
-          <Link
-            to="/premium"
-            className="hidden items-center gap-1 rounded-md bg-foreground px-2.5 py-1.5 text-xs font-bold text-background transition-opacity hover:opacity-90 md:inline-flex"
-          >
-            <Crown className="h-3 w-3" /> Upgrade
-          </Link>
-        )}
+
+      <div className="flex shrink-0 items-center gap-1">
         <button
+          type="button"
+          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted"
+          aria-label="Search"
+          title="Search"
+        >
+          <Search className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
           className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted"
           aria-label="Notifications"
-          type="button"
+          title="Notifications"
         >
           <Bell className="h-4 w-4" />
         </button>
+        <Link
+          to="/challenger-dashboard"
+          aria-label="Profile"
+          title="Profile"
+          className="ml-1 block h-7 w-7 overflow-hidden rounded-full ring-1 ring-border transition hover:ring-primary/40"
+        >
+          <img
+            src={avatarSrc}
+            alt="Profile"
+            onError={(e) => {
+              if (e.currentTarget.src !== avatarPlaceholder) e.currentTarget.src = avatarPlaceholder;
+            }}
+            className="h-full w-full object-cover"
+          />
+        </Link>
       </div>
     </header>
   );

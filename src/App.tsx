@@ -160,9 +160,10 @@ const App = () => (
                 <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
-                {/* Day 1 — canonical route is /challenge/day-1 (Day1Setup with assessment + AI builder). /training and other aliases redirect here. */}
-                <Route path="/challenge/day-1" element={<AuthGuard><Training /></AuthGuard>} />
-                <Route path="/training" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
+                {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
+                <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
+                {/* Day 1 — canonical route. Day1Setup (assessment + AI builder). */}
+                <Route path="/challenge/day-1" element={<AuthGuard><Day1 /></AuthGuard>} />
                 <Route path="/challenge/day/1" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
                 <Route path="/day/1" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
                 {/* Canonical day route (slash form) — handles Day 2 & 3 */}

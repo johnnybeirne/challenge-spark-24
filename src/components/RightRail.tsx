@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
+import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 
 // Global right rail — momentum, social proof, rewards.
 // Read-only surface: derives from existing state, mutates nothing.
@@ -12,6 +13,7 @@ const RightRail = () => {
   const isChallengerShell = useIsChallengerShell();
   const { state } = useAppState();
   const [collapsed, setCollapsed] = useState(false);
+  const pulse = usePulseOnLogin();
   if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;

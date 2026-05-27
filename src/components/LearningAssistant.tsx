@@ -215,9 +215,11 @@ const Bubble = ({ turn }: { turn: Turn }) => {
   }
   return (
     <div className="flex justify-start gap-2">
-      <div className="h-7 w-7 shrink-0 rounded-full bg-primary/15 text-[10px] font-semibold text-primary grid place-items-center">
-        AI
-      </div>
+      <img
+        src={johnnyAvatar}
+        alt="Johnny AI"
+        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+      />
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground prose prose-sm max-w-none dark:prose-invert">
         <ReactMarkdown>{turn.text}</ReactMarkdown>
       </div>

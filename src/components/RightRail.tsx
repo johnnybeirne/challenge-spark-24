@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Flame, Sparkles, Trophy, Users, ChevronRight } from "lucide-react";
+import { Flame, Sparkles, Trophy, Users, ChevronRight, ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
@@ -9,6 +11,7 @@ import { cn } from "@/lib/utils";
 const RightRail = () => {
   const isChallengerShell = useIsChallengerShell();
   const { state } = useAppState();
+  const [collapsed, setCollapsed] = useState(false);
   if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;

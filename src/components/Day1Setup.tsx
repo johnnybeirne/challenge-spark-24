@@ -555,69 +555,12 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
             </div>
 
-            {/* Chat thread */}
-            <div
-              ref={messagesRef}
-              className="rounded-xl border border-border bg-background p-4 min-h-[220px] max-h-[420px] overflow-y-auto space-y-4"
-            >
-              {builderHistory.length === 0 && !builderLoading && (
-                <p className="text-sm text-muted-foreground text-center py-6">
-                  Pick a starter below or type your own question to begin.
-                </p>
-              )}
-              {builderHistory.map((entry, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2 text-sm text-primary-foreground">
-                      {entry.prompt}
-                    </div>
-                  </div>
-                  <div className="flex justify-start">
-                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground prose prose-sm max-w-none">
-                      <ReactMarkdown>{entry.response}</ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {builderLoading && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Thinking…
-                </div>
-              )}
-            </div>
-
-            {/* Starter prompts */}
-            <div className="flex flex-wrap gap-2">
-              {BUILDER_STARTERS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => askBuilder(s)}
-                  disabled={builderLoading}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-50"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-
-            {/* Input */}
-            <div className="rounded-xl border border-border bg-card p-3">
-              <DictatedTextarea
-                value={builderInput}
-                onChange={(e) => setBuilderInput(e.target.value)}
-                placeholder="Ask your AI co-pilot anything about your challenge…"
-                className="min-h-[64px] border-0 focus-visible:ring-0 resize-none"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); askBuilder(); }
-                }}
-              />
-              <div className="mt-2 flex justify-end">
-                <Button size="sm" onClick={() => askBuilder()} disabled={builderLoading || !builderInput.trim()}>
-                  <Send className="h-4 w-4 mr-1.5" />
-                  Send
-                </Button>
-              </div>
-            </div>
+            {/* Learning assistant — prompt pills + accordion chat + freeform */}
+            <LearningAssistant
+              topic={topicHint || challengeLabel(challengeType)}
+              prompts={BUILDER_STARTERS}
+              ask={askBuilder}
+            />
 
             {/* Finish Day 1 */}
             <div className="pt-2">

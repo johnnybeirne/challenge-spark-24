@@ -43,10 +43,13 @@ const ChallengeCountdown = ({ className, compact = false }: Props) => {
     );
   }
 
+  // Round hours up when we're dropping the minutes so "59 minutes" doesn't vanish.
+  const displayHours = minutes >= 30 ? hours + 1 : hours;
+  const normalizedDays = displayHours >= 24 ? days + 1 : days;
+  const normalizedHours = displayHours >= 24 ? 0 : displayHours;
   const parts: string[] = [];
-  if (days > 0) parts.push(`${days} day${days === 1 ? "" : "s"}`);
-  if (hours > 0 || days > 0) parts.push(`${hours} hour${hours === 1 ? "" : "s"}`);
-  parts.push(`${minutes} minute${minutes === 1 ? "" : "s"}`);
+  if (normalizedDays > 0) parts.push(`${normalizedDays} day${normalizedDays === 1 ? "" : "s"}`);
+  if (normalizedHours > 0 || normalizedDays === 0) parts.push(`${normalizedHours} hour${normalizedHours === 1 ? "" : "s"}`);
 
   return (
     <div

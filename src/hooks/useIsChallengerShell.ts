@@ -19,6 +19,7 @@ import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 
 const CHALLENGER_ROUTE_PREFIXES = [
   "/challenger-dashboard",
+  "/profile",
   "/challenge/",
   "/challenge",
   "/day/",

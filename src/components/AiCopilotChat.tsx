@@ -204,10 +204,6 @@ const AiCopilotChat = () => {
             </span>
           </span>
           <span className="text-base font-semibold text-foreground pointer-events-none">Chat</span>
-              <MessageCircle className="h-3 w-3 text-primary-foreground" />
-            </span>
-          </span>
-          <span className="text-base font-semibold text-foreground pointer-events-none">Chat</span>
         </button>
       )}
 

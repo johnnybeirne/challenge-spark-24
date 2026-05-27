@@ -80,6 +80,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   // Free Student / Premium / Partner / Admin keep the existing layout below.
   // ────────────────────────────────────────────────────────────────────────
   if (role === "challenger") {
+    const identity = useChallengeIdentity();
     const currentDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";

@@ -5,6 +5,8 @@ import PromoterNav from "./PromoterNav";
 import Footer from "./Footer";
 import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
+import TopBar from "./TopBar";
+import RightRail from "./RightRail";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
@@ -27,8 +29,14 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
     >
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
       <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
-        <Outlet />
-        <Footer />
+        {showChallengeSidebar && <TopBar />}
+        <div className={showChallengeSidebar ? "flex w-full" : undefined}>
+          <div className="min-w-0 flex-1">
+            <Outlet />
+            <Footer />
+          </div>
+          {showChallengeSidebar && <RightRail />}
+        </div>
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}

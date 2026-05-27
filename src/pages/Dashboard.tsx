@@ -395,6 +395,18 @@ const Dashboard = () => {
             </div>
           </section>
         </section>
+
+        {/* Mobile sticky CTA — sits above BottomNav for one-tap day access */}
+        <div className="fixed inset-x-0 bottom-[64px] z-30 border-t border-border bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
+          <Button
+            size="lg"
+            className="h-12 w-full gap-2 text-sm font-black uppercase tracking-wider"
+            onClick={() => navigate(`/challenge/day-${ctaDay}`)}
+          >
+            {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </main>
     );
   }

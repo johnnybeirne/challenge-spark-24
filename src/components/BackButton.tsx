@@ -45,6 +45,7 @@ const BackButton = ({ className, fallback = "/challenger-dashboard", label = "Ba
   const { pathname } = useLocation();
 
   if (HIDE_ON_EXACT.has(pathname)) return null;
+  if (HIDE_ON_PATTERN.some((re) => re.test(pathname))) return null;
 
   const handleClick = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {

@@ -239,16 +239,16 @@ const Dashboard = () => {
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}
           {cfg.enabled && cfg.videoUrl && (
             <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Play className="h-3.5 w-3.5" fill="currentColor" />
+              <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Play className="h-4 w-4" fill="currentColor" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-foreground">{cfg.videoTitle}</p>
-                  <p className="truncate text-[11px] text-muted-foreground">Quick briefing · ~2 min</p>
+                  <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
                 </div>
                 {state.training.dashboardVideoWatched && (
-                  <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+                  <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
                     Watched
                   </span>
                 )}

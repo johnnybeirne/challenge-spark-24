@@ -278,7 +278,7 @@ const DayChallenge = () => {
               {completedLine}
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              {dayNum} of 3 days done · Momentum is building.
+              {dayNum} of 3 days done · Momentum is building{identity.isPersonalised ? ` in ${identity.shortTitle}` : ""}.
             </p>
           </div>
 

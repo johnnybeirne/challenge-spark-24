@@ -10,6 +10,8 @@ import TopBar from "./TopBar";
 import RightRail from "./RightRail";
 import BottomNav from "./BottomNav";
 import BackButton from "./BackButton";
+import CountdownBottomBar from "./CountdownBottomBar";
+
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";

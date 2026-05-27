@@ -13,6 +13,7 @@ import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { trackEvent } from "@/lib/analytics";
 
 const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
@@ -21,11 +22,12 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const { role } = useUserRole();
+  const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
-  const showChallengerMobileNav = showChallengeSidebar && role === "challenger";
+  const showChallengerMobileNav = showChallengeSidebar && isChallengerShell;
   const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);

@@ -124,9 +124,6 @@ const Mentor = () => {
     <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
       <section className="mx-auto flex max-w-5xl flex-col space-y-5 sm:space-y-6">
         <header>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Johnny AI
-          </div>
           <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">Ask Johnny AI</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Get practical, beginner-friendly help designing, launching, and running your challenge.

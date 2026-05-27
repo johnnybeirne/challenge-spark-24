@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Compass, Lock, LogOut, Menu, MessageCircle, Rocket, Share2, Sparkles, Target, TrendingUp, Users, Workflow, X, Zap } from "lucide-react";
+import { BookOpen, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Circle, Compass, Gift, HelpCircle, Lock, LogOut, Menu, MessageCircle, PlayCircle, Rocket, Settings, Share2, Sparkles, Target, TrendingUp, User as UserIcon, Users, Workflow, X, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";

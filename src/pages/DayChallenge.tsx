@@ -153,7 +153,8 @@ const DayChallenge = () => {
 
   const allDone = config.tasks.every((t) => isChecked(t.key));
   const hasValidUrl = dayNum === 3 ? isValidUrl(state.challenge.launchUrl) : true;
-  const canComplete = allDone && hasValidUrl;
+  const windowExpired = isChallengeExpired(state.challenge.endsAt);
+  const canComplete = allDone && hasValidUrl && !windowExpired;
 
   const communityEligible =
     state.challenge.launchUrl &&

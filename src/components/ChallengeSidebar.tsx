@@ -121,10 +121,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     ];
 
     const bottom = [
-      { path: "/challenger-dashboard", label: "Profile", Icon: UserIcon, onClick: () => authUser && photoInputRef.current?.click() },
-      { path: "/challenger-dashboard", label: "Settings", Icon: Settings },
+      { path: "/profile", label: "Profile", Icon: UserIcon },
+      { path: "/profile", label: "Settings", Icon: Settings },
       { path: "/mentor", label: "Support", Icon: HelpCircle },
     ];
+
 
     return (
       <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-3 p-2" : "gap-4 p-4")}>

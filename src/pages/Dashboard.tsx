@@ -201,8 +201,13 @@ const Dashboard = () => {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[20pt] font-bold text-foreground leading-tight">
-                  {cfg.videoTitle || "Watch this first"}
+                  {(() => {
+                    const fn = state.user?.name?.split(" ")[0] || "";
+                    const base = cfg.videoTitle || "Watch this first";
+                    return fn ? `${base} ${fn}` : base;
+                  })()}
                 </p>
+
                 <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
               </div>
               {state.training.dashboardVideoWatched && cfg.videoUrl && (

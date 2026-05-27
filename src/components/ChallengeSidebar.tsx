@@ -592,11 +592,15 @@ const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapse
         <SidebarContent collapsed={collapsed} />
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="fixed left-4 top-4 z-40 lg:hidden" aria-label="Open challenge menu">
-            <Menu className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
+        <div className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-border bg-background/90 px-3 py-2 backdrop-blur lg:hidden">
+          <SheetTrigger asChild>
+            <Button size="icon" variant="ghost" className="h-9 w-9" aria-label="Open challenge menu">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <p className="text-sm font-black tracking-tight text-foreground">LEADIO</p>
+          <span className="h-9 w-9" aria-hidden />
+        </div>
         <SheetContent side="left" className="w-[300px] p-0">
           <button className="absolute right-4 top-4 z-10 text-muted-foreground" onClick={() => setOpen(false)} aria-label="Close menu">
             <X className="h-5 w-5" />

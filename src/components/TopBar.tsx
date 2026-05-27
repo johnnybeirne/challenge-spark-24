@@ -13,9 +13,9 @@ const TopBar = () => {
   const { state } = useAppState();
   const { role } = useUserRole();
 
-  // Only the Challenger experience uses this refreshed nav for now.
-  // Other roles fall back to no top nav so we don't regress their layouts.
-  if (role !== "challenger") return null;
+  // Show ecosystem top nav for all authenticated consumer roles.
+  // Partners have their own nav; visitors aren't in this shell.
+  if (role === "partner" || role === "visitor") return null;
 
   const tools = [
     { to: "/training", label: "Training", Icon: GraduationCap },

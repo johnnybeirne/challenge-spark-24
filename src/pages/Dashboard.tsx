@@ -317,7 +317,7 @@ const Dashboard = () => {
               }}
             >
               <Sparkles className="h-4 w-4" />
-              Start Day 1
+              {hasProgress && !isComplete ? "Continue Building Your Challenge" : ctaLabel}
             </Button>
           </section>
 

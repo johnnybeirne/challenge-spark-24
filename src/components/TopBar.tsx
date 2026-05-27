@@ -2,20 +2,19 @@ import { Link, useLocation } from "react-router-dom";
 import { Bell, CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 
 // Global top utility bar — ecosystem tools, NOT progression.
-// Persistent across Challenger pages. Other roles see the legacy/no top bar.
+// Rendered whenever the Challenger shell is active (real challengers
+// AND admins previewing the challenger experience).
 const TopBar = () => {
   const { pathname } = useLocation();
   const { state } = useAppState();
-  const { role } = useUserRole();
+  const isChallengerShell = useIsChallengerShell();
 
-  // Show ecosystem top nav for all authenticated consumer roles.
-  // Partners have their own nav; visitors aren't in this shell.
-  if (role === "partner" || role === "visitor") return null;
+  if (!isChallengerShell) return null;
 
   const tools = [
     { to: "/training", label: "Training", Icon: GraduationCap },

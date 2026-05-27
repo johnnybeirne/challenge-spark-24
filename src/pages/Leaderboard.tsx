@@ -40,25 +40,35 @@ const Leaderboard = () => {
   const loadLeaderboard = async () => {
     setLoading(true);
     try {
-      // Load participant leaderboard from profiles
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("name, invite_code, direct_referral_count, indirect_referral_count, user_id")
-        .order("direct_referral_count", { ascending: false })
+      // Participant leaderboard — sourced from waitlist_signups (canonical referral activity).
+      const { data: signups } = await supabase
+        .from("waitlist_signups")
+        .select("name, first_name, surname, referral_code, confirmed_invites")
+        .gt("confirmed_invites", 0)
+        .order("confirmed_invites", { ascending: false })
+        .order("created_at", { ascending: true })
         .limit(50);
 
-      if (profiles) {
-        const mapped: LeaderboardEntry[] = profiles.map(p => ({
-          name: p.name || "Builder",
-          invite_code: p.invite_code,
-          direct_referral_count: p.direct_referral_count,
-          indirect_referral_count: p.indirect_referral_count,
-          score: p.direct_referral_count * 3 + p.indirect_referral_count,
-          isUser: p.user_id === authUser?.id,
-        }));
-        mapped.sort((a, b) => b.score - a.score);
+      if (signups) {
+        const userCode = state.user?.inviteCode;
+        const mapped: LeaderboardEntry[] = signups.map((s: any) => {
+          const display =
+            (s.first_name && s.surname && s.first_name !== s.surname)
+              ? `${s.first_name} ${s.surname}`
+              : (s.name || s.first_name || "Builder");
+          const direct = s.confirmed_invites ?? 0;
+          return {
+            name: display,
+            invite_code: s.referral_code,
+            direct_referral_count: direct,
+            indirect_referral_count: 0,
+            score: direct,
+            isUser: !!userCode && s.referral_code === userCode,
+          };
+        });
         setEntries(mapped);
       }
+
 
       // Load partner leaderboard from canonical view (attributed signups + manual adjustment)
       const { data: rows } = await supabase.rpc("get_partner_leaderboard", { p_limit: 50 });

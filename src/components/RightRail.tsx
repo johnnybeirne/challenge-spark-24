@@ -130,7 +130,7 @@ const RightRail = () => {
                 </span>
                 <span className="truncate text-sm font-semibold text-foreground">{c.name}</span>
               </span>
-              <span className="text-sm font-bold tabular-nums text-muted-foreground">{c.pts}</span>
+              
             </li>
           ))}
         </ol>

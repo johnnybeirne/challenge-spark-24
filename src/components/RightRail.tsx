@@ -118,7 +118,7 @@ const RightRail = () => {
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Top Challengers</Eyebrow>
+          <Eyebrow>Top Referrers</Eyebrow>
           <Trophy className="h-4 w-4 text-amber-500" />
         </div>
         <ol className="mt-3 space-y-2">

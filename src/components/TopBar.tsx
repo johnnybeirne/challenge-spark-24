@@ -62,14 +62,7 @@ const TopBar = () => {
         >
           <Search className="h-4 w-4" />
         </button>
-        <button
-          type="button"
-          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted"
-          aria-label="Notifications"
-          title="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-        </button>
+        <NotificationsBell />
         <Link
           to="/challenger-dashboard"
           aria-label="Profile"

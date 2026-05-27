@@ -56,7 +56,14 @@ const Dashboard = () => {
     state.challenge.calendarAdded;
   const completedDays = isComplete ? 3 : Math.max(0, currentDay - 1);
   const progressValue = isComplete ? 100 : ((completedDays + 0.5) / 3) * 100;
-  const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
+  const isDay1InProgress = !isComplete && currentDay === 1 && hasProgress;
+  const ctaLabel = isComplete
+    ? "View Your Challenge"
+    : isDay1InProgress
+    ? "Continue Building Your Challenge"
+    : currentDay > 1
+    ? `Continue Day ${currentDay}`
+    : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
   const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
@@ -313,13 +320,14 @@ const Dashboard = () => {
               className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
               onClick={() => {
                 trackEvent("dashboard_training_viewed");
-                navigate("/training");
+                navigate(`/challenge/day-${ctaDay}`);
               }}
             >
               <Sparkles className="h-4 w-4" />
-              {hasProgress && !isComplete ? "Continue Building Your Challenge" : ctaLabel}
+              {ctaLabel}
             </Button>
           </section>
+
 
           {/* 4. MOMENTUM ACTIONS */}
           <section>
@@ -411,7 +419,7 @@ const Dashboard = () => {
             className="h-12 w-full gap-2 text-base font-black uppercase tracking-wider"
             onClick={() => navigate(`/challenge/day-${ctaDay}`)}
           >
-            {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
+            {ctaLabel}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
@@ -463,7 +471,7 @@ const Dashboard = () => {
                 videoUrl={cfg.videoUrl}
                 watched={t.dashboardVideoWatched}
                 watchedLabel="Intro training complete"
-                primaryCta={{ label: firstName ? `${cfg.primaryCtaText}, ${firstName}` : cfg.primaryCtaText, onClick: () => { markDashboardWatched(); navigate("/challenge/day-1"); } }}
+                primaryCta={{ label: ctaLabel, onClick: () => { markDashboardWatched(); navigate(`/challenge/day-${ctaDay}`); } }}
                 
               />
               
@@ -526,7 +534,7 @@ const Dashboard = () => {
         </Card>
 
         <section className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center shadow-md sm:p-6">
-          <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-black uppercase tracking-wide sm:text-lg" onClick={() => navigate(`/day/${ctaDay}`)}>
+          <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-black uppercase tracking-wide sm:text-lg" onClick={() => navigate(`/challenge/day-${ctaDay}`)}>
             {ctaLabel}
             <ArrowRight className="h-5 w-5" />
           </Button>

@@ -70,7 +70,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
   return (
     <aside ref={asideRef} data-mode-aside className={cn("flex h-full w-full flex-col overflow-y-auto bg-muted/60", collapsed ? "gap-2 p-2" : "gap-3 p-4")}>
-      <ExperienceModeBadge collapsed={collapsed} />
+      
       <input
         ref={photoInputRef}
         type="file"

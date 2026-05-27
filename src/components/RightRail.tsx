@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Flame, Sparkles, Trophy, Users, ChevronRight } from "lucide-react";
+import { Flame, Sparkles, Trophy, Users, ChevronRight, ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { cn } from "@/lib/utils";
@@ -9,6 +11,7 @@ import { cn } from "@/lib/utils";
 const RightRail = () => {
   const isChallengerShell = useIsChallengerShell();
   const { state } = useAppState();
+  const [collapsed, setCollapsed] = useState(false);
   if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;
@@ -48,8 +51,40 @@ const RightRail = () => {
     ? "Lead Magnet Templates"
     : "Community Access";
 
+  if (collapsed) {
+    return (
+      <aside className="relative hidden w-[56px] shrink-0 flex-col items-center gap-3 border-l border-border bg-muted/30 p-3 lg:flex">
+        <Button
+          size="sm"
+          variant="default"
+          className="h-10 w-10 rounded-full p-0 shadow-lg"
+          onClick={() => setCollapsed(false)}
+          aria-label="Expand stats panel"
+          title="Expand stats"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <Trophy className="mt-2 h-5 w-5 text-amber-500" />
+        <Flame className="h-5 w-5 text-orange-500" />
+        <Users className="h-5 w-5 text-emerald-500" />
+        <Sparkles className="h-5 w-5 text-rose-500" />
+      </aside>
+    );
+  }
+
   return (
-    <aside className="hidden w-[300px] shrink-0 flex-col gap-3 overflow-visible border-l border-border bg-muted/30 p-4 lg:flex">
+    <aside className="relative hidden w-[300px] shrink-0 flex-col gap-3 overflow-visible border-l border-border bg-muted/30 p-4 lg:flex">
+      <Button
+        size="sm"
+        variant="default"
+        className="absolute -left-5 top-6 z-50 h-10 rounded-full px-3 shadow-lg hover:shadow-xl gap-1.5"
+        onClick={() => setCollapsed(true)}
+        aria-label="Collapse stats panel"
+        title="Collapse stats"
+      >
+        <ChevronRight className="h-5 w-5" />
+        <span className="text-xs font-semibold">Collapse</span>
+      </Button>
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">

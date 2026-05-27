@@ -320,13 +320,14 @@ const Dashboard = () => {
               className="mt-5 h-12 w-full gap-2 text-base font-black uppercase tracking-wider sm:w-auto"
               onClick={() => {
                 trackEvent("dashboard_training_viewed");
-                navigate("/training");
+                navigate(`/challenge/day-${ctaDay}`);
               }}
             >
               <Sparkles className="h-4 w-4" />
-              {hasProgress && !isComplete ? "Continue Building Your Challenge" : ctaLabel}
+              {ctaLabel}
             </Button>
           </section>
+
 
           {/* 4. MOMENTUM ACTIONS */}
           <section>

@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Mic, Square } from "lucide-react";
+import { Mic, RotateCcw, Square } from "lucide-react";
 import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 import { useDictation } from "@/hooks/useDictation";
 import { cn } from "@/lib/utils";
+
 
 interface Props extends Omit<TextareaProps, "onChange"> {
   value: string;
@@ -36,35 +37,52 @@ const DictatedTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
           ref={ref}
           value={value}
           onChange={onChange}
-          className={cn(isSupported && "pr-24", className)}
+          className={cn(isSupported ? "pr-32" : "pr-10", className)}
           {...props}
         />
-        {isSupported && (
-          <button
-            type="button"
-            onClick={handleToggle}
-            title={isListening ? "Stop dictation" : "Speak"}
-            aria-label={isListening ? "Stop dictation" : "Speak"}
-            className={cn(
-              "absolute bottom-2 right-2 flex items-center justify-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors",
-              isListening
-                ? "bg-destructive text-destructive-foreground animate-pulse"
-                : "bg-orange-500 text-white hover:bg-orange-600"
-            )}
-          >
-            {isListening ? (
-              <>
-                <span>Stop</span>
-                <Square className="h-3 w-3" fill="currentColor" />
-              </>
-            ) : (
-              <>
-                <Mic className="h-3.5 w-3.5" />
-                <span>Speak</span>
-              </>
-            )}
-          </button>
-        )}
+        <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
+          {value && (
+            <button
+              type="button"
+              onClick={() => {
+                baseRef.current = "";
+                emit("");
+              }}
+              title="Start again"
+              aria-label="Start again"
+              className="flex h-8 items-center justify-center gap-1 rounded-full border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+            </button>
+          )}
+          {isSupported && (
+            <button
+              type="button"
+              onClick={handleToggle}
+              title={isListening ? "Stop dictation" : "Speak"}
+              aria-label={isListening ? "Stop dictation" : "Speak"}
+              className={cn(
+                "flex items-center justify-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors",
+                isListening
+                  ? "bg-destructive text-destructive-foreground animate-pulse"
+                  : "bg-orange-500 text-white hover:bg-orange-600",
+              )}
+            >
+              {isListening ? (
+                <>
+                  <span>Stop</span>
+                  <Square className="h-3 w-3" fill="currentColor" />
+                </>
+              ) : (
+                <>
+                  <Mic className="h-3.5 w-3.5" />
+                  <span>Speak</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
+
       </div>
     );
   }

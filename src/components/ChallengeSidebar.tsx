@@ -17,6 +17,8 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
+
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
   const { state, setState, authUser } = useAppState();

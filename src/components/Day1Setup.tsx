@@ -55,7 +55,7 @@ const audienceLabel = (v: "b2b" | "b2c") =>
 
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState } = useAppState();
-  const [step, setStep] = useState<Step>(0);
+  const [step, setStep] = useState<Step>(1);
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(null);
   const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>("");

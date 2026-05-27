@@ -77,11 +77,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
 
   // ────────────────────────────────────────────────────────────────────────
-  // CHALLENGER-ONLY LAYOUT
-  // Only `challenger` role gets the journey-style sidebar.
-  // Free Student / Premium / Partner / Admin keep the existing layout below.
+  // CHALLENGER SHELL LAYOUT
+  // Real challengers + admin previewing the challenger experience.
+  // Free Student / Premium / Partner keep the existing layout below.
   // ────────────────────────────────────────────────────────────────────────
-  if (role === "challenger") {
+  if (isChallengerShell) {
     const identity = useChallengeIdentity();
     const currentDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;

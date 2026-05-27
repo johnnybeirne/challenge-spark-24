@@ -221,6 +221,7 @@ const App = () => (
                 <Route path="payouts" element={<AdminPayouts />} />
                 <Route path="partner-ops" element={<AdminPartnerOps />} />
                 <Route path="jv-partners" element={<AdminJvPartners />} />
+                <Route path="resources" element={<AdminResourceLibrary />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

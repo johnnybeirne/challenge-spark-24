@@ -112,8 +112,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   const goBack = () => setStep(((step as number) - 1) as Step);
 
   return (
-    <div className="app-page-container min-h-[80vh] flex items-center justify-center py-8 animate-fade-in">
-      <div className="w-full max-w-md md:max-w-4xl">
+    <div className="app-page-container pt-6 pb-8 animate-fade-in">
+      <div className="w-full max-w-md md:max-w-4xl mx-auto">
         {step > 0 && (
           <button
             onClick={goBack}

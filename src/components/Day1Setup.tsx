@@ -481,17 +481,18 @@ const Day1Setup = ({ onComplete }: Props) => {
               <h2 className="text-2xl font-bold tracking-tight">What transformation will they experience?</h2>
               <p className="text-sm text-muted-foreground">Describe how they will feel, what they will know, or what they will be able to do after they complete your challenge.</p>
             </div>
-            <div className="relative">
-              <Input
-                autoFocus
-                value={topicHint}
-                onChange={(e) => setTopicHint(e.target.value)}
-                placeholder="e.g. a finished landing page, a clear plan, a launched idea"
-                className="h-14 text-base px-4 pr-24"
-                onKeyDown={(e) => { if (e.key === "Enter") handleTopicNext(); }}
-              />
-              <DictateButton isListening={isDictating} onToggle={() => toggleDictation((text) => setTopicHint(text))} />
-            </div>
+            <DictatedTextarea
+              autoFocus
+              value={topicHint}
+              onChange={(e) => setTopicHint(e.target.value)}
+              placeholder="e.g. They'll finish with a launched landing page, a clear 3-day plan they can repeat, and the confidence to share it publicly."
+              rows={5}
+              className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
+              }}
+            />
+
             <Button size="lg" onClick={handleTopicNext} className="w-full h-12 text-base font-semibold">
               Continue
               <ArrowRight className="ml-2 h-5 w-5" />

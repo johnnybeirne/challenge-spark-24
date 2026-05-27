@@ -4,6 +4,7 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
+import { getChallengeEndsAt } from "@/lib/challengeWindow";
 import type { TrainingState } from "@/context/AppContext";
 import { createProfilePhotoUrl } from "@/lib/profilePhoto";
 
@@ -82,6 +83,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
       challenge: {
         currentDay: progress?.current_day ?? 1,
         startedAt: ensureStartedAt(progress?.started_at),
+        endsAt: getChallengeEndsAt(progress?.started_at, progress?.ends_at),
         tasks: progress?.tasks ?? {},
         aiOutputs: progress?.ai_outputs ?? {},
         launchUrl: progress?.launch_url ?? "",
@@ -217,9 +219,11 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
     const training = trainingRaw ? JSON.parse(trainingRaw) : null;
 
     if (challenge) {
+      const startedAt = ensureStartedAt(challenge.startedAt);
       await saveChallengeProgress(userId, {
         currentDay: challenge.currentDay ?? 1,
-        startedAt: ensureStartedAt(challenge.startedAt),
+        startedAt,
+        endsAt: getChallengeEndsAt(startedAt, challenge.endsAt),
         tasks: challenge.tasks ?? {},
         aiOutputs: challenge.aiOutputs ?? {},
         launchUrl: challenge.launchUrl ?? "",

@@ -18,6 +18,8 @@ import PostActionPromo from "@/components/PostActionPromo";
 // Day1Setup moved to /training hub
 import { DEMO_SETUP_RESET_KEY } from "@/pages/AdminViewAsUser";
 import { trackEvent } from "@/lib/analytics";
+import { isChallengeExpired } from "@/lib/challengeWindow";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { canAccessDay } from "@/lib/challengeProgression";
@@ -153,7 +155,8 @@ const DayChallenge = () => {
 
   const allDone = config.tasks.every((t) => isChecked(t.key));
   const hasValidUrl = dayNum === 3 ? isValidUrl(state.challenge.launchUrl) : true;
-  const canComplete = allDone && hasValidUrl;
+  const windowExpired = isChallengeExpired(state.challenge.endsAt);
+  const canComplete = allDone && hasValidUrl && !windowExpired;
 
   const communityEligible =
     state.challenge.launchUrl &&
@@ -422,6 +425,9 @@ const DayChallenge = () => {
   return (
     <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
       <TaskCompleteAnim show={showTaskAnim} />
+      <div className="mb-4">
+        <ChallengeCountdown />
+      </div>
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3

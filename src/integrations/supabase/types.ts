@@ -170,6 +170,7 @@ export type Database = {
           completed: boolean
           created_at: string
           current_day: number
+          ends_at: string | null
           id: string
           launch_url: string | null
           started_at: string
@@ -182,6 +183,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           current_day?: number
+          ends_at?: string | null
           id?: string
           launch_url?: string | null
           started_at?: string
@@ -194,6 +196,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           current_day?: number
+          ends_at?: string | null
           id?: string
           launch_url?: string | null
           started_at?: string

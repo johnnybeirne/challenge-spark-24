@@ -6,6 +6,7 @@ import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import NotificationsBell from "@/components/NotificationsBell";
 import GlobalSearch from "@/components/GlobalSearch";
+import ChallengeCountdown from "@/components/ChallengeCountdown";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 
@@ -68,7 +69,8 @@ const TopBar = () => {
         })}
       </nav>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-2">
+        <ChallengeCountdown compact className="hidden xl:inline-flex" />
         <button
           type="button"
           onClick={() => setSearchOpen(true)}

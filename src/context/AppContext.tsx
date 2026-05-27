@@ -86,6 +86,7 @@ export interface AppState {
   challenge: {
     currentDay: number;
     startedAt: string;
+    endsAt: string;
     tasks: Record<string, boolean>;
     aiOutputs: Record<string, string>;
     launchUrl: string;
@@ -167,6 +168,7 @@ export const defaultState: AppState = {
   challenge: {
     currentDay: 1,
     startedAt: new Date().toISOString(),
+    endsAt: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
     tasks: {},
     aiOutputs: {},
     launchUrl: "",

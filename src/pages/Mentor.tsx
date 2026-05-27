@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { Copy, Loader2, Send, Sparkles } from "lucide-react";
+import { Copy, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { useAppState } from "@/context/AppContext";
@@ -11,9 +11,11 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useUserStage } from "@/hooks/useUserStage";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import TypingDots from "@/components/TypingDots";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { toast } from "sonner";
 
-interface ChatMsg { role: "user" | "assistant"; content: string; }
+interface ChatMsg { role: "user" | "assistant"; content: string; typed?: boolean; }
+
 
 const DEFAULT_SUGGESTED = [
   "Help me choose a challenge idea",

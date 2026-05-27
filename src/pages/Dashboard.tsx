@@ -211,33 +211,47 @@ const Dashboard = () => {
             </Button>
 
             {/* Today → Tomorrow → Next Unlock — compact stacked rows on mobile, 3-col on desktop */}
-            <div className="mt-5 grid gap-3 border-t border-primary/20 pt-4 sm:mt-6 sm:pt-5 sm:grid-cols-3">
-              <div className="flex items-center gap-2.5 sm:items-start">
-                <CircleDot className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Today</p>
-                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{meta.title}</p>
+            {(() => {
+              const fmt = (d: Date) =>
+                d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+              const base = startedAt ?? new Date();
+              const todayDate = new Date(base);
+              todayDate.setDate(todayDate.getDate() + (ctaDay - 1));
+              const tomorrowDate = new Date(todayDate);
+              tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+              return (
+                <div className="mt-5 grid gap-3 border-t border-primary/20 pt-4 sm:mt-6 sm:pt-5 sm:grid-cols-3">
+                  <div className="flex items-center gap-2.5 sm:items-start">
+                    <CircleDot className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
+                        Today · {fmt(todayDate)}
+                      </p>
+                      <p className="mt-0.5 truncate text-sm font-bold text-foreground">{meta.title}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2.5 sm:items-start">
+                    <Circle className="h-4 w-4 shrink-0 text-muted-foreground/60 sm:mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
+                        {tomorrowMeta ? `Tomorrow · ${fmt(tomorrowDate)}` : "After this"}
+                      </p>
+                      <p className="mt-0.5 truncate text-sm font-bold text-foreground">
+                        {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2.5 sm:items-start">
+                    <Zap className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Next Unlock</p>
+                      <p className="mt-0.5 truncate text-sm font-bold text-foreground">{nextUnlock}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2.5 sm:items-start">
-                <Circle className="h-4 w-4 shrink-0 text-muted-foreground/60 sm:mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
-                    {tomorrowMeta ? "Tomorrow" : "After this"}
-                  </p>
-                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">
-                    {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5 sm:items-start">
-                <Zap className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Next Unlock</p>
-                  <p className="mt-0.5 truncate text-sm font-bold text-foreground">{nextUnlock}</p>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
+
           </section>
 
           {/* 2. COMPACT INTRO VIDEO — briefing, not the page */}

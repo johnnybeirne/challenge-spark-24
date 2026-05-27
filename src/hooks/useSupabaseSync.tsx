@@ -4,6 +4,7 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { ensureStartedAt } from "@/lib/challengeProgression";
+import { getChallengeEndsAt } from "@/lib/challengeWindow";
 import type { TrainingState } from "@/context/AppContext";
 import { createProfilePhotoUrl } from "@/lib/profilePhoto";
 

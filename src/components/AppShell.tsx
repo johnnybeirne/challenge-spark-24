@@ -29,8 +29,14 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
     >
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
       <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
-        <Outlet />
-        <Footer />
+        {showChallengeSidebar && <TopBar />}
+        <div className={showChallengeSidebar ? "flex w-full" : undefined}>
+          <div className="min-w-0 flex-1">
+            <Outlet />
+            <Footer />
+          </div>
+          {showChallengeSidebar && <RightRail />}
+        </div>
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}

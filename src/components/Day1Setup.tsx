@@ -384,7 +384,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="rounded-xl border border-border bg-card p-3">
               <DictatedTextarea
                 value={builderInput}
-                onChange={(v) => setBuilderInput(v)}
+                onChange={(e) => setBuilderInput(e.target.value)}
                 placeholder="Ask your AI co-pilot anything about your challenge…"
                 className="min-h-[64px] border-0 focus-visible:ring-0 resize-none"
                 onKeyDown={(e) => {

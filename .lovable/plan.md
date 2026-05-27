@@ -1,60 +1,65 @@
-# Catch self-referrals on the waitlist
+## Diagnosis
 
-## Goal
-People are referring themselves using a second email address (e.g. Catherine on the waitlist now). We'll capture cleaner data on signup and automatically flag suspicious referrals in the admin view, without blocking anyone.
+The changes are present in the code and are visible only after entering the admin preview flow at `/let-me-in`, which sets the `leadio_view_as_user` session flag and redirects to `/challenger-dashboard`.
 
-## What changes for the user filling in the waitlist form
+When refreshing `/challenger-dashboard` directly as the current preview user, the visible page is still the older LMS-style fallback:
 
-The form on `/waitlist` will go from **one Name field** to **two fields**:
-- First name (required)
-- Surname (required)
+```text
+LEFT: old profile/start/day cards
+TOP: only logout / no tool navbar
+CENTER: watch-first video dominates
+RIGHT: absent
+```
 
-That's the only visible change. Submission still works the same way.
+After opening `/let-me-in`, the intended shell appears:
 
-## What changes in the database
+```text
+LEFT: LEADIO journey sidebar
+TOP: Training / Community / Events / AI Coach / Leaderboard
+CENTER: Today: Define Your Challenge + current task
+RIGHT: Top Challengers / Momentum / Invite Progress / Next Unlock
+```
 
-Add three new columns to `waitlist_signups`:
-- `first_name` (text)
-- `surname` (text)
-- `signup_ip` (text) — captured server-side
-- `suspected_self_referral` (boolean, default false)
-- `self_referral_reasons` (text array) — e.g. `{same_local_part, name_in_email, same_ip}`
+So the problem is not cache or missing CSS. The current direct refresh path is not reliably satisfying the Challenger shell gate.
 
-Backfill `first_name` from the existing `name` column (split on first space) so old records aren't blank. Keep `name` as a computed convenience for display ("First Surname").
+## Root cause
 
-## How the self-referral check works
+`useIsChallengerShell()` currently returns true for:
 
-A new database trigger runs every time someone joins the waitlist with a `referred_by_code`. It compares the new signup against the referrer's record and sets `suspected_self_referral = true` if **any** of these match:
+- `role === "challenger"`
+- `role === "admin"` on challenger-owned routes
+- the `/let-me-in` session flag
 
-1. **Same email local-part** — `catherine@x.com` referring `catherine@y.com`
-2. **Email contains referrer's first name or surname** — Catherine referring `csmith2024@gmail.com` or `catherineb@…`
-3. **Same surname** — likely family, flagged but kept
-4. **Same signup IP** — same browser/device joining twice
+But in the normal preview/refresh state, the user being rendered appears as a challenge participant/free student state rather than canonical `role === "challenger"`, and the admin preview flag is not set unless `/let-me-in` is visited. That means `/challenger-dashboard` falls back to the older Dashboard/ChallengeSidebar layout.
 
-The signup still goes through and still counts toward the referrer's tier — we're not punishing anyone automatically. You decide in admin.
+## Plan
 
-## What changes in the admin view (`/admin/waitlist`)
+1. **Tighten the canonical shell gate**
+   - Update `src/hooks/useIsChallengerShell.ts` so `/challenger-dashboard` and challenge-owned routes render the Challenger shell for any authenticated user who has entered/started the challenge, not only `role === "challenger"` or admin preview.
+   - Keep partner routes excluded so partner navigation is not broken.
 
-- New **"⚠ Flagged"** column showing a warning chip on suspicious rows, with a tooltip listing the reasons.
-- New filter toggle: **"Show flagged only"**.
-- Each flagged row gets two actions:
-  - **Mark as valid** — clears the flag.
-  - **Void referral** — sets `referred_by_code` to null, decrements the referrer's `confirmed_invites`, and recalculates their tier.
+2. **Make AppShell use that gate as the layout source of truth**
+   - In `src/components/AppShell.tsx`, change `showChallengeSidebar` from the broader `showNav && authenticated && experience !== "partner"` behavior to a clearer split:
+     - Challenger shell: left sidebar + top navbar + right rail + challenger bottom nav.
+     - Non-challenger authenticated shell: existing ConsumerNav or PromoterNav.
+   - This prevents the old sidebar from mounting when the Challenger shell should be active.
 
-## Capturing IP
+3. **Ensure the left sidebar cannot fall back to the old LMS/profile layout on `/challenger-dashboard`**
+   - In `src/components/ChallengeSidebar.tsx`, use the same `isChallengerShell` gate consistently.
+   - Remove or bypass the older profile/start/video-style sidebar path for challenger-owned routes, without deleting functionality used by non-challenger pages.
 
-The waitlist insert moves through a small edge function (`waitlist-join`) so we can read the request IP from headers (`x-forwarded-for`). The function does the insert with the service role, then returns the new row. Existing CORS + validation pattern.
+4. **Keep Dashboard focused on current challenge action**
+   - In `src/pages/Dashboard.tsx`, ensure `/challenger-dashboard` uses the Challenger-focused dashboard whenever the canonical shell gate is true.
+   - Do not alter challenge progression, referrals, unlocks, analytics, AI Coach, events, training, community, profile, notifications, or existing routes.
 
-## Technical notes
+5. **Validate visibly**
+   - Check `/challenger-dashboard` directly after refresh.
+   - Check `/let-me-in` still works.
+   - Confirm the visible architecture is:
 
-- **Schema migration**: add columns, backfill `first_name`/`surname` by splitting current `name`, create trigger `flag_self_referral()` running on `BEFORE INSERT` on `waitlist_signups`.
-- **Edge function `waitlist-join`**: validates payload with zod (`first_name`, `surname`, `email`, `referred_by_code?`), pulls IP from `x-forwarded-for`, inserts row, returns it. Replaces the direct `supabase.from("waitlist_signups").insert(...)` call in `src/pages/Waitlist.tsx`.
-- **Form**: `Waitlist.tsx` updated to two inputs; `name` field is constructed as `${first} ${surname}` for backward compatibility with email templates that use `{{name}}`.
-- **Admin**: `AdminWaitlist.tsx` adds the flagged column, filter, and the two row actions (RPC `admin_clear_self_referral_flag` and `admin_void_waitlist_referral`).
-- Nothing changes for the main app referral system (`profiles.referred_by`) — this is waitlist-only for now. If you want the same logic applied to authenticated signups later, it's a separate pass.
-
-## Out of scope
-
-- Blocking signups (you chose "allow but flag").
-- Email-domain fuzzy matching beyond local-part (e.g. typo detection) — can add later if needed.
-- Backfilling flags on the existing ~hundreds of waitlist rows. We can run a one-off pass after the trigger lands if you want — say the word.
+```text
+LEFT SIDEBAR    = journey + progression + location
+TOP NAVBAR      = ecosystem utilities/tools
+CENTER CONTENT  = current challenge action
+RIGHT SIDEBAR   = momentum/social proof/rewards
+```

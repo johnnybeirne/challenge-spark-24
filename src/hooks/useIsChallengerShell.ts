@@ -45,8 +45,17 @@ export function useIsChallengerShell(): boolean {
   const { role } = useUserRole();
   const { pathname } = useLocation();
 
+  // Partners always get the partner shell — never the challenger one.
+  if (role === "partner") return false;
+
   if (role === "challenger") return true;
   if (hasDemoFlag()) return true;
-  if (role === "admin" && isChallengerRoute(pathname)) return true;
+
+  // Any authenticated non-partner user on a challenger-owned route sees the
+  // canonical Challenger shell. This includes free_student, premium_user,
+  // and admin — so refreshing /challenger-dashboard works without needing
+  // /let-me-in first.
+  if (role !== "visitor" && isChallengerRoute(pathname)) return true;
+
   return false;
 }

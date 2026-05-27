@@ -229,7 +229,7 @@ const Bubble = ({ turn }: { turn: Turn }) => {
 
 const Typing = () => (
   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-    <div className="h-7 w-7 rounded-full bg-primary/15 text-[10px] font-semibold text-primary grid place-items-center">AI</div>
+    <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
     <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
       <Loader2 className="h-4 w-4 animate-spin" />
     </div>

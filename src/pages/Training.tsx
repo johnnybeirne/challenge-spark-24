@@ -37,10 +37,12 @@ const Training = () => {
 
         {content.dashboard.enabled && (
           <TrainingVideoCard
-            title={content.dashboard.videoTitle}
+            eyebrow="Watch this first"
+            videoTitle={content.dashboard.videoTitle}
             subtitle={content.dashboard.subtitle}
+            placeholderLabel={content.dashboard.placeholderText}
+            lesson={content.dashboard.supportingText}
             videoUrl={content.dashboard.videoUrl}
-            placeholderText={content.dashboard.placeholderText}
           />
         )}
 
@@ -51,10 +53,12 @@ const Training = () => {
             return (
               <TrainingVideoCard
                 key={key}
-                title={`Day ${dayNum} · ${cfg.videoTitle}`}
+                eyebrow={`Day ${dayNum}`}
+                videoTitle={cfg.videoTitle}
                 subtitle={cfg.subtitle}
+                placeholderLabel={cfg.placeholderText}
+                lesson={cfg.keyLesson}
                 videoUrl={cfg.videoUrl}
-                placeholderText={cfg.placeholderText}
               />
             );
           })}

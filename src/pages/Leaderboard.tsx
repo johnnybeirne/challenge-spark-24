@@ -169,8 +169,9 @@ const Leaderboard = () => {
                           {entry.name} {entry.isUser && "(You)"}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {entry.direct_referral_count} direct · {entry.indirect_referral_count} indirect
+                          {entry.direct_referral_count} invite{entry.direct_referral_count === 1 ? "" : "s"}
                         </p>
+
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-foreground">{entry.score}</p>

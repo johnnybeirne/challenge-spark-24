@@ -21,7 +21,7 @@ import { memoryShareText } from "@/lib/personalisation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
-import { getNextReward } from "@/lib/credits";
+import { getNextReward, creditRewards } from "@/lib/credits";
 
 interface PartnerAsset {
   id: string;

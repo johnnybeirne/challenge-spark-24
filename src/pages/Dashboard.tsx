@@ -56,7 +56,14 @@ const Dashboard = () => {
     state.challenge.calendarAdded;
   const completedDays = isComplete ? 3 : Math.max(0, currentDay - 1);
   const progressValue = isComplete ? 100 : ((completedDays + 0.5) / 3) * 100;
-  const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
+  const isDay1InProgress = !isComplete && currentDay === 1 && hasProgress;
+  const ctaLabel = isComplete
+    ? "View Your Challenge"
+    : isDay1InProgress
+    ? "Continue Building Your Challenge"
+    : currentDay > 1
+    ? `Continue Day ${currentDay}`
+    : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
   const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;

@@ -178,45 +178,46 @@ const Dashboard = () => {
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
     return (
-      <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">
-        <section className="mx-auto max-w-3xl space-y-6">
+      <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
+        <section className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
           {/* 1. CURRENT ACTION HERO */}
-          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 shadow-md sm:p-8">
+          <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
             {identity.isPersonalised && (
-              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-foreground/70">
+              <p className="mb-1 truncate text-[11px] font-black uppercase tracking-[0.18em] text-foreground/70">
                 {identity.title}
               </p>
             )}
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary sm:text-[11px]">
               {isComplete ? "Challenge complete" : `Day ${ctaDay} · Your next action`}
             </p>
-            <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+            <h1 className="mt-2 text-xl font-black leading-tight text-foreground sm:text-3xl">
               Today: {meta.title}
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
               {meta.outcome}
             </p>
+            {/* Desktop CTA — mobile uses sticky bottom CTA */}
             <Button
               size="lg"
-              className="mt-5 h-12 gap-2 px-6 text-sm font-black uppercase tracking-wider sm:text-base"
+              className="mt-5 hidden h-12 gap-2 px-6 text-sm font-black uppercase tracking-wider sm:inline-flex sm:text-base"
               onClick={() => navigate(`/challenge/day-${ctaDay}`)}
             >
               {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
               <ArrowRight className="h-4 w-4" />
             </Button>
 
-            {/* Today → Tomorrow → Next Unlock strip */}
-            <div className="mt-6 grid gap-2 border-t border-primary/20 pt-5 sm:grid-cols-3">
-              <div className="flex items-start gap-2.5">
-                <CircleDot className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <div className="min-w-0">
+            {/* Today → Tomorrow → Next Unlock — compact stacked rows on mobile, 3-col on desktop */}
+            <div className="mt-5 grid gap-2 border-t border-primary/20 pt-4 sm:mt-6 sm:gap-2 sm:pt-5 sm:grid-cols-3">
+              <div className="flex items-center gap-2.5 sm:items-start">
+                <CircleDot className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Today</p>
                   <p className="truncate text-sm font-bold text-foreground">{meta.title}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-2.5">
-                <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-                <div className="min-w-0">
+              <div className="flex items-center gap-2.5 sm:items-start">
+                <Circle className="h-4 w-4 shrink-0 text-muted-foreground/60 sm:mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
                     {tomorrowMeta ? "Tomorrow" : "After this"}
                   </p>
@@ -225,9 +226,9 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-2.5">
-                <Zap className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <div className="min-w-0">
+              <div className="flex items-center gap-2.5 sm:items-start">
+                <Zap className="h-4 w-4 shrink-0 text-primary sm:mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Next Unlock</p>
                   <p className="truncate text-sm font-bold text-foreground">{nextUnlock}</p>
                 </div>
@@ -394,6 +395,18 @@ const Dashboard = () => {
             </div>
           </section>
         </section>
+
+        {/* Mobile sticky CTA — sits above BottomNav for one-tap day access */}
+        <div className="fixed inset-x-0 bottom-[64px] z-30 border-t border-border bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
+          <Button
+            size="lg"
+            className="h-12 w-full gap-2 text-sm font-black uppercase tracking-wider"
+            onClick={() => navigate(`/challenge/day-${ctaDay}`)}
+          >
+            {isComplete ? "Review Day 3" : `Continue Day ${ctaDay}`}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </main>
     );
   }

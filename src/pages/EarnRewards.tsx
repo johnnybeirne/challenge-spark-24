@@ -138,47 +138,53 @@ const EarnRewards = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-2xl px-5 py-10 pb-24 lg:py-14">
-        {/* Page intro — quiet, no header card */}
-        <header className="mb-10">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Earn Rewards</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-            {firstName ? `Invite the right people, ${firstName}.` : "Invite the right people."}
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Every builder you invite opens more of the vault and grows your visibility. One link. One job.
-          </p>
-        </header>
+      <div className="mx-auto max-w-2xl px-5 py-8 pb-24 lg:py-10">
+        {/* Eyebrow */}
+        <p className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Earn Rewards</p>
 
-        {/* 1. INVITE FRIENDS — the hero */}
-        <section className="mb-14">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Your invite link</p>
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-muted px-3 py-3">
+        {/* 1. INVITE FRIENDS — dominant hero */}
+        <section className="mb-16">
+          <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-7 shadow-sm sm:p-9">
+            <div className="mb-6 max-w-xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                {firstName ? `Invite Friends, ${firstName}` : "Invite Friends"}
+              </h1>
+              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                Invite others to join the challenge and unlock bonus rewards, training, and visibility opportunities.
+              </p>
+            </div>
+
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Your personal referral link</p>
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-background/80 px-3 py-3 backdrop-blur">
               <code className="flex-1 truncate text-sm text-foreground">{referralLink}</code>
               <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
                 {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="mt-4 text-sm italic leading-relaxed text-muted-foreground">"{shareText}"</p>
 
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <Button size="lg" className="w-full gap-2" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
+            <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
+              <Button size="lg" className="w-full gap-2 sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
                 <Share2 className="h-4 w-4" /> Share my link
               </Button>
-              <Button size="lg" variant="outline" className="w-full gap-2" onClick={copyLink}>
-                <Copy className="h-4 w-4" /> Copy link
+              <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" onClick={copyLink}>
+                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Copied" : "Copy link"}
               </Button>
             </div>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <Button variant="ghost" className="w-full gap-2 text-muted-foreground" onClick={shareWhatsApp}>
-                <MessageCircle className="h-4 w-4" /> WhatsApp
-              </Button>
-              <Button variant="ghost" className="w-full gap-2 text-muted-foreground" onClick={shareEmail}>
-                <Mail className="h-4 w-4" /> Email
-              </Button>
+            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+              <span>Share via</span>
+              <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
+                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+              </button>
+              <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
+                <Mail className="h-3.5 w-3.5" /> Email
+              </button>
             </div>
           </div>
+
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            Share your link → invite people → unlock rewards.
+          </p>
         </section>
 
         {/* 2. YOUR PROGRESS — light, no big numbers */}

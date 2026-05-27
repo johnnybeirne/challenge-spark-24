@@ -14,6 +14,8 @@ import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import RestartDay1Button from "@/components/RestartDay1Button";
 
+import { pushNotification } from "@/lib/notifications";
+
 export const SETUP_KEY = "leadio_setup";
 const DAY1_STEP_KEY = "leadio_day1_step";
 
@@ -163,6 +165,12 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
+      pushNotification({
+        title: "Profile updated",
+        message: "We've updated your profile with your challenge answers.",
+        href: "/challenger-dashboard",
+        dedupeKey: "day1_foundation_saved",
+      });
       setStep(4);
     }
   };
@@ -213,6 +221,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
+    pushNotification({
+      title: "Challenge direction saved",
+      message: "We've updated your profile with your challenge answers.",
+      href: "/challenger-dashboard",
+      dedupeKey: "day1_assessment_saved",
+    });
     setStep(8);
   };
 

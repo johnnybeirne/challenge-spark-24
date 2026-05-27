@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import { Bell, CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
+import { CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
+import NotificationsBell from "@/components/NotificationsBell";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 
@@ -61,14 +62,7 @@ const TopBar = () => {
         >
           <Search className="h-4 w-4" />
         </button>
-        <button
-          type="button"
-          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted"
-          aria-label="Notifications"
-          title="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-        </button>
+        <NotificationsBell />
         <Link
           to="/challenger-dashboard"
           aria-label="Profile"

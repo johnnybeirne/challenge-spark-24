@@ -24,6 +24,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
+import { getSetup } from "@/components/Day1Setup";
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -333,6 +334,54 @@ const Dashboard = () => {
               )}
             </div>
           </section>
+
+          {/* 3b. CHALLENGE PROFILE — answers from the Day 1 assessment */}
+          {(() => {
+            const setup = getSetup();
+            const aiSummary = (() => {
+              const outputs = state.challenge?.aiOutputs ?? {};
+              const builderKeys = Object.keys(outputs)
+                .filter((k) => k.startsWith("day1_builder_"))
+                .sort();
+              const last = builderKeys[builderKeys.length - 1];
+              return last ? outputs[last] : "";
+            })();
+            const hasAnswers = !!(setup?.problem || setup?.audience || setup?.how || setup?.topicHint || aiSummary);
+            if (!hasAnswers) return null;
+            const rows: { label: string; value?: string }[] = [
+              { label: "What problem do you solve?", value: setup?.problem },
+              { label: "Who do you solve it for?", value: setup?.audience },
+              { label: "How do you solve it?", value: setup?.how },
+              { label: "Transformation", value: setup?.topicHint },
+            ].filter((r) => !!r.value);
+            return (
+              <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">Your challenge profile</p>
+                    <h2 className="mt-1.5 text-xl font-bold text-foreground">Saved answers powering your AI Coach</h2>
+                  </div>
+                  <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" label="Edit" />
+                </div>
+                <dl className="mt-4 space-y-3">
+                  {rows.map((r) => (
+                    <div key={r.label} className="rounded-lg border border-border/60 bg-background/60 p-3">
+                      <dt className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">{r.label}</dt>
+                      <dd className="mt-1 text-sm font-medium text-foreground whitespace-pre-wrap">{r.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {aiSummary && (
+                  <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Latest AI guidance</p>
+                    <p className="mt-1 text-sm text-foreground whitespace-pre-wrap line-clamp-6">{aiSummary}</p>
+                  </div>
+                )}
+              </section>
+            );
+          })()}
+
+
 
 
           {/* 4. MOMENTUM ACTIONS */}

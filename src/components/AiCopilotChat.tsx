@@ -25,6 +25,8 @@ const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
 const DEFAULT_FALLBACK = "I don't have an answer for that yet. Try one of the suggested questions below.";
 const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";
 
+const BUBBLE_SIZE = 72;
+
 const AiCopilotChat = () => {
   const { state, setState } = useAppState();
   const [open, setOpen] = useState(false);
@@ -38,6 +40,23 @@ const AiCopilotChat = () => {
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const firstName = state.user?.name?.split(" ")[0] || "";
   const personalisedWelcome = welcome === DEFAULT_WELCOME ? `What do you want to work on next, ${firstName}?` : welcome;
+
+  // Draggable bubble position (persisted). null = default bottom-right.
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const raw = localStorage.getItem("chat_bubble_pos");
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; moved: boolean; pointerId: number } | null>(null);
+
+  const clampPos = (x: number, y: number) => {
+    const w = window.innerWidth, h = window.innerHeight;
+    return {
+      x: Math.max(8, Math.min(w - BUBBLE_SIZE - 8, x)),
+      y: Math.max(8, Math.min(h - BUBBLE_SIZE - 8, y)),
+    };
+  };
 
   useEffect(() => {
     (async () => {

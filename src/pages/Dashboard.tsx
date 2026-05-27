@@ -53,7 +53,7 @@ const Dashboard = () => {
     Boolean(state.user?.bio) ||
     state.challenge.calendarAdded;
   const completedDays = isComplete ? 3 : Math.max(0, currentDay - 1);
-  const progressValue = (completedDays / 3) * 100;
+  const progressValue = isComplete ? 100 : ((completedDays + 0.5) / 3) * 100;
   const ctaLabel = isComplete ? "Review Your Challenge" : hasProgress ? `Continue Day ${currentDay}` : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
   const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");

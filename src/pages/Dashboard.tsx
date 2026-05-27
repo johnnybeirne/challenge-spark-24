@@ -470,7 +470,7 @@ const Dashboard = () => {
             <>
               <TrainingVideoCard
                 eyebrow={cfg.title}
-                videoTitle={cfg.videoTitle}
+                videoTitle={firstName ? `${cfg.videoTitle}, ${firstName}` : cfg.videoTitle}
                 subtitle={personalize(cfg.subtitle)}
                 placeholderLabel={cfg.placeholderText}
                 lesson={cfg.supportingText}

@@ -530,7 +530,7 @@ const Dashboard = () => {
         <section className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-wider text-primary">Points Earned</p>
+              <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Points Earned</p>
               <div className="mt-1 flex items-end gap-2">
                 <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
                 <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>

@@ -1,17 +1,16 @@
-You're right — I previously edited `ChallengeCountdown.tsx`, but the pill in your screenshot is actually rendered by `CountdownBottomBar.tsx` (the floating bottom badge that shows `Xd · Xh · Xm · Xs left`). That's why nothing visibly changed.
+Wrap the dynamic choice values in the Day 1 Step 7 summary headline with curly double quotes so it's clear they're the user's selections.
 
-## Fix
+**File:** `src/components/Day1Setup.tsx` (lines 471–475)
 
-In `src/components/CountdownBottomBar.tsx` (line 65–68), update the non-urgent badge classes:
+**Change:**
+```tsx
+<h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+  You're building a{" "}
+  <span className="text-primary">“{challengeLabel(challengeType)}”</span> challenge for{" "}
+  <span className="text-primary">“{audienceLabelShort(audienceType)}”</span>
+</h2>
+```
 
-- Border: thin near-black → `border-foreground/80`
-- Background: slightly tinted but mostly transparent → `bg-foreground/[0.03]`
-- Keep the `backdrop-blur-md` and `rounded-full` so it stays the same shape
-- Leave the urgent (red) variant untouched
+Result reads: You're building a "learn a skill" challenge for "businesses".
 
-## Also revert the earlier mis-edit
-
-In `src/components/ChallengeCountdown.tsx` (line 60), restore the original styling I changed by mistake:
-`border-border bg-muted/40 text-muted-foreground`
-
-That's the whole change — visual only, no logic touched.
+No other copy, layout, or logic changes.

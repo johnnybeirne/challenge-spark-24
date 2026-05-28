@@ -280,8 +280,6 @@ const AdminBios = () => {
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    const fn = firstNameQ.trim().toLowerCase();
-    const sn = surnameQ.trim().toLowerCase();
     const fromT = joinedFrom ? new Date(joinedFrom).getTime() : null;
     const toT = joinedTo ? new Date(joinedTo).getTime() + 86_400_000 : null;
     const out = rows.filter((r) => {

@@ -130,11 +130,10 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 0 && persistedStep <= 8) return persistedStep as Step;
+    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
     if (saved?.audienceType) return 8;
     if (hasFoundation) return 4;
-    if (saved?.problem || saved?.audience || saved?.how) return 1;
-    return 0;
+    return 1;
   })();
 
 
@@ -168,8 +167,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  const goBack = () => setStep(Math.max(0, (step as number) - 1) as Step);
-
+  const goBack = () => setStep(Math.max(1, (step as number) - 1) as Step);
   // Persist foundation answers progressively so refresh doesn't wipe them.
   const persistFoundation = (patch: Partial<SetupData>) => {
     try {
@@ -334,7 +332,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
 
 
-        {step > 0 && step < 8 && (
+        {step > 1 && step < 8 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -344,37 +342,46 @@ const Day1Setup = ({ onComplete }: Props) => {
           </button>
         )}
 
-        {step === 0 && (
-          <div className="space-y-8 animate-fade-in">
-            <div className="space-y-3">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
-            </div>
-
-            <ul className="space-y-3">
+        {step >= 1 && step <= 3 && (
+          <div className="mb-8 space-y-4 animate-fade-in">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
+            <ul className="space-y-2">
               {[
                 "What problem do you solve?",
                 "Who do you solve it for?",
                 "How do you solve it?",
-              ].map((q, i) => (
-                <li key={q} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="text-base font-semibold text-foreground">{q}</span>
-                </li>
-              ))}
+              ].map((q, i) => {
+                const n = (i + 1) as 1 | 2 | 3;
+                const active = step === n;
+                const done = step > n;
+                return (
+                  <li key={q} className="flex items-center gap-3">
+                    <span
+                      className={
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-black " +
+                        (active
+                          ? "bg-primary text-primary-foreground"
+                          : done
+                            ? "bg-primary/20 text-primary"
+                            : "bg-muted text-muted-foreground")
+                      }
+                    >
+                      {i + 1}
+                    </span>
+                    <span
+                      className={
+                        "text-sm font-semibold " +
+                        (active ? "text-foreground" : "text-muted-foreground")
+                      }
+                    >
+                      {q}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
-            <Button
-              size="lg"
-              onClick={() => setStep(1)}
-              className="w-full h-12 text-base font-semibold"
-            >
-              Start
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
           </div>
         )}
-
 
         {step === 1 && (
           <FoundationStep

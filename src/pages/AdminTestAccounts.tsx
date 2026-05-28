@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Copy, RefreshCw, Trash2, UserPlus } from "lucide-react";
+import { CalendarIcon, Copy, ExternalLink, RefreshCw, Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -237,6 +237,14 @@ const AdminTestAccounts = () => {
                         </p>
                       </div>
                       <div className="flex gap-1 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open("/let-me-in", "_blank", "noopener,noreferrer")}
+                          title="View as user (new tab)"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5 mr-1" /> View as
+                        </Button>
                         <Button variant="outline" size="sm" onClick={() => handleMagicLink(acc)} title="Copy magic link">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>

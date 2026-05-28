@@ -13,7 +13,7 @@ import {
  * challenge deadline as H:MM:SS. Hides on scroll-down, reappears
  * on scroll-up or near the top so it never blocks reading.
  */
-const CountdownBottomBar = () => {
+const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: boolean }) => {
   const { state } = useAppState();
   const started = !!state.challenge?.startedAt;
   const endsAt = getChallengeEndsAt(state.challenge?.startedAt, state.challenge?.endsAt);
@@ -56,6 +56,7 @@ const CountdownBottomBar = () => {
       className={cn(
         "pointer-events-none fixed inset-x-0 z-30 transition-all duration-300",
         "bottom-20 lg:bottom-0",
+        sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]",
         visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
       )}
       aria-hidden={!visible}

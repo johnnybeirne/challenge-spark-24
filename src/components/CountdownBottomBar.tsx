@@ -78,7 +78,6 @@ const CountdownBottomBar = () => {
       </div>
     </div>
   );
-  );
 };
 
 export default CountdownBottomBar;

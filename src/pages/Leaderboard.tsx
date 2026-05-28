@@ -328,10 +328,6 @@ const Leaderboard = () => {
                           {entry.signups} attributed signup{entry.signups !== 1 ? "s" : ""}
                         </p>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                        <p className="text-xs text-muted-foreground">pts</p>
-                      </div>
                     </button>
                   );
                 })}

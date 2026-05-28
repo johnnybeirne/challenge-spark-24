@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Search, Pencil, User as UserIcon } from "lucide-react";
+import { Search, Pencil, User as UserIcon, ArrowUpDown } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 type Source = "profile" | "waitlist";
@@ -33,7 +33,12 @@ interface BioRow {
   instagram_url: string | null;
   youtube_url: string | null;
   website_url: string | null;
+  created_at: string | null;
 }
+
+type SortKey = "first_name" | "surname" | "created_at";
+type SortDir = "asc" | "desc";
+
 
 const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);

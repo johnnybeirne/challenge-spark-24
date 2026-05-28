@@ -53,6 +53,7 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import AdminTestAccounts from "@/pages/AdminTestAccounts";
+import AdminBios from "@/pages/AdminBios";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";

@@ -13,6 +13,8 @@ type WaitlistRow = {
   id: string;
   email: string;
   name: string | null;
+  first_name: string | null;
+  surname: string | null;
   referral_code: string;
   referred_by_code: string | null;
   confirmed_invites: number;

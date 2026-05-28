@@ -186,9 +186,11 @@ Deno.serve(async (req) => {
       if (progErr) return json({ error: `challenge_progress: ${progErr.message}` }, 500);
 
       // Magic-link for fast sign-in (admin can copy/paste into incognito).
+      const redirectTo = String(body?.redirect_to ?? "") || undefined;
       const { data: linkData } = await admin.auth.admin.generateLink({
         type: "magiclink",
         email,
+        options: redirectTo ? { redirectTo } : undefined,
       });
 
       return json({

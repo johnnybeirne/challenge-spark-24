@@ -56,6 +56,7 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
       className={cn(
         "pointer-events-none fixed inset-x-0 z-30 transition-all duration-300",
         "bottom-20 lg:bottom-0",
+        sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]",
         visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
       )}
       aria-hidden={!visible}

@@ -569,7 +569,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 Complete Day 1 &amp; Unlock Day 2
               </Button>
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                You can return to this co-pilot anytime from your dashboard.
+                You can get help from Johnny AI anytime.
               </p>
             </div>
           </div>

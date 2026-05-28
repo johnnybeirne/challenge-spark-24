@@ -133,6 +133,8 @@ const AdminBios = () => {
         confirmed_invites: null,
         current_tier: null,
         waitlist_position: null,
+        suspected_self_referral: false,
+
       });
     }
 
@@ -162,6 +164,8 @@ const AdminBios = () => {
         existing.confirmed_invites = w.confirmed_invites ?? null;
         existing.current_tier = w.current_tier ?? null;
         existing.waitlist_position = w.waitlist_position ?? null;
+        existing.suspected_self_referral = !!w.suspected_self_referral;
+
       } else {
         map.set(key, {
           sources: ["waitlist"],
@@ -186,7 +190,9 @@ const AdminBios = () => {
           confirmed_invites: w.confirmed_invites ?? null,
           current_tier: w.current_tier ?? null,
           waitlist_position: w.waitlist_position ?? null,
-        });
+          waitlist_position: w.waitlist_position ?? null,
+          suspected_self_referral: !!w.suspected_self_referral,
+
       }
     }
 

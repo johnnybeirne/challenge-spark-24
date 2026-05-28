@@ -5,10 +5,21 @@ import { useAppState } from "@/context/AppContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Trophy, Users, TrendingUp, Crown, Award, Star } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trophy, Users, Crown, Award, Star, Linkedin, Facebook, Instagram, Youtube, Globe } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
-interface LeaderboardEntry {
+interface ProfileBio {
+  bio?: string | null;
+  avatar_url?: string | null;
+  linkedin_url?: string | null;
+  facebook_url?: string | null;
+  instagram_url?: string | null;
+  youtube_url?: string | null;
+  website_url?: string | null;
+}
+
+interface LeaderboardEntry extends ProfileBio {
   name: string;
   invite_code: string;
   direct_referral_count: number;
@@ -25,7 +36,8 @@ const Leaderboard = () => {
   const [tab, setTab] = useState("participants");
   const [searchParams] = useSearchParams();
   const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
-  const focusRef = useRef<HTMLDivElement | null>(null);
+  const focusRef = useRef<HTMLButtonElement | null>(null);
+  const [selected, setSelected] = useState<(ProfileBio & { name: string; score: number; isUser?: boolean }) | null>(null);
 
   useEffect(() => {
     loadLeaderboard();
@@ -43,15 +55,27 @@ const Leaderboard = () => {
       // Participant leaderboard — sourced from waitlist_signups (canonical referral activity).
       const { data: signups } = await supabase
         .from("waitlist_signups")
-        .select("name, first_name, surname, referral_code, confirmed_invites")
+        .select("name, first_name, surname, email, referral_code, confirmed_invites")
         .gt("confirmed_invites", 0)
         .order("confirmed_invites", { ascending: false })
         .order("created_at", { ascending: true })
         .limit(50);
 
       if (signups) {
+        // Resolve bios via profiles (email match — waitlist has no FK to profiles).
+        const emails = (signups as any[]).map((s) => (s.email || "").toLowerCase()).filter(Boolean);
+        const { data: profileRows } = emails.length
+          ? await supabase
+              .from("profiles")
+              .select("email, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+              .in("email", emails)
+          : { data: [] as any[] };
+        const profileMap = new Map<string, ProfileBio>(
+          (profileRows || []).map((p: any) => [String(p.email || "").toLowerCase(), p])
+        );
+
         const userCode = state.user?.inviteCode;
-        const mapped: LeaderboardEntry[] = signups.map((s: any) => {
+        const mapped: LeaderboardEntry[] = (signups as any[]).map((s: any) => {
           const lastInitial = (last: string) => `${last.charAt(0).toUpperCase()}.`;
           let display: string;
           if (s.first_name && s.surname && s.first_name !== s.surname) {
@@ -63,6 +87,7 @@ const Leaderboard = () => {
             display = s.first_name || "Builder";
           }
           const direct = s.confirmed_invites ?? 0;
+          const prof = profileMap.get(String(s.email || "").toLowerCase()) || {};
           return {
             name: display,
             invite_code: s.referral_code,
@@ -70,6 +95,7 @@ const Leaderboard = () => {
             indirect_referral_count: 0,
             score: direct,
             isUser: !!userCode && s.referral_code === userCode,
+            ...prof,
           };
         });
         setEntries(mapped);
@@ -91,16 +117,26 @@ const Leaderboard = () => {
 
         const userIds = Array.from(userByPartner.values()).filter(Boolean) as string[];
         const { data: proProfiles } = userIds.length
-          ? await supabase.from("profiles").select("user_id, name").in("user_id", userIds)
+          ? await supabase
+              .from("profiles")
+              .select("user_id, name, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+              .in("user_id", userIds)
           : { data: [] as any[] };
-        const nameMap = new Map((proProfiles || []).map((p: any) => [p.user_id, p.name]));
+        const profByUser = new Map((proProfiles || []).map((p: any) => [p.user_id, p]));
 
         setPromoterEntries(rows.map((r: any) => {
           const userId = userByPartner.get(r.partner_id) as string | undefined;
+          const prof: any = userId ? profByUser.get(userId) || {} : {};
           return {
             partner_code: r.slug,
-            name: r.display_name || (userId && nameMap.get(userId)) || `/${r.slug}`,
-            avatar_url: r.avatar_url,
+            name: r.display_name || prof.name || `/${r.slug}`,
+            avatar_url: r.avatar_url || prof.avatar_url,
+            bio: prof.bio,
+            linkedin_url: prof.linkedin_url,
+            facebook_url: prof.facebook_url,
+            instagram_url: prof.instagram_url,
+            youtube_url: prof.youtube_url,
+            website_url: prof.website_url,
             signups: r.signups,
             score: r.total_score,
             is_founding_partner: userId ? foundingSet.has(userId) : false,
@@ -120,6 +156,8 @@ const Leaderboard = () => {
     if (rank === 3) return { icon: Star, color: "text-amber-600", label: "3rd" };
     return null;
   };
+
+  const openBio = (e: ProfileBio & { name: string; score: number; isUser?: boolean }) => setSelected(e);
 
   if (loading) return <div className="flex items-center justify-center min-h-screen"><Spinner /></div>;
 
@@ -155,10 +193,12 @@ const Leaderboard = () => {
                   const badge = getRankBadge(rank);
                   const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={entry.invite_code}
                       ref={isFocus && !focusRef.current ? focusRef : undefined}
-                      className={`flex items-center gap-3 px-4 py-3 ${
+                      onClick={() => openBio(entry)}
+                      className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
                         i < entries.length - 1 ? "border-b border-border" : ""
                       } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
                     >
@@ -167,8 +207,12 @@ const Leaderboard = () => {
                           <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
                         ) : rank}
                       </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                        {(entry.name || "?").slice(0, 2).toUpperCase()}
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+                        {entry.avatar_url ? (
+                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          (entry.name || "?").slice(0, 2).toUpperCase()
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
@@ -180,7 +224,7 @@ const Leaderboard = () => {
                         <p className="text-sm font-bold text-foreground">{entry.score}</p>
                         <p className="text-xs text-muted-foreground">pts</p>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </CardContent>
@@ -198,9 +242,11 @@ const Leaderboard = () => {
                   const badge = getRankBadge(rank);
 
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={entry.partner_code}
-                      className={`flex items-center gap-3 px-4 py-3 ${
+                      onClick={() => openBio(entry)}
+                      className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
                         i < promoterEntries.length - 1 ? "border-b border-border" : ""
                       } ${entry.isUser ? "bg-primary/5" : ""}`}
                     >
@@ -233,7 +279,7 @@ const Leaderboard = () => {
                         <p className="text-sm font-bold text-foreground">{entry.score}</p>
                         <p className="text-xs text-muted-foreground">pts</p>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </CardContent>
@@ -241,6 +287,64 @@ const Leaderboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent className="max-w-sm">
+          {selected && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-foreground shrink-0 overflow-hidden">
+                    {selected.avatar_url ? (
+                      <img src={selected.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      (selected.name || "?").slice(0, 2).toUpperCase()
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <DialogTitle className="text-base">{selected.name}</DialogTitle>
+                    <p className="text-xs text-muted-foreground">{selected.score} pts</p>
+                  </div>
+                </div>
+              </DialogHeader>
+              <div className="space-y-3">
+                {selected.bio ? (
+                  <p className="text-sm text-foreground whitespace-pre-wrap">{selected.bio}</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">This builder hasn't added a bio yet.</p>
+                )}
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  {selected.linkedin_url && (
+                    <a href={selected.linkedin_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary" aria-label="LinkedIn">
+                      <Linkedin className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selected.facebook_url && (
+                    <a href={selected.facebook_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Facebook">
+                      <Facebook className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selected.instagram_url && (
+                    <a href={selected.instagram_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Instagram">
+                      <Instagram className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selected.youtube_url && (
+                    <a href={selected.youtube_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary" aria-label="YouTube">
+                      <Youtube className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selected.website_url && (
+                    <a href={selected.website_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Website">
+                      <Globe className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -309,7 +309,11 @@ const AdminBios = () => {
                   </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {r.email || "—"}
+                    {r.created_at && (
+                      <span className="ml-2">· Joined {new Date(r.created_at).toLocaleDateString()}</span>
+                    )}
                   </p>
+
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                     {r.bio ? r.bio : <span className="italic">No bio yet</span>}
                   </p>

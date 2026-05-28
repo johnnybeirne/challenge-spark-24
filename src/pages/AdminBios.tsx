@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Search, Pencil, User as UserIcon } from "lucide-react";
+import { Search, Pencil, User as UserIcon, ArrowUpDown } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 type Source = "profile" | "waitlist";
@@ -33,15 +33,27 @@ interface BioRow {
   instagram_url: string | null;
   youtube_url: string | null;
   website_url: string | null;
+  created_at: string | null;
 }
+
+type SortKey = "first_name" | "surname" | "created_at";
+type SortDir = "asc" | "desc";
+
 
 const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [firstNameQ, setFirstNameQ] = useState("");
+  const [surnameQ, setSurnameQ] = useState("");
+  const [joinedFrom, setJoinedFrom] = useState("");
+  const [joinedTo, setJoinedTo] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("created_at");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [editing, setEditing] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
@@ -79,6 +91,8 @@ const AdminBios = () => {
       instagram_url: p.instagram_url,
       youtube_url: p.youtube_url,
       website_url: p.website_url,
+      created_at: p.created_at,
+
     }));
 
     const profileEmails = new Set(
@@ -101,7 +115,9 @@ const AdminBios = () => {
         instagram_url: w.instagram_url,
         youtube_url: w.youtube_url,
         website_url: w.website_url,
+        created_at: w.created_at,
       }));
+
 
     setRows([...profiles, ...waitlist]);
     setLoading(false);
@@ -113,13 +129,43 @@ const AdminBios = () => {
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return rows;
-    return rows.filter((r) =>
-      [r.name, r.first_name, r.surname, r.email]
+    const fn = firstNameQ.trim().toLowerCase();
+    const sn = surnameQ.trim().toLowerCase();
+    const fromT = joinedFrom ? new Date(joinedFrom).getTime() : null;
+    const toT = joinedTo ? new Date(joinedTo).getTime() + 86_400_000 : null;
+    const out = rows.filter((r) => {
+      if (s && ![r.name, r.first_name, r.surname, r.email]
         .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(s))
-    );
-  }, [rows, q]);
+        .some((v) => String(v).toLowerCase().includes(s))) return false;
+      if (fn && !String(r.first_name || "").toLowerCase().includes(fn)) return false;
+      if (sn && !String(r.surname || "").toLowerCase().includes(sn)) return false;
+      if (fromT || toT) {
+        const t = r.created_at ? new Date(r.created_at).getTime() : 0;
+        if (fromT && t < fromT) return false;
+        if (toT && t >= toT) return false;
+      }
+      return true;
+    });
+    const dir = sortDir === "asc" ? 1 : -1;
+    out.sort((a, b) => {
+      const av = sortKey === "created_at"
+        ? (a.created_at ? new Date(a.created_at).getTime() : 0)
+        : String((a as any)[sortKey] || "").toLowerCase();
+      const bv = sortKey === "created_at"
+        ? (b.created_at ? new Date(b.created_at).getTime() : 0)
+        : String((b as any)[sortKey] || "").toLowerCase();
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
+    return out;
+  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir]);
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir(key === "created_at" ? "desc" : "asc"); }
+  };
+
 
   const openEdit = (r: BioRow) => {
     setEditing(r);
@@ -166,7 +212,7 @@ const AdminBios = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
@@ -183,6 +229,54 @@ const AdminBios = () => {
           />
         </div>
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
+        <Input
+          placeholder="Filter first name"
+          value={firstNameQ}
+          onChange={(e) => setFirstNameQ(e.target.value)}
+        />
+        <Input
+          placeholder="Filter surname"
+          value={surnameQ}
+          onChange={(e) => setSurnameQ(e.target.value)}
+        />
+        <div>
+          <Label className="text-xs text-muted-foreground">Joined from</Label>
+          <Input type="date" value={joinedFrom} onChange={(e) => setJoinedFrom(e.target.value)} />
+        </div>
+        <div>
+          <Label className="text-xs text-muted-foreground">Joined to</Label>
+          <Input type="date" value={joinedTo} onChange={(e) => setJoinedTo(e.target.value)} />
+        </div>
+        <Button
+          variant="ghost"
+          onClick={() => { setQ(""); setFirstNameQ(""); setSurnameQ(""); setJoinedFrom(""); setJoinedTo(""); }}
+          className="self-end"
+        >
+          Clear filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <p className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}
+        </p>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-muted-foreground">Sort:</span>
+          <Button size="sm" variant={sortKey === "first_name" ? "secondary" : "ghost"} onClick={() => toggleSort("first_name")}>
+            First name <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <Button size="sm" variant={sortKey === "surname" ? "secondary" : "ghost"} onClick={() => toggleSort("surname")}>
+            Surname <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <Button size="sm" variant={sortKey === "created_at" ? "secondary" : "ghost"} onClick={() => toggleSort("created_at")}>
+            Joined <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <span className="text-muted-foreground">({sortDir})</span>
+        </div>
+      </div>
+
 
       {loading ? (
         <div className="flex justify-center py-12"><Spinner /></div>
@@ -215,7 +309,11 @@ const AdminBios = () => {
                   </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {r.email || "—"}
+                    {r.created_at && (
+                      <span className="ml-2">· Joined {new Date(r.created_at).toLocaleDateString()}</span>
+                    )}
                   </p>
+
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                     {r.bio ? r.bio : <span className="italic">No bio yet</span>}
                   </p>

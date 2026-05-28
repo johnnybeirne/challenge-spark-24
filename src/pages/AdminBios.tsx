@@ -640,17 +640,7 @@ const AdminBios = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
-        <Input
-          placeholder="Filter first name"
-          value={firstNameQ}
-          onChange={(e) => setFirstNameQ(e.target.value)}
-        />
-        <Input
-          placeholder="Filter surname"
-          value={surnameQ}
-          onChange={(e) => setSurnameQ(e.target.value)}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
         <div>
           <Label className="text-xs text-muted-foreground">Joined from</Label>
           <Input type="date" value={joinedFrom} onChange={(e) => setJoinedFrom(e.target.value)} />

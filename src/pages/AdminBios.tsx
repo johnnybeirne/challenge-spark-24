@@ -325,7 +325,7 @@ const AdminBios = () => {
       return 0;
     });
     return out;
-  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter, validRefMap]);
+  }, [rows, q, joinedFrom, joinedTo, sortKey, sortDir, filter, validRefMap]);
 
   const totals = useMemo(() => {
     const total = rows.length;

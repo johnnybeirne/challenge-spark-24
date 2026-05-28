@@ -91,6 +91,8 @@ const AdminBios = () => {
       instagram_url: p.instagram_url,
       youtube_url: p.youtube_url,
       website_url: p.website_url,
+      created_at: p.created_at,
+
     }));
 
     const profileEmails = new Set(

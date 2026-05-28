@@ -532,12 +532,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 8 && (
           <div className="space-y-5 animate-fade-in">
-            <div className="space-y-2">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Build it with your AI co-pilot</h2>
-              <p className="text-muted-foreground">
-                Ask anything to refine your positioning, structure, hook, or transformation. Your foundation answers are already loaded as context.
-              </p>
-            </div>
 
             {/* Snapshot */}
             <div className="rounded-xl border border-border bg-card/60 p-4 text-sm space-y-2">

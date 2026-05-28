@@ -44,9 +44,16 @@ const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [firstNameQ, setFirstNameQ] = useState("");
+  const [surnameQ, setSurnameQ] = useState("");
+  const [joinedFrom, setJoinedFrom] = useState("");
+  const [joinedTo, setJoinedTo] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("created_at");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [editing, setEditing] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
+
 
   const load = async () => {
     setLoading(true);

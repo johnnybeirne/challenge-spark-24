@@ -460,7 +460,12 @@ const Day1Setup = ({ onComplete }: Props) => {
               }}
             />
 
-            <Button size="lg" onClick={handleTopicNext} className="w-full h-12 text-base font-semibold">
+            <Button
+              size="lg"
+              onClick={handleTopicNext}
+              disabled={!topicHint.trim()}
+              className="w-full h-12 text-base font-semibold"
+            >
               Continue
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

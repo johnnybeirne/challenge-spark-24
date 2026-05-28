@@ -417,6 +417,10 @@ const QaModePanel = () => {
               </p>
             </div>
 
+            <QaSimulatedDate />
+
+
+
             <div className="space-y-1.5">
               <SectionLabel>Assessment Mode</SectionLabel>
               <div className="flex flex-wrap gap-1.5">

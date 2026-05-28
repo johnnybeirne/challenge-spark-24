@@ -57,7 +57,7 @@ const ChallengeCountdown = ({ className, compact = false }: Props) => {
         "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold",
         urgent
           ? "border-destructive/40 bg-destructive/5 text-destructive"
-          : "border-border bg-muted/40 text-muted-foreground",
+          : "border-foreground/80 bg-foreground/[0.03] text-muted-foreground",
         className,
       )}
       role="status"

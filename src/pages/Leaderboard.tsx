@@ -98,7 +98,31 @@ const Leaderboard = () => {
             ...prof,
           };
         });
-        setEntries(mapped);
+        // Pad to 5 with random fake builders (not on the waitlist).
+        const FAKES = [
+          { name: "Alex R.", bio: "Founder coaching SaaS teams on retention." },
+          { name: "Priya S.", bio: "Helping creators launch their first paid offer." },
+          { name: "Marcus T.", bio: "B2B sales strategist turned indie builder." },
+          { name: "Niamh O.", bio: "Productising consulting for agency owners." },
+          { name: "Diego F.", bio: "No-code maker shipping weekend experiments." },
+          { name: "Hannah K.", bio: "Wellness brand operator and community builder." },
+        ];
+        const realNames = new Set(mapped.map((m) => m.name.toLowerCase()));
+        const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
+        const needed = Math.max(0, 5 - mapped.length);
+        const padded: LeaderboardEntry[] = [...mapped];
+        for (let k = 0; k < needed && k < pool.length; k++) {
+          const f = pool[k];
+          padded.push({
+            name: f.name,
+            invite_code: `fake-${k}`,
+            direct_referral_count: 0,
+            indirect_referral_count: 0,
+            score: 0,
+            bio: f.bio,
+          });
+        }
+        setEntries(padded);
       }
 
 
@@ -124,7 +148,7 @@ const Leaderboard = () => {
           : { data: [] as any[] };
         const profByUser = new Map((proProfiles || []).map((p: any) => [p.user_id, p]));
 
-        setPromoterEntries(rows.map((r: any) => {
+        const realPromoters = rows.map((r: any) => {
           const userId = userByPartner.get(r.partner_id) as string | undefined;
           const prof: any = userId ? profByUser.get(userId) || {} : {};
           return {
@@ -142,13 +166,42 @@ const Leaderboard = () => {
             is_founding_partner: userId ? foundingSet.has(userId) : false,
             isUser: userId ? userId === authUser?.id : false,
           };
-        }));
+        });
+        setPromoterEntries(padPromoters(realPromoters));
       } else {
-        setPromoterEntries([]);
+        setPromoterEntries(padPromoters([]));
       }
     } catch {}
     setLoading(false);
   };
+
+  // Pad promoter list to 5 with fake promoters not already on the list.
+  const padPromoters = (real: any[]) => {
+    const FAKES = [
+      { name: "Sarah L.", bio: "Performance marketer running launch campaigns." },
+      { name: "Tomás B.", bio: "Community-led growth for early-stage SaaS." },
+      { name: "Maya K.", bio: "Affiliate strategist for creator economy brands." },
+      { name: "Owen P.", bio: "Newsletter operator and growth advisor." },
+      { name: "Lena V.", bio: "Partnerships lead helping founders ship faster." },
+    ];
+    const realNames = new Set(real.map((r) => String(r.name || "").toLowerCase()));
+    const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
+    const needed = Math.max(0, 5 - real.length);
+    const out = [...real];
+    for (let k = 0; k < needed && k < pool.length; k++) {
+      const f = pool[k];
+      out.push({
+        partner_code: `fake-promoter-${k}`,
+        name: f.name,
+        bio: f.bio,
+        signups: 0,
+        score: 0,
+        is_founding_partner: false,
+      });
+    }
+    return out;
+  };
+
 
   const getRankBadge = (rank: number) => {
     if (rank === 1) return { icon: Trophy, color: "text-yellow-500", label: "1st" };
@@ -220,10 +273,6 @@ const Leaderboard = () => {
                         </p>
 
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                        <p className="text-xs text-muted-foreground">pts</p>
-                      </div>
                     </button>
                   );
                 })}
@@ -274,10 +323,6 @@ const Leaderboard = () => {
                         <p className="text-xs text-muted-foreground">
                           {entry.signups} attributed signup{entry.signups !== 1 ? "s" : ""}
                         </p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                        <p className="text-xs text-muted-foreground">pts</p>
                       </div>
                     </button>
                   );

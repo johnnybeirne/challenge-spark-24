@@ -241,9 +241,13 @@ const AdminTestAccounts = () => {
                         </p>
                       </div>
                       <div className="flex gap-1 shrink-0">
-                        <Button
-                          variant="default"
-                          size="sm"
+                            const { data, error } = await supabase.functions.invoke("admin-test-account", {
+                              body: {
+                                action: "magic_link",
+                                email: acc.email,
+                                redirect_to: `${window.location.origin}/challenge/day-1`,
+                              },
+                            });
                           onClick={async () => {
                             const { data, error } = await supabase.functions.invoke("admin-test-account", {
                               body: { action: "magic_link", email: acc.email },

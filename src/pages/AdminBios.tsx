@@ -115,7 +115,9 @@ const AdminBios = () => {
         instagram_url: w.instagram_url,
         youtube_url: w.youtube_url,
         website_url: w.website_url,
+        created_at: w.created_at,
       }));
+
 
     setRows([...profiles, ...waitlist]);
     setLoading(false);

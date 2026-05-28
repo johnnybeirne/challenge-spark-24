@@ -18,6 +18,7 @@ import {
 
 const items = [
   { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
+  { title: "User Bios", url: "/owner-console/bios", icon: IdCard },
   { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },

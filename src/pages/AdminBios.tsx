@@ -47,7 +47,7 @@ interface BioRow {
 }
 
 
-type SortKey = "first_name" | "surname" | "created_at";
+type SortKey = "first_name" | "surname" | "email" | "created_at" | "current_tier" | "confirmed_invites" | "waitlist_position" | "referred_by_email";
 type SortDir = "asc" | "desc";
 
 const pick = <T,>(a: T | null | undefined, b: T | null | undefined): T | null =>
@@ -229,17 +229,25 @@ const AdminBios = () => {
     });
 
     const dir = sortDir === "asc" ? 1 : -1;
+    const numericKeys: SortKey[] = ["confirmed_invites", "waitlist_position"];
     out.sort((a, b) => {
-      const av = sortKey === "created_at"
-        ? (a.created_at ? new Date(a.created_at).getTime() : 0)
-        : String((a as any)[sortKey] || "").toLowerCase();
-      const bv = sortKey === "created_at"
-        ? (b.created_at ? new Date(b.created_at).getTime() : 0)
-        : String((b as any)[sortKey] || "").toLowerCase();
+      let av: number | string;
+      let bv: number | string;
+      if (sortKey === "created_at") {
+        av = a.created_at ? new Date(a.created_at).getTime() : 0;
+        bv = b.created_at ? new Date(b.created_at).getTime() : 0;
+      } else if (numericKeys.includes(sortKey)) {
+        av = ((a as any)[sortKey] ?? -Infinity) as number;
+        bv = ((b as any)[sortKey] ?? -Infinity) as number;
+      } else {
+        av = String((a as any)[sortKey] || "").toLowerCase();
+        bv = String((b as any)[sortKey] || "").toLowerCase();
+      }
       if (av < bv) return -1 * dir;
       if (av > bv) return 1 * dir;
       return 0;
     });
+    return out;
     return out;
   }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter]);
 
@@ -404,94 +412,104 @@ const AdminBios = () => {
         <p className="text-sm text-muted-foreground">
           Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}
         </p>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-muted-foreground">Sort:</span>
-          <Button size="sm" variant={sortKey === "first_name" ? "secondary" : "ghost"} onClick={() => toggleSort("first_name")}>
-            First name <ArrowUpDown className="h-3 w-3 ml-1" />
-          </Button>
-          <Button size="sm" variant={sortKey === "surname" ? "secondary" : "ghost"} onClick={() => toggleSort("surname")}>
-            Surname <ArrowUpDown className="h-3 w-3 ml-1" />
-          </Button>
-          <Button size="sm" variant={sortKey === "created_at" ? "secondary" : "ghost"} onClick={() => toggleSort("created_at")}>
-            Joined <ArrowUpDown className="h-3 w-3 ml-1" />
-          </Button>
-          <span className="text-muted-foreground">({sortDir})</span>
-        </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-12"><Spinner /></div>
       ) : (
         <Card>
-          <CardContent className="p-0">
-            {filtered.length === 0 && (
+          <CardContent className="p-0 overflow-x-auto">
+            {filtered.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">No people found</p>
-            )}
-            {filtered.map((r, i) => {
-              const isBuyer = r.sources.includes("profile");
-              const isWaitlist = r.sources.includes("waitlist");
-              return (
-                <div
-                  key={r.key}
-                  className={`flex items-start gap-3 px-4 py-3 ${
-                    i < filtered.length - 1 ? "border-b border-border" : ""
-                  }`}
-                >
-                  <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
-                    {r.avatar_url ? (
-                      <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <UserIcon className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold truncate">{displayName(r)}</p>
-                      {isBuyer && (
-                        <Badge variant="secondary" className="text-[10px] py-0 h-4">Buyer</Badge>
-                      )}
-                      {isWaitlist && (
-                        <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {r.email || "—"}
-                      {r.created_at && (
-                        <span className="ml-2">· Joined {new Date(r.created_at).toLocaleDateString()}</span>
-                      )}
-                    </p>
-
-                    {isWaitlist && (
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        {r.current_tier && <span className="font-medium text-foreground">{r.current_tier}</span>}
-                        {typeof r.confirmed_invites === "number" && (
-                          <span className="ml-2">· {r.confirmed_invites} invites</span>
-                        )}
-                        {typeof r.waitlist_position === "number" && r.waitlist_position > 0 && (
-                          <span className="ml-2">· #{r.waitlist_position}</span>
-                        )}
-                        {r.referral_code && (
-                          <span className="ml-2">· code <span className="font-mono">{r.referral_code}</span></span>
-                        )}
-                        {r.referred_by_code && (
-                          <span className="ml-2">
-                            · referred by{" "}
-                            <span className="font-mono">{r.referred_by_email || r.referred_by_code}</span>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2 text-left w-10"></th>
+                    {([
+                      ["first_name", "First name"],
+                      ["surname", "Surname"],
+                      ["email", "Email"],
+                      ["created_at", "Joined"],
+                      ["current_tier", "Tier"],
+                      ["confirmed_invites", "Invites"],
+                      ["waitlist_position", "Pos."],
+                      ["referred_by_email", "Referred by"],
+                    ] as const).map(([key, label]) => (
+                      <th
+                        key={key}
+                        className="px-3 py-2 text-left cursor-pointer select-none whitespace-nowrap hover:text-foreground"
+                        onClick={() => toggleSort(key as SortKey)}
+                      >
+                        <span className="inline-flex items-center gap-1">
+                          {label}
+                          <ArrowUpDown className="h-3 w-3 opacity-60" />
+                          {sortKey === key && (
+                            <span className="text-[10px] text-foreground">{sortDir}</span>
+                          )}
+                        </span>
+                      </th>
+                    ))}
+                    <th className="px-3 py-2 text-left">Bio</th>
+                    <th className="px-3 py-2 text-left">Source</th>
+                    <th className="px-3 py-2 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((r, i) => {
+                    const isBuyer = r.sources.includes("profile");
+                    const isWaitlist = r.sources.includes("waitlist");
+                    return (
+                      <tr
+                        key={r.key}
+                        className={i < filtered.length - 1 ? "border-b border-border" : ""}
+                      >
+                        <td className="px-3 py-2">
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                            {r.avatar_url ? (
+                              <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <UserIcon className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">{r.first_name || "—"}</td>
+                        <td className="px-3 py-2 whitespace-nowrap">{r.surname || "—"}</td>
+                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{r.email || "—"}</td>
+                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                          {r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">{r.current_tier || "—"}</td>
+                        <td className="px-3 py-2 text-right tabular-nums">{r.confirmed_invites ?? "—"}</td>
+                        <td className="px-3 py-2 text-right tabular-nums">
+                          {typeof r.waitlist_position === "number" && r.waitlist_position > 0 ? `#${r.waitlist_position}` : "—"}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                          {r.referred_by_email || r.referred_by_code || "—"}
+                          {r.suspected_self_referral && (
+                            <Badge variant="destructive" className="ml-2 text-[10px] h-4">⚠</Badge>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 max-w-xs">
+                          <span className="line-clamp-1 text-muted-foreground">
+                            {r.bio || <span className="italic">No bio</span>}
                           </span>
-                        )}
-                      </p>
-                    )}
-
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                      {r.bio ? r.bio : <span className="italic">No bio yet</span>}
-                    </p>
-                  </div>
-                  <Button size="sm" variant="outline" onClick={() => openEdit(r)}>
-                    <Pencil className="h-3 w-3 mr-1" /> Edit
-                  </Button>
-                </div>
-              );
-            })}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {isBuyer && <Badge variant="secondary" className="text-[10px] py-0 h-4 mr-1">Buyer</Badge>}
+                          {isWaitlist && <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <Button size="sm" variant="outline" onClick={() => openEdit(r)}>
+                            <Pencil className="h-3 w-3 mr-1" /> Edit
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
           </CardContent>
         </Card>
       )}

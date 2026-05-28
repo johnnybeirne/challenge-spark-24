@@ -236,12 +236,18 @@ const Leaderboard = () => {
         </p>
 
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="w-full grid grid-cols-2 mb-4">
-            <TabsTrigger value="participants" className="text-xs gap-1">
-              <Users className="h-3 w-3" /> Participants
+          <TabsList className="w-full grid grid-cols-2 mb-4 h-11 p-1 bg-muted border border-border">
+            <TabsTrigger
+              value="participants"
+              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+            >
+              <Users className="h-4 w-4" /> Participants
             </TabsTrigger>
-            <TabsTrigger value="promoters" className="text-xs gap-1">
-              <Crown className="h-3 w-3" /> Promoters
+            <TabsTrigger
+              value="promoters"
+              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+            >
+              <Crown className="h-4 w-4" /> Promoters
             </TabsTrigger>
           </TabsList>
 

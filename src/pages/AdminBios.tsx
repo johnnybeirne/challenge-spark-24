@@ -43,7 +43,9 @@ interface BioRow {
   confirmed_invites: number | null;
   current_tier: string | null;
   waitlist_position: number | null;
+  suspected_self_referral: boolean;
 }
+
 
 type SortKey = "first_name" | "surname" | "created_at";
 type SortDir = "asc" | "desc";

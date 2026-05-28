@@ -534,7 +534,9 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-5 animate-fade-in">
 
             {/* Snapshot */}
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Your Starting Point</h2>
             <div className="rounded-xl border border-border bg-card/60 p-4 text-sm space-y-2">
+
               <p className="font-semibold text-foreground">
                 A <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
                 <span className="text-primary">{audienceLabelShort(audienceType as "b2b" | "b2c")}</span>

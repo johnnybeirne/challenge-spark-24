@@ -229,17 +229,25 @@ const AdminBios = () => {
     });
 
     const dir = sortDir === "asc" ? 1 : -1;
+    const numericKeys: SortKey[] = ["confirmed_invites", "waitlist_position"];
     out.sort((a, b) => {
-      const av = sortKey === "created_at"
-        ? (a.created_at ? new Date(a.created_at).getTime() : 0)
-        : String((a as any)[sortKey] || "").toLowerCase();
-      const bv = sortKey === "created_at"
-        ? (b.created_at ? new Date(b.created_at).getTime() : 0)
-        : String((b as any)[sortKey] || "").toLowerCase();
+      let av: number | string;
+      let bv: number | string;
+      if (sortKey === "created_at") {
+        av = a.created_at ? new Date(a.created_at).getTime() : 0;
+        bv = b.created_at ? new Date(b.created_at).getTime() : 0;
+      } else if (numericKeys.includes(sortKey)) {
+        av = ((a as any)[sortKey] ?? -Infinity) as number;
+        bv = ((b as any)[sortKey] ?? -Infinity) as number;
+      } else {
+        av = String((a as any)[sortKey] || "").toLowerCase();
+        bv = String((b as any)[sortKey] || "").toLowerCase();
+      }
       if (av < bv) return -1 * dir;
       if (av > bv) return 1 * dir;
       return 0;
     });
+    return out;
     return out;
   }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter]);
 

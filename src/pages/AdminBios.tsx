@@ -82,6 +82,9 @@ const AdminBios = () => {
         .from("profiles")
         .select(
           "user_id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
+        )
+        .order("created_at", { ascending: false })
+        .limit(1000),
       supabase
         .from("waitlist_signups")
         .select(
@@ -90,9 +93,6 @@ const AdminBios = () => {
         .order("created_at", { ascending: false })
         .limit(2000),
 
-        )
-        .order("created_at", { ascending: false })
-        .limit(2000),
     ]);
 
     if (profilesRes.error) toast.error("Could not load profiles");

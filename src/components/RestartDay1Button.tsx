@@ -41,7 +41,7 @@ const EditDay1Button = ({
     <Button
       variant={variant}
       size={size}
-      className={`bg-orange-500 text-white border-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 ${className ?? ""}`}
+      className={`bg-orange-500 !text-white border-orange-500 hover:bg-orange-600 hover:!text-white hover:border-orange-600 transition-transform hover:scale-105 ${className ?? ""}`}
       onClick={() => {
         trackEvent("day1_answers_edit_opened" as any, {});
         navigate(redirectTo);

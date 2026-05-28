@@ -100,7 +100,11 @@ const AdminTestAccounts = () => {
 
   const handleMagicLink = async (acc: TestAccount) => {
     const { data, error } = await supabase.functions.invoke("admin-test-account", {
-      body: { action: "magic_link", email: acc.email },
+      body: {
+        action: "magic_link",
+        email: acc.email,
+        redirect_to: `${window.location.origin}/challenge/day-1`,
+      },
     });
     if (error || data?.error) return toast.error(data?.error ?? error?.message ?? "Failed");
     if (data?.magic_link) {

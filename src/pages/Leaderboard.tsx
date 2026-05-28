@@ -148,7 +148,7 @@ const Leaderboard = () => {
           : { data: [] as any[] };
         const profByUser = new Map((proProfiles || []).map((p: any) => [p.user_id, p]));
 
-        setPromoterEntries(rows.map((r: any) => {
+        const realPromoters = rows.map((r: any) => {
           const userId = userByPartner.get(r.partner_id) as string | undefined;
           const prof: any = userId ? profByUser.get(userId) || {} : {};
           return {
@@ -166,13 +166,42 @@ const Leaderboard = () => {
             is_founding_partner: userId ? foundingSet.has(userId) : false,
             isUser: userId ? userId === authUser?.id : false,
           };
-        }));
+        });
+        setPromoterEntries(padPromoters(realPromoters));
       } else {
-        setPromoterEntries([]);
+        setPromoterEntries(padPromoters([]));
       }
     } catch {}
     setLoading(false);
   };
+
+  // Pad promoter list to 5 with fake promoters not already on the list.
+  const padPromoters = (real: any[]) => {
+    const FAKES = [
+      { name: "Sarah L.", bio: "Performance marketer running launch campaigns." },
+      { name: "Tomás B.", bio: "Community-led growth for early-stage SaaS." },
+      { name: "Maya K.", bio: "Affiliate strategist for creator economy brands." },
+      { name: "Owen P.", bio: "Newsletter operator and growth advisor." },
+      { name: "Lena V.", bio: "Partnerships lead helping founders ship faster." },
+    ];
+    const realNames = new Set(real.map((r) => String(r.name || "").toLowerCase()));
+    const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
+    const needed = Math.max(0, 5 - real.length);
+    const out = [...real];
+    for (let k = 0; k < needed && k < pool.length; k++) {
+      const f = pool[k];
+      out.push({
+        partner_code: `fake-promoter-${k}`,
+        name: f.name,
+        bio: f.bio,
+        signups: 0,
+        score: 0,
+        is_founding_partner: false,
+      });
+    }
+    return out;
+  };
+
 
   const getRankBadge = (rank: number) => {
     if (rank === 1) return { icon: Trophy, color: "text-yellow-500", label: "1st" };

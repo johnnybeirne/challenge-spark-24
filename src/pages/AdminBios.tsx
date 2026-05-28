@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -16,8 +17,11 @@ import { toast } from "sonner";
 import { Search, Pencil, User as UserIcon } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
-interface ProfileRow {
-  user_id: string;
+type Source = "profile" | "waitlist";
+
+interface BioRow {
+  source: Source;
+  id: string; // user_id for profile, waitlist id for waitlist
   email: string | null;
   name: string | null;
   first_name: string | null;
@@ -32,24 +36,74 @@ interface ProfileRow {
 }
 
 const AdminBios = () => {
-  const [rows, setRows] = useState<ProfileRow[]>([]);
+  const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [editing, setEditing] = useState<ProfileRow | null>(null);
-  const [draft, setDraft] = useState<Partial<ProfileRow>>({});
+  const [editing, setEditing] = useState<BioRow | null>(null);
+  const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select(
-        "user_id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url"
-      )
-      .order("created_at", { ascending: false })
-      .limit(500);
-    if (error) toast.error("Could not load profiles");
-    setRows((data as ProfileRow[]) || []);
+    const [profilesRes, waitlistRes] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select(
+          "user_id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
+        )
+        .order("created_at", { ascending: false })
+        .limit(1000),
+      supabase
+        .from("waitlist_signups")
+        .select(
+          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
+        )
+        .order("created_at", { ascending: false })
+        .limit(1000),
+    ]);
+
+    if (profilesRes.error) toast.error("Could not load profiles");
+    if (waitlistRes.error) toast.error("Could not load waitlist");
+
+    const profiles: BioRow[] = (profilesRes.data || []).map((p: any) => ({
+      source: "profile",
+      id: p.user_id,
+      email: p.email,
+      name: p.name,
+      first_name: p.first_name,
+      surname: p.surname,
+      bio: p.bio,
+      avatar_url: p.avatar_url,
+      linkedin_url: p.linkedin_url,
+      facebook_url: p.facebook_url,
+      instagram_url: p.instagram_url,
+      youtube_url: p.youtube_url,
+      website_url: p.website_url,
+    }));
+
+    const profileEmails = new Set(
+      profiles.map((p) => (p.email || "").toLowerCase()).filter(Boolean)
+    );
+
+    const waitlist: BioRow[] = (waitlistRes.data || [])
+      .filter((w: any) => !profileEmails.has((w.email || "").toLowerCase()))
+      .map((w: any) => ({
+        source: "waitlist",
+        id: w.id,
+        email: w.email,
+        name: w.name,
+        first_name: w.first_name,
+        surname: w.surname,
+        bio: w.bio,
+        avatar_url: w.avatar_url,
+        linkedin_url: w.linkedin_url,
+        facebook_url: w.facebook_url,
+        instagram_url: w.instagram_url,
+        youtube_url: w.youtube_url,
+        website_url: w.website_url,
+      }));
+
+    setRows([...profiles, ...waitlist]);
     setLoading(false);
   };
 
@@ -67,7 +121,7 @@ const AdminBios = () => {
     );
   }, [rows, q]);
 
-  const openEdit = (r: ProfileRow) => {
+  const openEdit = (r: BioRow) => {
     setEditing(r);
     setDraft({
       bio: r.bio || "",
@@ -82,17 +136,18 @@ const AdminBios = () => {
   const save = async () => {
     if (!editing) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        bio: draft.bio ?? null,
-        linkedin_url: draft.linkedin_url || null,
-        facebook_url: draft.facebook_url || null,
-        instagram_url: draft.instagram_url || null,
-        youtube_url: draft.youtube_url || null,
-        website_url: draft.website_url || null,
-      })
-      .eq("user_id", editing.user_id);
+    const payload = {
+      bio: (draft.bio as string) ?? null,
+      linkedin_url: draft.linkedin_url || null,
+      facebook_url: draft.facebook_url || null,
+      instagram_url: draft.instagram_url || null,
+      youtube_url: draft.youtube_url || null,
+      website_url: draft.website_url || null,
+    };
+    const { error } =
+      editing.source === "profile"
+        ? await supabase.from("profiles").update(payload).eq("user_id", editing.id)
+        : await supabase.from("waitlist_signups").update(payload).eq("id", editing.id);
     setSaving(false);
     if (error) {
       toast.error("Could not save bio");
@@ -103,7 +158,7 @@ const AdminBios = () => {
     await load();
   };
 
-  const displayName = (r: ProfileRow) =>
+  const displayName = (r: BioRow) =>
     r.name ||
     [r.first_name, r.surname].filter(Boolean).join(" ") ||
     r.email ||
@@ -115,7 +170,7 @@ const AdminBios = () => {
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
-            Edit any user's public bio and social links.
+            Edit any user or waitlist member's bio and social links.
           </p>
         </div>
         <div className="relative w-72">
@@ -135,11 +190,11 @@ const AdminBios = () => {
         <Card>
           <CardContent className="p-0">
             {filtered.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-8">No profiles</p>
+              <p className="text-sm text-muted-foreground text-center py-8">No people found</p>
             )}
             {filtered.map((r, i) => (
               <div
-                key={r.user_id}
+                key={`${r.source}-${r.id}`}
                 className={`flex items-center gap-3 px-4 py-3 ${
                   i < filtered.length - 1 ? "border-b border-border" : ""
                 }`}
@@ -152,7 +207,12 @@ const AdminBios = () => {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">{displayName(r)}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold truncate">{displayName(r)}</p>
+                    {r.source === "waitlist" && (
+                      <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {r.email || "—"}
                   </p>

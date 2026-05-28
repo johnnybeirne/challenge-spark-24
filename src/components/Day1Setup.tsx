@@ -95,32 +95,45 @@ const FoundationStep = ({
   setValue: (v: string) => void;
   placeholder: string;
   onNext: () => void;
-}) => (
-  <div className="space-y-6 animate-fade-in">
-    <div className="space-y-2">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
-      <p className="text-sm text-muted-foreground">{helper}</p>
+}) => {
+  const MIN = 160;
+  const length = value.trim().length;
+  const remaining = Math.max(0, MIN - length);
+  const meetsMin = length >= MIN;
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="space-y-2">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+        <p className="text-sm text-muted-foreground">{helper}</p>
+      </div>
+
+      <div className="space-y-2">
+        <DictatedTextarea
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
+          className="min-h-[140px] text-base"
+        />
+        <p className={`text-xs ${meetsMin ? "text-muted-foreground" : "text-destructive"}`}>
+          {meetsMin
+            ? `${length} characters — minimum reached`
+            : `${remaining} more character${remaining === 1 ? "" : "s"} needed (minimum ${MIN})`}
+        </p>
+      </div>
+
+      <Button
+        size="lg"
+        onClick={onNext}
+        disabled={!meetsMin}
+        className="w-full h-12 text-base font-semibold"
+      >
+        Continue
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
     </div>
-
-    <DictatedTextarea
-      autoFocus
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      placeholder={placeholder}
-      className="min-h-[140px] text-base"
-    />
-
-    <Button
-      size="lg"
-      onClick={onNext}
-      disabled={!value.trim()}
-      className="w-full h-12 text-base font-semibold"
-    >
-      Continue
-      <ArrowRight className="ml-2 h-5 w-5" />
-    </Button>
-  </div>
-);
+  );
+};
 
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState } = useAppState();

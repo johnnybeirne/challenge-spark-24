@@ -382,7 +382,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           <FoundationStep
             n={1}
             title="What problem do you solve?"
-            helper="In your own words — the pain, frustration, or gap your work removes."
+            helper="In your own words — the pain, frustration, or gap your expertise removes."
             value={problem}
             setValue={setProblem}
             placeholder="e.g. Coaches struggle to package what they know into something people will pay for."

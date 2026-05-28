@@ -647,8 +647,6 @@ const AdminBios = () => {
           variant="ghost"
           onClick={() => {
             setQ("");
-            setFirstNameQ("");
-            setSurnameQ("");
             setJoinedFrom("");
             setJoinedTo("");
           }}

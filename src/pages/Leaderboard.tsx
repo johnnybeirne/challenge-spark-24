@@ -273,10 +273,6 @@ const Leaderboard = () => {
                         </p>
 
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-foreground">{entry.score}</p>
-                        <p className="text-xs text-muted-foreground">pts</p>
-                      </div>
                     </button>
                   );
                 })}

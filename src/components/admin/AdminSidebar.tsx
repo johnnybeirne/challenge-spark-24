@@ -81,10 +81,10 @@ export function AdminSidebar() {
                 return (
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
-                      <NavLink to={item.url} end={item.end}>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                      </NavLink>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

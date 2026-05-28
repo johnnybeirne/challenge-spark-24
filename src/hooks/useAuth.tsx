@@ -23,6 +23,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Honor a post-login redirect target set by admin "View as" before Supabase
+    // hydrates the session from the URL hash. Runs regardless of which auth
+    // event fires (SIGNED_IN vs INITIAL_SESSION) and survives the Site-URL
+    // fallback when redirect_to isn't allow-listed.
+    const consumeRedirect = () => {
+      try {
+        const target = localStorage.getItem("leadio_post_login_redirect");
+        if (!target) return false;
+        localStorage.removeItem("leadio_post_login_redirect");
+        // Clean any auth hash so it doesn't re-trigger on the next page
+        if (window.location.hash.includes("access_token")) {
+          history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+        window.location.replace(target);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     // 1) Subscribe FIRST so we don't miss an event
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
@@ -36,13 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         if (_event === "SIGNED_IN") {
           try { sessionStorage.setItem("leadio_just_logged_in", "1"); } catch {}
-          try {
-            const target = localStorage.getItem("leadio_post_login_redirect");
-            if (target) {
-              localStorage.removeItem("leadio_post_login_redirect");
-              setTimeout(() => { window.location.replace(target); }, 0);
-            }
-          } catch {}
+        }
+        if (uid && (_event === "SIGNED_IN" || _event === "INITIAL_SESSION")) {
+          consumeRedirect();
         }
       }
     );
@@ -53,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(existing?.user ?? null);
       setLoading(false);
       const uid = existing?.user?.id;
+      if (uid) consumeRedirect();
       if (uid) {
         setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
       }

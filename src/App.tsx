@@ -52,6 +52,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser from "@/pages/AdminViewAsUser";
+import AdminTestAccounts from "@/pages/AdminTestAccounts";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";

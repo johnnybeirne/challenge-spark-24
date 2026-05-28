@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -81,10 +81,10 @@ export function AdminSidebar() {
                 return (
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
-                      <NavLink to={item.url} end={item.end}>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                      </NavLink>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

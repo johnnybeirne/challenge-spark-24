@@ -36,6 +36,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         if (_event === "SIGNED_IN") {
           try { sessionStorage.setItem("leadio_just_logged_in", "1"); } catch {}
+          try {
+            const target = localStorage.getItem("leadio_post_login_redirect");
+            if (target) {
+              localStorage.removeItem("leadio_post_login_redirect");
+              setTimeout(() => { window.location.replace(target); }, 0);
+            }
+          } catch {}
         }
       }
     );

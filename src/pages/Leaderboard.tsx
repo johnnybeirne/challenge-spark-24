@@ -57,7 +57,7 @@ const Leaderboard = () => {
       // Participant leaderboard — sourced from waitlist_signups (canonical referral activity).
       const { data: signups } = await supabase
         .from("waitlist_signups")
-        .select("name, first_name, surname, email, referral_code, confirmed_invites")
+        .select("name, first_name, surname, email, referral_code, confirmed_invites, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
         .gt("confirmed_invites", 0)
         .order("confirmed_invites", { ascending: false })
         .order("created_at", { ascending: true })
@@ -90,6 +90,8 @@ const Leaderboard = () => {
           }
           const direct = s.confirmed_invites ?? 0;
           const prof = profileMap.get(String(s.email || "").toLowerCase()) || {};
+          // Prefer profile values; fall back to waitlist columns.
+          const pick = (a: any, b: any) => (a ?? null) || (b ?? null) || null;
           return {
             name: display,
             invite_code: s.referral_code,
@@ -97,7 +99,13 @@ const Leaderboard = () => {
             indirect_referral_count: 0,
             score: direct,
             isUser: !!userCode && s.referral_code === userCode,
-            ...prof,
+            bio: pick((prof as any).bio, s.bio),
+            avatar_url: pick((prof as any).avatar_url, s.avatar_url),
+            linkedin_url: pick((prof as any).linkedin_url, s.linkedin_url),
+            facebook_url: pick((prof as any).facebook_url, s.facebook_url),
+            instagram_url: pick((prof as any).instagram_url, s.instagram_url),
+            youtube_url: pick((prof as any).youtube_url, s.youtube_url),
+            website_url: pick((prof as any).website_url, s.website_url),
           };
         });
         // Pad to 5 with random fake builders (not on the waitlist).

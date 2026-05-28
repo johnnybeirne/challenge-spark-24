@@ -221,8 +221,13 @@ const AdminBios = () => {
         if (fromT && t < fromT) return false;
         if (toT && t >= toT) return false;
       }
+      if (filter === "referred" && !r.referred_by_code) return false;
+      if (filter === "direct" && r.referred_by_code) return false;
+      if (filter === "active_inviters" && (r.confirmed_invites ?? 0) <= 0) return false;
+      if (filter === "flagged" && !r.suspected_self_referral) return false;
       return true;
     });
+
     const dir = sortDir === "asc" ? 1 : -1;
     out.sort((a, b) => {
       const av = sortKey === "created_at"

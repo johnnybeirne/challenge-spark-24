@@ -190,11 +190,11 @@ const AdminBios = () => {
           confirmed_invites: w.confirmed_invites ?? null,
           current_tier: w.current_tier ?? null,
           waitlist_position: w.waitlist_position ?? null,
-          waitlist_position: w.waitlist_position ?? null,
           suspected_self_referral: !!w.suspected_self_referral,
-
+        });
       }
     }
+
 
     setRows(Array.from(map.values()));
     setLoading(false);

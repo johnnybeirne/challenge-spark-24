@@ -378,10 +378,11 @@ const AdminWaitlist = () => {
                       }}
                     />
                   </th>
-                  {(
+                   {(
                     [
                       ["waitlist_position", "#", "left"],
-                      ["name", "Name", "left"],
+                      ["name", "First name", "left"],
+                      ["name", "Surname", "left"],
                       ["email", "Email", "left"],
                       ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],

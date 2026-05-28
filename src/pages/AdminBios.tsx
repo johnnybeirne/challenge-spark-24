@@ -284,7 +284,8 @@ const AdminBios = () => {
     "Unnamed";
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 w-[90%] mx-auto">
+
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>

@@ -348,10 +348,8 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-8 animate-fade-in">
             <div className="space-y-3">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
-              <p className="text-base md:text-lg text-muted-foreground">
-                Define the transformation your challenge takers will achieve.
-              </p>
             </div>
+
             <ul className="space-y-3">
               {[
                 "What problem do you solve?",

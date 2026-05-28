@@ -14,6 +14,7 @@ import {
   type QaTier,
 } from "@/lib/qaPreview";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
+import QaSimulatedDate from "@/components/qa/QaSimulatedDate";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },
@@ -415,6 +416,10 @@ const QaModePanel = () => {
                 Logs out, clears cached user/auth/profile/subscription/assessment/course state, then rehydrates the app as the selected user.
               </p>
             </div>
+
+            <QaSimulatedDate />
+
+
 
             <div className="space-y-1.5">
               <SectionLabel>Assessment Mode</SectionLabel>

@@ -1,65 +1,63 @@
-## Diagnosis
+## Goal
 
-The changes are present in the code and are visible only after entering the admin preview flow at `/let-me-in`, which sets the `leadio_view_as_user` session flag and redirects to `/challenger-dashboard`.
+Let you preview the app as a user who signed up on a date you choose — both as a **quick local simulation** (no DB writes) and as a **persistent seeded test account** (real row in the database).
 
-When refreshing `/challenger-dashboard` directly as the current preview user, the visible page is still the older LMS-style fallback:
+The challenge's "current day" is anchored to `challenge.startedAt` / `challenge_progress.started_at`. Backdating that value is what makes Day 2 / Day 3 content appear.
 
-```text
-LEFT: old profile/start/day cards
-TOP: only logout / no tool navbar
-CENTER: watch-first video dominates
-RIGHT: absent
-```
+---
 
-After opening `/let-me-in`, the intended shell appears:
+## Part 1 — Local simulation (extend the QA panel)
 
-```text
-LEFT: LEADIO journey sidebar
-TOP: Training / Community / Events / AI Coach / Leaderboard
-CENTER: Today: Define Your Challenge + current task
-RIGHT: Top Challengers / Momentum / Invite Progress / Next Unlock
-```
+In the floating **QA Mode** panel (Beaker button, top-right, admins only), add a new **"Simulated signup date"** section:
 
-So the problem is not cache or missing CSS. The current direct refresh path is not reliably satisfying the Challenger shell gate.
+- Shadcn date picker, defaults to today.
+- "Apply" button: rewrites the local AppContext user so `joinedAt` and `challenge.startedAt` are set to the chosen date at the current wall-clock time, and recomputes `currentDay` from elapsed hours (1 = 0–24h ago, 2 = 24–48h, 3 = 48–72h, completed window beyond).
+- "Clear" button: reverts to real values.
+- A small caption shows the resulting day, e.g. *"Simulating Day 2 — started 26 hours ago"*.
 
-## Root cause
+Stored in `localStorage` alongside the existing `leadioPreviewState`, surfaced through the existing `useQaPreview` hook so a banner shows it's active. No backend writes, no leaderboard impact.
 
-`useIsChallengerShell()` currently returns true for:
+This is what you'll use day-to-day to flip between Day 1 / 2 / 3 views.
 
-- `role === "challenger"`
-- `role === "admin"` on challenger-owned routes
-- the `/let-me-in` session flag
+---
 
-But in the normal preview/refresh state, the user being rendered appears as a challenge participant/free student state rather than canonical `role === "challenger"`, and the admin preview flag is not set unless `/let-me-in` is visited. That means `/challenger-dashboard` falls back to the older Dashboard/ChallengeSidebar layout.
+## Part 2 — Seeded test account (new admin page)
 
-## Plan
+New page at **`/admin/test-accounts`** (linked from the admin sidebar) with two tabs:
 
-1. **Tighten the canonical shell gate**
-   - Update `src/hooks/useIsChallengerShell.ts` so `/challenger-dashboard` and challenge-owned routes render the Challenger shell for any authenticated user who has entered/started the challenge, not only `role === "challenger"` or admin preview.
-   - Keep partner routes excluded so partner navigation is not broken.
+**Create**
+- First name, surname, email (defaults to `test+<timestamp>@leadio.test`).
+- Signup date picker (defaults to today, allows any past date).
+- "Create test account" → creates real rows:
+  - `auth.users` (random password, email auto-confirmed) via an edge function using the service role.
+  - `profiles` and `waitlist_signups` with `created_at` backdated.
+  - `challenge_progress` with `started_at` backdated and `ends_at = started_at + 72h`.
+- Flagged with `email LIKE 'test+%@leadio.test'` so they're easy to filter out.
 
-2. **Make AppShell use that gate as the layout source of truth**
-   - In `src/components/AppShell.tsx`, change `showChallengeSidebar` from the broader `showNav && authenticated && experience !== "partner"` behavior to a clearer split:
-     - Challenger shell: left sidebar + top navbar + right rail + challenger bottom nav.
-     - Non-challenger authenticated shell: existing ConsumerNav or PromoterNav.
-   - This prevents the old sidebar from mounting when the Challenger shell should be active.
+**Manage**
+- Lists all test accounts (filtered by the test email pattern).
+- Shows signup date, current challenge day, email.
+- Actions: **Copy magic-link** (sign-in URL you can open in an incognito window), **Delete**.
 
-3. **Ensure the left sidebar cannot fall back to the old LMS/profile layout on `/challenger-dashboard`**
-   - In `src/components/ChallengeSidebar.tsx`, use the same `isChallengerShell` gate consistently.
-   - Remove or bypass the older profile/start/video-style sidebar path for challenger-owned routes, without deleting functionality used by non-challenger pages.
+This gives you a real, persistent user you can actually log into — useful for end-to-end testing of emails, leaderboards, etc.
 
-4. **Keep Dashboard focused on current challenge action**
-   - In `src/pages/Dashboard.tsx`, ensure `/challenger-dashboard` uses the Challenger-focused dashboard whenever the canonical shell gate is true.
-   - Do not alter challenge progression, referrals, unlocks, analytics, AI Coach, events, training, community, profile, notifications, or existing routes.
+---
 
-5. **Validate visibly**
-   - Check `/challenger-dashboard` directly after refresh.
-   - Check `/let-me-in` still works.
-   - Confirm the visible architecture is:
+## Technical details
 
-```text
-LEFT SIDEBAR    = journey + progression + location
-TOP NAVBAR      = ecosystem utilities/tools
-CENTER CONTENT  = current challenge action
-RIGHT SIDEBAR   = momentum/social proof/rewards
-```
+**Files added**
+- `src/components/qa/SimulatedDatePicker.tsx` — date picker section mounted inside `QaModePanel`.
+- `src/pages/AdminTestAccounts.tsx` — admin page (Create + Manage tabs).
+- `supabase/functions/admin-test-account/index.ts` — edge function that verifies the caller is an admin via JWT + `has_role`, then uses the service role to insert backdated rows / delete test accounts / mint a magic link.
+
+**Files edited**
+- `src/lib/qaPreview.ts` — add `simulatedJoinedAt?: string` to `QaPreviewState`.
+- `src/context/AppContext.tsx` — when `qa.simulatedJoinedAt` is set, override `user.joinedAt` and `challenge.startedAt` / `endsAt` / `currentDay` in the resolved state (read-only, never persists to Supabase).
+- `src/components/QaModePanel.tsx` — mount the new date picker section.
+- `src/App.tsx` — register `/admin/test-accounts` route.
+- `src/components/admin/AdminSidebar.tsx` — add "Test accounts" link.
+
+**Safety**
+- Edge function rejects any non-admin caller and refuses to act on emails not matching `test+%@leadio.test`.
+- Local simulation is fully client-side; never writes to Supabase.
+- Existing "Exit Preview" button clears the simulated date alongside the rest of QA state.

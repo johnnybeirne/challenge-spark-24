@@ -1,9 +1,11 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
 import { getCreditTier, getUnlockedRewards } from "@/lib/credits";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { applySimulatedDate } from "@/lib/simulatedDate";
 
 /* ───── Types ───── */
 
@@ -416,6 +418,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [state, setStateRaw] = useState<AppState>(defaultState);
   const [hydrated, setHydrated] = useState(false);
   const prevUnlocksRef = useRef<string[]>([]);
+  const qa = useQaPreview();
+
+  // Display state with any QA simulated-date override applied.
+  // The override is NEVER persisted — useSupabaseSync below receives the raw state.
+  const displayState = useMemo(
+    () => (qa.active && qa.simulatedJoinedAt ? applySimulatedDate(state, qa.simulatedJoinedAt) : state),
+    [state, qa.active, qa.simulatedJoinedAt]
+  );
 
   // Hydrate state from Supabase when user authenticates
   useEffect(() => {
@@ -517,7 +527,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ state, setState, authUser, authLoading, signOut }}>
+    <AppContext.Provider value={{ state: displayState, setState, authUser, authLoading, signOut }}>
       {children}
     </AppContext.Provider>
   );

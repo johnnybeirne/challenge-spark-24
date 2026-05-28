@@ -342,47 +342,6 @@ const Day1Setup = ({ onComplete }: Props) => {
           </button>
         )}
 
-        {step >= 1 && step <= 3 && (
-          <div className="mb-8 space-y-4 animate-fade-in">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Let's Shape Your Challenge</h1>
-            <ul className="space-y-2">
-              {[
-                "What problem do you solve?",
-                "Who do you solve it for?",
-                "How do you solve it?",
-              ].map((q, i) => {
-                const n = (i + 1) as 1 | 2 | 3;
-                const active = step === n;
-                const done = step > n;
-                return (
-                  <li key={q} className="flex items-center gap-3">
-                    <span
-                      className={
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-black " +
-                        (active
-                          ? "bg-primary text-primary-foreground"
-                          : done
-                            ? "bg-primary/20 text-primary"
-                            : "bg-muted text-muted-foreground")
-                      }
-                    >
-                      {i + 1}
-                    </span>
-                    <span
-                      className={
-                        "text-sm font-semibold " +
-                        (active ? "text-foreground" : "text-muted-foreground")
-                      }
-                    >
-                      {q}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-
         {step === 1 && (
           <FoundationStep
             n={1}

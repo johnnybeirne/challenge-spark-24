@@ -47,7 +47,7 @@ interface BioRow {
 }
 
 
-type SortKey = "first_name" | "surname" | "created_at";
+type SortKey = "first_name" | "surname" | "email" | "created_at" | "current_tier" | "confirmed_invites" | "waitlist_position" | "referred_by_email";
 type SortDir = "asc" | "desc";
 
 const pick = <T,>(a: T | null | undefined, b: T | null | undefined): T | null =>

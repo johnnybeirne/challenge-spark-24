@@ -446,9 +446,9 @@ const Dashboard = () => {
                   <Sparkles className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground">Create Bio With AI</p>
+                  <p className="text-sm font-bold text-foreground">Add your bio and let others know who you are</p>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {bioDone ? "Done" : "+50 points"}
+                    {bioDone ? "Done" : "Earn 50 points"}
                   </p>
                 </div>
               </button>

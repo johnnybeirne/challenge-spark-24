@@ -238,10 +238,19 @@ const AdminTestAccounts = () => {
                       </div>
                       <div className="flex gap-1 shrink-0">
                         <Button
-                          variant="outline"
+                          variant="default"
                           size="sm"
-                          onClick={() => window.open("/let-me-in", "_blank", "noopener,noreferrer")}
-                          title="View as user (new tab)"
+                          onClick={async () => {
+                            const { data, error } = await supabase.functions.invoke("admin-test-account", {
+                              body: { action: "magic_link", email: acc.email },
+                            });
+                            if (error || data?.error || !data?.magic_link) {
+                              toast.error(data?.error ?? error?.message ?? "Failed to get link");
+                              return;
+                            }
+                            window.open(data.magic_link, "_blank", "noopener,noreferrer");
+                          }}
+                          title="Sign in as this backdated user in a new tab"
                         >
                           <ExternalLink className="h-3.5 w-3.5 mr-1" /> View as
                         </Button>

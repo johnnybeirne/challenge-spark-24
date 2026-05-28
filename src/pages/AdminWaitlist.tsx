@@ -114,7 +114,7 @@ const AdminWaitlist = () => {
       setLoading(true);
       const { data } = await supabase
         .from("waitlist_signups")
-        .select("id,email,name,referral_code,referred_by_code,confirmed_invites,waitlist_position,status,current_tier,created_at,suspected_self_referral,self_referral_reasons")
+        .select("id,email,name,first_name,surname,referral_code,referred_by_code,confirmed_invites,waitlist_position,status,current_tier,created_at,suspected_self_referral,self_referral_reasons")
         .order("waitlist_position", { ascending: true })
         .limit(2000);
       setRows((data as WaitlistRow[]) || []);

@@ -40,8 +40,25 @@ const RightRail = () => {
     </p>
   );
 
+  // Format name as "First L." using first name + first letter of surname.
+  const formatName = (full: string | null | undefined) => {
+    const parts = (full || "Builder").trim().split(/\s+/);
+    const first = parts[0] || "Builder";
+    const last = parts[1];
+    return last ? `${first} ${last[0].toUpperCase()}.` : first;
+  };
+
   // Live top challengers — pulled from waitlist referral leaders.
-  // Falls back to a sample only when no one has confirmed referrals yet.
+  // Always pad with 3 random fake builders (not on the waitlist) so the
+  // leaderboard never looks empty.
+  const FAKE_BUILDERS: { name: string; pts: number }[] = [
+    { name: "Alex R.", pts: 320 },
+    { name: "Priya S.", pts: 260 },
+    { name: "Marcus T.", pts: 210 },
+    { name: "Niamh O.", pts: 180 },
+    { name: "Diego F.", pts: 150 },
+    { name: "Hannah K.", pts: 120 },
+  ];
   const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
   useEffect(() => {
     let cancelled = false;
@@ -54,19 +71,15 @@ const RightRail = () => {
         .order("created_at", { ascending: true })
         .limit(3);
       if (cancelled) return;
-      const rows = (data ?? []).map((r: { name: string | null; confirmed_invites: number | null }) => ({
-        name: (r.name || "Builder").split(" ")[0],
+      const realRows = (data ?? []).map((r: { name: string | null; confirmed_invites: number | null }) => ({
+        name: formatName(r.name),
         pts: r.confirmed_invites ?? 0,
       }));
-      if (rows.length > 0) {
-        setTopChallengers(rows);
-      } else {
-        setTopChallengers([
-          { name: "Alex R.", pts: Math.max(points + 120, 320) },
-          { name: "Priya S.", pts: Math.max(points + 60, 260) },
-          { name: "Marcus T.", pts: Math.max(points + 20, 210) },
-        ]);
-      }
+      // Always add 3 random fake builders that are NOT on the waitlist.
+      const realNames = new Set(realRows.map((r) => r.name.toLowerCase()));
+      const pool = FAKE_BUILDERS.filter((f) => !realNames.has(f.name.toLowerCase()));
+      const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+      setTopChallengers([...realRows, ...shuffled]);
     })();
     return () => { cancelled = true; };
   }, [points]);

@@ -223,6 +223,7 @@ const App = () => (
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<AdminTestAccounts />} />
+                <Route path="bios" element={<AdminBios />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
                 <Route path="coupons" element={<AdminCoupons />} />

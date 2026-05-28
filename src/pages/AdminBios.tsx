@@ -329,6 +329,49 @@ const AdminBios = () => {
         </div>
       </div>
 
+      {/* Stats */}
+      <div className="grid gap-3 sm:grid-cols-4 mb-3">
+        {[
+          { label: "Total signups", value: totals.total },
+          { label: "Referred", value: totals.referred },
+          { label: "Active inviters", value: totals.inviters },
+          { label: "Total invites", value: totals.totalInvites },
+        ].map((s) => (
+          <Card key={s.label}>
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
+              <p className="mt-1 text-2xl font-semibold">{s.value.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {(
+          [
+            ["all", "All"],
+            ["referred", "Referred"],
+            ["direct", "Direct"],
+            ["active_inviters", "Inviters"],
+            ["flagged", "⚠ Flagged"],
+          ] as const
+        ).map(([key, label]) => (
+          <Button
+            key={key}
+            variant={filter === key ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter(key)}
+          >
+            {label}
+            {key === "flagged" && totals.flagged > 0 && (
+              <Badge variant="secondary" className="ml-2 h-4 text-[10px]">{totals.flagged}</Badge>
+            )}
+          </Button>
+        ))}
+      </div>
+
+
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
         <Input
           placeholder="Filter first name"

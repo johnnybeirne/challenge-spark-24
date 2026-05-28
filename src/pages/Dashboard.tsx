@@ -375,9 +375,6 @@ const Dashboard = () => {
 
           {/* 4. MOMENTUM ACTIONS */}
           <section>
-            <p className="mb-3 px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
-              Momentum
-            </p>
             <div className="flex flex-col gap-3">
               <input
                 ref={photoInputRef}

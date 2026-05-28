@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -30,6 +31,7 @@ interface LeaderboardEntry extends ProfileBio {
 
 const Leaderboard = () => {
   const { state, authUser } = useAppState();
+  const { isAdmin } = useUserRole();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -348,7 +350,7 @@ const Leaderboard = () => {
                   </div>
                   <div className="min-w-0">
                     <DialogTitle className="text-base">{selected.name}</DialogTitle>
-                    <p className="text-xs text-muted-foreground">{selected.score} pts</p>
+                    {isAdmin && <p className="text-xs text-muted-foreground">{selected.score} pts</p>}
                   </div>
                 </div>
               </DialogHeader>

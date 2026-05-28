@@ -99,8 +99,6 @@ const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [firstNameQ, setFirstNameQ] = useState("");
-  const [surnameQ, setSurnameQ] = useState("");
   const [joinedFrom, setJoinedFrom] = useState("");
   const [joinedTo, setJoinedTo] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
@@ -282,8 +280,6 @@ const AdminBios = () => {
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    const fn = firstNameQ.trim().toLowerCase();
-    const sn = surnameQ.trim().toLowerCase();
     const fromT = joinedFrom ? new Date(joinedFrom).getTime() : null;
     const toT = joinedTo ? new Date(joinedTo).getTime() + 86_400_000 : null;
     const out = rows.filter((r) => {
@@ -294,8 +290,6 @@ const AdminBios = () => {
           .some((v) => String(v).toLowerCase().includes(s))
       )
         return false;
-      if (fn && !String(r.first_name || "").toLowerCase().includes(fn)) return false;
-      if (sn && !String(r.surname || "").toLowerCase().includes(sn)) return false;
       if (fromT || toT) {
         const t = r.created_at ? new Date(r.created_at).getTime() : 0;
         if (fromT && t < fromT) return false;
@@ -331,7 +325,7 @@ const AdminBios = () => {
       return 0;
     });
     return out;
-  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter, validRefMap]);
+  }, [rows, q, joinedFrom, joinedTo, sortKey, sortDir, filter, validRefMap]);
 
   const totals = useMemo(() => {
     const total = rows.length;
@@ -640,17 +634,7 @@ const AdminBios = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
-        <Input
-          placeholder="Filter first name"
-          value={firstNameQ}
-          onChange={(e) => setFirstNameQ(e.target.value)}
-        />
-        <Input
-          placeholder="Filter surname"
-          value={surnameQ}
-          onChange={(e) => setSurnameQ(e.target.value)}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
         <div>
           <Label className="text-xs text-muted-foreground">Joined from</Label>
           <Input type="date" value={joinedFrom} onChange={(e) => setJoinedFrom(e.target.value)} />
@@ -663,8 +647,6 @@ const AdminBios = () => {
           variant="ghost"
           onClick={() => {
             setQ("");
-            setFirstNameQ("");
-            setSurnameQ("");
             setJoinedFrom("");
             setJoinedTo("");
           }}

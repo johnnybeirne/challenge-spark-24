@@ -22,7 +22,7 @@ interface Props {
  * existing answers are pre-filled and can be saved over.
  */
 const EditDay1Button = ({
-  variant = "ghost",
+  variant = "outline",
   size = "sm",
   className,
   label = "Need to edit your original answers?",

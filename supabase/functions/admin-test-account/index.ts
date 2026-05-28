@@ -202,13 +202,18 @@ Deno.serve(async (req) => {
         magic_link: linkData?.properties?.action_link ?? null,
       });
     }
-
     if (action === "magic_link") {
       const email = String(body?.email ?? "").trim().toLowerCase();
       if (!TEST_EMAIL_PATTERN.test(email)) return json({ error: "Only test+*@leadio.test allowed" }, 400);
-      const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
+      const redirectTo = String(body?.redirect_to ?? "") || undefined;
+      const { data, error } = await admin.auth.admin.generateLink({
+        type: "magiclink",
+        email,
+        options: redirectTo ? { redirectTo } : undefined,
+      });
       if (error) return json({ error: error.message }, 500);
       return json({ magic_link: data?.properties?.action_link ?? null });
+    }
     }
 
     if (action === "delete") {

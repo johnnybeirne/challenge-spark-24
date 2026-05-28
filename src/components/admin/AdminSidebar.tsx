@@ -18,6 +18,7 @@ import {
 
 const items = [
   { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
+  { title: "User Bios", url: "/owner-console/bios", icon: IdCard },
   { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
@@ -34,7 +35,7 @@ const items = [
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },
   { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
   { title: "Test Accounts", url: "/owner-console/test-accounts", icon: FlaskConical },
-  { title: "User Bios", url: "/owner-console/bios", icon: IdCard },
+  
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Feature Overview", url: "/owner-console/features", icon: FileText },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },

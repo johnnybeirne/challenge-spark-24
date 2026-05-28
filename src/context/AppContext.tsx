@@ -527,7 +527,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ state, setState, authUser, authLoading, signOut }}>
+    <AppContext.Provider value={{ state: displayState, setState, authUser, authLoading, signOut }}>
       {children}
     </AppContext.Provider>
   );

@@ -245,6 +245,11 @@ const AdminTestAccounts = () => {
                           variant="default"
                           size="sm"
                           onClick={async () => {
+                            // Persist target so the new tab navigates to Day 1 after Supabase auth
+                            // (in case redirect_to is overridden by Supabase Site URL allow-list).
+                            try {
+                              localStorage.setItem("leadio_post_login_redirect", "/challenge/day-1");
+                            } catch {}
                             const { data, error } = await supabase.functions.invoke("admin-test-account", {
                               body: {
                                 action: "magic_link",

@@ -614,7 +614,7 @@ const AdminBios = () => {
             ["all", "All"],
             ["referred", "Referred"],
             ["direct", "Direct"],
-            ["active_inviters", "Inviters"],
+            ["active_inviters", "Referrers"],
             ["flagged", "⚠ Flagged"],
           ] as const
         ).map(([key, label]) => (

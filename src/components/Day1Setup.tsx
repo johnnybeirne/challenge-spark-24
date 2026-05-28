@@ -332,7 +332,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
 
 
-        {step > 0 && step < 8 && (
+        {step > 1 && step < 8 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"

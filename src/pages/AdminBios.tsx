@@ -594,7 +594,7 @@ const AdminBios = () => {
         {[
           { label: "Total people", value: totals.total },
           { label: "Referred", value: totals.referred },
-          { label: "Active inviters", value: totals.inviters },
+          { label: "Referrers", value: totals.inviters },
           { label: "Total invites", value: totals.totalInvites },
           { label: "Flagged", value: totals.flagged },
         ].map((s) => (
@@ -614,7 +614,7 @@ const AdminBios = () => {
             ["all", "All"],
             ["referred", "Referred"],
             ["direct", "Direct"],
-            ["active_inviters", "Inviters"],
+            ["active_inviters", "Referrers"],
             ["flagged", "⚠ Flagged"],
           ] as const
         ).map(([key, label]) => (

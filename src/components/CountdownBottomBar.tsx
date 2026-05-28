@@ -65,7 +65,7 @@ const CountdownBottomBar = () => {
           "pointer-events-auto flex w-full items-center justify-center gap-2 border-t px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md",
           urgent
             ? "border-destructive/30 bg-destructive/10 text-destructive"
-            : "border-foreground/20 bg-background/80 text-muted-foreground",
+            : "border-foreground/20 bg-foreground/10 text-foreground",
         )}
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}

@@ -221,7 +221,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
   const handleChallenge = (v: string) => { setChallengeType(v); advance(6); };
-  const handleTopicNext = () => setStep(7);
+  const handleTopicNext = () => {
+    if (!topicHint.trim()) return;
+    setStep(7);
+  };
 
   // Step 7 → save the refinement, advance to the AI-guided builder (step 8).
   const handleSaveAssessment = () => {

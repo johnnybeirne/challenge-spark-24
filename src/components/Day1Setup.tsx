@@ -470,8 +470,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Here's what you're building</p>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
                 You're building a{" "}
-                <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
-                <span className="text-primary">{audienceLabelShort(audienceType)}</span>
+                <span className="text-primary">“{challengeLabel(challengeType)}”</span> challenge for{" "}
+                <span className="text-primary">“{audienceLabelShort(audienceType)}”</span>
               </h2>
             </div>
             {topicHint && (

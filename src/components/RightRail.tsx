@@ -47,6 +47,17 @@ const RightRail = () => {
     const last = parts[1];
     return last ? `${first} ${last[0].toUpperCase()}.` : first;
   };
+  const formatFromParts = (
+    first: string | null,
+    surname: string | null,
+    name: string | null,
+  ) => {
+    const f = (first || "").trim();
+    const s = (surname || "").trim();
+    if (f && s) return `${f} ${s.charAt(0).toUpperCase()}.`;
+    if (f) return f;
+    return formatName(name);
+  };
 
   // Live top challengers — pulled from waitlist referral leaders.
   // Always pad with 3 random fake builders (not on the waitlist) so the
@@ -65,14 +76,14 @@ const RightRail = () => {
     (async () => {
       const { data } = await supabase
         .from("waitlist_signups")
-        .select("name, confirmed_invites")
+        .select("name, first_name, surname, confirmed_invites")
         .gt("confirmed_invites", 0)
         .order("confirmed_invites", { ascending: false })
         .order("created_at", { ascending: true })
         .limit(3);
       if (cancelled) return;
-      const realRows = (data ?? []).map((r: { name: string | null; confirmed_invites: number | null }) => ({
-        name: formatName(r.name),
+      const realRows = (data ?? []).map((r: { name: string | null; first_name: string | null; surname: string | null; confirmed_invites: number | null }) => ({
+        name: formatFromParts(r.first_name, r.surname, r.name),
         pts: r.confirmed_invites ?? 0,
       }));
       // Always add 3 random fake builders that are NOT on the waitlist.

@@ -13,6 +13,8 @@ type WaitlistRow = {
   id: string;
   email: string;
   name: string | null;
+  first_name: string | null;
+  surname: string | null;
   referral_code: string;
   referred_by_code: string | null;
   confirmed_invites: number;
@@ -112,7 +114,7 @@ const AdminWaitlist = () => {
       setLoading(true);
       const { data } = await supabase
         .from("waitlist_signups")
-        .select("id,email,name,referral_code,referred_by_code,confirmed_invites,waitlist_position,status,current_tier,created_at,suspected_self_referral,self_referral_reasons")
+        .select("id,email,name,first_name,surname,referral_code,referred_by_code,confirmed_invites,waitlist_position,status,current_tier,created_at,suspected_self_referral,self_referral_reasons")
         .order("waitlist_position", { ascending: true })
         .limit(2000);
       setRows((data as WaitlistRow[]) || []);
@@ -376,10 +378,11 @@ const AdminWaitlist = () => {
                       }}
                     />
                   </th>
-                  {(
+                   {(
                     [
                       ["waitlist_position", "#", "left"],
-                      ["name", "Name", "left"],
+                      ["name", "First name", "left"],
+                      ["name", "Surname", "left"],
                       ["email", "Email", "left"],
                       ["valid_referrals", "Referrals", "center"],
                       ["referred_by_code", "Referred by", "left"],
@@ -444,38 +447,81 @@ const AdminWaitlist = () => {
                         r.waitlist_position
                       )}
                     </td>
-                    <td className="px-4 py-3 font-medium">
-                      <span className="inline-flex items-center gap-1.5 w-full">
-                        {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
-                        <Input
-                          defaultValue={r.name || ""}
-                          placeholder="—"
-                          className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent"
-                          onBlur={async (e) => {
-                            const newName = e.target.value.trim();
-                            const current = (r.name || "").trim();
-                            if (newName === current) return;
-                            const { error } = await supabase
-                              .from("waitlist_signups")
-                              .update({ name: newName || null })
-                              .eq("id", r.id);
-                            if (error) {
-                              toast.error(`Failed to update name: ${error.message}`);
-                              return;
-                            }
-                            setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, name: newName || null } : x)));
-                            toast.success("Name updated.");
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                            if (e.key === "Escape") {
-                              (e.target as HTMLInputElement).value = r.name || "";
-                              (e.target as HTMLInputElement).blur();
-                            }
-                          }}
-                        />
-                      </span>
-                    </td>
+                    {(() => {
+                      const nameParts = (r.name || "").trim().split(/\s+/).filter(Boolean);
+                      const fnFallback = nameParts[0] || "";
+                      const snFallback = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+                      const currentFirst = (r.first_name ?? fnFallback) || "";
+                      const currentSurname = (r.surname ?? snFallback) || "";
+                      const saveNames = async (newFirst: string, newSurname: string) => {
+                        const combined = [newFirst, newSurname].filter(Boolean).join(" ").trim();
+                        const { error } = await supabase
+                          .from("waitlist_signups")
+                          .update({
+                            first_name: newFirst || null,
+                            surname: newSurname || null,
+                            name: combined || null,
+                          })
+                          .eq("id", r.id);
+                        if (error) {
+                          toast.error(`Failed to update name: ${error.message}`);
+                          return;
+                        }
+                        setRows((prev) =>
+                          prev.map((x) =>
+                            x.id === r.id
+                              ? { ...x, first_name: newFirst || null, surname: newSurname || null, name: combined || null }
+                              : x,
+                          ),
+                        );
+                        toast.success("Name updated.");
+                      };
+                      return (
+                        <>
+                          <td className="px-4 py-3 font-medium min-w-[180px]">
+                            <span className="inline-flex items-center gap-1.5 w-full">
+                              {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                              <Input
+                                defaultValue={currentFirst}
+                                placeholder="First name"
+                                className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full min-w-[140px]"
+                                onBlur={(e) => {
+                                  const v = e.target.value.trim();
+                                  if (v === currentFirst) return;
+                                  saveNames(v, currentSurname);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                  if (e.key === "Escape") {
+                                    (e.target as HTMLInputElement).value = currentFirst;
+                                    (e.target as HTMLInputElement).blur();
+                                  }
+                                }}
+                              />
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 font-medium min-w-[180px]">
+                            <Input
+                              defaultValue={currentSurname}
+                              placeholder="Surname"
+                              className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full min-w-[140px]"
+                              onBlur={(e) => {
+                                const v = e.target.value.trim();
+                                if (v === currentSurname) return;
+                                saveNames(currentFirst, v);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                if (e.key === "Escape") {
+                                  (e.target as HTMLInputElement).value = currentSurname;
+                                  (e.target as HTMLInputElement).blur();
+                                }
+                              }}
+                            />
+                          </td>
+                        </>
+                      );
+                    })()}
                     <td className="px-4 py-3 text-xs text-muted-foreground">{r.email}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={isTop ? "font-semibold text-amber-700" : "font-semibold"}>

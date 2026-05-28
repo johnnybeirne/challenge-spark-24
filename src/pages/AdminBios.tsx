@@ -20,8 +20,10 @@ import Spinner from "@/components/Spinner";
 type Source = "profile" | "waitlist";
 
 interface BioRow {
-  source: Source;
-  id: string; // user_id for profile, waitlist id for waitlist
+  sources: Source[];
+  key: string; // dedupe key: lowercased email or fallback id
+  profile_user_id: string | null;
+  waitlist_id: string | null;
   email: string | null;
   name: string | null;
   first_name: string | null;
@@ -34,11 +36,26 @@ interface BioRow {
   youtube_url: string | null;
   website_url: string | null;
   created_at: string | null;
+  // Waitlist-only context
+  referral_code: string | null;
+  referred_by_code: string | null;
+  referred_by_email: string | null;
+  confirmed_invites: number | null;
+  current_tier: string | null;
+  waitlist_position: number | null;
 }
 
 type SortKey = "first_name" | "surname" | "created_at";
 type SortDir = "asc" | "desc";
 
+const pick = <T,>(a: T | null | undefined, b: T | null | undefined): T | null =>
+  (a ?? null) || (b ?? null) || null;
+
+const earlier = (a: string | null, b: string | null): string | null => {
+  if (!a) return b;
+  if (!b) return a;
+  return new Date(a).getTime() <= new Date(b).getTime() ? a : b;
+};
 
 const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
@@ -54,7 +71,6 @@ const AdminBios = () => {
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
 
-
   const load = async () => {
     setLoading(true);
     const [profilesRes, waitlistRes] = await Promise.all([
@@ -68,58 +84,108 @@ const AdminBios = () => {
       supabase
         .from("waitlist_signups")
         .select(
-          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
+          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position"
         )
         .order("created_at", { ascending: false })
-        .limit(1000),
+        .limit(2000),
     ]);
 
     if (profilesRes.error) toast.error("Could not load profiles");
     if (waitlistRes.error) toast.error("Could not load waitlist");
 
-    const profiles: BioRow[] = (profilesRes.data || []).map((p: any) => ({
-      source: "profile",
-      id: p.user_id,
-      email: p.email,
-      name: p.name,
-      first_name: p.first_name,
-      surname: p.surname,
-      bio: p.bio,
-      avatar_url: p.avatar_url,
-      linkedin_url: p.linkedin_url,
-      facebook_url: p.facebook_url,
-      instagram_url: p.instagram_url,
-      youtube_url: p.youtube_url,
-      website_url: p.website_url,
-      created_at: p.created_at,
+    const waitlistList = waitlistRes.data || [];
 
-    }));
+    // Build referral_code -> email map so we can resolve "referred by"
+    const codeToEmail = new Map<string, string>();
+    for (const w of waitlistList) {
+      if (w.referral_code && w.email) codeToEmail.set(w.referral_code, w.email);
+    }
 
-    const profileEmails = new Set(
-      profiles.map((p) => (p.email || "").toLowerCase()).filter(Boolean)
-    );
+    const map = new Map<string, BioRow>();
 
-    const waitlist: BioRow[] = (waitlistRes.data || [])
-      .filter((w: any) => !profileEmails.has((w.email || "").toLowerCase()))
-      .map((w: any) => ({
-        source: "waitlist",
-        id: w.id,
-        email: w.email,
-        name: w.name,
-        first_name: w.first_name,
-        surname: w.surname,
-        bio: w.bio,
-        avatar_url: w.avatar_url,
-        linkedin_url: w.linkedin_url,
-        facebook_url: w.facebook_url,
-        instagram_url: w.instagram_url,
-        youtube_url: w.youtube_url,
-        website_url: w.website_url,
-        created_at: w.created_at,
-      }));
+    for (const p of profilesRes.data || []) {
+      const key = (p.email || `profile:${p.user_id}`).toLowerCase();
+      map.set(key, {
+        sources: ["profile"],
+        key,
+        profile_user_id: p.user_id,
+        waitlist_id: null,
+        email: p.email,
+        name: p.name,
+        first_name: p.first_name,
+        surname: p.surname,
+        bio: p.bio,
+        avatar_url: p.avatar_url,
+        linkedin_url: p.linkedin_url,
+        facebook_url: p.facebook_url,
+        instagram_url: p.instagram_url,
+        youtube_url: p.youtube_url,
+        website_url: p.website_url,
+        created_at: p.created_at,
+        referral_code: null,
+        referred_by_code: null,
+        referred_by_email: null,
+        confirmed_invites: null,
+        current_tier: null,
+        waitlist_position: null,
+      });
+    }
 
+    for (const w of waitlistList) {
+      const key = (w.email || `waitlist:${w.id}`).toLowerCase();
+      const existing = map.get(key);
+      const referred_by_email = w.referred_by_code
+        ? codeToEmail.get(w.referred_by_code) || null
+        : null;
+      if (existing) {
+        existing.sources = Array.from(new Set([...existing.sources, "waitlist"])) as Source[];
+        existing.waitlist_id = w.id;
+        existing.name = pick(existing.name, w.name);
+        existing.first_name = pick(existing.first_name, w.first_name);
+        existing.surname = pick(existing.surname, w.surname);
+        existing.bio = pick(existing.bio, w.bio);
+        existing.avatar_url = pick(existing.avatar_url, w.avatar_url);
+        existing.linkedin_url = pick(existing.linkedin_url, w.linkedin_url);
+        existing.facebook_url = pick(existing.facebook_url, w.facebook_url);
+        existing.instagram_url = pick(existing.instagram_url, w.instagram_url);
+        existing.youtube_url = pick(existing.youtube_url, w.youtube_url);
+        existing.website_url = pick(existing.website_url, w.website_url);
+        existing.created_at = earlier(existing.created_at, w.created_at);
+        existing.referral_code = w.referral_code ?? null;
+        existing.referred_by_code = w.referred_by_code ?? null;
+        existing.referred_by_email = referred_by_email;
+        existing.confirmed_invites = w.confirmed_invites ?? null;
+        existing.current_tier = w.current_tier ?? null;
+        existing.waitlist_position = w.waitlist_position ?? null;
+      } else {
+        map.set(key, {
+          sources: ["waitlist"],
+          key,
+          profile_user_id: null,
+          waitlist_id: w.id,
+          email: w.email,
+          name: w.name,
+          first_name: w.first_name,
+          surname: w.surname,
+          bio: w.bio,
+          avatar_url: w.avatar_url,
+          linkedin_url: w.linkedin_url,
+          facebook_url: w.facebook_url,
+          instagram_url: w.instagram_url,
+          youtube_url: w.youtube_url,
+          website_url: w.website_url,
+          created_at: w.created_at,
+          referral_code: w.referral_code ?? null,
+          referred_by_code: w.referred_by_code ?? null,
+          referred_by_email,
+          confirmed_invites: w.confirmed_invites ?? null,
+          current_tier: w.current_tier ?? null,
+          waitlist_position: w.waitlist_position ?? null,
+        });
+      }
+    }
 
-    setRows([...profiles, ...waitlist]);
+    setRows(Array.from(map.values()));
     setLoading(false);
   };
 
@@ -166,7 +232,6 @@ const AdminBios = () => {
     else { setSortKey(key); setSortDir(key === "created_at" ? "desc" : "asc"); }
   };
 
-
   const openEdit = (r: BioRow) => {
     setEditing(r);
     setDraft({
@@ -190,12 +255,20 @@ const AdminBios = () => {
       youtube_url: draft.youtube_url || null,
       website_url: draft.website_url || null,
     };
-    const { error } =
-      editing.source === "profile"
-        ? await supabase.from("profiles").update(payload).eq("user_id", editing.id)
-        : await supabase.from("waitlist_signups").update(payload).eq("id", editing.id);
+    const ops: Promise<{ error: unknown }>[] = [];
+    if (editing.profile_user_id) {
+      ops.push(
+        supabase.from("profiles").update(payload).eq("user_id", editing.profile_user_id) as unknown as Promise<{ error: unknown }>
+      );
+    }
+    if (editing.waitlist_id) {
+      ops.push(
+        supabase.from("waitlist_signups").update(payload).eq("id", editing.waitlist_id) as unknown as Promise<{ error: unknown }>
+      );
+    }
+    const results = await Promise.all(ops);
     setSaving(false);
-    if (error) {
+    if (results.some((r) => r.error)) {
       toast.error("Could not save bio");
       return;
     }
@@ -216,7 +289,7 @@ const AdminBios = () => {
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
-            Edit any user or waitlist member's bio and social links.
+            Edit any user or waitlist member's bio and social links. Buyers and waitlist members with the same email are merged.
           </p>
         </div>
         <div className="relative w-72">
@@ -277,7 +350,6 @@ const AdminBios = () => {
         </div>
       </div>
 
-
       {loading ? (
         <div className="flex justify-center py-12"><Spinner /></div>
       ) : (
@@ -286,43 +358,71 @@ const AdminBios = () => {
             {filtered.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-8">No people found</p>
             )}
-            {filtered.map((r, i) => (
-              <div
-                key={`${r.source}-${r.id}`}
-                className={`flex items-center gap-3 px-4 py-3 ${
-                  i < filtered.length - 1 ? "border-b border-border" : ""
-                }`}
-              >
-                <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
-                  {r.avatar_url ? (
-                    <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <UserIcon className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold truncate">{displayName(r)}</p>
-                    {r.source === "waitlist" && (
-                      <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>
+            {filtered.map((r, i) => {
+              const isBuyer = r.sources.includes("profile");
+              const isWaitlist = r.sources.includes("waitlist");
+              return (
+                <div
+                  key={r.key}
+                  className={`flex items-start gap-3 px-4 py-3 ${
+                    i < filtered.length - 1 ? "border-b border-border" : ""
+                  }`}
+                >
+                  <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+                    {r.avatar_url ? (
+                      <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserIcon className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {r.email || "—"}
-                    {r.created_at && (
-                      <span className="ml-2">· Joined {new Date(r.created_at).toLocaleDateString()}</span>
-                    )}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold truncate">{displayName(r)}</p>
+                      {isBuyer && (
+                        <Badge variant="secondary" className="text-[10px] py-0 h-4">Buyer</Badge>
+                      )}
+                      {isWaitlist && (
+                        <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {r.email || "—"}
+                      {r.created_at && (
+                        <span className="ml-2">· Joined {new Date(r.created_at).toLocaleDateString()}</span>
+                      )}
+                    </p>
 
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                    {r.bio ? r.bio : <span className="italic">No bio yet</span>}
-                  </p>
+                    {isWaitlist && (
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {r.current_tier && <span className="font-medium text-foreground">{r.current_tier}</span>}
+                        {typeof r.confirmed_invites === "number" && (
+                          <span className="ml-2">· {r.confirmed_invites} invites</span>
+                        )}
+                        {typeof r.waitlist_position === "number" && r.waitlist_position > 0 && (
+                          <span className="ml-2">· #{r.waitlist_position}</span>
+                        )}
+                        {r.referral_code && (
+                          <span className="ml-2">· code <span className="font-mono">{r.referral_code}</span></span>
+                        )}
+                        {r.referred_by_code && (
+                          <span className="ml-2">
+                            · referred by{" "}
+                            <span className="font-mono">{r.referred_by_email || r.referred_by_code}</span>
+                          </span>
+                        )}
+                      </p>
+                    )}
+
+                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                      {r.bio ? r.bio : <span className="italic">No bio yet</span>}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => openEdit(r)}>
+                    <Pencil className="h-3 w-3 mr-1" /> Edit
+                  </Button>
                 </div>
-                <Button size="sm" variant="outline" onClick={() => openEdit(r)}>
-                  <Pencil className="h-3 w-3 mr-1" /> Edit
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       )}
@@ -334,6 +434,11 @@ const AdminBios = () => {
               <DialogHeader>
                 <DialogTitle>Edit bio — {displayName(editing)}</DialogTitle>
               </DialogHeader>
+              {editing.profile_user_id && editing.waitlist_id && (
+                <p className="text-xs text-muted-foreground -mt-2">
+                  Saves to both the buyer profile and waitlist record.
+                </p>
+              )}
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="bio">Bio</Label>

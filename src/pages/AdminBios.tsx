@@ -13,15 +13,35 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { Search, Pencil, User as UserIcon, ArrowUpDown } from "lucide-react";
+import {
+  Search,
+  Pencil,
+  User as UserIcon,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  Trophy,
+  AlertTriangle,
+  ShieldCheck,
+  Ban,
+  Copy,
+  Download,
+  Trash2,
+} from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 type Source = "profile" | "waitlist";
 
 interface BioRow {
   sources: Source[];
-  key: string; // dedupe key: lowercased email or fallback id
+  key: string;
   profile_user_id: string | null;
   waitlist_id: string | null;
   email: string | null;
@@ -40,14 +60,27 @@ interface BioRow {
   referral_code: string | null;
   referred_by_code: string | null;
   referred_by_email: string | null;
+  referred_by_name: string | null;
   confirmed_invites: number | null;
   current_tier: string | null;
   waitlist_position: number | null;
+  status: string | null;
   suspected_self_referral: boolean;
+  self_referral_reasons: string[] | null;
 }
 
+type SortKey =
+  | "waitlist_position"
+  | "first_name"
+  | "surname"
+  | "email"
+  | "valid_referrals"
+  | "referred_by_name"
+  | "referred_by_email"
+  | "current_tier"
+  | "status"
+  | "created_at";
 
-type SortKey = "first_name" | "surname" | "email" | "created_at" | "current_tier" | "confirmed_invites" | "waitlist_position" | "referred_by_email";
 type SortDir = "asc" | "desc";
 
 const pick = <T,>(a: T | null | undefined, b: T | null | undefined): T | null =>
@@ -59,6 +92,9 @@ const earlier = (a: string | null, b: string | null): string | null => {
   return new Date(a).getTime() <= new Date(b).getTime() ? a : b;
 };
 
+const formatDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+
 const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,9 +103,12 @@ const AdminBios = () => {
   const [surnameQ, setSurnameQ] = useState("");
   const [joinedFrom, setJoinedFrom] = useState("");
   const [joinedTo, setJoinedTo] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("created_at");
+  const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters" | "flagged">("all");
+  const [filter, setFilter] = useState<
+    "all" | "referred" | "direct" | "active_inviters" | "flagged"
+  >("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const [editing, setEditing] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
@@ -84,15 +123,14 @@ const AdminBios = () => {
           "user_id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
         )
         .order("created_at", { ascending: false })
-        .limit(1000),
+        .limit(2000),
       supabase
         .from("waitlist_signups")
         .select(
-          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position, suspected_self_referral"
+          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position, status, suspected_self_referral, self_referral_reasons"
         )
         .order("created_at", { ascending: false })
         .limit(2000),
-
     ]);
 
     if (profilesRes.error) toast.error("Could not load profiles");
@@ -100,10 +138,9 @@ const AdminBios = () => {
 
     const waitlistList = waitlistRes.data || [];
 
-    // Build referral_code -> email map so we can resolve "referred by"
-    const codeToEmail = new Map<string, string>();
+    const codeToWaitlist = new Map<string, { email: string | null; name: string | null }>();
     for (const w of waitlistList) {
-      if (w.referral_code && w.email) codeToEmail.set(w.referral_code, w.email);
+      if (w.referral_code) codeToWaitlist.set(w.referral_code, { email: w.email, name: w.name });
     }
 
     const map = new Map<string, BioRow>();
@@ -130,20 +167,20 @@ const AdminBios = () => {
         referral_code: null,
         referred_by_code: null,
         referred_by_email: null,
+        referred_by_name: null,
         confirmed_invites: null,
         current_tier: null,
         waitlist_position: null,
+        status: null,
         suspected_self_referral: false,
-
+        self_referral_reasons: null,
       });
     }
 
     for (const w of waitlistList) {
       const key = (w.email || `waitlist:${w.id}`).toLowerCase();
+      const inviter = w.referred_by_code ? codeToWaitlist.get(w.referred_by_code) : null;
       const existing = map.get(key);
-      const referred_by_email = w.referred_by_code
-        ? codeToEmail.get(w.referred_by_code) || null
-        : null;
       if (existing) {
         existing.sources = Array.from(new Set([...existing.sources, "waitlist"])) as Source[];
         existing.waitlist_id = w.id;
@@ -160,12 +197,14 @@ const AdminBios = () => {
         existing.created_at = earlier(existing.created_at, w.created_at);
         existing.referral_code = w.referral_code ?? null;
         existing.referred_by_code = w.referred_by_code ?? null;
-        existing.referred_by_email = referred_by_email;
+        existing.referred_by_email = inviter?.email ?? null;
+        existing.referred_by_name = inviter?.name ?? null;
         existing.confirmed_invites = w.confirmed_invites ?? null;
         existing.current_tier = w.current_tier ?? null;
         existing.waitlist_position = w.waitlist_position ?? null;
+        existing.status = w.status ?? null;
         existing.suspected_self_referral = !!w.suspected_self_referral;
-
+        existing.self_referral_reasons = w.self_referral_reasons ?? null;
       } else {
         map.set(key, {
           sources: ["waitlist"],
@@ -186,23 +225,60 @@ const AdminBios = () => {
           created_at: w.created_at,
           referral_code: w.referral_code ?? null,
           referred_by_code: w.referred_by_code ?? null,
-          referred_by_email,
+          referred_by_email: inviter?.email ?? null,
+          referred_by_name: inviter?.name ?? null,
           confirmed_invites: w.confirmed_invites ?? null,
           current_tier: w.current_tier ?? null,
           waitlist_position: w.waitlist_position ?? null,
+          status: w.status ?? null,
           suspected_self_referral: !!w.suspected_self_referral,
+          self_referral_reasons: w.self_referral_reasons ?? null,
         });
       }
     }
 
-
     setRows(Array.from(map.values()));
+    setSelected(new Set());
     setLoading(false);
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  // Valid referrals per inviter waitlist_id (deduped by email, excludes self-ref).
+  const validRefMap = useMemo(() => {
+    const byCode = new Map<string, BioRow>();
+    rows.forEach((r) => {
+      if (r.referral_code) byCode.set(r.referral_code, r);
+    });
+    const seen = new Map<string, Set<string>>();
+    rows.forEach((r) => {
+      const ref = r.referred_by_code;
+      if (!ref) return;
+      const inviter = byCode.get(ref);
+      if (!inviter) return;
+      const email = (r.email || "").toLowerCase().trim();
+      if (!email) return;
+      if (inviter.email && email === inviter.email.toLowerCase().trim()) return;
+      if (!seen.has(ref)) seen.set(ref, new Set());
+      seen.get(ref)!.add(email);
+    });
+    const map = new Map<string, number>();
+    seen.forEach((set, code) => {
+      const inviter = byCode.get(code);
+      if (inviter) map.set(inviter.key, set.size);
+    });
+    return map;
+  }, [rows]);
+
+  const topFiveKeys = useMemo(() => {
+    return Array.from(validRefMap.entries())
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([k]) => k);
+  }, [validRefMap]);
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -211,9 +287,13 @@ const AdminBios = () => {
     const fromT = joinedFrom ? new Date(joinedFrom).getTime() : null;
     const toT = joinedTo ? new Date(joinedTo).getTime() + 86_400_000 : null;
     const out = rows.filter((r) => {
-      if (s && ![r.name, r.first_name, r.surname, r.email]
-        .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(s))) return false;
+      if (
+        s &&
+        ![r.name, r.first_name, r.surname, r.email, r.referral_code, r.referred_by_code]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(s))
+      )
+        return false;
       if (fn && !String(r.first_name || "").toLowerCase().includes(fn)) return false;
       if (sn && !String(r.surname || "").toLowerCase().includes(sn)) return false;
       if (fromT || toT) {
@@ -229,16 +309,19 @@ const AdminBios = () => {
     });
 
     const dir = sortDir === "asc" ? 1 : -1;
-    const numericKeys: SortKey[] = ["confirmed_invites", "waitlist_position"];
+    const numericKeys: SortKey[] = ["waitlist_position", "valid_referrals"];
     out.sort((a, b) => {
       let av: number | string;
       let bv: number | string;
       if (sortKey === "created_at") {
         av = a.created_at ? new Date(a.created_at).getTime() : 0;
         bv = b.created_at ? new Date(b.created_at).getTime() : 0;
+      } else if (sortKey === "valid_referrals") {
+        av = validRefMap.get(a.key) ?? 0;
+        bv = validRefMap.get(b.key) ?? 0;
       } else if (numericKeys.includes(sortKey)) {
-        av = ((a as any)[sortKey] ?? -Infinity) as number;
-        bv = ((b as any)[sortKey] ?? -Infinity) as number;
+        av = ((a as any)[sortKey] ?? Number.POSITIVE_INFINITY) as number;
+        bv = ((b as any)[sortKey] ?? Number.POSITIVE_INFINITY) as number;
       } else {
         av = String((a as any)[sortKey] || "").toLowerCase();
         bv = String((b as any)[sortKey] || "").toLowerCase();
@@ -248,8 +331,7 @@ const AdminBios = () => {
       return 0;
     });
     return out;
-    return out;
-  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter]);
+  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter, validRefMap]);
 
   const totals = useMemo(() => {
     const total = rows.length;
@@ -262,7 +344,98 @@ const AdminBios = () => {
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else { setSortKey(key); setSortDir(key === "created_at" ? "desc" : "asc"); }
+    else {
+      setSortKey(key);
+      setSortDir(key === "created_at" || key === "valid_referrals" ? "desc" : "asc");
+    }
+  };
+
+  const toggleOne = (key: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const deleteSelected = async () => {
+    const ids = filtered
+      .filter((r) => selected.has(r.key) && r.waitlist_id)
+      .map((r) => r.waitlist_id!) as string[];
+    if (ids.length === 0) {
+      toast.info("Only waitlist rows can be deleted here.");
+      return;
+    }
+    if (!window.confirm(`Delete ${ids.length} waitlist signup${ids.length === 1 ? "" : "s"}? This cannot be undone.`))
+      return;
+    const { error } = await supabase.from("waitlist_signups").delete().in("id", ids);
+    if (error) {
+      toast.error(`Failed to delete: ${error.message}`);
+      return;
+    }
+    toast.success(`Deleted ${ids.length} signup${ids.length === 1 ? "" : "s"}.`);
+    await load();
+  };
+
+  const clearFlag = async (r: BioRow) => {
+    if (!r.waitlist_id) return;
+    const { error } = await supabase.rpc("admin_clear_self_referral_flag", { p_signup_id: r.waitlist_id });
+    if (error) {
+      toast.error(`Failed: ${error.message}`);
+      return;
+    }
+    setRows((prev) =>
+      prev.map((x) =>
+        x.key === r.key ? { ...x, suspected_self_referral: false, self_referral_reasons: [] } : x
+      )
+    );
+    toast.success("Marked as valid.");
+  };
+
+  const voidReferral = async (r: BioRow) => {
+    if (!r.waitlist_id) return;
+    if (!window.confirm(`Void referral from ${r.email}? This decrements the referrer's invite count.`)) return;
+    const { error } = await supabase.rpc("admin_void_waitlist_referral", { p_signup_id: r.waitlist_id });
+    if (error) {
+      toast.error(`Failed: ${error.message}`);
+      return;
+    }
+    toast.success("Referral voided.");
+    await load();
+  };
+
+  const saveNames = async (r: BioRow, newFirst: string, newSurname: string) => {
+    const combined = [newFirst, newSurname].filter(Boolean).join(" ").trim();
+    const payload = {
+      first_name: newFirst || null,
+      surname: newSurname || null,
+      name: combined || null,
+    };
+    const ops: Promise<{ error: unknown }>[] = [];
+    if (r.profile_user_id) {
+      ops.push(
+        supabase.from("profiles").update(payload).eq("user_id", r.profile_user_id) as unknown as Promise<{ error: unknown }>
+      );
+    }
+    if (r.waitlist_id) {
+      ops.push(
+        supabase.from("waitlist_signups").update(payload).eq("id", r.waitlist_id) as unknown as Promise<{ error: unknown }>
+      );
+    }
+    const results = await Promise.all(ops);
+    if (results.some((x) => x.error)) {
+      toast.error("Failed to update name");
+      return;
+    }
+    setRows((prev) =>
+      prev.map((x) =>
+        x.key === r.key
+          ? { ...x, first_name: newFirst || null, surname: newSurname || null, name: combined || null }
+          : x
+      )
+    );
+    toast.success("Name updated.");
   };
 
   const openEdit = (r: BioRow) => {
@@ -301,7 +474,7 @@ const AdminBios = () => {
     }
     const results = await Promise.all(ops);
     setSaving(false);
-    if (results.some((r) => r.error)) {
+    if (results.some((x) => x.error)) {
       toast.error("Could not save bio");
       return;
     }
@@ -310,40 +483,126 @@ const AdminBios = () => {
     await load();
   };
 
+  const exportCsv = () => {
+    const header = [
+      "position",
+      "first_name",
+      "surname",
+      "email",
+      "valid_referrals",
+      "referred_by_email",
+      "tier",
+      "status",
+      "created_at",
+      "source",
+    ];
+    const lines = filtered.map((r) =>
+      [
+        r.waitlist_position ?? "",
+        JSON.stringify(r.first_name || ""),
+        JSON.stringify(r.surname || ""),
+        r.email || "",
+        validRefMap.get(r.key) ?? 0,
+        r.referred_by_email || r.referred_by_code || "",
+        r.current_tier || "",
+        r.status || "",
+        r.created_at || "",
+        r.sources.join("+"),
+      ].join(",")
+    );
+    const csv = [header.join(","), ...lines].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `user-bios-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const displayName = (r: BioRow) =>
     r.name ||
     [r.first_name, r.surname].filter(Boolean).join(" ") ||
     r.email ||
     "Unnamed";
 
+  const SortHeader = ({
+    k,
+    label,
+    align = "left",
+  }: {
+    k: SortKey;
+    label: string;
+    align?: "left" | "center" | "right";
+  }) => {
+    const active = sortKey === k;
+    const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+    return (
+      <th className={`px-3 py-2 text-${align} whitespace-nowrap`}>
+        <button
+          type="button"
+          onClick={() => toggleSort(k)}
+          className={`inline-flex items-center gap-1 hover:text-foreground ${
+            active ? "text-foreground" : ""
+          }`}
+        >
+          {label}
+          <Icon className="h-3 w-3 opacity-60" />
+        </button>
+      </th>
+    );
+  };
+
+  const rankChipCls = [
+    "bg-amber-400/20 text-amber-800 ring-amber-500/40",
+    "bg-zinc-400/20 text-zinc-800 ring-zinc-500/40",
+    "bg-orange-700/15 text-orange-900 ring-orange-700/40",
+    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+  ];
+
   return (
     <div className="p-6 w-[90%] mx-auto">
-
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
-            Edit any user or waitlist member's bio and social links. Buyers and waitlist members with the same email are merged.
+            Unified view of buyer profiles + waitlist signups. Records with the same email are merged.
           </p>
         </div>
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search name or email…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="pl-9"
-          />
+        <div className="flex flex-wrap gap-2">
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search name, email, code…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Button onClick={exportCsv} variant="outline" size="sm" className="gap-2">
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+          <Button
+            onClick={deleteSelected}
+            disabled={selected.size === 0}
+            variant="destructive"
+            size="sm"
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" /> Delete ({selected.size})
+          </Button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-3 sm:grid-cols-4 mb-3">
+      <div className="grid gap-3 sm:grid-cols-5 mb-3">
         {[
-          { label: "Total signups", value: totals.total },
+          { label: "Total people", value: totals.total },
           { label: "Referred", value: totals.referred },
           { label: "Active inviters", value: totals.inviters },
           { label: "Total invites", value: totals.totalInvites },
+          { label: "Flagged", value: totals.flagged },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="p-4">
@@ -373,12 +632,13 @@ const AdminBios = () => {
           >
             {label}
             {key === "flagged" && totals.flagged > 0 && (
-              <Badge variant="secondary" className="ml-2 h-4 text-[10px]">{totals.flagged}</Badge>
+              <Badge variant="secondary" className="ml-2 h-4 text-[10px]">
+                {totals.flagged}
+              </Badge>
             )}
           </Button>
         ))}
       </div>
-
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
         <Input
@@ -401,7 +661,13 @@ const AdminBios = () => {
         </div>
         <Button
           variant="ghost"
-          onClick={() => { setQ(""); setFirstNameQ(""); setSurnameQ(""); setJoinedFrom(""); setJoinedTo(""); }}
+          onClick={() => {
+            setQ("");
+            setFirstNameQ("");
+            setSurnameQ("");
+            setJoinedFrom("");
+            setJoinedTo("");
+          }}
           className="self-end"
         >
           Clear filters
@@ -415,7 +681,9 @@ const AdminBios = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><Spinner /></div>
+        <div className="flex justify-center py-12">
+          <Spinner />
+        </div>
       ) : (
         <Card>
           <CardContent className="p-0 overflow-x-auto">
@@ -425,45 +693,57 @@ const AdminBios = () => {
               <table className="w-full text-sm">
                 <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
                   <tr>
+                    <th className="px-3 py-2 w-8">
+                      <input
+                        type="checkbox"
+                        aria-label="Select all"
+                        checked={filtered.length > 0 && filtered.every((r) => selected.has(r.key))}
+                        onChange={(e) => {
+                          setSelected((prev) => {
+                            const next = new Set(prev);
+                            if (e.target.checked) filtered.forEach((r) => next.add(r.key));
+                            else filtered.forEach((r) => next.delete(r.key));
+                            return next;
+                          });
+                        }}
+                      />
+                    </th>
                     <th className="px-3 py-2 text-left w-10"></th>
-                    {([
-                      ["first_name", "First name"],
-                      ["surname", "Surname"],
-                      ["email", "Email"],
-                      ["created_at", "Joined"],
-                      ["current_tier", "Tier"],
-                      ["confirmed_invites", "Invites"],
-                      ["waitlist_position", "Pos."],
-                      ["referred_by_email", "Referred by"],
-                    ] as const).map(([key, label]) => (
-                      <th
-                        key={key}
-                        className="px-3 py-2 text-left cursor-pointer select-none whitespace-nowrap hover:text-foreground"
-                        onClick={() => toggleSort(key as SortKey)}
-                      >
-                        <span className="inline-flex items-center gap-1">
-                          {label}
-                          <ArrowUpDown className="h-3 w-3 opacity-60" />
-                          {sortKey === key && (
-                            <span className="text-[10px] text-foreground">{sortDir}</span>
-                          )}
-                        </span>
-                      </th>
-                    ))}
+                    <SortHeader k="waitlist_position" label="#" />
+                    <SortHeader k="first_name" label="First name" />
+                    <SortHeader k="surname" label="Surname" />
+                    <SortHeader k="email" label="Email" />
+                    <SortHeader k="valid_referrals" label="Refs" align="right" />
+                    <SortHeader k="referred_by_name" label="Referred by" />
+                    <SortHeader k="referred_by_email" label="Referrer email" />
+                    <SortHeader k="current_tier" label="Tier" />
+                    <SortHeader k="status" label="Status" />
+                    <th className="px-3 py-2 text-left">Flag</th>
+                    <SortHeader k="created_at" label="Joined" />
                     <th className="px-3 py-2 text-left">Bio</th>
-                    <th className="px-3 py-2 text-left">Source</th>
                     <th className="px-3 py-2 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((r, i) => {
+                  {filtered.map((r) => {
+                    const refs = validRefMap.get(r.key) ?? 0;
+                    const topRank = topFiveKeys.indexOf(r.key);
+                    const isTop = topRank >= 0;
+                    const rowCls = isTop
+                      ? "border-b last:border-0 bg-amber-500/5 hover:bg-amber-500/10"
+                      : "border-b last:border-0 hover:bg-muted/20";
                     const isBuyer = r.sources.includes("profile");
                     const isWaitlist = r.sources.includes("waitlist");
                     return (
-                      <tr
-                        key={r.key}
-                        className={i < filtered.length - 1 ? "border-b border-border" : ""}
-                      >
+                      <tr key={r.key} className={rowCls}>
+                        <td className="px-3 py-2">
+                          <input
+                            type="checkbox"
+                            aria-label={`Select ${r.email}`}
+                            checked={selected.has(r.key)}
+                            onChange={() => toggleOne(r.key)}
+                          />
+                        </td>
                         <td className="px-3 py-2">
                           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                             {r.avatar_url ? (
@@ -473,36 +753,197 @@ const AdminBios = () => {
                             )}
                           </div>
                         </td>
-                        <td className="px-3 py-2 whitespace-nowrap">{r.first_name || "—"}</td>
-                        <td className="px-3 py-2 whitespace-nowrap">{r.surname || "—"}</td>
-                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{r.email || "—"}</td>
-                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                          {r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">{r.current_tier || "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">{r.confirmed_invites ?? "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">
-                          {typeof r.waitlist_position === "number" && r.waitlist_position > 0 ? `#${r.waitlist_position}` : "—"}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                          {r.referred_by_email || r.referred_by_code || "—"}
-                          {r.suspected_self_referral && (
-                            <Badge variant="destructive" className="ml-2 text-[10px] h-4">⚠</Badge>
+                        <td className="px-3 py-2 font-mono text-xs text-muted-foreground whitespace-nowrap">
+                          {isTop ? (
+                            <span
+                              className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}
+                            >
+                              {topRank + 1}
+                            </span>
+                          ) : (
+                            r.waitlist_position ?? "—"
                           )}
+                        </td>
+                        <td className="px-3 py-2 min-w-[160px]">
+                          <span className="inline-flex items-center gap-1.5 w-full">
+                            {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                            <Input
+                              defaultValue={r.first_name || ""}
+                              placeholder="First name"
+                              className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full"
+                              onBlur={(e) => {
+                                const v = e.target.value.trim();
+                                if (v === (r.first_name || "")) return;
+                                saveNames(r, v, r.surname || "");
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                if (e.key === "Escape") {
+                                  (e.target as HTMLInputElement).value = r.first_name || "";
+                                  (e.target as HTMLInputElement).blur();
+                                }
+                              }}
+                            />
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 min-w-[160px]">
+                          <Input
+                            defaultValue={r.surname || ""}
+                            placeholder="Surname"
+                            className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full"
+                            onBlur={(e) => {
+                              const v = e.target.value.trim();
+                              if (v === (r.surname || "")) return;
+                              saveNames(r, r.first_name || "", v);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                              if (e.key === "Escape") {
+                                (e.target as HTMLInputElement).value = r.surname || "";
+                                (e.target as HTMLInputElement).blur();
+                              }
+                            }}
+                          />
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                          {r.email || "—"}
+                        </td>
+                        <td className="px-3 py-2 text-right tabular-nums">
+                          <span className={isTop ? "font-semibold text-amber-700" : refs > 0 ? "font-semibold" : ""}>
+                            {refs || "—"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {r.referred_by_code ? (
+                            <span className="text-sm">
+                              {r.referred_by_name || r.referred_by_email || r.referred_by_code}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {isWaitlist ? "Direct" : "—"}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
+                          {r.referred_by_email ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="truncate max-w-[180px]">{r.referred_by_email}</span>
+                              <button
+                                type="button"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  try {
+                                    await navigator.clipboard.writeText(r.referred_by_email!);
+                                    toast.success("Email copied");
+                                  } catch {
+                                    toast.error("Failed to copy");
+                                  }
+                                }}
+                                className="rounded p-0.5 hover:bg-muted hover:text-foreground"
+                                title="Copy email"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            </span>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {r.current_tier ? (
+                            <Badge variant="secondary" className="text-xs">
+                              {r.current_tier}
+                            </Badge>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {r.status ? (
+                            <Badge variant={r.status === "active" ? "default" : "outline"} className="text-xs">
+                              {r.status}
+                            </Badge>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {r.suspected_self_referral ? (
+                            <TooltipProvider>
+                              <div className="flex items-center gap-1">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-500/40">
+                                      <AlertTriangle className="h-3 w-3" /> Flag
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="text-xs">
+                                      <div className="mb-1 font-semibold">Suspected self-referral</div>
+                                      <ul className="list-disc pl-4">
+                                        {(r.self_referral_reasons || []).map((reason) => (
+                                          <li key={reason}>{reason.replace(/_/g, " ")}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      onClick={() => clearFlag(r)}
+                                      className="rounded p-1 text-emerald-700 hover:bg-emerald-500/10"
+                                      aria-label="Mark valid"
+                                    >
+                                      <ShieldCheck className="h-3.5 w-3.5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Mark as valid</TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      onClick={() => voidReferral(r)}
+                                      className="rounded p-1 text-destructive hover:bg-destructive/10"
+                                      aria-label="Void referral"
+                                    >
+                                      <Ban className="h-3.5 w-3.5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Void referral</TooltipContent>
+                                </Tooltip>
+                              </div>
+                            </TooltipProvider>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
+                          {formatDate(r.created_at)}
                         </td>
                         <td className="px-3 py-2 max-w-xs">
                           <span className="line-clamp-1 text-muted-foreground">
                             {r.bio || <span className="italic">No bio</span>}
                           </span>
                         </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {isBuyer && <Badge variant="secondary" className="text-[10px] py-0 h-4 mr-1">Buyer</Badge>}
-                          {isWaitlist && <Badge variant="outline" className="text-[10px] py-0 h-4">Waitlist</Badge>}
-                        </td>
-                        <td className="px-3 py-2 text-right">
-                          <Button size="sm" variant="outline" onClick={() => openEdit(r)}>
-                            <Pencil className="h-3 w-3 mr-1" /> Edit
-                          </Button>
+                        <td className="px-3 py-2 text-right whitespace-nowrap">
+                          <div className="inline-flex items-center gap-1">
+                            {isBuyer && (
+                              <Badge variant="secondary" className="text-[10px] py-0 h-4">
+                                Buyer
+                              </Badge>
+                            )}
+                            {isWaitlist && (
+                              <Badge variant="outline" className="text-[10px] py-0 h-4">
+                                Waitlist
+                              </Badge>
+                            )}
+                            <Button size="sm" variant="outline" onClick={() => openEdit(r)} className="ml-1">
+                              <Pencil className="h-3 w-3 mr-1" /> Edit
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     );

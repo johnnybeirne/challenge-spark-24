@@ -174,9 +174,6 @@ const Leaderboard = () => {
                         <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
                           {entry.name} {entry.isUser && "(You)"}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {entry.direct_referral_count} invite{entry.direct_referral_count === 1 ? "" : "s"}
-                        </p>
 
                       </div>
                       <div className="text-right shrink-0">

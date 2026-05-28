@@ -188,11 +188,11 @@ const Leaderboard = () => {
   // Pad promoter list to 5 with fake promoters not already on the list.
   const padPromoters = (real: any[]) => {
     const FAKES = [
-      { name: "Sarah L.", bio: "Performance marketer running launch campaigns." },
-      { name: "Tomás B.", bio: "Community-led growth for early-stage SaaS." },
-      { name: "Maya K.", bio: "Affiliate strategist for creator economy brands." },
-      { name: "Owen P.", bio: "Newsletter operator and growth advisor." },
-      { name: "Lena V.", bio: "Partnerships lead helping founders ship faster." },
+      { name: "Sarah L." },
+      { name: "Tomás B." },
+      { name: "Maya K." },
+      { name: "Owen P." },
+      { name: "Lena V." },
     ];
     const realNames = new Set(real.map((r) => String(r.name || "").toLowerCase()));
     const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
@@ -203,11 +203,11 @@ const Leaderboard = () => {
       out.push({
         partner_code: `fake-promoter-${k}`,
         name: f.name,
-        bio: f.bio,
         signups: 0,
         score: 0,
         is_founding_partner: false,
       });
+
     }
     return out;
   };

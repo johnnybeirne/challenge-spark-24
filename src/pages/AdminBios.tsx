@@ -290,8 +290,6 @@ const AdminBios = () => {
           .some((v) => String(v).toLowerCase().includes(s))
       )
         return false;
-      if (fn && !String(r.first_name || "").toLowerCase().includes(fn)) return false;
-      if (sn && !String(r.surname || "").toLowerCase().includes(sn)) return false;
       if (fromT || toT) {
         const t = r.created_at ? new Date(r.created_at).getTime() : 0;
         if (fromT && t < fromT) return false;

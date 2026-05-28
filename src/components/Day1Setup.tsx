@@ -352,7 +352,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             helper="In your own words — the pain, frustration, or gap your expertise removes."
             value={problem}
             setValue={setProblem}
-            placeholder="e.g. Coaches struggle to package what they know into something people will pay for."
+            placeholder="e.g. Most founders waste months chasing leads that never convert because they don't have a repeatable way to turn cold attention into paying customers."
             onNext={() => handleFoundationNext(1)}
           />
         )}

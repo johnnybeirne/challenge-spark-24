@@ -405,7 +405,7 @@ const Dashboard = () => {
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">Add Profile Photo</p>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {photoDone ? "Done" : photoUploading ? "Uploading…" : "+50 points"}
+                    {photoDone ? "Done" : photoUploading ? "Uploading…" : "Earn 50 points"}
                   </p>
                 </div>
               </button>

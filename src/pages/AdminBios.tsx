@@ -43,7 +43,9 @@ interface BioRow {
   confirmed_invites: number | null;
   current_tier: string | null;
   waitlist_position: number | null;
+  suspected_self_referral: boolean;
 }
+
 
 type SortKey = "first_name" | "surname" | "created_at";
 type SortDir = "asc" | "desc";
@@ -67,6 +69,8 @@ const AdminBios = () => {
   const [joinedTo, setJoinedTo] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters" | "flagged">("all");
+
   const [editing, setEditing] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
@@ -84,10 +88,11 @@ const AdminBios = () => {
       supabase
         .from("waitlist_signups")
         .select(
-          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position"
+          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position, suspected_self_referral"
         )
         .order("created_at", { ascending: false })
         .limit(2000),
+
     ]);
 
     if (profilesRes.error) toast.error("Could not load profiles");
@@ -128,6 +133,8 @@ const AdminBios = () => {
         confirmed_invites: null,
         current_tier: null,
         waitlist_position: null,
+        suspected_self_referral: false,
+
       });
     }
 
@@ -157,6 +164,8 @@ const AdminBios = () => {
         existing.confirmed_invites = w.confirmed_invites ?? null;
         existing.current_tier = w.current_tier ?? null;
         existing.waitlist_position = w.waitlist_position ?? null;
+        existing.suspected_self_referral = !!w.suspected_self_referral;
+
       } else {
         map.set(key, {
           sources: ["waitlist"],
@@ -181,9 +190,11 @@ const AdminBios = () => {
           confirmed_invites: w.confirmed_invites ?? null,
           current_tier: w.current_tier ?? null,
           waitlist_position: w.waitlist_position ?? null,
+          suspected_self_referral: !!w.suspected_self_referral,
         });
       }
     }
+
 
     setRows(Array.from(map.values()));
     setLoading(false);
@@ -210,8 +221,13 @@ const AdminBios = () => {
         if (fromT && t < fromT) return false;
         if (toT && t >= toT) return false;
       }
+      if (filter === "referred" && !r.referred_by_code) return false;
+      if (filter === "direct" && r.referred_by_code) return false;
+      if (filter === "active_inviters" && (r.confirmed_invites ?? 0) <= 0) return false;
+      if (filter === "flagged" && !r.suspected_self_referral) return false;
       return true;
     });
+
     const dir = sortDir === "asc" ? 1 : -1;
     out.sort((a, b) => {
       const av = sortKey === "created_at"
@@ -225,7 +241,16 @@ const AdminBios = () => {
       return 0;
     });
     return out;
-  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir]);
+  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter]);
+
+  const totals = useMemo(() => {
+    const total = rows.length;
+    const referred = rows.filter((r) => !!r.referred_by_code).length;
+    const inviters = rows.filter((r) => (r.confirmed_invites ?? 0) > 0).length;
+    const totalInvites = rows.reduce((sum, r) => sum + (r.confirmed_invites ?? 0), 0);
+    const flagged = rows.filter((r) => r.suspected_self_referral).length;
+    return { total, referred, inviters, totalInvites, flagged };
+  }, [rows]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -303,6 +328,49 @@ const AdminBios = () => {
           />
         </div>
       </div>
+
+      {/* Stats */}
+      <div className="grid gap-3 sm:grid-cols-4 mb-3">
+        {[
+          { label: "Total signups", value: totals.total },
+          { label: "Referred", value: totals.referred },
+          { label: "Active inviters", value: totals.inviters },
+          { label: "Total invites", value: totals.totalInvites },
+        ].map((s) => (
+          <Card key={s.label}>
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
+              <p className="mt-1 text-2xl font-semibold">{s.value.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {(
+          [
+            ["all", "All"],
+            ["referred", "Referred"],
+            ["direct", "Direct"],
+            ["active_inviters", "Inviters"],
+            ["flagged", "⚠ Flagged"],
+          ] as const
+        ).map(([key, label]) => (
+          <Button
+            key={key}
+            variant={filter === key ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter(key)}
+          >
+            {label}
+            {key === "flagged" && totals.flagged > 0 && (
+              <Badge variant="secondary" className="ml-2 h-4 text-[10px]">{totals.flagged}</Badge>
+            )}
+          </Button>
+        ))}
+      </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
         <Input

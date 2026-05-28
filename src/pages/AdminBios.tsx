@@ -400,6 +400,14 @@ const AdminBios = () => {
           <Input type="date" value={joinedTo} onChange={(e) => setJoinedTo(e.target.value)} />
         </div>
         <Button
+          variant="ghost"
+          onClick={() => { setQ(""); setFirstNameQ(""); setSurnameQ(""); setJoinedFrom(""); setJoinedTo(""); }}
+          className="self-end"
+        >
+          Clear filters
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
         <p className="text-sm text-muted-foreground">
           Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}

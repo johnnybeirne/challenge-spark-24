@@ -31,6 +31,7 @@ interface LeaderboardEntry extends ProfileBio {
 
 const Leaderboard = () => {
   const { state, authUser } = useAppState();
+  const { isAdmin } = useUserRole();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

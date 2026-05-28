@@ -110,12 +110,12 @@ const Leaderboard = () => {
         });
         // Pad to 5 with random fake builders (not on the waitlist).
         const FAKES = [
-          { name: "Alex R.", bio: "Founder coaching SaaS teams on retention." },
-          { name: "Priya S.", bio: "Helping creators launch their first paid offer." },
-          { name: "Marcus T.", bio: "B2B sales strategist turned indie builder." },
-          { name: "Niamh O.", bio: "Productising consulting for agency owners." },
-          { name: "Diego F.", bio: "No-code maker shipping weekend experiments." },
-          { name: "Hannah K.", bio: "Wellness brand operator and community builder." },
+          { name: "Alex R." },
+          { name: "Priya S." },
+          { name: "Marcus T." },
+          { name: "Niamh O." },
+          { name: "Diego F." },
+          { name: "Hannah K." },
         ];
         const realNames = new Set(mapped.map((m) => m.name.toLowerCase()));
         const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
@@ -129,8 +129,8 @@ const Leaderboard = () => {
             direct_referral_count: 0,
             indirect_referral_count: 0,
             score: 0,
-            bio: f.bio,
           });
+
         }
         setEntries(padded);
       }

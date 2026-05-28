@@ -212,7 +212,7 @@ const AdminBios = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
@@ -229,6 +229,54 @@ const AdminBios = () => {
           />
         </div>
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
+        <Input
+          placeholder="Filter first name"
+          value={firstNameQ}
+          onChange={(e) => setFirstNameQ(e.target.value)}
+        />
+        <Input
+          placeholder="Filter surname"
+          value={surnameQ}
+          onChange={(e) => setSurnameQ(e.target.value)}
+        />
+        <div>
+          <Label className="text-xs text-muted-foreground">Joined from</Label>
+          <Input type="date" value={joinedFrom} onChange={(e) => setJoinedFrom(e.target.value)} />
+        </div>
+        <div>
+          <Label className="text-xs text-muted-foreground">Joined to</Label>
+          <Input type="date" value={joinedTo} onChange={(e) => setJoinedTo(e.target.value)} />
+        </div>
+        <Button
+          variant="ghost"
+          onClick={() => { setQ(""); setFirstNameQ(""); setSurnameQ(""); setJoinedFrom(""); setJoinedTo(""); }}
+          className="self-end"
+        >
+          Clear filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <p className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}
+        </p>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-muted-foreground">Sort:</span>
+          <Button size="sm" variant={sortKey === "first_name" ? "secondary" : "ghost"} onClick={() => toggleSort("first_name")}>
+            First name <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <Button size="sm" variant={sortKey === "surname" ? "secondary" : "ghost"} onClick={() => toggleSort("surname")}>
+            Surname <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <Button size="sm" variant={sortKey === "created_at" ? "secondary" : "ghost"} onClick={() => toggleSort("created_at")}>
+            Joined <ArrowUpDown className="h-3 w-3 ml-1" />
+          </Button>
+          <span className="text-muted-foreground">({sortDir})</span>
+        </div>
+      </div>
+
 
       {loading ? (
         <div className="flex justify-center py-12"><Spinner /></div>

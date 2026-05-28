@@ -25,7 +25,7 @@ const EditDay1Button = ({
   variant = "ghost",
   size = "sm",
   className,
-  label = "Edit Your Answers",
+  label = "Need to edit your original answers?",
   redirectTo = "/challenge/day-1",
 }: Props) => {
   const { state } = useAppState();

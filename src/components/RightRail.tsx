@@ -59,16 +59,15 @@ const RightRail = () => {
     return formatName(name);
   };
 
-  // Live top challengers — pulled from waitlist referral leaders.
-  // Always pad with 3 random fake builders (not on the waitlist) so the
-  // leaderboard never looks empty.
+  // Live top challengers — mirrors the Leaderboard: real waitlist leaders first,
+  // then padded with the same fixed fake builders (in the same order) to 5.
   const FAKE_BUILDERS: { name: string; pts: number }[] = [
-    { name: "Alex R.", pts: 320 },
-    { name: "Priya S.", pts: 260 },
-    { name: "Marcus T.", pts: 210 },
-    { name: "Niamh O.", pts: 180 },
-    { name: "Diego F.", pts: 150 },
-    { name: "Hannah K.", pts: 120 },
+    { name: "Alex R.", pts: 0 },
+    { name: "Priya S.", pts: 0 },
+    { name: "Marcus T.", pts: 0 },
+    { name: "Niamh O.", pts: 0 },
+    { name: "Diego F.", pts: 0 },
+    { name: "Hannah K.", pts: 0 },
   ];
   const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
   useEffect(() => {
@@ -80,17 +79,17 @@ const RightRail = () => {
         .gt("confirmed_invites", 0)
         .order("confirmed_invites", { ascending: false })
         .order("created_at", { ascending: true })
-        .limit(3);
+        .limit(5);
       if (cancelled) return;
       const realRows = (data ?? []).map((r: { name: string | null; first_name: string | null; surname: string | null; confirmed_invites: number | null }) => ({
         name: formatFromParts(r.first_name, r.surname, r.name),
         pts: r.confirmed_invites ?? 0,
       }));
-      // Always add 3 random fake builders that are NOT on the waitlist.
+      // Pad to 5 using the same fixed fake builders the Leaderboard uses (same order).
       const realNames = new Set(realRows.map((r) => r.name.toLowerCase()));
       const pool = FAKE_BUILDERS.filter((f) => !realNames.has(f.name.toLowerCase()));
-      const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
-      setTopChallengers([...realRows, ...shuffled]);
+      const needed = Math.max(0, 5 - realRows.length);
+      setTopChallengers([...realRows, ...pool.slice(0, needed)]);
     })();
     return () => { cancelled = true; };
   }, [points]);

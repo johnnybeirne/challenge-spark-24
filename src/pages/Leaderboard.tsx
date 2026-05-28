@@ -36,7 +36,7 @@ const Leaderboard = () => {
   const [tab, setTab] = useState("participants");
   const [searchParams] = useSearchParams();
   const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
-  const focusRef = useRef<HTMLDivElement | null>(null);
+  const focusRef = useRef<HTMLButtonElement | null>(null);
   const [selected, setSelected] = useState<(ProfileBio & { name: string; score: number; isUser?: boolean }) | null>(null);
 
   useEffect(() => {

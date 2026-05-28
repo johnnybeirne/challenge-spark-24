@@ -54,18 +54,18 @@ const CountdownBottomBar = () => {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 transition-all duration-300",
-        "bottom-20 lg:bottom-4",
+        "pointer-events-none fixed inset-x-0 z-30 transition-all duration-300",
+        "bottom-20 lg:bottom-0",
         visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
       )}
       aria-hidden={!visible}
     >
       <div
         className={cn(
-          "pointer-events-auto inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-md",
+          "pointer-events-auto flex w-full items-center justify-center gap-2 border-t px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md",
           urgent
             ? "border-destructive/30 bg-destructive/10 text-destructive"
-            : "border-foreground/80 bg-foreground/[0.03] text-muted-foreground",
+            : "border-foreground/20 bg-background/80 text-muted-foreground",
         )}
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
@@ -77,6 +77,7 @@ const CountdownBottomBar = () => {
         </span>
       </div>
     </div>
+  );
   );
 };
 

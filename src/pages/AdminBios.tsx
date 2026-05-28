@@ -513,14 +513,6 @@ const AdminBios = () => {
           </CardContent>
         </Card>
       )}
-                    <Pencil className="h-3 w-3 mr-1" /> Edit
-                  </Button>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-w-lg">

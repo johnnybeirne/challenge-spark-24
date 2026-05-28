@@ -82,13 +82,14 @@ const AdminBios = () => {
         .from("profiles")
         .select(
           "user_id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at"
-        )
-        .order("created_at", { ascending: false })
-        .limit(1000),
       supabase
         .from("waitlist_signups")
         .select(
-          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position"
+          "id, email, name, first_name, surname, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url, created_at, referral_code, referred_by_code, confirmed_invites, current_tier, waitlist_position, suspected_self_referral"
+        )
+        .order("created_at", { ascending: false })
+        .limit(2000),
+
         )
         .order("created_at", { ascending: false })
         .limit(2000),

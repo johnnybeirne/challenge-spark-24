@@ -67,6 +67,8 @@ const AdminBios = () => {
   const [joinedTo, setJoinedTo] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [filter, setFilter] = useState<"all" | "referred" | "direct" | "active_inviters" | "flagged">("all");
+
   const [editing, setEditing] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);

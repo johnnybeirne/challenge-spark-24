@@ -52,10 +52,16 @@ const Leaderboard = () => {
       if (signups) {
         const userCode = state.user?.inviteCode;
         const mapped: LeaderboardEntry[] = signups.map((s: any) => {
-          const display =
-            (s.first_name && s.surname && s.first_name !== s.surname)
-              ? `${s.first_name} ${s.surname}`
-              : (s.name || s.first_name || "Builder");
+          const lastInitial = (last: string) => `${last.charAt(0).toUpperCase()}.`;
+          let display: string;
+          if (s.first_name && s.surname && s.first_name !== s.surname) {
+            display = `${s.first_name} ${lastInitial(s.surname)}`;
+          } else if (s.name) {
+            const parts = String(s.name).trim().split(/\s+/);
+            display = parts.length >= 2 ? `${parts[0]} ${lastInitial(parts[parts.length - 1])}` : parts[0];
+          } else {
+            display = s.first_name || "Builder";
+          }
           const direct = s.confirmed_invites ?? 0;
           return {
             name: display,

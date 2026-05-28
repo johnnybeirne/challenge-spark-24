@@ -99,8 +99,6 @@ const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [firstNameQ, setFirstNameQ] = useState("");
-  const [surnameQ, setSurnameQ] = useState("");
   const [joinedFrom, setJoinedFrom] = useState("");
   const [joinedTo, setJoinedTo] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");

@@ -50,7 +50,7 @@ const DictatedTextarea = React.forwardRef<HTMLTextAreaElement, Props>(
               }}
               title="Start again"
               aria-label="Start again"
-              className="flex h-8 items-center justify-center gap-1 rounded-full border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="flex h-8 items-center justify-center gap-1 rounded-full border-2 border-foreground bg-background px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Start again</span>

@@ -350,7 +350,7 @@ const Leaderboard = () => {
                   </div>
                   <div className="min-w-0">
                     <DialogTitle className="text-base">{selected.name}</DialogTitle>
-                    <p className="text-xs text-muted-foreground">{selected.score} pts</p>
+                    {isAdmin && <p className="text-xs text-muted-foreground">{selected.score} pts</p>}
                   </div>
                 </div>
               </DialogHeader>

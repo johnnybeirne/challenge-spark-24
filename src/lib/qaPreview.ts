@@ -33,6 +33,8 @@ export interface QaPreviewState {
   auth: QaAuth;
   flags: QaFlags;
   assessmentMode?: QaAssessmentMode;
+  /** ISO date string. When set, the app treats the user as if they joined on this date. */
+  simulatedJoinedAt?: string | null;
 }
 
 const KEY = "leadioPreviewState";

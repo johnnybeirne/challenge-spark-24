@@ -167,7 +167,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  const goBack = () => setStep(Math.max(0, (step as number) - 1) as Step);
   const goBack = () => setStep(Math.max(1, (step as number) - 1) as Step);
   // Persist foundation answers progressively so refresh doesn't wipe them.
   const persistFoundation = (patch: Partial<SetupData>) => {

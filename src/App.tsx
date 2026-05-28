@@ -53,6 +53,7 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser from "@/pages/AdminViewAsUser";
 import AdminTestAccounts from "@/pages/AdminTestAccounts";
+import AdminBios from "@/pages/AdminBios";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
 import AdminChallengeDays from "@/pages/AdminChallengeDays";
@@ -222,6 +223,7 @@ const App = () => (
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<AdminTestAccounts />} />
+                <Route path="bios" element={<AdminBios />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
                 <Route path="coupons" element={<AdminCoupons />} />

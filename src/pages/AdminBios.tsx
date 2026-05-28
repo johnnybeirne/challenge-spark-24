@@ -241,7 +241,16 @@ const AdminBios = () => {
       return 0;
     });
     return out;
-  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir]);
+  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir, filter]);
+
+  const totals = useMemo(() => {
+    const total = rows.length;
+    const referred = rows.filter((r) => !!r.referred_by_code).length;
+    const inviters = rows.filter((r) => (r.confirmed_invites ?? 0) > 0).length;
+    const totalInvites = rows.reduce((sum, r) => sum + (r.confirmed_invites ?? 0), 0);
+    const flagged = rows.filter((r) => r.suspected_self_referral).length;
+    return { total, referred, inviters, totalInvites, flagged };
+  }, [rows]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));

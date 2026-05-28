@@ -129,13 +129,43 @@ const AdminBios = () => {
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return rows;
-    return rows.filter((r) =>
-      [r.name, r.first_name, r.surname, r.email]
+    const fn = firstNameQ.trim().toLowerCase();
+    const sn = surnameQ.trim().toLowerCase();
+    const fromT = joinedFrom ? new Date(joinedFrom).getTime() : null;
+    const toT = joinedTo ? new Date(joinedTo).getTime() + 86_400_000 : null;
+    const out = rows.filter((r) => {
+      if (s && ![r.name, r.first_name, r.surname, r.email]
         .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(s))
-    );
-  }, [rows, q]);
+        .some((v) => String(v).toLowerCase().includes(s))) return false;
+      if (fn && !String(r.first_name || "").toLowerCase().includes(fn)) return false;
+      if (sn && !String(r.surname || "").toLowerCase().includes(sn)) return false;
+      if (fromT || toT) {
+        const t = r.created_at ? new Date(r.created_at).getTime() : 0;
+        if (fromT && t < fromT) return false;
+        if (toT && t >= toT) return false;
+      }
+      return true;
+    });
+    const dir = sortDir === "asc" ? 1 : -1;
+    out.sort((a, b) => {
+      const av = sortKey === "created_at"
+        ? (a.created_at ? new Date(a.created_at).getTime() : 0)
+        : String((a as any)[sortKey] || "").toLowerCase();
+      const bv = sortKey === "created_at"
+        ? (b.created_at ? new Date(b.created_at).getTime() : 0)
+        : String((b as any)[sortKey] || "").toLowerCase();
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
+    return out;
+  }, [rows, q, firstNameQ, surnameQ, joinedFrom, joinedTo, sortKey, sortDir]);
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir(key === "created_at" ? "desc" : "asc"); }
+  };
+
 
   const openEdit = (r: BioRow) => {
     setEditing(r);

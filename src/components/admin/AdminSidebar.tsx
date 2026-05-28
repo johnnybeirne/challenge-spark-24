@@ -34,6 +34,7 @@ const items = [
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },
   { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
   { title: "Test Accounts", url: "/owner-console/test-accounts", icon: FlaskConical },
+  { title: "User Bios", url: "/owner-console/bios", icon: IdCard },
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Feature Overview", url: "/owner-console/features", icon: FileText },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },

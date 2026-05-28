@@ -418,6 +418,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [state, setStateRaw] = useState<AppState>(defaultState);
   const [hydrated, setHydrated] = useState(false);
   const prevUnlocksRef = useRef<string[]>([]);
+  const qa = useQaPreview();
+
+  // Display state with any QA simulated-date override applied.
+  // The override is NEVER persisted — useSupabaseSync below receives the raw state.
+  const displayState = useMemo(
+    () => (qa.active && qa.simulatedJoinedAt ? applySimulatedDate(state, qa.simulatedJoinedAt) : state),
+    [state, qa.active, qa.simulatedJoinedAt]
+  );
 
   // Hydrate state from Supabase when user authenticates
   useEffect(() => {

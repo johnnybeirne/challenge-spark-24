@@ -27,7 +27,7 @@ const items = [
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   
   { title: "Signups", url: "/owner-console/signups", icon: UserPlus },
-  { title: "Waitlist", url: "/owner-console/waitlist", icon: Mail },
+  
   { title: "Waitlist Email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },

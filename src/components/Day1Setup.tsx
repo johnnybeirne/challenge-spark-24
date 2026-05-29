@@ -604,24 +604,26 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
               : null;
 
+          const step2Messages = [
+            `Perfect${fn}.`,
+            "I now know who you're helping.",
+            "Now let's understand what's getting in their way.",
+            "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
                 <TypedSequence
                   resetKey="step2-intro"
-                  messages={[
-                    `Perfect${fn}.`,
-                    "I now know who you're helping.",
-                    "Now let's understand what's getting in their way.",
-                    "What is frustrating them right now?",
-                    "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
-                  ]}
+                  messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
               )}
 
               {step2Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step2Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus

@@ -215,7 +215,7 @@ const App = () => (
                 <Route path="challenge-days" element={<AdminChallengeDays />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="signups" element={<AdminSignups />} />
-                <Route path="waitlist" element={<AdminWaitlist />} />
+                
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
                 <Route path="newsletter" element={<AdminNewsletter />} />
                 <Route path="activity" element={<AdminActivityFeed />} />

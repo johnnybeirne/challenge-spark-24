@@ -51,8 +51,7 @@ import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
-import AdminViewAsUser from "@/pages/AdminViewAsUser";
-import AdminTestAccounts from "@/pages/AdminTestAccounts";
+import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";
 import AdminBios from "@/pages/AdminBios";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
@@ -161,7 +160,7 @@ const App = () => (
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
-                <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/challenger-dashboard" />} />
+                <Route path="/let-me-in" element={<AdminViewAsUserAutoLaunch redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
 
@@ -221,7 +220,7 @@ const App = () => (
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
-                <Route path="test-accounts" element={<AdminTestAccounts />} />
+                <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />
                 <Route path="bios" element={<AdminBios />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
                 <Route path="features" element={<FeatureOverviewPage mode="admin" />} />

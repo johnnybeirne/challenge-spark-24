@@ -781,9 +781,10 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey={`step4-ack-${audienceType}`}
                 messages={[
+                  `Perfect${fn}.`,
                   audienceType === "b2b"
-                    ? `Perfect${fn}. We'll build this for a business audience.`
-                    : `Perfect${fn}. We'll build this for an individual audience.`,
+                    ? "Let's focus on the business professionals you want to help."
+                    : "Let's focus on the people you want to help and the result you want them to achieve.",
                 ]}
                 onComplete={() => {
                   setStep(5);

@@ -787,14 +787,18 @@ const AdminBios = () => {
                               }
                             }}
                           />
-                        </td>
                         <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                           {r.email || "—"}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
+                          {formatDate(r.created_at)}
                         </td>
                         <td className="px-3 py-2 text-right tabular-nums">
                           <span className={isTop ? "font-semibold text-amber-700" : refs > 0 ? "font-semibold" : ""}>
                             {refs || "—"}
                           </span>
+                        </td>
+
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap">
                           {r.referred_by_code ? (

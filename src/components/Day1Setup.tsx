@@ -605,8 +605,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step2Messages = [
-            `Perfect${fn}.`,
-            "I now know who you're helping.",
             "Now let's understand what's getting in their way.",
             "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
           ];
@@ -685,8 +683,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step3Messages = [
-            `Great${fn}.`,
-            "We know who you're helping and what's getting in their way.",
             "Now let's define the outcome.",
             "Describe the result, improvement, or change they'll experience by the end of your challenge.",
           ];
@@ -811,7 +807,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            `Perfect${fn}.`,
             audienceType === "b2b"
               ? "This challenge is designed to help business professionals achieve a meaningful result."
               : "This challenge is designed to help individual people improve an area of their lives.",
@@ -895,7 +890,6 @@ const Day1Setup = ({ onComplete }: Props) => {
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
           const step6Messages = [
-            `Great choice${fn}.`,
             `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
             "Tell me about the people you're helping.",
             "The more specific you are, the better I can tailor the challenge.",

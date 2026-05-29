@@ -933,13 +933,19 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 7 && audienceType && (() => {
-          const who = topicHint.trim();
-          const pain = problem.trim();
-          const result = how.trim();
-
           // Strip leading filler so the words compose inside a sentence.
           const strip = (s: string) =>
             s.replace(/^they(['’]ll| will)?\s+/i, "").replace(/^\s*/, "").replace(/\.$/, "");
+
+          // "Who you help" lives in topicHint (step 6 in the AI-led flow) but falls
+          // back to `audience` (step 1 foundation flow) so the summary never breaks.
+          const whoRaw = (topicHint?.trim() || audience?.trim() || "");
+          const painRaw = problem?.trim() || "";
+          const resultRaw = how?.trim() || "";
+
+          const who = whoRaw ? strip(whoRaw) : "";
+          const pain = painRaw ? strip(painRaw).toLowerCase() : "";
+          const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
 
           const audiencePhrase =
             audienceType === "b2b" ? "businesses and professionals" : "individuals and consumers";
@@ -950,28 +956,31 @@ const Day1Setup = ({ onComplete }: Props) => {
             "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
             "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
           };
-          const methodPhrase = methodMap[challengeType] ?? "a clear, day-by-day structure";
+          const methodPhrase = challengeType
+            ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
+            : "";
 
           const promise = who && pain && result
-            ? `Help ${strip(who)} overcome ${strip(pain).toLowerCase()} so they can ${strip(result).toLowerCase()} — using ${methodPhrase}.`
+            ? `Help ${who} overcome ${pain} so they can ${result}${methodPhrase ? ` — using ${methodPhrase}` : ""}.`
             : null;
 
-          // Summary as a list of paragraphs. Each becomes its own line/paragraph.
+          // Summary as a list of paragraphs. Sections with missing data are hidden
+          // rather than rendered as broken sentences (e.g. "You're helping .").
           const summary: string[] = [
             `${Fn ? `${Fn}based` : "Based"} on what you've told me, this is what I have.`,
-            `You're creating a challenge for ${audiencePhrase}.`,
-            `You're helping ${strip(who)}.`,
-            `Right now, they're struggling with ${strip(pain).toLowerCase()}.`,
-            `By the end of your challenge, they'll ${strip(result).toLowerCase()}.`,
-            `You'll help them get there using ${methodPhrase}.`,
-            `This gives your challenge a clear promise.`,
-          ];
+            audienceType ? `You're creating a challenge for ${audiencePhrase}.` : null,
+            who ? `You're helping ${who}.` : null,
+            pain ? `Right now, they're struggling with ${pain}.` : null,
+            result ? `By the end of your challenge, they'll ${result}.` : null,
+            methodPhrase ? `You'll help them get there using ${methodPhrase}.` : null,
+            promise ? `This gives your challenge a clear promise.` : null,
+          ].filter((line): line is string => Boolean(line));
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step7Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step7-summary-${audienceType}-${challengeType}`}
+                  resetKey={`step7-summary-${audienceType}-${challengeType}-${who.length}-${pain.length}-${result.length}`}
                   messages={summary}
                   onComplete={() => setStep7Phase("reveal")}
                 />

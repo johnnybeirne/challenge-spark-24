@@ -268,13 +268,8 @@ const ChallengeRecord = () => {
       </Section>
 
       <Section
-        eyebrow={`Day 2 · ${
-          dayStatus(2) === "complete"
-            ? "Complete"
-            : dayStatus(2) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(2)}
+
         title="Lead Magnet Quiz"
         description="The quiz you designed as the entry point to your challenge."
         status={dayStatus(2)}

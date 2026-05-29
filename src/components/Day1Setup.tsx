@@ -886,9 +886,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
           const step6Messages = [
-            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
-            "Tell me about the people you're helping.",
-            "The more specific you are, the better I can tailor the challenge.",
+            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me about them in detail.`,
           ];
 
           return (

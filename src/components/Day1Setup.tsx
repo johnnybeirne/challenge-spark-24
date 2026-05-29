@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2, Users, AlertCircle, Target, Quote, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -326,6 +327,7 @@ const FoundationStep = ({
 
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
+  const navigate = useNavigate();
 
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
@@ -405,12 +407,16 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   // Top-right confirmation that the latest answer has been written to the
-  // user's profile (memory auto-syncs to user_memory via useSupabaseSync).
+  // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).
   const profileSaved = (label: string) =>
-    toast.success("Saved to your profile", {
+    toast.success("Your dashboard is updated", {
       description: label,
       position: "top-right",
-      duration: 2500,
+      duration: 3500,
+      action: {
+        label: "Dashboard",
+        onClick: () => navigate("/challenger-dashboard"),
+      },
     });
 
   const handleFoundationNext = (current: 1 | 2 | 3) => {
@@ -448,9 +454,9 @@ const Day1Setup = ({ onComplete }: Props) => {
       trackEvent("memory_created", { source: "day1_foundation" });
       profileSaved("The outcome you'll deliver");
       pushNotification({
-        title: "Profile updated",
-        message: "We've updated your profile with your challenge answers.",
-        href: "/profile",
+        title: "Dashboard updated",
+        message: "Your dashboard now reflects your latest challenge answers.",
+        href: "/challenger-dashboard",
         dedupeKey: "day1_foundation_saved",
       });
       setStep7Phase("intro");
@@ -544,8 +550,8 @@ const Day1Setup = ({ onComplete }: Props) => {
     trackEvent("memory_created", { source: "day1_assessment" });
     profileSaved("Challenge direction confirmed");
     pushNotification({
-      title: "Challenge direction saved",
-      message: "We've updated your profile with your challenge answers.",
+      title: "Dashboard updated",
+      message: "Your dashboard now reflects your latest challenge answers.",
       href: "/challenger-dashboard",
       dedupeKey: "day1_assessment_saved",
     });

@@ -256,6 +256,13 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const [step, setStep] = useState<Step>(initialStep);
 
+  // Conversational sub-phases for the AI-led steps.
+  type ConvPhase = "intro" | "choose" | "ack";
+  const [step4Phase, setStep4Phase] = useState<ConvPhase>(saved?.audienceType ? "choose" : "intro");
+  const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
+
+  const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
+
   // Foundation answers
   const [problem, setProblem] = useState<string>(saved?.problem ?? "");
   const [audience, setAudience] = useState<string>(saved?.audience ?? "");

@@ -56,7 +56,11 @@ const TypedSequence = ({
     if (idx >= messages.length) {
       if (!doneRef.current) {
         doneRef.current = true;
-        onComplete?.();
+        // Final read-pause before advancing — gives the user a moment to absorb.
+        const last = messages[messages.length - 1] ?? "";
+        const finalPause = last.length > 60 ? 1300 : last.length > 30 ? 1000 : 800;
+        const t = setTimeout(() => onComplete?.(), finalPause);
+        return () => clearTimeout(t);
       }
       return;
     }
@@ -71,18 +75,21 @@ const TypedSequence = ({
         setCurrent(full.slice(0, i));
         if (i >= full.length) {
           clearInterval(interval);
+          // Pause after each message — longer for longer messages.
+          const betweenPause = full.length > 60 ? 1100 : full.length > 30 ? 850 : 650;
           setTimeout(() => {
             setShown((prev) => [...prev, full]);
             setCurrent("");
             setIdx((prevIdx) => prevIdx + 1);
-          }, 450);
+          }, betweenPause);
         }
       }, 22);
       return () => clearInterval(interval);
-    }, idx === 0 ? 350 : 650);
+    }, idx === 0 ? 400 : 750);
     return () => clearTimeout(dotsTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
+
 
   return (
     <div className="flex items-start gap-3">

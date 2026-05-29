@@ -446,6 +446,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
+      profileSaved("The outcome you'll deliver");
       pushNotification({
         title: "Profile updated",
         message: "We've updated your profile with your challenge answers.",

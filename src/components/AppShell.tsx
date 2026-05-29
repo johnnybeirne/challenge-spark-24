@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
-import Footer from "./Footer";
+
 import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
 import TopBar from "./TopBar";
@@ -87,7 +87,6 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
           <div className="min-w-0 flex-1">
             {showNav && authenticated && <BackButton />}
             <Outlet />
-            <Footer />
           </div>
           {showChallengeSidebar && <RightRail />}
         </div>

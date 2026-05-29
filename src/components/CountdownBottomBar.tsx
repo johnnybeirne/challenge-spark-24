@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
@@ -9,17 +9,14 @@ import {
 } from "@/lib/challengeWindow";
 
 /**
- * Subtle, transparent bottom bar that surfaces the rolling 72-hour
- * challenge deadline as H:MM:SS. Hides on scroll-down, reappears
- * on scroll-up or near the top so it never blocks reading.
+ * Solid bottom bar that surfaces the rolling 72-hour challenge deadline
+ * as H:MM:SS without attaching scroll listeners or intercepting gestures.
  */
 const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: boolean }) => {
   const { state } = useAppState();
   const started = !!state.challenge?.startedAt;
   const endsAt = getChallengeEndsAt(state.challenge?.startedAt, state.challenge?.endsAt);
   const [now, setNow] = useState(() => Date.now());
-  const [visible, setVisible] = useState(true);
-  const lastY = useRef(0);
 
   // Tick every second for live seconds display.
   useEffect(() => {
@@ -27,46 +24,24 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
     return () => window.clearInterval(id);
   }, []);
 
-  // Hide on scroll down, show on scroll up or near top.
-  useEffect(() => {
-    lastY.current = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      const delta = y - lastY.current;
-      if (y < 80) setVisible(true);
-      else if (delta > 6) setVisible(false);
-      else if (delta < -6) setVisible(true);
-      lastY.current = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   if (!started) return null;
   const remaining = getRemainingMs(endsAt, now);
   if (remaining <= 0) return null;
 
   const { days, hours, minutes, seconds } = formatRemaining(remaining);
-  const urgent = remaining < 6 * 60 * 60 * 1000;
   const pad = (n: number) => n.toString().padStart(2, "0");
   const sep = <span className="opacity-60">·</span>;
 
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-30 transition-all duration-300",
+        "pointer-events-none fixed inset-x-0 z-30",
         "bottom-20 lg:bottom-0",
         sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]",
-        visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
       )}
-      aria-hidden={!visible}
     >
       <div
-        className={cn(
-          "pointer-events-auto flex w-full items-center justify-center gap-3 border-t border-[#EA580C] bg-[#EA580C] px-6 py-4 text-base font-semibold text-white shadow-sm sm:text-lg",
-        )}
-
-
+        className="flex w-full items-center justify-center gap-3 border-t border-countdown bg-countdown px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm sm:text-lg"
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
       >

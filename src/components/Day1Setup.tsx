@@ -264,7 +264,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
+  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(1); };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";

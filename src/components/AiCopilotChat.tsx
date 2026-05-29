@@ -38,6 +38,7 @@ const AiCopilotChat = () => {
   const [starters, setStarters] = useState<string[]>([]);
   const [fallback, setFallback] = useState<string>(DEFAULT_FALLBACK);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  const suppressClickRef = useRef(false);
   const firstName = state.user?.name?.split(" ")[0] || "";
   const personalisedWelcome = welcome === DEFAULT_WELCOME ? `What do you want to work on next, ${firstName}?` : welcome;
 
@@ -153,7 +154,15 @@ const AiCopilotChat = () => {
       {/* Floating bubble — bigger, clearly labelled, draggable */}
       {!open && (
         <button
+          onClick={() => {
+            if (suppressClickRef.current) {
+              suppressClickRef.current = false;
+              return;
+            }
+            handleOpen();
+          }}
           onPointerDown={(e) => {
+            if (e.pointerType !== "mouse") return;
             e.preventDefault();
             const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
             const startX = e.clientX;
@@ -174,10 +183,9 @@ const AiCopilotChat = () => {
               document.removeEventListener("pointerup", onUp);
               document.removeEventListener("pointercancel", onUp);
               if (moved) {
+                suppressClickRef.current = true;
                 const finalPos = clampPos(origX + (ev.clientX - startX), origY + (ev.clientY - startY));
                 try { localStorage.setItem("chat_bubble_pos", JSON.stringify(finalPos)); } catch {}
-              } else {
-                handleOpen();
               }
             };
             document.addEventListener("pointermove", onMove);
@@ -186,8 +194,8 @@ const AiCopilotChat = () => {
           }}
           style={
             pos
-              ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto", touchAction: "none" }
-              : { touchAction: "none" }
+              ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto", touchAction: "manipulation" }
+              : { touchAction: "manipulation" }
           }
           className={`fixed ${pos ? "" : "bottom-6 right-6"} z-50 group flex items-center gap-3 pl-2 pr-5 py-2 rounded-full bg-card border-2 border-primary shadow-xl hover:shadow-2xl active:cursor-grabbing cursor-grab select-none ${
             !hasOpened ? "animate-bounce-in" : ""

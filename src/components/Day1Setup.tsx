@@ -825,7 +825,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey={`step5-ack-${challengeType}`}
                 messages={[
-                  "Got it.",
+                  `Got it${fn}.`,
                   `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
                 ]}
                 onComplete={() => { setStep6Phase("intro"); setStep(6); }}

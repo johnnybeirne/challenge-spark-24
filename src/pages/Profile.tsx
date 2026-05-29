@@ -247,9 +247,9 @@ const Profile = () => {
           </h1>
         </header>
 
-        {/* Basic details */}
+        {/* Contact details */}
         <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-bold">Basic details</h2>
+          <h2 className="text-lg font-bold">Contact details</h2>
           <div className="flex items-center gap-4">
             <img
               src={avatarSrc}

@@ -315,7 +315,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      setStep(3);
+      setStep(7);
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });

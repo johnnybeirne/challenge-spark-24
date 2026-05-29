@@ -809,21 +809,27 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
-        {step === 5 && (
+        {step === 5 && (() => {
+          const step5Messages = [
+            `Perfect${fn}.`,
+            audienceType === "b2b"
+              ? "This challenge is designed to help business professionals achieve a meaningful result."
+              : "This challenge is designed to help individual people improve an area of their lives.",
+            "What result do you want participants to achieve?",
+          ];
+          return (
           <div className="space-y-6 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
-                resetKey="step5-intro"
-                messages={[
-                  `${firstName}, what result do you want participants to achieve?`,
-                  "Choose the primary outcome participants should achieve by the end of your challenge.",
-                ]}
+                resetKey={`step5-intro-${audienceType}`}
+                messages={step5Messages}
                 onComplete={() => setStep5Phase("choose")}
               />
             )}
 
             {step5Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
+                <StaticAi messages={step5Messages} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                   {challengeOptions.map((opt) => {
@@ -861,19 +867,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                 </div>
               </div>
             )}
-
-            {step5Phase === "ack" && challengeType && (
-              <TypedSequence
-                resetKey={`step5-ack-${challengeType}`}
-                messages={[
-                  `Got it${fn}.`,
-                  `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
-                ]}
-                onComplete={() => { setStep6Phase("intro"); setStep(6); }}
-              />
-            )}
           </div>
-        )}
+          );
+        })()}
 
         {step === 6 && (() => {
           const placeholderMap: Record<string, string> = {

@@ -990,7 +990,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             result ? <>By the end of this challenge, they'll have {hl(result)}.</> : null,
             methodPhrase ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</> : null,
             <>{closing}</>,
-          ].filter((n): n is React.ReactNode => Boolean(n));
+          ].filter(Boolean) as React.ReactNode[];
 
           return (
             <div className="space-y-6 animate-fade-in">

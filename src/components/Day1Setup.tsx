@@ -766,8 +766,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey="step5-intro"
                 messages={[
-                  "Now let's define the result.",
-                  "When people complete your challenge, what do you want them to walk away with?",
+                  `${firstName}, what result do you want participants to achieve?`,
+                  "Choose the primary outcome participants should achieve by the end of your challenge.",
                 ]}
                 onComplete={() => setStep5Phase("choose")}
               />
@@ -777,7 +777,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               <div className="space-y-5 animate-fade-in">
                 <div className="flex">
                   <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                    When people complete your challenge, what do you want them to walk away with?
+                    <p className="font-semibold text-foreground mb-1">{firstName}, what result do you want participants to achieve?</p>
+                    <p>Choose the primary outcome participants should achieve by the end of your challenge.</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

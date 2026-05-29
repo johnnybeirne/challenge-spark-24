@@ -124,7 +124,6 @@ const Profile = () => {
   const aiCards = useMemo(() => {
     const cards: { label: string; value: string }[] = [];
     const map: Record<string, string> = {
-      day1_promise: "Challenge promise",
       day1_transformation: "Challenge transformation",
       day1_quick_win: "Quick win idea",
       day1_outcome: "Challenge taker outcome",

@@ -1,17 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save, Quote } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Loader2, Link as LinkIcon, Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useAppState } from "@/context/AppContext";
-import { getSetup, SETUP_KEY } from "@/components/Day1Setup";
-import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { pushNotification } from "@/lib/notifications";
 import { trackEvent } from "@/lib/analytics";
-import RestartDay1Button from "@/components/RestartDay1Button";
+import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 type ProfileRow = {
@@ -26,16 +22,6 @@ type ProfileRow = {
   instagram_url?: string | null;
   youtube_url?: string | null;
   website_url?: string | null;
-};
-
-const readJsonObject = (value: unknown): Record<string, string> => {
-  if (typeof value !== "string") return {};
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
 };
 
 const splitName = (full?: string | null): { first: string; last: string } => {

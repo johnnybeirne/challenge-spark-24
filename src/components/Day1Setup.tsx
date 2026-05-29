@@ -27,6 +27,23 @@ const JohnnyAvatar = () => (
   />
 );
 
+// Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
+const DelayedFeedback = ({ text }: { text: string }) => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div className="flex animate-fade-in pt-1">
+      <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
+        {ready ? text : <span className="text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>}
+      </div>
+    </div>
+  );
+};
+
+
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.
 const TypedSequence = ({

@@ -191,12 +191,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const handleFoundationNext = (current: 1 | 2 | 3) => {
     if (current === 1) {
-      if (!problem.trim()) return;
-      persistFoundation({ problem: problem.trim() });
-      setStep(2);
-    } else if (current === 2) {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
+      setStep(2);
+    } else if (current === 2) {
+      if (!problem.trim()) return;
+      persistFoundation({ problem: problem.trim() });
       setStep(3);
     } else {
       if (!how.trim()) return;

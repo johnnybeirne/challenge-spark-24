@@ -261,6 +261,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
+  // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
+  const fn = firstName && firstName !== "there" ? `, ${firstName}` : "";
+  const Fn = firstName && firstName !== "there" ? `${firstName}, ` : "";
 
   // Foundation answers
   const [problem, setProblem] = useState<string>(saved?.problem ?? "");

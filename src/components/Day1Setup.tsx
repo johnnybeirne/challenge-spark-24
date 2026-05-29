@@ -248,7 +248,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 4 && persistedStep <= 8) return persistedStep as Step;
+    if (persistedStep === 2 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
     return 4;

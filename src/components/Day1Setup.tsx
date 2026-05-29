@@ -937,108 +937,70 @@ const Day1Setup = ({ onComplete }: Props) => {
           const pain = problem.trim();
           const result = how.trim();
 
-          // Strip a leading "they'll" / "they will" so it composes inside the promise sentence.
-          const stripThey = (s: string) =>
+          // Strip leading filler so the words compose inside a sentence.
+          const strip = (s: string) =>
             s.replace(/^they(['’]ll| will)?\s+/i, "").replace(/^\s*/, "").replace(/\.$/, "");
+
+          const audiencePhrase =
+            audienceType === "b2b" ? "businesses and professionals" : "individuals and consumers";
+
+          const methodMap: Record<string, string> = {
+            "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
+            "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
+            "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
+            "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
+          };
+          const methodPhrase = methodMap[challengeType] ?? "a clear, day-by-day structure";
+
           const promise = who && pain && result
-            ? `Help ${stripThey(who)} overcome ${stripThey(pain).toLowerCase()} so they can ${stripThey(result).toLowerCase()}.`
+            ? `Help ${strip(who)} overcome ${strip(pain).toLowerCase()} so they can ${strip(result).toLowerCase()} — using ${methodPhrase}.`
             : null;
+
+          // Summary as a list of paragraphs. Each becomes its own line/paragraph.
+          const summary: string[] = [
+            `${Fn || "Okay — "}here's what we've built together.`,
+            `You're creating a challenge for ${audiencePhrase}.`,
+            `You're helping ${strip(who)}.`,
+            `Right now, they're struggling with ${strip(pain).toLowerCase()}.`,
+            `By the end of your challenge, they'll ${strip(result).toLowerCase()}.`,
+            `You'll help them get there using ${methodPhrase}.`,
+            `This gives your challenge a clear promise.`,
+          ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step7Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step7-intro"
-                  messages={[
-                    `Thanks${fn}.`,
-                    "Give me a second to pull everything together...",
-                    "Based on what you've told me, here's what I'm seeing.",
-                  ]}
+                  resetKey={`step7-summary-${audienceType}-${challengeType}`}
+                  messages={summary}
                   onComplete={() => setStep7Phase("reveal")}
                 />
               )}
 
               {step7Phase === "reveal" && (
                 <div className="space-y-6 animate-fade-in">
-                  {/* Hero header */}
-                  <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8">
-                    <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
-                    <div className="relative space-y-3">
-                      <div className="inline-flex items-center gap-2 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary border border-primary/20">
-                        <Sparkles className="h-3.5 w-3.5" />
-                        Challenge Blueprint
-                      </div>
-                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-tight">
-                        {Fn}here's the challenge taking shape.
-                      </h2>
-                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                        A strategic read-back of everything you've told me. This becomes the foundation for your 3-day challenge.
-                      </p>
+                  {/* Render the full summary statically once typing finishes */}
+                  <div className="flex items-start gap-3">
+                    <JohnnyAvatar />
+                    <div className="flex-1 space-y-3 min-w-0 text-sm md:text-base leading-relaxed text-foreground">
+                      {summary.map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Promise — hero card */}
+                  {/* Challenge Promise */}
                   {promise && (
-                    <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg">
+                    <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
                       <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                       <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Your Challenge Promise</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                         <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
                           {promise}
                         </p>
                       </div>
                     </div>
                   )}
-
-                  {/* Three pillars */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {who && (
-                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
-                        <div className="flex items-center gap-2.5 mb-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                            <Users className="h-4.5 w-4.5" />
-                          </div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Audience</p>
-                        </div>
-                        <p className="text-sm leading-relaxed text-foreground">{who}</p>
-                      </div>
-                    )}
-                    {pain && (
-                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
-                        <div className="flex items-center gap-2.5 mb-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
-                            <AlertCircle className="h-4.5 w-4.5" />
-                          </div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Problem</p>
-                        </div>
-                        <p className="text-sm leading-relaxed text-foreground">{pain}</p>
-                      </div>
-                    )}
-                    {result && (
-                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
-                        <div className="flex items-center gap-2.5 mb-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                            <Target className="h-4.5 w-4.5" />
-                          </div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Outcome</p>
-                        </div>
-                        <p className="text-sm leading-relaxed text-foreground">{result}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Next step framing */}
-                  <div className="flex items-start gap-3 rounded-2xl bg-muted/40 border border-border/60 p-4 md:p-5">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                      <Compass className="h-4.5 w-4.5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-semibold text-foreground">What happens next</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Your AI co-pilot will sharpen this into a challenge people will actually want to take — hook, daily structure, and the tangible result by Day 3.
-                      </p>
-                    </div>
-                  </div>
 
                   <Button
                     size="lg"
@@ -1054,6 +1016,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             </div>
           );
         })()}
+
 
         {step === 8 && (
           <div className="space-y-5 animate-fade-in">

@@ -689,7 +689,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
                       />
-                      {problemFeedback && <DelayedFeedback text={problemFeedback} />}
+                      
                     </div>
                     <Button
                       size="lg"
@@ -765,7 +765,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                         }}
                       />
-                      {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
+                      
                     </div>
                     <Button
                       size="lg"
@@ -967,7 +967,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
                         }}
                       />
-                      {feedback && <DelayedFeedback text={feedback} />}
+                      
                     </div>
                     <Button
                       size="lg"

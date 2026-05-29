@@ -605,8 +605,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step2Messages = [
-            `Perfect${fn}.`,
-            "I now know who you're helping.",
             "Now let's understand what's getting in their way.",
             "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
           ];

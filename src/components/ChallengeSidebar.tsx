@@ -99,7 +99,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const formatDayDate = (offset: number) => {
       const d = new Date(startedAt);
       d.setDate(d.getDate() + offset);
-      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
     };
 
     const days = [1, 2, 3].map((n) => {

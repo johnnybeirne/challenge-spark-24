@@ -100,7 +100,9 @@ const AdminTestAccounts = () => {
       try {
         await navigator.clipboard.writeText(data.magic_link);
         toast.success("Magic link copied to clipboard");
-      } catch {}
+      } catch {
+        toast.info("Magic link created, but clipboard access was blocked.");
+      }
     }
     setTab("manage");
   };
@@ -258,7 +260,9 @@ const AdminTestAccounts = () => {
                             // (in case redirect_to is overridden by Supabase Site URL allow-list).
                             try {
                               localStorage.setItem("leadio_post_login_redirect", targetRoute);
-                            } catch {}
+                            } catch {
+                              // Continue with the magic-link redirect even if local storage is unavailable.
+                            }
                             const { data, error } = await supabase.functions.invoke("admin-test-account", {
                               body: {
                                 action: "magic_link",

@@ -74,7 +74,6 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
           <span className="h-2.5 w-2.5 rounded-full bg-primary" />
           <span className="font-semibold text-foreground">Learning assistant</span>
         </div>
-        <span className="text-xs text-muted-foreground">Topic: {topic}</span>
       </div>
 
       <div className="p-5 space-y-5">

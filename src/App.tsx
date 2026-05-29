@@ -62,7 +62,6 @@ import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminJvPartners from "@/pages/AdminJvPartners";
 import AdminSignups from "@/pages/AdminSignups";
-import AdminWaitlist from "@/pages/AdminWaitlist";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import AdminNewsletter from "@/pages/AdminNewsletter";
 import Unsubscribe from "@/pages/Unsubscribe";

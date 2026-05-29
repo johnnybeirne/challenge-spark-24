@@ -1,17 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save, Quote } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Loader2, Link as LinkIcon, Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useAppState } from "@/context/AppContext";
-import { getSetup, SETUP_KEY } from "@/components/Day1Setup";
-import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { pushNotification } from "@/lib/notifications";
 import { trackEvent } from "@/lib/analytics";
-import RestartDay1Button from "@/components/RestartDay1Button";
+import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 type ProfileRow = {
@@ -28,16 +24,6 @@ type ProfileRow = {
   website_url?: string | null;
 };
 
-const readJsonObject = (value: unknown): Record<string, string> => {
-  if (typeof value !== "string") return {};
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
-};
-
 const splitName = (full?: string | null): { first: string; last: string } => {
   if (!full) return { first: "", last: "" };
   const parts = full.trim().split(/\s+/);
@@ -45,7 +31,6 @@ const splitName = (full?: string | null): { first: string; last: string } => {
 };
 
 const Profile = () => {
-  const { state } = useAppState();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -62,11 +47,6 @@ const Profile = () => {
   const [website, setWebsite] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarSigned, setAvatarSigned] = useState<string | null>(null);
-
-  // Editable foundation answers
-  const [problem, setProblem] = useState("");
-  const [audience, setAudience] = useState("");
-  const [how, setHow] = useState("");
 
   useEffect(() => {
     let cancel = false;
@@ -111,52 +91,6 @@ const Profile = () => {
     };
   }, []);
 
-  const aiOutputs = state.challenge?.aiOutputs ?? {};
-  useEffect(() => {
-    const foundation = readJsonObject(aiOutputs.day1_foundation);
-    const assessment = readJsonObject(aiOutputs.day1_assessment);
-    const setup = getSetup();
-
-    setProblem(foundation.problem ?? assessment.problem ?? setup?.problem ?? "");
-    setAudience(foundation.audience ?? assessment.audience ?? setup?.audience ?? "");
-    setHow(foundation.how ?? assessment.how ?? setup?.how ?? state.memory.desiredOutcome ?? "");
-  }, [aiOutputs.day1_assessment, aiOutputs.day1_foundation, state.memory.desiredOutcome]);
-  const aiCards = useMemo(() => {
-    const cards: { label: string; value: string }[] = [];
-    const map: Record<string, string> = {
-      day1_transformation: "Challenge transformation",
-      day1_quick_win: "Quick win idea",
-      day1_outcome: "Challenge taker outcome",
-      day1_title: "Suggested challenge title",
-      day1_structure: "Suggested structure",
-    };
-    const stripFirstName = (v: string) => {
-      const fn = firstName.trim();
-      if (!fn) return v;
-      const escaped = fn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return v
-        .replace(new RegExp(`^${escaped}['’]s\\s+`, "i"), "")
-        .replace(new RegExp(`^${escaped}\\s+`, "i"), "")
-        .trim();
-    };
-    for (const [k, label] of Object.entries(map)) {
-      const v = aiOutputs[k];
-      if (v && typeof v === "string") {
-        const value = k === "day1_title" ? stripFirstName(v) : v;
-        cards.push({ label, value });
-      }
-    }
-    const builderKeys = Object.keys(aiOutputs)
-      .filter((k) => k.startsWith("day1_builder_"))
-      .sort();
-    builderKeys.forEach((k, i) => {
-      const v = aiOutputs[k];
-      if (v && typeof v === "string") {
-        cards.push({ label: `AI Coach note ${i + 1}`, value: v });
-      }
-    });
-    return cards;
-  }, [aiOutputs, firstName]);
 
   const handlePhoto = async (file?: File) => {
     if (!file || !profile?.user_id) return;
@@ -202,19 +136,6 @@ const Profile = () => {
 
       if (error) throw error;
 
-      // Update locally-saved challenge foundation answers too.
-      try {
-        const cur = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-        localStorage.setItem(
-          SETUP_KEY,
-          JSON.stringify({
-            ...cur,
-            problem: problem.trim(),
-            audience: audience.trim(),
-            how: how.trim(),
-          }),
-        );
-      } catch {}
 
       pushNotification({
         title: "Profile updated",
@@ -335,40 +256,6 @@ const Profile = () => {
           </div>
         </section>
 
-        {/* Challenge promise */}
-        {typeof aiOutputs.day1_promise === "string" && aiOutputs.day1_promise.trim() && (
-          <section className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg">
-            <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
-            <div className="space-y-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-              <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground whitespace-pre-wrap">
-                {aiOutputs.day1_promise as string}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* AI-generated direction */}
-        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
-          <div>
-            <h2 className="text-lg font-bold">AI-Generated Challenge Direction</h2>
-            <p className="text-sm text-muted-foreground">Outputs from the AI Builder and AI Coach.</p>
-          </div>
-          {aiCards.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Nothing here yet. Finish Day 1 and chat with the AI Coach to populate this.
-            </p>
-          ) : (
-            <div className="grid gap-3">
-              {aiCards.map((c, i) => (
-                <div key={`${c.label}-${i}`} className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">{c.label}</p>
-                  <p className="mt-1 text-sm text-foreground whitespace-pre-wrap">{c.value}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
         <div className="sticky bottom-4 flex justify-end">
           <Button onClick={handleSave} disabled={saving} size="lg" className="shadow-lg">

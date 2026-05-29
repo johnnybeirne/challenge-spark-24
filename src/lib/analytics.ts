@@ -74,7 +74,8 @@ export type AnalyticsEvent =
   | "training_video_url_added"
   | "training_section_disabled"
   | "training_section_enabled"
-  | "profile_updated";
+  | "profile_updated"
+  | "your_dashboard_viewed";
 
 
 export async function trackEvent(

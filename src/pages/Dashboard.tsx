@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Lock, LogOut, Sparkles, Upload, Zap } from "lucide-react";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Compass, Lock, LogOut, Sparkles, Upload, Zap } from "lucide-react";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
@@ -336,133 +336,28 @@ const Dashboard = () => {
 
 
 
-          {/* 3b. CHALLENGE PROFILE — answers from the Day 1 assessment */}
-          {(() => {
-            const setup = getSetup();
-            const aiSummary = (() => {
-              const outputs = state.challenge?.aiOutputs ?? {};
-              const builderKeys = Object.keys(outputs)
-                .filter((k) => k.startsWith("day1_builder_"))
-                .sort();
-              const last = builderKeys[builderKeys.length - 1];
-              return last ? outputs[last] : "";
-            })();
-            const hasAnswers = !!(setup?.problem || setup?.audience || setup?.how || setup?.topicHint || aiSummary);
-            if (!hasAnswers) return null;
-            const rows: { label: string; value?: string }[] = [
-              { label: "What problem do you solve?", value: setup?.problem },
-              { label: "Who do you solve it for?", value: setup?.audience },
-              { label: "How do you solve it?", value: setup?.how },
-              { label: "Transformation", value: setup?.topicHint },
-            ].filter((r) => !!r.value);
-            return (
-              <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">Your challenge profile</p>
-                    <h2 className="mt-1.5 text-xl font-bold text-foreground">Saved answers powering your AI Coach</h2>
-                  </div>
-                  <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" />
-                </div>
-                <dl className="mt-4 space-y-3">
-                  {rows.map((r) => (
-                    <div key={r.label} className="rounded-lg border border-border/60 bg-background/60 p-3">
-                      <dt className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">{r.label}</dt>
-                      <dd className="mt-1 text-sm font-medium text-foreground whitespace-pre-wrap">{r.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-                {aiSummary && (
-                  <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
-                    <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Latest AI guidance</p>
-                    <p className="mt-1 text-sm text-foreground whitespace-pre-wrap line-clamp-6">{aiSummary}</p>
-                  </div>
-                )}
-              </section>
-            );
-          })()}
-
-
-
-
-          {/* 4. MOMENTUM ACTIONS */}
-          <section>
-            <div className="flex flex-col gap-3">
-              <input
-                ref={photoInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(event) => {
-                  void handlePhotoUpload(event.target.files?.[0]);
-                  event.currentTarget.value = "";
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => !photoDone && photoInputRef.current?.click()}
-                disabled={photoDone || photoUploading}
-                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
-                  photoDone
-                    ? "border-border bg-muted/30 opacity-60"
-                    : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
-                }`}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Camera className="h-4 w-4" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground">Add Profile Photo</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {photoDone ? "Done" : photoUploading ? "Uploading…" : "Earn 50 points"}
-                  </p>
-                </div>
-              </button>
-
-              <div
-                className={`flex items-start gap-3 rounded-xl border p-4 transition-all ${
-                  calendarDone
-                    ? "border-border bg-muted/30 opacity-60"
-                    : "border-border bg-background hover:border-primary/40"
-                }`}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <CalendarPlus className="h-4 w-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-foreground">Add Challenge To Calendar</p>
-                  {calendarDone ? (
-                    <p className="mt-0.5 text-sm text-muted-foreground">Done</p>
-                  ) : (
-                    <AddToCalendar
-                      variant="secondary"
-                      className="mt-1.5 !h-9 !px-3 text-sm font-bold"
-                    />
-                  )}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => navigate("/mentor")}
-                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
-                  bioDone
-                    ? "border-border bg-muted/30 opacity-60"
-                    : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
-                }`}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Sparkles className="h-4 w-4" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground">Add Your Bio (Let others know who you are)</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {bioDone ? "Done" : "Earn 50 points"}
-                  </p>
-                </div>
-              </button>
+          {/* OPEN YOUR DASHBOARD — button to the full challenge record */}
+          <button
+            type="button"
+            onClick={() => navigate("/your-dashboard")}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-sm transition-all hover:border-primary/40 hover:bg-primary/5 sm:p-6"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Compass className="h-6 w-6" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-primary">
+                Your Dashboard
+              </p>
+              <p className="mt-0.5 text-base font-bold text-foreground">
+                See everything you've built so far
+              </p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Day 1 answers, your quiz, launch assets — all in one place.
+              </p>
             </div>
-          </section>
+            <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </button>
         </section>
 
         {/* Mobile sticky CTA — sits above BottomNav for one-tap day access */}
@@ -479,6 +374,7 @@ const Dashboard = () => {
       </main>
     );
   }
+
 
   return (
     <main className="app-page-container min-h-screen py-5 pb-24 lg:py-8">

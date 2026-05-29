@@ -36,6 +36,7 @@ import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
 import Profile from "@/pages/Profile";
+import YourDashboard from "@/pages/YourDashboard";
 
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";
@@ -162,6 +163,7 @@ const App = () => (
               <Route element={<AppShell showNav />}>
                 <Route path="/let-me-in" element={<AdminViewAsUserAutoLaunch redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/your-dashboard" element={<AuthGuard><YourDashboard /></AuthGuard>} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />

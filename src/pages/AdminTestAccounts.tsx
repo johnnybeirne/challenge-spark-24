@@ -45,7 +45,7 @@ const getRelevantChallengeRoute = (acc: TestAccount) => {
 };
 
 const AdminTestAccounts = () => {
-  const [tab, setTab] = useState("create");
+  const [tab, setTab] = useState("manage");
   const [firstName, setFirstName] = useState("Test");
   const [surname, setSurname] = useState("User");
   const [email, setEmail] = useState("");

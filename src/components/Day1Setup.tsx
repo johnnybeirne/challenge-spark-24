@@ -17,6 +17,16 @@ import LearningAssistant from "@/components/LearningAssistant";
 
 import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
+
+const JohnnyAvatar = () => (
+  <img
+    src={johnnyAvatar}
+    alt="Johnny AI"
+    className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+  />
+);
+
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.
 const TypedSequence = ({
@@ -77,20 +87,23 @@ const TypedSequence = ({
   return (
     <div className="space-y-3">
       {shown.map((m, i) => (
-        <div key={i} className="flex animate-fade-in">
+        <div key={i} className="flex items-start gap-2 animate-fade-in">
+          <JohnnyAvatar />
           <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
             {m}
           </div>
         </div>
       ))}
       {idx < messages.length && (
-        <div className="flex animate-fade-in">
+        <div className="flex items-start gap-2 animate-fade-in">
+          <JohnnyAvatar />
           <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
             {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
           </div>
         </div>
       )}
     </div>
+
   );
 };
 
@@ -565,7 +578,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {problemFeedback && (
-                      <div className="flex animate-fade-in pt-1">
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {problemFeedback}
                         </div>
@@ -649,7 +662,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {outcomeFeedback && (
-                      <div className="flex animate-fade-in pt-1">
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {outcomeFeedback}
                         </div>
@@ -876,7 +889,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {feedback && (
-                      <div className="flex animate-fade-in pt-1">
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {feedback}
                         </div>

@@ -717,34 +717,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step3Phase === "input" && (
-                <div className="space-y-5 animate-fade-in">
+                <div className="space-y-5">
                   <StaticAi messages={step3Messages} />
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={how}
-                      onChange={(e) => setHow(e.target.value)}
-                      placeholder={outcomePlaceholder}
-                      rows={5}
-                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
-                      }}
-                    />
-                    {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
-
-                  </div>
-
-
-                  <Button
-                    size="lg"
-                    onClick={() => handleFoundationNext(3)}
-                    disabled={!how.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={how}
+                        onChange={(e) => setHow(e.target.value)}
+                        placeholder={outcomePlaceholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
+                        }}
+                      />
+                      {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={() => handleFoundationNext(3)}
+                      disabled={!how.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
             </div>

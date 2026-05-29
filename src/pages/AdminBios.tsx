@@ -695,14 +695,15 @@ const AdminBios = () => {
                     <SortHeader k="first_name" label="First name" />
                     <SortHeader k="surname" label="Surname" />
                     <SortHeader k="email" label="Email" />
+                    <SortHeader k="created_at" label="Joined" />
                     <SortHeader k="valid_referrals" label="Refs" align="right" />
                     <SortHeader k="referred_by_name" label="Referred by" />
                     <SortHeader k="referred_by_email" label="Referrer email" />
                     <SortHeader k="current_tier" label="Tier" />
                     <SortHeader k="status" label="Status" />
                     <th className="px-3 py-2 text-left">Flag</th>
-                    <SortHeader k="created_at" label="Joined" />
                     <th className="px-3 py-2 text-left">Bio</th>
+
                     <th className="px-3 py-2 text-right">Actions</th>
                   </tr>
                 </thead>

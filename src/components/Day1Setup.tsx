@@ -56,14 +56,42 @@ const audienceOptions = [
 ];
 
 const challengeOptions = [
-  { value: "quick-win", label: "A quick win", icon: Zap },
-  { value: "transformation", label: "A transformation", icon: Sparkles },
-  { value: "skill", label: "Learn a skill", icon: GraduationCap },
-  { value: "launch", label: "Launch something", icon: Rocket },
+  {
+    value: "solve-problem",
+    emoji: "🎯",
+    label: "Solve a Problem",
+    description:
+      "Help participants overcome a specific challenge, frustration, or obstacle that is holding them back.",
+    summary: "Participants will solve a specific problem.",
+  },
+  {
+    value: "quick-win",
+    emoji: "⚡",
+    label: "Achieve a Quick Win",
+    description:
+      "Help participants experience an immediate result that builds confidence and momentum.",
+    summary: "Participants will achieve an immediate result.",
+  },
+  {
+    value: "create-asset",
+    emoji: "🛠",
+    label: "Create an Asset",
+    description:
+      "Help participants build something valuable they can use long after the challenge is complete.",
+    summary: "Participants will create something valuable.",
+  },
+  {
+    value: "reach-milestone",
+    emoji: "🚀",
+    label: "Reach a Milestone",
+    description:
+      "Help participants achieve a meaningful milestone that moves them significantly closer to their goal.",
+    summary: "Participants will achieve a meaningful milestone.",
+  },
 ];
 
 const challengeLabel = (v: string) =>
-  challengeOptions.find((o) => o.value === v)?.label.toLowerCase().replace(/^a /, "") ?? v;
+  challengeOptions.find((o) => o.value === v)?.label ?? v;
 
 const audienceLabelShort = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";

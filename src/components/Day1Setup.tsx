@@ -734,8 +734,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 4 && (() => {
           const step4Messages = [
-            `Hi ${firstName}.`,
-            `Who do you want to help${fn}?`,
+            `Hi ${firstName}, let's start by identifying who you want to help.`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">

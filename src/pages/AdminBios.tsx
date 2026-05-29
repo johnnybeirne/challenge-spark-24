@@ -907,9 +907,6 @@ const AdminBios = () => {
                             <span className="text-xs text-muted-foreground">—</span>
                           )}
                         </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
-                          {formatDate(r.created_at)}
-                        </td>
                         <td className="px-3 py-2 max-w-xs">
                           <span className="line-clamp-1 text-muted-foreground">
                             {r.bio || <span className="italic">No bio</span>}

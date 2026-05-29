@@ -224,13 +224,8 @@ const ChallengeRecord = () => {
       )}
 
       <Section
-        eyebrow={`Day 1 · ${
-          dayStatus(1) === "complete"
-            ? "Complete"
-            : dayStatus(1) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(1)}
+
         title="Foundation"
         description="Your answers from Day 1 — these power your AI Coach."
         status={dayStatus(1)}

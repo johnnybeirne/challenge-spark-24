@@ -300,28 +300,6 @@ const Dashboard = () => {
           })()}
 
 
-          {/* 3. TODAY'S TASK */}
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
-            <p className="text-sm font-black uppercase tracking-[0.14em] text-primary">
-              Today's task
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Button
-                size="lg"
-                className="h-12 gap-2 text-base font-black uppercase tracking-wider"
-                onClick={() => {
-                  trackEvent("dashboard_training_viewed");
-                  navigate(`/challenge/day-${ctaDay}`);
-                }}
-              >
-                <Sparkles className="h-4 w-4" />
-                {ctaLabel}
-              </Button>
-              {isDay1InProgress && (
-                <RestartDay1Button variant="ghost" size="sm" className="text-muted-foreground" />
-              )}
-            </div>
-          </section>
 
 
           {/* 3b. CHALLENGE PROFILE — answers from the Day 1 assessment */}

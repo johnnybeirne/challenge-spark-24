@@ -174,9 +174,9 @@ const YourDashboard = () => {
       const value = typeof v === "string" ? v.trim() : "";
       if (checked || value) items.push({ label, value, checked });
     }
-    const url = state.challenge?.url?.trim();
+    const url = state.challenge?.launchUrl?.trim();
     return { items, url };
-  }, [aiOutputs, tasks, state.challenge?.url]);
+  }, [aiOutputs, tasks, state.challenge?.launchUrl]);
 
   const startedAt = state.challenge?.startedAt ? new Date(state.challenge.startedAt) : null;
   const endsAt = state.challenge?.endsAt ? new Date(state.challenge.endsAt) : null;

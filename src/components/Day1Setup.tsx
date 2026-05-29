@@ -472,23 +472,38 @@ const Day1Setup = ({ onComplete }: Props) => {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {challengeOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleChallenge(opt.value)}
-                  className={`flex flex-col items-start gap-2 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
-                    challengeType === opt.value ? "border-primary bg-primary/10" : "border-border bg-card"
-                  }`}
-                >
-                  <span className="text-base font-semibold">
-                    <span className="mr-1.5">{opt.emoji}</span>
-                    {opt.label}
-                  </span>
-                  <span className="text-sm text-muted-foreground leading-relaxed">
-                    {opt.description}
-                  </span>
-                </button>
-              ))}
+              {challengeOptions.map((opt) => {
+                const selected = challengeType === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => handleChallenge(opt.value)}
+                    className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                      selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                    }`}
+                  >
+                    <span
+                      className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                        selected ? "border-primary" : "border-muted-foreground/40"
+                      }`}
+                      aria-hidden
+                    >
+                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                    </span>
+                    <span className="flex flex-col gap-1">
+                      <span className="text-base font-semibold">
+                        <span className="mr-1.5">{opt.emoji}</span>
+                        {opt.label}
+                      </span>
+                      <span className="text-sm text-muted-foreground leading-relaxed">
+                        {opt.description}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

@@ -37,12 +37,42 @@ const dayFromStart = (iso: string | null): string => {
   return `Day ${day} · ${hours}h in`;
 };
 
-const getRelevantChallengeRoute = (acc: TestAccount) => {
+export const getRelevantChallengeRoute = (acc: TestAccount) => {
   const anchor = acc.challenge_started_at || acc.signup_at;
   const elapsedMs = Date.now() - new Date(anchor).getTime();
   const day = elapsedMs >= 48 * 60 * 60 * 1000 ? 3 : elapsedMs >= 24 * 60 * 60 * 1000 ? 2 : 1;
   return day === 1 ? "/challenge/day-1" : `/challenge/day/${day}`;
 };
+
+export const launchViewAsTestAccount = async (acc: TestAccount) => {
+  const targetRoute = getRelevantChallengeRoute(acc);
+  try {
+    localStorage.setItem("leadio_post_login_redirect", targetRoute);
+  } catch {}
+  const { data, error } = await supabase.functions.invoke("admin-test-account", {
+    body: {
+      action: "magic_link",
+      email: acc.email,
+      redirect_to: `${window.location.origin}${targetRoute}`,
+    },
+  });
+  if (error || data?.error || !data?.magic_link) {
+    toast.error(data?.error ?? error?.message ?? "Failed to get link");
+    return false;
+  }
+  window.open(data.magic_link, "_blank", "noopener,noreferrer");
+  return true;
+};
+
+export const fetchTestAccounts = async (): Promise<TestAccount[]> => {
+  const { data, error } = await supabase.functions.invoke("admin-test-account", {
+    body: { action: "list" },
+  });
+  if (error || data?.error) return [];
+  return data?.accounts ?? [];
+};
+
+export type { TestAccount };
 
 const AdminTestAccounts = () => {
   const [tab, setTab] = useState("manage");

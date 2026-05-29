@@ -325,35 +325,18 @@ const Profile = () => {
           </div>
         </section>
 
-        {/* Challenge foundation */}
-        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-bold">Challenge Foundation</h2>
-              <p className="text-sm text-muted-foreground">
-                Your answers from the Day 1 assessment. These power the AI Coach.
+        {/* Challenge promise */}
+        {typeof aiOutputs.day1_promise === "string" && aiOutputs.day1_promise.trim() && (
+          <section className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg">
+            <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
+            <div className="space-y-3">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
+              <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground whitespace-pre-wrap">
+                {aiOutputs.day1_promise as string}
               </p>
             </div>
-            <RestartDay1Button variant="ghost" size="sm" className="shrink-0 text-xs text-muted-foreground" />
-          </div>
-          <div className="space-y-4">
-            {[
-              { label: "What problem do you solve?", value: problem, set: setProblem },
-              { label: "Who do you solve it for?", value: audience, set: setAudience },
-              { label: "How do you solve it?", value: how, set: setHow },
-            ].map((f) => (
-              <div key={f.label} className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{f.label}</label>
-                <Textarea
-                  value={f.value}
-                  onChange={(e) => f.set(e.target.value)}
-                  className="min-h-[100px]"
-                  placeholder="Not answered yet."
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* AI-generated direction */}
         <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">

@@ -35,7 +35,8 @@ const EditDay1Button = ({
     ? new Date(state.challenge.startedAt).getTime()
     : null;
   const withinWindow = startedAt !== null && Date.now() - startedAt < EDIT_WINDOW_MS;
-  if (!withinWindow) return null;
+  const locked = (state.challenge?.currentDay ?? 1) > 1;
+  if (!withinWindow || locked) return null;
 
   return (
     <Button

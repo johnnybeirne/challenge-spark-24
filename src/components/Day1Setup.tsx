@@ -806,8 +806,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            `Perfect${fn}.`,
-            "What result do you want participants to achieve?",
+            `Perfect${fn}, what result do you want participants to achieve?`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">

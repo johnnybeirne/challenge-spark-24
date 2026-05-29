@@ -816,7 +816,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </button>
                     );
                   })}
-                </div>
+                </RevealControls>
               </div>
             )}
           </div>

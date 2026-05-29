@@ -253,6 +253,80 @@ Deno.serve(async (req) => {
       return json({ magic_link: data?.properties?.action_link ?? null });
     }
 
+    if (action === "backfill") {
+      // Re-seed Day 1 answers + user_memory for an existing test account so
+      // older accounts created before the seeding logic also show realistic data.
+      const email = String(body?.email ?? "").trim().toLowerCase();
+      if (!TEST_EMAIL_PATTERN.test(email)) return json({ error: "Only test+*@leadio.test allowed" }, 400);
+
+      const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      const target = list?.users?.find((u) => u.email?.toLowerCase() === email);
+      if (!target) return json({ error: "User not found" }, 404);
+      const userId = target.id;
+
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("first_name, surname")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const firstName = profile?.first_name?.trim() || "Test";
+
+      const seededDay1 = {
+        day1_define_app: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
+        day1_problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
+        day1_result: "A simple, repeatable system that generates qualified leads on autopilot.",
+        day1_share_reason: "It helps them spot exactly what's missing in their current setup and fix it fast.",
+      };
+      const seededMemory = {
+        name: firstName,
+        challenge_name: `${firstName}'s Lead Engine Challenge`,
+        audience_type: "b2b",
+        challenge_type: "growth",
+        topic: "qualified lead generation",
+        desired_outcome: "A simple, repeatable system that generates qualified leads on autopilot",
+      };
+      const seededTasks: Record<string, boolean> = {
+        day1_define_app: true,
+        day1_problem: true,
+        day1_result: true,
+        day1_share_reason: true,
+      };
+
+      const nowIso = new Date().toISOString();
+
+      const { error: memErr } = await admin
+        .from("user_memory")
+        .upsert({ user_id: userId, ...seededMemory, updated_at: nowIso }, { onConflict: "user_id" });
+      if (memErr) return json({ error: `user_memory: ${memErr.message}` }, 500);
+
+      const { data: existing } = await admin
+        .from("challenge_progress")
+        .select("tasks, ai_outputs, started_at, current_day, ends_at")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      const mergedTasks = { ...((existing?.tasks as Record<string, boolean>) ?? {}), ...seededTasks };
+      const mergedAi = { ...((existing?.ai_outputs as Record<string, string>) ?? {}), ...seededDay1 };
+
+      const { error: progErr } = await admin
+        .from("challenge_progress")
+        .upsert(
+          {
+            user_id: userId,
+            current_day: existing?.current_day ?? 1,
+            started_at: existing?.started_at ?? nowIso,
+            ends_at: existing?.ends_at ?? new Date(Date.now() + 72 * 3600_000).toISOString(),
+            tasks: mergedTasks,
+            ai_outputs: mergedAi,
+            updated_at: nowIso,
+          },
+          { onConflict: "user_id" }
+        );
+      if (progErr) return json({ error: `challenge_progress: ${progErr.message}` }, 500);
+
+      return json({ ok: true });
+    }
+
     if (action === "delete") {
       const email = String(body?.email ?? "").trim().toLowerCase();
       if (!TEST_EMAIL_PATTERN.test(email)) return json({ error: "Only test+*@leadio.test allowed" }, 400);

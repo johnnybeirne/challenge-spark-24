@@ -851,7 +851,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const wordCount = topicHint.trim().split(/\s+/).filter(Boolean).length;
           const feedbackPool = [
-            "Perfect. I can already see who this challenge is designed for.",
+            `Perfect${fn}. I can already see who this challenge is designed for.`,
             "That's helpful. Let's build on that.",
             "Great. The audience is becoming much clearer.",
           ];

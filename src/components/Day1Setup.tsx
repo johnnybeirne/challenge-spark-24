@@ -61,6 +61,27 @@ const DelayedFeedback = ({ text }: { text: string }) => {
   );
 };
 
+// Wraps response controls (cards, textarea, button) so they pause briefly after
+// the AI message completes, then rise gently into view.
+const RevealControls = ({
+  children,
+  className = "",
+  delay = 250,
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement> & { delay?: number }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  if (!visible) return null;
+  return (
+    <div {...rest} className={`animate-rise-in ${className}`}>
+      {children}
+    </div>
+  );
+};
+
 
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.
@@ -621,34 +642,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step2Phase === "input" && (
-                <div className="space-y-5 animate-fade-in">
+                <div className="space-y-5">
                   <StaticAi messages={step2Messages} />
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={problem}
-                      onChange={(e) => setProblem(e.target.value)}
-                      placeholder={problemPlaceholder}
-                      rows={5}
-                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
-                      }}
-                    />
-                    {problemFeedback && <DelayedFeedback text={problemFeedback} />}
-
-                  </div>
-
-
-                  <Button
-                    size="lg"
-                    onClick={() => handleFoundationNext(2)}
-                    disabled={!problem.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={problem}
+                        onChange={(e) => setProblem(e.target.value)}
+                        placeholder={problemPlaceholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
+                        }}
+                      />
+                      {problemFeedback && <DelayedFeedback text={problemFeedback} />}
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={() => handleFoundationNext(2)}
+                      disabled={!problem.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
             </div>
@@ -698,34 +718,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step3Phase === "input" && (
-                <div className="space-y-5 animate-fade-in">
+                <div className="space-y-5">
                   <StaticAi messages={step3Messages} />
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={how}
-                      onChange={(e) => setHow(e.target.value)}
-                      placeholder={outcomePlaceholder}
-                      rows={5}
-                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
-                      }}
-                    />
-                    {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
-
-                  </div>
-
-
-                  <Button
-                    size="lg"
-                    onClick={() => handleFoundationNext(3)}
-                    disabled={!how.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={how}
+                        onChange={(e) => setHow(e.target.value)}
+                        placeholder={outcomePlaceholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
+                        }}
+                      />
+                      {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={() => handleFoundationNext(3)}
+                      disabled={!how.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
             </div>
@@ -748,9 +767,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step4Phase === "choose" && (
-              <div className="space-y-3 animate-fade-in">
+              <div className="space-y-3">
                 <StaticAi messages={step4Messages} />
-                <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <RevealControls role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {[
                     {
@@ -797,7 +816,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </button>
                     );
                   })}
-                </div>
+                </RevealControls>
               </div>
             )}
           </div>
@@ -819,9 +838,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step5Phase === "choose" && (
-              <div className="space-y-3 animate-fade-in">
+              <div className="space-y-3">
                 <StaticAi messages={step5Messages} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {challengeOptions.map((opt) => {
                     const selected = challengeType === opt.value;
@@ -855,7 +874,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </button>
                     );
                   })}
-                </div>
+                </RevealControls>
               </div>
             )}
           </div>
@@ -900,34 +919,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step6Phase === "input" && (
-                <div className="space-y-5 animate-fade-in">
+                <div className="space-y-5">
                   <StaticAi messages={step6Messages} />
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={topicHint}
-                      onChange={(e) => setTopicHint(e.target.value)}
-                      placeholder={placeholder}
-                      rows={5}
-                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
-                      }}
-                    />
-                    {feedback && <DelayedFeedback text={feedback} />}
-
-                  </div>
-
-
-                  <Button
-                    size="lg"
-                    onClick={handleTopicNext}
-                    disabled={!topicHint.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={topicHint}
+                        onChange={(e) => setTopicHint(e.target.value)}
+                        placeholder={placeholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
+                        }}
+                      />
+                      {feedback && <DelayedFeedback text={feedback} />}
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleTopicNext}
+                      disabled={!topicHint.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
             </div>
@@ -1016,27 +1034,29 @@ const Day1Setup = ({ onComplete }: Props) => {
                     </div>
                   </div>
 
-                  {/* Challenge Promise */}
-                  {promise && (
-                    <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
-                      <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                        <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
-                          Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
-                        </p>
+                  <RevealControls className="space-y-6">
+                    {/* Challenge Promise */}
+                    {promise && (
+                      <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
+                        <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
+                        <div className="space-y-3">
+                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
+                          <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
+                            Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <Button
-                    size="lg"
-                    onClick={handleSaveAssessment}
-                    className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-                  >
-                    Continue Building Your Challenge
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                    <Button
+                      size="lg"
+                      onClick={handleSaveAssessment}
+                      className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                    >
+                      Continue Building Your Challenge
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
 
@@ -1074,7 +1094,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             />
 
             {/* Finish Day 1 */}
-            <div className="pt-2">
+            <RevealControls className="pt-2">
               <Button
                 size="lg"
                 onClick={handleFinishDay1}
@@ -1086,7 +1106,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <p className="mt-2 text-center text-xs text-muted-foreground">
                 You can get help from Johnny AI anytime.
               </p>
-            </div>
+            </RevealControls>
           </div>
         )}
       </div>

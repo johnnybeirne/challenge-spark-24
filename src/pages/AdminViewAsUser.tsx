@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { Eye } from "lucide-react";
 import { useAppState, defaultState, generateInviteCode } from "@/context/AppContext";
 import { SETUP_KEY } from "@/components/Day1Setup";

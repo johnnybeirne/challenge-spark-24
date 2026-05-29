@@ -33,10 +33,10 @@ const JohnnyAvatar = () => (
 const StaticAi = ({ messages }: { messages: string[] }) => (
   <div className="flex items-start gap-3">
     <JohnnyAvatar />
-    <div className="flex-1 space-y-3 min-w-0">
+    <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
-          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug">
             {m}
           </div>
         </div>

@@ -20,7 +20,7 @@ const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
 const useLaunchDemoUser = () => {
   const { setState } = useAppState();
 
-  return (redirectTo: string) => {
+  return (redirectTo: string, startDay: 1 | 2 | 3 = 1) => {
     try {
       sessionStorage.setItem(DEMO_USER_KEY, "1");
       sessionStorage.setItem(DEMO_SETUP_RESET_KEY, "1");
@@ -44,6 +44,13 @@ const useLaunchDemoUser = () => {
         adminBoost: 0,
         adminBadge: null,
         submittedUrl: null,
+      },
+      challenge: {
+        ...defaultState.challenge,
+        currentDay: startDay,
+        // Backdate so earlier days appear complete and the countdown reflects elapsed time.
+        startedAt: new Date(Date.now() - (startDay - 1) * 24 * 60 * 60 * 1000).toISOString(),
+        endsAt: new Date(Date.now() + (4 - startDay) * 24 * 60 * 60 * 1000).toISOString(),
       },
     });
 
@@ -88,13 +95,13 @@ const AdminViewAsUserPage = () => {
           <Button onClick={() => launch("/challenger-dashboard")}>
             Launch demo (Dashboard)
           </Button>
-          <Button variant="outline" onClick={() => launch("/challenge/day-1")}>
+          <Button variant="outline" onClick={() => launch("/challenge/day-1", 1)}>
             Launch Day 1
           </Button>
-          <Button variant="outline" onClick={() => launch("/challenge/day-2")}>
+          <Button variant="outline" onClick={() => launch("/challenge/day-2", 2)}>
             Launch Day 2
           </Button>
-          <Button variant="outline" onClick={() => launch("/challenge/day-3")}>
+          <Button variant="outline" onClick={() => launch("/challenge/day-3", 3)}>
             Launch Day 3
           </Button>
         </CardContent>

@@ -20,7 +20,7 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background lg:hidden"
       aria-label="Primary"
     >
       <div className="flex justify-around pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1">

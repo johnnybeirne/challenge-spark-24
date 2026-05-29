@@ -47,7 +47,7 @@ const TopBar = () => {
   const avatarSrc = state.user?.avatarUrl || (hasName ? avatarPlaceholder : sampleUserAvatar);
 
   return (
-    <header className="sticky top-0 z-30 hidden h-14 w-full items-center justify-between gap-3 border-b border-border bg-background/80 px-3 backdrop-blur lg:flex">
+    <header className="sticky top-0 z-30 hidden h-14 w-full items-center justify-between gap-3 border-b border-border bg-background px-3 lg:flex">
       <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
         {tools.map(({ to, label, Icon }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
+  { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
   { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
   { title: "User Bios", url: "/owner-console/bios", icon: IdCard },
   { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
@@ -33,7 +34,6 @@ const items = [
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },
-  { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
   
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Feature Overview", url: "/owner-console/features", icon: FileText },

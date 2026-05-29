@@ -1,12 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import { Eye } from "lucide-react";
+import { Eye, Zap } from "lucide-react";
 import { useAppState, defaultState, generateInviteCode } from "@/context/AppContext";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
-import AdminTestAccounts from "@/pages/AdminTestAccounts";
+import AdminTestAccounts, {
+  fetchTestAccounts,
+  launchViewAsTestAccount,
+  type TestAccount,
+} from "@/pages/AdminTestAccounts";
+import { toast } from "sonner";
 
 const DEMO_USER_KEY = "leadio_view_as_user";
 const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";

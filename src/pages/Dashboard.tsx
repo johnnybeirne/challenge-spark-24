@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
   const [signupCreditCount, setSignupCreditCount] = useState(0);
+  const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
   const hasProgress =

@@ -365,7 +365,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             helper="In your own words — the pain, frustration, or gap your expertise removes."
             value={problem}
             setValue={setProblem}
-            placeholder="e.g. The problem I solve is that most founders waste months chasing leads that never convert because they don't have a repeatable way to turn cold attention into paying customers."
+            placeholder="e.g. I help people who are frustrated by slow progress, inconsistent results, and information overload by helping them identify the key actions that create meaningful breakthroughs."
             onNext={() => handleFoundationNext(1)}
           />
         )}

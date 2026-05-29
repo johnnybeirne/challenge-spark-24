@@ -56,14 +56,42 @@ const audienceOptions = [
 ];
 
 const challengeOptions = [
-  { value: "quick-win", label: "A quick win", icon: Zap },
-  { value: "transformation", label: "A transformation", icon: Sparkles },
-  { value: "skill", label: "Learn a skill", icon: GraduationCap },
-  { value: "launch", label: "Launch something", icon: Rocket },
+  {
+    value: "solve-problem",
+    emoji: "🎯",
+    label: "Solve a Problem",
+    description:
+      "Help participants overcome a specific challenge, frustration, or obstacle that is holding them back.",
+    summary: "Participants will solve a specific problem.",
+  },
+  {
+    value: "quick-win",
+    emoji: "⚡",
+    label: "Achieve a Quick Win",
+    description:
+      "Help participants experience an immediate result that builds confidence and momentum.",
+    summary: "Participants will achieve an immediate result.",
+  },
+  {
+    value: "create-asset",
+    emoji: "🛠",
+    label: "Create an Asset",
+    description:
+      "Help participants build something valuable they can use long after the challenge is complete.",
+    summary: "Participants will create something valuable.",
+  },
+  {
+    value: "reach-milestone",
+    emoji: "🚀",
+    label: "Reach a Milestone",
+    description:
+      "Help participants achieve a meaningful milestone that moves them significantly closer to their goal.",
+    summary: "Participants will achieve a meaningful milestone.",
+  },
 ];
 
 const challengeLabel = (v: string) =>
-  challengeOptions.find((o) => o.value === v)?.label.toLowerCase().replace(/^a /, "") ?? v;
+  challengeOptions.find((o) => o.value === v)?.label ?? v;
 
 const audienceLabelShort = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
@@ -205,7 +233,6 @@ const Day1Setup = ({ onComplete }: Props) => {
       setState((prev) => ({
         ...prev,
         memory: mergeMemory(prev.memory, {
-          topic: problem.trim(),
           desiredOutcome: how.trim(),
         }),
         challenge: {
@@ -233,7 +260,12 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
-  const handleChallenge = (v: string) => { setChallengeType(v); advance(6); };
+  const handleChallenge = (v: string) => {
+    setChallengeType(v);
+    const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
+    persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    advance(6);
+  };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
     setStep(7);
@@ -434,21 +466,27 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 5 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold tracking-tight">What result do you want them to achieve with your challenge?</h2>
+              <h2 className="text-2xl font-bold tracking-tight">What do you want participants to achieve?</h2>
+              <p className="text-sm text-muted-foreground">
+                Choose the primary outcome participants should achieve by the end of your challenge.
+              </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {challengeOptions.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => handleChallenge(opt.value)}
-                  className={`flex flex-col items-center justify-center gap-3 p-5 rounded-xl border-2 transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                  className={`flex flex-col items-start gap-2 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
                     challengeType === opt.value ? "border-primary bg-primary/10" : "border-border bg-card"
                   }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <opt.icon className="h-6 w-6" />
-                  </div>
-                  <span className="text-sm font-semibold text-center">{opt.label}</span>
+                  <span className="text-base font-semibold">
+                    <span className="mr-1.5">{opt.emoji}</span>
+                    {opt.label}
+                  </span>
+                  <span className="text-sm text-muted-foreground leading-relaxed">
+                    {opt.description}
+                  </span>
                 </button>
               ))}
             </div>

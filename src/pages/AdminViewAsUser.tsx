@@ -89,7 +89,13 @@ const AdminViewAsUserPage = () => {
             Launch demo (Dashboard)
           </Button>
           <Button variant="outline" onClick={() => launch("/challenge/day-1")}>
-            Launch demo (Day 1)
+            Launch Day 1
+          </Button>
+          <Button variant="outline" onClick={() => launch("/challenge/day-2")}>
+            Launch Day 2
+          </Button>
+          <Button variant="outline" onClick={() => launch("/challenge/day-3")}>
+            Launch Day 3
           </Button>
         </CardContent>
       </Card>

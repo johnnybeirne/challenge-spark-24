@@ -404,6 +404,15 @@ const Day1Setup = ({ onComplete }: Props) => {
     } catch {}
   };
 
+  // Top-right confirmation that the latest answer has been written to the
+  // user's profile (memory auto-syncs to user_memory via useSupabaseSync).
+  const profileSaved = (label: string) =>
+    toast.success("Saved to your profile", {
+      description: label,
+      position: "top-right",
+      duration: 2500,
+    });
+
   const handleFoundationNext = (current: 1 | 2 | 3) => {
     if (current === 1) {
       if (!audience.trim()) return;
@@ -412,6 +421,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
+      profileSaved("The problem you're solving");
       setStep3Phase(saved?.how ? "input" : "intro");
       setStep(3);
     } else {
@@ -436,6 +446,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
+      profileSaved("The outcome you'll deliver");
       pushNotification({
         title: "Profile updated",
         message: "We've updated your profile with your challenge answers.",
@@ -450,6 +461,11 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleAudience = (v: "b2b" | "b2c") => {
     setAudienceType(v);
     persistFoundation({ audienceType: v });
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { audienceType: v }),
+    }));
+    profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
     // Skip the standalone ack screen — flow straight into step 5 whose intro
     // sequence opens with the acknowledgement so the conversation stays continuous.
     setStep5Phase("intro");
@@ -458,13 +474,28 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
+    const label = challengeOptions.find((o) => o.value === v)?.label ?? v;
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType(v),
+        desiredOutcome: summary,
+      }),
+    }));
+    profileSaved(`Challenge type: ${label}`);
     // Same pattern — step 6's intro opens with the acknowledgement.
     setStep6Phase("intro");
     setStep(6);
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
+    persistFoundation({ topicHint: topicHint.trim() } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
+    }));
+    profileSaved("Who you're helping");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -511,6 +542,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
+    profileSaved("Challenge direction confirmed");
     pushNotification({
       title: "Challenge direction saved",
       message: "We've updated your profile with your challenge answers.",

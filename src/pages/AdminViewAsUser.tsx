@@ -100,18 +100,59 @@ const AdminViewAsUserAutoLaunch = ({ redirectTo = "/challenge/day-1" }: { redire
  */
 const AdminViewAsUserPage = () => {
   const launch = useLaunchDemoUser();
+  const [latest, setLatest] = useState<TestAccount | null>(null);
+  const [launching, setLaunching] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchTestAccounts().then((accs) => {
+      if (cancelled) return;
+      const sorted = [...accs].sort(
+        (a, b) => new Date(b.signup_at).getTime() - new Date(a.signup_at).getTime(),
+      );
+      setLatest(sorted[0] ?? null);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleQuickLaunch = async () => {
+    if (!latest) {
+      toast.error("No test accounts yet. Create one below.");
+      return;
+    }
+    setLaunching(true);
+    await launchViewAsTestAccount(latest);
+    setLaunching(false);
+  };
 
   return (
     <div className="space-y-6 p-6">
+      <Card className="border-primary/40 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" /> Quick Launch
+          </CardTitle>
+          <CardDescription>
+            {latest
+              ? `Open the most recent test user (${latest.first_name ?? "Test"} ${latest.surname?.[0] ?? ""}. · ${latest.email}) in a new tab on the correct challenge day.`
+              : "No test accounts found yet — create one below to enable one-click View as."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button size="lg" onClick={handleQuickLaunch} disabled={!latest || launching}>
+            <Eye className="h-4 w-4 mr-2" />
+            {launching ? "Opening…" : latest ? "View as latest test user" : "No test user available"}
+          </Button>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Eye className="h-5 w-5" /> View as User
+            <Eye className="h-5 w-5" /> Demo participant (no signup)
           </CardTitle>
           <CardDescription>
-            Launch a quick demo participant session, or use a real backdated
-            test account below to preview the experience as it appears on a
-            specific day of the challenge.
+            Drop straight into the challenger experience with a hardcoded backdated window. Great for previewing without creating an account.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">

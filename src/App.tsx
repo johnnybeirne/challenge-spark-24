@@ -62,7 +62,6 @@ import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminJvPartners from "@/pages/AdminJvPartners";
 import AdminSignups from "@/pages/AdminSignups";
-import AdminWaitlist from "@/pages/AdminWaitlist";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import AdminNewsletter from "@/pages/AdminNewsletter";
 import Unsubscribe from "@/pages/Unsubscribe";
@@ -216,7 +215,7 @@ const App = () => (
                 <Route path="challenge-days" element={<AdminChallengeDays />} />
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="signups" element={<AdminSignups />} />
-                <Route path="waitlist" element={<AdminWaitlist />} />
+                
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
                 <Route path="newsletter" element={<AdminNewsletter />} />
                 <Route path="activity" element={<AdminActivityFeed />} />

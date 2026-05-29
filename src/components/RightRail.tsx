@@ -94,6 +94,9 @@ const RightRail = () => {
     return () => { cancelled = true; };
   }, [points]);
 
+  if (!isChallengerShell) return null;
+
+
   const nextUnlockLabel = completed
     ? "Community Access"
     : currentDay === 1

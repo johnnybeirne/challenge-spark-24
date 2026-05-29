@@ -581,12 +581,14 @@ const DayChallenge = () => {
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}
+                      onBlur={() => notifyDashboardUpdated(task.key)}
                     />
                   ) : (
                     <DictatedTextarea
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
                       onChange={(e) => setOutput(task.key, e.target.value)}
+                      onBlur={() => notifyDashboardUpdated(task.key)}
                       className="mt-1"
                       rows={6}
                     />

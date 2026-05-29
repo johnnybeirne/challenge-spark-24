@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { Eye } from "lucide-react";
 import { useAppState, defaultState, generateInviteCode } from "@/context/AppContext";
 import { SETUP_KEY } from "@/components/Day1Setup";
@@ -19,7 +19,6 @@ const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
  */
 const useLaunchDemoUser = () => {
   const { setState } = useAppState();
-  const navigate = useNavigate();
 
   return (redirectTo: string) => {
     try {
@@ -48,7 +47,7 @@ const useLaunchDemoUser = () => {
       },
     });
 
-    navigate(redirectTo, { replace: true });
+    window.open(redirectTo, "_blank", "noopener,noreferrer");
   };
 };
 
@@ -90,7 +89,13 @@ const AdminViewAsUserPage = () => {
             Launch demo (Dashboard)
           </Button>
           <Button variant="outline" onClick={() => launch("/challenge/day-1")}>
-            Launch demo (Day 1)
+            Launch Day 1
+          </Button>
+          <Button variant="outline" onClick={() => launch("/challenge/day-2")}>
+            Launch Day 2
+          </Button>
+          <Button variant="outline" onClick={() => launch("/challenge/day-3")}>
+            Launch Day 3
           </Button>
         </CardContent>
       </Card>

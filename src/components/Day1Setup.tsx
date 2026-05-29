@@ -863,7 +863,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step6-intro"
                   messages={[
-                    "Excellent.",
+                    `Excellent${fn}.`,
                     "I'm starting to get a picture of the challenge you're creating.",
                     "Now tell me about the people you're helping.",
                     "The more specific you are, the better I can tailor the challenge.",

@@ -260,7 +260,12 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
-  const handleChallenge = (v: string) => { setChallengeType(v); advance(6); };
+  const handleChallenge = (v: string) => {
+    setChallengeType(v);
+    const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
+    persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    advance(6);
+  };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
     setStep(7);

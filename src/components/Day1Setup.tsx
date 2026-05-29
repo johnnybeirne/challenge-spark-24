@@ -68,10 +68,12 @@ const TypedSequence = ({
   messages,
   onComplete,
   resetKey,
+  skipMakingNotes = false,
 }: {
   messages: string[];
   onComplete?: () => void;
   resetKey: string | number;
+  skipMakingNotes?: boolean;
 }) => {
   const [shown, setShown] = useState<string[]>([]);
   const [current, setCurrent] = useState("");
@@ -120,13 +122,13 @@ const TypedSequence = ({
         }
       }, 22);
       return () => clearInterval(interval);
-    }, idx === 0 ? 2000 : 750);
+    }, idx === 0 ? (skipMakingNotes ? 200 : 2000) : 750);
     return () => clearTimeout(dotsTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
 
 
-  const isMakingNotes = idx === 0 && showDots && shown.length === 0;
+  const isMakingNotes = !skipMakingNotes && idx === 0 && showDots && shown.length === 0;
 
   return (
     <div className="flex items-start gap-3">
@@ -736,7 +738,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step4Messages = [
             `Hi ${firstName}.`,
             "Let's build your challenge together.",
-            "First, I need to understand who you want to help.",
+            `First${fn}, I need to understand who you want to help.`,
           ];
           return (
           <div className="space-y-6 animate-fade-in">
@@ -744,6 +746,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey="step4-intro"
                 messages={step4Messages}
+                skipMakingNotes
                 onComplete={() => setStep4Phase("choose")}
               />
             )}

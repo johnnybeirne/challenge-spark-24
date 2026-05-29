@@ -38,7 +38,7 @@ const dayFromStart = (iso: string | null): string => {
 };
 
 const getRelevantChallengeRoute = (acc: TestAccount) => {
-  const anchor = acc.signup_at || acc.challenge_started_at;
+  const anchor = acc.challenge_started_at || acc.signup_at;
   const elapsedMs = Date.now() - new Date(anchor).getTime();
   const day = elapsedMs >= 48 * 60 * 60 * 1000 ? 3 : elapsedMs >= 24 * 60 * 60 * 1000 ? 2 : 1;
   return day === 1 ? "/challenge/day-1" : `/challenge/day/${day}`;
@@ -256,7 +256,7 @@ const AdminTestAccounts = () => {
                           size="sm"
                           onClick={async () => {
                             const targetRoute = getRelevantChallengeRoute(acc);
-                            // Persist target so the new tab navigates to Day 1 after Supabase auth
+                            // Persist target so the new tab navigates to the relevant challenge day after auth
                             // (in case redirect_to is overridden by Supabase Site URL allow-list).
                             try {
                               localStorage.setItem("leadio_post_login_redirect", targetRoute);

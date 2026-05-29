@@ -11,6 +11,14 @@ import AdminTestAccounts from "@/pages/AdminTestAccounts";
 const DEMO_USER_KEY = "leadio_view_as_user";
 const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
 
+const safeRedirect = (value: string | null | undefined, fallback: string) => {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return fallback;
+  return value;
+};
+
+const demoEntryUrl = (redirectTo: string, startDay: 1 | 2 | 3) =>
+  `/let-me-in?redirect=${encodeURIComponent(redirectTo)}&day=${startDay}`;
+
 /**
  * Shared helper: drops the current browser session into a fresh in-memory
  * "demo participant" so an admin can preview the challenger experience
@@ -20,7 +28,12 @@ const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
 const useLaunchDemoUser = () => {
   const { setState } = useAppState();
 
-  return (redirectTo: string, startDay: 1 | 2 | 3 = 1) => {
+  return (redirectTo: string, startDay: 1 | 2 | 3 = 1, openMode: "new-tab" | "same-tab" = "new-tab") => {
+    if (openMode === "new-tab") {
+      window.open(demoEntryUrl(redirectTo, startDay), "_blank", "noopener,noreferrer");
+      return;
+    }
+
     try {
       sessionStorage.setItem(DEMO_USER_KEY, "1");
       sessionStorage.setItem(DEMO_SETUP_RESET_KEY, "1");
@@ -54,7 +67,7 @@ const useLaunchDemoUser = () => {
       },
     });
 
-    window.open(redirectTo, "_blank", "noopener,noreferrer");
+    window.location.replace(redirectTo);
   };
 };
 
@@ -65,7 +78,12 @@ const useLaunchDemoUser = () => {
  */
 const AdminViewAsUserAutoLaunch = ({ redirectTo = "/challenge/day-1" }: { redirectTo?: string }) => {
   const launch = useLaunchDemoUser();
-  useEffect(() => { launch(redirectTo); }, [redirectTo]);
+  const params = new URLSearchParams(window.location.search);
+  const target = safeRedirect(params.get("redirect"), redirectTo);
+  const dayParam = Number(params.get("day"));
+  const startDay = dayParam === 2 || dayParam === 3 ? dayParam : 1;
+
+  useEffect(() => { launch(target, startDay, "same-tab"); }, [target, startDay]);
   return <Spinner />;
 };
 

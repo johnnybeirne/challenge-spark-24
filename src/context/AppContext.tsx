@@ -408,6 +408,7 @@ interface AppContextValue {
   setState: React.Dispatch<React.SetStateAction<AppState>>;
   authUser: any;
   authLoading: boolean;
+  hydrated: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -527,7 +528,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ state: displayState, setState, authUser, authLoading, signOut }}>
+    <AppContext.Provider value={{ state: displayState, setState, authUser, authLoading, hydrated, signOut }}>
       {children}
     </AppContext.Provider>
   );

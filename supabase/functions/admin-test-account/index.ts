@@ -214,7 +214,6 @@ Deno.serve(async (req) => {
       if (error) return json({ error: error.message }, 500);
       return json({ magic_link: data?.properties?.action_link ?? null });
     }
-    }
 
     if (action === "delete") {
       const email = String(body?.email ?? "").trim().toLowerCase();

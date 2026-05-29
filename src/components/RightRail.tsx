@@ -231,6 +231,8 @@ const RightRail = () => {
           View vault <ChevronRight className="h-4 w-4" />
         </Link>
       </Card>
+        </div>
+      )}
     </aside>
   );
 };

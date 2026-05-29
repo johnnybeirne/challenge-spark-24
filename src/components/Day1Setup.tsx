@@ -17,6 +17,16 @@ import LearningAssistant from "@/components/LearningAssistant";
 
 import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
+
+const JohnnyAvatar = () => (
+  <img
+    src={johnnyAvatar}
+    alt="Johnny AI"
+    className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+  />
+);
+
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.
 const TypedSequence = ({

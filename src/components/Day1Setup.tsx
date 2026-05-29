@@ -607,8 +607,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step2Messages = [
-            "Now let's understand what's getting in their way.",
-            "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
+            "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
           return (
@@ -685,8 +684,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step3Messages = [
-            "Now let's define the outcome.",
-            "Describe the result, improvement, or change they'll experience by the end of your challenge.",
+            "Now describe the result they'll experience by the end of your challenge.",
           ];
 
           return (
@@ -736,8 +734,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 4 && (() => {
           const step4Messages = [
-            `Hi ${firstName}.`,
-            `Who do you want to help${fn}?`,
+            `Hi ${firstName}, let's start by identifying who you want to help.`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">
@@ -809,8 +806,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            `Perfect${fn}.`,
-            "What result do you want participants to achieve?",
+            `Perfect${fn}, what result do you want participants to achieve?`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">
@@ -890,9 +886,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
           const step6Messages = [
-            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
-            "Tell me about the people you're helping.",
-            "The more specific you are, the better I can tailor the challenge.",
+            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me about them in detail.`,
           ];
 
           return (

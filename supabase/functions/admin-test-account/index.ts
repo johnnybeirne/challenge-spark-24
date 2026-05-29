@@ -215,10 +215,7 @@ Deno.serve(async (req) => {
       // Day 1 is always seeded as complete (so the profile renders with answers).
       // current_day reflects elapsed time since the backdated signup.
       const seededTasks: Record<string, boolean> = {
-        day1_define_app: true,
-        day1_problem: true,
-        day1_result: true,
-        day1_share_reason: true,
+        day1_create_structure: true,
       };
 
       const { error: progErr } = await admin

@@ -16,6 +16,83 @@ import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import LearningAssistant from "@/components/LearningAssistant";
 
 import { pushNotification } from "@/lib/notifications";
+import TypingDots from "@/components/TypingDots";
+
+// Conversational typing sequence — types each message in turn, calls onComplete after all done.
+const TypedSequence = ({
+  messages,
+  onComplete,
+  resetKey,
+}: {
+  messages: string[];
+  onComplete?: () => void;
+  resetKey: string | number;
+}) => {
+  const [shown, setShown] = useState<string[]>([]);
+  const [current, setCurrent] = useState("");
+  const [idx, setIdx] = useState(0);
+  const [showDots, setShowDots] = useState(true);
+  const doneRef = useRef(false);
+
+  useEffect(() => {
+    setShown([]);
+    setCurrent("");
+    setIdx(0);
+    setShowDots(true);
+    doneRef.current = false;
+  }, [resetKey]);
+
+  useEffect(() => {
+    if (idx >= messages.length) {
+      if (!doneRef.current) {
+        doneRef.current = true;
+        onComplete?.();
+      }
+      return;
+    }
+    const full = messages[idx];
+    setShowDots(true);
+    setCurrent("");
+    const dotsTimer = setTimeout(() => {
+      setShowDots(false);
+      let i = 0;
+      const interval = setInterval(() => {
+        i++;
+        setCurrent(full.slice(0, i));
+        if (i >= full.length) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setShown((prev) => [...prev, full]);
+            setCurrent("");
+            setIdx((prevIdx) => prevIdx + 1);
+          }, 450);
+        }
+      }, 22);
+      return () => clearInterval(interval);
+    }, idx === 0 ? 350 : 650);
+    return () => clearTimeout(dotsTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx, resetKey]);
+
+  return (
+    <div className="space-y-3">
+      {shown.map((m, i) => (
+        <div key={i} className="flex animate-fade-in">
+          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+            {m}
+          </div>
+        </div>
+      ))}
+      {idx < messages.length && (
+        <div className="flex animate-fade-in">
+          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
+            {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const SETUP_KEY = "leadio_setup";
 const DAY1_STEP_KEY = "leadio_day1_step";

@@ -46,8 +46,8 @@ const Day1 = () => {
     // Clear local Day 1 progress markers
     try {
       localStorage.removeItem(SETUP_KEY);
-      // Send the user back to the first foundation question (Who is your challenge for?)
-      localStorage.setItem(DAY1_STEP_KEY, "1");
+      // Send the user back to the very first screen: Businesses vs Consumers
+      localStorage.setItem(DAY1_STEP_KEY, "4");
     } catch {}
 
     // Strip Day 1 content from app state (aiOutputs, tasks, memory fields)

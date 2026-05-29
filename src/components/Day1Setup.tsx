@@ -172,9 +172,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
     if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
-    if (saved?.audienceType) return 8;
-    if (hasFoundation) return 4;
-    return 1;
+    if (saved?.audienceType && hasFoundation) return 5;
+    if (saved?.audienceType) return 1;
+    return 4;
   })();
 
 
@@ -208,7 +208,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  const goBack = () => setStep(Math.max(1, (step as number) - 1) as Step);
+  // Flow order: 4 (audience type) → 1 → 2 → 3 (foundation) → 5 → 6 → 7 → 8
+  const goBack = () => {
+    const map: Record<number, Step> = { 1: 4, 2: 1, 3: 2, 5: 3, 6: 5, 7: 6 };
+    const prev = map[step as number];
+    if (prev !== undefined) setStep(prev);
+  };
   // Persist foundation answers progressively so refresh doesn't wipe them.
   const persistFoundation = (patch: Partial<SetupData>) => {
     try {
@@ -255,11 +260,11 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         dedupeKey: "day1_foundation_saved",
       });
-      setStep(4);
+      setStep(5);
     }
   };
 
-  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(5); };
+  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); advance(1); };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";

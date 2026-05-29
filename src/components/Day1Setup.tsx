@@ -783,8 +783,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                 messages={[
                   `Perfect${fn}.`,
                   audienceType === "b2b"
-                    ? "Let's focus on the business professionals you want to help."
-                    : "Let's focus on the people you want to help and the result you want them to achieve.",
+                    ? "This challenge is designed to help business professionals achieve a meaningful result."
+                    : "This challenge is designed to help individual people improve an area of their lives.",
                 ]}
                 onComplete={() => {
                   setStep(5);

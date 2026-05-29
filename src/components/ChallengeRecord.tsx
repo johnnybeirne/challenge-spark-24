@@ -286,13 +286,8 @@ const ChallengeRecord = () => {
       </Section>
 
       <Section
-        eyebrow={`Day 3 · ${
-          dayStatus(3) === "complete"
-            ? "Complete"
-            : dayStatus(3) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(3)}
+
         title="Launch"
         description="Your launch assets and public challenge URL."
         status={dayStatus(3)}

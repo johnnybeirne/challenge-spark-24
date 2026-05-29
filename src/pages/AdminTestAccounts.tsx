@@ -37,6 +37,13 @@ const dayFromStart = (iso: string | null): string => {
   return `Day ${day} · ${hours}h in`;
 };
 
+const getRelevantChallengeRoute = (acc: TestAccount) => {
+  const anchor = acc.signup_at || acc.challenge_started_at;
+  const elapsedMs = Date.now() - new Date(anchor).getTime();
+  const day = elapsedMs >= 48 * 60 * 60 * 1000 ? 3 : elapsedMs >= 24 * 60 * 60 * 1000 ? 2 : 1;
+  return day === 1 ? "/challenge/day-1" : `/challenge/day/${day}`;
+};
+
 const AdminTestAccounts = () => {
   const [tab, setTab] = useState("create");
   const [firstName, setFirstName] = useState("Test");
@@ -93,17 +100,20 @@ const AdminTestAccounts = () => {
       try {
         await navigator.clipboard.writeText(data.magic_link);
         toast.success("Magic link copied to clipboard");
-      } catch {}
+      } catch {
+        toast.info("Magic link created, but clipboard access was blocked.");
+      }
     }
     setTab("manage");
   };
 
   const handleMagicLink = async (acc: TestAccount) => {
+    const targetRoute = getRelevantChallengeRoute(acc);
     const { data, error } = await supabase.functions.invoke("admin-test-account", {
       body: {
         action: "magic_link",
         email: acc.email,
-        redirect_to: `${window.location.origin}/challenge/day-1`,
+        redirect_to: `${window.location.origin}${targetRoute}`,
       },
     });
     if (error || data?.error) return toast.error(data?.error ?? error?.message ?? "Failed");
@@ -245,16 +255,19 @@ const AdminTestAccounts = () => {
                           variant="default"
                           size="sm"
                           onClick={async () => {
+                            const targetRoute = getRelevantChallengeRoute(acc);
                             // Persist target so the new tab navigates to Day 1 after Supabase auth
                             // (in case redirect_to is overridden by Supabase Site URL allow-list).
                             try {
-                              localStorage.setItem("leadio_post_login_redirect", "/challenge/day-1");
-                            } catch {}
+                              localStorage.setItem("leadio_post_login_redirect", targetRoute);
+                            } catch {
+                              // Continue with the magic-link redirect even if local storage is unavailable.
+                            }
                             const { data, error } = await supabase.functions.invoke("admin-test-account", {
                               body: {
                                 action: "magic_link",
                                 email: acc.email,
-                                redirect_to: `${window.location.origin}/challenge/day-1`,
+                                redirect_to: `${window.location.origin}${targetRoute}`,
                               },
                             });
                             if (error || data?.error || !data?.magic_link) {

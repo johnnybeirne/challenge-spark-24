@@ -237,7 +237,7 @@ const FoundationStep = ({
 };
 
 const Day1Setup = ({ onComplete }: Props) => {
-  const { state, setState } = useAppState();
+  const { state, setState, authUser } = useAppState();
 
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();

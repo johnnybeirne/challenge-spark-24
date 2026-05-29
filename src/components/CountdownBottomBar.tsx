@@ -32,7 +32,9 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
   const pad = (n: number) => n.toString().padStart(2, "0");
   const sep = <span className="opacity-60">·</span>;
 
-  const totalMs = Math.max(1, endsAt - new Date(state.challenge!.startedAt!).getTime());
+  const endsAtMs = new Date(endsAt).getTime();
+  const startedAtMs = state.challenge?.startedAt ? new Date(state.challenge.startedAt).getTime() : endsAtMs - 72 * 3600 * 1000;
+  const totalMs = Math.max(1, endsAtMs - startedAtMs);
   const elapsedPct = Math.min(100, Math.max(0, ((totalMs - remaining) / totalMs) * 100));
 
   return (

@@ -316,11 +316,12 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      setStep(7);
+      setStep3Phase(saved?.how ? "input" : "intro");
+      setStep(3);
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });
-      // Save into memory + aiOutputs so AI uses these as foundational context.
+      // Save into memory + aiOutputs so the AI uses this as the desired outcome.
       setState((prev) => ({
         ...prev,
         memory: mergeMemory(prev.memory, {
@@ -343,10 +344,9 @@ const Day1Setup = ({ onComplete }: Props) => {
         title: "Profile updated",
         message: "We've updated your profile with your challenge answers.",
         href: "/profile",
-
         dedupeKey: "day1_foundation_saved",
       });
-      setStep(5);
+      setStep(7);
     }
   };
 

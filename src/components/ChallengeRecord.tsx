@@ -265,7 +265,7 @@ const ChallengeRecord = () => {
         )}
       </Section>
 
-      {(currentDay >= 2 || day2.length > 0) && (
+      {currentDay >= 2 && (
         <Section
           eyebrow={dayEyebrow(2)}
 
@@ -285,7 +285,7 @@ const ChallengeRecord = () => {
         </Section>
       )}
 
-      {(currentDay >= 3 || day3.items.length > 0 || day3.url) && (
+      {currentDay >= 3 && (
         <Section
           eyebrow={dayEyebrow(3)}
 

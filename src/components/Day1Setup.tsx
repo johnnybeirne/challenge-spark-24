@@ -578,7 +578,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {problemFeedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><img src="" alt="" style="display:none"/>
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {problemFeedback}
                         </div>
@@ -662,7 +662,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {outcomeFeedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><img src="" alt="" style="display:none"/>
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {outcomeFeedback}
                         </div>
@@ -889,7 +889,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {feedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><img src="" alt="" style="display:none"/>
+                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
                         <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
                           {feedback}
                         </div>

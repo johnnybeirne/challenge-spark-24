@@ -181,6 +181,24 @@ const ChallengeRecord = () => {
     return "locked";
   };
 
+  const dayDate = (n: number): string => {
+    const base = startedAt ?? new Date();
+    const d = new Date(base);
+    d.setDate(d.getDate() + (n - 1));
+    return fmt(d);
+  };
+
+  const dayEyebrow = (n: number): string => {
+    const status =
+      dayStatus(n) === "complete"
+        ? "Complete"
+        : dayStatus(n) === "in_progress"
+        ? "In progress"
+        : "Locked";
+    return `Day ${n} · ${dayDate(n)} · ${status}`;
+  };
+
+
   return (
     <div className="space-y-5 sm:space-y-6">
 

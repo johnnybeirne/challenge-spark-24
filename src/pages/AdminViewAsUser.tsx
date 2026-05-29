@@ -48,9 +48,9 @@ const useLaunchDemoUser = () => {
       challenge: {
         ...defaultState.challenge,
         currentDay: startDay,
-        // Backdate so earlier days appear complete and the countdown reflects elapsed time.
-        startedAt: new Date(Date.now() - (startDay - 1) * 24 * 60 * 60 * 1000).toISOString(),
-        endsAt: new Date(Date.now() + (4 - startDay) * 24 * 60 * 60 * 1000).toISOString(),
+        // Hardcoded test window: Day 1 = 2 days ago, Day 2 = yesterday, Day 3 = today.
+        startedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        endsAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
       },
     });
 

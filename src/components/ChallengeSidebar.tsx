@@ -66,7 +66,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     setPhotoUploading(true);
     const { path, signedUrl, error: uploadError } = await uploadProfilePhoto(authUser.id, file);
     if (uploadError || !signedUrl) { setPhotoUploading(false); return toast.error(uploadError?.message || "Photo upload failed"); }
-    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: path } as any).eq("user_id", authUser.id);
+    const { error: profileError } = await supabase.from("profiles").update({ avatar_url: path } as never).eq("user_id", authUser.id);
     setPhotoUploading(false);
     if (profileError) return toast.error(profileError.message || "Could not save your photo");
     const alreadyUploaded = Boolean(state.user?.avatarUrl);

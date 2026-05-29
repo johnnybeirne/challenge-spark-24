@@ -947,9 +947,6 @@ const Day1Setup = ({ onComplete }: Props) => {
           const pain = painRaw ? strip(painRaw).toLowerCase() : "";
           const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
 
-          const audiencePhrase =
-            audienceType === "b2b" ? "businesses and professionals" : "individuals and consumers";
-
           const methodMap: Record<string, string> = {
             "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
             "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
@@ -960,22 +957,40 @@ const Day1Setup = ({ onComplete }: Props) => {
             ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
             : "";
 
-          const promise = who && pain && result
-            ? `Help ${who} overcome ${pain} so they can ${result}${methodPhrase ? ` using ${methodPhrase}` : ""}.`
+          const promise = who && pain && result && methodPhrase
+            ? `Help ${who} move from ${pain} to ${result} through ${methodPhrase}.`
             : null;
 
-          // Summary as a list of paragraphs. Sections with missing data are hidden
-          // rather than rendered as broken sentences (e.g. "You're helping .").
+          // Highlight helper for the static reveal — renders the user-derived
+          // value in bold brand accent inside the surrounding sentence.
+          const hl = (v: string) => (
+            <span className="font-semibold text-primary">{v}</span>
+          );
+
+          // Plain-text sentences used during typing. Missing fields are skipped
+          // so we never display "You want to help ." or similar broken copy.
+          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you've shared, a clear picture is starting to emerge.`;
+          const closing = `That's what makes this challenge valuable. It creates a clear path from where they are today to where they want to be.`;
+
           const summary: string[] = [
-            `${Fn ? `${Fn}based` : "Based"} on what you've told me, here's what I'm seeing.`,
-            audienceType ? `We now know this challenge is for ${audiencePhrase}.` : null,
-            who ? `We also know you're helping ${who}.` : null,
-            pain ? `The main thing getting in their way is ${pain}.` : null,
-            result ? `We know the outcome you want them to achieve is ${result}.` : null,
-            methodPhrase ? `And the way you'll help them get there is through ${methodPhrase}.` : null,
-            promise ? `That gives us a clear challenge promise:` : null,
-            promise,
+            intro,
+            who ? `You want to help ${who}.` : null,
+            pain ? `Right now, they're struggling because ${pain}.` : null,
+            result ? `By the end of this challenge, they'll have ${result}.` : null,
+            methodPhrase ? `You'll guide them through ${methodPhrase} to help them achieve that result.` : null,
+            closing,
           ].filter((line): line is string => Boolean(line));
+
+          // Same sentences as React nodes with highlighted user values for the
+          // static reveal phase.
+          const summaryNodes: React.ReactNode[] = [
+            <>{intro}</>,
+            who ? <>You want to help {hl(who)}.</> : null,
+            pain ? <>Right now, they're struggling because {hl(pain)}.</> : null,
+            result ? <>By the end of this challenge, they'll have {hl(result)}.</> : null,
+            methodPhrase ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</> : null,
+            <>{closing}</>,
+          ].filter((n): n is React.ReactNode => Boolean(n));
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -993,7 +1008,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
                     <div className="flex-1 space-y-3 min-w-0 text-sm md:text-base leading-relaxed text-foreground">
-                      {summary.map((p, i) => (
+                      {summaryNodes.map((p, i) => (
                         <p key={i}>{p}</p>
                       ))}
                     </div>
@@ -1006,7 +1021,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <div className="space-y-3">
                         <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                         <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
-                          {promise}
+                          Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
                         </p>
                       </div>
                     </div>

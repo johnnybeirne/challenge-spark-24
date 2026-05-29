@@ -588,7 +588,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   resetKey="step2-intro"
                   messages={[
                     `Perfect${fn}.`,
-                    "I know who you're helping.",
+                    "I now know who you're helping.",
                     "Now let's understand what's getting in their way.",
                     "What is frustrating them right now?",
                     "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",

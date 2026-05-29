@@ -550,8 +550,8 @@ const Day1Setup = ({ onComplete }: Props) => {
     trackEvent("memory_created", { source: "day1_assessment" });
     profileSaved("Challenge direction confirmed");
     pushNotification({
-      title: "Challenge direction saved",
-      message: "We've updated your profile with your challenge answers.",
+      title: "Dashboard updated",
+      message: "Your dashboard now reflects your latest challenge answers.",
       href: "/challenger-dashboard",
       dedupeKey: "day1_assessment_saved",
     });

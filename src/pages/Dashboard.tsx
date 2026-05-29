@@ -203,7 +203,13 @@ const Dashboard = () => {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[20pt] font-bold text-foreground leading-tight">
                   {(() => {
-                    const fn = state.user?.name?.split(" ")[0] || "";
+                    const rawName =
+                      state.user?.name ||
+                      (authUser?.user_metadata as any)?.full_name ||
+                      (authUser?.user_metadata as any)?.name ||
+                      authUser?.email?.split("@")[0] ||
+                      "";
+                    const fn = rawName.split(" ")[0] || "";
                     const base = cfg.videoTitle || "Watch this first";
                     return fn ? `${base} ${fn}` : base;
                   })()}

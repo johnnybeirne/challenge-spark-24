@@ -22,12 +22,22 @@ const DAY1_STEP_KEY = "leadio_day1_step";
 
 const Day1 = () => {
   const navigate = useNavigate();
-  const { setState } = useAppState();
+  const { state, setState } = useAppState();
   const [resetKey, setResetKey] = useState(0);
+  const isLocked = (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {
+    if (isLocked) {
+      toast.info("Day 1 is locked — you've moved on to Day 2.");
+      navigate("/challenger-dashboard", { replace: true });
+      return;
+    }
     trackEvent("training_hub_viewed", { surface: "day1" });
-  }, []);
+  }, [isLocked, navigate]);
+
+  if (isLocked) return null;
+
+
 
   const handleComplete = () => {
     setState((prev) => ({

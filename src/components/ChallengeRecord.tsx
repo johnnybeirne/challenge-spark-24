@@ -183,17 +183,7 @@ const ChallengeRecord = () => {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <header className="space-y-2">
-        <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">
-          Your Challenge Record
-        </p>
-        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {identity.isPersonalised ? identity.title : "Your Challenge"}
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Everything you've built across the 3-day challenge, in one place.
-        </p>
-      </header>
+
 
       {(identity.isPersonalised || day1.promise) && (
         <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-7">

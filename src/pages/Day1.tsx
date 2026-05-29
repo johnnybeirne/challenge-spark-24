@@ -90,8 +90,8 @@ const Day1 = () => {
       <div className="mx-auto max-w-3xl px-4 pt-4 flex justify-end">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <RotateCcw className="h-3.5 w-3.5" />
+            <Button variant="destructive" size="sm" className="gap-2">
+              <RotateCcw className="h-4 w-4" />
               Reset Day 1
             </Button>
           </AlertDialogTrigger>

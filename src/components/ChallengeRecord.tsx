@@ -265,34 +265,37 @@ const ChallengeRecord = () => {
         )}
       </Section>
 
-      <Section
-        eyebrow={dayEyebrow(2)}
+      {(currentDay >= 2 || day2.length > 0) && (
+        <Section
+          eyebrow={dayEyebrow(2)}
 
-        title="Lead Magnet Quiz"
-        description="The quiz you designed as the entry point to your challenge."
-        status={dayStatus(2)}
-      >
-        {day2.length === 0 ? (
-          <EmptyDay day={2} href="/challenge/day-2" />
-        ) : (
-          <div className="space-y-3">
-            {day2.map((item) => (
-              <Field key={item.label} label={item.label} value={item.value} />
-            ))}
-          </div>
-        )}
-      </Section>
+          title="Lead Magnet Quiz"
+          description="The quiz you designed as the entry point to your challenge."
+          status={dayStatus(2)}
+        >
+          {day2.length === 0 ? (
+            <EmptyDay day={2} href="/challenge/day-2" />
+          ) : (
+            <div className="space-y-3">
+              {day2.map((item) => (
+                <Field key={item.label} label={item.label} value={item.value} />
+              ))}
+            </div>
+          )}
+        </Section>
+      )}
 
-      <Section
-        eyebrow={dayEyebrow(3)}
+      {(currentDay >= 3 || day3.items.length > 0 || day3.url) && (
+        <Section
+          eyebrow={dayEyebrow(3)}
 
-        title="Launch"
-        description="Your launch assets and public challenge URL."
-        status={dayStatus(3)}
-      >
-        {day3.items.length === 0 && !day3.url ? (
-          <EmptyDay day={3} href="/challenge/day-3" />
-        ) : (
+          title="Launch"
+          description="Your launch assets and public challenge URL."
+          status={dayStatus(3)}
+        >
+          {day3.items.length === 0 && !day3.url ? (
+            <EmptyDay day={3} href="/challenge/day-3" />
+          ) : (
           <div className="space-y-3">
             {day3.url && (
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
@@ -334,7 +337,8 @@ const ChallengeRecord = () => {
             ))}
           </div>
         )}
-      </Section>
+        </Section>
+      )}
     </div>
   );
 };

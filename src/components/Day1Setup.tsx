@@ -807,7 +807,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            `Perfect${fn}.`,
             audienceType === "b2b"
               ? "This challenge is designed to help business professionals achieve a meaningful result."
               : "This challenge is designed to help individual people improve an area of their lives.",

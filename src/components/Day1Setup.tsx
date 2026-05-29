@@ -233,7 +233,12 @@ const Day1Setup = ({ onComplete }: Props) => {
       setState((prev) => ({
         ...prev,
         memory: mergeMemory(prev.memory, {
-          topic: problem.trim(),
+  const handleChallenge = (v: string) => {
+    setChallengeType(v);
+    const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
+    persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    advance(6);
+  };
           desiredOutcome: how.trim(),
         }),
         challenge: {

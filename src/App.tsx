@@ -163,7 +163,7 @@ const App = () => (
               <Route element={<AppShell showNav />}>
                 <Route path="/let-me-in" element={<AdminViewAsUserAutoLaunch redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
-                <Route path="/your-dashboard" element={<AuthGuard><YourDashboard /></AuthGuard>} />
+                <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />

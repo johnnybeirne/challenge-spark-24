@@ -217,7 +217,7 @@ const Dashboard = () => {
                   })()}
                 </p>
 
-                <p className="truncate text-sm text-muted-foreground">Quick briefing · ~2 min</p>
+                
               </div>
               {state.training.dashboardVideoWatched && cfg.videoUrl && (
                 <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">

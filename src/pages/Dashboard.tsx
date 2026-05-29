@@ -25,6 +25,8 @@ import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
 import { getSetup } from "@/components/Day1Setup";
+import ChallengeRecord from "@/components/ChallengeRecord";
+
 
 const challengeSteps = [
   { day: 1, title: "Define Your Challenge" },
@@ -336,29 +338,10 @@ const Dashboard = () => {
 
 
 
-          {/* OPEN YOUR DASHBOARD — button to the full challenge record */}
-          <button
-            type="button"
-            onClick={() => navigate("/your-dashboard")}
-            className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-sm transition-all hover:border-primary/40 hover:bg-primary/5 sm:p-6"
-          >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Compass className="h-6 w-6" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-primary">
-                Your Dashboard
-              </p>
-              <p className="mt-0.5 text-base font-bold text-foreground">
-                See everything you've built so far
-              </p>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                Day 1 answers, your quiz, launch assets — all in one place.
-              </p>
-            </div>
-            <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-          </button>
+          {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
+          <ChallengeRecord />
         </section>
+
 
         {/* Mobile sticky CTA — sits above BottomNav for one-tap day access */}
         <div className="fixed inset-x-0 bottom-[64px] z-30 border-t border-border bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">

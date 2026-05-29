@@ -90,7 +90,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const storedDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
-    const yourDashboardActive = location.pathname === "/your-dashboard";
+    
 
 
     // Per-user personalised day dates derived from challenge.startedAt
@@ -187,32 +187,14 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             collapsed ? "p-2" : "px-3 py-2.5",
             dashboardActive && "ring-2 ring-primary/20 border-primary/40"
           )}
-          title="Start Here"
-        >
-          <div className="flex items-center gap-2">
-            <Rocket className={cn("h-4 w-4 shrink-0", dashboardActive ? "text-primary" : "text-muted-foreground")} />
-            {!collapsed && <span className="text-sm font-semibold text-foreground">Start Here</span>}
-          </div>
-        </button>
-
-        {/* Your Dashboard — challenge record (Day 1/2/3 outputs) */}
-        <button
-          onClick={() => {
-            go("/your-dashboard");
-            requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-          }}
-          className={cn(
-            "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
-            collapsed ? "p-2" : "px-3 py-2.5",
-            yourDashboardActive && "ring-2 ring-primary/20 border-primary/40"
-          )}
           title="Your Dashboard"
         >
           <div className="flex items-center gap-2">
-            <Compass className={cn("h-4 w-4 shrink-0", yourDashboardActive ? "text-primary" : "text-muted-foreground")} />
+            <Rocket className={cn("h-4 w-4 shrink-0", dashboardActive ? "text-primary" : "text-muted-foreground")} />
             {!collapsed && <span className="text-sm font-semibold text-foreground">Your Dashboard</span>}
           </div>
         </button>
+
 
         {/* DAYS — journey */}
         <section className="space-y-1.5">

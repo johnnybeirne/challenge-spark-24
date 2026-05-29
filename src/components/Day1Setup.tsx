@@ -736,22 +736,25 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
-        {step === 4 && (
+        {step === 4 && (() => {
+          const step4Messages = [
+            `Hi ${firstName}.`,
+            "Let's build your challenge together.",
+            "First, I need to understand who you want to help.",
+          ];
+          return (
           <div className="space-y-6 animate-fade-in">
             {step4Phase === "intro" && (
               <TypedSequence
                 resetKey="step4-intro"
-                messages={[
-                  `Hi ${firstName}.`,
-                  "Let's build your challenge together.",
-                  "First, I need to understand who you want to help.",
-                ]}
+                messages={step4Messages}
                 onComplete={() => setStep4Phase("choose")}
               />
             )}
 
             {step4Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
+                <StaticAi messages={step4Messages} />
                 <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                   {[
@@ -802,24 +805,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                 </div>
               </div>
             )}
-
-            {step4Phase === "ack" && audienceType && (
-              <TypedSequence
-                resetKey={`step4-ack-${audienceType}`}
-                messages={[
-                  `Perfect${fn}.`,
-                  audienceType === "b2b"
-                    ? "This challenge is designed to help business professionals achieve a meaningful result."
-                    : "This challenge is designed to help individual people improve an area of their lives.",
-                ]}
-                onComplete={() => {
-                  setStep(5);
-                  setStep5Phase("intro");
-                }}
-              />
-            )}
           </div>
-        )}
+          );
+        })()}
 
         {step === 5 && (
           <div className="space-y-6 animate-fade-in">

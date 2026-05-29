@@ -260,7 +260,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         dedupeKey: "day1_foundation_saved",
       });
-      setStep(4);
+      setStep(5);
     }
   };
 

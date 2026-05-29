@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2, Users, AlertCircle, Target, Quote, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -960,39 +960,85 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step7Phase === "reveal" && (
                 <div className="space-y-6 animate-fade-in">
+                  {/* Hero header */}
+                  <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8">
+                    <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+                    <div className="relative space-y-3">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary border border-primary/20">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        Challenge Blueprint
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-tight">
+                        {Fn}here's the challenge taking shape.
+                      </h2>
+                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                        A strategic read-back of everything you've told me. This becomes the foundation for your 3-day challenge.
+                      </p>
+                    </div>
+                  </div>
 
+                  {/* Promise — hero card */}
+                  {promise && (
+                    <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg">
+                      <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Your Challenge Promise</p>
+                        <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
+                          {promise}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
-                  <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6 space-y-5">
+                  {/* Three pillars */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {who && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">You're helping</p>
-                        <p className="text-base leading-relaxed text-foreground">{who}</p>
+                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-2.5 mb-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <Users className="h-4.5 w-4.5" />
+                          </div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Audience</p>
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground">{who}</p>
                       </div>
                     )}
                     {pain && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">The problem</p>
-                        <p className="text-base leading-relaxed text-foreground">{pain}</p>
+                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-2.5 mb-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+                            <AlertCircle className="h-4.5 w-4.5" />
+                          </div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Problem</p>
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground">{pain}</p>
                       </div>
                     )}
                     {result && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">The outcome</p>
-                        <p className="text-base leading-relaxed text-foreground">{result}</p>
+                      <div className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-2.5 mb-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <Target className="h-4.5 w-4.5" />
+                          </div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Outcome</p>
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground">{result}</p>
                       </div>
                     )}
                   </div>
 
-                  {promise && (
-                    <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 md:p-6 space-y-2">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-primary">Your challenge promise</p>
-                      <p className="text-lg md:text-xl font-semibold leading-snug text-foreground">{promise}</p>
+                  {/* Next step framing */}
+                  <div className="flex items-start gap-3 rounded-2xl bg-muted/40 border border-border/60 p-4 md:p-5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                      <Compass className="h-4.5 w-4.5" />
                     </div>
-                  )}
-
-                  <p className="text-muted-foreground leading-relaxed text-center">
-                    Next, your AI co-pilot will help you sharpen this into a challenge people will actually want to take.
-                  </p>
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-foreground">What happens next</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Your AI co-pilot will sharpen this into a challenge people will actually want to take — hook, daily structure, and the tangible result by Day 3.
+                      </p>
+                    </div>
+                  </div>
 
                   <Button
                     size="lg"
@@ -1004,6 +1050,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   </Button>
                 </div>
               )}
+
             </div>
           );
         })()}

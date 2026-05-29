@@ -87,7 +87,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   // Free Student / Premium / Partner keep the existing layout below.
   // ────────────────────────────────────────────────────────────────────────
   if (isChallengerShell) {
-    const currentDay = state.challenge.currentDay ?? 1;
+    const storedDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
 
@@ -102,6 +102,20 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
     };
 
+    // Effective day is whichever is further along: stored progress
+    // (advanced by completing tasks) or elapsed time since start. This
+    // keeps the sidebar realistic when an admin previews a backdated
+    // test account where currentDay hasn't been bumped manually.
+    const elapsedHours = Math.max(0, (Date.now() - startedAt.getTime()) / (60 * 60 * 1000));
+    const elapsedDay = challengeCompleted
+      ? 3
+      : elapsedHours >= 48
+      ? 3
+      : elapsedHours >= 24
+      ? 2
+      : 1;
+    const currentDay = Math.max(storedDay, elapsedDay);
+
     const days = [1, 2, 3].map((n) => {
       const path = `/challenge/day-${n}`;
       const active =
@@ -111,8 +125,9 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
 
       const complete = challengeCompleted || currentDay > n;
       const inProgress = !complete && currentDay === n;
-      const locked = !complete && !inProgress;
-      const status = complete ? "Complete" : inProgress ? "In Progress" : "Locked";
+      const unlockedByTime = elapsedDay >= n;
+      const locked = !complete && !inProgress && !unlockedByTime;
+      const status = complete ? "Complete" : inProgress ? "In Progress" : unlockedByTime ? "Available" : "Locked";
       const dateLabel = formatDayDate(n - 1);
       return { n, path, active, complete, inProgress, locked, status, dateLabel };
     });

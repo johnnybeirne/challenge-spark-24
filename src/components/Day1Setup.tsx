@@ -683,8 +683,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step3Messages = [
-            `Great${fn}.`,
-            "We know who you're helping and what's getting in their way.",
             "Now let's define the outcome.",
             "Describe the result, improvement, or change they'll experience by the end of your challenge.",
           ];

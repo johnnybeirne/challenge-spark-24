@@ -671,7 +671,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   "Got it.",
                   `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
                 ]}
-                onComplete={() => setStep(6)}
+                onComplete={() => { setStep6Phase("intro"); setStep(6); }}
               />
             )}
           </div>

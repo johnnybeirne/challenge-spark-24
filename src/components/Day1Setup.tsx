@@ -176,7 +176,37 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (saved?.audienceType) return 5;
     return 4;
   })();
-...
+
+  const [step, setStep] = useState<Step>(initialStep);
+
+  // Foundation answers
+  const [problem, setProblem] = useState<string>(saved?.problem ?? "");
+  const [audience, setAudience] = useState<string>(saved?.audience ?? "");
+  const [how, setHow] = useState<string>(saved?.how ?? "");
+
+  // Refinement answers
+  const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(saved?.audienceType ?? null);
+  const [challengeType, setChallengeType] = useState<string>(saved?.challengeType ?? "");
+  const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
+  const { isListening: isDictating, toggle: toggleDictation } = useDictation();
+
+  // AI builder state
+  const [builderInput, setBuilderInput] = useState("");
+  const [builderLoading, setBuilderLoading] = useState(false);
+  const [builderHistory, setBuilderHistory] = useState<ChatEntry[]>([]);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    trackEvent("onboarding_viewed", { step });
+    try { localStorage.setItem(DAY1_STEP_KEY, String(step)); } catch {}
+  }, [step]);
+
+  useEffect(() => {
+    messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
+  }, [builderHistory, builderLoading]);
+
+  const advance = (next: Step) => setTimeout(() => setStep(next), 250);
+
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
     const map: Record<number, Step> = { 5: 4, 6: 5, 7: 6 };

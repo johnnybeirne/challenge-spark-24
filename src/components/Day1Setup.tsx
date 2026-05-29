@@ -838,9 +838,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step5Phase === "choose" && (
-              <div className="space-y-3 animate-fade-in">
+              <div className="space-y-3">
                 <StaticAi messages={step5Messages} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {challengeOptions.map((opt) => {
                     const selected = challengeType === opt.value;
@@ -874,7 +874,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </button>
                     );
                   })}
-                </div>
+                </RevealControls>
               </div>
             )}
           </div>

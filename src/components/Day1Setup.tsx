@@ -684,8 +684,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step3Messages = [
-            "Now let's define the outcome.",
-            "Describe the result, improvement, or change they'll experience by the end of your challenge.",
+            "Now describe the result they'll experience by the end of your challenge.",
           ];
 
           return (

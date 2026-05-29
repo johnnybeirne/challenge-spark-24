@@ -552,14 +552,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step2Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
-                  <div className="flex">
-                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                      What is frustrating them right now? Tell me about the problem, obstacle, or pain point they're trying to overcome.
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground">What is frustrating them right now?</label>
                     <DictatedTextarea
                       autoFocus
                       value={problem}
@@ -579,6 +572,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </div>
                     )}
                   </div>
+
 
                   <Button
                     size="lg"
@@ -642,14 +636,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
-                  <div className="flex">
-                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                      What will be different for participants by the end of your challenge? Describe the result, improvement, or change they'll experience.
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground">What will be different for participants by the end of your challenge?</label>
                     <DictatedTextarea
                       autoFocus
                       value={how}
@@ -669,6 +656,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </div>
                     )}
                   </div>
+
 
                   <Button
                     size="lg"
@@ -701,12 +689,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
             {step4Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
-                <div className="flex">
-                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                    First, I need to understand who you want to help.
-                  </div>
-                </div>
                 <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
                   {[
                     {
                       value: "b2b" as const,
@@ -788,13 +772,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
             {step5Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
-                <div className="flex">
-                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                    <p className="font-semibold text-foreground mb-1">{firstName}, what result do you want participants to achieve?</p>
-                    <p>Choose the primary outcome participants should achieve by the end of your challenge.</p>
-                  </div>
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
                   {challengeOptions.map((opt) => {
                     const selected = challengeType === opt.value;
                     return (
@@ -884,14 +863,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step6Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
-                  <div className="flex">
-                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                      Now tell me about the people you're helping. The more specific you are, the better I can tailor the challenge.
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground">Who do you help?</label>
                     <DictatedTextarea
                       autoFocus
                       value={topicHint}
@@ -911,6 +883,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       </div>
                     )}
                   </div>
+
 
                   <Button
                     size="lg"
@@ -955,11 +928,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step7Phase === "reveal" && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="flex">
-                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                      {Fn}here's what I'm seeing.
-                    </div>
-                  </div>
+
 
                   <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6 space-y-5">
                     {who && (

@@ -259,6 +259,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
+  const [step7Phase, setStep7Phase] = useState<"intro" | "reveal">("intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
   // Natural-sounding personalisation token: ", Johnny" or "" if no name available.

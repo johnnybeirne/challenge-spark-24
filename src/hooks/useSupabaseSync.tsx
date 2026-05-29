@@ -206,6 +206,13 @@ export async function saveTraining(userId: string, training: TrainingState) {
 /** Migrate localStorage data to Supabase for newly authenticated user */
 export async function migrateLocalToSupabase(userId: string): Promise<Partial<AppState> | null> {
   try {
+    const skipMigration = localStorage.getItem("leadio_skip_local_migration") === "1";
+    if (skipMigration) {
+      localStorage.removeItem("leadio_skip_local_migration");
+      clearLocalStorage();
+      return null;
+    }
+
     const challengeRaw = localStorage.getItem("challengeos_challenge");
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
     const memoryRaw = localStorage.getItem("leadio_memory") || localStorage.getItem("challengeos_memory");
@@ -257,7 +264,8 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
 export function useSupabaseSync(
   authUser: User | null,
   state: AppState,
-  prevUnlocksRef: React.MutableRefObject<string[]>
+  prevUnlocksRef: React.MutableRefObject<string[]>,
+  enabled = true
 ) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const memoryDebounceRef = useRef<ReturnType<typeof setTimeout>>();
@@ -265,7 +273,7 @@ export function useSupabaseSync(
 
   // Sync challenge progress on change
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || !enabled) return;
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -275,10 +283,10 @@ export function useSupabaseSync(
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [authUser, state.challenge]);
+  }, [authUser, enabled, state.challenge]);
 
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || !enabled) return;
 
     if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
     memoryDebounceRef.current = setTimeout(() => {
@@ -288,10 +296,10 @@ export function useSupabaseSync(
     return () => {
       if (memoryDebounceRef.current) clearTimeout(memoryDebounceRef.current);
     };
-  }, [authUser, state.memory]);
+  }, [authUser, enabled, state.memory]);
 
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || !enabled) return;
 
     if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
     trainingDebounceRef.current = setTimeout(() => {
@@ -301,11 +309,11 @@ export function useSupabaseSync(
     return () => {
       if (trainingDebounceRef.current) clearTimeout(trainingDebounceRef.current);
     };
-  }, [authUser, state.training]);
+  }, [authUser, enabled, state.training]);
 
   // Sync new unlocks
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || !enabled) return;
 
     const currentIds = state.unlocks.map((u) => u.id);
     const newUnlocks = state.unlocks.filter(
@@ -317,5 +325,5 @@ export function useSupabaseSync(
     }
 
     prevUnlocksRef.current = currentIds;
-  }, [authUser, state.unlocks]);
+  }, [authUser, enabled, state.unlocks]);
 }

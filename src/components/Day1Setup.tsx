@@ -261,6 +261,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
+  // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
+  const fn = firstName && firstName !== "there" ? `, ${firstName}` : "";
+  const Fn = firstName && firstName !== "there" ? `${firstName}, ` : "";
 
   // Foundation answers
   const [problem, setProblem] = useState<string>(saved?.problem ?? "");
@@ -527,7 +530,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step2-intro"
                   messages={[
-                    "Perfect.",
+                    `Perfect${fn}.`,
                     "I know who you're helping.",
                     "Now let's understand what's getting in their way.",
                     "What is frustrating them right now?",
@@ -616,7 +619,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step3-intro"
                   messages={[
-                    "Great.",
+                    `Great${fn}.`,
                     "We know who you're helping.",
                     "We know what's getting in their way.",
                     "Now let's define the outcome.",
@@ -748,8 +751,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                 resetKey={`step4-ack-${audienceType}`}
                 messages={[
                   audienceType === "b2b"
-                    ? "Perfect. We'll build this for a business audience."
-                    : "Perfect. We'll build this for an individual audience.",
+                    ? `Perfect${fn}. We'll build this for a business audience.`
+                    : `Perfect${fn}. We'll build this for an individual audience.`,
                 ]}
                 onComplete={() => {
                   setStep(5);
@@ -822,7 +825,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey={`step5-ack-${challengeType}`}
                 messages={[
-                  "Got it.",
+                  `Got it${fn}.`,
                   `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
                 ]}
                 onComplete={() => { setStep6Phase("intro"); setStep(6); }}
@@ -848,7 +851,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const wordCount = topicHint.trim().split(/\s+/).filter(Boolean).length;
           const feedbackPool = [
-            "Perfect. I can already see who this challenge is designed for.",
+            `Perfect${fn}. I can already see who this challenge is designed for.`,
             "That's helpful. Let's build on that.",
             "Great. The audience is becoming much clearer.",
           ];
@@ -860,7 +863,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step6-intro"
                   messages={[
-                    "Excellent.",
+                    `Excellent${fn}.`,
                     "I'm starting to get a picture of the challenge you're creating.",
                     "Now tell me about the people you're helping.",
                     "The more specific you are, the better I can tailor the challenge.",

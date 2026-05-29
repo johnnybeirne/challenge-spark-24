@@ -27,6 +27,24 @@ const JohnnyAvatar = () => (
   />
 );
 
+// Static rendering of the AI conversation block — used to keep the prior typed
+// message visible alongside the response controls (matches the look of
+// TypedSequence after typing has finished).
+const StaticAi = ({ messages }: { messages: string[] }) => (
+  <div className="flex items-start gap-3">
+    <JohnnyAvatar />
+    <div className="flex-1 space-y-3 min-w-0">
+      {messages.map((m, i) => (
+        <div key={i} className="flex">
+          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+            {m}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 // Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
 const DelayedFeedback = ({ text }: { text: string }) => {
   const [ready, setReady] = useState(false);

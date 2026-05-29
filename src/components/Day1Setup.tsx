@@ -248,7 +248,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 4 && persistedStep <= 8) return persistedStep as Step;
+    if (persistedStep === 2 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
     return 4;
@@ -261,6 +261,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step4Phase, setStep4Phase] = useState<ConvPhase>(saved?.audienceType ? "choose" : "intro");
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
+  const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
 
@@ -294,7 +295,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
-    const map: Record<number, Step> = { 5: 4, 6: 5, 7: 6 };
+    const map: Record<number, Step> = { 2: 6, 5: 4, 6: 5, 7: 2 };
     const prev = map[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -314,7 +315,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      setStep(3);
+      setStep(7);
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });
@@ -361,7 +362,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
-    setStep(7);
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   };
 
   // Step 7 → save the refinement, advance to the AI-guided builder (step 8).
@@ -495,17 +497,93 @@ const Day1Setup = ({ onComplete }: Props) => {
           />
         )}
 
-        {step === 2 && (
-          <FoundationStep
-            n={2}
-            title="What problem do you solve?"
-            helper="In your own words — the pain, frustration, or gap your expertise removes."
-            value={problem}
-            setValue={setProblem}
-            placeholder="e.g. I help people who are frustrated by slow progress, inconsistent results, and information overload by helping them identify the key actions that create meaningful breakthroughs."
-            onNext={() => handleFoundationNext(2)}
-          />
-        )}
+        {step === 2 && (() => {
+          const problemPlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. They rely heavily on referrals and struggle to generate predictable enquiries.",
+            "b2b|quick-win": "e.g. They need a faster way to attract opportunities and generate momentum.",
+            "b2b|create-asset": "e.g. They struggle to clearly communicate the value of what they offer.",
+            "b2b|reach-milestone": "e.g. They aren't making enough progress toward the business growth they want.",
+            "b2c|solve-problem": "e.g. They struggle to stay consistent with healthy habits.",
+            "b2c|quick-win": "e.g. They want to feel more motivated, focused, and productive.",
+            "b2c|create-asset": "e.g. They don't have a practical plan they can follow with confidence.",
+            "b2c|reach-milestone": "e.g. They keep falling short of a goal they genuinely want to achieve.",
+          };
+          const problemPlaceholder =
+            problemPlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. The specific frustration, pain point, or obstacle holding them back right now.";
+
+          const problemWords = problem.trim().split(/\s+/).filter(Boolean).length;
+          const problemFeedbackPool = [
+            "I can see why that's frustrating.",
+            "That gives me a much clearer picture.",
+            "Now we're getting to the heart of the problem.",
+            "That's exactly the kind of insight that helps build a great challenge.",
+          ];
+          const problemFeedback =
+            problemWords >= 5
+              ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
+              : null;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step2Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step2-intro"
+                  messages={[
+                    "Perfect.",
+                    "I know who you're helping.",
+                    "Now let's understand what's getting in their way.",
+                    "What is frustrating them right now?",
+                    "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
+                  ]}
+                  onComplete={() => setStep2Phase("input")}
+                />
+              )}
+
+              {step2Phase === "input" && (
+                <div className="space-y-5 animate-fade-in">
+                  <div className="flex">
+                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                      What is frustrating them right now? Tell me about the problem, obstacle, or pain point they're trying to overcome.
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-foreground">What is frustrating them right now?</label>
+                    <DictatedTextarea
+                      autoFocus
+                      value={problem}
+                      onChange={(e) => setProblem(e.target.value)}
+                      placeholder={problemPlaceholder}
+                      rows={5}
+                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
+                      }}
+                    />
+                    {problemFeedback && (
+                      <div className="flex animate-fade-in pt-1">
+                        <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
+                          {problemFeedback}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={() => handleFoundationNext(2)}
+                    disabled={!problem.trim()}
+                    className="w-full h-12 text-base font-semibold"
+                  >
+                    Continue
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {step === 3 && (
           <FoundationStep

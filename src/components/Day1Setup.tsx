@@ -894,23 +894,26 @@ const Day1Setup = ({ onComplete }: Props) => {
           ];
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
+          const step6Messages = [
+            `Great choice${fn}.`,
+            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
+            "Tell me about the people you're helping.",
+            "The more specific you are, the better I can tailor the challenge.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step6-intro"
-                  messages={[
-                    `Excellent${fn}.`,
-                    "I'm starting to get a picture of the challenge you're creating.",
-                    "Now tell me about the people you're helping.",
-                    "The more specific you are, the better I can tailor the challenge.",
-                  ]}
+                  resetKey={`step6-intro-${challengeType}`}
+                  messages={step6Messages}
                   onComplete={() => setStep6Phase("input")}
                 />
               )}
 
               {step6Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step6Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus

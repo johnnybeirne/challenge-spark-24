@@ -156,7 +156,7 @@ const Profile = () => {
       }
     });
     return cards;
-  }, [aiOutputs]);
+  }, [aiOutputs, firstName]);
 
   const handlePhoto = async (file?: File) => {
     if (!file || !profile?.user_id) return;

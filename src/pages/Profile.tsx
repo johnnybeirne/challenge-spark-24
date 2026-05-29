@@ -136,19 +136,6 @@ const Profile = () => {
 
       if (error) throw error;
 
-      // Update locally-saved challenge foundation answers too.
-      try {
-        const cur = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-        localStorage.setItem(
-          SETUP_KEY,
-          JSON.stringify({
-            ...cur,
-            problem: problem.trim(),
-            audience: audience.trim(),
-            how: how.trim(),
-          }),
-        );
-      } catch {}
 
       pushNotification({
         title: "Profile updated",
@@ -269,40 +256,6 @@ const Profile = () => {
           </div>
         </section>
 
-        {/* Challenge promise */}
-        {typeof aiOutputs.day1_promise === "string" && aiOutputs.day1_promise.trim() && (
-          <section className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg">
-            <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
-            <div className="space-y-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-              <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground whitespace-pre-wrap">
-                {aiOutputs.day1_promise as string}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* AI-generated direction */}
-        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
-          <div>
-            <h2 className="text-lg font-bold">AI-Generated Challenge Direction</h2>
-            <p className="text-sm text-muted-foreground">Outputs from the AI Builder and AI Coach.</p>
-          </div>
-          {aiCards.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Nothing here yet. Finish Day 1 and chat with the AI Coach to populate this.
-            </p>
-          ) : (
-            <div className="grid gap-3">
-              {aiCards.map((c, i) => (
-                <div key={`${c.label}-${i}`} className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">{c.label}</p>
-                  <p className="mt-1 text-sm text-foreground whitespace-pre-wrap">{c.value}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
         <div className="sticky bottom-4 flex justify-end">
           <Button onClick={handleSave} disabled={saving} size="lg" className="shadow-lg">

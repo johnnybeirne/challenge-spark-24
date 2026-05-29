@@ -187,8 +187,12 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
             />
             <div className="mt-2 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Press Enter to send</span>
-              <Button size="sm" onClick={runFree} disabled={loadingKey !== null || !freeform.trim()}>
-                <Send className="h-4 w-4 mr-1.5" />
+              <Button
+                onClick={runFree}
+                disabled={loadingKey !== null || !freeform.trim()}
+                className="h-8 rounded-full px-3 text-xs font-semibold gap-1.5"
+              >
+                <Send className="h-3.5 w-3.5" />
                 Send
               </Button>
             </div>

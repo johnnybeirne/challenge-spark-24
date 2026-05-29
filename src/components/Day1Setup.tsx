@@ -61,6 +61,26 @@ const DelayedFeedback = ({ text }: { text: string }) => {
   );
 };
 
+// Wraps response controls (cards, textarea, button) so they pause briefly after
+// the AI message completes, then rise gently into view.
+const RevealControls = ({
+  children,
+  className = "",
+  delay = 250,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  if (!visible) return null;
+  return <div className={`animate-rise-in ${className}`}>{children}</div>;
+};
+
 
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.

@@ -904,8 +904,9 @@ const Day1Setup = ({ onComplete }: Props) => {
           ];
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
+          const audienceNoun = audienceType === "b2b" ? "businesses" : "people";
           const step6Messages = [
-            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me about them in detail.`,
+            `You're helping ${audienceNoun} ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me about them in detail.`,
           ];
 
           return (

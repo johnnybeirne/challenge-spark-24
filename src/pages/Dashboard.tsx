@@ -244,7 +244,7 @@ const Dashboard = () => {
                 <div className="flex justify-end border-t border-border bg-muted/20 px-4 py-3">
                   <Button
                     size="sm"
-                    variant="secondary"
+                    variant="default"
                     onClick={() => {
                       if (!state.training.dashboardVideoWatched) {
                         setState((prev) => ({

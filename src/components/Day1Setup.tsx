@@ -252,8 +252,8 @@ const FoundationStep = ({
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
-        <p className="text-sm text-muted-foreground">{helper}</p>
       </div>
+
 
       <div className="space-y-2">
         <DictatedTextarea

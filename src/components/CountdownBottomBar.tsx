@@ -41,7 +41,7 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
       )}
     >
       <div
-        className="flex w-full items-center justify-center gap-3 border-t border-countdown bg-countdown px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm sm:text-lg"
+        className="flex w-full items-center justify-center gap-3 border-t border-countdown/75 bg-countdown/75 px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm backdrop-blur-md sm:text-lg"
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
       >

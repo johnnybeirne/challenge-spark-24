@@ -10,7 +10,7 @@ import {
 
 /**
  * Solid bottom bar that surfaces the rolling 72-hour challenge deadline
- * as H:MM:SS without attaching scroll listeners or intercepting gestures.
+ * without per-second renders, scroll listeners, or intercepted gestures.
  */
 const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: boolean }) => {
   const { state } = useAppState();
@@ -18,9 +18,9 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
   const endsAt = getChallengeEndsAt(state.challenge?.startedAt, state.challenge?.endsAt);
   const [now, setNow] = useState(() => Date.now());
 
-  // Tick every second for live seconds display.
+  // Tick lightly so scrolling stays smooth while the fixed bar is mounted.
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    const id = window.setInterval(() => setNow(Date.now()), 30_000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -28,7 +28,7 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
   const remaining = getRemainingMs(endsAt, now);
   if (remaining <= 0) return null;
 
-  const { days, hours, minutes, seconds } = formatRemaining(remaining);
+  const { days, hours, minutes } = formatRemaining(remaining);
   const pad = (n: number) => n.toString().padStart(2, "0");
   const sep = <span className="opacity-60">·</span>;
 
@@ -48,7 +48,7 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
         <Clock className="h-6 w-6" />
         <span className="tabular-nums">
           {days > 0 && <>{days}d {sep} </>}
-          {hours}h {sep} {pad(minutes)}m {sep} {pad(seconds)}s left
+          {hours}h {sep} {pad(minutes)}m left
         </span>
       </div>
 

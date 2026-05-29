@@ -172,9 +172,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
     if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
-    if (saved?.audienceType) return 8;
-    if (hasFoundation) return 4;
-    return 1;
+    if (saved?.audienceType && hasFoundation) return 5;
+    if (saved?.audienceType) return 1;
+    return 4;
   })();
 
 

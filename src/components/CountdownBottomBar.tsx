@@ -63,11 +63,9 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
     >
       <div
         className={cn(
-          "pointer-events-auto flex w-full items-center justify-center gap-3 border-t px-6 py-4 text-base font-semibold shadow-sm sm:text-lg",
-          urgent
-            ? "border-destructive/30 bg-destructive/95 text-destructive-foreground"
-            : "border-border bg-background/95 text-foreground",
+          "pointer-events-auto flex w-full items-center justify-center gap-3 border-t border-[#EA580C] bg-[#EA580C] px-6 py-4 text-base font-semibold text-white shadow-sm sm:text-lg",
         )}
+
 
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}

@@ -210,6 +210,9 @@ const DayChallenge = () => {
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
+  };
+
+
 
   const setLaunchUrl = (url: string) => {
     setState((prev) => ({

@@ -248,7 +248,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep === 2 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
+    if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
     return 4;
@@ -262,6 +262,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
+  const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
 
@@ -295,7 +296,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
-    const map: Record<number, Step> = { 2: 6, 5: 4, 6: 5, 7: 2 };
+    const map: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
     const prev = map[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -315,11 +316,12 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      setStep(7);
+      setStep3Phase(saved?.how ? "input" : "intro");
+      setStep(3);
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });
-      // Save into memory + aiOutputs so AI uses these as foundational context.
+      // Save into memory + aiOutputs so the AI uses this as the desired outcome.
       setState((prev) => ({
         ...prev,
         memory: mergeMemory(prev.memory, {
@@ -342,10 +344,9 @@ const Day1Setup = ({ onComplete }: Props) => {
         title: "Profile updated",
         message: "We've updated your profile with your challenge answers.",
         href: "/profile",
-
         dedupeKey: "day1_foundation_saved",
       });
-      setStep(5);
+      setStep(7);
     }
   };
 
@@ -585,17 +586,95 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
-        {step === 3 && (
-          <FoundationStep
-            n={3}
-            title="How do you solve it?"
-            helper="Your method, framework, or approach — what makes the result happen."
-            value={how}
-            setValue={setHow}
-            placeholder="e.g. A 3-step packaging system that turns expertise into a signature offer."
-            onNext={() => handleFoundationNext(3)}
-          />
-        )}
+        {step === 3 && (() => {
+          const outcomePlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
+            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
+            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
+            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
+            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
+            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
+            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
+            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
+          };
+          const outcomePlaceholder =
+            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. The transformation, result, or change participants will experience by the end.";
+
+          const outcomeWords = how.trim().split(/\s+/).filter(Boolean).length;
+          const outcomeFeedbackPool = [
+            "I like that.",
+            "That's a meaningful outcome.",
+            "I can see why people would want that result.",
+            "Now the transformation is becoming clear.",
+            "That's the kind of result that motivates people to take action.",
+          ];
+          const outcomeFeedback =
+            outcomeWords >= 5
+              ? outcomeFeedbackPool[Math.min(Math.floor(outcomeWords / 6), outcomeFeedbackPool.length - 1)]
+              : null;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step3Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step3-intro"
+                  messages={[
+                    "Great.",
+                    "We know who you're helping.",
+                    "We know what's getting in their way.",
+                    "Now let's define the outcome.",
+                    "What will be different for participants by the end of your challenge?",
+                    "Describe the result, improvement, or change they'll experience.",
+                  ]}
+                  onComplete={() => setStep3Phase("input")}
+                />
+              )}
+
+              {step3Phase === "input" && (
+                <div className="space-y-5 animate-fade-in">
+                  <div className="flex">
+                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                      What will be different for participants by the end of your challenge? Describe the result, improvement, or change they'll experience.
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-foreground">What will be different for participants by the end of your challenge?</label>
+                    <DictatedTextarea
+                      autoFocus
+                      value={how}
+                      onChange={(e) => setHow(e.target.value)}
+                      placeholder={outcomePlaceholder}
+                      rows={5}
+                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
+                      }}
+                    />
+                    {outcomeFeedback && (
+                      <div className="flex animate-fade-in pt-1">
+                        <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
+                          {outcomeFeedback}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={() => handleFoundationNext(3)}
+                    disabled={!how.trim()}
+                    className="w-full h-12 text-base font-semibold"
+                  >
+                    Continue
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {step === 4 && (
           <div className="space-y-6 animate-fade-in">

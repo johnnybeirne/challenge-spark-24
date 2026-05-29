@@ -122,13 +122,13 @@ const TypedSequence = ({
         }
       }, 22);
       return () => clearInterval(interval);
-    }, idx === 0 ? 2000 : 750);
+    }, idx === 0 ? (skipMakingNotes ? 200 : 2000) : 750);
     return () => clearTimeout(dotsTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
 
 
-  const isMakingNotes = idx === 0 && showDots && shown.length === 0;
+  const isMakingNotes = !skipMakingNotes && idx === 0 && showDots && shown.length === 0;
 
   return (
     <div className="flex items-start gap-3">

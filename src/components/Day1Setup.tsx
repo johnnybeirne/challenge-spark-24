@@ -919,34 +919,33 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step6Phase === "input" && (
-                <div className="space-y-5 animate-fade-in">
+                <div className="space-y-5">
                   <StaticAi messages={step6Messages} />
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={topicHint}
-                      onChange={(e) => setTopicHint(e.target.value)}
-                      placeholder={placeholder}
-                      rows={5}
-                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
-                      }}
-                    />
-                    {feedback && <DelayedFeedback text={feedback} />}
-
-                  </div>
-
-
-                  <Button
-                    size="lg"
-                    onClick={handleTopicNext}
-                    disabled={!topicHint.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={topicHint}
+                        onChange={(e) => setTopicHint(e.target.value)}
+                        placeholder={placeholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
+                        }}
+                      />
+                      {feedback && <DelayedFeedback text={feedback} />}
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleTopicNext}
+                      disabled={!topicHint.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
             </div>

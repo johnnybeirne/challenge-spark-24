@@ -32,6 +32,11 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
   const pad = (n: number) => n.toString().padStart(2, "0");
   const sep = <span className="opacity-60">·</span>;
 
+  const endsAtMs = new Date(endsAt).getTime();
+  const startedAtMs = state.challenge?.startedAt ? new Date(state.challenge.startedAt).getTime() : endsAtMs - 72 * 3600 * 1000;
+  const totalMs = Math.max(1, endsAtMs - startedAtMs);
+  const elapsedPct = Math.min(100, Math.max(0, ((totalMs - remaining) / totalMs) * 100));
+
   return (
     <div
       className={cn(
@@ -41,12 +46,18 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
       )}
     >
       <div
-        className="flex w-full items-center justify-center gap-3 border-t border-countdown/75 bg-countdown/75 px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm backdrop-blur-md sm:text-lg"
+        className="relative flex w-full items-center justify-center gap-3 overflow-hidden border-t border-countdown/75 bg-countdown/75 px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm backdrop-blur-md sm:text-lg"
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
+        aria-label={`${Math.round(elapsedPct)}% of challenge time elapsed`}
       >
-        <Clock className="h-6 w-6" />
-        <span className="tabular-nums">
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 bg-countdown-foreground/20"
+          style={{ width: `${elapsedPct}%` }}
+          aria-hidden="true"
+        />
+        <Clock className="relative h-6 w-6" />
+        <span className="relative tabular-nums">
           {days > 0 && <>{days}d {sep} </>}
           {hours}h {sep} {pad(minutes)}m left
         </span>

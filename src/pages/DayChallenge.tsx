@@ -198,6 +198,19 @@ const DayChallenge = () => {
     if (dayNum === 1 && key === "define_app") trackEvent("memory_updated", { source: "day1_define_app" });
   };
 
+  const notifyDashboardUpdated = (key: string) => {
+    const value = getOutput(key);
+    if (!value || !value.trim()) return;
+    toast.success("Your dashboard is updated", {
+      description: `Day ${dayNum} answer saved`,
+      position: "top-right",
+      duration: 3500,
+      action: {
+        label: "Dashboard",
+        onClick: () => navigate("/challenger-dashboard"),
+      },
+    });
+
   const setLaunchUrl = (url: string) => {
     setState((prev) => ({
       ...prev,

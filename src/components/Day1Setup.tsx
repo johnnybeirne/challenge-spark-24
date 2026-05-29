@@ -738,7 +738,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step4Messages = [
             `Hi ${firstName}.`,
             "Let's build your challenge together.",
-            "First, I need to understand who you want to help.",
+            `First${fn}, I need to understand who you want to help.`,
           ];
           return (
           <div className="space-y-6 animate-fade-in">
@@ -746,6 +746,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey="step4-intro"
                 messages={step4Messages}
+                skipMakingNotes
                 onComplete={() => setStep4Phase("choose")}
               />
             )}

@@ -181,6 +181,24 @@ const ChallengeRecord = () => {
     return "locked";
   };
 
+  const dayDate = (n: number): string => {
+    const base = startedAt ?? new Date();
+    const d = new Date(base);
+    d.setDate(d.getDate() + (n - 1));
+    return fmt(d);
+  };
+
+  const dayEyebrow = (n: number): string => {
+    const status =
+      dayStatus(n) === "complete"
+        ? "Complete"
+        : dayStatus(n) === "in_progress"
+        ? "In progress"
+        : "Locked";
+    return `Day ${n} · ${dayDate(n)} · ${status}`;
+  };
+
+
   return (
     <div className="space-y-5 sm:space-y-6">
 
@@ -206,13 +224,8 @@ const ChallengeRecord = () => {
       )}
 
       <Section
-        eyebrow={`Day 1 · ${
-          dayStatus(1) === "complete"
-            ? "Complete"
-            : dayStatus(1) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(1)}
+
         title="Foundation"
         description="Your answers from Day 1 — these power your AI Coach."
         status={dayStatus(1)}
@@ -255,13 +268,8 @@ const ChallengeRecord = () => {
       </Section>
 
       <Section
-        eyebrow={`Day 2 · ${
-          dayStatus(2) === "complete"
-            ? "Complete"
-            : dayStatus(2) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(2)}
+
         title="Lead Magnet Quiz"
         description="The quiz you designed as the entry point to your challenge."
         status={dayStatus(2)}
@@ -278,13 +286,8 @@ const ChallengeRecord = () => {
       </Section>
 
       <Section
-        eyebrow={`Day 3 · ${
-          dayStatus(3) === "complete"
-            ? "Complete"
-            : dayStatus(3) === "in_progress"
-            ? "In progress"
-            : "Locked"
-        }`}
+        eyebrow={dayEyebrow(3)}
+
         title="Launch"
         description="Your launch assets and public challenge URL."
         status={dayStatus(3)}

@@ -677,35 +677,88 @@ const Day1Setup = ({ onComplete }: Props) => {
           </div>
         )}
 
-        {step === 6 && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold tracking-tight">What transformation will they experience?</h2>
-              <p className="text-sm text-muted-foreground">Describe how they will feel, what they will know, or what they will be able to do after they complete your challenge.</p>
-            </div>
-            <DictatedTextarea
-              autoFocus
-              value={topicHint}
-              onChange={(e) => setTopicHint(e.target.value)}
-              placeholder="e.g. They'll finish with a launched landing page, a clear 3-day plan they can repeat, and the confidence to share it publicly."
-              rows={5}
-              className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
-              }}
-            />
+        {step === 6 && (() => {
+          const placeholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. Coaches and consultants who struggle to generate a consistent flow of qualified leads.",
+            "b2b|quick-win": "e.g. Small business owners who want to attract their first new client.",
+            "b2b|create-asset": "e.g. Experts who need a compelling offer they can confidently sell.",
+            "b2b|reach-milestone": "e.g. Service providers aiming to secure their first five paying clients.",
+            "b2c|solve-problem": "e.g. Busy parents who struggle to maintain healthy habits.",
+            "b2c|quick-win": "e.g. People who want to feel more energetic and productive.",
+            "b2c|create-asset": "e.g. Individuals who want to create a personal budget they can stick to.",
+            "b2c|reach-milestone": "e.g. Adults working toward losing their first 10 pounds.",
+          };
+          const placeholder =
+            placeholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. Describe the specific person you want to help — who they are, what stage they're at, and what they want.";
 
-            <Button
-              size="lg"
-              onClick={handleTopicNext}
-              disabled={!topicHint.trim()}
-              className="w-full h-12 text-base font-semibold"
-            >
-              Continue
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        )}
+          const wordCount = topicHint.trim().split(/\s+/).filter(Boolean).length;
+          const feedbackPool = [
+            "Perfect. I can already see who this challenge is designed for.",
+            "That's helpful. Let's build on that.",
+            "Great. The audience is becoming much clearer.",
+          ];
+          const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step6Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step6-intro"
+                  messages={[
+                    "Excellent.",
+                    "I'm starting to get a picture of the challenge you're creating.",
+                    "Now tell me about the people you're helping.",
+                    "The more specific you are, the better I can tailor the challenge.",
+                  ]}
+                  onComplete={() => setStep6Phase("input")}
+                />
+              )}
+
+              {step6Phase === "input" && (
+                <div className="space-y-5 animate-fade-in">
+                  <div className="flex">
+                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                      Now tell me about the people you're helping. The more specific you are, the better I can tailor the challenge.
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-foreground">Who do you help?</label>
+                    <DictatedTextarea
+                      autoFocus
+                      value={topicHint}
+                      onChange={(e) => setTopicHint(e.target.value)}
+                      placeholder={placeholder}
+                      rows={5}
+                      className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
+                      }}
+                    />
+                    {feedback && (
+                      <div className="flex animate-fade-in pt-1">
+                        <div className="max-w-[90%] rounded-xl bg-primary/5 border border-primary/20 px-3 py-2 text-xs md:text-sm text-muted-foreground italic">
+                          {feedback}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={handleTopicNext}
+                    disabled={!topicHint.trim()}
+                    className="w-full h-12 text-base font-semibold"
+                  >
+                    Continue
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {step === 7 && audienceType && (
           <div className="space-y-6 animate-fade-in text-center">

@@ -160,7 +160,7 @@ const App = () => (
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
-                <Route path="/let-me-in" element={<AdminViewAsUser redirectTo="/challenger-dashboard" />} />
+                <Route path="/let-me-in" element={<AdminViewAsUserAutoLaunch redirectTo="/challenger-dashboard" />} />
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
 

@@ -51,8 +51,8 @@ interface Props {
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const audienceOptions = [
-  { value: "b2b" as const, label: "Businesses / professionals", icon: Briefcase },
-  { value: "b2c" as const, label: "Individuals / consumers", icon: UserIcon },
+  { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },
+  { value: "b2c" as const, label: "Individuals / Consumers", icon: UserIcon },
 ];
 
 const challengeOptions = [

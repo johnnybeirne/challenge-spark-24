@@ -67,18 +67,19 @@ const RevealControls = ({
   children,
   className = "",
   delay = 250,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) => {
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement> & { delay?: number }) => {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), delay);
     return () => clearTimeout(t);
   }, [delay]);
   if (!visible) return null;
-  return <div className={`animate-rise-in ${className}`}>{children}</div>;
+  return (
+    <div {...rest} className={`animate-rise-in ${className}`}>
+      {children}
+    </div>
+  );
 };
 
 

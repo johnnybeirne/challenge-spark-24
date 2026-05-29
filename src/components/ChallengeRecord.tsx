@@ -225,9 +225,7 @@ const ChallengeRecord = () => {
 
       <Section
         eyebrow={dayEyebrow(1)}
-
         title="Foundation"
-        description="Your answers from Day 1 — these power your AI Coach."
         status={dayStatus(1)}
         action={
           (day1.fields.length > 0 || day1.aiCards.length > 0) && (

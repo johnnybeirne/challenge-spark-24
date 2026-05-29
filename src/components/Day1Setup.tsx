@@ -295,7 +295,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
-    const map: Record<number, Step> = { 5: 4, 6: 5, 7: 6 };
+    const map: Record<number, Step> = { 2: 6, 5: 4, 6: 5, 7: 2 };
     const prev = map[step as number];
     if (prev !== undefined) setStep(prev);
   };

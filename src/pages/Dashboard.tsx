@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
   const [signupCreditCount, setSignupCreditCount] = useState(0);
+  const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
   const hasProgress =
@@ -216,41 +217,68 @@ const Dashboard = () => {
                 </span>
               )}
             </div>
-            <div className="aspect-video w-full bg-black">
-              {cfg.videoUrl ? (
-                <iframe
-                  src={cfg.videoUrl}
-                  title={cfg.videoTitle || "Watch this first"}
-                  className="h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  onLoad={() => {
-                    if (!state.training.dashboardVideoWatched) {
-                      setState((prev) => ({
-                        ...prev,
-                        training: {
-                          ...prev.training,
-                          dashboardVideoWatched: true,
-                          preChallengeWatched: true,
-                        },
-                      }));
-                      trackEvent("dashboard_training_marked_watched");
-                    }
-                  }}
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted/40 to-muted/10 text-center">
-                  <button
-                    type="button"
-                    aria-label="Play training video"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition hover:scale-105"
-                  >
-                    <Play className="h-6 w-6" fill="currentColor" />
-                  </button>
-                  <p className="text-sm font-bold text-muted-foreground">Training video goes here</p>
+            {!videoCollapsed && (
+              <>
+                <div className="aspect-video w-full bg-black">
+                  {cfg.videoUrl ? (
+                    <iframe
+                      src={cfg.videoUrl}
+                      title={cfg.videoTitle || "Watch this first"}
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted/40 to-muted/10 text-center">
+                      <button
+                        type="button"
+                        aria-label="Play training video"
+                        className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition hover:scale-105"
+                      >
+                        <Play className="h-6 w-6" fill="currentColor" />
+                      </button>
+                      <p className="text-sm font-bold text-muted-foreground">Training video goes here</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+                <div className="flex justify-end border-t border-border bg-muted/20 px-4 py-3">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                      if (!state.training.dashboardVideoWatched) {
+                        setState((prev) => ({
+                          ...prev,
+                          training: {
+                            ...prev.training,
+                            dashboardVideoWatched: true,
+                            preChallengeWatched: true,
+                          },
+                        }));
+                        trackEvent("dashboard_training_marked_watched");
+                      }
+                      setVideoCollapsed(true);
+                    }}
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Mark as Watched
+                  </Button>
+                </div>
+              </>
+            )}
+            {videoCollapsed && (
+              <div className="flex justify-end border-t border-border bg-muted/20 px-4 py-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setVideoCollapsed(false)}
+                >
+                  <Play className="h-4 w-4" fill="currentColor" />
+                  Watch Welcome Video Again
+                </Button>
+              </div>
+            )}
+
           </section>
 
           {/* TIMELINE — Today / Tomorrow / Day 3, full-width under video */}

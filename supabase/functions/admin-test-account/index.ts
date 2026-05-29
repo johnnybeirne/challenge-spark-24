@@ -136,13 +136,30 @@ Deno.serve(async (req) => {
       const elapsedMs = Math.max(0, Date.now() - signupDate.getTime());
       const computedDay = elapsedMs >= 48 * 3600_000 ? 3 : elapsedMs >= 24 * 3600_000 ? 2 : 1;
 
-      // Realistic Day 1 answers so the profile + identity feel populated
-      // when previewing the experience as a backdated test user.
+      // Realistic Day 1 answers using the actual keys Day1Setup writes so the
+      // profile + identity feel populated when previewing the experience.
+      // day1_foundation + day1_assessment are JSON-stringified blobs (see
+      // src/components/Day1Setup.tsx lines 440 + 531).
+      const seededFoundation = {
+        problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
+        audience: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
+        how: "A simple, repeatable system that generates qualified leads on autopilot.",
+      };
+      const seededAssessment = {
+        ...seededFoundation,
+        audienceType: "b2b",
+        challengeType: "growth",
+        transformation: "qualified lead generation",
+      };
       const seededDay1 = {
-        day1_define_app: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
-        day1_problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
-        day1_result: "A simple, repeatable system that generates qualified leads on autopilot.",
-        day1_share_reason: "It helps them spot exactly what's missing in their current setup and fix it fast.",
+        day1_foundation: JSON.stringify(seededFoundation),
+        day1_assessment: JSON.stringify(seededAssessment),
+        day1_promise: "Help coaches and consultants build a qualified lead engine in 3 days.",
+        day1_transformation: "From manual outreach to a system that pulls qualified leads in on autopilot.",
+        day1_quick_win: "Map your current lead flow in 10 minutes and spot the one bottleneck killing conversion.",
+        day1_outcome: "A repeatable lead engine producing qualified conversations every week.",
+        day1_title: `${firstName}'s Lead Engine Challenge`,
+        day1_structure: "Day 1: Foundation. Day 2: Engine build. Day 3: Launch + first leads.",
       };
 
       const seededMemory = {
@@ -198,10 +215,7 @@ Deno.serve(async (req) => {
       // Day 1 is always seeded as complete (so the profile renders with answers).
       // current_day reflects elapsed time since the backdated signup.
       const seededTasks: Record<string, boolean> = {
-        day1_define_app: true,
-        day1_problem: true,
-        day1_result: true,
-        day1_share_reason: true,
+        day1_create_structure: true,
       };
 
       const { error: progErr } = await admin
@@ -271,11 +285,26 @@ Deno.serve(async (req) => {
         .maybeSingle();
       const firstName = profile?.first_name?.trim() || "Test";
 
+      const seededFoundation = {
+        problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
+        audience: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
+        how: "A simple, repeatable system that generates qualified leads on autopilot.",
+      };
+      const seededAssessment = {
+        ...seededFoundation,
+        audienceType: "b2b",
+        challengeType: "growth",
+        transformation: "qualified lead generation",
+      };
       const seededDay1 = {
-        day1_define_app: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
-        day1_problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
-        day1_result: "A simple, repeatable system that generates qualified leads on autopilot.",
-        day1_share_reason: "It helps them spot exactly what's missing in their current setup and fix it fast.",
+        day1_foundation: JSON.stringify(seededFoundation),
+        day1_assessment: JSON.stringify(seededAssessment),
+        day1_promise: "Help coaches and consultants build a qualified lead engine in 3 days.",
+        day1_transformation: "From manual outreach to a system that pulls qualified leads in on autopilot.",
+        day1_quick_win: "Map your current lead flow in 10 minutes and spot the one bottleneck killing conversion.",
+        day1_outcome: "A repeatable lead engine producing qualified conversations every week.",
+        day1_title: `${firstName}'s Lead Engine Challenge`,
+        day1_structure: "Day 1: Foundation. Day 2: Engine build. Day 3: Launch + first leads.",
       };
       const seededMemory = {
         name: firstName,
@@ -286,10 +315,7 @@ Deno.serve(async (req) => {
         desired_outcome: "A simple, repeatable system that generates qualified leads on autopilot",
       };
       const seededTasks: Record<string, boolean> = {
-        day1_define_app: true,
-        day1_problem: true,
-        day1_result: true,
-        day1_share_reason: true,
+        day1_create_structure: true,
       };
 
       const nowIso = new Date().toISOString();

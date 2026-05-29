@@ -82,7 +82,7 @@ const Day1 = () => {
     });
 
     trackEvent("day1_reset" as any, {});
-    toast.success("Day 1 reset — start fresh below.");
+    toast.success("Day 1 reset — let's start again.");
     setResetKey((k) => k + 1);
   };
 

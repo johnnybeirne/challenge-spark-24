@@ -751,8 +751,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                 resetKey={`step4-ack-${audienceType}`}
                 messages={[
                   audienceType === "b2b"
-                    ? "Perfect. We'll build this for a business audience."
-                    : "Perfect. We'll build this for an individual audience.",
+                    ? `Perfect${fn}. We'll build this for a business audience.`
+                    : `Perfect${fn}. We'll build this for an individual audience.`,
                 ]}
                 onComplete={() => {
                   setStep(5);

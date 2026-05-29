@@ -102,42 +102,39 @@ const RightRail = () => {
     ? "Lead Magnet Templates"
     : "Community Access";
 
-  if (collapsed) {
-    return (
-      <aside className="relative hidden w-[56px] shrink-0 flex-col items-center gap-3 border-l border-border bg-muted/30 p-3 lg:flex">
-        <Button
-          size="sm"
-          variant="default"
-          className={cn("h-10 w-10 rounded-full p-0 shadow-lg", pulse && "animate-attention-pulse")}
-          onClick={() => setCollapsed(false)}
-          aria-label="Expand stats panel"
-          title="Expand stats"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        <Trophy className="mt-2 h-5 w-5 text-amber-500" />
-        <Flame className="h-5 w-5 text-orange-500" />
-        <Users className="h-5 w-5 text-emerald-500" />
-        <Sparkles className="h-5 w-5 text-rose-500" />
-      </aside>
-    );
-  }
-
   return (
-    <aside className="relative hidden w-[300px] shrink-0 flex-col gap-3 overflow-visible border-l border-border bg-muted/30 p-4 lg:flex">
+    <aside
+      className={cn(
+        "relative hidden shrink-0 flex-col overflow-visible border-l border-border bg-muted/30 lg:flex",
+        "transition-[width,padding] duration-300 ease-in-out",
+        collapsed ? "w-[56px] items-center gap-3 p-3" : "w-[300px] gap-3 p-4",
+      )}
+    >
       <Button
         size="sm"
         variant="default"
         className={cn(
           "absolute -left-4 top-6 z-50 h-10 w-10 rounded-full p-0 shadow-lg hover:shadow-xl",
-          pulse && "animate-attention-pulse"
+          pulse && "animate-attention-pulse",
         )}
-        onClick={() => setCollapsed(true)}
-        aria-label="Collapse stats panel"
-        title="Collapse stats"
+        onClick={() => setCollapsed((v) => !v)}
+        aria-label={collapsed ? "Expand stats panel" : "Collapse stats panel"}
+        title={collapsed ? "Expand stats" : "Collapse stats"}
       >
-        <ChevronRight className="h-5 w-5" />
+        {collapsed ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
       </Button>
+
+      {collapsed && (
+        <div className="mt-12 flex flex-col items-center gap-3 animate-fade-in">
+          <Trophy className="h-5 w-5 text-amber-500" />
+          <Flame className="h-5 w-5 text-orange-500" />
+          <Users className="h-5 w-5 text-emerald-500" />
+          <Sparkles className="h-5 w-5 text-rose-500" />
+        </div>
+      )}
+
+      {!collapsed && (
+        <div className="flex flex-col gap-3 animate-fade-in">
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">
@@ -234,6 +231,8 @@ const RightRail = () => {
           View vault <ChevronRight className="h-4 w-4" />
         </Link>
       </Card>
+        </div>
+      )}
     </aside>
   );
 };

@@ -961,19 +961,20 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
 
           const promise = who && pain && result
-            ? `Help ${who} overcome ${pain} so they can ${result}${methodPhrase ? ` — using ${methodPhrase}` : ""}.`
+            ? `Help ${who} overcome ${pain} so they can ${result}${methodPhrase ? ` using ${methodPhrase}` : ""}.`
             : null;
 
           // Summary as a list of paragraphs. Sections with missing data are hidden
           // rather than rendered as broken sentences (e.g. "You're helping .").
           const summary: string[] = [
-            `${Fn ? `${Fn}based` : "Based"} on what you've told me, this is what I have.`,
-            audienceType ? `You're creating a challenge for ${audiencePhrase}.` : null,
-            who ? `You're helping ${who}.` : null,
-            pain ? `Right now, they're struggling with ${pain}.` : null,
-            result ? `By the end of your challenge, they'll ${result}.` : null,
-            methodPhrase ? `You'll help them get there using ${methodPhrase}.` : null,
-            promise ? `This gives your challenge a clear promise.` : null,
+            `${Fn ? `${Fn}based` : "Based"} on what you've told me, here's what I'm seeing.`,
+            audienceType ? `We now know this challenge is for ${audiencePhrase}.` : null,
+            who ? `We also know you're helping ${who}.` : null,
+            pain ? `The main thing getting in their way is ${pain}.` : null,
+            result ? `We know the outcome you want them to achieve is ${result}.` : null,
+            methodPhrase ? `And the way you'll help them get there is through ${methodPhrase}.` : null,
+            promise ? `That gives us a clear challenge promise:` : null,
+            promise,
           ].filter((line): line is string => Boolean(line));
 
           return (

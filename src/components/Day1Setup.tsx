@@ -68,10 +68,12 @@ const TypedSequence = ({
   messages,
   onComplete,
   resetKey,
+  skipMakingNotes = false,
 }: {
   messages: string[];
   onComplete?: () => void;
   resetKey: string | number;
+  skipMakingNotes?: boolean;
 }) => {
   const [shown, setShown] = useState<string[]>([]);
   const [current, setCurrent] = useState("");

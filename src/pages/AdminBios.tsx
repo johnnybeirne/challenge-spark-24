@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,12 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -22,7 +36,6 @@ import {
 import { toast } from "sonner";
 import {
   Search,
-  Pencil,
   User as UserIcon,
   ArrowUp,
   ArrowDown,
@@ -34,6 +47,9 @@ import {
   Copy,
   Download,
   Trash2,
+  MoreHorizontal,
+  Pencil,
+  X,
 } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
@@ -56,7 +72,6 @@ interface BioRow {
   youtube_url: string | null;
   website_url: string | null;
   created_at: string | null;
-  // Waitlist-only context
   referral_code: string | null;
   referred_by_code: string | null;
   referred_by_email: string | null;
@@ -69,19 +84,9 @@ interface BioRow {
   self_referral_reasons: string[] | null;
 }
 
-type SortKey =
-  | "waitlist_position"
-  | "first_name"
-  | "surname"
-  | "email"
-  | "valid_referrals"
-  | "referred_by_name"
-  | "referred_by_email"
-  | "current_tier"
-  | "status"
-  | "created_at";
-
+type SortKey = "name" | "created_at" | "valid_referrals" | "waitlist_position" | "current_tier";
 type SortDir = "asc" | "desc";
+type FilterKey = "all" | "buyers" | "waitlist" | "referred" | "direct" | "active_inviters" | "flagged";
 
 const pick = <T,>(a: T | null | undefined, b: T | null | undefined): T | null =>
   (a ?? null) || (b ?? null) || null;
@@ -92,8 +97,38 @@ const earlier = (a: string | null, b: string | null): string | null => {
   return new Date(a).getTime() <= new Date(b).getTime() ? a : b;
 };
 
-const formatDate = (iso: string | null) =>
+const formatFull = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+
+const formatRelative = (iso: string | null) => {
+  if (!iso) return "—";
+  try {
+    return formatDistanceToNow(new Date(iso), { addSuffix: true });
+  } catch {
+    return "—";
+  }
+};
+
+const copyText = async (v: string | null | undefined, label = "Copied") => {
+  if (!v) return;
+  try {
+    await navigator.clipboard.writeText(v);
+    toast.success(label);
+  } catch {
+    toast.error("Copy failed");
+  }
+};
+
+const displayName = (r: BioRow) =>
+  r.name || [r.first_name, r.surname].filter(Boolean).join(" ") || r.email || "Unnamed";
+
+const rankChipCls = [
+  "bg-amber-400/20 text-amber-800 ring-amber-500/40",
+  "bg-zinc-400/20 text-zinc-800 ring-zinc-500/40",
+  "bg-orange-700/15 text-orange-900 ring-orange-700/40",
+  "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+  "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+];
 
 const AdminBios = () => {
   const [rows, setRows] = useState<BioRow[]>([]);
@@ -101,14 +136,12 @@ const AdminBios = () => {
   const [q, setQ] = useState("");
   const [joinedFrom, setJoinedFrom] = useState("");
   const [joinedTo, setJoinedTo] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("valid_referrals");
+  const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [filter, setFilter] = useState<
-    "all" | "referred" | "direct" | "active_inviters" | "flagged"
-  >("all");
+  const [filter, setFilter] = useState<FilterKey>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  const [editing, setEditing] = useState<BioRow | null>(null);
+  const [openRow, setOpenRow] = useState<BioRow | null>(null);
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
 
@@ -135,14 +168,12 @@ const AdminBios = () => {
     if (waitlistRes.error) toast.error("Could not load waitlist");
 
     const waitlistList = waitlistRes.data || [];
-
     const codeToWaitlist = new Map<string, { email: string | null; name: string | null }>();
     for (const w of waitlistList) {
       if (w.referral_code) codeToWaitlist.set(w.referral_code, { email: w.email, name: w.name });
     }
 
     const map = new Map<string, BioRow>();
-
     for (const p of profilesRes.data || []) {
       const key = (p.email || `profile:${p.user_id}`).toLowerCase();
       map.set(key, {
@@ -244,7 +275,6 @@ const AdminBios = () => {
     load();
   }, []);
 
-  // Valid referrals per inviter waitlist_id (deduped by email, excludes self-ref).
   const validRefMap = useMemo(() => {
     const byCode = new Map<string, BioRow>();
     rows.forEach((r) => {
@@ -270,13 +300,15 @@ const AdminBios = () => {
     return map;
   }, [rows]);
 
-  const topFiveKeys = useMemo(() => {
-    return Array.from(validRefMap.entries())
-      .filter(([, n]) => n > 0)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([k]) => k);
-  }, [validRefMap]);
+  const topFiveKeys = useMemo(
+    () =>
+      Array.from(validRefMap.entries())
+        .filter(([, n]) => n > 0)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([k]) => k),
+    [validRefMap]
+  );
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -295,15 +327,16 @@ const AdminBios = () => {
         if (fromT && t < fromT) return false;
         if (toT && t >= toT) return false;
       }
+      if (filter === "buyers" && !r.sources.includes("profile")) return false;
+      if (filter === "waitlist" && !r.sources.includes("waitlist")) return false;
       if (filter === "referred" && !r.referred_by_code) return false;
       if (filter === "direct" && r.referred_by_code) return false;
-      if (filter === "active_inviters" && (r.confirmed_invites ?? 0) <= 0) return false;
+      if (filter === "active_inviters" && (validRefMap.get(r.key) ?? 0) <= 0) return false;
       if (filter === "flagged" && !r.suspected_self_referral) return false;
       return true;
     });
 
     const dir = sortDir === "asc" ? 1 : -1;
-    const numericKeys: SortKey[] = ["waitlist_position", "valid_referrals"];
     out.sort((a, b) => {
       let av: number | string;
       let bv: number | string;
@@ -313,9 +346,12 @@ const AdminBios = () => {
       } else if (sortKey === "valid_referrals") {
         av = validRefMap.get(a.key) ?? 0;
         bv = validRefMap.get(b.key) ?? 0;
-      } else if (numericKeys.includes(sortKey)) {
-        av = ((a as any)[sortKey] ?? Number.POSITIVE_INFINITY) as number;
-        bv = ((b as any)[sortKey] ?? Number.POSITIVE_INFINITY) as number;
+      } else if (sortKey === "waitlist_position") {
+        av = a.waitlist_position ?? Number.POSITIVE_INFINITY;
+        bv = b.waitlist_position ?? Number.POSITIVE_INFINITY;
+      } else if (sortKey === "name") {
+        av = displayName(a).toLowerCase();
+        bv = displayName(b).toLowerCase();
       } else {
         av = String((a as any)[sortKey] || "").toLowerCase();
         bv = String((b as any)[sortKey] || "").toLowerCase();
@@ -329,12 +365,15 @@ const AdminBios = () => {
 
   const totals = useMemo(() => {
     const total = rows.length;
+    const buyers = rows.filter((r) => r.sources.includes("profile")).length;
+    const waitlist = rows.filter((r) => r.sources.includes("waitlist")).length;
     const referred = rows.filter((r) => !!r.referred_by_code).length;
-    const inviters = rows.filter((r) => (r.confirmed_invites ?? 0) > 0).length;
-    const totalInvites = rows.reduce((sum, r) => sum + (r.confirmed_invites ?? 0), 0);
+    const direct = rows.filter((r) => !r.referred_by_code && r.sources.includes("waitlist")).length;
+    const inviters = Array.from(validRefMap.values()).filter((n) => n > 0).length;
+    const totalInvites = rows.reduce((s, r) => s + (validRefMap.get(r.key) ?? 0), 0);
     const flagged = rows.filter((r) => r.suspected_self_referral).length;
-    return { total, referred, inviters, totalInvites, flagged };
-  }, [rows]);
+    return { total, buyers, waitlist, referred, direct, inviters, totalInvites, flagged };
+  }, [rows, validRefMap]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -372,6 +411,22 @@ const AdminBios = () => {
     await load();
   };
 
+  const deleteOne = async (r: BioRow) => {
+    if (!r.waitlist_id) {
+      toast.info("Only waitlist rows can be deleted.");
+      return;
+    }
+    if (!window.confirm(`Delete waitlist signup for ${r.email}? This cannot be undone.`)) return;
+    const { error } = await supabase.from("waitlist_signups").delete().eq("id", r.waitlist_id);
+    if (error) {
+      toast.error(`Failed: ${error.message}`);
+      return;
+    }
+    toast.success("Deleted.");
+    setOpenRow(null);
+    await load();
+  };
+
   const clearFlag = async (r: BioRow) => {
     if (!r.waitlist_id) return;
     const { error } = await supabase.rpc("admin_clear_self_referral_flag", { p_signup_id: r.waitlist_id });
@@ -384,6 +439,9 @@ const AdminBios = () => {
         x.key === r.key ? { ...x, suspected_self_referral: false, self_referral_reasons: [] } : x
       )
     );
+    if (openRow?.key === r.key) {
+      setOpenRow({ ...openRow, suspected_self_referral: false, self_referral_reasons: [] });
+    }
     toast.success("Marked as valid.");
   };
 
@@ -399,42 +457,10 @@ const AdminBios = () => {
     await load();
   };
 
-  const saveNames = async (r: BioRow, newFirst: string, newSurname: string) => {
-    const combined = [newFirst, newSurname].filter(Boolean).join(" ").trim();
-    const payload = {
-      first_name: newFirst || null,
-      surname: newSurname || null,
-      name: combined || null,
-    };
-    const ops: Promise<{ error: unknown }>[] = [];
-    if (r.profile_user_id) {
-      ops.push(
-        supabase.from("profiles").update(payload).eq("user_id", r.profile_user_id) as unknown as Promise<{ error: unknown }>
-      );
-    }
-    if (r.waitlist_id) {
-      ops.push(
-        supabase.from("waitlist_signups").update(payload).eq("id", r.waitlist_id) as unknown as Promise<{ error: unknown }>
-      );
-    }
-    const results = await Promise.all(ops);
-    if (results.some((x) => x.error)) {
-      toast.error("Failed to update name");
-      return;
-    }
-    setRows((prev) =>
-      prev.map((x) =>
-        x.key === r.key
-          ? { ...x, first_name: newFirst || null, surname: newSurname || null, name: combined || null }
-          : x
-      )
-    );
-    toast.success("Name updated.");
-  };
-
-  const openEdit = (r: BioRow) => {
-    setEditing(r);
+  const openDrawer = (r: BioRow) => {
+    setOpenRow(r);
     setDraft({
+      name: r.name || [r.first_name, r.surname].filter(Boolean).join(" ") || "",
       bio: r.bio || "",
       linkedin_url: r.linkedin_url || "",
       facebook_url: r.facebook_url || "",
@@ -444,10 +470,17 @@ const AdminBios = () => {
     });
   };
 
-  const save = async () => {
-    if (!editing) return;
+  const saveDrawer = async () => {
+    if (!openRow) return;
     setSaving(true);
+    const full = ((draft.name as string) || "").trim();
+    const parts = full.split(/\s+/);
+    const first = parts.shift() || null;
+    const surname = parts.join(" ") || null;
     const payload = {
+      name: full || null,
+      first_name: first,
+      surname,
       bio: (draft.bio as string) ?? null,
       linkedin_url: draft.linkedin_url || null,
       facebook_url: draft.facebook_url || null,
@@ -456,52 +489,54 @@ const AdminBios = () => {
       website_url: draft.website_url || null,
     };
     const ops: Promise<{ error: unknown }>[] = [];
-    if (editing.profile_user_id) {
+    if (openRow.profile_user_id) {
       ops.push(
-        supabase.from("profiles").update(payload).eq("user_id", editing.profile_user_id) as unknown as Promise<{ error: unknown }>
+        supabase.from("profiles").update(payload).eq("user_id", openRow.profile_user_id) as unknown as Promise<{ error: unknown }>
       );
     }
-    if (editing.waitlist_id) {
+    if (openRow.waitlist_id) {
       ops.push(
-        supabase.from("waitlist_signups").update(payload).eq("id", editing.waitlist_id) as unknown as Promise<{ error: unknown }>
+        supabase.from("waitlist_signups").update(payload).eq("id", openRow.waitlist_id) as unknown as Promise<{ error: unknown }>
       );
     }
     const results = await Promise.all(ops);
     setSaving(false);
     if (results.some((x) => x.error)) {
-      toast.error("Could not save bio");
+      toast.error("Could not save");
       return;
     }
-    toast.success("Bio updated");
-    setEditing(null);
+    toast.success("Saved");
+    setOpenRow(null);
     await load();
   };
 
   const exportCsv = () => {
     const header = [
-      "position",
-      "first_name",
-      "surname",
+      "name",
       "email",
-      "valid_referrals",
+      "joined",
+      "source",
+      "refs",
       "referred_by_email",
+      "referred_by_code",
       "tier",
       "status",
-      "created_at",
-      "source",
+      "waitlist_position",
+      "flagged",
     ];
     const lines = filtered.map((r) =>
       [
-        r.waitlist_position ?? "",
-        JSON.stringify(r.first_name || ""),
-        JSON.stringify(r.surname || ""),
+        JSON.stringify(displayName(r)),
         r.email || "",
-        validRefMap.get(r.key) ?? 0,
-        r.referred_by_email || r.referred_by_code || "",
-        r.current_tier || "",
-        r.status || "",
         r.created_at || "",
         r.sources.join("+"),
+        validRefMap.get(r.key) ?? 0,
+        r.referred_by_email || "",
+        r.referred_by_code || "",
+        r.current_tier || "",
+        r.status || "",
+        r.waitlist_position ?? "",
+        r.suspected_self_referral ? "yes" : "",
       ].join(",")
     );
     const csv = [header.join(","), ...lines].join("\n");
@@ -514,511 +549,590 @@ const AdminBios = () => {
     URL.revokeObjectURL(url);
   };
 
-  const displayName = (r: BioRow) =>
-    r.name ||
-    [r.first_name, r.surname].filter(Boolean).join(" ") ||
-    r.email ||
-    "Unnamed";
-
   const SortHeader = ({
     k,
     label,
     align = "left",
+    className = "",
   }: {
     k: SortKey;
     label: string;
-    align?: "left" | "center" | "right";
+    align?: "left" | "right";
+    className?: string;
   }) => {
     const active = sortKey === k;
     const Icon = active ? (sortDir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
     return (
-      <th className={`px-3 py-2 text-${align} whitespace-nowrap`}>
+      <th
+        className={`px-3 py-2.5 whitespace-nowrap select-none ${
+          align === "right" ? "text-right" : "text-left"
+        } ${active ? "bg-muted/60 text-foreground" : ""} ${className}`}
+      >
         <button
           type="button"
           onClick={() => toggleSort(k)}
-          className={`inline-flex items-center gap-1 hover:text-foreground ${
-            active ? "text-foreground" : ""
+          className={`inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground hover:underline underline-offset-2 ${
+            align === "right" ? "flex-row-reverse" : ""
           }`}
         >
-          {label}
-          <Icon className="h-3 w-3 opacity-60" />
+          <span>{label}</span>
+          <Icon className={`h-3 w-3 ${active ? "opacity-100" : "opacity-50"}`} />
         </button>
       </th>
     );
   };
 
-  const rankChipCls = [
-    "bg-amber-400/20 text-amber-800 ring-amber-500/40",
-    "bg-zinc-400/20 text-zinc-800 ring-zinc-500/40",
-    "bg-orange-700/15 text-orange-900 ring-orange-700/40",
-    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
-    "bg-amber-400/10 text-amber-800 ring-amber-400/30",
+  const filterPills: { key: FilterKey; label: string; count: number; tone?: string }[] = [
+    { key: "all", label: "All", count: totals.total },
+    { key: "buyers", label: "Buyers", count: totals.buyers },
+    { key: "waitlist", label: "Waitlist", count: totals.waitlist },
+    { key: "referred", label: "Referred", count: totals.referred },
+    { key: "direct", label: "Direct", count: totals.direct },
+    { key: "active_inviters", label: "Referrers", count: totals.inviters },
+    { key: "flagged", label: "⚠ Flagged", count: totals.flagged, tone: "flagged" },
   ];
 
   return (
-    <div className="p-6 w-[90%] mx-auto">
-      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+    <div className="p-6 max-w-[1400px] mx-auto">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-5 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">User Bios</h1>
           <p className="text-sm text-muted-foreground">
-            Unified view of buyer profiles + waitlist signups. Records with the same email are merged.
+            Merged view of buyers & waitlist signups. Click a row for full details.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search name, email, code…"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <Button onClick={exportCsv} variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" /> Export CSV
-          </Button>
-          <Button
-            onClick={deleteSelected}
-            disabled={selected.size === 0}
-            variant="destructive"
-            size="sm"
-            className="gap-2"
-          >
-            <Trash2 className="h-4 w-4" /> Delete ({selected.size})
-          </Button>
-        </div>
+        <Button onClick={exportCsv} variant="outline" size="sm" className="gap-2">
+          <Download className="h-4 w-4" /> Export CSV
+        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-3 sm:grid-cols-5 mb-3">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-5">
         {[
           { label: "Total people", value: totals.total },
-          { label: "Referred", value: totals.referred },
-          { label: "Referrers", value: totals.inviters },
-          { label: "Total invites", value: totals.totalInvites },
-          { label: "Flagged", value: totals.flagged },
+          { label: "Active referrers", value: totals.inviters },
+          { label: "Valid referrals", value: totals.totalInvites },
+          { label: "Flagged", value: totals.flagged, danger: totals.flagged > 0 },
         ].map((s) => (
-          <Card key={s.label}>
+          <Card key={s.label} className={s.danger ? "border-amber-500/40" : ""}>
             <CardContent className="p-4">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
-              <p className="mt-1 text-2xl font-semibold">{s.value.toLocaleString()}</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{s.label}</p>
+              <p className={`mt-1 text-2xl font-semibold ${s.danger ? "text-amber-700" : ""}`}>
+                {s.value.toLocaleString()}
+              </p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Filter pills */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {(
-          [
-            ["all", "All"],
-            ["referred", "Referred"],
-            ["direct", "Direct"],
-            ["active_inviters", "Referrers"],
-            ["flagged", "⚠ Flagged"],
-          ] as const
-        ).map(([key, label]) => (
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <div className="relative flex-1 min-w-[220px] max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search name, email, code…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="pl-9 h-9"
+          />
+        </div>
+        <Input
+          type="date"
+          value={joinedFrom}
+          onChange={(e) => setJoinedFrom(e.target.value)}
+          className="h-9 w-[150px]"
+          aria-label="Joined from"
+        />
+        <span className="text-muted-foreground text-sm">→</span>
+        <Input
+          type="date"
+          value={joinedTo}
+          onChange={(e) => setJoinedTo(e.target.value)}
+          className="h-9 w-[150px]"
+          aria-label="Joined to"
+        />
+        <Select value={`${sortKey}:${sortDir}`} onValueChange={(v) => {
+          const [k, d] = v.split(":") as [SortKey, SortDir];
+          setSortKey(k);
+          setSortDir(d);
+        }}>
+          <SelectTrigger className="h-9 w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="created_at:desc">Newest first</SelectItem>
+            <SelectItem value="created_at:asc">Oldest first</SelectItem>
+            <SelectItem value="valid_referrals:desc">Most refs</SelectItem>
+            <SelectItem value="name:asc">Name A–Z</SelectItem>
+            <SelectItem value="waitlist_position:asc">Waitlist position</SelectItem>
+          </SelectContent>
+        </Select>
+        {(q || joinedFrom || joinedTo || filter !== "all") && (
           <Button
-            key={key}
-            variant={filter === key ? "default" : "outline"}
+            variant="ghost"
             size="sm"
-            onClick={() => setFilter(key)}
+            onClick={() => {
+              setQ("");
+              setJoinedFrom("");
+              setJoinedTo("");
+              setFilter("all");
+            }}
           >
-            {label}
-            {key === "flagged" && totals.flagged > 0 && (
-              <Badge variant="secondary" className="ml-2 h-4 text-[10px]">
-                {totals.flagged}
-              </Badge>
-            )}
+            <X className="h-3.5 w-3.5 mr-1" /> Clear
           </Button>
+        )}
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {filterPills.map((p) => (
+          <button
+            key={p.key}
+            onClick={() => setFilter(p.key)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition ${
+              filter === p.key
+                ? p.tone === "flagged"
+                  ? "border-amber-500 bg-amber-500/10 text-amber-800"
+                  : "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            }`}
+          >
+            {p.label}
+            <span
+              className={`rounded-full px-1.5 text-[10px] tabular-nums ${
+                filter === p.key && p.tone !== "flagged"
+                  ? "bg-primary-foreground/20"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {p.count}
+            </span>
+          </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-        <div>
-          <Label className="text-xs text-muted-foreground">Joined from</Label>
-          <Input type="date" value={joinedFrom} onChange={(e) => setJoinedFrom(e.target.value)} />
-        </div>
-        <div>
-          <Label className="text-xs text-muted-foreground">Joined to</Label>
-          <Input type="date" value={joinedTo} onChange={(e) => setJoinedTo(e.target.value)} />
-        </div>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setQ("");
-            setJoinedFrom("");
-            setJoinedTo("");
-          }}
-          className="self-end"
-        >
-          Clear filters
-        </Button>
-      </div>
+      {/* Result count */}
+      <p className="text-xs text-muted-foreground mb-2">
+        Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}
+      </p>
 
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <p className="text-sm text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {rows.length}
-        </p>
-      </div>
-
+      {/* Table */}
       {loading ? (
         <div className="flex justify-center py-12">
           <Spinner />
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-0 overflow-x-auto">
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
             {filtered.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No people found</p>
+              <p className="text-sm text-muted-foreground text-center py-12">No people match the filters.</p>
             ) : (
-              <table className="w-full text-sm">
-                <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2 w-8">
-                      <input
-                        type="checkbox"
-                        aria-label="Select all"
-                        checked={filtered.length > 0 && filtered.every((r) => selected.has(r.key))}
-                        onChange={(e) => {
-                          setSelected((prev) => {
-                            const next = new Set(prev);
-                            if (e.target.checked) filtered.forEach((r) => next.add(r.key));
-                            else filtered.forEach((r) => next.delete(r.key));
-                            return next;
-                          });
-                        }}
-                      />
-                    </th>
-                    <th className="px-3 py-2 text-left w-10"></th>
-                    <SortHeader k="waitlist_position" label="#" />
-                    <SortHeader k="first_name" label="First name" />
-                    <SortHeader k="surname" label="Surname" />
-                    <SortHeader k="email" label="Email" />
-                    <SortHeader k="created_at" label="Joined" />
-                    <SortHeader k="valid_referrals" label="Refs" align="right" />
-                    <SortHeader k="referred_by_name" label="Referred by" />
-                    <SortHeader k="referred_by_email" label="Referrer email" />
-                    <SortHeader k="current_tier" label="Tier" />
-                    <SortHeader k="status" label="Status" />
-                    <th className="px-3 py-2 text-left">Flag</th>
-                    <th className="px-3 py-2 text-left">Bio</th>
-
-                    <th className="px-3 py-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((r) => {
-                    const refs = validRefMap.get(r.key) ?? 0;
-                    const topRank = topFiveKeys.indexOf(r.key);
-                    const isTop = topRank >= 0;
-                    const rowCls = isTop
-                      ? "border-b last:border-0 bg-amber-500/5 hover:bg-amber-500/10"
-                      : "border-b last:border-0 hover:bg-muted/20";
-                    const isBuyer = r.sources.includes("profile");
-                    const isWaitlist = r.sources.includes("waitlist");
-                    return (
-                      <tr key={r.key} className={rowCls}>
-                        <td className="px-3 py-2">
-                          <input
-                            type="checkbox"
-                            aria-label={`Select ${r.email}`}
-                            checked={selected.has(r.key)}
-                            onChange={() => toggleOne(r.key)}
-                          />
-                        </td>
-                        <td className="px-3 py-2">
-                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                            {r.avatar_url ? (
-                              <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <UserIcon className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-3 py-2 font-mono text-xs text-muted-foreground whitespace-nowrap">
-                          {isTop ? (
-                            <span
-                              className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ring-1 ${rankChipCls[topRank]}`}
-                            >
-                              {topRank + 1}
-                            </span>
-                          ) : (
-                            r.waitlist_position ?? "—"
-                          )}
-                        </td>
-                        <td className="px-3 py-2 min-w-[160px]">
-                          <span className="inline-flex items-center gap-1.5 w-full">
-                            {topRank === 0 && <Trophy className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
-                            <Input
-                              defaultValue={r.first_name || ""}
-                              placeholder="First name"
-                              className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full"
-                              onBlur={(e) => {
-                                const v = e.target.value.trim();
-                                if (v === (r.first_name || "")) return;
-                                saveNames(r, v, r.surname || "");
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                                if (e.key === "Escape") {
-                                  (e.target as HTMLInputElement).value = r.first_name || "";
-                                  (e.target as HTMLInputElement).blur();
-                                }
-                              }}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground sticky top-0 z-10">
+                    <tr className="border-b">
+                      <th className="px-3 py-2.5 w-10">
+                        <input
+                          type="checkbox"
+                          aria-label="Select all"
+                          checked={filtered.length > 0 && filtered.every((r) => selected.has(r.key))}
+                          onChange={(e) => {
+                            setSelected((prev) => {
+                              const next = new Set(prev);
+                              if (e.target.checked) filtered.forEach((r) => next.add(r.key));
+                              else filtered.forEach((r) => next.delete(r.key));
+                              return next;
+                            });
+                          }}
+                        />
+                      </th>
+                      <SortHeader k="name" label="Person" />
+                      <SortHeader k="created_at" label="Joined" />
+                      <SortHeader k="valid_referrals" label="Refs" align="right" />
+                      <th className="px-3 py-2.5 text-left">Context</th>
+                      <th className="px-3 py-2.5 text-right w-20">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((r) => {
+                      const refs = validRefMap.get(r.key) ?? 0;
+                      const topRank = topFiveKeys.indexOf(r.key);
+                      const isTop = topRank >= 0;
+                      const isBuyer = r.sources.includes("profile");
+                      const isWaitlist = r.sources.includes("waitlist");
+                      const rowCls = `border-b last:border-0 cursor-pointer transition ${
+                        isTop ? "bg-amber-500/5 hover:bg-amber-500/10" : "hover:bg-muted/30"
+                      } ${selected.has(r.key) ? "bg-primary/5" : ""}`;
+                      return (
+                        <tr
+                          key={r.key}
+                          className={rowCls}
+                          onClick={() => openDrawer(r)}
+                        >
+                          <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              aria-label={`Select ${r.email}`}
+                              checked={selected.has(r.key)}
+                              onChange={() => toggleOne(r.key)}
                             />
-                          </span>
-                        </td>
-                        <td className="px-3 py-2 min-w-[160px]">
-                          <Input
-                            defaultValue={r.surname || ""}
-                            placeholder="Surname"
-                            className="h-8 px-2 py-1 border-transparent hover:border-input focus:border-input bg-transparent w-full"
-                            onBlur={(e) => {
-                              const v = e.target.value.trim();
-                              if (v === (r.surname || "")) return;
-                              saveNames(r, r.first_name || "", v);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                              if (e.key === "Escape") {
-                                (e.target as HTMLInputElement).value = r.surname || "";
-                                (e.target as HTMLInputElement).blur();
-                              }
-                            }}
-                          />
-                        <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                          {r.email || "—"}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
-                          {formatDate(r.created_at)}
-                        </td>
-                        <td className="px-3 py-2 text-right tabular-nums">
-                          <span className={isTop ? "font-semibold text-amber-700" : refs > 0 ? "font-semibold" : ""}>
-                            {refs || "—"}
-                          </span>
-                        </td>
-
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {r.referred_by_code ? (
-                            <span className="text-sm">
-                              {r.referred_by_name || r.referred_by_email || r.referred_by_code}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">
-                              {isWaitlist ? "Direct" : "—"}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
-                          {r.referred_by_email ? (
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="truncate max-w-[180px]">{r.referred_by_email}</span>
-                              <button
-                                type="button"
-                                onClick={async (e) => {
-                                  e.stopPropagation();
-                                  try {
-                                    await navigator.clipboard.writeText(r.referred_by_email!);
-                                    toast.success("Email copied");
-                                  } catch {
-                                    toast.error("Failed to copy");
-                                  }
-                                }}
-                                className="rounded p-0.5 hover:bg-muted hover:text-foreground"
-                                title="Copy email"
-                              >
-                                <Copy className="h-3 w-3" />
-                              </button>
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {r.current_tier ? (
-                            <Badge variant="secondary" className="text-xs">
-                              {r.current_tier}
-                            </Badge>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {r.status ? (
-                            <Badge variant={r.status === "active" ? "default" : "outline"} className="text-xs">
-                              {r.status}
-                            </Badge>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {r.suspected_self_referral ? (
-                            <TooltipProvider>
-                              <div className="flex items-center gap-1">
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-500/40">
-                                      <AlertTriangle className="h-3 w-3" /> Flag
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <div className="text-xs">
-                                      <div className="mb-1 font-semibold">Suspected self-referral</div>
-                                      <ul className="list-disc pl-4">
-                                        {(r.self_referral_reasons || []).map((reason) => (
-                                          <li key={reason}>{reason.replace(/_/g, " ")}</li>
-                                        ))}
-                                      </ul>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      type="button"
-                                      onClick={() => clearFlag(r)}
-                                      className="rounded p-1 text-emerald-700 hover:bg-emerald-500/10"
-                                      aria-label="Mark valid"
-                                    >
-                                      <ShieldCheck className="h-3.5 w-3.5" />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>Mark as valid</TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      type="button"
-                                      onClick={() => voidReferral(r)}
-                                      className="rounded p-1 text-destructive hover:bg-destructive/10"
-                                      aria-label="Void referral"
-                                    >
-                                      <Ban className="h-3.5 w-3.5" />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>Void referral</TooltipContent>
-                                </Tooltip>
+                          </td>
+                          {/* Person */}
+                          <td className="px-3 py-3 min-w-[260px]">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 ring-1 ring-border">
+                                {r.avatar_url ? (
+                                  <img src={r.avatar_url} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  <UserIcon className="h-4 w-4 text-muted-foreground" />
+                                )}
                               </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  {isTop && (
+                                    <Trophy
+                                      className={`h-3.5 w-3.5 shrink-0 ${
+                                        topRank === 0 ? "text-amber-500" : "text-amber-500/60"
+                                      }`}
+                                    />
+                                  )}
+                                  <span className="font-medium truncate">{displayName(r)}</span>
+                                  {r.suspected_self_referral && (
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <span className="inline-flex items-center rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-amber-500/40">
+                                            <AlertTriangle className="h-2.5 w-2.5" />
+                                          </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Suspected self-referral</TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
+                                </div>
+                                <div className="text-xs text-muted-foreground truncate flex items-center gap-1.5">
+                                  <span className="truncate">{r.email || "no email"}</span>
+                                  {isBuyer && (
+                                    <Badge variant="secondary" className="text-[9px] py-0 h-3.5 px-1.5">
+                                      Buyer
+                                    </Badge>
+                                  )}
+                                  {isWaitlist && (
+                                    <Badge variant="outline" className="text-[9px] py-0 h-3.5 px-1.5">
+                                      Waitlist
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          {/* Joined */}
+                          <td className="px-3 py-3 whitespace-nowrap text-xs text-muted-foreground">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span>{formatRelative(r.created_at)}</span>
+                                </TooltipTrigger>
+                                <TooltipContent>{formatFull(r.created_at)}</TooltipContent>
+                              </Tooltip>
                             </TooltipProvider>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 max-w-xs">
-                          <span className="line-clamp-1 text-muted-foreground">
-                            {r.bio || <span className="italic">No bio</span>}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2 text-right whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1">
-                            {isBuyer && (
-                              <Badge variant="secondary" className="text-[10px] py-0 h-4">
-                                Buyer
-                              </Badge>
+                          </td>
+                          {/* Refs */}
+                          <td className="px-3 py-3 text-right tabular-nums">
+                            {isTop ? (
+                              <span
+                                className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${rankChipCls[topRank]}`}
+                              >
+                                #{topRank + 1} · {refs}
+                              </span>
+                            ) : refs > 0 ? (
+                              <span className="font-semibold">{refs}</span>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
                             )}
-                            {isWaitlist && (
-                              <Badge variant="outline" className="text-[10px] py-0 h-4">
-                                Waitlist
-                              </Badge>
-                            )}
-                            <Button size="sm" variant="outline" onClick={() => openEdit(r)} className="ml-1">
-                              <Pencil className="h-3 w-3 mr-1" /> Edit
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          </td>
+                          {/* Context */}
+                          <td className="px-3 py-3 text-xs text-muted-foreground max-w-[340px]">
+                            <div className="truncate">
+                              {isWaitlist && (
+                                <>
+                                  {r.waitlist_position != null && (
+                                    <span className="font-mono">#{r.waitlist_position}</span>
+                                  )}
+                                  {r.current_tier && (
+                                    <>
+                                      {r.waitlist_position != null && " · "}
+                                      <Badge variant="secondary" className="text-[10px] py-0 h-4 px-1.5">
+                                        {r.current_tier}
+                                      </Badge>
+                                    </>
+                                  )}
+                                  {r.referred_by_code ? (
+                                    <>
+                                      {" · "}via {r.referred_by_name || r.referred_by_email || r.referred_by_code}
+                                    </>
+                                  ) : (
+                                    <> · Direct</>
+                                  )}
+                                </>
+                              )}
+                              {!isWaitlist && isBuyer && <span>Buyer profile</span>}
+                            </div>
+                          </td>
+                          {/* Actions */}
+                          <td
+                            className="px-3 py-3 text-right"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-7 w-7">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => openDrawer(r)}>
+                                  <Pencil className="h-3.5 w-3.5 mr-2" /> Edit bio
+                                </DropdownMenuItem>
+                                {r.email && (
+                                  <DropdownMenuItem onClick={() => copyText(r.email, "Email copied")}>
+                                    <Copy className="h-3.5 w-3.5 mr-2" /> Copy email
+                                  </DropdownMenuItem>
+                                )}
+                                {r.suspected_self_referral && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => clearFlag(r)}>
+                                      <ShieldCheck className="h-3.5 w-3.5 mr-2 text-emerald-600" /> Mark valid
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => voidReferral(r)}>
+                                      <Ban className="h-3.5 w-3.5 mr-2 text-destructive" /> Void referral
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                                {r.waitlist_id && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() => deleteOne(r)}
+                                      className="text-destructive focus:text-destructive"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete signup
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             )}
           </CardContent>
         </Card>
       )}
 
-      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
-        <DialogContent className="max-w-lg">
-          {editing && (
+      {/* Selected action bar */}
+      {selected.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 rounded-full border bg-background px-4 py-2 shadow-lg">
+          <span className="text-sm font-medium">{selected.size} selected</span>
+          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
+            Clear
+          </Button>
+          <Button size="sm" variant="destructive" onClick={deleteSelected} className="gap-1.5">
+            <Trash2 className="h-3.5 w-3.5" /> Delete
+          </Button>
+        </div>
+      )}
+
+      {/* Detail drawer */}
+      <Sheet open={!!openRow} onOpenChange={(o) => !o && setOpenRow(null)}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          {openRow && (
             <>
-              <DialogHeader>
-                <DialogTitle>Edit bio — {displayName(editing)}</DialogTitle>
-              </DialogHeader>
-              {editing.profile_user_id && editing.waitlist_id && (
-                <p className="text-xs text-muted-foreground -mt-2">
-                  Saves to both the buyer profile and waitlist record.
-                </p>
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center overflow-hidden ring-1 ring-border">
+                    {openRow.avatar_url ? (
+                      <img src={openRow.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <div className="truncate">{displayName(openRow)}</div>
+                    <div className="text-xs font-normal text-muted-foreground truncate flex items-center gap-1.5">
+                      {openRow.email || "no email"}
+                      {openRow.email && (
+                        <button
+                          type="button"
+                          onClick={() => copyText(openRow.email)}
+                          className="hover:text-foreground"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </SheetTitle>
+              </SheetHeader>
+
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {openRow.sources.includes("profile") && <Badge variant="secondary">Buyer</Badge>}
+                {openRow.sources.includes("waitlist") && <Badge variant="outline">Waitlist</Badge>}
+                <Badge variant="outline" className="text-muted-foreground">
+                  Joined {formatRelative(openRow.created_at)}
+                </Badge>
+                {(validRefMap.get(openRow.key) ?? 0) > 0 && (
+                  <Badge>{validRefMap.get(openRow.key)} valid refs</Badge>
+                )}
+              </div>
+
+              {openRow.suspected_self_referral && (
+                <div className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-800">
+                    <AlertTriangle className="h-4 w-4" /> Suspected self-referral
+                  </div>
+                  {openRow.self_referral_reasons && openRow.self_referral_reasons.length > 0 && (
+                    <ul className="mt-1.5 ml-5 list-disc text-xs text-amber-800">
+                      {openRow.self_referral_reasons.map((reason) => (
+                        <li key={reason}>{reason.replace(/_/g, " ")}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-2.5 flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => clearFlag(openRow)} className="gap-1.5">
+                      <ShieldCheck className="h-3.5 w-3.5" /> Mark valid
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => voidReferral(openRow)} className="gap-1.5">
+                      <Ban className="h-3.5 w-3.5" /> Void referral
+                    </Button>
+                  </div>
+                </div>
               )}
-              <div className="space-y-4">
+
+              {openRow.sources.includes("waitlist") && (
+                <div className="mt-4 rounded-md border bg-muted/30 p-3 text-xs grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="text-muted-foreground">Position</div>
+                    <div className="font-medium">
+                      {openRow.waitlist_position != null ? `#${openRow.waitlist_position}` : "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Tier</div>
+                    <div className="font-medium">{openRow.current_tier || "—"}</div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Status</div>
+                    <div className="font-medium">{openRow.status || "—"}</div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Confirmed invites</div>
+                    <div className="font-medium">{openRow.confirmed_invites ?? 0}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="text-muted-foreground">Referred by</div>
+                    <div className="font-medium truncate">
+                      {openRow.referred_by_code
+                        ? `${openRow.referred_by_name || openRow.referred_by_email || ""} (${openRow.referred_by_code})`
+                        : "Direct"}
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="text-muted-foreground">Their referral code</div>
+                    <div className="font-mono text-xs flex items-center gap-1.5">
+                      {openRow.referral_code || "—"}
+                      {openRow.referral_code && (
+                        <button
+                          type="button"
+                          onClick={() => copyText(openRow.referral_code)}
+                          className="hover:text-foreground"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5 space-y-3">
                 <div>
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="d-name">Full name</Label>
+                  <Input
+                    id="d-name"
+                    value={(draft.name as string) || ""}
+                    onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+                    placeholder="First Last"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="d-bio">Bio</Label>
                   <Textarea
-                    id="bio"
-                    rows={5}
+                    id="d-bio"
+                    rows={4}
                     value={(draft.bio as string) || ""}
                     onChange={(e) => setDraft((d) => ({ ...d, bio: e.target.value }))}
                     placeholder="Short bio shown on the leaderboard…"
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="linkedin">LinkedIn</Label>
-                    <Input
-                      id="linkedin"
-                      value={(draft.linkedin_url as string) || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, linkedin_url: e.target.value }))}
-                      placeholder="https://linkedin.com/in/…"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="website">Website</Label>
-                    <Input
-                      id="website"
-                      value={(draft.website_url as string) || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, website_url: e.target.value }))}
-                      placeholder="https://…"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="facebook">Facebook</Label>
-                    <Input
-                      id="facebook"
-                      value={(draft.facebook_url as string) || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, facebook_url: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="instagram">Instagram</Label>
-                    <Input
-                      id="instagram"
-                      value={(draft.instagram_url as string) || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, instagram_url: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="youtube">YouTube</Label>
-                    <Input
-                      id="youtube"
-                      value={(draft.youtube_url as string) || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, youtube_url: e.target.value }))}
-                    />
-                  </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {(
+                    [
+                      ["linkedin_url", "LinkedIn"],
+                      ["website_url", "Website"],
+                      ["facebook_url", "Facebook"],
+                      ["instagram_url", "Instagram"],
+                      ["youtube_url", "YouTube"],
+                    ] as const
+                  ).map(([k, label]) => (
+                    <div key={k}>
+                      <Label htmlFor={`d-${k}`} className="text-xs">
+                        {label}
+                      </Label>
+                      <Input
+                        id={`d-${k}`}
+                        value={(draft[k as keyof BioRow] as string) || ""}
+                        onChange={(e) => setDraft((d) => ({ ...d, [k]: e.target.value }))}
+                        placeholder="https://…"
+                        className="h-9"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
-              <DialogFooter>
-                <Button variant="ghost" onClick={() => setEditing(null)} disabled={saving}>
-                  Cancel
-                </Button>
-                <Button onClick={save} disabled={saving}>
-                  {saving ? "Saving…" : "Save changes"}
-                </Button>
-              </DialogFooter>
+
+              <div className="mt-5 flex items-center justify-between gap-2 pt-4 border-t">
+                {openRow.waitlist_id ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteOne(openRow)}
+                    className="text-destructive hover:text-destructive gap-1.5"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Delete signup
+                  </Button>
+                ) : (
+                  <div />
+                )}
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => setOpenRow(null)} disabled={saving}>
+                    Cancel
+                  </Button>
+                  <Button size="sm" onClick={saveDrawer} disabled={saving}>
+                    {saving ? "Saving…" : "Save"}
+                  </Button>
+                </div>
+              </div>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

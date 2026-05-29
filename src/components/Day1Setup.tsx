@@ -421,6 +421,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
+      profileSaved("The problem you're solving");
       setStep3Phase(saved?.how ? "input" : "intro");
       setStep(3);
     } else {

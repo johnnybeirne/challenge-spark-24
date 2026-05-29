@@ -90,7 +90,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const storedDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
-    const yourDashboardActive = location.pathname === "/your-dashboard";
+    
 
 
     // Per-user personalised day dates derived from challenge.startedAt

@@ -289,51 +289,6 @@ const Dashboard = () => {
 
           </section>
 
-          {/* TIMELINE — Today / Tomorrow / Day 3, full-width under video */}
-          {(() => {
-            const fmt = (d: Date) =>
-              d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
-            const base = startedAt ?? new Date();
-            const todayDate = new Date(base);
-            todayDate.setDate(todayDate.getDate() + (ctaDay - 1));
-            const tomorrowDate = new Date(todayDate);
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const day3Date = new Date(base);
-            day3Date.setDate(day3Date.getDate() + 2);
-            const day3Meta = dayMeta[3];
-            return (
-              <section className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-8">
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="flex items-start gap-2.5">
-                    <CircleDot className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Today</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(todayDate)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">{meta.title}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">Tomorrow</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(tomorrowDate)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">
-                        {tomorrowMeta ? tomorrowMeta.title : isComplete ? "You're all caught up" : "Wrap up & celebrate"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">{day3Date.toLocaleDateString(undefined, { weekday: "long" })}</p>
-                      <p className="mt-0.5 text-sm font-bold text-foreground">{fmt(day3Date)}</p>
-                      <p className="mt-1 truncate text-sm text-muted-foreground">{day3Meta.title}</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            );
-          })()}
 
 
 

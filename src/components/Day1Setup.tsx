@@ -611,13 +611,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                       }}
                     />
-                    {problemFeedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {problemFeedback}
-                        </div>
-                      </div>
-                    )}
+                    {problemFeedback && <DelayedFeedback text={problemFeedback} />}
+
                   </div>
 
 
@@ -695,13 +690,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                       }}
                     />
-                    {outcomeFeedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {outcomeFeedback}
-                        </div>
-                      </div>
-                    )}
+                    {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
+
                   </div>
 
 
@@ -922,13 +912,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
                       }}
                     />
-                    {feedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {feedback}
-                        </div>
-                      </div>
-                    )}
+                    {feedback && <DelayedFeedback text={feedback} />}
+
                   </div>
 
 

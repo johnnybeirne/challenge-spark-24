@@ -27,6 +27,23 @@ const JohnnyAvatar = () => (
   />
 );
 
+// Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
+const DelayedFeedback = ({ text }: { text: string }) => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div className="flex animate-fade-in pt-1">
+      <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
+        {ready ? text : <span className="text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>}
+      </div>
+    </div>
+  );
+};
+
+
 
 // Conversational typing sequence — types each message in turn, calls onComplete after all done.
 const TypedSequence = ({
@@ -85,11 +102,13 @@ const TypedSequence = ({
         }
       }, 22);
       return () => clearInterval(interval);
-    }, idx === 0 ? 400 : 750);
+    }, idx === 0 ? 2000 : 750);
     return () => clearTimeout(dotsTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
 
+
+  const isMakingNotes = idx === 0 && showDots && shown.length === 0;
 
   return (
     <div className="flex items-start gap-3">
@@ -105,13 +124,20 @@ const TypedSequence = ({
         {idx < messages.length && (
           <div className="flex animate-fade-in">
             <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
-              {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
+              {isMakingNotes ? (
+                <span className="italic text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>
+              ) : showDots ? (
+                <TypingDots />
+              ) : (
+                <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>
+              )}
             </div>
           </div>
         )}
       </div>
     </div>
   );
+
 
 };
 
@@ -585,13 +611,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                       }}
                     />
-                    {problemFeedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {problemFeedback}
-                        </div>
-                      </div>
-                    )}
+                    {problemFeedback && <DelayedFeedback text={problemFeedback} />}
+
                   </div>
 
 
@@ -669,13 +690,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                       }}
                     />
-                    {outcomeFeedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {outcomeFeedback}
-                        </div>
-                      </div>
-                    )}
+                    {outcomeFeedback && <DelayedFeedback text={outcomeFeedback} />}
+
                   </div>
 
 
@@ -896,13 +912,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
                       }}
                     />
-                    {feedback && (
-                      <div className="flex animate-fade-in pt-1">
-                        <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
-                          {feedback}
-                        </div>
-                      </div>
-                    )}
+                    {feedback && <DelayedFeedback text={feedback} />}
+
                   </div>
 
 

@@ -766,9 +766,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step4Phase === "choose" && (
-              <div className="space-y-3 animate-fade-in">
+              <div className="space-y-3">
                 <StaticAi messages={step4Messages} />
-                <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <RevealControls role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {[
                     {

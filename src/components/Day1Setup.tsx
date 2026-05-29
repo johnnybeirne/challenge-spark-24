@@ -607,8 +607,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               : null;
 
           const step2Messages = [
-            "Now let's understand what's getting in their way.",
-            "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
+            "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
           return (

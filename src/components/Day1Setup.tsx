@@ -137,32 +137,28 @@ const challengeOptions = [
     value: "solve-problem",
     emoji: "🎯",
     label: "Solve a Problem",
-    description:
-      "Help participants overcome a specific challenge, frustration, or obstacle that is holding them back.",
+    description: "Help participants overcome a specific problem that is holding them back.",
     summary: "Participants will solve a specific problem.",
   },
   {
     value: "quick-win",
     emoji: "⚡",
     label: "Achieve a Quick Win",
-    description:
-      "Help participants experience an immediate result that builds confidence and momentum.",
+    description: "Help participants achieve a meaningful result quickly.",
     summary: "Participants will achieve an immediate result.",
   },
   {
     value: "create-asset",
     emoji: "🛠",
-    label: "Create an Asset",
-    description:
-      "Help participants build something valuable they can use long after the challenge is complete.",
+    label: "Create Something Valuable",
+    description: "Help participants create something they can continue using after the challenge.",
     summary: "Participants will create something valuable.",
   },
   {
     value: "reach-milestone",
     emoji: "🚀",
     label: "Reach a Milestone",
-    description:
-      "Help participants achieve a meaningful milestone that moves them significantly closer to their goal.",
+    description: "Help participants make significant progress toward an important goal.",
     summary: "Participants will achieve a meaningful milestone.",
   },
 ];
@@ -770,8 +766,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey="step5-intro"
                 messages={[
-                  "Now let's define the result.",
-                  "When people complete your challenge, what do you want them to walk away with?",
+                  `${firstName}, what result do you want participants to achieve?`,
+                  "Choose the primary outcome participants should achieve by the end of your challenge.",
                 ]}
                 onComplete={() => setStep5Phase("choose")}
               />
@@ -781,7 +777,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               <div className="space-y-5 animate-fade-in">
                 <div className="flex">
                   <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
-                    When people complete your challenge, what do you want them to walk away with?
+                    <p className="font-semibold text-foreground mb-1">{firstName}, what result do you want participants to achieve?</p>
+                    <p>Choose the primary outcome participants should achieve by the end of your challenge.</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

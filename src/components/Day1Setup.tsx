@@ -171,12 +171,11 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
-    if (saved?.audienceType && hasFoundation) return 5;
-    if (saved?.audienceType) return 1;
+    if (persistedStep >= 4 && persistedStep <= 8) return persistedStep as Step;
+    if (saved?.audienceType && saved?.challengeType) return 6;
+    if (saved?.audienceType) return 5;
     return 4;
   })();
-
 
   const [step, setStep] = useState<Step>(initialStep);
 
@@ -208,9 +207,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Flow order: 4 (audience type) → 1 → 2 → 3 (foundation) → 5 → 6 → 7 → 8
+  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
-    const map: Record<number, Step> = { 1: 4, 2: 1, 3: 2, 5: 3, 6: 5, 7: 6 };
+    const map: Record<number, Step> = { 5: 4, 6: 5, 7: 6 };
     const prev = map[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -264,7 +263,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); setStep(1); };
+  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); persistFoundation({ audienceType: v }); setStep(5); };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";

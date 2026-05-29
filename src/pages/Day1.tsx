@@ -95,7 +95,6 @@ const Day1 = () => {
               Reset Day 1
             </Button>
           </AlertDialogTrigger>
-          </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>

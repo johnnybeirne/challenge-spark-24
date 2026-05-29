@@ -462,21 +462,27 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 5 && (
           <div className="space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold tracking-tight">What result do you want them to achieve with your challenge?</h2>
+              <h2 className="text-2xl font-bold tracking-tight">What do you want participants to achieve?</h2>
+              <p className="text-sm text-muted-foreground">
+                Choose the primary outcome participants should achieve by the end of your challenge.
+              </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {challengeOptions.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => handleChallenge(opt.value)}
-                  className={`flex flex-col items-center justify-center gap-3 p-5 rounded-xl border-2 transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                  className={`flex flex-col items-start gap-2 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
                     challengeType === opt.value ? "border-primary bg-primary/10" : "border-border bg-card"
                   }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <opt.icon className="h-6 w-6" />
-                  </div>
-                  <span className="text-sm font-semibold text-center">{opt.label}</span>
+                  <span className="text-base font-semibold">
+                    <span className="mr-1.5">{opt.emoji}</span>
+                    {opt.label}
+                  </span>
+                  <span className="text-sm text-muted-foreground leading-relaxed">
+                    {opt.description}
+                  </span>
                 </button>
               ))}
             </div>

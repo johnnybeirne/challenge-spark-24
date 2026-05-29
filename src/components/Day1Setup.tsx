@@ -1094,7 +1094,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             />
 
             {/* Finish Day 1 */}
-            <div className="pt-2">
+            <RevealControls className="pt-2">
               <Button
                 size="lg"
                 onClick={handleFinishDay1}
@@ -1106,7 +1106,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <p className="mt-2 text-center text-xs text-muted-foreground">
                 You can get help from Johnny AI anytime.
               </p>
-            </div>
+            </RevealControls>
           </div>
         )}
       </div>

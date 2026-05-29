@@ -35,8 +35,8 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-20 hidden lg:block",
-        "bottom-0",
+        "pointer-events-none fixed inset-x-0 z-30",
+        "bottom-20 lg:bottom-0",
         sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]",
       )}
     >

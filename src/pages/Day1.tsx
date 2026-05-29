@@ -46,7 +46,8 @@ const Day1 = () => {
     // Clear local Day 1 progress markers
     try {
       localStorage.removeItem(SETUP_KEY);
-      localStorage.removeItem(DAY1_STEP_KEY);
+      // Send the user straight to the "businesses or consumers" screen (step 4)
+      localStorage.setItem(DAY1_STEP_KEY, "4");
     } catch {}
 
     // Strip Day 1 content from app state (aiOutputs, tasks, memory fields)

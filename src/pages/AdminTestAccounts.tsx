@@ -48,6 +48,7 @@ export const launchViewAsTestAccount = async (acc: TestAccount) => {
   const targetRoute = getRelevantChallengeRoute(acc);
   try {
     localStorage.setItem("leadio_post_login_redirect", targetRoute);
+    localStorage.setItem("leadio_skip_local_migration", "1");
   } catch {}
   // Best-effort backfill of Day 1 answers + user_memory for accounts that
   // pre-date the seeding logic. Failure is non-fatal — we still try to open.

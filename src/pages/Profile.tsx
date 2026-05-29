@@ -28,6 +28,16 @@ type ProfileRow = {
   website_url?: string | null;
 };
 
+const readJsonObject = (value: unknown): Record<string, string> => {
+  if (typeof value !== "string") return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
 const splitName = (full?: string | null): { first: string; last: string } => {
   if (!full) return { first: "", last: "" };
   const parts = full.trim().split(/\s+/);
@@ -54,10 +64,9 @@ const Profile = () => {
   const [avatarSigned, setAvatarSigned] = useState<string | null>(null);
 
   // Editable foundation answers
-  const setup = getSetup();
-  const [problem, setProblem] = useState(setup?.problem ?? "");
-  const [audience, setAudience] = useState(setup?.audience ?? "");
-  const [how, setHow] = useState(setup?.how ?? "");
+  const [problem, setProblem] = useState("");
+  const [audience, setAudience] = useState("");
+  const [how, setHow] = useState("");
 
   useEffect(() => {
     let cancel = false;
@@ -103,6 +112,15 @@ const Profile = () => {
   }, []);
 
   const aiOutputs = state.challenge?.aiOutputs ?? {};
+  useEffect(() => {
+    const foundation = readJsonObject(aiOutputs.day1_foundation);
+    const assessment = readJsonObject(aiOutputs.day1_assessment);
+    const setup = getSetup();
+
+    setProblem(foundation.problem ?? assessment.problem ?? setup?.problem ?? "");
+    setAudience(foundation.audience ?? assessment.audience ?? setup?.audience ?? "");
+    setHow(foundation.how ?? assessment.how ?? setup?.how ?? state.memory.desiredOutcome ?? "");
+  }, [aiOutputs.day1_assessment, aiOutputs.day1_foundation, state.memory.desiredOutcome]);
   const aiCards = useMemo(() => {
     const cards: { label: string; value: string }[] = [];
     const map: Record<string, string> = {

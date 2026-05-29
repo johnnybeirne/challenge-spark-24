@@ -218,24 +218,28 @@ Deno.serve(async (req) => {
         day1_create_structure: true,
       };
 
-      const { error: progErr } = await admin
+      const progressPayload = {
+        user_id: userId,
+        current_day: computedDay,
+        started_at: signupAtIso,
+        ends_at: endsAtIso,
+        tasks: seededTasks,
+        ai_outputs: seededDay1,
+        launch_url: "",
+        completed: false,
+        created_at: signupAtIso,
+        updated_at: signupAtIso,
+      };
+      const { data: updatedProgress, error: updateProgErr } = await admin
         .from("challenge_progress")
-        .upsert(
-          {
-            user_id: userId,
-            current_day: computedDay,
-            started_at: signupAtIso,
-            ends_at: endsAtIso,
-            tasks: seededTasks,
-            ai_outputs: seededDay1,
-            launch_url: "",
-            completed: false,
-            created_at: signupAtIso,
-            updated_at: signupAtIso,
-          },
-          { onConflict: "user_id" }
-        );
-      if (progErr) return json({ error: `challenge_progress: ${progErr.message}` }, 500);
+        .update(progressPayload)
+        .eq("user_id", userId)
+        .select("user_id");
+      if (updateProgErr) return json({ error: `challenge_progress: ${updateProgErr.message}` }, 500);
+      if (!updatedProgress?.length) {
+        const { error: insertProgErr } = await admin.from("challenge_progress").insert(progressPayload);
+        if (insertProgErr) return json({ error: `challenge_progress: ${insertProgErr.message}` }, 500);
+      }
 
       // Magic-link for fast sign-in (admin can copy/paste into incognito).
       const redirectTo = String(body?.redirect_to ?? "") || undefined;
@@ -334,21 +338,25 @@ Deno.serve(async (req) => {
       const mergedTasks = { ...((existing?.tasks as Record<string, boolean>) ?? {}), ...seededTasks };
       const mergedAi = { ...((existing?.ai_outputs as Record<string, string>) ?? {}), ...seededDay1 };
 
-      const { error: progErr } = await admin
+      const progressPayload = {
+        user_id: userId,
+        current_day: existing?.current_day ?? 1,
+        started_at: existing?.started_at ?? nowIso,
+        ends_at: existing?.ends_at ?? new Date(Date.now() + 72 * 3600_000).toISOString(),
+        tasks: mergedTasks,
+        ai_outputs: mergedAi,
+        updated_at: nowIso,
+      };
+      const { data: updatedProgress, error: updateProgErr } = await admin
         .from("challenge_progress")
-        .upsert(
-          {
-            user_id: userId,
-            current_day: existing?.current_day ?? 1,
-            started_at: existing?.started_at ?? nowIso,
-            ends_at: existing?.ends_at ?? new Date(Date.now() + 72 * 3600_000).toISOString(),
-            tasks: mergedTasks,
-            ai_outputs: mergedAi,
-            updated_at: nowIso,
-          },
-          { onConflict: "user_id" }
-        );
-      if (progErr) return json({ error: `challenge_progress: ${progErr.message}` }, 500);
+        .update(progressPayload)
+        .eq("user_id", userId)
+        .select("user_id");
+      if (updateProgErr) return json({ error: `challenge_progress: ${updateProgErr.message}` }, 500);
+      if (!updatedProgress?.length) {
+        const { error: insertProgErr } = await admin.from("challenge_progress").insert(progressPayload);
+        if (insertProgErr) return json({ error: `challenge_progress: ${insertProgErr.message}` }, 500);
+      }
 
       return json({ ok: true });
     }

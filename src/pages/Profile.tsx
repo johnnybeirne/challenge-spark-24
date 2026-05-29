@@ -130,9 +130,21 @@ const Profile = () => {
       day1_title: "Suggested challenge title",
       day1_structure: "Suggested structure",
     };
+    const stripFirstName = (v: string) => {
+      const fn = firstName.trim();
+      if (!fn) return v;
+      const escaped = fn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return v
+        .replace(new RegExp(`^${escaped}['’]s\\s+`, "i"), "")
+        .replace(new RegExp(`^${escaped}\\s+`, "i"), "")
+        .trim();
+    };
     for (const [k, label] of Object.entries(map)) {
       const v = aiOutputs[k];
-      if (v && typeof v === "string") cards.push({ label, value: v });
+      if (v && typeof v === "string") {
+        const value = k === "day1_title" ? stripFirstName(v) : v;
+        cards.push({ label, value });
+      }
     }
     const builderKeys = Object.keys(aiOutputs)
       .filter((k) => k.startsWith("day1_builder_"))
@@ -144,7 +156,7 @@ const Profile = () => {
       }
     });
     return cards;
-  }, [aiOutputs]);
+  }, [aiOutputs, firstName]);
 
   const handlePhoto = async (file?: File) => {
     if (!file || !profile?.user_id) return;

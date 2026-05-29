@@ -346,6 +346,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         href: "/profile",
         dedupeKey: "day1_foundation_saved",
       });
+      setStep7Phase("intro");
       setStep(7);
     }
   };

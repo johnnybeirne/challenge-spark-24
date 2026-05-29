@@ -36,7 +36,7 @@ import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
 import Profile from "@/pages/Profile";
-import YourDashboard from "@/pages/YourDashboard";
+
 
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
 import BlueprintDashboard from "@/pages/blueprint/BlueprintDashboard";

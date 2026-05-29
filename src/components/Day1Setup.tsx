@@ -261,7 +261,15 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
   const [step7Phase, setStep7Phase] = useState<"intro" | "reveal">("intro");
 
-  const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
+  const rawName =
+    (state.user?.name as string | undefined) ||
+    (state.memory?.name as string | undefined) ||
+    (authUser?.user_metadata?.full_name as string | undefined) ||
+    (authUser?.user_metadata?.name as string | undefined) ||
+    (authUser?.user_metadata?.first_name as string | undefined) ||
+    (typeof authUser?.email === "string" ? authUser.email.split("@")[0] : "") ||
+    "";
+  const firstName = rawName.trim().split(/\s+/)[0] || "there";
   // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
   const fn = firstName && firstName !== "there" ? `, ${firstName}` : "";
   const Fn = firstName && firstName !== "there" ? `${firstName}, ` : "";

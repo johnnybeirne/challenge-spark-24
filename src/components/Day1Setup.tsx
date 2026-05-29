@@ -427,13 +427,18 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleAudience = (v: "b2b" | "b2c") => {
     setAudienceType(v);
     persistFoundation({ audienceType: v });
-    setStep4Phase("ack");
+    // Skip the standalone ack screen — flow straight into step 5 whose intro
+    // sequence opens with the acknowledgement so the conversation stays continuous.
+    setStep5Phase("intro");
+    setStep(5);
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
-    setStep5Phase("ack");
+    // Same pattern — step 6's intro opens with the acknowledgement.
+    setStep6Phase("intro");
+    setStep(6);
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;

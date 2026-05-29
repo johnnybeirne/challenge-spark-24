@@ -171,46 +171,15 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
   const initialStep: Step = (() => {
-    if (persistedStep >= 1 && persistedStep <= 8) return persistedStep as Step;
-    if (saved?.audienceType && hasFoundation) return 5;
-    if (saved?.audienceType) return 1;
+    if (persistedStep >= 4 && persistedStep <= 8) return persistedStep as Step;
+    if (saved?.audienceType && saved?.challengeType) return 6;
+    if (saved?.audienceType) return 5;
     return 4;
   })();
-
-
-  const [step, setStep] = useState<Step>(initialStep);
-
-  // Foundation answers
-  const [problem, setProblem] = useState<string>(saved?.problem ?? "");
-  const [audience, setAudience] = useState<string>(saved?.audience ?? "");
-  const [how, setHow] = useState<string>(saved?.how ?? "");
-
-  // Refinement answers
-  const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(saved?.audienceType ?? null);
-  const [challengeType, setChallengeType] = useState<string>(saved?.challengeType ?? "");
-  const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
-  const { isListening: isDictating, toggle: toggleDictation } = useDictation();
-
-  // AI builder state
-  const [builderInput, setBuilderInput] = useState("");
-  const [builderLoading, setBuilderLoading] = useState(false);
-  const [builderHistory, setBuilderHistory] = useState<ChatEntry[]>([]);
-  const messagesRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    trackEvent("onboarding_viewed", { step });
-    try { localStorage.setItem(DAY1_STEP_KEY, String(step)); } catch {}
-  }, [step]);
-
-  useEffect(() => {
-    messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
-  }, [builderHistory, builderLoading]);
-
-  const advance = (next: Step) => setTimeout(() => setStep(next), 250);
-
-  // Flow order: 4 (audience type) → 1 → 2 → 3 (foundation) → 5 → 6 → 7 → 8
+...
+  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
   const goBack = () => {
-    const map: Record<number, Step> = { 1: 4, 2: 1, 3: 2, 5: 3, 6: 5, 7: 6 };
+    const map: Record<number, Step> = { 5: 4, 6: 5, 7: 6 };
     const prev = map[step as number];
     if (prev !== undefined) setStep(prev);
   };

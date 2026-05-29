@@ -85,11 +85,13 @@ const TypedSequence = ({
         }
       }, 22);
       return () => clearInterval(interval);
-    }, idx === 0 ? 400 : 750);
+    }, idx === 0 ? 2000 : 750);
     return () => clearTimeout(dotsTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
 
+
+  const isMakingNotes = idx === 0 && showDots && shown.length === 0;
 
   return (
     <div className="flex items-start gap-3">
@@ -105,13 +107,20 @@ const TypedSequence = ({
         {idx < messages.length && (
           <div className="flex animate-fade-in">
             <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
-              {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
+              {isMakingNotes ? (
+                <span className="italic text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>
+              ) : showDots ? (
+                <TypingDots />
+              ) : (
+                <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>
+              )}
             </div>
           </div>
         )}
       </div>
     </div>
   );
+
 
 };
 

@@ -259,6 +259,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
+  const [step7Phase, setStep7Phase] = useState<"intro" | "reveal">("intro");
 
   const firstName = ((state.user?.name || state.memory?.name || "") as string).trim().split(/\s+/)[0] || "there";
   // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
@@ -345,6 +346,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         href: "/profile",
         dedupeKey: "day1_foundation_saved",
       });
+      setStep7Phase("intro");
       setStep(7);
     }
   };
@@ -917,35 +919,85 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
-        {step === 7 && audienceType && (
-          <div className="space-y-6 animate-fade-in text-center">
-            <div className="space-y-3">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Here's what you're building</p>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                You're building a{" "}
-                <span className="text-primary">“{challengeLabel(challengeType)}”</span> challenge for{" "}
-                <span className="text-primary">“{audienceLabelShort(audienceType)}”</span>
-              </h2>
+        {step === 7 && audienceType && (() => {
+          const who = topicHint.trim();
+          const pain = problem.trim();
+          const result = how.trim();
+
+          // Strip a leading "they'll" / "they will" so it composes inside the promise sentence.
+          const stripThey = (s: string) =>
+            s.replace(/^they(['’]ll| will)?\s+/i, "").replace(/^\s*/, "").replace(/\.$/, "");
+          const promise = who && pain && result
+            ? `Help ${stripThey(who)} overcome ${stripThey(pain).toLowerCase()} so they can ${stripThey(result).toLowerCase()}.`
+            : null;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step7Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step7-intro"
+                  messages={[
+                    `Thanks${fn}.`,
+                    "Give me a second to pull everything together...",
+                    "Based on what you've told me, here's what I'm seeing.",
+                  ]}
+                  onComplete={() => setStep7Phase("reveal")}
+                />
+              )}
+
+              {step7Phase === "reveal" && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="flex">
+                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                      {Fn}here's what I'm seeing.
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6 space-y-5">
+                    {who && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">You're helping</p>
+                        <p className="text-base leading-relaxed text-foreground">{who}</p>
+                      </div>
+                    )}
+                    {pain && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">The problem</p>
+                        <p className="text-base leading-relaxed text-foreground">{pain}</p>
+                      </div>
+                    )}
+                    {result && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">The outcome</p>
+                        <p className="text-base leading-relaxed text-foreground">{result}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {promise && (
+                    <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 md:p-6 space-y-2">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-primary">Your challenge promise</p>
+                      <p className="text-lg md:text-xl font-semibold leading-snug text-foreground">{promise}</p>
+                    </div>
+                  )}
+
+                  <p className="text-muted-foreground leading-relaxed text-center">
+                    Next, your AI co-pilot will help you sharpen this into a challenge people will actually want to take.
+                  </p>
+
+                  <Button
+                    size="lg"
+                    onClick={handleSaveAssessment}
+                    className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                  >
+                    Continue Building Your Challenge
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
             </div>
-            {topicHint && (
-              <div className="p-4 rounded-lg border border-border bg-card/60 text-left">
-                <p className="text-sm text-muted-foreground">Transformation</p>
-                <p className="font-medium mt-1">{topicHint}</p>
-              </div>
-            )}
-            <p className="text-muted-foreground leading-relaxed">
-              Next, your AI co-pilot will help you sharpen this into a challenge people will actually want to take.
-            </p>
-            <Button
-              size="lg"
-              onClick={handleSaveAssessment}
-              className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-            >
-              Continue Building Your Challenge
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        )}
+          );
+        })()}
 
         {step === 8 && (
           <div className="space-y-5 animate-fade-in">

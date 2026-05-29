@@ -530,7 +530,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step2-intro"
                   messages={[
-                    "Perfect.",
+                    `Perfect${fn}.`,
                     "I know who you're helping.",
                     "Now let's understand what's getting in their way.",
                     "What is frustrating them right now?",

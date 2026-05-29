@@ -695,14 +695,15 @@ const AdminBios = () => {
                     <SortHeader k="first_name" label="First name" />
                     <SortHeader k="surname" label="Surname" />
                     <SortHeader k="email" label="Email" />
+                    <SortHeader k="created_at" label="Joined" />
                     <SortHeader k="valid_referrals" label="Refs" align="right" />
                     <SortHeader k="referred_by_name" label="Referred by" />
                     <SortHeader k="referred_by_email" label="Referrer email" />
                     <SortHeader k="current_tier" label="Tier" />
                     <SortHeader k="status" label="Status" />
                     <th className="px-3 py-2 text-left">Flag</th>
-                    <SortHeader k="created_at" label="Joined" />
                     <th className="px-3 py-2 text-left">Bio</th>
+
                     <th className="px-3 py-2 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -786,14 +787,18 @@ const AdminBios = () => {
                               }
                             }}
                           />
-                        </td>
                         <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                           {r.email || "—"}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
+                          {formatDate(r.created_at)}
                         </td>
                         <td className="px-3 py-2 text-right tabular-nums">
                           <span className={isTop ? "font-semibold text-amber-700" : refs > 0 ? "font-semibold" : ""}>
                             {refs || "—"}
                           </span>
+                        </td>
+
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap">
                           {r.referred_by_code ? (
@@ -901,9 +906,6 @@ const AdminBios = () => {
                           ) : (
                             <span className="text-xs text-muted-foreground">—</span>
                           )}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-xs text-muted-foreground">
-                          {formatDate(r.created_at)}
                         </td>
                         <td className="px-3 py-2 max-w-xs">
                           <span className="line-clamp-1 text-muted-foreground">

@@ -27,6 +27,24 @@ const JohnnyAvatar = () => (
   />
 );
 
+// Static rendering of the AI conversation block — used to keep the prior typed
+// message visible alongside the response controls (matches the look of
+// TypedSequence after typing has finished).
+const StaticAi = ({ messages }: { messages: string[] }) => (
+  <div className="flex items-start gap-3">
+    <JohnnyAvatar />
+    <div className="flex-1 space-y-3 min-w-0">
+      {messages.map((m, i) => (
+        <div key={i} className="flex">
+          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+            {m}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 // Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
 const DelayedFeedback = ({ text }: { text: string }) => {
   const [ready, setReady] = useState(false);
@@ -409,13 +427,18 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleAudience = (v: "b2b" | "b2c") => {
     setAudienceType(v);
     persistFoundation({ audienceType: v });
-    setStep4Phase("ack");
+    // Skip the standalone ack screen — flow straight into step 5 whose intro
+    // sequence opens with the acknowledgement so the conversation stays continuous.
+    setStep5Phase("intro");
+    setStep(5);
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
-    setStep5Phase("ack");
+    // Same pattern — step 6's intro opens with the acknowledgement.
+    setStep6Phase("intro");
+    setStep(6);
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
@@ -581,24 +604,26 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
               : null;
 
+          const step2Messages = [
+            `Perfect${fn}.`,
+            "I now know who you're helping.",
+            "Now let's understand what's getting in their way.",
+            "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
                 <TypedSequence
                   resetKey="step2-intro"
-                  messages={[
-                    `Perfect${fn}.`,
-                    "I now know who you're helping.",
-                    "Now let's understand what's getting in their way.",
-                    "What is frustrating them right now?",
-                    "Tell me about the problem, obstacle, pain point, or situation they're trying to overcome.",
-                  ]}
+                  messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
               )}
 
               {step2Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step2Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus
@@ -659,25 +684,26 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? outcomeFeedbackPool[Math.min(Math.floor(outcomeWords / 6), outcomeFeedbackPool.length - 1)]
               : null;
 
+          const step3Messages = [
+            `Great${fn}.`,
+            "We know who you're helping and what's getting in their way.",
+            "Now let's define the outcome.",
+            "Describe the result, improvement, or change they'll experience by the end of your challenge.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
                   resetKey="step3-intro"
-                  messages={[
-                    `Great${fn}.`,
-                    "We know who you're helping.",
-                    "We know what's getting in their way.",
-                    "Now let's define the outcome.",
-                    "What will be different for participants by the end of your challenge?",
-                    "Describe the result, improvement, or change they'll experience.",
-                  ]}
+                  messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />
               )}
 
               {step3Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step3Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus
@@ -710,22 +736,25 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
-        {step === 4 && (
+        {step === 4 && (() => {
+          const step4Messages = [
+            `Hi ${firstName}.`,
+            "Let's build your challenge together.",
+            "First, I need to understand who you want to help.",
+          ];
+          return (
           <div className="space-y-6 animate-fade-in">
             {step4Phase === "intro" && (
               <TypedSequence
                 resetKey="step4-intro"
-                messages={[
-                  `Hi ${firstName}.`,
-                  "Let's build your challenge together.",
-                  "First, I need to understand who you want to help.",
-                ]}
+                messages={step4Messages}
                 onComplete={() => setStep4Phase("choose")}
               />
             )}
 
             {step4Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
+                <StaticAi messages={step4Messages} />
                 <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                   {[
@@ -776,40 +805,31 @@ const Day1Setup = ({ onComplete }: Props) => {
                 </div>
               </div>
             )}
-
-            {step4Phase === "ack" && audienceType && (
-              <TypedSequence
-                resetKey={`step4-ack-${audienceType}`}
-                messages={[
-                  `Perfect${fn}.`,
-                  audienceType === "b2b"
-                    ? "This challenge is designed to help business professionals achieve a meaningful result."
-                    : "This challenge is designed to help individual people improve an area of their lives.",
-                ]}
-                onComplete={() => {
-                  setStep(5);
-                  setStep5Phase("intro");
-                }}
-              />
-            )}
           </div>
-        )}
+          );
+        })()}
 
-        {step === 5 && (
+        {step === 5 && (() => {
+          const step5Messages = [
+            `Perfect${fn}.`,
+            audienceType === "b2b"
+              ? "This challenge is designed to help business professionals achieve a meaningful result."
+              : "This challenge is designed to help individual people improve an area of their lives.",
+            "What result do you want participants to achieve?",
+          ];
+          return (
           <div className="space-y-6 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
-                resetKey="step5-intro"
-                messages={[
-                  `${firstName}, what result do you want participants to achieve?`,
-                  "Choose the primary outcome participants should achieve by the end of your challenge.",
-                ]}
+                resetKey={`step5-intro-${audienceType}`}
+                messages={step5Messages}
                 onComplete={() => setStep5Phase("choose")}
               />
             )}
 
             {step5Phase === "choose" && (
               <div className="space-y-5 animate-fade-in">
+                <StaticAi messages={step5Messages} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                   {challengeOptions.map((opt) => {
@@ -847,19 +867,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                 </div>
               </div>
             )}
-
-            {step5Phase === "ack" && challengeType && (
-              <TypedSequence
-                resetKey={`step5-ack-${challengeType}`}
-                messages={[
-                  `Got it${fn}.`,
-                  `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
-                ]}
-                onComplete={() => { setStep6Phase("intro"); setStep(6); }}
-              />
-            )}
           </div>
-        )}
+          );
+        })()}
 
         {step === 6 && (() => {
           const placeholderMap: Record<string, string> = {
@@ -884,23 +894,26 @@ const Day1Setup = ({ onComplete }: Props) => {
           ];
           const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
 
+          const step6Messages = [
+            `Great choice${fn}.`,
+            `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
+            "Tell me about the people you're helping.",
+            "The more specific you are, the better I can tailor the challenge.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step6-intro"
-                  messages={[
-                    `Excellent${fn}.`,
-                    "I'm starting to get a picture of the challenge you're creating.",
-                    "Now tell me about the people you're helping.",
-                    "The more specific you are, the better I can tailor the challenge.",
-                  ]}
+                  resetKey={`step6-intro-${challengeType}`}
+                  messages={step6Messages}
                   onComplete={() => setStep6Phase("input")}
                 />
               )}
 
               {step6Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step6Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus

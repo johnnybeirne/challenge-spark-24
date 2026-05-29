@@ -284,28 +284,7 @@ const AdminTestAccounts = () => {
                         <Button
                           variant="default"
                           size="sm"
-                          onClick={async () => {
-                            const targetRoute = getRelevantChallengeRoute(acc);
-                            // Persist target so the new tab navigates to the relevant challenge day after auth
-                            // (in case redirect_to is overridden by Supabase Site URL allow-list).
-                            try {
-                              localStorage.setItem("leadio_post_login_redirect", targetRoute);
-                            } catch {
-                              // Continue with the magic-link redirect even if local storage is unavailable.
-                            }
-                            const { data, error } = await supabase.functions.invoke("admin-test-account", {
-                              body: {
-                                action: "magic_link",
-                                email: acc.email,
-                                redirect_to: `${window.location.origin}${targetRoute}`,
-                              },
-                            });
-                            if (error || data?.error || !data?.magic_link) {
-                              toast.error(data?.error ?? error?.message ?? "Failed to get link");
-                              return;
-                            }
-                            window.open(data.magic_link, "_blank", "noopener,noreferrer");
-                          }}
+                          onClick={() => launchViewAsTestAccount(acc)}
                           title="Sign in as this backdated user in a new tab"
                         >
                           <ExternalLink className="h-3.5 w-3.5 mr-1" /> View as

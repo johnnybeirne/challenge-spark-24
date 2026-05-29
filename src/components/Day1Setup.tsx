@@ -684,25 +684,26 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? outcomeFeedbackPool[Math.min(Math.floor(outcomeWords / 6), outcomeFeedbackPool.length - 1)]
               : null;
 
+          const step3Messages = [
+            `Great${fn}.`,
+            "We know who you're helping and what's getting in their way.",
+            "Now let's define the outcome.",
+            "Describe the result, improvement, or change they'll experience by the end of your challenge.",
+          ];
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
                   resetKey="step3-intro"
-                  messages={[
-                    `Great${fn}.`,
-                    "We know who you're helping.",
-                    "We know what's getting in their way.",
-                    "Now let's define the outcome.",
-                    "What will be different for participants by the end of your challenge?",
-                    "Describe the result, improvement, or change they'll experience.",
-                  ]}
+                  messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />
               )}
 
               {step3Phase === "input" && (
                 <div className="space-y-5 animate-fade-in">
+                  <StaticAi messages={step3Messages} />
                   <div className="space-y-2">
                     <DictatedTextarea
                       autoFocus

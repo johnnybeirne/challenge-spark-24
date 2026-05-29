@@ -85,26 +85,27 @@ const TypedSequence = ({
   }, [idx, resetKey]);
 
   return (
-    <div className="space-y-3">
-      {shown.map((m, i) => (
-        <div key={i} className="flex items-start gap-2 animate-fade-in">
-          <JohnnyAvatar />
-          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-background border border-border/60 shadow-sm px-4 py-3 text-sm md:text-base leading-relaxed">
-            {m}
+    <div className="flex items-start gap-3">
+      <JohnnyAvatar />
+      <div className="flex-1 space-y-3 min-w-0">
+        {shown.map((m, i) => (
+          <div key={i} className="flex animate-fade-in">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-background border border-border/60 shadow-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+              {m}
+            </div>
           </div>
-        </div>
-      ))}
-      {idx < messages.length && (
-        <div className="flex items-start gap-2 animate-fade-in">
-          <JohnnyAvatar />
-          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-background border border-border/60 shadow-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
-            {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
+        ))}
+        {idx < messages.length && (
+          <div className="flex animate-fade-in">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-background border border-border/60 shadow-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
+              {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
-
   );
+
 };
 
 export const SETUP_KEY = "leadio_setup";
@@ -578,7 +579,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {problemFeedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
+                      <div className="flex animate-fade-in pt-1">
                         <div className="max-w-[90%] rounded-xl bg-background border border-border/60 shadow-sm px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
                           {problemFeedback}
                         </div>
@@ -662,7 +663,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {outcomeFeedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
+                      <div className="flex animate-fade-in pt-1">
                         <div className="max-w-[90%] rounded-xl bg-background border border-border/60 shadow-sm px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
                           {outcomeFeedback}
                         </div>
@@ -889,7 +890,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     {feedback && (
-                      <div className="flex items-start gap-2 animate-fade-in pt-1"><JohnnyAvatar />
+                      <div className="flex animate-fade-in pt-1">
                         <div className="max-w-[90%] rounded-xl bg-background border border-border/60 shadow-sm px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
                           {feedback}
                         </div>

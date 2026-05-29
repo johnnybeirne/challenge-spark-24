@@ -1034,27 +1034,29 @@ const Day1Setup = ({ onComplete }: Props) => {
                     </div>
                   </div>
 
-                  {/* Challenge Promise */}
-                  {promise && (
-                    <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
-                      <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                        <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
-                          Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
-                        </p>
+                  <RevealControls className="space-y-6">
+                    {/* Challenge Promise */}
+                    {promise && (
+                      <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
+                        <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
+                        <div className="space-y-3">
+                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
+                          <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
+                            Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <Button
-                    size="lg"
-                    onClick={handleSaveAssessment}
-                    className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-                  >
-                    Continue Building Your Challenge
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                    <Button
+                      size="lg"
+                      onClick={handleSaveAssessment}
+                      className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                    >
+                      Continue Building Your Challenge
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
                 </div>
               )}
 

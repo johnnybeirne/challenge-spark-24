@@ -361,11 +361,11 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 1 && (
           <FoundationStep
             n={1}
-            title="What problem do you solve?"
-            helper="In your own words — the pain, frustration, or gap your expertise removes."
-            value={problem}
-            setValue={setProblem}
-            placeholder="e.g. I help people who are frustrated by slow progress, inconsistent results, and information overload by helping them identify the key actions that create meaningful breakthroughs."
+            title="Who is your challenge for?"
+            helper="Let's clarify the audience first — who is this person, what stage are they in, what do they want?"
+            value={audience}
+            setValue={setAudience}
+            placeholder="e.g. New coaches, 0–12 months in, who have expertise but no offer."
             onNext={() => handleFoundationNext(1)}
           />
         )}
@@ -373,11 +373,11 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 2 && (
           <FoundationStep
             n={2}
-            title="Who do you solve it for?"
-            helper="Be specific — who is this person, what stage are they in, what do they want?"
-            value={audience}
-            setValue={setAudience}
-            placeholder="e.g. New coaches, 0–12 months in, who have expertise but no offer."
+            title="What problem do you solve?"
+            helper="In your own words — the pain, frustration, or gap your expertise removes."
+            value={problem}
+            setValue={setProblem}
+            placeholder="e.g. I help people who are frustrated by slow progress, inconsistent results, and information overload by helping them identify the key actions that create meaningful breakthroughs."
             onNext={() => handleFoundationNext(2)}
           />
         )}

@@ -31,7 +31,6 @@ const splitName = (full?: string | null): { first: string; last: string } => {
 };
 
 const Profile = () => {
-  const { state } = useAppState();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -48,11 +47,6 @@ const Profile = () => {
   const [website, setWebsite] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarSigned, setAvatarSigned] = useState<string | null>(null);
-
-  // Editable foundation answers
-  const [problem, setProblem] = useState("");
-  const [audience, setAudience] = useState("");
-  const [how, setHow] = useState("");
 
   useEffect(() => {
     let cancel = false;
@@ -97,52 +91,6 @@ const Profile = () => {
     };
   }, []);
 
-  const aiOutputs = state.challenge?.aiOutputs ?? {};
-  useEffect(() => {
-    const foundation = readJsonObject(aiOutputs.day1_foundation);
-    const assessment = readJsonObject(aiOutputs.day1_assessment);
-    const setup = getSetup();
-
-    setProblem(foundation.problem ?? assessment.problem ?? setup?.problem ?? "");
-    setAudience(foundation.audience ?? assessment.audience ?? setup?.audience ?? "");
-    setHow(foundation.how ?? assessment.how ?? setup?.how ?? state.memory.desiredOutcome ?? "");
-  }, [aiOutputs.day1_assessment, aiOutputs.day1_foundation, state.memory.desiredOutcome]);
-  const aiCards = useMemo(() => {
-    const cards: { label: string; value: string }[] = [];
-    const map: Record<string, string> = {
-      day1_transformation: "Challenge transformation",
-      day1_quick_win: "Quick win idea",
-      day1_outcome: "Challenge taker outcome",
-      day1_title: "Suggested challenge title",
-      day1_structure: "Suggested structure",
-    };
-    const stripFirstName = (v: string) => {
-      const fn = firstName.trim();
-      if (!fn) return v;
-      const escaped = fn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return v
-        .replace(new RegExp(`^${escaped}['’]s\\s+`, "i"), "")
-        .replace(new RegExp(`^${escaped}\\s+`, "i"), "")
-        .trim();
-    };
-    for (const [k, label] of Object.entries(map)) {
-      const v = aiOutputs[k];
-      if (v && typeof v === "string") {
-        const value = k === "day1_title" ? stripFirstName(v) : v;
-        cards.push({ label, value });
-      }
-    }
-    const builderKeys = Object.keys(aiOutputs)
-      .filter((k) => k.startsWith("day1_builder_"))
-      .sort();
-    builderKeys.forEach((k, i) => {
-      const v = aiOutputs[k];
-      if (v && typeof v === "string") {
-        cards.push({ label: `AI Coach note ${i + 1}`, value: v });
-      }
-    });
-    return cards;
-  }, [aiOutputs, firstName]);
 
   const handlePhoto = async (file?: File) => {
     if (!file || !profile?.user_id) return;

@@ -19,7 +19,6 @@ const DEMO_SETUP_RESET_KEY = "leadio_view_as_user_reset_setup";
  */
 const useLaunchDemoUser = () => {
   const { setState } = useAppState();
-  const navigate = useNavigate();
 
   return (redirectTo: string) => {
     try {
@@ -48,7 +47,7 @@ const useLaunchDemoUser = () => {
       },
     });
 
-    navigate(redirectTo, { replace: true });
+    window.open(redirectTo, "_blank", "noopener,noreferrer");
   };
 };
 

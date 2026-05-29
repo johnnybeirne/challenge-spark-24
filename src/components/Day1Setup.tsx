@@ -340,12 +340,16 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const handleAudience = (v: "b2b" | "b2c") => { setAudienceType(v); persistFoundation({ audienceType: v }); setStep(5); };
+  const handleAudience = (v: "b2b" | "b2c") => {
+    setAudienceType(v);
+    persistFoundation({ audienceType: v });
+    setStep4Phase("ack");
+  };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
-    setStep(6);
+    setStep5Phase("ack");
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;

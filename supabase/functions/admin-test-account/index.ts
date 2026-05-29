@@ -132,6 +132,28 @@ Deno.serve(async (req) => {
       const signupAtIso = signupDate.toISOString();
       const endsAtIso = new Date(signupDate.getTime() + 72 * 60 * 60 * 1000).toISOString();
 
+      // Compute which day the user should be on based on elapsed time.
+      const elapsedMs = Math.max(0, Date.now() - signupDate.getTime());
+      const computedDay = elapsedMs >= 48 * 3600_000 ? 3 : elapsedMs >= 24 * 3600_000 ? 2 : 1;
+
+      // Realistic Day 1 answers so the profile + identity feel populated
+      // when previewing the experience as a backdated test user.
+      const seededDay1 = {
+        day1_define_app: "Coaches, consultants, and experts who want more qualified leads without grinding on content.",
+        day1_problem: "Their growth depends on constant outreach or content — there is no system pulling leads in for them.",
+        day1_result: "A simple, repeatable system that generates qualified leads on autopilot.",
+        day1_share_reason: "It helps them spot exactly what's missing in their current setup and fix it fast.",
+      };
+
+      const seededMemory = {
+        name: firstName,
+        challenge_name: `${firstName}'s Lead Engine Challenge`,
+        audience_type: "b2b",
+        challenge_type: "growth",
+        topic: "qualified lead generation",
+        desired_outcome: "A simple, repeatable system that generates qualified leads on autopilot",
+      };
+
       // Update profile (handle_new_user trigger may have inserted one)
       const { error: profileErr } = await admin
         .from("profiles")
@@ -143,6 +165,7 @@ Deno.serve(async (req) => {
             first_name: firstName,
             surname,
             invite_code: inviteCode,
+            bio: `Building ${seededMemory.challenge_name} — ${seededMemory.desired_outcome}.`,
             created_at: signupAtIso,
             updated_at: signupAtIso,
           },
@@ -165,17 +188,32 @@ Deno.serve(async (req) => {
         console.error("waitlist insert failed", waitlistErr.message);
       }
 
-      // Upsert challenge_progress with backdated started_at
+      // Seed user_memory with the same answers so identity ("Your X Challenge")
+      // and copilot context are populated immediately.
+      const { error: memErr } = await admin
+        .from("user_memory")
+        .upsert({ user_id: userId, ...seededMemory, updated_at: signupAtIso }, { onConflict: "user_id" });
+      if (memErr) console.error("user_memory upsert failed", memErr.message);
+
+      // Day 1 is always seeded as complete (so the profile renders with answers).
+      // current_day reflects elapsed time since the backdated signup.
+      const seededTasks: Record<string, boolean> = {
+        day1_define_app: true,
+        day1_problem: true,
+        day1_result: true,
+        day1_share_reason: true,
+      };
+
       const { error: progErr } = await admin
         .from("challenge_progress")
         .upsert(
           {
             user_id: userId,
-            current_day: 1,
+            current_day: computedDay,
             started_at: signupAtIso,
             ends_at: endsAtIso,
-            tasks: {},
-            ai_outputs: {},
+            tasks: seededTasks,
+            ai_outputs: seededDay1,
             launch_url: "",
             completed: false,
             created_at: signupAtIso,

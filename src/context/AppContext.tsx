@@ -418,6 +418,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const { user: authUser, loading: authLoading, signOut } = useAuth();
   const [state, setStateRaw] = useState<AppState>(defaultState);
   const [hydrated, setHydrated] = useState(false);
+  const [syncEnabled, setSyncEnabled] = useState(false);
   const prevUnlocksRef = useRef<string[]>([]);
   const qa = useQaPreview();
 
@@ -431,6 +432,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Hydrate state from Supabase when user authenticates
   useEffect(() => {
     if (authLoading) return;
+
+    setSyncEnabled(false);
 
     if (authUser) {
       (async () => {
@@ -454,6 +457,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setStateRaw((prev) => checkAndTriggerUnlocks(prev));
         }
         setHydrated(true);
+        setSyncEnabled(true);
       })();
     } else {
       try {
@@ -471,6 +475,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       } catch {}
       setHydrated(true);
+      setSyncEnabled(false);
     }
   }, [authUser, authLoading]);
 
@@ -497,7 +502,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [state.training]);
 
   // Supabase sync hook
-  useSupabaseSync(authUser ?? null, state, prevUnlocksRef);
+  useSupabaseSync(authUser ?? null, state, prevUnlocksRef, syncEnabled);
 
   // Debounced AI context snapshot — keeps ai_user_context fresh for KB-aware AI.
   useEffect(() => {

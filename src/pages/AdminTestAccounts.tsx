@@ -49,6 +49,11 @@ export const launchViewAsTestAccount = async (acc: TestAccount) => {
   try {
     localStorage.setItem("leadio_post_login_redirect", targetRoute);
   } catch {}
+  // Best-effort backfill of Day 1 answers + user_memory for accounts that
+  // pre-date the seeding logic. Failure is non-fatal — we still try to open.
+  await supabase.functions
+    .invoke("admin-test-account", { body: { action: "backfill", email: acc.email } })
+    .catch(() => null);
   const { data, error } = await supabase.functions.invoke("admin-test-account", {
     body: {
       action: "magic_link",

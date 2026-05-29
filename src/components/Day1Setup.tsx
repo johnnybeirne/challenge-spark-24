@@ -520,83 +520,159 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 4 && (
           <div className="space-y-6 animate-fade-in">
-            <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tight">Who is your challenge for?</h1>
-              <p className="text-muted-foreground">Let's clarify the audience first.</p>
-            </div>
-            <div role="radiogroup" aria-label="Audience" className="grid grid-cols-2 gap-3">
-              {audienceOptions.map((opt) => {
-                const selected = audienceType === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => handleAudience(opt.value)}
-                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-xl border-2 text-center transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
-                      selected ? "border-primary bg-primary/10" : "border-border bg-card"
-                    }`}
-                  >
-                    <span
-                      className={`absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
-                        selected ? "border-primary" : "border-border"
-                      }`}
-                    >
-                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                    </span>
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <opt.icon className="h-6 w-6" />
-                    </div>
-                    <span className="font-semibold">{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            {step4Phase === "intro" && (
+              <TypedSequence
+                resetKey="step4-intro"
+                messages={[
+                  `Hi ${firstName}.`,
+                  "Let's build your challenge together.",
+                  "First, I need to understand who you want to help.",
+                ]}
+                onComplete={() => setStep4Phase("choose")}
+              />
+            )}
+
+            {step4Phase === "choose" && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="flex">
+                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                    First, I need to understand who you want to help.
+                  </div>
+                </div>
+                <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    {
+                      value: "b2b" as const,
+                      emoji: "🏢",
+                      label: "Business & Professionals",
+                      description: "Help business owners, consultants, coaches, experts, teams, or organisations achieve a meaningful result.",
+                    },
+                    {
+                      value: "b2c" as const,
+                      emoji: "👥",
+                      label: "Individuals & Consumers",
+                      description: "Help people improve an area of their life, health, finances, career, mindset, relationships, or wellbeing.",
+                    },
+                  ].map((opt) => {
+                    const selected = audienceType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => handleAudience(opt.value)}
+                        className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                          selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                        }`}
+                      >
+                        <span
+                          className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                            selected ? "border-primary" : "border-muted-foreground/40"
+                          }`}
+                          aria-hidden
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                        </span>
+                        <span className="flex flex-col gap-1">
+                          <span className="text-base font-semibold">
+                            <span className="mr-1.5">{opt.emoji}</span>
+                            {opt.label}
+                          </span>
+                          <span className="text-sm text-muted-foreground leading-relaxed">
+                            {opt.description}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {step4Phase === "ack" && audienceType && (
+              <TypedSequence
+                resetKey={`step4-ack-${audienceType}`}
+                messages={[
+                  audienceType === "b2b"
+                    ? "Perfect. We'll build this for a business audience."
+                    : "Perfect. We'll build this for an individual audience.",
+                ]}
+                onComplete={() => {
+                  setStep(5);
+                  setStep5Phase("intro");
+                }}
+              />
+            )}
           </div>
         )}
 
         {step === 5 && (
           <div className="space-y-6 animate-fade-in">
-            <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold tracking-tight">What do you want participants to achieve?</h2>
-              <p className="text-sm text-muted-foreground">
-                Choose the primary outcome participants should achieve by the end of your challenge.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {challengeOptions.map((opt) => {
-                const selected = challengeType === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => handleChallenge(opt.value)}
-                    className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
-                      selected ? "border-primary bg-primary/10" : "border-border bg-card"
-                    }`}
-                  >
-                    <span
-                      className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                        selected ? "border-primary" : "border-muted-foreground/40"
-                      }`}
-                      aria-hidden
-                    >
-                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                    </span>
-                    <span className="flex flex-col gap-1">
-                      <span className="text-base font-semibold">
-                        <span className="mr-1.5">{opt.emoji}</span>
-                        {opt.label}
-                      </span>
-                      <span className="text-sm text-muted-foreground leading-relaxed">
-                        {opt.description}
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {step5Phase === "intro" && (
+              <TypedSequence
+                resetKey="step5-intro"
+                messages={[
+                  "Now let's define the result.",
+                  "When people complete your challenge, what do you want them to walk away with?",
+                ]}
+                onComplete={() => setStep5Phase("choose")}
+              />
+            )}
+
+            {step5Phase === "choose" && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="flex">
+                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
+                    When people complete your challenge, what do you want them to walk away with?
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {challengeOptions.map((opt) => {
+                    const selected = challengeType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => handleChallenge(opt.value)}
+                        className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                          selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                        }`}
+                      >
+                        <span
+                          className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                            selected ? "border-primary" : "border-muted-foreground/40"
+                          }`}
+                          aria-hidden
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                        </span>
+                        <span className="flex flex-col gap-1">
+                          <span className="text-base font-semibold">
+                            <span className="mr-1.5">{opt.emoji}</span>
+                            {opt.label}
+                          </span>
+                          <span className="text-sm text-muted-foreground leading-relaxed">
+                            {opt.description}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {step5Phase === "ack" && challengeType && (
+              <TypedSequence
+                resetKey={`step5-ack-${challengeType}`}
+                messages={[
+                  "Got it.",
+                  `You're helping people ${(challengeLabel(challengeType) || "").toLowerCase()}.`,
+                ]}
+                onComplete={() => setStep(6)}
+              />
+            )}
           </div>
         )}
 

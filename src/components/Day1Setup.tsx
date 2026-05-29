@@ -459,6 +459,11 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleAudience = (v: "b2b" | "b2c") => {
     setAudienceType(v);
     persistFoundation({ audienceType: v });
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { audienceType: v }),
+    }));
+    profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
     // Skip the standalone ack screen — flow straight into step 5 whose intro
     // sequence opens with the acknowledgement so the conversation stays continuous.
     setStep5Phase("intro");
@@ -467,13 +472,28 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
+    const label = challengeOptions.find((o) => o.value === v)?.label ?? v;
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType(v),
+        desiredOutcome: summary,
+      }),
+    }));
+    profileSaved(`Challenge type: ${label}`);
     // Same pattern — step 6's intro opens with the acknowledgement.
     setStep6Phase("intro");
     setStep(6);
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
+    persistFoundation({ topicHint: topicHint.trim() } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
+    }));
+    profileSaved("Who you're helping");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };

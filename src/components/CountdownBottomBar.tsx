@@ -63,7 +63,7 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
     >
       <div
         className={cn(
-          "pointer-events-auto flex w-full items-center justify-center gap-2 border-t px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md",
+          "pointer-events-auto flex w-full items-center justify-center gap-3 border-t px-6 py-4 text-base font-semibold shadow-sm backdrop-blur-md sm:text-lg",
           urgent
             ? "border-destructive/30 bg-destructive/10 text-destructive"
             : "border-foreground/20 bg-foreground/10 text-foreground",
@@ -71,12 +71,13 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
       >
-        <Clock className="h-3.5 w-3.5" />
+        <Clock className="h-6 w-6" />
         <span className="tabular-nums">
           {days > 0 && <>{days}d {sep} </>}
           {hours}h {sep} {pad(minutes)}m {sep} {pad(seconds)}s left
         </span>
       </div>
+
     </div>
   );
 };

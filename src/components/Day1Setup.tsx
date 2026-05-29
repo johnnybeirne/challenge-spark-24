@@ -362,7 +362,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
-    setStep(7);
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   };
 
   // Step 7 → save the refinement, advance to the AI-guided builder (step 8).

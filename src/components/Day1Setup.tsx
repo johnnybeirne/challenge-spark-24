@@ -33,10 +33,10 @@ const JohnnyAvatar = () => (
 const StaticAi = ({ messages }: { messages: string[] }) => (
   <div className="flex items-start gap-3">
     <JohnnyAvatar />
-    <div className="flex-1 space-y-3 min-w-0">
+    <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
-          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug">
             {m}
           </div>
         </div>
@@ -204,28 +204,28 @@ const challengeOptions = [
     value: "solve-problem",
     emoji: "🎯",
     label: "Solve a Problem",
-    description: "Help participants overcome a specific problem that is holding them back.",
+    description: "Overcome a specific blocker.",
     summary: "Participants will solve a specific problem.",
   },
   {
     value: "quick-win",
     emoji: "⚡",
     label: "Achieve a Quick Win",
-    description: "Help participants achieve a meaningful result quickly.",
+    description: "Deliver a meaningful result fast.",
     summary: "Participants will achieve an immediate result.",
   },
   {
     value: "create-asset",
     emoji: "🛠",
     label: "Create Something Valuable",
-    description: "Help participants create something they can continue using after the challenge.",
+    description: "Build something they keep using.",
     summary: "Participants will create something valuable.",
   },
   {
     value: "reach-milestone",
     emoji: "🚀",
     label: "Reach a Milestone",
-    description: "Help participants make significant progress toward an important goal.",
+    description: "Progress toward an important goal.",
     summary: "Participants will achieve a meaningful milestone.",
   },
 ];
@@ -737,11 +737,10 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 4 && (() => {
           const step4Messages = [
             `Hi ${firstName}.`,
-            "Let's build your challenge together.",
-            `First${fn}, I need to understand who you want to help.`,
+            `Who do you want to help${fn}?`,
           ];
           return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-3 animate-fade-in">
             {step4Phase === "intro" && (
               <TypedSequence
                 resetKey="step4-intro"
@@ -752,22 +751,22 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step4Phase === "choose" && (
-              <div className="space-y-5 animate-fade-in">
+              <div className="space-y-3 animate-fade-in">
                 <StaticAi messages={step4Messages} />
-                <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div role="radiogroup" aria-label="Audience" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {[
                     {
                       value: "b2b" as const,
                       emoji: "🏢",
                       label: "Business & Professionals",
-                      description: "Help business owners, consultants, coaches, experts, teams, or organisations achieve a meaningful result.",
+                      description: "Help businesses, teams, or experts get a result.",
                     },
                     {
                       value: "b2c" as const,
                       emoji: "👥",
                       label: "Individuals & Consumers",
-                      description: "Help people improve an area of their life, health, finances, career, mindset, relationships, or wellbeing.",
+                      description: "Help people improve an area of their life.",
                     },
                   ].map((opt) => {
                     const selected = audienceType === opt.value;
@@ -777,24 +776,24 @@ const Day1Setup = ({ onComplete }: Props) => {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => handleAudience(opt.value)}
-                        className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                        className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
                           selected ? "border-primary bg-primary/10" : "border-border bg-card"
                         }`}
                       >
                         <span
-                          className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                             selected ? "border-primary" : "border-muted-foreground/40"
                           }`}
                           aria-hidden
                         >
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
-                        <span className="flex flex-col gap-1">
-                          <span className="text-base font-semibold">
+                        <span className="flex flex-col gap-0.5">
+                          <span className="text-base font-semibold leading-tight">
                             <span className="mr-1.5">{opt.emoji}</span>
                             {opt.label}
                           </span>
-                          <span className="text-sm text-muted-foreground leading-relaxed">
+                          <span className="text-sm text-muted-foreground leading-snug">
                             {opt.description}
                           </span>
                         </span>
@@ -810,13 +809,11 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            audienceType === "b2b"
-              ? "This challenge is designed to help business professionals achieve a meaningful result."
-              : "This challenge is designed to help individual people improve an area of their lives.",
+            `Perfect${fn}.`,
             "What result do you want participants to achieve?",
           ];
           return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
                 resetKey={`step5-intro-${audienceType}`}
@@ -826,9 +823,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             )}
 
             {step5Phase === "choose" && (
-              <div className="space-y-5 animate-fade-in">
+              <div className="space-y-3 animate-fade-in">
                 <StaticAi messages={step5Messages} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {challengeOptions.map((opt) => {
                     const selected = challengeType === opt.value;
@@ -838,24 +835,24 @@ const Day1Setup = ({ onComplete }: Props) => {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => handleChallenge(opt.value)}
-                        className={`flex items-start gap-3 p-5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                        className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
                           selected ? "border-primary bg-primary/10" : "border-border bg-card"
                         }`}
                       >
                         <span
-                          className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                             selected ? "border-primary" : "border-muted-foreground/40"
                           }`}
                           aria-hidden
                         >
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
-                        <span className="flex flex-col gap-1">
-                          <span className="text-base font-semibold">
+                        <span className="flex flex-col gap-0.5">
+                          <span className="text-base font-semibold leading-tight">
                             <span className="mr-1.5">{opt.emoji}</span>
                             {opt.label}
                           </span>
-                          <span className="text-sm text-muted-foreground leading-relaxed">
+                          <span className="text-sm text-muted-foreground leading-snug">
                             {opt.description}
                           </span>
                         </span>

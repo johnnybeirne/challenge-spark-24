@@ -137,32 +137,28 @@ const challengeOptions = [
     value: "solve-problem",
     emoji: "🎯",
     label: "Solve a Problem",
-    description:
-      "Help participants overcome a specific challenge, frustration, or obstacle that is holding them back.",
+    description: "Help participants overcome a specific problem that is holding them back.",
     summary: "Participants will solve a specific problem.",
   },
   {
     value: "quick-win",
     emoji: "⚡",
     label: "Achieve a Quick Win",
-    description:
-      "Help participants experience an immediate result that builds confidence and momentum.",
+    description: "Help participants achieve a meaningful result quickly.",
     summary: "Participants will achieve an immediate result.",
   },
   {
     value: "create-asset",
     emoji: "🛠",
-    label: "Create an Asset",
-    description:
-      "Help participants build something valuable they can use long after the challenge is complete.",
+    label: "Create Something Valuable",
+    description: "Help participants create something they can continue using after the challenge.",
     summary: "Participants will create something valuable.",
   },
   {
     value: "reach-milestone",
     emoji: "🚀",
     label: "Reach a Milestone",
-    description:
-      "Help participants achieve a meaningful milestone that moves them significantly closer to their goal.",
+    description: "Help participants make significant progress toward an important goal.",
     summary: "Participants will achieve a meaningful milestone.",
   },
 ];

@@ -334,35 +334,6 @@ const ChallengeRecord = () => {
           </div>
         )}
       </Section>
-
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-primary">
-          Timeline
-        </p>
-        <h3 className="mt-1.5 text-lg font-bold text-foreground">Your 72-hour window</h3>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border border-border/60 bg-background/60 p-3">
-            <dt className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
-              Started
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">{fmt(startedAt)}</dd>
-          </div>
-          <div className="rounded-lg border border-border/60 bg-background/60 p-3">
-            <dt className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
-              Current day
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">
-              {completed ? "Complete" : `Day ${currentDay}`}
-            </dd>
-          </div>
-          <div className="rounded-lg border border-border/60 bg-background/60 p-3">
-            <dt className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
-              Ends
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">{fmt(endsAt)}</dd>
-          </div>
-        </dl>
-      </section>
     </div>
   );
 };

@@ -958,7 +958,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Summary as a list of paragraphs. Each becomes its own line/paragraph.
           const summary: string[] = [
-            `${Fn || "Okay — "}here's what we've built together.`,
+            `${Fn || ""}Based on what you've told me, this is what I have.`,
             `You're creating a challenge for ${audiencePhrase}.`,
             `You're helping ${strip(who)}.`,
             `Right now, they're struggling with ${strip(pain).toLowerCase()}.`,

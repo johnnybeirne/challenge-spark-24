@@ -16,13 +16,13 @@ const RightRail = () => {
   const { state } = useAppState();
   const [collapsed, setCollapsed] = useState(false);
   const pulse = usePulseOnLogin();
-  if (!isChallengerShell) return null;
   const points = state.credits?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;
   const completed = !!state.challenge?.completed;
   const directReferrals = state.network?.direct ?? 0;
   const unlocksCount = state.unlocks?.length ?? 0;
   const recentUnlock = state.unlocks?.[state.unlocks.length - 1];
+
 
   const dayProgress = completed ? 100 : Math.min(100, Math.round(((currentDay - 1) / 3) * 100));
 
@@ -93,6 +93,9 @@ const RightRail = () => {
     })();
     return () => { cancelled = true; };
   }, [points]);
+
+  if (!isChallengerShell) return null;
+
 
   const nextUnlockLabel = completed
     ? "Community Access"

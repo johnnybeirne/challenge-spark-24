@@ -337,7 +337,8 @@ const ChallengeRecord = () => {
             ))}
           </div>
         )}
-      </Section>
+        </Section>
+      )}
     </div>
   );
 };

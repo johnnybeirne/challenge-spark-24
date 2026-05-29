@@ -136,7 +136,7 @@ const Profile = () => {
       const escaped = fn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return v
         .replace(new RegExp(`^${escaped}['’]s\\s+`, "i"), "")
-        .replace(new RegExp(`^${escaped}\\s+`, "i"))
+        .replace(new RegExp(`^${escaped}\\s+`, "i"), "")
         .trim();
     };
     for (const [k, label] of Object.entries(map)) {

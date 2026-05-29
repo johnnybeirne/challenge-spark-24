@@ -87,20 +87,23 @@ const TypedSequence = ({
   return (
     <div className="space-y-3">
       {shown.map((m, i) => (
-        <div key={i} className="flex animate-fade-in">
+        <div key={i} className="flex items-start gap-2 animate-fade-in">
+          <JohnnyAvatar />
           <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed">
             {m}
           </div>
         </div>
       ))}
       {idx < messages.length && (
-        <div className="flex animate-fade-in">
+        <div className="flex items-start gap-2 animate-fade-in">
+          <JohnnyAvatar />
           <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
             {showDots ? <TypingDots /> : <span>{current}<span className="inline-block w-0.5 h-4 bg-foreground/60 ml-0.5 align-middle animate-pulse" /></span>}
           </div>
         </div>
       )}
     </div>
+
   );
 };
 

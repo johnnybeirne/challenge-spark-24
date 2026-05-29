@@ -967,7 +967,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleTopicNext();
                         }}
                       />
-                      {feedback && <DelayedFeedback text={feedback} />}
+                      
                     </div>
                     <Button
                       size="lg"

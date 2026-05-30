@@ -17,20 +17,20 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
-  { title: "Product Overview", url: "/owner-console/overview", icon: FileText },
+  { title: "View as user", url: "/owner-console/view-as-user", icon: Eye },
+  { title: "Product overview", url: "/owner-console/overview", icon: FileText },
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard },
-  { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
-  { title: "Console Home", url: "/owner-console", icon: LayoutDashboard, end: true },
-  { title: "Landing Page Editor", url: "/owner-console/content", icon: FileEdit },
-  { title: "Resource Library", url: "/owner-console/resources", icon: BookOpen },
+  { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake },
+  { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true },
+  { title: "Landing page editor", url: "/owner-console/content", icon: FileEdit },
+  { title: "Resource library", url: "/owner-console/resources", icon: BookOpen },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
-  { title: "Waitlist Email", url: "/owner-console/waitlist-email", icon: Mail },
+  { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
-  { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
-  { title: "Training System", url: "/owner-console/training", icon: GraduationCap },
-  { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
+  { title: "Activity feed", url: "/owner-console/activity", icon: Activity },
+  { title: "Training system", url: "/owner-console/training", icon: GraduationCap },
+  { title: "Diagnostic chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
 ];
 
@@ -101,7 +101,7 @@ export function AdminSidebar() {
                 <SidebarMenuButton asChild tooltip="Waitlist thanks preview">
                   <a href="/waitlist/thanks?preview=1" target="_blank" rel="noopener noreferrer">
                     <Eye className="h-4 w-4" />
-                    <span>Waitlist Thanks (Preview)</span>
+                    <span>Waitlist thanks (preview)</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

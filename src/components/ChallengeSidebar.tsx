@@ -460,10 +460,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           <section className="space-y-1.5">
             {[
               { n: 1, path: "/blueprint/lesson/1", label: "Foundations", Icon: Zap, premium: false },
-              { n: 2, path: "/blueprint/lesson/2", label: "Growth Opportunity", Icon: Target, premium: false },
-              { n: 3, path: "/blueprint/lesson/3", label: "Referral Loops", Icon: Users, premium: false },
-              { n: 4, path: "/blueprint/lesson/4", label: "Advanced Systems", Icon: Workflow, premium: true },
-              { n: 5, path: "/blueprint/lesson/5", label: "Scaling With Leadio", Icon: TrendingUp, premium: true },
+              { n: 2, path: "/blueprint/lesson/2", label: "Growth opportunity", Icon: Target, premium: false },
+              { n: 3, path: "/blueprint/lesson/3", label: "Referral loops", Icon: Users, premium: false },
+              { n: 4, path: "/blueprint/lesson/4", label: "Advanced systems", Icon: Workflow, premium: true },
+              { n: 5, path: "/blueprint/lesson/5", label: "Scaling with Leadio", Icon: TrendingUp, premium: true },
             ].map(({ n, path, label, Icon, premium }) => {
               const active = location.pathname === path;
               const locked = premium && !isPremiumUser;
@@ -509,15 +509,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
       <section className="space-y-1.5">
         {(showChallengeNav
           ? [
-              { path: "/referrals", label: "Unlock Bonus Rewards", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
+              { path: "/referrals", label: "Unlock bonus rewards", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
               { path: "/unlocks", label: "Rewards", Icon: Sparkles, tint: "bg-rose-100 text-rose-700", accent: "hover:border-rose-400" },
               { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
-              { path: "/calendar", label: "Live Sessions", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
+              { path: "/calendar", label: "Live sessions", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
             ]
           : [
               { path: "/mentor", label: "Ask Johnny AI", Icon: MessageCircle, tint: "bg-violet-100 text-violet-700", accent: "hover:border-violet-400" },
-              { path: "/referrals", label: "Unlock Bonus Rewards", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
-              { path: "/calendar", label: "Live Session Calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
+              { path: "/referrals", label: "Unlock bonus rewards", Icon: Share2, tint: "bg-emerald-100 text-emerald-700", accent: "hover:border-emerald-400" },
+              { path: "/calendar", label: "Live session calendar", Icon: CalendarDays, tint: "bg-amber-100 text-amber-700", accent: "hover:border-amber-400" },
             ]
         ).map(({ path, label, Icon, tint, accent }) => {
           const active = location.pathname === path;

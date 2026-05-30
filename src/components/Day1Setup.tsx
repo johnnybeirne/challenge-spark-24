@@ -616,6 +616,9 @@ const Day1Setup = ({ onComplete }: Props) => {
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
         {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
 
+        <div className="mb-6">
+          <VideoPlaceholder />
+        </div>
 
         {step > 1 && step < 8 && (
           <button

@@ -32,7 +32,7 @@ const Day1 = () => {
     // Read-only view of completed Day 1 — show saved answers, no inputs.
     let saved: any = null;
     try { saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch {}
-    const memory = state.memory || {};
+    const memory: any = state.memory || {};
     const items: { label: string; value: string }[] = [
       { label: "Who you're solving for", value: saved?.audience || "" },
       { label: "The problem you're solving", value: saved?.problem || "" },

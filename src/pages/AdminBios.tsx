@@ -119,6 +119,9 @@ const copyText = async (v: string | null | undefined, label = "Copied") => {
   }
 };
 
+const TEST_EMAIL_RE = /^test\+[^@]*@leadio\.test$|@leadio\.local$/i;
+const isTestEmail = (email: string | null | undefined) => !!email && TEST_EMAIL_RE.test(email.trim());
+
 const displayName = (r: BioRow) =>
   r.name || [r.first_name, r.surname].filter(Boolean).join(" ") || r.email || "Unnamed";
 
@@ -266,7 +269,7 @@ const AdminBios = () => {
       }
     }
 
-    setRows(Array.from(map.values()));
+    setRows(Array.from(map.values()).filter((r) => !isTestEmail(r.email)));
     setSelected(new Set());
     setLoading(false);
   };

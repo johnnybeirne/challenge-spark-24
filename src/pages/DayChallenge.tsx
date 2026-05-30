@@ -22,7 +22,7 @@ import { isChallengeExpired } from "@/lib/challengeWindow";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
-import { canAccessDay } from "@/lib/challengeProgression";
+import { canAccessDay, getDayUnlock } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";

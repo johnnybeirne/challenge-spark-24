@@ -70,100 +70,111 @@ export default function Rewards() {
       </header>
 
       {/* Ladder */}
-      <main className="flex-1 overflow-y-auto px-6 py-3">
-        <div className="mx-auto max-w-5xl space-y-1.5">
-          {sortedRungs.map((rung) => {
+      <main className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="mx-auto max-w-3xl">
+          {sortedRungs.map((rung, idx) => {
             const reached = userPoints >= rung.points;
             const isCurrentRung =
               rung.points <= userPoints &&
               !sortedRungs.some((r) => r.points <= userPoints && r.points > rung.points);
             const tier = tierForPoints(rung.points);
+            const prevTier = idx > 0 ? tierForPoints(sortedRungs[idx - 1].points) : null;
+            const showTierDivider = !prevTier || prevTier.name !== tier.name;
             const isGold = rung.doubleUnlock;
             const isDest = rung.isDestination;
 
             return (
-              <div
-                key={rung.points}
-                className={cn(
-                  "relative grid grid-cols-[80px_1fr_auto] items-center gap-4 rounded-xl border px-4 py-2.5 transition-all",
-                  reached ? "opacity-100" : "opacity-70",
-                  isGold && "border-amber-400/60 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/30",
-                  isDest && "border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5",
-                  !isGold && !isDest && "bg-card",
-                  isCurrentRung && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-                )}
-              >
-                {/* Points marker */}
-                <div className="flex items-center gap-2">
-                  {isCurrentRung && (
-                    <ChevronRight className="h-4 w-4 shrink-0 animate-pulse text-primary" />
-                  )}
-                  <div className={cn(
-                    "flex h-10 w-12 items-center justify-center rounded-lg text-sm font-bold",
-                    reached ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
-                    isGold && reached && "bg-amber-500 text-white",
-                    isDest && "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground",
-                  )}>
-                    {rung.points}
-                  </div>
-                </div>
-
-                {/* Reward + tier */}
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    {reached ? (
-                      <Check className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                    ) : (
-                      <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    )}
-                    <p className={cn("truncate text-sm font-semibold", isDest && "text-base")}>
-                      {rung.name}
-                    </p>
-                    {isGold && (
-                      <span className="shrink-0 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                        <Sparkles className="mr-0.5 inline h-2.5 w-2.5" />
-                        Double
-                      </span>
-                    )}
-                    {isDest && (
-                      <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                        Destination
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", tierColor[tier.name])}>
+              <div key={rung.points}>
+                {showTierDivider && (
+                  <div className={cn("flex items-center gap-3", idx === 0 ? "mb-4" : "mb-4 mt-8")}>
+                    <span className={cn("rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider", tierColor[tier.name])}>
                       {tier.name}
                     </span>
-                    {rung.retailValue > 0 && (
-                      <span className="ml-2">Retail ${rung.retailValue}</span>
-                    )}
-                  </p>
-                </div>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+                )}
 
-                {/* Buy button */}
-                <div className="flex shrink-0 items-center gap-3">
-                  {rung.buyPrice > 0 && !isDest ? (
-                    <Button
-                      size="sm"
-                      variant={isGold ? "default" : "outline"}
-                      className={cn(
-                        "h-8 text-xs font-semibold",
-                        isGold && "bg-amber-500 text-white hover:bg-amber-600",
+                <div
+                  className={cn(
+                    "relative grid grid-cols-[64px_1fr_auto] items-center gap-5 rounded-xl border px-5 py-4 transition-all",
+                    reached ? "opacity-100" : "opacity-60",
+                    isGold && "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20",
+                    isDest && "border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5",
+                    !isGold && !isDest && "bg-card",
+                    isCurrentRung && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                  )}
+                >
+                  {/* Points marker */}
+                  <div className="flex items-center gap-2">
+                    {isCurrentRung && (
+                      <ChevronRight className="h-4 w-4 shrink-0 animate-pulse text-primary" />
+                    )}
+                    <div className={cn(
+                      "flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold",
+                      reached ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                      isGold && reached && "bg-amber-500 text-white",
+                      isDest && "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground",
+                    )}>
+                      {rung.points}
+                    </div>
+                  </div>
+
+                  {/* Reward name (dominant) + retail (small, muted) */}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      {reached ? (
+                        <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                      ) : (
+                        <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                       )}
-                      onClick={() => handleBuy(rung.priceId)}
-                    >
-                      Buy ${rung.buyPrice}
-                    </Button>
-                  ) : isDest ? (
-                    <span className="text-xs font-bold text-primary">★ Top reward</span>
-                  ) : null}
+                      <p className={cn("truncate text-base font-bold tracking-tight", isDest && "text-lg")}>
+                        {rung.name}
+                      </p>
+                      {isGold && (
+                        <span className="shrink-0 rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                          <Sparkles className="mr-0.5 inline h-2 w-2" />
+                          2×
+                        </span>
+                      )}
+                      {isDest && (
+                        <span className="shrink-0 rounded-full bg-primary/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary-foreground">
+                          Top
+                        </span>
+                      )}
+                    </div>
+                    {rung.retailValue > 0 && (
+                      <p className="mt-0.5 pl-6 text-xs text-muted-foreground">
+                        Retail ${rung.retailValue}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Buy button — clean, minimal */}
+                  <div className="flex shrink-0 items-center">
+                    {rung.buyPrice > 0 && !isDest ? (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className={cn(
+                          "h-9 text-sm font-semibold text-foreground hover:bg-muted",
+                          isGold && "text-amber-700 hover:bg-amber-100 dark:text-amber-300",
+                        )}
+                        onClick={() => handleBuy(rung.priceId)}
+                      >
+                        Buy ${rung.buyPrice}
+                      </Button>
+                    ) : isDest ? (
+                      <span className="text-xs font-bold text-primary">★ Top reward</span>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
       </main>
+
+
 
       {/* Sticky full-suite footer */}
       <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur">

@@ -246,7 +246,7 @@ const Dashboard = () => {
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
     return (
-      <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
+      <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-20">
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
           {/* INTRO VIDEO — welcome briefing */}

@@ -227,8 +227,9 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Intro (0) → Foundation (1-3) → Refinement (4-7) → AI Builder (8)
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+// Sequence: 4 audience-type → 1 who you serve → 5 result type → 6 avatar detail
+// → 2 problem → 3 process → 9 result → 7 promise → 8 AI builder.
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },

@@ -15,6 +15,7 @@ import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 
 import LearningAssistant from "@/components/LearningAssistant";
+import VideoPlaceholder from "@/components/VideoPlaceholder";
 
 import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";

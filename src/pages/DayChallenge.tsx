@@ -143,7 +143,8 @@ const DayChallenge = () => {
     return () => { cancelled = true; };
   }, [authUser?.id]);
 
-  if (adminChecked && !isAdmin && !canAccessDay(dayNum, state.challenge.startedAt)) {
+  const dayLocked = adminChecked && !isAdmin && !canAccessDay(dayNum, state.challenge.startedAt);
+  if (dayLocked && dayNum !== 2 && dayNum !== 3) {
     navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
     return null;
   }

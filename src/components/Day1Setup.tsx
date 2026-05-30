@@ -209,6 +209,7 @@ export interface SetupData {
   problem?: string;
   audience?: string;
   how?: string;
+  outcome?: string;
 }
 
 export const getSetup = (): SetupData | null => {

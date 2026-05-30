@@ -26,6 +26,7 @@ import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
+import VideoPlaceholder from "@/components/VideoPlaceholder";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";

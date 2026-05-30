@@ -151,7 +151,47 @@ const Dashboard = () => {
     toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Points earned.");
   };
 
-  const getStepStatus = (day: number) => {
+  const DAY1_STEP_KEY = "leadio_day1_step";
+
+  const handleResetDay1 = () => {
+    try {
+      localStorage.removeItem(SETUP_KEY);
+      localStorage.setItem(DAY1_STEP_KEY, "4");
+    } catch {}
+
+    setState((prev) => {
+      const aiOutputs = Object.fromEntries(
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(
+          ([k]) => !k.startsWith("day1_"),
+        ),
+      );
+      const tasks = Object.fromEntries(
+        Object.entries(prev.challenge.tasks ?? {}).filter(
+          ([k]) => !k.startsWith("day1_"),
+        ),
+      );
+      return {
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          currentDay: 1,
+          aiOutputs,
+          tasks,
+        },
+        training: { ...prev.training, day1Watched: false },
+        memory: {
+          ...prev.memory,
+          topic: "",
+          desiredOutcome: "",
+          audienceType: undefined as any,
+          challengeType: undefined as any,
+        },
+      };
+    });
+
+    trackEvent("day1_reset" as any, {});
+    toast.success("Day 1 reset — let's start again.");
+  };
     if (isComplete || currentDay > day) return "Complete";
     if (currentDay === day) return "In progress";
     return "Locked";

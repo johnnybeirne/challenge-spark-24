@@ -531,7 +531,7 @@ const DayChallenge = () => {
 
 
       {/* AI-guided training (primary). Video kept below as optional briefing. */}
-      {dayNum === 2 && (
+      {dayNum === 2 && !isReadOnly && (
         <div className="mb-6 space-y-6">
           <DayVideoModal dayNum={2} />
           <DayCopilot
@@ -550,7 +550,7 @@ const DayChallenge = () => {
         </div>
       )}
 
-      {dayNum === 3 && (
+      {dayNum === 3 && !isReadOnly && (
         <div className="mb-6 space-y-6">
           <DayVideoModal dayNum={3} />
           <DayCopilot

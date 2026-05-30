@@ -860,9 +860,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 4 && (() => {
-          const step4Messages = [
-            `Hi ${firstName}, let's start by identifying who you want to help.`,
-          ];
+          const knownLabel =
+            memoryAudienceType === "b2b"
+              ? "businesses and professionals"
+              : memoryAudienceType === "b2c"
+                ? "individuals and consumers"
+                : null;
+          const step4Messages = knownLabel
+            ? [
+                `Hi ${firstName}, you previously said you want to help ${knownLabel}.`,
+                "Confirm your audience to continue — you can change it here if you'd like.",
+              ]
+            : [
+                `Hi ${firstName}, let's start by identifying who you want to help.`,
+              ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step4Phase === "intro" && (

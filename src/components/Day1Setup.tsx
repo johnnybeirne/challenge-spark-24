@@ -389,8 +389,6 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
-    // If audience type is already stored on the user profile, skip the B2B/B2C step.
-    if (memoryAudienceType) return 5;
     return 4;
   })();
 
@@ -464,11 +462,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8.
-  // If audience type was pre-known (skipping step 4), going back from step 5
-  // is disabled so we never re-show the B2B/B2C choice.
   const goBack = () => {
     const baseMap: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
-    if (knownAudienceType && step === 5) return;
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -691,7 +686,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         <DayVideoModal dayNum={1} />
 
-        {step > 1 && step < 8 && !(knownAudienceType && step === 5) && (
+        {step > 1 && step < 8 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -865,9 +860,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 4 && (() => {
-          const step4Messages = [
-            `Hi ${firstName}, let's start by identifying who you want to help.`,
-          ];
+          const knownLabel =
+            memoryAudienceType === "b2b"
+              ? "businesses and professionals"
+              : memoryAudienceType === "b2c"
+                ? "individuals and consumers"
+                : null;
+          const step4Messages = knownLabel
+            ? [
+                `Hi ${firstName}, you previously said you want to help ${knownLabel}.`,
+                "Confirm your audience to continue — you can change it here if you'd like.",
+              ]
+            : [
+                `Hi ${firstName}, let's start by identifying who you want to help.`,
+              ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step4Phase === "intro" && (

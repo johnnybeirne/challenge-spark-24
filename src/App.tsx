@@ -56,7 +56,7 @@ import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsU
 import AdminBios from "@/pages/AdminBios";
 import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
 import AdminContent from "@/pages/AdminContent";
-import AdminChallengeDays from "@/pages/AdminChallengeDays";
+
 import AdminCoupons from "@/pages/AdminCoupons";
 import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
@@ -215,7 +215,7 @@ const App = () => (
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
                 <Route path="content" element={<AdminContent />} />
-                <Route path="challenge-days" element={<AdminChallengeDays />} />
+                
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="signups" element={<AdminSignups />} />
                 

@@ -413,7 +413,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     (authUser?.user_metadata?.first_name as string | undefined) ||
     (typeof authUser?.email === "string" ? authUser.email.split("@")[0] : "") ||
     "";
-  const firstName = rawName.trim().split(/\s+/)[0] || "";
+  const firstName = rawName.trim().split(/\s+/)[0] || "there";
   // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
   const fn = firstName && firstName !== "there" ? `, ${firstName}` : "";
   const Fn = firstName && firstName !== "there" ? `${firstName}, ` : "";

@@ -1065,6 +1065,7 @@ export type Database = {
           surname: string | null
           updated_at: string
           user_id: string
+          video_modal_dismissed: Json
           website_url: string | null
           youtube_url: string | null
         }
@@ -1093,6 +1094,7 @@ export type Database = {
           surname?: string | null
           updated_at?: string
           user_id: string
+          video_modal_dismissed?: Json
           website_url?: string | null
           youtube_url?: string | null
         }
@@ -1121,6 +1123,7 @@ export type Database = {
           surname?: string | null
           updated_at?: string
           user_id?: string
+          video_modal_dismissed?: Json
           website_url?: string | null
           youtube_url?: string | null
         }

@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS video_modal_dismissed jsonb NOT NULL DEFAULT '{}'::jsonb;

@@ -375,10 +375,22 @@ const Day1Setup = ({ onComplete }: Props) => {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
+
+  // Audience type may already be known from earlier surfaces (signup, assessment).
+  // Pull it from saved setup first, then from memory, so Day 1 never re-asks B2B vs B2C.
+  const memoryAudienceType =
+    state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
+      ? (state.memory.audienceType as "b2b" | "b2c")
+      : null;
+  const knownAudienceType: "b2b" | "b2c" | null =
+    saved?.audienceType ?? memoryAudienceType;
+
   const initialStep: Step = (() => {
     if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
+    // If audience type is already stored on the user profile, skip the B2B/B2C step.
+    if (memoryAudienceType) return 5;
     return 4;
   })();
 
@@ -412,7 +424,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [how, setHow] = useState<string>(saved?.how ?? "");
 
   // Refinement answers
-  const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(saved?.audienceType ?? null);
+  const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
   const [challengeType, setChallengeType] = useState<string>(saved?.challengeType ?? "");
   const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
   const { isListening: isDictating, toggle: toggleDictation } = useDictation();
@@ -432,12 +444,32 @@ const Day1Setup = ({ onComplete }: Props) => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
   }, [builderHistory, builderLoading]);
 
+  // If audience type came from memory (not saved), write it into setup so the
+  // rest of the flow treats it as confirmed and we never re-ask B2B vs B2C.
+  useEffect(() => {
+    if (!saved?.audienceType && memoryAudienceType) {
+      try {
+        const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
+        if (!current.audienceType) {
+          localStorage.setItem(
+            SETUP_KEY,
+            JSON.stringify({ ...current, audienceType: memoryAudienceType }),
+          );
+        }
+      } catch {}
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8
+  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8.
+  // If audience type was pre-known (skipping step 4), going back from step 5
+  // is disabled so we never re-show the B2B/B2C choice.
   const goBack = () => {
-    const map: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
-    const prev = map[step as number];
+    const baseMap: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
+    if (knownAudienceType && step === 5) return;
+    const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
   // Persist foundation answers progressively so refresh doesn't wipe them.
@@ -659,7 +691,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         <DayVideoModal dayNum={1} />
 
-        {step > 1 && step < 8 && (
+        {step > 1 && step < 8 && !(knownAudienceType && step === 5) && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -905,9 +937,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 5 && (() => {
-          const step5Messages = [
-            `Perfect${fn}, what result do you want participants to achieve?`,
-          ];
+          const audienceFullLabel =
+            audienceType === "b2b"
+              ? "businesses and professionals"
+              : audienceType === "b2c"
+                ? "individuals and consumers"
+                : "your audience";
+          const step5Messages = knownAudienceType
+            ? [
+                `${Fn || "Hi there, "}you're focused on helping ${audienceFullLabel} — now let's get more specific.`,
+                "What result do you want participants to achieve?",
+              ]
+            : [
+                `Perfect${fn}, what result do you want participants to achieve?`,
+              ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (

@@ -516,6 +516,23 @@ export const defaultSiteConfig: SiteConfig = {
       unlockValue: 197,
       unlockMessage: "Builder Circle unlocked — your challenge can now earn visibility.",
     },
+    ladder: {
+      fullSuitePrice: 497,
+      fullSuitePriceId: "reward_full_suite",
+      rungs: [
+        { points: 100, name: "Launch Checklist",                 retailValue: 47,  buyPrice: 27, priceId: "reward_100", doubleUnlock: false },
+        { points: 200, name: "AI Prompt Pack",                   retailValue: 97,  buyPrice: 37, priceId: "reward_200", doubleUnlock: false },
+        { points: 300, name: "Referral Templates + JV Bonus",    retailValue: 147, buyPrice: 47, priceId: "reward_300", doubleUnlock: true  },
+        { points: 400, name: "Advanced Challenge Training",      retailValue: 147, buyPrice: 67, priceId: "reward_400", doubleUnlock: false },
+        { points: 500, name: "Community Feature Spot + JV Bonus",retailValue: 197, buyPrice: 77, priceId: "reward_500", doubleUnlock: true  },
+        { points: 600, name: "Strategy Call Application",        retailValue: 297, buyPrice: 87, priceId: "reward_600", doubleUnlock: false },
+        { points: 700, name: "Done-for-you Funnel + JV Bonus",   retailValue: 297, buyPrice: 87, priceId: "reward_700", doubleUnlock: true  },
+        { points: 800, name: "Lifetime Challenge Access",        retailValue: 497, buyPrice: 87, priceId: "reward_800", doubleUnlock: false },
+        { points: 900, name: "Partner Spotlight + JV Bonus",     retailValue: 397, buyPrice: 87, priceId: "reward_900", doubleUnlock: true  },
+        { points: 1000,name: "Strategic Partner Kit",            retailValue: 0,   buyPrice: 0,  priceId: "reward_1000",doubleUnlock: false, isDestination: true },
+      ],
+    },
+
   },
   referrals: {
     defaultShareMessage: "I just took this 90-second assessment on audience growth — curious what you'd get?",

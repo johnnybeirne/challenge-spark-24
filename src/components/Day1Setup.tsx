@@ -422,6 +422,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [problem, setProblem] = useState<string>(saved?.problem ?? "");
   const [audience, setAudience] = useState<string>(saved?.audience ?? "");
   const [how, setHow] = useState<string>(saved?.how ?? "");
+  const [outcome, setOutcome] = useState<string>(saved?.outcome ?? "");
 
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);

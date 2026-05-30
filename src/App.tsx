@@ -67,6 +67,7 @@ import AdminNewsletter from "@/pages/AdminNewsletter";
 import Unsubscribe from "@/pages/Unsubscribe";
 import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
+import Workflow from "@/pages/Workflow";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import Waitlist from "@/pages/Waitlist";
@@ -149,6 +150,7 @@ const App = () => (
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
+                <Route path="/workflow" element={<Workflow />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
                 {/* Referral invite entry — stores code then funnels into assessment */}

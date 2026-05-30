@@ -16,6 +16,7 @@ import {
   Monitor,
   Smartphone,
   Settings2,
+  GripVertical,
 } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";
@@ -35,6 +36,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const PAGES: { id: string; label: string; previewUrl: string; description: string }[] = [
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page" },
@@ -122,25 +138,46 @@ const AdminContent = () => {
     setPreviewNonce((n) => n + 1);
   }, [activePage]);
 
+  // Custom section order persisted in a meta row: section='_meta', key='section_order'.
+  const orderRow = useMemo(
+    () => rows.find((r) => r.section === "_meta" && r.key === "section_order"),
+    [rows]
+  );
+  const customOrder = useMemo<string[]>(() => {
+    if (!orderRow?.value) return [];
+    try {
+      const v = JSON.parse(orderRow.value);
+      return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  }, [orderRow]);
+
   const grouped = useMemo(() => {
     const g: Record<string, Draft[]> = {};
     for (const r of rows) {
+      if (r.section === "_meta") continue; // hide meta rows from the editor
       g[r.section] ??= [];
       g[r.section].push(r);
     }
-    // Sort sections to match the order they appear on the live page.
-    // Known sections (from SECTION_META) come first in page order; unknown
-    // sections are appended alphabetically at the end.
+    // Section order priority:
+    // 1. Persisted custom order (drag-and-drop result)
+    // 2. SECTION_META declaration order (matches live page)
+    // 3. Alphabetical fallback for anything else
     const knownOrder = Object.keys(SECTION_META[activePage] ?? {});
     const orderIndex = (name: string) => {
-      const i = knownOrder.indexOf(name);
-      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+      const c = customOrder.indexOf(name);
+      if (c !== -1) return [0, c] as const;
+      const k = knownOrder.indexOf(name);
+      if (k !== -1) return [1, k] as const;
+      return [2, 0] as const;
     };
     const ordered: Record<string, Draft[]> = {};
     Object.keys(g)
       .sort((a, b) => {
-        const ai = orderIndex(a);
-        const bi = orderIndex(b);
+        const [ag, ai] = orderIndex(a);
+        const [bg, bi] = orderIndex(b);
+        if (ag !== bg) return ag - bg;
         if (ai !== bi) return ai - bi;
         return a.localeCompare(b);
       })
@@ -148,7 +185,65 @@ const AdminContent = () => {
         ordered[k] = g[k];
       });
     return ordered;
-  }, [rows, activePage]);
+  }, [rows, activePage, customOrder]);
+
+  const sectionIds = useMemo(() => Object.keys(grouped), [grouped]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } })
+  );
+
+  const persistOrder = async (order: string[]) => {
+    const payload = {
+      page: activePage,
+      section: "_meta",
+      key: "section_order",
+      value: JSON.stringify(order),
+      value_type: "json",
+      label: "Section order",
+      sort_order: 0,
+    };
+    if (orderRow) {
+      const { error } = await supabase
+        .from("site_content")
+        .update({ value: payload.value })
+        .eq("id", orderRow.id);
+      if (error) return toast.error(error.message);
+    } else {
+      const { error } = await supabase.from("site_content").insert(payload);
+      if (error) return toast.error(error.message);
+    }
+    invalidatePage(activePage);
+    await load(activePage);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = sectionIds.indexOf(String(active.id));
+    const newIndex = sectionIds.indexOf(String(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
+    const next = arrayMove(sectionIds, oldIndex, newIndex);
+    // Optimistically reflect the new order by writing a synthetic meta row
+    // into local state so the UI updates before the network round-trip.
+    setRows((rs) => {
+      const without = rs.filter((r) => !(r.section === "_meta" && r.key === "section_order"));
+      const fake: Draft = {
+        id: orderRow?.id ?? `meta-${Date.now()}`,
+        page: activePage,
+        section: "_meta",
+        key: "section_order",
+        value: JSON.stringify(next),
+        value_type: "json",
+        label: "Section order",
+        sort_order: 0,
+      } as Draft;
+      return [...without, fake];
+    });
+    void persistOrder(next);
+  };
+
+
 
 
   const updateRow = (id: string, patch: Partial<Draft>) =>
@@ -303,61 +398,78 @@ const AdminContent = () => {
                 </div>
               </div>
             ) : (
-              <Accordion
-                type="single"
-                collapsible
-                value={activeSection ?? undefined}
-                onValueChange={(v) => setActiveSection(v || null)}
-                className="space-y-2"
-              >
-                {Object.entries(grouped).map(([section, items]) => {
-                  const sectionDirty = items.some((r) => r._dirty);
-                  const meta = sectionMeta(activePage, section);
-                  const friendly = meta?.label ?? sectionTitle(section);
-                  return (
-                    <AccordionItem
-                      key={section}
-                      value={section}
-                      className="rounded-lg border bg-card px-3 data-[state=open]:border-primary/60"
-                    >
-                      <AccordionTrigger className="hover:no-underline py-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-semibold">{friendly}</span>
-                          <Badge variant="secondary" className="h-5 text-[10px]">
-                            {items.length}
-                          </Badge>
-                          {sectionDirty && (
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="unsaved" />
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+                  <Accordion
+                    type="single"
+                    collapsible
+                    value={activeSection ?? undefined}
+                    onValueChange={(v) => setActiveSection(v || null)}
+                    className="space-y-2"
+                  >
+                    {Object.entries(grouped).map(([section, items]) => {
+                      const sectionDirty = items.some((r) => r._dirty);
+                      const meta = sectionMeta(activePage, section);
+                      const friendly = meta?.label ?? sectionTitle(section);
+                      return (
+                        <SortableSection key={section} id={section}>
+                          {(handleProps) => (
+                            <AccordionItem
+                              value={section}
+                              className="rounded-lg border bg-card pl-1 pr-3 data-[state=open]:border-primary/60"
+                            >
+                              <div className="flex items-center">
+                                <button
+                                  type="button"
+                                  aria-label="Drag to reorder"
+                                  className="flex h-8 w-7 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
+                                  {...handleProps}
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </button>
+                                <AccordionTrigger className="flex-1 hover:no-underline py-3">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-sm font-semibold">{friendly}</span>
+                                    <Badge variant="secondary" className="h-5 text-[10px]">
+                                      {items.length}
+                                    </Badge>
+                                    {sectionDirty && (
+                                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="unsaved" />
+                                    )}
+                                  </div>
+                                </AccordionTrigger>
+                              </div>
+                              <AccordionContent className="pb-3 space-y-3">
+                                {meta?.hint && (
+                                  <p className="text-xs text-muted-foreground italic">
+                                    Appears in preview as: {meta.hint}
+                                  </p>
+                                )}
+                                {items.map((row) => (
+                                  <FieldRow
+                                    key={row.id}
+                                    row={row}
+                                    onUpdate={(p) => updateRow(row.id, p)}
+                                    onRemove={() => removeRow(row)}
+                                  />
+                                ))}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => addRow(section)}
+                                  className="w-full justify-start text-xs h-8"
+                                >
+                                  <Plus className="h-3.5 w-3.5 mr-1" /> Add field
+                                </Button>
+                              </AccordionContent>
+                            </AccordionItem>
                           )}
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-3 space-y-3">
-                        {meta?.hint && (
-                          <p className="text-xs text-muted-foreground italic">
-                            Appears in preview as: {meta.hint}
-                          </p>
-                        )}
-                        {items.map((row) => (
-                          <FieldRow
-                            key={row.id}
-                            row={row}
-                            onUpdate={(p) => updateRow(row.id, p)}
-                            onRemove={() => removeRow(row)}
-                          />
-                        ))}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => addRow(section)}
-                          className="w-full justify-start text-xs h-8"
-                        >
-                          <Plus className="h-3.5 w-3.5 mr-1" /> Add field
-                        </Button>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                })}
-              </Accordion>
+                        </SortableSection>
+                      );
+                    })}
+                  </Accordion>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
 
@@ -457,6 +569,29 @@ const AdminContent = () => {
     </div>
   );
 };
+
+function SortableSection({
+  id,
+  children,
+}: {
+  id: string;
+  children: (handleProps: Record<string, unknown>) => React.ReactNode;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children({ ...attributes, ...listeners })}
+    </div>
+  );
+}
+
 
 function FieldRow({
   row,

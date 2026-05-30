@@ -324,6 +324,7 @@ export interface SiteConfig {
   partners: PartnerConfig;
   notifications: NotificationConfig;
   global: GlobalConfig;
+  upgradeCards: UpgradeCardsConfig;
 }
 
 /* ───── Defaults ───── */

@@ -607,7 +607,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         name: prev.user?.name || prev.memory.name,
         audienceType,
         challengeType: normalizeChallengeType(challengeType),
-        desiredOutcome: topicHint || how,
+        desiredOutcome: outcome || topicHint || how,
         topic: topicHint || problem,
       }),
       challenge: {

@@ -445,14 +445,11 @@ const AdminContent = () => {
                                     Appears in preview as: {meta.hint}
                                   </p>
                                 )}
-                                {items.map((row) => (
-                                  <FieldRow
-                                    key={row.id}
-                                    row={row}
-                                    onUpdate={(p) => updateRow(row.id, p)}
-                                    onRemove={() => removeRow(row)}
-                                  />
-                                ))}
+                                <SectionFieldsGrid
+                                  items={items}
+                                  onUpdate={(id, p) => updateRow(id, p)}
+                                  onRemove={(row) => removeRow(row)}
+                                />
                                 <Button
                                   variant="ghost"
                                   size="sm"

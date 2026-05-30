@@ -40,6 +40,7 @@ const CmsChallenge = () => {
 
   const save = () => {
     updateSection("challenge", draft);
+    updateSection("upgradeCards", upgradeDraft);
     toast.success("Challenge content updated");
   };
 

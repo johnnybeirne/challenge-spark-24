@@ -269,7 +269,7 @@ const userGroups: FeatureGroup[] = [
       },
       {
         title: "Reward redemption",
-        does: "Reward detail pages and a credits redemption flow at /redeem.",
+        does: "Reward detail pages and a points redemption flow at /redeem.",
         matters: "Closes the loop between earning and using rewards.",
       },
       {

@@ -111,7 +111,7 @@ const Day1 = () => {
               <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
               <AlertDialogDescription>
                 This clears your Day 1 answers, AI outputs, and progress so you can
-                start the questions from scratch. Your referrals, credits, and other
+                start the questions from scratch. Your referrals, points, and other
                 progress are kept.
               </AlertDialogDescription>
             </AlertDialogHeader>

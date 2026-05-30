@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
-  const [signupCreditCount, setSignupCreditCount] = useState(0);
+  const [signupPointCount, setSignupPointCount] = useState(0);
   const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
@@ -55,7 +55,7 @@ const Dashboard = () => {
     state.challenge.currentDay > 1 ||
     Object.keys(state.challenge.tasks).length > 0 ||
     Object.keys(state.challenge.aiOutputs).some((key) => state.challenge.aiOutputs[key]) ||
-    (state.credits?.awardedActions?.length ?? 0) > 0 ||
+    (state.points?.awardedActions?.length ?? 0) > 0 ||
     Boolean(state.user?.avatarUrl) ||
     Boolean(state.user?.bio) ||
     state.challenge.calendarAdded;
@@ -70,7 +70,7 @@ const Dashboard = () => {
     ? `Continue Day ${currentDay}`
     : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
-  const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+  const hasSignupPoints = (state.points?.awardedActions ?? []).includes("challenge_signup");
   const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
   const getDayDate = (day: number) => {
     if (!startedAt) return null;
@@ -82,9 +82,9 @@ const Dashboard = () => {
   useEffect(() => { trackEvent("dashboard_training_viewed"); }, []);
 
   useEffect(() => {
-    if (!hasSignupCredits) return;
+    if (!hasSignupPoints) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setSignupCreditCount(100);
+      setSignupPointCount(100);
       return;
     }
 
@@ -94,13 +94,13 @@ const Dashboard = () => {
     const animate = (time: number) => {
       const progress = Math.min((time - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setSignupCreditCount(Math.round(eased * 100));
+      setSignupPointCount(Math.round(eased * 100));
       if (progress < 1) frame = requestAnimationFrame(animate);
     };
 
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [hasSignupCredits]);
+  }, [hasSignupPoints]);
 
   const handlePhotoUpload = async (file?: File) => {
     if (!file || !authUser || photoUploading) return;
@@ -434,7 +434,7 @@ const Dashboard = () => {
             <div>
               <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Points Earned</p>
               <div className="mt-1 flex items-end gap-2">
-                <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
+                <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.points?.total ?? 0}</span>
                 <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>
               </div>
             </div>

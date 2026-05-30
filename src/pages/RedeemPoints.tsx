@@ -4,16 +4,16 @@ import { ArrowLeft, Check, Lock, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
-import { creditRewards } from "@/lib/credits";
+import { pointRewards } from "@/lib/points";
 
-const ladder = creditRewards.map((r) => ({ credits: r.credits, name: r.title }));
+const ladder = pointRewards.map((r) => ({ points: r.points, name: r.title }));
 
 const STORAGE_KEY = "leadio.unlockedRewards.v1";
 
-const RedeemCredits = () => {
+const RedeemPoints = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
-  const credits = state.credits?.total ?? 0;
+  const points = state.points?.total ?? 0;
 
   // Auto-unlock anything the user has reached (no spending)
   const [unlocked, setUnlocked] = useState<number[]>([]);
@@ -21,27 +21,27 @@ const RedeemCredits = () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       const prev: (string | number)[] = raw ? JSON.parse(raw) : [];
-      const reached = ladder.filter((l) => credits >= l.credits).map((l) => l.credits);
+      const reached = ladder.filter((l) => points >= l.points).map((l) => l.points);
       const merged = Array.from(new Set([...prev.map(Number).filter(Boolean), ...reached]));
       setUnlocked(merged);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } catch {
-      setUnlocked(ladder.filter((l) => credits >= l.credits).map((l) => l.credits));
+      setUnlocked(ladder.filter((l) => points >= l.points).map((l) => l.points));
     }
-  }, [credits]);
+  }, [points]);
 
   const next = useMemo(
-    () => ladder.find((l) => l.credits > credits) ?? ladder[ladder.length - 1],
-    [credits]
+    () => ladder.find((l) => l.points > points) ?? ladder[ladder.length - 1],
+    [points]
   );
   const prevMilestone = useMemo(() => {
-    const reached = ladder.filter((l) => l.credits <= credits);
-    return reached.length ? reached[reached.length - 1].credits : 0;
-  }, [credits]);
+    const reached = ladder.filter((l) => l.points <= points);
+    return reached.length ? reached[reached.length - 1].points : 0;
+  }, [points]);
   const progressPct = next
     ? Math.min(
         100,
-        Math.round(((credits - prevMilestone) / (next.credits - prevMilestone)) * 100)
+        Math.round(((points - prevMilestone) / (next.points - prevMilestone)) * 100)
       )
     : 100;
 
@@ -66,18 +66,18 @@ const RedeemCredits = () => {
         {/* Progress */}
         <div className="mb-8 rounded-xl border border-border bg-card p-5">
           <p className="text-sm text-muted-foreground">
-            You have <span className="font-semibold text-foreground">{credits} points</span>
+            You have <span className="font-semibold text-foreground">{points} points</span>
           </p>
           {next && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Your next reward unlocks at <span className="font-semibold text-foreground">{next.credits} points</span>
+              Your next reward unlocks at <span className="font-semibold text-foreground">{next.points} points</span>
             </p>
           )}
           <div className="mt-4">
             <Progress value={progressPct} className="h-2" />
             {next && (
               <p className="mt-2 text-xs text-muted-foreground">
-                {credits} / {next.credits} points
+                {points} / {next.points} points
               </p>
             )}
           </div>
@@ -86,10 +86,10 @@ const RedeemCredits = () => {
         {/* Ladder */}
         <ol className="relative border-l border-border pl-6">
           {ladder.map((item) => {
-            const isUnlocked = credits >= item.credits;
-            const remaining = Math.max(0, item.credits - credits);
+            const isUnlocked = points >= item.points;
+            const remaining = Math.max(0, item.points - points);
             return (
-              <li key={item.credits} className="relative mb-6 last:mb-0">
+              <li key={item.points} className="relative mb-6 last:mb-0">
                 <span
                   className={`absolute -left-[34px] flex h-7 w-7 items-center justify-center rounded-full border-2 ${
                     isUnlocked
@@ -102,7 +102,7 @@ const RedeemCredits = () => {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {item.credits} Points
+                      {item.points} Points
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-foreground">{item.name}</p>
                     {isUnlocked ? (
@@ -146,4 +146,4 @@ const RedeemCredits = () => {
   );
 };
 
-export default RedeemCredits;
+export default RedeemPoints;

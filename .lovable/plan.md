@@ -1,54 +1,71 @@
-## What's there today
+# Rename `credits` → `points`
 
-Four pages cover overlapping ground:
+Rename the internal reward-system terminology from "credits" to "points" everywhere it refers to the gamification/reward ladder. Unrelated uses of the word "credit" stay as-is.
 
-| Page | Route(s) | What it shows |
-|---|---|---|
-| `FeatureOverviewPage` (admin/user modes) | `/owner-console/features`, `/admin/features`, `/app/features` | Generated feature list + workflow chart + journey + snapshot, copy-to-clipboard |
-| `Workflow.tsx` | `/workflow` (public) | Cinematic 14-stage user-journey diagram with animations |
-| `UserFeaturesAudit.tsx` | `/user-features` | 1,100-line internal audit: every route, role visibility, conflicts |
-| `Features.tsx` | — (imported, **never routed**) | Old curated feature catalog with refresh/copy |
+## Scope
 
-Plus AdminHub has a duplicated "Content Editor" card (lines 7–13 and 21–27) and a "Client Feature Overview" card.
+### In scope (rename)
+The points/credits reward system: balance, ledger, tiers, redemption, and the UI/labels around it.
 
-These all answer "what does this product do / where does it live?" — just at different fidelity. Worth merging.
+Files involved:
+- `src/lib/credits.ts` → **rename to `src/lib/points.ts`** (32 hits — tiers, point math, types)
+- `src/context/AppContext.tsx` (29 hits — `state.credits`, reducers, types)
+- `src/components/CreditStatusCard.tsx` → **rename to `src/components/PointStatusCard.tsx`** (20 hits)
+- `src/pages/RedeemCredits.tsx` → **rename to `src/pages/RedeemPoints.tsx`** (21 hits)
+- `src/pages/Unlocks.tsx` (15 hits)
+- `src/pages/Dashboard.tsx` (8 hits)
+- `src/pages/EarnRewards.tsx` (6 hits)
+- `src/App.tsx` (2 hits — route + import)
+- `src/components/AppShell.tsx` (2 hits)
+- `src/components/RightRail.tsx` (`state.credits?.total`)
+- `src/components/ChallengeSidebar.tsx` — only the credits-system reference, NOT "No credit card required"
+- `src/pages/UserFeaturesAudit.tsx` — "Redeem credits", "Earn Credits"
+- `src/lib/featureOverview.ts` — the reward-system mentions
+- `src/pages/blueprint/BlueprintDashboard.tsx` — `state.credits?.total`
+- `src/hooks/useIsChallengerShell.ts` — route reference
 
-## Proposed consolidation
+Route change:
+- `/redeem-credits` (and/or `/redeem`) → `/redeem-points`. Old route kept as a redirect to avoid breaking shared links.
 
-**One admin surface: `/owner-console/overview`** with three tabs:
+### Out of scope (leave untouched)
+These uses of "credit" are unrelated to the reward system:
+- "No credit card required" — `ChallengeSidebar.tsx`, `BlueprintLanding.tsx`, `BlueprintSignup.tsx` (×2)
+- "AI credits exhausted…" — `supabase/functions/blueprint-insight/index.ts` (Lovable AI Gateway language)
+- "more credits and flexibility" (Pro account marketing copy) — `DayChallenge.tsx`
+- "Coupon-driven sales credit your account…" — `PartnerDashboard.tsx` (verb, attribution)
+- "they credit you for it" — `assessmentData.ts`
+- "Your referrals, credits, and other…" in `Day1.tsx` — **flag for review**: ambiguous, likely should change to "points" too, will confirm in implementation.
 
-1. **Features** — current `FeatureOverviewPage` (admin mode), keeps Refresh + Copy.
-2. **Workflow** — current `Workflow.tsx` cinematic stages, embedded as a tab (drop public `/workflow` route or redirect it here).
-3. **Route audit** — current `UserFeaturesAudit` content (route inventory, role matrix, conflicts).
+## Naming rules
 
-The public-facing `/app/features` stays (it's user-mode marketing copy) but is the only "outside" surface.
+Case-preserving rename:
+- `credits` → `points`
+- `Credits` → `Points`
+- `CREDITS` → `POINTS`
+- `credit` (singular, reward-system only) → `point`
+- `Credit` → `Point`
+- `CreditStatusCard` → `PointStatusCard`
+- `RedeemCredits` → `RedeemPoints`
+- `creditTiers`, `addCredits`, `creditLedger`, etc. → `pointTiers`, `addPoints`, `pointLedger`
+- AppContext: `state.credits` → `state.points` (object shape `{ total, ledger, … }` keeps same fields, just renamed at the top level)
+- LocalStorage keys touching credits: migrate on load (read old key once, write new key) so existing users don't lose balances.
 
-### Route changes
+## Technical notes
 
-- New: `/owner-console/overview` (tabbed page).
-- Redirect: `/owner-console/features` → `/owner-console/overview?tab=features`
-- Redirect: `/user-features` → `/owner-console/overview?tab=audit`
-- Redirect: `/workflow` → `/owner-console/overview?tab=workflow` (it's currently public but only linked from internal places; if you want to keep it public for sales, say so and I'll leave it).
-- Delete: `src/pages/Features.tsx` (unrouted dead code).
+- Rename `src/lib/credits.ts` → `src/lib/points.ts` and `src/components/CreditStatusCard.tsx` → `src/components/PointStatusCard.tsx` and `src/pages/RedeemCredits.tsx` → `src/pages/RedeemPoints.tsx`. Update every import path.
+- `AppContext` is the canonical state per project memory. Update the reducer action names (`ADD_CREDITS` → `ADD_POINTS`, etc.), the state slice key, and the persisted-storage key with a one-time migration:
+  ```ts
+  const legacy = localStorage.getItem('leadio.credits');
+  if (legacy && !localStorage.getItem('leadio.points')) {
+    localStorage.setItem('leadio.points', legacy);
+    localStorage.removeItem('leadio.credits');
+  }
+  ```
+- `src/App.tsx`: add the new `/redeem-points` route; keep `/redeem-credits` (and `/redeem` if present) as `<Navigate>` redirects to the new path.
+- Update the index memory note that currently says "Redeem Credits page" to "Redeem Points page".
+- No Supabase schema columns are named `credits` (verified — only edge-function string referenced AI credits). No DB migration needed.
 
-### AdminHub cleanup
+## Verification
 
-- Remove the duplicate "Content Editor" card.
-- Replace "Client Feature Overview" card with a single "Overview" card pointing at `/owner-console/overview`.
-- Sidebar: collapse "User Journey Audit" + "Feature Overview" into one "Overview" entry.
-
-## Files touched
-
-- `src/App.tsx` — new route, redirects, drop dead import.
-- `src/pages/AdminOverview.tsx` (new) — tabs wrapper composing the three existing components.
-- `src/pages/FeatureOverviewPage.tsx` — keep as-is, used inside tab.
-- `src/pages/Workflow.tsx` — keep component, export as tab body (drop its own SEO/full-page chrome when embedded).
-- `src/pages/UserFeaturesAudit.tsx` — keep as tab body.
-- `src/pages/AdminHub.tsx` — remove duplicate card, rename feature card.
-- `src/components/admin/AdminSidebar.tsx` — single "Overview" entry.
-- `src/pages/Features.tsx` — delete.
-- `src/pages/Links.tsx` — update `/user-features` link.
-
-## Open question before I build
-
-Should `/workflow` stay publicly accessible (it's the cinematic sales-style journey) or move fully behind the admin console? It's not linked from any public nav today, but if it's used in sales/demos I'll keep the public route and just also embed it in the overview tab.
+- `rg -n "credit" src/` returns only the out-of-scope strings listed above.
+- App boots, `/redeem-credits` redirects to `/redeem-points`, points balance survives reload (localStorage migration works), Unlocks / Dashboard / EarnRewards render points totals.

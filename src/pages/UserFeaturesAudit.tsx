@@ -81,7 +81,7 @@ const ROUTES: RouteRow[] = [
   { route: "/waitlist/thanks", purpose: "Waitlist thank-you + referral share", access: "Public", status: "Detected" },
   { route: "/app/features", purpose: "Public feature overview", access: "Public", status: "Detected" },
   { route: "/unlocks", purpose: "Unlocks / rewards", access: "Authenticated", status: "Detected" },
-  { route: "/redeem", purpose: "Redeem credits", access: "Authenticated", status: "Detected" },
+  { route: "/redeem", purpose: "Redeem points", access: "Authenticated", status: "Detected" },
   { route: "/referrals", purpose: "Personal invite links + tracking", access: "Authenticated", status: "Detected" },
   { route: "/community", purpose: "Builder Circle community", access: "Authenticated", status: "Detected" },
   { route: "/calendar", purpose: "Add-to-calendar", access: "Authenticated", status: "Detected" },
@@ -697,7 +697,7 @@ const LMS_FORBIDDEN_TERMS = [
   "Bonus Vault",
   "Challenge Progress",
   "Leaderboard",
-  "Earn Credits",
+  "Earn Points",
   "Start Challenge",
 ];
 

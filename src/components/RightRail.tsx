@@ -16,7 +16,7 @@ const RightRail = () => {
   const { state } = useAppState();
   const [collapsed, setCollapsed] = useState(false);
   const pulse = usePulseOnLogin();
-  const points = state.credits?.total ?? 0;
+  const points = state.points?.total ?? 0;
   const currentDay = state.challenge?.currentDay ?? 1;
   const completed = !!state.challenge?.completed;
   const directReferrals = state.network?.direct ?? 0;

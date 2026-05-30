@@ -46,6 +46,25 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
 ];
 
+// Maps DB section id -> friendly label + "where it appears" hint + iframe anchor.
+// Anchors must match the `id="..."` wrappers in src/pages/Landing.tsx.
+const SECTION_META: Record<string, Record<string, { label: string; hint: string; anchor: string }>> = {
+  landing: {
+    hero: { label: "Hero", hint: "Top of page — main headline, subhead, primary button.", anchor: "hero" },
+    problem: { label: "Problem", hint: "“Lead flow should not feel like guesswork” band.", anchor: "problem" },
+    reveal: { label: "What the quiz reveals", hint: "Two-column reveal section.", anchor: "reveal" },
+    score: { label: "Score preview", hint: "Donut chart + result list.", anchor: "score" },
+    benefits: { label: "Benefits", hint: "Four-up benefits grid.", anchor: "benefits" },
+    authority: { label: "Authority card", hint: "“Built for people who need leads…” centered card.", anchor: "authority" },
+    faq: { label: "FAQ", hint: "Accordion of questions and answers.", anchor: "faq" },
+    cta: { label: "Final CTA", hint: "Bottom call-to-action band.", anchor: "cta" },
+    sticky: { label: "Sticky bottom bar", hint: "Persistent bar pinned to the bottom of the page.", anchor: "cta" },
+  },
+};
+
+const sectionMeta = (page: string, section: string) =>
+  SECTION_META[page]?.[section];
+
 type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean };
 
 const sectionTitle = (s: string) =>

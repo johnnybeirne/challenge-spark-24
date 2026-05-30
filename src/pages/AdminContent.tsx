@@ -446,7 +446,7 @@ const AdminContent = () => {
                     onValueChange={(v) => setActiveSection(v || null)}
                     className="space-y-2"
                   >
-                    {Object.entries(grouped).map(([section, items]) => {
+                    {Object.entries(grouped).map(([section, items], idx, arr) => {
                       const sectionDirty = items.some((r) => r._dirty);
                       const meta = sectionMeta(activePage, section);
                       const friendly = meta?.label ?? sectionTitle(section);
@@ -461,11 +461,31 @@ const AdminContent = () => {
                                 <button
                                   type="button"
                                   aria-label="Drag to reorder"
-                                  className="flex h-8 w-7 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
+                                  className="flex h-8 w-6 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
                                   {...handleProps}
                                 >
                                   <GripVertical className="h-4 w-4" />
                                 </button>
+                                <div className="flex flex-col shrink-0 -my-1 mr-1">
+                                  <button
+                                    type="button"
+                                    aria-label="Move up"
+                                    disabled={idx === 0}
+                                    onClick={(e) => { e.stopPropagation(); reorderSections(idx, idx - 1); }}
+                                    className="h-4 w-5 flex items-center justify-center text-muted-foreground/60 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                                  >
+                                    <ChevronUp className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    aria-label="Move down"
+                                    disabled={idx === arr.length - 1}
+                                    onClick={(e) => { e.stopPropagation(); reorderSections(idx, idx + 1); }}
+                                    className="h-4 w-5 flex items-center justify-center text-muted-foreground/60 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                                  >
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
                                 <AccordionTrigger className="flex-1 hover:no-underline py-3">
                                   <div className="flex items-center gap-2 min-w-0">
                                     <span className="text-sm font-semibold">{friendly}</span>

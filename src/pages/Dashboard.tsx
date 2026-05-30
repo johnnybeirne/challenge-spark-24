@@ -351,17 +351,17 @@ const Dashboard = () => {
 
           {/* Reset Day 1 — muted, bottom placement */}
           {currentDay === 1 && (
-            <div className="flex justify-center pt-2">
+            <div className="flex flex-col items-center gap-1.5 pt-2">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
                     <RotateCcw className="h-3 w-3" />
-                    Reset Day 1
+                    Start Day 1 again
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
+                    <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This clears your Day 1 answers, AI outputs, and progress so you can
                       start the questions from scratch. Your referrals, points, and other
@@ -371,11 +371,14 @@ const Dashboard = () => {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleResetDay1}>
-                      Reset Day 1
+                      Start Day 1 again
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+              <p className="text-[11px] text-muted-foreground text-center max-w-sm">
+                If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+              </p>
             </div>
           )}
         </section>
@@ -649,17 +652,17 @@ const Dashboard = () => {
 
         {/* Reset Day 1 — muted, bottom placement */}
         {currentDay === 1 && (
-          <div className="flex justify-center pt-2">
+          <div className="flex flex-col items-center gap-1.5 pt-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
                   <RotateCcw className="h-3 w-3" />
-                  Reset Day 1
+                  Start Day 1 again
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
+                  <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This clears your Day 1 answers, AI outputs, and progress so you can
                     start the questions from scratch. Your referrals, points, and other
@@ -669,11 +672,14 @@ const Dashboard = () => {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={handleResetDay1}>
-                    Reset Day 1
+                    Start Day 1 again
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+            <p className="text-[11px] text-muted-foreground text-center max-w-sm">
+              If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+            </p>
           </div>
         )}
       </section>

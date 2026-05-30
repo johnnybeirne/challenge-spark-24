@@ -1,11 +1,19 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+
 
 export type LandingVariant = "default" | "free_training";
 
@@ -62,10 +70,12 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
       <ScorePreview />
       <BenefitsSection />
       <AuthoritySection />
+      <FaqSection />
       <CTASection onStart={() => startQuiz("bottom")} />
       <StickyQuizButton onStart={() => startQuiz("sticky")} />
     </main>
     </>
+
   );
 };
 
@@ -251,4 +261,53 @@ const CTASection = ({ onStart }: { onStart: () => void }) => (
   </PageSection>
 );
 
+const FaqSection = () => {
+  const { t, map, loaded } = useSiteContent("landing");
+
+  const items = useMemo(() => {
+    const indices = new Set<string>();
+    for (const k of Object.keys(map)) {
+      const m = k.match(/^faq\.item_(\d+)_[qa]$/);
+      if (m) indices.add(m[1]);
+    }
+    return Array.from(indices)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((i) => ({
+        i,
+        q: t(`faq.item_${i}_q`),
+        a: t(`faq.item_${i}_a`),
+      }))
+      .filter((x) => x.q.trim() || x.a.trim());
+  }, [map, t]);
+
+  if (!loaded || items.length === 0) return null;
+
+  const title = t("faq.title", "Frequently asked questions");
+
+  return (
+    <PageSection className="border-t border-border bg-card/55">
+      <SectionHeader eyebrow="FAQ" title={title} />
+      <div className="mx-auto mt-10 max-w-3xl">
+        <Accordion type="single" collapsible className="space-y-3">
+          {items.map((item) => (
+            <AccordionItem
+              key={item.i}
+              value={item.i}
+              className="rounded-xl border border-border bg-background px-5 shadow-sm"
+            >
+              <AccordionTrigger className="py-5 text-left text-base font-black text-foreground hover:no-underline sm:text-lg">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 text-base leading-7 text-muted-foreground">
+                {item.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </PageSection>
+  );
+};
+
 export default Landing;
+

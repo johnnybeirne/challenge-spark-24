@@ -360,11 +360,10 @@ const Workflow = () => {
               <Activity className="mr-1.5 h-3 w-3 animate-pulse" /> Live product workflow
             </Badge>
             <h1 className="bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl lg:text-6xl">
-              The Leadio user journey,<br />end to end.
+              How it works.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Nine stages from first click to launched challenge, three direct referrals, and the Builder Circle.
-              Every node, label, and metric is drawn from the live product.
+              Five simple steps — from a 3-minute diagnostic to a launched lead magnet and a community of builders behind you.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs">
               {(["input", "processing", "approval", "branch", "completion"] as StageType[]).map((t) => (

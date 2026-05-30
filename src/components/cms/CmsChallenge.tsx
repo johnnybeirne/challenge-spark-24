@@ -173,6 +173,53 @@ const CmsChallenge = () => {
         </EditorCard>
       ))}
 
+      <EditorCard
+        title="Upgrade cards"
+        description="Two side-by-side upgrade cards shown on Day 1/2/3 completion screens and Day 2/3 locked screens."
+      >
+        <EditableField
+          label="Heading shown above the cards"
+          value={upgradeDraft.heading}
+          onChange={(v) => setUpgradeDraft((p) => ({ ...p, heading: v }))}
+          multiline
+          rows={2}
+        />
+        {(["plan1", "plan2"] as const).map((slot) => (
+          <div key={slot} className="space-y-3 rounded-lg border border-border p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {slot === "plan1" ? "Card 1" : "Card 2"}
+            </p>
+            <EditableField
+              label="Name"
+              value={upgradeDraft[slot].name}
+              onChange={(v) => updatePlan(slot, "name", v)}
+            />
+            <EditableField
+              label="Price"
+              value={upgradeDraft[slot].price}
+              onChange={(v) => updatePlan(slot, "price", v)}
+            />
+            <EditableField
+              label="Description"
+              value={upgradeDraft[slot].description}
+              onChange={(v) => updatePlan(slot, "description", v)}
+              multiline
+              rows={3}
+            />
+            <EditableField
+              label="Button text"
+              value={upgradeDraft[slot].ctaText}
+              onChange={(v) => updatePlan(slot, "ctaText", v)}
+            />
+            <EditableField
+              label="Button link"
+              value={upgradeDraft[slot].ctaLink}
+              onChange={(v) => updatePlan(slot, "ctaLink", v)}
+            />
+          </div>
+        ))}
+      </EditorCard>
+
       <StickyActionBar onSave={save} saveLabel="Save challenge" />
     </div>
   );

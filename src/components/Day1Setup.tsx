@@ -31,6 +31,7 @@ import DayVideoModal from "@/components/DayVideoModal";
 import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import { isDay1ResetOpen } from "@/lib/day1Reset";
 
 const JohnnyAvatar = () => (
   <img

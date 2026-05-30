@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { useSiteConfig, type ChallengeConfig, type ChallengeTask } from "@/context/SiteConfigContext";
+import { useSiteConfig, type ChallengeConfig, type ChallengeTask, type UpgradeCardsConfig, type UpgradeCardPlan } from "@/context/SiteConfigContext";
 import {
   CmsPageHeader,
   EditorCard,

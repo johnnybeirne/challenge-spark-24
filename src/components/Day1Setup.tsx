@@ -209,6 +209,7 @@ export interface SetupData {
   problem?: string;
   audience?: string;
   how?: string;
+  outcome?: string;
 }
 
 export const getSetup = (): SetupData | null => {
@@ -226,8 +227,9 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Intro (0) → Foundation (1-3) → Refinement (4-7) → AI Builder (8)
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+// Sequence: 4 audience-type → 1 who you serve → 5 result type → 6 avatar detail
+// → 2 problem → 3 process → 9 result → 7 promise → 8 AI builder.
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },
@@ -387,9 +389,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     saved?.audienceType ?? memoryAudienceType;
 
   const initialStep: Step = (() => {
-    if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
-    if (saved?.audienceType && saved?.challengeType) return 6;
-    if (saved?.audienceType) return 5;
+    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
 
@@ -402,6 +402,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
+  const [step9Phase, setStep9Phase] = useState<"intro" | "input">(saved?.outcome ? "input" : "intro");
   const [step7Phase, setStep7Phase] = useState<"intro" | "reveal">("intro");
 
   const rawName =
@@ -421,6 +422,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [problem, setProblem] = useState<string>(saved?.problem ?? "");
   const [audience, setAudience] = useState<string>(saved?.audience ?? "");
   const [how, setHow] = useState<string>(saved?.how ?? "");
+  const [outcome, setOutcome] = useState<string>(saved?.outcome ?? "");
 
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
@@ -462,9 +464,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8.
+  // Sequence: 4 → 1 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
+    const baseMap: Record<number, Step> = { 1: 4, 5: 1, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -493,7 +495,9 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (current === 1) {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
-      setStep(2);
+      profileSaved("Who you serve");
+      setStep5Phase(saved?.challengeType ? "choose" : "intro");
+      setStep(5);
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
@@ -503,12 +507,8 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });
-      // Save into memory + aiOutputs so the AI uses this as the desired outcome.
       setState((prev) => ({
         ...prev,
-        memory: mergeMemory(prev.memory, {
-          desiredOutcome: how.trim(),
-        }),
         challenge: {
           ...prev.challenge,
           aiOutputs: {
@@ -522,16 +522,28 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
-      profileSaved("The outcome you'll deliver");
-      pushNotification({
-        title: "Dashboard updated",
-        message: "Your dashboard now reflects your latest challenge answers.",
-        href: "/challenger-dashboard",
-        dedupeKey: "day1_foundation_saved",
-      });
-      setStep7Phase("intro");
-      setStep(7);
+      profileSaved("How you create the result");
+      setStep9Phase(saved?.outcome ? "input" : "intro");
+      setStep(9);
     }
+  };
+
+  const handleOutcomeNext = () => {
+    if (!outcome.trim()) return;
+    persistFoundation({ outcome: outcome.trim() });
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { desiredOutcome: outcome.trim() }),
+    }));
+    profileSaved("The outcome you'll deliver");
+    pushNotification({
+      title: "Dashboard updated",
+      message: "Your dashboard now reflects your latest challenge answers.",
+      href: "/challenger-dashboard",
+      dedupeKey: "day1_outcome_saved",
+    });
+    setStep7Phase("intro");
+    setStep(7);
   };
 
   const handleAudience = (v: "b2b" | "b2c") => {
@@ -542,10 +554,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       memory: mergeMemory(prev.memory, { audienceType: v }),
     }));
     profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
-    // Skip the standalone ack screen — flow straight into step 5 whose intro
-    // sequence opens with the acknowledgement so the conversation stays continuous.
-    setStep5Phase("intro");
-    setStep(5);
+    // Next: describe who you serve more specifically (open text).
+    setStep(1);
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
@@ -560,8 +570,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       }),
     }));
     profileSaved(`Challenge type: ${label}`);
-    // Same pattern — step 6's intro opens with the acknowledgement.
-    setStep6Phase("intro");
+    setStep6Phase(saved?.topicHint ? "input" : "intro");
     setStep(6);
   };
   const handleTopicNext = () => {
@@ -571,7 +580,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Who you're helping");
+    profileSaved("Client avatar saved");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -584,10 +593,11 @@ const Day1Setup = ({ onComplete }: Props) => {
       audienceType,
       challengeType,
       topicHint: topicHint.trim(),
-      desiredOutcome: topicHint.trim(),
+      desiredOutcome: outcome.trim() || topicHint.trim(),
       problem: problem.trim(),
       audience: audience.trim(),
       how: how.trim(),
+      outcome: outcome.trim(),
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 
@@ -597,7 +607,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         name: prev.user?.name || prev.memory.name,
         audienceType,
         challengeType: normalizeChallengeType(challengeType),
-        desiredOutcome: topicHint || how,
+        desiredOutcome: outcome || topicHint || how,
         topic: topicHint || problem,
       }),
       challenge: {
@@ -636,10 +646,11 @@ const Day1Setup = ({ onComplete }: Props) => {
       audienceType,
       challengeType,
       topicHint: topicHint.trim(),
-      desiredOutcome: topicHint.trim(),
+      desiredOutcome: outcome.trim() || topicHint.trim(),
       problem: problem.trim(),
       audience: audience.trim(),
       how: how.trim(),
+      outcome: outcome.trim(),
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });
@@ -687,7 +698,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         <DayVideoModal dayNum={1} />
 
-        {step > 1 && step < 8 && (
+        {step !== 4 && step !== 8 && step !== 0 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -700,11 +711,21 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 1 && (
           <FoundationStep
             n={1}
-            title="Who is your challenge for?"
-            helper="Let's clarify the audience first — who is this person, what stage are they in, what do they want?"
+            title={
+              audienceType === "b2b"
+                ? "Which businesses or professionals do you serve?"
+                : audienceType === "b2c"
+                  ? "Which individuals or consumers do you serve?"
+                  : "Who do you serve?"
+            }
+            helper="Describe who you serve, more specifically within that choice."
             value={audience}
             setValue={setAudience}
-            placeholder="e.g. New coaches, 0–12 months in, who have expertise but no offer."
+            placeholder={
+              audienceType === "b2b"
+                ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
+                : "e.g. New parents in their 30s who want to build healthier daily habits."
+            }
             onNext={() => handleFoundationNext(1)}
           />
         )}
@@ -785,35 +806,22 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 3 && (() => {
-          const outcomePlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
-            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
-            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
-            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
-            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
-            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
-            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
-            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
+          const processPlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. I diagnose where leads are leaking, then walk them through a 3-step system to fix it.",
+            "b2b|quick-win": "e.g. I help them craft a single outreach asset and ship it within 48 hours.",
+            "b2b|create-asset": "e.g. I guide them to define their offer, then build a one-page sales asset they can use immediately.",
+            "b2b|reach-milestone": "e.g. I break the milestone into 3 weekly sprints with a checkpoint at the end of each.",
+            "b2c|solve-problem": "e.g. I help them identify what's blocking them, then rebuild the habit one micro-step at a time.",
+            "b2c|quick-win": "e.g. I give them a single daily action they can complete in under 10 minutes.",
+            "b2c|create-asset": "e.g. I walk them through a simple template and help them adapt it to their life.",
+            "b2c|reach-milestone": "e.g. I break the goal into weekly targets and coach them through one focus area each week.",
           };
-          const outcomePlaceholder =
-            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The transformation, result, or change participants will experience by the end.";
-
-          const outcomeWords = how.trim().split(/\s+/).filter(Boolean).length;
-          const outcomeFeedbackPool = [
-            "I like that.",
-            "That's a meaningful outcome.",
-            "I can see why people would want that result.",
-            "Now the transformation is becoming clear.",
-            "That's the kind of result that motivates people to take action.",
-          ];
-          const outcomeFeedback =
-            outcomeWords >= 5
-              ? outcomeFeedbackPool[Math.min(Math.floor(outcomeWords / 6), outcomeFeedbackPool.length - 1)]
-              : null;
+          const processPlaceholder =
+            processPlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. Describe the steps, framework, or method you take them through to create the result.";
 
           const step3Messages = [
-            "Now describe the result they'll experience by the end of your challenge.",
+            "Now describe your process — how you take them through it and create the result.",
           ];
 
           return (
@@ -835,7 +843,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={how}
                         onChange={(e) => setHow(e.target.value)}
-                        placeholder={outcomePlaceholder}
+                        placeholder={processPlaceholder}
                         rows={5}
                         className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
@@ -859,6 +867,69 @@ const Day1Setup = ({ onComplete }: Props) => {
             </div>
           );
         })()}
+
+        {step === 9 && (() => {
+          const outcomePlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
+            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
+            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
+            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
+            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
+            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
+            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
+            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
+          };
+          const outcomePlaceholder =
+            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. The transformation, result, or change participants will experience by the end.";
+
+          const step9Messages = [
+            "Finally, describe the result they'll experience by the end of your challenge.",
+          ];
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step9Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step9-intro"
+                  messages={step9Messages}
+                  onComplete={() => setStep9Phase("input")}
+                />
+              )}
+
+              {step9Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={step9Messages} />
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={outcome}
+                        onChange={(e) => setOutcome(e.target.value)}
+                        placeholder={outcomePlaceholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
+                        }}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleOutcomeNext}
+                      disabled={!outcome.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
 
         {step === 4 && (() => {
           const knownLabel =
@@ -1093,7 +1164,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           // back to `audience` (step 1 foundation flow) so the summary never breaks.
           const whoRaw = (topicHint?.trim() || audience?.trim() || "");
           const painRaw = problem?.trim() || "";
-          const resultRaw = how?.trim() || "";
+          const resultRaw = outcome?.trim() || how?.trim() || "";
 
           const who = whoRaw ? strip(whoRaw) : "";
           const pain = painRaw ? strip(painRaw).toLowerCase() : "";

@@ -8,14 +8,6 @@ import { SEO } from "@/components/SEO";
 import { ChevronRight, Sparkles, Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const tierColor: Record<string, string> = {
-  Starter: "bg-slate-200 text-slate-700",
-  Builder: "bg-sky-200 text-sky-800",
-  "Growth Partner": "bg-emerald-200 text-emerald-800",
-  "Featured Creator": "bg-violet-200 text-violet-800",
-  "Strategic Partner": "bg-rose-200 text-rose-800",
-};
-
 function tierForPoints(points: number) {
   return pointTiers.find(
     (t) => points >= t.min && (t.max === null || points <= t.max),
@@ -62,7 +54,7 @@ export default function Rewards() {
               <span className="font-bold text-primary">{userPoints}</span>
               <span className="text-muted-foreground"> pts</span>
             </div>
-            <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", tierColor[userTier.name])}>
+            <span className="text-xs font-medium text-muted-foreground">
               {userTier.name}
             </span>
           </div>
@@ -81,13 +73,12 @@ export default function Rewards() {
             const prevTier = idx > 0 ? tierForPoints(sortedRungs[idx - 1].points) : null;
             const showTierDivider = !prevTier || prevTier.name !== tier.name;
             const isGold = rung.doubleUnlock;
-            const isDest = rung.isDestination;
 
             return (
               <div key={rung.points}>
                 {showTierDivider && (
-                  <div className={cn("flex items-center gap-3", idx === 0 ? "mb-4" : "mb-4 mt-8")}>
-                    <span className={cn("rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider", tierColor[tier.name])}>
+                  <div className={cn("mb-3 mt-6 flex items-center gap-3", idx === 0 ? "" : "")}>
+                    <span className="text-xs font-medium text-muted-foreground">
                       {tier.name}
                     </span>
                     <div className="h-px flex-1 bg-border" />
@@ -99,8 +90,7 @@ export default function Rewards() {
                     "relative grid grid-cols-[64px_1fr_auto] items-center gap-5 rounded-xl border px-5 py-4 transition-all",
                     reached ? "opacity-100" : "opacity-60",
                     isGold && "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20",
-                    isDest && "border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5",
-                    !isGold && !isDest && "bg-card",
+                    !isGold && "bg-card",
                     isCurrentRung && "ring-2 ring-primary ring-offset-2 ring-offset-background",
                   )}
                 >
@@ -113,7 +103,6 @@ export default function Rewards() {
                       "flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold",
                       reached ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                       isGold && reached && "bg-amber-500 text-white",
-                      isDest && "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground",
                     )}>
                       {rung.points}
                     </div>
@@ -127,18 +116,13 @@ export default function Rewards() {
                       ) : (
                         <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                       )}
-                      <p className={cn("truncate text-base font-bold tracking-tight", isDest && "text-lg")}>
+                      <p className={cn("truncate text-base font-bold tracking-tight")}>
                         {rung.name}
                       </p>
                       {isGold && (
-                        <span className="shrink-0 rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                        <span className="inline-flex shrink-0 items-center rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
                           <Sparkles className="mr-0.5 inline h-2 w-2" />
                           2×
-                        </span>
-                      )}
-                      {isDest && (
-                        <span className="shrink-0 rounded-full bg-primary/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary-foreground">
-                          Top
                         </span>
                       )}
                     </div>
@@ -151,20 +135,15 @@ export default function Rewards() {
 
                   {/* Buy button — clean, minimal */}
                   <div className="flex shrink-0 items-center">
-                    {rung.buyPrice > 0 && !isDest ? (
+                    {rung.buyPrice > 0 ? (
                       <Button
                         size="sm"
                         variant="ghost"
-                        className={cn(
-                          "h-9 text-sm font-semibold text-foreground hover:bg-muted",
-                          isGold && "text-amber-700 hover:bg-amber-100 dark:text-amber-300",
-                        )}
+                        className="h-9 text-sm font-semibold text-foreground hover:bg-muted"
                         onClick={() => handleBuy(rung.priceId)}
                       >
                         Buy ${rung.buyPrice}
                       </Button>
-                    ) : isDest ? (
-                      <span className="text-xs font-bold text-primary">★ Top reward</span>
                     ) : null}
                   </div>
                 </div>

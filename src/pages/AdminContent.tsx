@@ -246,15 +246,10 @@ const AdminContent = () => {
     await load(activePage);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = sectionIds.indexOf(String(active.id));
-    const newIndex = sectionIds.indexOf(String(over.id));
-    if (oldIndex === -1 || newIndex === -1) return;
+  const reorderSections = (oldIndex: number, newIndex: number) => {
+    if (oldIndex === newIndex || oldIndex < 0 || newIndex < 0) return;
+    if (oldIndex >= sectionIds.length || newIndex >= sectionIds.length) return;
     const next = arrayMove(sectionIds, oldIndex, newIndex);
-    // Optimistically reflect the new order by writing a synthetic meta row
-    // into local state so the UI updates before the network round-trip.
     setRows((rs) => {
       const without = rs.filter((r) => !(r.section === "_meta" && r.key === "section_order"));
       const fake: Draft = {
@@ -270,6 +265,15 @@ const AdminContent = () => {
       return [...without, fake];
     });
     void persistOrder(next);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    reorderSections(
+      sectionIds.indexOf(String(active.id)),
+      sectionIds.indexOf(String(over.id)),
+    );
   };
 
 

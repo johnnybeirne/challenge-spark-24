@@ -529,6 +529,19 @@ const AdminContent = () => {
           </div>
         </div>
 
+        {/* Drag handle to resize editor panel */}
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            resizing.current = true;
+            document.body.style.cursor = "col-resize";
+            document.body.style.userSelect = "none";
+          }}
+          onDoubleClick={() => setPanelWidth(340)}
+          className="hidden lg:block w-1.5 shrink-0 cursor-col-resize bg-border hover:bg-primary/50 active:bg-primary transition-colors"
+          title="Drag to resize · double-click to reset"
+        />
+
         {/* Right: live preview */}
         <div className="hidden lg:flex flex-1 flex-col min-w-0">
           <div className="px-4 py-2 border-b bg-background flex items-center justify-between gap-2">

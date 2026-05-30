@@ -394,6 +394,8 @@ const DayChallenge = () => {
               Back to dashboard
             </Button>
           </div>
+
+          <UpgradeCards />
         </section>
       </div>
     );

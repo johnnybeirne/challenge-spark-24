@@ -100,7 +100,34 @@ const AdminContent = () => {
   const [previewNonce, setPreviewNonce] = useState(0);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [panelWidth, setPanelWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return 340;
+    const saved = Number(localStorage.getItem("admin-content-panel-w"));
+    return saved && saved > 240 ? saved : 340;
+  });
+  const resizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!resizing.current) return;
+      const next = Math.min(720, Math.max(260, e.clientX));
+      setPanelWidth(next);
+    };
+    const onUp = () => {
+      if (!resizing.current) return;
+      resizing.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      try { localStorage.setItem("admin-content-panel-w", String(panelWidth)); } catch {}
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [panelWidth]);
 
   // When the selected section changes, scroll the preview iframe to its anchor.
   // We mutate the iframe's hash directly to avoid a full reload.
@@ -373,7 +400,10 @@ const AdminContent = () => {
       {/* Split pane: editor | preview */}
       <div className="flex-1 flex min-h-0">
         {/* Left: editor */}
-        <div className="w-full lg:w-[440px] xl:w-[480px] shrink-0 border-r bg-background flex flex-col">
+        <div
+          className="w-full lg:!w-[var(--editor-w)] shrink-0 border-r bg-background flex flex-col"
+          style={{ ["--editor-w" as string]: `${panelWidth}px` }}
+        >
           <div className="px-4 py-3 border-b">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
@@ -498,6 +528,19 @@ const AdminContent = () => {
             </Button>
           </div>
         </div>
+
+        {/* Drag handle to resize editor panel */}
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            resizing.current = true;
+            document.body.style.cursor = "col-resize";
+            document.body.style.userSelect = "none";
+          }}
+          onDoubleClick={() => setPanelWidth(340)}
+          className="hidden lg:block w-1.5 shrink-0 cursor-col-resize bg-border hover:bg-primary/50 active:bg-primary transition-colors"
+          title="Drag to resize · double-click to reset"
+        />
 
         {/* Right: live preview */}
         <div className="hidden lg:flex flex-1 flex-col min-w-0">

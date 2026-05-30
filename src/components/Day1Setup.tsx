@@ -711,11 +711,21 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 1 && (
           <FoundationStep
             n={1}
-            title="Who is your challenge for?"
-            helper="Let's clarify the audience first — who is this person, what stage are they in, what do they want?"
+            title={
+              audienceType === "b2b"
+                ? "Which businesses or professionals do you serve?"
+                : audienceType === "b2c"
+                  ? "Which individuals or consumers do you serve?"
+                  : "Who do you serve?"
+            }
+            helper="Describe who you serve, more specifically within that choice."
             value={audience}
             setValue={setAudience}
-            placeholder="e.g. New coaches, 0–12 months in, who have expertise but no offer."
+            placeholder={
+              audienceType === "b2b"
+                ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
+                : "e.g. New parents in their 30s who want to build healthier daily habits."
+            }
             onNext={() => handleFoundationNext(1)}
           />
         )}

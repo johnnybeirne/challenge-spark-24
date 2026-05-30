@@ -83,7 +83,23 @@ const AdminContent = () => {
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // When the selected section changes, scroll the preview iframe to its anchor.
+  // We mutate the iframe's hash directly to avoid a full reload.
+  useEffect(() => {
+    if (!activeSection) return;
+    const meta = sectionMeta(activePage, activeSection);
+    if (!meta) return;
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    try {
+      win.location.hash = `#${meta.anchor}`;
+    } catch {
+      /* cross-origin or not ready — ignore */
+    }
+  }, [activeSection, activePage, previewNonce]);
 
   const load = async (page: string) => {
     setLoading(true);

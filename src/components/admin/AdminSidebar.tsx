@@ -24,7 +24,7 @@ const items = [
   { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Resource Library", url: "/owner-console/resources", icon: BookOpen },
-  { title: "Challenge Days", url: "/owner-console/challenge-days", icon: ListChecks },
+  
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   
   

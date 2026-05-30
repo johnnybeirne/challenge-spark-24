@@ -37,14 +37,14 @@ const STAGES: Stage[] = [
   {
     id: "discover",
     index: 1,
-    title: "Take the 3-minute diagnostic",
-    subtitle: "Answer 9 quick questions about your business and audience.",
+    title: "Take the 3-minute lead-gen quiz",
+    subtitle: "9 quick questions about your current lead generation situation.",
     type: "input",
     badge: "Step 1",
     icon: ClipboardList,
     fields: [
-      { label: "What you do", value: "Answer 9 short questions" },
-      { label: "Time it takes", value: "About 3 minutes" },
+      { label: "What it covers", value: "Your current lead-gen setup" },
+      { label: "Time it takes", value: "About 3 minutes, 9 questions" },
     ],
     actions: ["No signup required to start", "Works on phone or laptop"],
     metric: { label: "Time", value: "3 min" },

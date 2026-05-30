@@ -138,7 +138,7 @@ export default function Rewards() {
                     {rung.buyPrice > 0 ? (
                       <Button
                         size="sm"
-                        className="h-9 bg-primary text-primary-foreground text-sm font-semibold hover:brightness-90"
+                        className="h-9 bg-primary text-primary-foreground text-sm font-semibold transition-transform duration-150 hover:scale-110 hover:brightness-90"
                         onClick={() => handleBuy(rung.priceId)}
                       >
                         Buy ${rung.buyPrice}
@@ -165,7 +165,7 @@ export default function Rewards() {
           </div>
           <Button
             size="lg"
-            className="font-bold hover:brightness-90"
+            className="font-bold transition-transform duration-150 hover:scale-105 hover:brightness-90"
             onClick={() => handleBuy(fullSuitePriceId)}
           >
             Buy now — ${fullSuitePrice}

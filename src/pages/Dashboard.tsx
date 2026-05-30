@@ -5,7 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Compass, Lock, LogOut, Sparkles, Upload, Zap } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Compass, Lock, LogOut, RotateCcw, Sparkles, Upload, Zap } from "lucide-react";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
@@ -24,7 +35,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
-import { getSetup } from "@/components/Day1Setup";
+import { SETUP_KEY } from "@/components/Day1Setup";
 import ChallengeRecord from "@/components/ChallengeRecord";
 
 

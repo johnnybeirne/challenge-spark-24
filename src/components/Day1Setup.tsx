@@ -1164,7 +1164,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           // back to `audience` (step 1 foundation flow) so the summary never breaks.
           const whoRaw = (topicHint?.trim() || audience?.trim() || "");
           const painRaw = problem?.trim() || "";
-          const resultRaw = how?.trim() || "";
+          const resultRaw = outcome?.trim() || how?.trim() || "";
 
           const who = whoRaw ? strip(whoRaw) : "";
           const pain = painRaw ? strip(painRaw).toLowerCase() : "";

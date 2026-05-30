@@ -31,7 +31,7 @@ const PageSection = ({ children, className = "" }: { children: ReactNode; classN
 
 const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) => (
   <div className="mx-auto max-w-3xl text-center">
-    {eyebrow && <p className="text-sm font-black uppercase text-primary">{eyebrow}</p>}
+    {eyebrow && <p className="text-sm font-black text-primary">{eyebrow}</p>}
     <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{title}</h2>
     {body && <p className="mt-5 text-lg leading-8 text-muted-foreground">{body}</p>}
   </div>
@@ -102,7 +102,7 @@ const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
       <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
         {t("sticky.tagline", "Ready to find the gap in your lead flow?")}
       </p>
-      <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black uppercase shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
+      <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
         {t("sticky.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>
@@ -114,7 +114,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">
     <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
       <div className="text-center lg:text-left">
-        <p className="mx-auto max-w-2xl text-base font-black uppercase leading-6 text-primary lg:mx-0">
+        <p className="mx-auto max-w-2xl text-base font-black leading-6 text-primary lg:mx-0">
           {t("hero.eyebrow", "Built for coaches, consultants, and authors who want more leads")}
         </p>
         <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
@@ -124,7 +124,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
           {t("hero.subhead", "Answer nine quick questions and get a recommended strategy based on your answers. Instantly")}
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-          <Button className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
+          <Button className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
             {t("hero.cta_label", "Start the quiz")}
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -142,7 +142,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
           className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
         />
         <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
-          <p className="text-xs font-black uppercase text-primary">{t("hero.image_overlay_eyebrow", "The real question")}</p>
+          <p className="text-xs font-black text-primary">{t("hero.image_overlay_eyebrow", "The real question")}</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-foreground">{t("hero.image_overlay_text", "Is your lead flow inconsistent because of attention, trust, conversion, or follow-up?")}</p>
         </div>
       </div>
@@ -177,7 +177,7 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
     <PageSection>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div>
-          <p className="text-sm font-black uppercase text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
+          <p className="text-sm font-black text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
           <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("reveal.title", "Your inconsistency usually has one primary cause")}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -206,11 +206,11 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
         >
           <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
             <span className="text-5xl font-black leading-none text-foreground">{pct}%</span>
-            <span className="mt-3 max-w-[10rem] text-sm font-black uppercase leading-5 text-muted-foreground">{t("score.percent_label", "System readiness")}</span>
+            <span className="mt-3 max-w-[10rem] text-sm font-black leading-5 text-muted-foreground">{t("score.percent_label", "System readiness")}</span>
           </div>
         </div>
         <div>
-          <p className="text-sm font-black uppercase text-primary">{t("score.eyebrow", "Your result")}</p>
+          <p className="text-sm font-black text-primary">{t("score.eyebrow", "Your result")}</p>
           <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
           <div className="mt-6 space-y-3">
             {items.map((item) => (
@@ -262,7 +262,7 @@ const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => (
       <TrendingUp className="mx-auto h-9 w-9 text-primary" />
       <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{t("cta.title", "Find the gap in your lead flow")}</h2>
       <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("cta.body", "Start with the quiz, get your diagnosis, then move into the next step with clarity.")}</p>
-      <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={onStart}>
+      <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20" onClick={onStart}>
         {t("cta.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>

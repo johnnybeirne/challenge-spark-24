@@ -868,6 +868,69 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
+        {step === 9 && (() => {
+          const outcomePlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
+            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
+            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
+            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
+            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
+            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
+            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
+            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
+          };
+          const outcomePlaceholder =
+            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. The transformation, result, or change participants will experience by the end.";
+
+          const step9Messages = [
+            "Finally, describe the result they'll experience by the end of your challenge.",
+          ];
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step9Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step9-intro"
+                  messages={step9Messages}
+                  onComplete={() => setStep9Phase("input")}
+                />
+              )}
+
+              {step9Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={step9Messages} />
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={outcome}
+                        onChange={(e) => setOutcome(e.target.value)}
+                        placeholder={outcomePlaceholder}
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
+                        }}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleOutcomeNext}
+                      disabled={!outcome.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+
         {step === 4 && (() => {
           const knownLabel =
             memoryAudienceType === "b2b"

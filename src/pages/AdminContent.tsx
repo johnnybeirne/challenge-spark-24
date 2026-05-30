@@ -284,21 +284,25 @@ const AdminContent = () => {
               </div>
             ) : (
               <Accordion
-                type="multiple"
-                defaultValue={Object.keys(grouped)}
+                type="single"
+                collapsible
+                value={activeSection ?? undefined}
+                onValueChange={(v) => setActiveSection(v || null)}
                 className="space-y-2"
               >
                 {Object.entries(grouped).map(([section, items]) => {
                   const sectionDirty = items.some((r) => r._dirty);
+                  const meta = sectionMeta(activePage, section);
+                  const friendly = meta?.label ?? sectionTitle(section);
                   return (
                     <AccordionItem
                       key={section}
                       value={section}
-                      className="rounded-lg border bg-card px-3"
+                      className="rounded-lg border bg-card px-3 data-[state=open]:border-primary/60"
                     >
                       <AccordionTrigger className="hover:no-underline py-3">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-semibold">{sectionTitle(section)}</span>
+                          <span className="text-sm font-semibold">{friendly}</span>
                           <Badge variant="secondary" className="h-5 text-[10px]">
                             {items.length}
                           </Badge>
@@ -308,6 +312,11 @@ const AdminContent = () => {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="pb-3 space-y-3">
+                        {meta?.hint && (
+                          <p className="text-xs text-muted-foreground italic">
+                            Appears in preview as: {meta.hint}
+                          </p>
+                        )}
                         {items.map((row) => (
                           <FieldRow
                             key={row.id}

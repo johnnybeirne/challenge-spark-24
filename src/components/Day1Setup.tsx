@@ -937,9 +937,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 5 && (() => {
-          const step5Messages = [
-            `Perfect${fn}, what result do you want participants to achieve?`,
-          ];
+          const audienceFullLabel =
+            audienceType === "b2b"
+              ? "businesses and professionals"
+              : audienceType === "b2c"
+                ? "individuals and consumers"
+                : "your audience";
+          const step5Messages = knownAudienceType
+            ? [
+                `${Fn || "Hi there, "}you're focused on helping ${audienceFullLabel} — now let's get more specific.`,
+                "What result do you want participants to achieve?",
+              ]
+            : [
+                `Perfect${fn}, what result do you want participants to achieve?`,
+              ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (

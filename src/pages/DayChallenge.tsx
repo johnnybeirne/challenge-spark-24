@@ -611,15 +611,17 @@ const DayChallenge = () => {
           <Card key={task.key}>
             <CardContent className="p-5">
               <label
-                className="flex items-center gap-3 cursor-pointer group mb-3"
-                onClick={() => toggleTask(task.key)}
+                className={`flex items-center gap-3 group mb-3 ${isReadOnly ? "" : "cursor-pointer"}`}
+                onClick={isReadOnly ? undefined : () => toggleTask(task.key)}
               >
-                <Checkbox checked={isChecked(task.key)} className="pointer-events-none" />
+                <Checkbox checked={isChecked(task.key)} disabled={isReadOnly} className="pointer-events-none" />
                 <span
                   className={`text-sm font-medium transition-colors ${
                     isChecked(task.key)
                       ? "line-through text-muted-foreground"
-                      : "text-foreground group-hover:text-primary"
+                      : isReadOnly
+                        ? "text-foreground"
+                        : "text-foreground group-hover:text-primary"
                   }`}
                 >
                   {i + 1}. {task.label}
@@ -627,7 +629,13 @@ const DayChallenge = () => {
               </label>
               {task.hasTextarea && (
                 <div className="space-y-3">
-                  {task.inputType === "input" ? (
+                  {isReadOnly ? (
+                    task.inputType === "input" ? (
+                      <Input value={getOutput(task.key)} readOnly disabled />
+                    ) : (
+                      <Textarea value={getOutput(task.key)} readOnly disabled className="mt-1" rows={6} />
+                    )
+                  ) : task.inputType === "input" ? (
                     <DictatedInput
                       placeholder={task.placeholder}
                       value={getOutput(task.key)}
@@ -644,7 +652,7 @@ const DayChallenge = () => {
                       rows={6}
                     />
                   )}
-                  {task.helper && <p className="text-xs leading-relaxed text-muted-foreground">{task.helper}</p>}
+                  {task.helper && !isReadOnly && <p className="text-xs leading-relaxed text-muted-foreground">{task.helper}</p>}
                 </div>
               )}
             </CardContent>
@@ -652,7 +660,7 @@ const DayChallenge = () => {
         ))}
       </div>
 
-      {dayNum === 3 && (
+      {dayNum === 3 && !isReadOnly && (
         <Card className="mt-4">
           <CardContent className="p-5">
             <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
@@ -678,7 +686,18 @@ const DayChallenge = () => {
         </Card>
       )}
 
-      {canComplete && (
+      {dayNum === 3 && isReadOnly && state.challenge.launchUrl && (
+        <Card className="mt-4">
+          <CardContent className="p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Your live URL</p>
+            <a href={state.challenge.launchUrl} target="_blank" rel="noreferrer" className="text-sm text-primary underline break-all">
+              {state.challenge.launchUrl}
+            </a>
+          </CardContent>
+        </Card>
+      )}
+
+      {canComplete && !isReadOnly && (
         <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
           <CardContent className="p-5">
             <p className="mb-4 text-sm font-semibold leading-relaxed text-foreground">

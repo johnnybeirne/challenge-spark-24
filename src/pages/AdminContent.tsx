@@ -276,6 +276,7 @@ const AdminContent = () => {
         value_type: "text",
         label: "",
         sort_order: 99,
+        column_slot: "full",
         _dirty: true,
         _new: true,
       } as Draft,

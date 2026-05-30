@@ -15,7 +15,7 @@ const BottomNav = () => {
     { to: "/challenger-dashboard", label: "Dashboard", icon: LayoutDashboard, match: ["/challenger-dashboard"] },
     { to: challengePath, label: "Challenge", icon: Flame, match: ["/challenge/"] },
     { to: "/unlocks", label: "Unlocks", icon: Gift, match: ["/unlocks"] },
-    { to: "/earn", label: "Earn Rewards", icon: Sparkles, match: ["/earn", "/referrals", "/rewards", "/bonus-vault"] },
+    { to: "/earn", label: "Earn rewards", icon: Sparkles, match: ["/earn", "/referrals", "/rewards", "/bonus-vault"] },
   ];
 
   return (

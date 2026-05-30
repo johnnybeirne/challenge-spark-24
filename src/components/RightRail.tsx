@@ -35,7 +35,7 @@ const RightRail = () => {
   // Eyebrow labels — small uppercase, but never below 14px.
   // Hierarchy comes from weight, color, and letter-spacing — not tiny type.
   const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-    <p className="text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+    <p className="text-sm font-semibold text-muted-foreground">
       {children}
     </p>
   );
@@ -142,7 +142,7 @@ const RightRail = () => {
       {/* 1. TOP CHALLENGERS — social proof */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Top Referrers</Eyebrow>
+          <Eyebrow>Top referrers</Eyebrow>
           <Trophy className="h-4 w-4 text-amber-500" />
         </div>
         <ol className="mt-3 space-y-2">
@@ -172,7 +172,7 @@ const RightRail = () => {
       {/* 2. YOUR MOMENTUM */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Your Momentum</Eyebrow>
+          <Eyebrow>Your momentum</Eyebrow>
           <Flame className="h-4 w-4 text-orange-500" />
         </div>
         <p className="mt-3 text-2xl font-black text-foreground">{points} pts</p>
@@ -190,7 +190,7 @@ const RightRail = () => {
       {/* 3. INVITE PROGRESS */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Earn Referral Rewards</Eyebrow>
+          <Eyebrow>Earn referral rewards</Eyebrow>
           <Users className="h-4 w-4 text-emerald-500" />
         </div>
         <p className="mt-2 text-base font-bold text-foreground">
@@ -216,7 +216,7 @@ const RightRail = () => {
       {/* 4. NEXT UNLOCK */}
       <Card>
         <div className="flex items-center justify-between">
-          <Eyebrow>Next Unlock</Eyebrow>
+          <Eyebrow>Next unlock</Eyebrow>
           <Sparkles className="h-4 w-4 text-rose-500" />
         </div>
         <p className="mt-2 text-base font-bold text-foreground">{nextUnlockLabel}</p>

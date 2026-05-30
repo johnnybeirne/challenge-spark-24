@@ -369,7 +369,7 @@ const Dashboard = () => {
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
+              <h2 className="text-xl font-bold text-foreground">Your progress</h2>
               <span className={`text-sm font-medium ${completedDays > 0 || hasProgress ? "text-primary" : "text-muted-foreground"}`}>{completedDays} of 3 complete</span>
             </div>
             <div className="mb-3 flex justify-between px-0.5 text-sm font-semibold text-muted-foreground">
@@ -544,7 +544,7 @@ const Dashboard = () => {
                 </div>
                 <div className="min-w-0 pr-14">
                   <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Step 3</p>
-                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Create Bio</h2>
+                  <h2 className="mt-0.5 text-lg font-bold text-foreground">Create bio</h2>
                 </div>
               </div>
               <DictatedTextarea

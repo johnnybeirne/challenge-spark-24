@@ -70,10 +70,12 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
       <ScorePreview />
       <BenefitsSection />
       <AuthoritySection />
+      <FaqSection />
       <CTASection onStart={() => startQuiz("bottom")} />
       <StickyQuizButton onStart={() => startQuiz("sticky")} />
     </main>
     </>
+
   );
 };
 

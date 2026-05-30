@@ -464,9 +464,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8.
+  // Sequence: 4 → 1 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
+    const baseMap: Record<number, Step> = { 1: 4, 5: 1, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };

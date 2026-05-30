@@ -350,8 +350,8 @@ const Dashboard = () => {
           {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
           <ChallengeRecord />
 
-          {/* Reset Day 1 — muted, bottom placement */}
-          {currentDay === 1 && (
+          {/* Reset Day 1 — available for 24h from Day 1 start, then permanently locked */}
+          {isDay1ResetOpen(state.challenge?.startedAt) ? (
             <div className="flex flex-col items-center gap-1.5 pt-2">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -381,7 +381,17 @@ const Dashboard = () => {
                 If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
               </p>
             </div>
-          )}
+          ) : state.challenge?.startedAt ? (
+            <div className="flex flex-col items-center gap-1 pt-2">
+              <p className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <Lock className="h-3 w-3" />
+                Your Challenge Promise is locked.
+              </p>
+              <p className="text-[11px] text-muted-foreground text-center max-w-sm">
+                To change your answers, <Link to="/premium" className="underline hover:text-foreground">upgrade to Lifetime Challenge Access</Link>.
+              </p>
+            </div>
+          ) : null}
         </section>
 
 

@@ -42,7 +42,9 @@ const useLaunchDemoUser = () => {
     try {
       sessionStorage.setItem(DEMO_USER_KEY, "1");
       sessionStorage.setItem(DEMO_SETUP_RESET_KEY, "1");
+      clearState();
       localStorage.removeItem(SETUP_KEY);
+      localStorage.removeItem("leadio_day1_step");
     } catch {}
 
     setState({

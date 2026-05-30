@@ -18,25 +18,19 @@ import {
 
 const items = [
   { title: "View as User", url: "/owner-console/view-as-user", icon: Eye },
-  { title: "User Journey Audit", url: "/user-features", icon: ClipboardList },
+  { title: "Product Overview", url: "/owner-console/overview", icon: FileText },
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard },
   { title: "JV Partners", url: "/owner-console/jv-partners", icon: Handshake },
-  { title: "Overview", url: "/owner-console", icon: LayoutDashboard, end: true },
+  { title: "Console Home", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Content Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Resource Library", url: "/owner-console/resources", icon: BookOpen },
-  
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
-  
-  
-  
   { title: "Waitlist Email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity Feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training System", url: "/owner-console/training", icon: GraduationCap },
-  
   { title: "Diagnostic Chat", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
-  { title: "Feature Overview", url: "/owner-console/features", icon: FileText },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
 ];
 

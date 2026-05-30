@@ -18,7 +18,7 @@ const ENROLMENT_CARDS: Card[] = [
 ];
 
 const INTERNAL_CARDS: Card[] = [
-  { title: "User Features Audit", route: "/user-features", description: "Internal audit of every user-facing route, feature, and funnel stage.", badge: "admin" },
+  { title: "Product Overview", route: "/owner-console/overview?tab=audit", description: "Features, workflow, and route audit in one place.", badge: "admin" },
 ];
 
 const Section = ({ title, cards }: { title: string; cards: Card[] }) => (

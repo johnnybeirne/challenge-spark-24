@@ -107,8 +107,9 @@ const RightRail = () => {
 
   return (
     <aside
+      data-mode-aside
       className={cn(
-        "relative hidden shrink-0 flex-col overflow-visible border-l border-border bg-muted/30 lg:flex",
+        "right-rail relative hidden shrink-0 flex-col overflow-visible border-l border-border bg-muted/30 lg:flex",
         "transition-[width,padding] duration-300 ease-in-out",
         collapsed ? "w-[56px] items-center gap-3 p-3" : "w-[300px] gap-3 p-4",
       )}

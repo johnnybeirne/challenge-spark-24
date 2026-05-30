@@ -299,6 +299,20 @@ export interface GlobalConfig {
   trackAnalytics: boolean;
 }
 
+export interface UpgradeCardPlan {
+  name: string;
+  price: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface UpgradeCardsConfig {
+  heading: string;
+  plan1: UpgradeCardPlan;
+  plan2: UpgradeCardPlan;
+}
+
 export interface SiteConfig {
   landing: LandingConfig;
   assessment: AssessmentConfig;

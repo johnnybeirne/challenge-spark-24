@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Eye, Zap } from "lucide-react";
-import { useAppState, defaultState, generateInviteCode } from "@/context/AppContext";
+import { useAppState, defaultState, generateInviteCode, clearState } from "@/context/AppContext";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

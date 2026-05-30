@@ -158,6 +158,37 @@ const DayChallenge = () => {
     return null;
   }
 
+  // Locked screen for Day 2 / Day 3 before they unlock
+  if (dayLocked && (dayNum === 2 || dayNum === 3)) {
+    const unlock = getDayUnlockSafe(dayNum, state.challenge.startedAt);
+    return (
+      <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
+        <section className="mx-auto max-w-3xl space-y-6">
+          <div className="text-center">
+            <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+              <Lock className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Day {dayNum} locked
+            </p>
+            <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+              Day {dayNum} opens {unlock.label.toLowerCase()}
+            </h1>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Come back when Day {dayNum} unlocks — your progress is saved.
+            </p>
+          </div>
+          <UpgradeCards />
+          <div className="flex justify-center">
+            <Button variant="outline" onClick={() => navigate("/challenger-dashboard")}>
+              Back to dashboard
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   // Setup is now embedded in /training (the onboarding hub).
   // Day 1 focuses purely on training, tasks, and AI help.
 

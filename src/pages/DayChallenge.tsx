@@ -476,6 +476,8 @@ const DayChallenge = () => {
           </CardContent>
         </Card>
 
+        <UpgradeCards />
+
         <Button variant="ghost" className="mt-2" onClick={() => navigate("/challenger-dashboard")}>
           Back to Dashboard
         </Button>

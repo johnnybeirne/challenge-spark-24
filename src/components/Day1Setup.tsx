@@ -375,10 +375,22 @@ const Day1Setup = ({ onComplete }: Props) => {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
+
+  // Audience type may already be known from earlier surfaces (signup, assessment).
+  // Pull it from saved setup first, then from memory, so Day 1 never re-asks B2B vs B2C.
+  const memoryAudienceType =
+    state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
+      ? (state.memory.audienceType as "b2b" | "b2c")
+      : null;
+  const knownAudienceType: "b2b" | "b2c" | null =
+    saved?.audienceType ?? memoryAudienceType;
+
   const initialStep: Step = (() => {
     if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
+    // If audience type is already stored on the user profile, skip the B2B/B2C step.
+    if (memoryAudienceType) return 5;
     return 4;
   })();
 
@@ -401,7 +413,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     (authUser?.user_metadata?.first_name as string | undefined) ||
     (typeof authUser?.email === "string" ? authUser.email.split("@")[0] : "") ||
     "";
-  const firstName = rawName.trim().split(/\s+/)[0] || "there";
+  const firstName = rawName.trim().split(/\s+/)[0] || "";
   // Natural-sounding personalisation token: ", Johnny" or "" if no name available.
   const fn = firstName && firstName !== "there" ? `, ${firstName}` : "";
   const Fn = firstName && firstName !== "there" ? `${firstName}, ` : "";

@@ -194,6 +194,16 @@ export interface RewardDef {
   description: string;
 }
 
+export interface LadderRung {
+  points: number;
+  name: string;
+  retailValue: number;
+  buyPrice: number;
+  priceId: string;
+  doubleUnlock: boolean;
+  isDestination?: boolean;
+}
+
 export interface RewardsConfig {
   challengeRewards: RewardDef[];
   referralRewards: RewardDef[];
@@ -204,7 +214,13 @@ export interface RewardsConfig {
     unlockValue: number;
     unlockMessage: string;
   };
+  ladder: {
+    fullSuitePrice: number;
+    fullSuitePriceId: string;
+    rungs: LadderRung[];
+  };
 }
+
 
 export interface ReferralConfig {
   defaultShareMessage: string;

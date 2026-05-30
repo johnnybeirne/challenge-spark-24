@@ -16,6 +16,13 @@ import {
 const CmsChallenge = () => {
   const { config, updateSection } = useSiteConfig();
   const [draft, setDraft] = useState<ChallengeConfig>(JSON.parse(JSON.stringify(config.challenge)));
+  const [upgradeDraft, setUpgradeDraft] = useState<UpgradeCardsConfig>(
+    JSON.parse(JSON.stringify(config.upgradeCards)),
+  );
+
+  const updatePlan = (slot: "plan1" | "plan2", field: keyof UpgradeCardPlan, value: string) => {
+    setUpgradeDraft((prev) => ({ ...prev, [slot]: { ...prev[slot], [field]: value } }));
+  };
 
   const updateTask = (dayIdx: number, taskIdx: number, field: keyof ChallengeTask, value: string) => {
     const days = [...draft.days];

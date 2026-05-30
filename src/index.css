@@ -42,13 +42,52 @@
 @layer base {
   * { @apply border-border; -webkit-tap-highlight-color: transparent; }
   html { min-height: 100%; -webkit-text-size-adjust: 100%; overflow-x: clip; }
-  body { @apply bg-background text-foreground; min-height: 100%; overflow-x: clip; overscroll-behavior-y: auto; }
+  body { @apply bg-background text-foreground; min-height: 100%; overflow-x: clip; overscroll-behavior-y: auto; font-weight: 400; }
   #root { min-height: 100%; }
   body :where(p, span, a, button, label, input, select, textarea, li, td, th, small, div, [role="tab"], [role="menuitem"]) {
     font-size: max(1rem, 1em);
   }
   input, select, textarea { font-size: 16px !important; }
   @media (min-width: 768px) { input, select, textarea { font-size: 16px !important; } }
+
+  /* ───── Global typography weight pass ─────
+     Major page headings (h1) keep their existing weight. All other
+     headings drop to medium (500) so they read as subheadings rather
+     than competing with page titles. Body text stays at 400. */
+  h2, h3, h4, h5, h6 { font-weight: 500; }
+}
+
+@layer utilities {
+  /* ───── Sidebar visual lightening ─────
+     Left and right sidebars are supporting chrome — they should read
+     lighter than the main content area. Soften overall colour and
+     downgrade any local bold/semibold treatments to medium. */
+  [data-mode-aside],
+  aside.challenge-sidebar,
+  aside.right-rail {
+    color: hsl(var(--muted-foreground));
+  }
+  [data-mode-aside] .font-bold,
+  [data-mode-aside] .font-semibold,
+  aside.challenge-sidebar .font-bold,
+  aside.challenge-sidebar .font-semibold,
+  aside.right-rail .font-bold,
+  aside.right-rail .font-semibold {
+    font-weight: 500;
+  }
+  [data-mode-aside] :is(h1, h2, h3, h4, h5, h6),
+  aside.challenge-sidebar :is(h1, h2, h3, h4, h5, h6),
+  aside.right-rail :is(h1, h2, h3, h4, h5, h6) {
+    font-weight: 500;
+  }
+
+  /* ───── Section breathing room ─────
+     Add vertical rhythm between stacked sections on main pages
+     without disturbing component-level spacing. */
+  main > section + section,
+  main > div > section + section {
+    margin-top: 2.5rem;
+  }
 }
 
 /* ───── Existing keyframes (used elsewhere) ───── */

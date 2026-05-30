@@ -26,6 +26,7 @@ import { canAccessDay } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
+import VideoPlaceholder from "@/components/VideoPlaceholder";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
@@ -492,7 +493,8 @@ const DayChallenge = () => {
 
       {/* AI-guided training (primary). Video kept below as optional briefing. */}
       {dayNum === 2 && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-6">
+          <VideoPlaceholder />
           <DayCopilot
             dayNum={2}
             eyebrow="Day 2 · AI-guided training"

@@ -462,11 +462,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
   // Flow order: 4 (audience type) → 5 (outcome) → 6 → 7 → 8.
-  // If audience type was pre-known (skipping step 4), going back from step 5
-  // is disabled so we never re-show the B2B/B2C choice.
   const goBack = () => {
     const baseMap: Record<number, Step> = { 2: 6, 3: 2, 5: 4, 6: 5, 7: 3 };
-    if (knownAudienceType && step === 5) return;
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };

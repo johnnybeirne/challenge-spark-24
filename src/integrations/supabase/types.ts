@@ -1322,6 +1322,7 @@ export type Database = {
       }
       site_content: {
         Row: {
+          column_slot: string
           created_at: string
           id: string
           key: string
@@ -1334,6 +1335,7 @@ export type Database = {
           value_type: string
         }
         Insert: {
+          column_slot?: string
           created_at?: string
           id?: string
           key: string
@@ -1346,6 +1348,7 @@ export type Database = {
           value_type?: string
         }
         Update: {
+          column_slot?: string
           created_at?: string
           id?: string
           key?: string

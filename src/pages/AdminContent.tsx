@@ -128,8 +128,28 @@ const AdminContent = () => {
       g[r.section] ??= [];
       g[r.section].push(r);
     }
-    return g;
-  }, [rows]);
+    // Sort sections to match the order they appear on the live page.
+    // Known sections (from SECTION_META) come first in page order; unknown
+    // sections are appended alphabetically at the end.
+    const knownOrder = Object.keys(SECTION_META[activePage] ?? {});
+    const orderIndex = (name: string) => {
+      const i = knownOrder.indexOf(name);
+      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+    };
+    const ordered: Record<string, Draft[]> = {};
+    Object.keys(g)
+      .sort((a, b) => {
+        const ai = orderIndex(a);
+        const bi = orderIndex(b);
+        if (ai !== bi) return ai - bi;
+        return a.localeCompare(b);
+      })
+      .forEach((k) => {
+        ordered[k] = g[k];
+      });
+    return ordered;
+  }, [rows, activePage]);
+
 
   const updateRow = (id: string, patch: Partial<Draft>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch, _dirty: true } : r)));

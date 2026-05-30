@@ -301,10 +301,7 @@ const FoundationStep = ({
   placeholder: string;
   onNext: () => void;
 }) => {
-  const MIN = 160;
   const length = value.trim().length;
-  const remaining = Math.max(0, MIN - length);
-  const meetsMin = length >= MIN;
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
@@ -320,17 +317,14 @@ const FoundationStep = ({
           placeholder={placeholder}
           className="min-h-[140px] text-base"
         />
-        <p className={`text-xs ${meetsMin ? "text-muted-foreground" : "text-destructive"}`}>
-          {meetsMin
-            ? `${length} characters — minimum reached`
-            : `${remaining} more character${remaining === 1 ? "" : "s"} needed (minimum ${MIN})`}
-        </p>
+        {length > 0 && (
+          <p className="text-xs text-muted-foreground">{length} characters</p>
+        )}
       </div>
 
       <Button
         size="lg"
         onClick={onNext}
-        disabled={!meetsMin}
         className="w-full h-12 text-base font-semibold"
       >
         Continue

@@ -647,7 +647,35 @@ const Dashboard = () => {
           </section>
         </div>
 
-
+        {/* Reset Day 1 — muted, bottom placement */}
+        {currentDay === 1 && (
+          <div className="flex justify-center pt-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                  <RotateCcw className="h-3 w-3" />
+                  Reset Day 1
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This clears your Day 1 answers, AI outputs, and progress so you can
+                    start the questions from scratch. Your referrals, points, and other
+                    progress are kept.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleResetDay1}>
+                    Reset Day 1
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </section>
     </main>
   );

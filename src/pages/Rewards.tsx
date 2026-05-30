@@ -8,14 +8,6 @@ import { SEO } from "@/components/SEO";
 import { ChevronRight, Sparkles, Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const tierColor: Record<string, string> = {
-  Starter: "bg-slate-200 text-slate-700",
-  Builder: "bg-sky-200 text-sky-800",
-  "Growth Partner": "bg-emerald-200 text-emerald-800",
-  "Featured Creator": "bg-violet-200 text-violet-800",
-  "Strategic Partner": "bg-rose-200 text-rose-800",
-};
-
 function tierForPoints(points: number) {
   return pointTiers.find(
     (t) => points >= t.min && (t.max === null || points <= t.max),
@@ -81,7 +73,6 @@ export default function Rewards() {
             const prevTier = idx > 0 ? tierForPoints(sortedRungs[idx - 1].points) : null;
             const showTierDivider = !prevTier || prevTier.name !== tier.name;
             const isGold = rung.doubleUnlock;
-            const isDest = rung.isDestination;
 
             return (
               <div key={rung.points}>

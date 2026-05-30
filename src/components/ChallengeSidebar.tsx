@@ -414,36 +414,42 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           const active = location.pathname === path || location.pathname === `/day/${n}` || location.pathname === `/challenge/day/${n}`;
             const currentDay = state.challenge.currentDay ?? 1;
             const challengeCompleted = !!state.challenge.completed;
-            const complete = challengeCompleted || currentDay > n;
-            const locked = !complete && currentDay < n;
-            const DisplayIcon = locked ? Lock : complete ? CheckCircle2 : Icon;
+            const complete = !challengeCompleted && currentDay > n;
+            const locked = !challengeCompleted && currentDay !== n;
+            const DisplayIcon = locked && !complete ? Lock : complete ? CheckCircle2 : Icon;
+            const isDisabled = locked;
             return (
               <button
                 key={path}
-                onClick={() => go(path)}
+                onClick={() => { if (!isDisabled) go(path); }}
+                disabled={isDisabled}
+                aria-disabled={isDisabled}
                 className={cn(
-                  "w-full rounded-xl border-2 border-black text-left transition-all hover:bg-primary/5 bg-background",
-                  locked && "border-border/60 bg-muted/30",
+                  "w-full rounded-xl border-2 border-black text-left transition-all bg-background",
+                  !isDisabled && "hover:bg-primary/5",
+                  locked && !complete && "border-border/60 bg-muted/30",
+                  complete && "border-border/60 bg-success/5 cursor-not-allowed opacity-80",
+                  locked && !complete && "cursor-not-allowed",
                   collapsed ? "p-2" : "px-3 py-2",
                   active && "ring-2 ring-primary/20"
                 )}
-                title={`Day ${n} – ${label}`}
+                title={complete ? `Day ${n} – ${label} (completed)` : locked ? `Day ${n} – locked` : `Day ${n} – ${label}`}
               >
                 <div className="flex items-center justify-between gap-2">
                   {!collapsed ? (
                     <div className="min-w-0 flex-1">
-                      <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Day {n}</p>
-                      <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                      <p className={cn("text-[10px] font-black uppercase tracking-wider", locked && !complete ? "text-muted-foreground" : complete ? "text-success" : "text-primary")}>Day {n}{complete ? " · Completed" : ""}</p>
+                      <p className={cn("truncate text-sm font-semibold", locked && !complete ? "text-muted-foreground" : complete ? "text-muted-foreground" : "text-foreground")}>{label}</p>
                     </div>
                   ) : (
                     <span className={cn(
                       "flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-black",
-                      active ? "bg-primary text-primary-foreground" : locked ? "bg-muted text-muted-foreground" : complete ? "bg-success/15 text-success" : "bg-primary/10 text-primary"
+                      active ? "bg-primary text-primary-foreground" : locked && !complete ? "bg-muted text-muted-foreground" : complete ? "bg-success/15 text-success" : "bg-primary/10 text-primary"
                     )}>{n}</span>
                   )}
                   <DisplayIcon className={cn(
                     "h-4 w-4 shrink-0",
-                    locked ? "text-muted-foreground" : complete ? "text-success" : active ? "text-primary" : "text-muted-foreground"
+                    locked && !complete ? "text-muted-foreground" : complete ? "text-success" : active ? "text-primary" : "text-muted-foreground"
                   )} />
                 </div>
               </button>

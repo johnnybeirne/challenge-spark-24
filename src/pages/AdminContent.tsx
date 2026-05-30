@@ -328,6 +328,7 @@ const AdminContent = () => {
     } else {
       addRow(name, "full");
     }
+    toast.warning("Section saved to content store, but it won't appear on the live page until a developer adds it to the page template.", { duration: 8000 });
   };
 
   const saveAll = async () => {
@@ -761,12 +762,13 @@ function FieldRow({
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Key</label>
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Field ID</label>
                   <Input
                     value={row.key}
                     onChange={(e) => onUpdate({ key: e.target.value })}
                     className="h-8 text-xs font-mono"
                   />
+                  <p className="text-[10px] text-muted-foreground leading-tight">Internal ID the page code reads (e.g. <code>hero.headline</code>). Not visible to visitors.</p>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Type</label>

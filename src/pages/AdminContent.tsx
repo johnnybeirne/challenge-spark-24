@@ -17,6 +17,8 @@ import {
   Smartphone,
   Settings2,
   GripVertical,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";

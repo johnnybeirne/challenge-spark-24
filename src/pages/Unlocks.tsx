@@ -7,9 +7,9 @@ import { useAppState } from "@/context/AppContext";
 import { getNextReward, pointRewards } from "@/lib/points";
 
 const dayRewards = [
-  { day: 1, label: "Complete Day 1", points: 10 },
-  { day: 2, label: "Complete Day 2", points: 15 },
-  { day: 3, label: "Complete Day 3", points: 25 },
+  { day: 1, label: "Complete Day 1", points: 50 },
+  { day: 2, label: "Complete Day 2", points: 50 },
+  { day: 3, label: "Complete Day 3", points: 50 },
 ];
 
 const StatusIcon = ({ status }: { status: "done" | "current" | "locked" }) => {

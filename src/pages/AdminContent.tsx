@@ -400,7 +400,10 @@ const AdminContent = () => {
       {/* Split pane: editor | preview */}
       <div className="flex-1 flex min-h-0">
         {/* Left: editor */}
-        <div className="w-full lg:w-[440px] xl:w-[480px] shrink-0 border-r bg-background flex flex-col">
+        <div
+          className="hidden lg:flex shrink-0 border-r bg-background flex-col"
+          style={{ width: panelWidth }}
+        >
           <div className="px-4 py-3 border-b">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">

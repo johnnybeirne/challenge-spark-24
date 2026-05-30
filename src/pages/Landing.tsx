@@ -1,11 +1,11 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, ClipboardCheck, Compass, Eye, Gauge, HelpCircle, Search, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { useSiteContent, type SiteContentMap } from "@/hooks/useSiteContent";
 import {
   Accordion,
   AccordionContent,
@@ -31,14 +31,29 @@ const PageSection = ({ children, className = "" }: { children: ReactNode; classN
 
 const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) => (
   <div className="mx-auto max-w-3xl text-center">
-    <p className="text-sm font-black uppercase text-primary">{eyebrow}</p>
+    {eyebrow && <p className="text-sm font-black uppercase text-primary">{eyebrow}</p>}
     <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{title}</h2>
     {body && <p className="mt-5 text-lg leading-8 text-muted-foreground">{body}</p>}
   </div>
 );
 
+/** Collect ordered values for keys matching `section.item_N` (sorted by N). */
+function collectItems(map: SiteContentMap, section: string): string[] {
+  const prefix = `${section}.item_`;
+  const found: Array<{ n: number; v: string }> = [];
+  for (const k of Object.keys(map)) {
+    if (!k.startsWith(prefix)) continue;
+    const n = Number(k.slice(prefix.length));
+    if (!Number.isFinite(n)) continue;
+    const v = map[k];
+    if (typeof v === "string" && v.trim()) found.push({ n, v });
+  }
+  return found.sort((a, b) => a.n - b.n).map((x) => x.v);
+}
+
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
+  const { t, map } = useSiteContent("landing");
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
@@ -64,54 +79,56 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
       <main className="min-h-screen bg-background pb-24 text-foreground">
-      <HeroSection onStart={() => startQuiz("hero")} />
-      <ProblemSection />
-      <RevealSection />
-      <ScorePreview />
-      <BenefitsSection />
-      <AuthoritySection />
-      <FaqSection />
-      <CTASection onStart={() => startQuiz("bottom")} />
-      <StickyQuizButton onStart={() => startQuiz("sticky")} />
-    </main>
+        <HeroSection t={t} onStart={() => startQuiz("hero")} />
+        <ProblemSection t={t} map={map} />
+        <RevealSection t={t} map={map} />
+        <ScorePreview t={t} map={map} />
+        <BenefitsSection t={t} map={map} />
+        <AuthoritySection t={t} />
+        <FaqSection t={t} map={map} />
+        <CTASection t={t} onStart={() => startQuiz("bottom")} />
+        <StickyQuizButton t={t} onStart={() => startQuiz("sticky")} />
+      </main>
     </>
 
   );
 };
 
-const StickyQuizButton = ({ onStart }: { onStart: () => void }) => (
+type T = (sectionDotKey: string, fallback?: string) => string;
+
+const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6">
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
       <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
-        Ready to find the gap in your lead flow?
+        {t("sticky.tagline", "Ready to find the gap in your lead flow?")}
       </p>
       <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black uppercase shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
-        Start the quiz
+        {t("sticky.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
   </div>
 );
 
-const HeroSection = ({ onStart }: { onStart: () => void }) => (
+const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">
     <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
       <div className="text-center lg:text-left">
         <p className="mx-auto max-w-2xl text-base font-black uppercase leading-6 text-primary lg:mx-0">
-          Built for coaches, consultants, and authors who want more leads
+          {t("hero.eyebrow", "Built for coaches, consultants, and authors who want more leads")}
         </p>
         <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
-          Find out why your leads are inconsistent
+          {t("hero.headline", "Find out why your leads are inconsistent")}
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
-          Answer nine quick questions and get a recommended strategy based on your answers. Instantly
+          {t("hero.subhead", "Answer nine quick questions and get a recommended strategy based on your answers. Instantly")}
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
           <Button className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
-            Start the quiz
+            {t("hero.cta_label", "Start the quiz")}
             <ArrowRight className="h-4 w-4" />
           </Button>
-          <p className="text-sm font-medium text-muted-foreground">No signup required to get your diagnosis.</p>
+          <p className="text-sm font-medium text-muted-foreground">{t("hero.cta_note", "No signup required to get your diagnosis.")}</p>
         </div>
       </div>
 
@@ -125,22 +142,25 @@ const HeroSection = ({ onStart }: { onStart: () => void }) => (
           className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
         />
         <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
-          <p className="text-xs font-black uppercase text-primary">The real question</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-foreground">Is your lead flow inconsistent because of attention, trust, conversion, or follow-up?</p>
+          <p className="text-xs font-black uppercase text-primary">{t("hero.image_overlay_eyebrow", "The real question")}</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-foreground">{t("hero.image_overlay_text", "Is your lead flow inconsistent because of attention, trust, conversion, or follow-up?")}</p>
         </div>
       </div>
     </div>
   </section>
 );
 
-const ProblemSection = () => {
-  const problems = ["Some weeks bring enquiries. Other weeks go quiet.", "You post, message, tweak, and still cannot tell what caused the result.", "More effort can hide the real bottleneck instead of fixing it."];
-
+const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+  const items = collectItems(map, "problem");
   return (
     <PageSection className="border-y border-border bg-card/55">
-      <SectionHeader eyebrow="The problem" title="Lead flow should not feel like guesswork" body="When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing." />
+      <SectionHeader
+        eyebrow={t("problem.eyebrow", "The problem")}
+        title={t("problem.title", "Lead flow should not feel like guesswork")}
+        body={t("problem.body", "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.")}
+      />
       <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {problems.map((problem) => (
+        {items.map((problem) => (
           <div key={problem} className="rounded-xl border border-border bg-background p-6 shadow-sm transition-transform hover:-translate-y-1">
             <HelpCircle className="h-6 w-6 text-primary" />
             <p className="mt-5 font-semibold leading-7 text-foreground">{problem}</p>
@@ -151,71 +171,74 @@ const ProblemSection = () => {
   );
 };
 
-const RevealSection = () => (
-  <PageSection>
-    <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-      <div>
-        <p className="text-sm font-black uppercase text-primary">What the quiz reveals</p>
-        <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">Your inconsistency usually has one primary cause</h2>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {["You are not getting enough of the right attention", "People notice you but do not trust the next step", "Interest exists but conversion is unclear", "Follow-up depends too heavily on manual effort"].map((item) => (
-          <div key={item} className="flex items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
-            <Search className="mt-1 h-5 w-5 shrink-0 text-primary" />
-            <p className="font-semibold leading-7 text-foreground">{item}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </PageSection>
-);
-
-const ScorePreview = () => (
-  <PageSection className="border-y border-border bg-card/55">
-    <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-      <div className="mx-auto flex size-64 items-center justify-center rounded-full bg-[conic-gradient(hsl(var(--success))_0_76%,hsl(var(--muted))_76%_100%)] p-6 [animation:donut-fill_1.4s_ease-out_both] lg:mx-0">
-        <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
-          <span className="text-5xl font-black leading-none text-foreground">76%</span>
-          <span className="mt-3 max-w-[10rem] text-sm font-black uppercase leading-5 text-muted-foreground">System readiness</span>
+const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+  const items = collectItems(map, "reveal");
+  return (
+    <PageSection>
+      <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+        <div>
+          <p className="text-sm font-black uppercase text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
+          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("reveal.title", "Your inconsistency usually has one primary cause")}</h2>
         </div>
-      </div>
-      <div>
-        <p className="text-sm font-black uppercase text-primary">Your result</p>
-        <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">Get a clear diagnosis, then a recommended strategy</h2>
-        <div className="mt-6 space-y-3">
-          {["Where your leads are leaking", "What system gap matters most", "What to do next based on your answers"].map((item) => (
-            <div key={item} className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          {items.map((item) => (
+            <div key={item} className="flex items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
+              <Search className="mt-1 h-5 w-5 shrink-0 text-primary" />
               <p className="font-semibold leading-7 text-foreground">{item}</p>
             </div>
           ))}
         </div>
       </div>
-    </div>
-  </PageSection>
-);
+    </PageSection>
+  );
+};
 
-const HowItWorks = () => {
-  const steps = [
-    { icon: ClipboardCheck, title: "Answer", body: "Nine quick questions about how leads currently find, trust, and choose you." },
-    { icon: Gauge, title: "Diagnose", body: "See what is driving the inconsistency instead of guessing from surface symptoms." },
-    { icon: Compass, title: "Act", body: "Move into the next step with a strategy matched to your diagnosis." },
-  ];
-
+const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
+  const items = collectItems(map, "score");
+  const pctRaw = t("score.percent", "76").replace(/[^0-9]/g, "");
+  const pct = Math.max(0, Math.min(100, Number(pctRaw) || 76));
   return (
-    <PageSection>
-      <SectionHeader eyebrow="How it works" title="A simple path from quiz to next step" />
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {steps.map((step, index) => (
-          <div key={step.title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <step.icon className="h-6 w-6" />
+    <PageSection className="border-y border-border bg-card/55">
+      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div
+          className="mx-auto flex size-64 items-center justify-center rounded-full p-6 [animation:donut-fill_1.4s_ease-out_both] lg:mx-0"
+          style={{ background: `conic-gradient(hsl(var(--success)) 0 ${pct}%, hsl(var(--muted)) ${pct}% 100%)` }}
+        >
+          <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
+            <span className="text-5xl font-black leading-none text-foreground">{pct}%</span>
+            <span className="mt-3 max-w-[10rem] text-sm font-black uppercase leading-5 text-muted-foreground">{t("score.percent_label", "System readiness")}</span>
+          </div>
+        </div>
+        <div>
+          <p className="text-sm font-black uppercase text-primary">{t("score.eyebrow", "Your result")}</p>
+          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
+          <div className="mt-6 space-y-3">
+            {items.map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+                <p className="font-semibold leading-7 text-foreground">{item}</p>
               </div>
-              <span className="text-sm font-black uppercase text-muted-foreground">0{index + 1}</span>
-            </div>
-            <h3 className="mt-6 text-xl font-black text-foreground">{step.title}</h3>
-            <p className="mt-3 leading-7 text-muted-foreground">{step.body}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </PageSection>
+  );
+};
+
+const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+  const items = collectItems(map, "benefits");
+  return (
+    <PageSection className="border-y border-border bg-card/55">
+      <SectionHeader
+        eyebrow={t("benefits.eyebrow", "Why take it")}
+        title={t("benefits.title", "Know what to fix before you spend more effort")}
+      />
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((benefit) => (
+          <div key={benefit} className="rounded-xl border border-border bg-background p-5 shadow-sm">
+            <CheckCircle2 className="h-5 w-5 text-success" />
+            <p className="mt-4 font-semibold leading-7 text-foreground">{benefit}</p>
           </div>
         ))}
       </div>
@@ -223,47 +246,31 @@ const HowItWorks = () => {
   );
 };
 
-const BenefitsSection = () => (
-  <PageSection className="border-y border-border bg-card/55">
-    <SectionHeader eyebrow="Why take it" title="Know what to fix before you spend more effort" />
-    <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {["Replace vague advice with a diagnosis", "See whether effort or system is the issue", "Understand your next practical move", "Continue cleanly into the full flow"].map((benefit) => (
-        <div key={benefit} className="rounded-xl border border-border bg-background p-5 shadow-sm">
-          <CheckCircle2 className="h-5 w-5 text-success" />
-          <p className="mt-4 font-semibold leading-7 text-foreground">{benefit}</p>
-        </div>
-      ))}
-    </div>
-  </PageSection>
-);
-
-const AuthoritySection = () => (
+const AuthoritySection = ({ t }: { t: T }) => (
   <PageSection>
     <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 text-center shadow-sm md:p-10">
       <Eye className="mx-auto h-8 w-8 text-primary" />
-      <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">Built for people who need leads, not another theory</h2>
-      <p className="mt-4 text-lg leading-8 text-muted-foreground">The quiz is designed for founders, creators, consultants, and experts who want to understand what is making their lead flow unpredictable.</p>
+      <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">{t("authority.title", "Built for people who need leads, not another theory")}</h2>
+      <p className="mt-4 text-lg leading-8 text-muted-foreground">{t("authority.body", "The quiz is designed for founders, creators, consultants, and experts who want to understand what is making their lead flow unpredictable.")}</p>
     </div>
   </PageSection>
 );
 
-const CTASection = ({ onStart }: { onStart: () => void }) => (
+const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <PageSection className="border-t border-border">
     <div className="mx-auto max-w-3xl text-center">
       <TrendingUp className="mx-auto h-9 w-9 text-primary" />
-      <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">Find the gap in your lead flow</h2>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Start with the quiz, get your diagnosis, then move into the next step with clarity.</p>
+      <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{t("cta.title", "Find the gap in your lead flow")}</h2>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("cta.body", "Start with the quiz, get your diagnosis, then move into the next step with clarity.")}</p>
       <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={onStart}>
-        Start the quiz
+        {t("cta.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
   </PageSection>
 );
 
-const FaqSection = () => {
-  const { t, map, loaded } = useSiteContent("landing");
-
+const FaqSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = useMemo(() => {
     const indices = new Set<string>();
     for (const k of Object.keys(map)) {
@@ -280,13 +287,11 @@ const FaqSection = () => {
       .filter((x) => x.q.trim() || x.a.trim());
   }, [map, t]);
 
-  if (!loaded || items.length === 0) return null;
-
-  const title = t("faq.title", "Frequently asked questions");
+  if (items.length === 0) return null;
 
   return (
     <PageSection className="border-t border-border bg-card/55">
-      <SectionHeader eyebrow="FAQ" title={title} />
+      <SectionHeader eyebrow="FAQ" title={t("faq.title", "Frequently asked questions")} />
       <div className="mx-auto mt-10 max-w-3xl">
         <Accordion type="single" collapsible className="space-y-3">
           {items.map((item) => (
@@ -310,4 +315,3 @@ const FaqSection = () => {
 };
 
 export default Landing;
-

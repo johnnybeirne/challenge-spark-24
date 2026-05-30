@@ -8,6 +8,7 @@ import {
   Users,
   ArrowRight,
   CheckCircle2,
+  Circle,
   Activity,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

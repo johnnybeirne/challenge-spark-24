@@ -244,7 +244,7 @@ const App = () => (
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
-                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
+                <Route path="features" element={<Navigate to="/owner-console/overview?tab=features" replace />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

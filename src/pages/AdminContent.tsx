@@ -17,6 +17,8 @@ import {
   Smartphone,
   Settings2,
   GripVertical,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";
@@ -244,15 +246,10 @@ const AdminContent = () => {
     await load(activePage);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = sectionIds.indexOf(String(active.id));
-    const newIndex = sectionIds.indexOf(String(over.id));
-    if (oldIndex === -1 || newIndex === -1) return;
+  const reorderSections = (oldIndex: number, newIndex: number) => {
+    if (oldIndex === newIndex || oldIndex < 0 || newIndex < 0) return;
+    if (oldIndex >= sectionIds.length || newIndex >= sectionIds.length) return;
     const next = arrayMove(sectionIds, oldIndex, newIndex);
-    // Optimistically reflect the new order by writing a synthetic meta row
-    // into local state so the UI updates before the network round-trip.
     setRows((rs) => {
       const without = rs.filter((r) => !(r.section === "_meta" && r.key === "section_order"));
       const fake: Draft = {
@@ -268,6 +265,15 @@ const AdminContent = () => {
       return [...without, fake];
     });
     void persistOrder(next);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    reorderSections(
+      sectionIds.indexOf(String(active.id)),
+      sectionIds.indexOf(String(over.id)),
+    );
   };
 
 
@@ -440,7 +446,7 @@ const AdminContent = () => {
                     onValueChange={(v) => setActiveSection(v || null)}
                     className="space-y-2"
                   >
-                    {Object.entries(grouped).map(([section, items]) => {
+                    {Object.entries(grouped).map(([section, items], idx, arr) => {
                       const sectionDirty = items.some((r) => r._dirty);
                       const meta = sectionMeta(activePage, section);
                       const friendly = meta?.label ?? sectionTitle(section);
@@ -455,11 +461,31 @@ const AdminContent = () => {
                                 <button
                                   type="button"
                                   aria-label="Drag to reorder"
-                                  className="flex h-8 w-7 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
+                                  className="flex h-8 w-6 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
                                   {...handleProps}
                                 >
                                   <GripVertical className="h-4 w-4" />
                                 </button>
+                                <div className="flex flex-col shrink-0 -my-1 mr-1">
+                                  <button
+                                    type="button"
+                                    aria-label="Move up"
+                                    disabled={idx === 0}
+                                    onClick={(e) => { e.stopPropagation(); reorderSections(idx, idx - 1); }}
+                                    className="h-4 w-5 flex items-center justify-center text-muted-foreground/60 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                                  >
+                                    <ChevronUp className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    aria-label="Move down"
+                                    disabled={idx === arr.length - 1}
+                                    onClick={(e) => { e.stopPropagation(); reorderSections(idx, idx + 1); }}
+                                    className="h-4 w-5 flex items-center justify-center text-muted-foreground/60 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                                  >
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
                                 <AccordionTrigger className="flex-1 hover:no-underline py-3">
                                   <div className="flex items-center gap-2 min-w-0">
                                     <span className="text-sm font-semibold">{friendly}</span>

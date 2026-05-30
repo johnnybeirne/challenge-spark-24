@@ -9,6 +9,18 @@ interface DayVideoModalProps {
   dayNum: 1 | 2 | 3;
 }
 
+const TITLES: Record<1 | 2 | 3, string> = {
+  1: "Welcome to Day 1 — Define Your Challenge",
+  2: "Day 2 — Build Your Diagnostic Quiz",
+  3: "Day 3 — Design the Challenge Experience",
+};
+
+const SUBTITLES: Record<1 | 2 | 3, string> = {
+  1: "Watch this short briefing before you begin.",
+  2: "A quick walkthrough before today's AI session.",
+  3: "Watch this before mapping your 3-day arc.",
+};
+
 const storageKey = (day: number) => `video_modal_dismissed_day_${day}`;
 
 export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
@@ -64,7 +76,8 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Day {dayNum} intro video</DialogTitle>
+          <DialogTitle>{TITLES[dayNum]}</DialogTitle>
+          <p className="text-sm text-muted-foreground">{SUBTITLES[dayNum]}</p>
         </DialogHeader>
         <VideoPlaceholder />
         <div className="flex items-center gap-2 pt-2">

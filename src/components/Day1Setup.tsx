@@ -698,7 +698,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         <DayVideoModal dayNum={1} />
 
-        {step > 1 && step < 8 && (
+        {step !== 4 && step !== 8 && step !== 0 && (
           <button
             onClick={goBack}
             className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"

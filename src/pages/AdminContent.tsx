@@ -298,8 +298,8 @@ const AdminContent = () => {
     toast.success("Deleted");
   };
 
-  const addRow = (section: string) => {
-    const tmpId = `new-${Date.now()}`;
+  const addRow = (section: string, slot: "full" | "left" | "right" = "full") => {
+    const tmpId = `new-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     setRows((rs) => [
       ...rs,
       {
@@ -311,7 +311,7 @@ const AdminContent = () => {
         value_type: "text",
         label: "",
         sort_order: 99,
-        column_slot: "full",
+        column_slot: slot,
         _dirty: true,
         _new: true,
       } as Draft,
@@ -321,7 +321,13 @@ const AdminContent = () => {
   const addSection = () => {
     const name = prompt("New section name (e.g. 'features', 'testimonials')")?.trim();
     if (!name) return;
-    addRow(name);
+    const layout = prompt("Layout? Type '1' for one column, or '2' for two columns", "1")?.trim();
+    if (layout === "2") {
+      addRow(name, "left");
+      addRow(name, "right");
+    } else {
+      addRow(name, "full");
+    }
   };
 
   const saveAll = async () => {

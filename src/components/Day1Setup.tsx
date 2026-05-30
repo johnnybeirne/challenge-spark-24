@@ -389,9 +389,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     saved?.audienceType ?? memoryAudienceType;
 
   const initialStep: Step = (() => {
-    if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
-    if (saved?.audienceType && saved?.challengeType) return 6;
-    if (saved?.audienceType) return 5;
+    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
 
@@ -404,6 +402,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
+  const [step9Phase, setStep9Phase] = useState<"intro" | "input">(saved?.outcome ? "input" : "intro");
   const [step7Phase, setStep7Phase] = useState<"intro" | "reveal">("intro");
 
   const rawName =

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Eye, Zap } from "lucide-react";
-import { useAppState, defaultState, generateInviteCode } from "@/context/AppContext";
+import { useAppState, defaultState, generateInviteCode, clearState } from "@/context/AppContext";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,7 +42,9 @@ const useLaunchDemoUser = () => {
     try {
       sessionStorage.setItem(DEMO_USER_KEY, "1");
       sessionStorage.setItem(DEMO_SETUP_RESET_KEY, "1");
+      clearState();
       localStorage.removeItem(SETUP_KEY);
+      localStorage.removeItem("leadio_day1_step");
     } catch {}
 
     setState({

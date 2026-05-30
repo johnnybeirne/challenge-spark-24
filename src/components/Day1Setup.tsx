@@ -389,8 +389,6 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (persistedStep === 2 || persistedStep === 3 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     if (saved?.audienceType && saved?.challengeType) return 6;
     if (saved?.audienceType) return 5;
-    // If audience type is already stored on the user profile, skip the B2B/B2C step.
-    if (memoryAudienceType) return 5;
     return 4;
   })();
 

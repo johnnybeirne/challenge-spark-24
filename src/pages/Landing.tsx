@@ -79,14 +79,14 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
       <main className="min-h-screen bg-background pb-24 text-foreground">
-        <HeroSection t={t} onStart={() => startQuiz("hero")} />
-        <ProblemSection t={t} map={map} />
-        <RevealSection t={t} map={map} />
-        <ScorePreview t={t} map={map} />
-        <BenefitsSection t={t} map={map} />
-        <AuthoritySection t={t} />
-        <FaqSection t={t} map={map} />
-        <CTASection t={t} onStart={() => startQuiz("bottom")} />
+        <div id="hero" style={{ scrollMarginTop: 24 }}><HeroSection t={t} onStart={() => startQuiz("hero")} /></div>
+        <div id="problem" style={{ scrollMarginTop: 24 }}><ProblemSection t={t} map={map} /></div>
+        <div id="reveal" style={{ scrollMarginTop: 24 }}><RevealSection t={t} map={map} /></div>
+        <div id="score" style={{ scrollMarginTop: 24 }}><ScorePreview t={t} map={map} /></div>
+        <div id="benefits" style={{ scrollMarginTop: 24 }}><BenefitsSection t={t} map={map} /></div>
+        <div id="authority" style={{ scrollMarginTop: 24 }}><AuthoritySection t={t} /></div>
+        <div id="faq" style={{ scrollMarginTop: 24 }}><FaqSection t={t} map={map} /></div>
+        <div id="cta" style={{ scrollMarginTop: 24 }}><CTASection t={t} onStart={() => startQuiz("bottom")} /></div>
         <StickyQuizButton t={t} onStart={() => startQuiz("sticky")} />
       </main>
     </>

@@ -46,6 +46,25 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
 ];
 
+// Maps DB section id -> friendly label + "where it appears" hint + iframe anchor.
+// Anchors must match the `id="..."` wrappers in src/pages/Landing.tsx.
+const SECTION_META: Record<string, Record<string, { label: string; hint: string; anchor: string }>> = {
+  landing: {
+    hero: { label: "Hero", hint: "Top of page — main headline, subhead, primary button.", anchor: "hero" },
+    problem: { label: "Problem", hint: "“Lead flow should not feel like guesswork” band.", anchor: "problem" },
+    reveal: { label: "What the quiz reveals", hint: "Two-column reveal section.", anchor: "reveal" },
+    score: { label: "Score preview", hint: "Donut chart + result list.", anchor: "score" },
+    benefits: { label: "Benefits", hint: "Four-up benefits grid.", anchor: "benefits" },
+    authority: { label: "Authority card", hint: "“Built for people who need leads…” centered card.", anchor: "authority" },
+    faq: { label: "FAQ", hint: "Accordion of questions and answers.", anchor: "faq" },
+    cta: { label: "Final CTA", hint: "Bottom call-to-action band.", anchor: "cta" },
+    sticky: { label: "Sticky bottom bar", hint: "Persistent bar pinned to the bottom of the page.", anchor: "cta" },
+  },
+};
+
+const sectionMeta = (page: string, section: string) =>
+  SECTION_META[page]?.[section];
+
 type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean };
 
 const sectionTitle = (s: string) =>
@@ -64,7 +83,23 @@ const AdminContent = () => {
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // When the selected section changes, scroll the preview iframe to its anchor.
+  // We mutate the iframe's hash directly to avoid a full reload.
+  useEffect(() => {
+    if (!activeSection) return;
+    const meta = sectionMeta(activePage, activeSection);
+    if (!meta) return;
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    try {
+      win.location.hash = `#${meta.anchor}`;
+    } catch {
+      /* cross-origin or not ready — ignore */
+    }
+  }, [activeSection, activePage, previewNonce]);
 
   const load = async (page: string) => {
     setLoading(true);
@@ -249,21 +284,25 @@ const AdminContent = () => {
               </div>
             ) : (
               <Accordion
-                type="multiple"
-                defaultValue={Object.keys(grouped)}
+                type="single"
+                collapsible
+                value={activeSection ?? undefined}
+                onValueChange={(v) => setActiveSection(v || null)}
                 className="space-y-2"
               >
                 {Object.entries(grouped).map(([section, items]) => {
                   const sectionDirty = items.some((r) => r._dirty);
+                  const meta = sectionMeta(activePage, section);
+                  const friendly = meta?.label ?? sectionTitle(section);
                   return (
                     <AccordionItem
                       key={section}
                       value={section}
-                      className="rounded-lg border bg-card px-3"
+                      className="rounded-lg border bg-card px-3 data-[state=open]:border-primary/60"
                     >
                       <AccordionTrigger className="hover:no-underline py-3">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-semibold">{sectionTitle(section)}</span>
+                          <span className="text-sm font-semibold">{friendly}</span>
                           <Badge variant="secondary" className="h-5 text-[10px]">
                             {items.length}
                           </Badge>
@@ -273,6 +312,11 @@ const AdminContent = () => {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="pb-3 space-y-3">
+                        {meta?.hint && (
+                          <p className="text-xs text-muted-foreground italic">
+                            Appears in preview as: {meta.hint}
+                          </p>
+                        )}
                         {items.map((row) => (
                           <FieldRow
                             key={row.id}
@@ -326,8 +370,19 @@ const AdminContent = () => {
         {/* Right: live preview */}
         <div className="hidden lg:flex flex-1 flex-col min-w-0">
           <div className="px-4 py-2 border-b bg-background flex items-center justify-between gap-2">
-            <div className="text-xs text-muted-foreground truncate">
-              Live preview · <span className="font-mono">{currentPage.previewUrl}</span>
+            <div className="text-xs text-muted-foreground truncate flex items-center gap-2">
+              <span>
+                Editing: <span className="font-semibold text-foreground">{currentPage.label}</span>
+                {activeSection && (
+                  <>
+                    {" / "}
+                    <span className="font-semibold text-foreground">
+                      {sectionMeta(activePage, activeSection)?.label ?? sectionTitle(activeSection)}
+                    </span>
+                  </>
+                )}
+              </span>
+              <span className="font-mono opacity-60">{currentPage.previewUrl}</span>
             </div>
             <div className="flex items-center gap-1">
               <Button

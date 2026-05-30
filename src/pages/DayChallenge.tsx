@@ -493,7 +493,8 @@ const DayChallenge = () => {
 
       {/* AI-guided training (primary). Video kept below as optional briefing. */}
       {dayNum === 2 && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-6">
+          <VideoPlaceholder />
           <DayCopilot
             dayNum={2}
             eyebrow="Day 2 · AI-guided training"

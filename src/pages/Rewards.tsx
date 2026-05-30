@@ -158,9 +158,9 @@ export default function Rewards() {
       <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-bold">Buy the full suite</p>
+            <p className="text-sm font-bold">Can't wait?</p>
             <p className="text-xs text-muted-foreground">
-              Every reward, unlocked instantly. Lifetime access.
+              Get every reward unlocked instantly. Total value $1,497. Yours for $497.
             </p>
           </div>
           <Button

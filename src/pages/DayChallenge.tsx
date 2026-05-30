@@ -484,6 +484,12 @@ const DayChallenge = () => {
   return (
     <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
       <TaskCompleteAnim show={showTaskAnim} />
+      {isReadOnly && (
+        <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">Day {dayNum} is complete.</span>{" "}
+          Your answers are saved.
+        </div>
+      )}
       <div className="mb-6">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Day {dayNum} of 3
@@ -492,7 +498,7 @@ const DayChallenge = () => {
         <p className="mt-2 text-sm text-muted-foreground">
           {config.intro}
         </p>
-        {config.nudge && (
+        {config.nudge && !isReadOnly && (
           <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
         )}
       </div>

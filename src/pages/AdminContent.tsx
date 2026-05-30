@@ -81,7 +81,7 @@ const SECTION_META: Record<string, Record<string, { label: string; hint: string;
 const sectionMeta = (page: string, section: string) =>
   SECTION_META[page]?.[section];
 
-type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean };
+type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean; column_slot?: "full" | "left" | "right" };
 
 const sectionTitle = (s: string) =>
   s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -276,6 +276,7 @@ const AdminContent = () => {
         value_type: "text",
         label: "",
         sort_order: 99,
+        column_slot: "full",
         _dirty: true,
         _new: true,
       } as Draft,
@@ -307,6 +308,7 @@ const AdminContent = () => {
           value_type: r.value_type,
           label: r.label,
           sort_order: r.sort_order,
+          column_slot: r.column_slot ?? "full",
         });
         if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }
         else ok++;
@@ -319,6 +321,7 @@ const AdminContent = () => {
             value_type: r.value_type,
             label: r.label,
             sort_order: r.sort_order,
+            column_slot: r.column_slot ?? "full",
           })
           .eq("id", r.id);
         if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }
@@ -445,14 +448,11 @@ const AdminContent = () => {
                                     Appears in preview as: {meta.hint}
                                   </p>
                                 )}
-                                {items.map((row) => (
-                                  <FieldRow
-                                    key={row.id}
-                                    row={row}
-                                    onUpdate={(p) => updateRow(row.id, p)}
-                                    onRemove={() => removeRow(row)}
-                                  />
-                                ))}
+                                <SectionFieldsGrid
+                                  items={items}
+                                  onUpdate={(id, p) => updateRow(id, p)}
+                                  onRemove={(row) => removeRow(row)}
+                                />
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -593,6 +593,49 @@ function SortableSection({
 }
 
 
+function SectionFieldsGrid({
+  items,
+  onUpdate,
+  onRemove,
+}: {
+  items: Draft[];
+  onUpdate: (id: string, p: Partial<Draft>) => void;
+  onRemove: (row: Draft) => void;
+}) {
+  const hasTwoCol = items.some((r) => r.column_slot === "left" || r.column_slot === "right");
+
+  if (!hasTwoCol) {
+    return (
+      <div className="space-y-3">
+        {items.map((row) => (
+          <FieldRow key={row.id} row={row} onUpdate={(p) => onUpdate(row.id, p)} onRemove={() => onRemove(row)} />
+        ))}
+      </div>
+    );
+  }
+
+  // Render in a 2-column grid; "full" spans both columns and preserves order
+  // by emitting in original sequence with a col-span-2 class.
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {items.map((row) => {
+        const slot = row.column_slot ?? "full";
+        const span =
+          slot === "full"
+            ? "col-span-2"
+            : slot === "left"
+            ? "col-start-1"
+            : "col-start-2";
+        return (
+          <div key={row.id} className={span}>
+            <FieldRow row={row} onUpdate={(p) => onUpdate(row.id, p)} onRemove={() => onRemove(row)} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function FieldRow({
   row,
   onUpdate,
@@ -602,6 +645,7 @@ function FieldRow({
   onUpdate: (p: Partial<Draft>) => void;
   onRemove: () => void;
 }) {
+  const slot = row.column_slot ?? "full";
   return (
     <div
       className={`rounded-md border p-3 space-y-2 transition-colors ${
@@ -609,9 +653,16 @@ function FieldRow({
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-foreground truncate">
-          {friendlyLabel(row)}
-        </span>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-xs font-medium text-foreground truncate">
+            {friendlyLabel(row)}
+          </span>
+          {slot !== "full" && (
+            <Badge variant="outline" className="h-4 text-[9px] uppercase tracking-wider px-1">
+              {slot}
+            </Badge>
+          )}
+        </div>
         <div className="flex items-center gap-0.5 shrink-0">
           <Popover>
             <PopoverTrigger asChild>
@@ -651,6 +702,28 @@ function FieldRow({
                     <option value="image">Image URL</option>
                   </select>
                 </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Column</label>
+                <div className="grid grid-cols-3 gap-1">
+                  {(["full", "left", "right"] as const).map((opt) => (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => onUpdate({ column_slot: opt })}
+                      className={`h-8 text-xs rounded-md border capitalize ${
+                        slot === opt
+                          ? "border-primary bg-primary/10 text-foreground font-medium"
+                          : "border-input bg-background text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {opt === "full" ? "Full" : opt === "left" ? "Left" : "Right"}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Editor layout only — mirrors how it sits on the live page.
+                </p>
               </div>
             </PopoverContent>
           </Popover>

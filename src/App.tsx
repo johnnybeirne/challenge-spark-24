@@ -44,6 +44,8 @@ import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
 import BlueprintInsight from "@/pages/blueprint/BlueprintInsight";
 import BlueprintBridge from "@/pages/blueprint/BlueprintBridge";
 import RewardDetail from "@/pages/RewardDetail";
+import Rewards from "@/pages/Rewards";
+
 import Partners from "@/pages/Partners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
@@ -191,7 +193,7 @@ const App = () => (
                 <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
                 <Route path="/bonus-vault" element={<Navigate to="/earn" replace />} />
-                <Route path="/rewards" element={<Navigate to="/earn" replace />} />
+                <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />

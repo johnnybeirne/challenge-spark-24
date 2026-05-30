@@ -169,9 +169,111 @@ const CmsRewards = () => {
         />
       </EditorCard>
 
+      <EditorCard
+        title="Rewards Ladder (/rewards page)"
+        description="Each rung on the public rewards ladder. Prices, names, and double-unlock styling are all editable here."
+      >
+        <div className="grid grid-cols-2 gap-3">
+          <EditableField
+            label="Full suite price (USD)"
+            helper="Price shown in the pinned bottom bar."
+            type="number"
+            value={String(draft.ladder.fullSuitePrice)}
+            onChange={(v) =>
+              setDraft((prev) => ({
+                ...prev,
+                ladder: { ...prev.ladder, fullSuitePrice: Number(v) },
+              }))
+            }
+          />
+          <EditableField
+            label="Full suite Stripe price ID"
+            helper="The price_id registered in Stripe (e.g. reward_full_suite)."
+            value={draft.ladder.fullSuitePriceId}
+            onChange={(v) =>
+              setDraft((prev) => ({
+                ...prev,
+                ladder: { ...prev.ladder, fullSuitePriceId: v },
+              }))
+            }
+          />
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {draft.ladder.rungs.map((rung, i) => (
+            <div key={rung.points} className="rounded-lg border p-3">
+              <p className="mb-2 text-sm font-semibold">{rung.points} pts</p>
+              <div className="grid grid-cols-2 gap-3">
+                <EditableField
+                  label="Reward name"
+                  value={rung.name}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], name: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+                <EditableField
+                  label="Stripe price ID"
+                  value={rung.priceId}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], priceId: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+                <EditableField
+                  label="Retail value (USD)"
+                  type="number"
+                  value={String(rung.retailValue)}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], retailValue: Number(v) };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+                <EditableField
+                  label="Buy price (USD)"
+                  type="number"
+                  value={String(rung.buyPrice)}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], buyPrice: Number(v) };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+              </div>
+              <div className="mt-2">
+                <ToggleField
+                  label="Double unlock (gold/amber styling)"
+                  helper="Highlights this rung as a JV partner bonus tier."
+                  checked={rung.doubleUnlock}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], doubleUnlock: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </EditorCard>
+
       <StickyActionBar onSave={save} saveLabel="Save rewards" />
     </div>
   );
 };
 
 export default CmsRewards;
+

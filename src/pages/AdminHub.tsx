@@ -1,8 +1,15 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Settings, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench } from "lucide-react";
+import { BarChart3, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench } from "lucide-react";
 
 const sections = [
+  {
+    title: "Product Overview",
+    description: "Features, workflow, and route audit — everything that describes what's built",
+    icon: FileText,
+    to: "/owner-console/overview",
+    color: "text-cyan-500",
+  },
   {
     title: "Content Editor",
     description: "Edit every headline, subhead, button, and paragraph across all pages",
@@ -16,13 +23,6 @@ const sections = [
     icon: BarChart3,
     to: "/owner-console/analytics",
     color: "text-blue-500",
-  },
-  {
-    title: "Content Editor",
-    description: "Edit public-facing content visually (WYSIWYG)",
-    icon: Settings,
-    to: "/owner-console/content",
-    color: "text-emerald-500",
   },
   {
     title: "Promoters",
@@ -72,13 +72,6 @@ const sections = [
     icon: Eye,
     to: "/owner-console/view-as-user",
     color: "text-emerald-500",
-  },
-  {
-    title: "Client Feature Overview",
-    description: "Copy-ready feature summaries with administrator workflow",
-    icon: FileText,
-    to: "/owner-console/features",
-    color: "text-cyan-500",
   },
 ];
 

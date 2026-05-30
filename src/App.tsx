@@ -65,14 +65,13 @@ import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import AdminNewsletter from "@/pages/AdminNewsletter";
 import Unsubscribe from "@/pages/Unsubscribe";
-import Features from "@/pages/Features";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
-import Workflow from "@/pages/Workflow";
+import AdminOverview from "@/pages/AdminOverview";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import Waitlist from "@/pages/Waitlist";
 import WaitlistThanks from "@/pages/WaitlistThanks";
-import UserFeaturesAudit from "@/pages/UserFeaturesAudit";
+
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
 import InviteEntry from "@/pages/InviteEntry";
@@ -150,7 +149,7 @@ const App = () => (
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/app/features" element={<FeatureOverviewPage mode="user" />} />
-                <Route path="/workflow" element={<Workflow />} />
+                <Route path="/workflow" element={<Navigate to="/owner-console/overview?tab=workflow" replace />} />
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
                 {/* Referral invite entry — stores code then funnels into assessment */}
@@ -227,7 +226,8 @@ const App = () => (
                 <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />
                 <Route path="bios" element={<AdminBios />} />
                 <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
-                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
+                <Route path="overview" element={<AdminOverview />} />
+                <Route path="features" element={<Navigate to="/owner-console/overview?tab=features" replace />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="payouts" element={<AdminPayouts />} />
                 <Route path="partner-ops" element={<AdminPartnerOps />} />
@@ -236,16 +236,14 @@ const App = () => (
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}
-              <Route path="/user-features" element={<AdminLayout />}>
-                <Route index element={<UserFeaturesAudit />} />
-              </Route>
+              <Route path="/user-features" element={<Navigate to="/owner-console/overview?tab=audit" replace />} />
 
               {/* Legacy admin redirects */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminHub />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
-                <Route path="features" element={<FeatureOverviewPage mode="admin" />} />
+                <Route path="features" element={<Navigate to="/owner-console/overview?tab=features" replace />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

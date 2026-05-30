@@ -81,7 +81,7 @@ const SECTION_META: Record<string, Record<string, { label: string; hint: string;
 const sectionMeta = (page: string, section: string) =>
   SECTION_META[page]?.[section];
 
-type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean };
+type Draft = SiteContentRow & { _dirty?: boolean; _new?: boolean; column_slot?: "full" | "left" | "right" };
 
 const sectionTitle = (s: string) =>
   s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

@@ -299,6 +299,20 @@ export interface GlobalConfig {
   trackAnalytics: boolean;
 }
 
+export interface UpgradeCardPlan {
+  name: string;
+  price: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface UpgradeCardsConfig {
+  heading: string;
+  plan1: UpgradeCardPlan;
+  plan2: UpgradeCardPlan;
+}
+
 export interface SiteConfig {
   landing: LandingConfig;
   assessment: AssessmentConfig;
@@ -310,6 +324,7 @@ export interface SiteConfig {
   partners: PartnerConfig;
   notifications: NotificationConfig;
   global: GlobalConfig;
+  upgradeCards: UpgradeCardsConfig;
 }
 
 /* ───── Defaults ───── */
@@ -612,6 +627,23 @@ export const defaultSiteConfig: SiteConfig = {
     showCohortTiming: true,
     adminPassword: "challengeos2024",
     trackAnalytics: true,
+  },
+  upgradeCards: {
+    heading: "Why wait to earn enough points? Unlock lifetime access now and keep everything you have built.",
+    plan1: {
+      name: "Lifetime Challenge Access",
+      price: "$97",
+      description: "Keep lifetime access to the 3-day challenge, your dashboard, and everything you've built.",
+      ctaText: "Get lifetime access",
+      ctaLink: "/premium",
+    },
+    plan2: {
+      name: "Lifetime Challenge + Premium Course",
+      price: "$497",
+      description: "Everything in the $97 plan plus Modules 4 and 5 of the premium course.",
+      ctaText: "Get the full package",
+      ctaLink: "/premium",
+    },
   },
 };
 

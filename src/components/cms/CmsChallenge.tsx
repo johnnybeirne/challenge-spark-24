@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { useSiteConfig, type ChallengeConfig, type ChallengeTask } from "@/context/SiteConfigContext";
+import { useSiteConfig, type ChallengeConfig, type ChallengeTask, type UpgradeCardsConfig, type UpgradeCardPlan } from "@/context/SiteConfigContext";
 import {
   CmsPageHeader,
   EditorCard,
@@ -16,6 +16,13 @@ import {
 const CmsChallenge = () => {
   const { config, updateSection } = useSiteConfig();
   const [draft, setDraft] = useState<ChallengeConfig>(JSON.parse(JSON.stringify(config.challenge)));
+  const [upgradeDraft, setUpgradeDraft] = useState<UpgradeCardsConfig>(
+    JSON.parse(JSON.stringify(config.upgradeCards)),
+  );
+
+  const updatePlan = (slot: "plan1" | "plan2", field: keyof UpgradeCardPlan, value: string) => {
+    setUpgradeDraft((prev) => ({ ...prev, [slot]: { ...prev[slot], [field]: value } }));
+  };
 
   const updateTask = (dayIdx: number, taskIdx: number, field: keyof ChallengeTask, value: string) => {
     const days = [...draft.days];
@@ -33,6 +40,7 @@ const CmsChallenge = () => {
 
   const save = () => {
     updateSection("challenge", draft);
+    updateSection("upgradeCards", upgradeDraft);
     toast.success("Challenge content updated");
   };
 
@@ -164,6 +172,53 @@ const CmsChallenge = () => {
           )}
         </EditorCard>
       ))}
+
+      <EditorCard
+        title="Upgrade cards"
+        description="Two side-by-side upgrade cards shown on Day 1/2/3 completion screens and Day 2/3 locked screens."
+      >
+        <EditableField
+          label="Heading shown above the cards"
+          value={upgradeDraft.heading}
+          onChange={(v) => setUpgradeDraft((p) => ({ ...p, heading: v }))}
+          multiline
+          rows={2}
+        />
+        {(["plan1", "plan2"] as const).map((slot) => (
+          <div key={slot} className="space-y-3 rounded-lg border border-border p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {slot === "plan1" ? "Card 1" : "Card 2"}
+            </p>
+            <EditableField
+              label="Name"
+              value={upgradeDraft[slot].name}
+              onChange={(v) => updatePlan(slot, "name", v)}
+            />
+            <EditableField
+              label="Price"
+              value={upgradeDraft[slot].price}
+              onChange={(v) => updatePlan(slot, "price", v)}
+            />
+            <EditableField
+              label="Description"
+              value={upgradeDraft[slot].description}
+              onChange={(v) => updatePlan(slot, "description", v)}
+              multiline
+              rows={3}
+            />
+            <EditableField
+              label="Button text"
+              value={upgradeDraft[slot].ctaText}
+              onChange={(v) => updatePlan(slot, "ctaText", v)}
+            />
+            <EditableField
+              label="Button link"
+              value={upgradeDraft[slot].ctaLink}
+              onChange={(v) => updatePlan(slot, "ctaLink", v)}
+            />
+          </div>
+        ))}
+      </EditorCard>
 
       <StickyActionBar onSave={save} saveLabel="Save challenge" />
     </div>

@@ -1,81 +1,29 @@
-# Split Dashboard into Start Here + Your Dashboard
+The mismatch is real: the editor is showing the **Authority** section, while the visible preview is currently scrolled to the **Hero** section. The data is wired, but the editor gives no clear page-position context, so it looks like unrelated text should be controlling the circled headline.
 
-## New information architecture
+Plan:
 
-```
-Sidebar / Bottom nav
-├── Start Here           ← /challenger-dashboard  (renamed, welcome-only)
-├── Your Dashboard       ← /your-dashboard        (NEW — Day 1/2/3 record)
-├── Challenge            ← unchanged
-├── Unlocks              ← unchanged
-└── Earn Rewards         ← unchanged
+1. **Make each CMS section identify its live page area**
+   - Rename section headers and field labels so they map to what users see, e.g.:
+     - Hero: Eyebrow, Main headline, Supporting text, Primary button
+     - Authority: Authority card title, Authority card body
+     - FAQ: Question 1, Answer 1, etc.
+   - Add a small “Appears in preview as…” hint per section so users know what part of the page they are editing.
 
-Account menu
-└── Profile              ← contact details only
-```
+2. **Sync preview scroll to the selected editor section**
+   - Add stable anchors/data attributes to Landing sections: hero, problem, reveal, score, benefits, authority, faq, cta.
+   - When an editor accordion section opens or is selected, reload/point the iframe to `/#section-id` so the preview jumps to the matching part of the page.
+   - This means opening **Authority** will show the Authority card, not the top Hero headline.
 
-## Start Here (existing `/challenger-dashboard`, slimmed)
+3. **Improve the split editor UX**
+   - Add a “Editing: Landing / Hero” or “Editing: Landing / Authority” indicator above the preview.
+   - Keep desktop/mobile/reload controls as-is.
+   - Preserve saving behavior and the existing live page rendering.
 
-Keep only the orientation surface:
-- Welcome video card (with Mark as Watched / Watch Again)
-- Countdown ("2 days · 23 hours left")
-- Primary CTA (Start Day 1 / Continue Day N / View Your Challenge)
-- 3-day step strip
+4. **Clean up unused/duplicated preview code if safe**
+   - The standalone `CmsPreviewPane` exists but the current page uses its own iframe. I’ll either reuse it or leave it alone if changing it would create unnecessary scope.
 
-Remove from this page (move to Your Dashboard):
-- Day 1 answer summaries (niche, audience, promise, challenge title)
-- Profile bio / avatar edit card
-- Assessment result card
-- Signup credits panel
-
-## Your Dashboard (new `/your-dashboard`)
-
-A single page that records everything the user has built. Read-only summary with "Edit on Day X" links back into the challenge flow (no inline editing — keeps AI-derived outputs consistent).
-
-Sections, in order:
-
-1. **Challenge identity** — title from `useChallengeIdentity`, niche, audience, promise, desired outcome (sourced from `aiOutputs.day1_foundation` + `day1_assessment` + `state.memory.desiredOutcome`).
-2. **Day 1 — Foundation** — full parsed `day1_foundation` + `day1_assessment` fields. "Redo Day 1" link.
-3. **Day 2 — Lead Magnet Quiz** — outputs under `day2_*` keys from `aiOutputs`. Empty state with link to `/challenge/day-2` if not done.
-4. **Day 3 — Launch** — outputs under `day3_*` keys + public challenge URL when set. Empty state with link to `/challenge/day-3`.
-5. **Progress + timeline** — started_at, ends_at, current day, completed flag.
-
-All read from `state.challenge.aiOutputs` / `state.memory` — no schema changes.
-
-## Profile (`/profile`, slimmed)
-
-Keep only:
-- Avatar + name
-- Email (read-only)
-- Bio
-- Contact details section
-- Sign out
-
-Remove:
-- "Suggested challenge title" card
-- Day 1 answer summaries
-- Anything sourced from `aiOutputs.day1_*`
-
-## Routing + nav
-
-- Rename sidebar label `"Your Dashboard"` → `"Start Here"` in `src/components/ChallengeSidebar.tsx`.
-- Add new sidebar entry `"Your Dashboard"` → `/your-dashboard` directly under Start Here.
-- Update `src/components/BottomNav.tsx`: replace the Dashboard tab with two entries OR keep 4 tabs by swapping the Dashboard tab to point to `/your-dashboard` (the more frequently revisited page) and exposing Start Here via the sidebar/header. **Recommend: keep 4-tab rule; bottom nav points to `/your-dashboard`, Start Here lives in sidebar + first-run redirect.**
-- Add route in `src/App.tsx`: `<Route path="/your-dashboard" element={<AuthGuard><YourDashboard /></AuthGuard>} />`.
-- First-time users (no Day 1 progress) land on `/challenger-dashboard` (Start Here). Returning users with progress can be auto-redirected by `useUserStage` primary CTA — no change needed, CTAs already route into the challenge.
-
-## Files touched
-
-- `src/pages/Dashboard.tsx` — strip down to welcome-only.
-- `src/pages/YourDashboard.tsx` — **new**, lifts the Day 1 rendering logic currently in `Profile.tsx` (lines ~116-345) and adds Day 2/3 sections.
-- `src/pages/Profile.tsx` — remove Day 1 sections, keep contact details.
-- `src/components/ChallengeSidebar.tsx` — rename label, add new entry.
-- `src/components/BottomNav.tsx` — repoint Dashboard tab to `/your-dashboard`.
-- `src/App.tsx` — register `/your-dashboard` route.
-- `src/lib/analytics.ts` — add `your_dashboard_viewed` event (no `as any`).
-
-## Out of scope
-
-- No DB or state-shape changes; everything reads existing `aiOutputs` / `memory`.
-- No inline editing of Day 1 answers — users redo a day to change them.
-- No changes to challenge identity hook, scoring, or unlock engine.
+Validation:
+- Open Content Editor → Landing.
+- Select Hero and confirm preview shows the top headline.
+- Select Authority and confirm preview scrolls to the Authority card.
+- Confirm edits still save and refresh the preview.

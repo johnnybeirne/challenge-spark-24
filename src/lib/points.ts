@@ -1,24 +1,24 @@
-export type CreditTierName = "Starter" | "Builder" | "Growth Partner" | "Featured Creator" | "Strategic Partner";
+export type PointTierName = "Starter" | "Builder" | "Growth Partner" | "Featured Creator" | "Strategic Partner";
 
-export interface CreditTier {
-  name: CreditTierName;
+export interface PointTier {
+  name: PointTierName;
   min: number;
   max: number | null;
 }
 
-export interface CreditReward {
+export interface PointReward {
   credits: number;
   title: string;
   accessLabel: string;
 }
 
-export interface CreditRule {
+export interface PointRule {
   id: string;
   label: string;
   credits: number;
 }
 
-export const creditTiers: CreditTier[] = [
+export const pointTiers: PointTier[] = [
   { name: "Starter", min: 0, max: 49 },
   { name: "Builder", min: 50, max: 149 },
   { name: "Growth Partner", min: 150, max: 299 },
@@ -26,7 +26,7 @@ export const creditTiers: CreditTier[] = [
   { name: "Strategic Partner", min: 500, max: null },
 ];
 
-export const creditRewards: CreditReward[] = [
+export const pointRewards: PointReward[] = [
   { credits: 50, title: "Challenge Launch Checklist", accessLabel: "Unlock access" },
   { credits: 100, title: "AI Prompt Pack", accessLabel: "Unlock access" },
   { credits: 150, title: "Referral Message Templates", accessLabel: "Unlock access" },
@@ -35,7 +35,7 @@ export const creditRewards: CreditReward[] = [
   { credits: 500, title: "Strategy Call Application", accessLabel: "Apply for" },
 ];
 
-export const creditRules: CreditRule[] = [
+export const pointRules: PointRule[] = [
   { id: "complete_day_1", label: "Complete Day 1", credits: 10 },
   { id: "complete_day_2", label: "Complete Day 2", credits: 15 },
   { id: "complete_day_3", label: "Complete Day 3", credits: 25 },
@@ -45,18 +45,18 @@ export const creditRules: CreditRule[] = [
   { id: "referral_day_3", label: "Your referral completes Day 3", credits: 25 },
 ];
 
-export const getCreditTier = (credits: number) =>
-  creditTiers.find((tier) => credits >= tier.min && (tier.max === null || credits <= tier.max)) ?? creditTiers[0];
+export const getPointTier = (credits: number) =>
+  pointTiers.find((tier) => credits >= tier.min && (tier.max === null || credits <= tier.max)) ?? pointTiers[0];
 
-export const getNextTier = (credits: number) => creditTiers.find((tier) => tier.min > credits) ?? null;
+export const getNextTier = (credits: number) => pointTiers.find((tier) => tier.min > credits) ?? null;
 
 export const getTierProgress = (credits: number) => {
-  const tier = getCreditTier(credits);
+  const tier = getPointTier(credits);
   const nextTier = getNextTier(credits);
   if (!nextTier) return 100;
   return Math.min(100, Math.round(((credits - tier.min) / (nextTier.min - tier.min)) * 100));
 };
 
-export const getNextReward = (credits: number) => creditRewards.find((reward) => reward.credits > credits) ?? null;
+export const getNextReward = (credits: number) => pointRewards.find((reward) => reward.credits > credits) ?? null;
 
-export const getUnlockedRewards = (credits: number) => creditRewards.filter((reward) => credits >= reward.credits);
+export const getUnlockedRewards = (credits: number) => pointRewards.filter((reward) => credits >= reward.credits);

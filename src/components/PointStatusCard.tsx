@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { creditRules, creditTiers, getCreditTier, getNextReward, getNextTier, getTierProgress } from "@/lib/credits";
+import { pointRules, pointTiers, getPointTier, getNextReward, getNextTier, getTierProgress } from "@/lib/points";
 
-const GROWTH_MIN = creditTiers.find((t) => t.name === "Growth Partner")!.min;
-const FEATURED_MIN = creditTiers.find((t) => t.name === "Featured Creator")!.min;
+const GROWTH_MIN = pointTiers.find((t) => t.name === "Growth Partner")!.min;
+const FEATURED_MIN = pointTiers.find((t) => t.name === "Featured Creator")!.min;
 
 const GrowthToFeaturedBar = ({ credits, compact }: { credits: number; compact?: boolean }) => {
   const navigate = useNavigate();
@@ -60,18 +60,18 @@ const GrowthToFeaturedBar = ({ credits, compact }: { credits: number; compact?: 
   );
 };
 
-interface CreditStatusCardProps {
+interface PointStatusCardProps {
   credits: number;
   compact?: boolean;
 }
 
-const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) => {
+const PointStatusCard = ({ credits, compact = false }: PointStatusCardProps) => {
   const navigate = useNavigate();
-  const tier = getCreditTier(credits);
+  const tier = getPointTier(credits);
   const nextTier = getNextTier(credits);
   const nextReward = getNextReward(credits);
   const progress = getTierProgress(credits);
-  const creditsToNextTier = nextTier ? nextTier.min - credits : 0;
+  const pointsToNextTier = nextTier ? nextTier.min - credits : 0;
 
   return (
     <Card className="overflow-hidden border-primary/20 bg-primary/5 shadow-sm">
@@ -100,7 +100,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
           </div>
           <Progress value={progress} className="h-2 transition-all duration-700" />
           <p className="mt-3 text-sm text-muted-foreground">
-            {nextTier ? `You’re ${creditsToNextTier} points away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
+            {nextTier ? `You’re ${pointsToNextTier} points away from ${nextTier.name} status.` : "You’ve reached Strategic Partner status."}
           </p>
         </div>}
 
@@ -113,7 +113,7 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
 
         {!compact && (
           <div className="mt-5 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
-            {creditRules.slice(0, 4).map((rule) => (
+            {pointRules.slice(0, 4).map((rule) => (
               <div key={rule.id} className="flex items-center justify-between rounded-lg bg-background/60 px-3 py-2">
                 <span>{rule.label}</span>
                 <span className="font-bold text-primary">+{rule.credits}</span>
@@ -131,4 +131,4 @@ const CreditStatusCard = ({ credits, compact = false }: CreditStatusCardProps) =
   );
 };
 
-export default CreditStatusCard;
+export default PointStatusCard;

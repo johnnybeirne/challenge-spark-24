@@ -36,7 +36,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const mode = getExperienceFromPath(pathname);
 
   // Subtle confirmation for the +50 "challenge started" momentum reward.
-  // The award itself is granted idempotently in applyCreditRules
+  // The award itself is granted idempotently in applyPointRules
   // (guarded by awardedActions). This effect only handles the visible
   // toast + analytics, persisted per-browser so it never repeats.
   const awardedActions = state.credits?.awardedActions ?? [];

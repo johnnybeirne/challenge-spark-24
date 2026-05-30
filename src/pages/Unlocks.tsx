@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
-import { getNextReward, creditRewards } from "@/lib/credits";
+import { getNextReward, pointRewards } from "@/lib/points";
 
 const dayRewards = [
   { day: 1, label: "Complete Day 1", credits: 10 },
@@ -42,15 +42,15 @@ const Unlocks = () => {
   const currentDay = state.challenge?.currentDay ?? 1;
   const completed = !!state.challenge?.completed;
   const referralCount = state.network?.direct ?? 0;
-  const totalCredits = state.credits?.total ?? 0;
+  const totalPoints = state.credits?.total ?? 0;
 
-  const nextReward = getNextReward(totalCredits);
-  const remaining = nextReward ? Math.max(0, nextReward.credits - totalCredits) : 0;
+  const nextReward = getNextReward(totalPoints);
+  const remaining = nextReward ? Math.max(0, nextReward.credits - totalPoints) : 0;
   const prevThreshold = nextReward
-    ? [...creditRewards].reverse().find((r) => r.credits <= totalCredits)?.credits ?? 0
+    ? [...pointRewards].reverse().find((r) => r.credits <= totalPoints)?.credits ?? 0
     : 0;
   const progressPct = nextReward
-    ? Math.min(100, Math.round(((totalCredits - prevThreshold) / (nextReward.credits - prevThreshold)) * 100))
+    ? Math.min(100, Math.round(((totalPoints - prevThreshold) / (nextReward.credits - prevThreshold)) * 100))
     : 100;
   const invitesNeeded = Math.max(1, Math.ceil(remaining / 50));
 
@@ -92,7 +92,7 @@ const Unlocks = () => {
               <div className="mt-4">
                 <Progress value={progressPct} className="h-2" />
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {totalCredits} / {nextReward.credits} points
+                  {totalPoints} / {nextReward.credits} points
                 </div>
               </div>
 

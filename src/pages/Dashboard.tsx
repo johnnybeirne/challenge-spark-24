@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
-  const [signupCreditCount, setSignupCreditCount] = useState(0);
+  const [signupPointCount, setSignupPointCount] = useState(0);
   const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
@@ -70,7 +70,7 @@ const Dashboard = () => {
     ? `Continue Day ${currentDay}`
     : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
-  const hasSignupCredits = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+  const hasSignupPoints = (state.credits?.awardedActions ?? []).includes("challenge_signup");
   const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
   const getDayDate = (day: number) => {
     if (!startedAt) return null;
@@ -82,9 +82,9 @@ const Dashboard = () => {
   useEffect(() => { trackEvent("dashboard_training_viewed"); }, []);
 
   useEffect(() => {
-    if (!hasSignupCredits) return;
+    if (!hasSignupPoints) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setSignupCreditCount(100);
+      setSignupPointCount(100);
       return;
     }
 
@@ -94,13 +94,13 @@ const Dashboard = () => {
     const animate = (time: number) => {
       const progress = Math.min((time - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setSignupCreditCount(Math.round(eased * 100));
+      setSignupPointCount(Math.round(eased * 100));
       if (progress < 1) frame = requestAnimationFrame(animate);
     };
 
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [hasSignupCredits]);
+  }, [hasSignupPoints]);
 
   const handlePhotoUpload = async (file?: File) => {
     if (!file || !authUser || photoUploading) return;

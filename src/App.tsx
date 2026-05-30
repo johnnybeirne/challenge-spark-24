@@ -27,7 +27,7 @@ import Day1 from "@/pages/Day1";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import Unlocks from "@/pages/Unlocks";
-import RedeemCredits from "@/pages/RedeemCredits";
+import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
 import Community from "@/pages/Community";
 import Calendar from "@/pages/Calendar";
@@ -183,7 +183,7 @@ const App = () => (
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
 
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
-                <Route path="/redeem" element={<AuthGuard><RedeemCredits /></AuthGuard>} />
+                <Route path="/redeem" element={<AuthGuard><RedeemPoints /></AuthGuard>} />
                 <Route path="/earn" element={<AuthGuard><EarnRewards /></AuthGuard>} />
                 {/* Legacy routes — redirect to the unified Earn Rewards page */}
                 <Route path="/referrals" element={<Navigate to="/earn" replace />} />

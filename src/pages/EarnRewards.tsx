@@ -21,7 +21,7 @@ import { memoryShareText } from "@/lib/personalisation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
-import { getNextReward, creditRewards } from "@/lib/credits";
+import { getNextReward, pointRewards } from "@/lib/points";
 
 interface PartnerAsset {
   id: string;
@@ -216,7 +216,7 @@ const EarnRewards = () => {
           const nextReward = getNextReward(points);
           const threshold = nextReward?.credits ?? points;
           const prevThreshold = (() => {
-            const earned = creditRewards.map((r) => r.credits).filter((c) => c <= points);
+            const earned = pointRewards.map((r) => r.credits).filter((c) => c <= points);
             return earned.length ? earned[earned.length - 1] : 0;
           })();
           const pct = nextReward

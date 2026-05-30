@@ -4,13 +4,13 @@ import { ArrowLeft, Check, Lock, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAppState } from "@/context/AppContext";
-import { creditRewards } from "@/lib/credits";
+import { pointRewards } from "@/lib/points";
 
-const ladder = creditRewards.map((r) => ({ credits: r.credits, name: r.title }));
+const ladder = pointRewards.map((r) => ({ credits: r.credits, name: r.title }));
 
 const STORAGE_KEY = "leadio.unlockedRewards.v1";
 
-const RedeemCredits = () => {
+const RedeemPoints = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const credits = state.credits?.total ?? 0;
@@ -146,4 +146,4 @@ const RedeemCredits = () => {
   );
 };
 
-export default RedeemCredits;
+export default RedeemPoints;

@@ -54,7 +54,7 @@ export default function Rewards() {
               <span className="font-bold text-primary">{userPoints}</span>
               <span className="text-muted-foreground"> pts</span>
             </div>
-            <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", tierColor[userTier.name])}>
+            <span className="text-xs font-medium text-muted-foreground">
               {userTier.name}
             </span>
           </div>
@@ -90,8 +90,7 @@ export default function Rewards() {
                     "relative grid grid-cols-[64px_1fr_auto] items-center gap-5 rounded-xl border px-5 py-4 transition-all",
                     reached ? "opacity-100" : "opacity-60",
                     isGold && "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20",
-                    isDest && "border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5",
-                    !isGold && !isDest && "bg-card",
+                    !isGold && "bg-card",
                     isCurrentRung && "ring-2 ring-primary ring-offset-2 ring-offset-background",
                   )}
                 >
@@ -104,7 +103,6 @@ export default function Rewards() {
                       "flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold",
                       reached ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                       isGold && reached && "bg-amber-500 text-white",
-                      isDest && "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground",
                     )}>
                       {rung.points}
                     </div>

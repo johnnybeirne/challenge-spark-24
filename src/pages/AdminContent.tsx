@@ -138,25 +138,46 @@ const AdminContent = () => {
     setPreviewNonce((n) => n + 1);
   }, [activePage]);
 
+  // Custom section order persisted in a meta row: section='_meta', key='section_order'.
+  const orderRow = useMemo(
+    () => rows.find((r) => r.section === "_meta" && r.key === "section_order"),
+    [rows]
+  );
+  const customOrder = useMemo<string[]>(() => {
+    if (!orderRow?.value) return [];
+    try {
+      const v = JSON.parse(orderRow.value);
+      return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  }, [orderRow]);
+
   const grouped = useMemo(() => {
     const g: Record<string, Draft[]> = {};
     for (const r of rows) {
+      if (r.section === "_meta") continue; // hide meta rows from the editor
       g[r.section] ??= [];
       g[r.section].push(r);
     }
-    // Sort sections to match the order they appear on the live page.
-    // Known sections (from SECTION_META) come first in page order; unknown
-    // sections are appended alphabetically at the end.
+    // Section order priority:
+    // 1. Persisted custom order (drag-and-drop result)
+    // 2. SECTION_META declaration order (matches live page)
+    // 3. Alphabetical fallback for anything else
     const knownOrder = Object.keys(SECTION_META[activePage] ?? {});
     const orderIndex = (name: string) => {
-      const i = knownOrder.indexOf(name);
-      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+      const c = customOrder.indexOf(name);
+      if (c !== -1) return [0, c] as const;
+      const k = knownOrder.indexOf(name);
+      if (k !== -1) return [1, k] as const;
+      return [2, 0] as const;
     };
     const ordered: Record<string, Draft[]> = {};
     Object.keys(g)
       .sort((a, b) => {
-        const ai = orderIndex(a);
-        const bi = orderIndex(b);
+        const [ag, ai] = orderIndex(a);
+        const [bg, bi] = orderIndex(b);
+        if (ag !== bg) return ag - bg;
         if (ai !== bi) return ai - bi;
         return a.localeCompare(b);
       })
@@ -164,7 +185,65 @@ const AdminContent = () => {
         ordered[k] = g[k];
       });
     return ordered;
-  }, [rows, activePage]);
+  }, [rows, activePage, customOrder]);
+
+  const sectionIds = useMemo(() => Object.keys(grouped), [grouped]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } })
+  );
+
+  const persistOrder = async (order: string[]) => {
+    const payload = {
+      page: activePage,
+      section: "_meta",
+      key: "section_order",
+      value: JSON.stringify(order),
+      value_type: "json",
+      label: "Section order",
+      sort_order: 0,
+    };
+    if (orderRow) {
+      const { error } = await supabase
+        .from("site_content")
+        .update({ value: payload.value })
+        .eq("id", orderRow.id);
+      if (error) return toast.error(error.message);
+    } else {
+      const { error } = await supabase.from("site_content").insert(payload);
+      if (error) return toast.error(error.message);
+    }
+    invalidatePage(activePage);
+    await load(activePage);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = sectionIds.indexOf(String(active.id));
+    const newIndex = sectionIds.indexOf(String(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
+    const next = arrayMove(sectionIds, oldIndex, newIndex);
+    // Optimistically reflect the new order by writing a synthetic meta row
+    // into local state so the UI updates before the network round-trip.
+    setRows((rs) => {
+      const without = rs.filter((r) => !(r.section === "_meta" && r.key === "section_order"));
+      const fake: Draft = {
+        id: orderRow?.id ?? `meta-${Date.now()}`,
+        page: activePage,
+        section: "_meta",
+        key: "section_order",
+        value: JSON.stringify(next),
+        value_type: "json",
+        label: "Section order",
+        sort_order: 0,
+      } as Draft;
+      return [...without, fake];
+    });
+    void persistOrder(next);
+  };
+
+
 
 
   const updateRow = (id: string, patch: Partial<Draft>) =>

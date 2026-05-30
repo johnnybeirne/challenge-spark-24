@@ -600,7 +600,7 @@ const AdminBios = () => {
       {/* Header */}
       <div className="flex items-start justify-between mb-5 gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">User Bios</h1>
+          <h1 className="text-2xl font-bold">Registrants</h1>
           <p className="text-sm text-muted-foreground">
             Merged view of buyers & waitlist signups. Click a row for full details.
           </p>

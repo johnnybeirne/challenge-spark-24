@@ -512,7 +512,8 @@ const DayChallenge = () => {
       )}
 
       {dayNum === 3 && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-6">
+          <VideoPlaceholder />
           <DayCopilot
             dayNum={3}
             eyebrow="Day 3 · AI-guided training"

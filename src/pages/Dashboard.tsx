@@ -38,7 +38,6 @@ import RestartDay1Button from "@/components/RestartDay1Button";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
-import { Link } from "react-router-dom";
 
 
 const challengeSteps = [

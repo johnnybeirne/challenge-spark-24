@@ -146,6 +146,15 @@ const DayChallenge = () => {
     return null;
   }
 
+  // Lock completed days — once you progress past a day, you can't go back to it.
+  // Admins bypass this so they can preview any day.
+  const currentDayNum = state.challenge.currentDay ?? 1;
+  if (adminChecked && !isAdmin && currentDayNum > dayNum && !state.challenge.completed) {
+    toast.info(`Day ${dayNum} is locked — you've moved on to Day ${currentDayNum}.`);
+    navigate("/challenger-dashboard", { replace: true });
+    return null;
+  }
+
   // Setup is now embedded in /training (the onboarding hub).
   // Day 1 focuses purely on training, tasks, and AI help.
 

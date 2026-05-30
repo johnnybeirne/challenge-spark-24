@@ -308,6 +308,7 @@ const AdminContent = () => {
           value_type: r.value_type,
           label: r.label,
           sort_order: r.sort_order,
+          column_slot: r.column_slot ?? "full",
         });
         if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }
         else ok++;
@@ -320,6 +321,7 @@ const AdminContent = () => {
             value_type: r.value_type,
             label: r.label,
             sort_order: r.sort_order,
+            column_slot: r.column_slot ?? "full",
           })
           .eq("id", r.id);
         if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }

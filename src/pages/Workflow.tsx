@@ -3,16 +3,11 @@ import { motion, useInView, useScroll, useSpring } from "framer-motion";
 import {
   ClipboardList,
   Sparkles,
-  UserPlus,
   Target,
-  Magnet,
   Rocket,
-  Gift,
   Users,
-  GraduationCap,
   ArrowRight,
   CheckCircle2,
-  Circle,
   Activity,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

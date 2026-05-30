@@ -341,6 +341,36 @@ const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
 
+  const handleResetDay1 = () => {
+    try {
+      localStorage.removeItem(SETUP_KEY);
+      localStorage.setItem(DAY1_STEP_KEY, "4");
+    } catch {}
+    setState((prev) => {
+      const aiOutputs = Object.fromEntries(
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(([k]) => !k.startsWith("day1_")),
+      );
+      const tasks = Object.fromEntries(
+        Object.entries(prev.challenge.tasks ?? {}).filter(([k]) => !k.startsWith("day1_")),
+      );
+      return {
+        ...prev,
+        challenge: { ...prev.challenge, currentDay: 1, aiOutputs, tasks },
+        training: { ...prev.training, day1Watched: false },
+        memory: {
+          ...prev.memory,
+          topic: "",
+          desiredOutcome: "",
+          audienceType: undefined as any,
+          challengeType: undefined as any,
+        },
+      };
+    });
+    trackEvent("day1_reset" as any, {});
+    toast.success("Day 1 reset — let's start again.");
+    try { window.location.reload(); } catch {}
+  };
+
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
   const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();

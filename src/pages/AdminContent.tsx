@@ -811,7 +811,9 @@ function FieldRow({
         </div>
       </div>
 
-      {row.value_type === "textarea" ? (
+      {row.value_type === "image" ? (
+        <ImageField value={row.value} onChange={(v) => onUpdate({ value: v })} />
+      ) : row.value_type === "textarea" ? (
         <Textarea
           value={row.value}
           onChange={(e) => onUpdate({ value: e.target.value })}
@@ -826,6 +828,95 @@ function FieldRow({
           type={row.value_type === "url" ? "url" : "text"}
         />
       )}
+    </div>
+  );
+}
+
+function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (file: File) => {
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image must be under 8 MB");
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage
+      .from("site-images")
+      .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+    if (error) {
+      setUploading(false);
+      toast.error("Upload failed", { description: error.message });
+      return;
+    }
+    const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+    setUploading(false);
+    onChange(data.publicUrl);
+    toast.success("Image uploaded");
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-start gap-2">
+        <div className="h-16 w-16 shrink-0 rounded-md border bg-muted/40 overflow-hidden flex items-center justify-center">
+          {value ? (
+            <img src={value} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <ImageIcon className="h-5 w-5 text-muted-foreground/60" />
+          )}
+        </div>
+        <div className="flex-1 space-y-1.5 min-w-0">
+          <Input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Paste image URL or upload"
+            className="h-8 text-xs"
+          />
+          <div className="flex items-center gap-1.5">
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void handleFile(f);
+                e.target.value = "";
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs"
+              disabled={uploading}
+              onClick={() => inputRef.current?.click()}
+            >
+              {uploading ? (
+                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+              ) : (
+                <Upload className="h-3 w-3 mr-1" />
+              )}
+              Upload
+            </Button>
+            {value && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs text-muted-foreground hover:text-destructive"
+                onClick={() => onChange("")}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

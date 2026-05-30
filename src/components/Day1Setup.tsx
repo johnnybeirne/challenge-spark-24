@@ -1,6 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2, Users, AlertCircle, Target, Quote, Compass } from "lucide-react";
+import { Briefcase, User as UserIcon, Zap, Sparkles, GraduationCap, Rocket, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2, Users, AlertCircle, Target, Quote, Compass, RotateCcw } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -329,6 +340,36 @@ const FoundationStep = ({
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
+
+  const handleResetDay1 = () => {
+    try {
+      localStorage.removeItem(SETUP_KEY);
+      localStorage.setItem(DAY1_STEP_KEY, "4");
+    } catch {}
+    setState((prev) => {
+      const aiOutputs = Object.fromEntries(
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(([k]) => !k.startsWith("day1_")),
+      );
+      const tasks = Object.fromEntries(
+        Object.entries(prev.challenge.tasks ?? {}).filter(([k]) => !k.startsWith("day1_")),
+      );
+      return {
+        ...prev,
+        challenge: { ...prev.challenge, currentDay: 1, aiOutputs, tasks },
+        training: { ...prev.training, day1Watched: false },
+        memory: {
+          ...prev.memory,
+          topic: "",
+          desiredOutcome: "",
+          audienceType: undefined as any,
+          challengeType: undefined as any,
+        },
+      };
+    });
+    trackEvent("day1_reset" as any, {});
+    toast.success("Day 1 reset — let's start again.");
+    try { window.location.reload(); } catch {}
+  };
 
   // Restore prior in-progress assessment from saved setup + persisted step
   const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
@@ -1097,6 +1138,36 @@ const Day1Setup = ({ onComplete }: Props) => {
                       Continue Building Your Challenge
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
+
+                    <div className="flex flex-col items-center gap-1.5 pt-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                            <RotateCcw className="h-3 w-3" />
+                            Start Day 1 again
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This clears your Day 1 answers, AI outputs, and progress so you can
+                              start the questions from scratch. Your referrals, points, and other
+                              progress are kept.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleResetDay1}>
+                              Start Day 1 again
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      <p className="text-[11px] text-muted-foreground text-center max-w-sm">
+                        If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+                      </p>
+                    </div>
                   </RevealControls>
                 </div>
               )}

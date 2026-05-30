@@ -398,61 +398,78 @@ const AdminContent = () => {
                 </div>
               </div>
             ) : (
-              <Accordion
-                type="single"
-                collapsible
-                value={activeSection ?? undefined}
-                onValueChange={(v) => setActiveSection(v || null)}
-                className="space-y-2"
-              >
-                {Object.entries(grouped).map(([section, items]) => {
-                  const sectionDirty = items.some((r) => r._dirty);
-                  const meta = sectionMeta(activePage, section);
-                  const friendly = meta?.label ?? sectionTitle(section);
-                  return (
-                    <AccordionItem
-                      key={section}
-                      value={section}
-                      className="rounded-lg border bg-card px-3 data-[state=open]:border-primary/60"
-                    >
-                      <AccordionTrigger className="hover:no-underline py-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-semibold">{friendly}</span>
-                          <Badge variant="secondary" className="h-5 text-[10px]">
-                            {items.length}
-                          </Badge>
-                          {sectionDirty && (
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="unsaved" />
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+                  <Accordion
+                    type="single"
+                    collapsible
+                    value={activeSection ?? undefined}
+                    onValueChange={(v) => setActiveSection(v || null)}
+                    className="space-y-2"
+                  >
+                    {Object.entries(grouped).map(([section, items]) => {
+                      const sectionDirty = items.some((r) => r._dirty);
+                      const meta = sectionMeta(activePage, section);
+                      const friendly = meta?.label ?? sectionTitle(section);
+                      return (
+                        <SortableSection key={section} id={section}>
+                          {(handleProps) => (
+                            <AccordionItem
+                              value={section}
+                              className="rounded-lg border bg-card pl-1 pr-3 data-[state=open]:border-primary/60"
+                            >
+                              <div className="flex items-center">
+                                <button
+                                  type="button"
+                                  aria-label="Drag to reorder"
+                                  className="flex h-8 w-7 shrink-0 cursor-grab items-center justify-center text-muted-foreground/60 hover:text-foreground active:cursor-grabbing"
+                                  {...handleProps}
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </button>
+                                <AccordionTrigger className="flex-1 hover:no-underline py-3">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-sm font-semibold">{friendly}</span>
+                                    <Badge variant="secondary" className="h-5 text-[10px]">
+                                      {items.length}
+                                    </Badge>
+                                    {sectionDirty && (
+                                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="unsaved" />
+                                    )}
+                                  </div>
+                                </AccordionTrigger>
+                              </div>
+                              <AccordionContent className="pb-3 space-y-3">
+                                {meta?.hint && (
+                                  <p className="text-xs text-muted-foreground italic">
+                                    Appears in preview as: {meta.hint}
+                                  </p>
+                                )}
+                                {items.map((row) => (
+                                  <FieldRow
+                                    key={row.id}
+                                    row={row}
+                                    onUpdate={(p) => updateRow(row.id, p)}
+                                    onRemove={() => removeRow(row)}
+                                  />
+                                ))}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => addRow(section)}
+                                  className="w-full justify-start text-xs h-8"
+                                >
+                                  <Plus className="h-3.5 w-3.5 mr-1" /> Add field
+                                </Button>
+                              </AccordionContent>
+                            </AccordionItem>
                           )}
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-3 space-y-3">
-                        {meta?.hint && (
-                          <p className="text-xs text-muted-foreground italic">
-                            Appears in preview as: {meta.hint}
-                          </p>
-                        )}
-                        {items.map((row) => (
-                          <FieldRow
-                            key={row.id}
-                            row={row}
-                            onUpdate={(p) => updateRow(row.id, p)}
-                            onRemove={() => removeRow(row)}
-                          />
-                        ))}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => addRow(section)}
-                          className="w-full justify-start text-xs h-8"
-                        >
-                          <Plus className="h-3.5 w-3.5 mr-1" /> Add field
-                        </Button>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                })}
-              </Accordion>
+                        </SortableSection>
+                      );
+                    })}
+                  </Accordion>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
 

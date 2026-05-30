@@ -391,7 +391,7 @@ const AdminContent = () => {
       <div className="border-b bg-background">
         <div className="flex items-center justify-between gap-3 px-4 py-2">
           <div className="flex items-center gap-3 min-w-0">
-            <h1 className="text-sm font-semibold shrink-0">Content Editor</h1>
+            <h1 className="text-sm font-semibold shrink-0">Landing Page Editor</h1>
             <Tabs value={activePage} onValueChange={setActivePage}>
               <TabsList className="h-8">
                 {PAGES.map((p) => (

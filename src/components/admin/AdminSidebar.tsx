@@ -27,7 +27,7 @@ const items = [
   { title: "Challenge Days", url: "/owner-console/challenge-days", icon: ListChecks },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   
-  { title: "Signups", url: "/owner-console/signups", icon: UserPlus },
+  
   
   { title: "Waitlist Email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail },

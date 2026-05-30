@@ -134,8 +134,8 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
 
       <div className="relative">
         <img
-          src={frustratedEntrepreneurLeads}
-          alt="Frustrated entrepreneur trying to understand where leads are coming from"
+          src={t("hero.image") || frustratedEntrepreneurLeads}
+          alt={t("hero.image_alt", "Frustrated entrepreneur trying to understand where leads are coming from")}
           width={1280}
           height={960}
           fetchPriority="high"

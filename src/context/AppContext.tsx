@@ -357,15 +357,15 @@ function applyPointRules(state: AppState): AppState {
 
   if (updated.challenge.currentDay > 1) {
     completedDays.add(1);
-    updated = awardPoints(updated, "complete_day_1", "You earned 10 points for completing Day 1", 10);
+    updated = awardPoints(updated, "complete_day_1", "You earned 50 points for completing Day 1", 50);
   }
   if (updated.challenge.currentDay > 2) {
     completedDays.add(2);
-    updated = awardPoints(updated, "complete_day_2", "You earned 15 points for completing Day 2", 15);
+    updated = awardPoints(updated, "complete_day_2", "You earned 50 points for completing Day 2", 50);
   }
   if (updated.challenge.completed || updated.challenge.currentDay > 3) {
     completedDays.add(3);
-    updated = awardPoints(updated, "complete_day_3", "You earned 25 points for completing Day 3", 25);
+    updated = awardPoints(updated, "complete_day_3", "You earned 50 points for completing Day 3", 50);
   }
 
   if (updated.user?.avatarUrl) {

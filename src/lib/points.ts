@@ -36,13 +36,13 @@ export const pointRewards: PointReward[] = [
 ];
 
 export const pointRules: PointRule[] = [
-  { id: "complete_day_1", label: "Complete Day 1", points: 10 },
-  { id: "complete_day_2", label: "Complete Day 2", points: 15 },
-  { id: "complete_day_3", label: "Complete Day 3", points: 25 },
+  { id: "complete_day_1", label: "Complete Day 1", points: 50 },
+  { id: "complete_day_2", label: "Complete Day 2", points: 50 },
+  { id: "complete_day_3", label: "Complete Day 3", points: 50 },
   { id: "referral_join", label: "Invite someone who joins", points: 50 },
-  { id: "referral_day_1", label: "Your referral completes Day 1", points: 10 },
-  { id: "referral_day_2", label: "Your referral completes Day 2", points: 15 },
-  { id: "referral_day_3", label: "Your referral completes Day 3", points: 25 },
+  { id: "referral_day_1", label: "Your referral completes Day 1", points: 50 },
+  { id: "referral_day_2", label: "Your referral completes Day 2", points: 50 },
+  { id: "referral_day_3", label: "Your referral completes Day 3", points: 50 },
 ];
 
 export const getPointTier = (points: number) =>

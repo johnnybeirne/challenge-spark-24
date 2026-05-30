@@ -495,7 +495,9 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (current === 1) {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
-      setStep(2);
+      profileSaved("Who you serve");
+      setStep5Phase(saved?.challengeType ? "choose" : "intro");
+      setStep(5);
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
@@ -505,12 +507,8 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else {
       if (!how.trim()) return;
       persistFoundation({ how: how.trim() });
-      // Save into memory + aiOutputs so the AI uses this as the desired outcome.
       setState((prev) => ({
         ...prev,
-        memory: mergeMemory(prev.memory, {
-          desiredOutcome: how.trim(),
-        }),
         challenge: {
           ...prev.challenge,
           aiOutputs: {
@@ -524,16 +522,28 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
-      profileSaved("The outcome you'll deliver");
-      pushNotification({
-        title: "Dashboard updated",
-        message: "Your dashboard now reflects your latest challenge answers.",
-        href: "/challenger-dashboard",
-        dedupeKey: "day1_foundation_saved",
-      });
-      setStep7Phase("intro");
-      setStep(7);
+      profileSaved("How you create the result");
+      setStep9Phase(saved?.outcome ? "input" : "intro");
+      setStep(9);
     }
+  };
+
+  const handleOutcomeNext = () => {
+    if (!outcome.trim()) return;
+    persistFoundation({ outcome: outcome.trim() });
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, { desiredOutcome: outcome.trim() }),
+    }));
+    profileSaved("The outcome you'll deliver");
+    pushNotification({
+      title: "Dashboard updated",
+      message: "Your dashboard now reflects your latest challenge answers.",
+      href: "/challenger-dashboard",
+      dedupeKey: "day1_outcome_saved",
+    });
+    setStep7Phase("intro");
+    setStep(7);
   };
 
   const handleAudience = (v: "b2b" | "b2c") => {
@@ -544,10 +554,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       memory: mergeMemory(prev.memory, { audienceType: v }),
     }));
     profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
-    // Skip the standalone ack screen — flow straight into step 5 whose intro
-    // sequence opens with the acknowledgement so the conversation stays continuous.
-    setStep5Phase("intro");
-    setStep(5);
+    // Next: describe who you serve more specifically (open text).
+    setStep(1);
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
@@ -562,8 +570,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       }),
     }));
     profileSaved(`Challenge type: ${label}`);
-    // Same pattern — step 6's intro opens with the acknowledgement.
-    setStep6Phase("intro");
+    setStep6Phase(saved?.topicHint ? "input" : "intro");
     setStep(6);
   };
   const handleTopicNext = () => {
@@ -573,7 +580,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Who you're helping");
+    profileSaved("Client avatar saved");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };

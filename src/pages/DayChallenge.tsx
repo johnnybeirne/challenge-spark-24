@@ -160,7 +160,7 @@ const DayChallenge = () => {
 
   // Locked screen for Day 2 / Day 3 before they unlock
   if (dayLocked && (dayNum === 2 || dayNum === 3)) {
-    const unlock = getDayUnlockSafe(dayNum, state.challenge.startedAt);
+    const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
     return (
       <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
         <section className="mx-auto max-w-3xl space-y-6">

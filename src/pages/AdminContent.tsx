@@ -370,8 +370,19 @@ const AdminContent = () => {
         {/* Right: live preview */}
         <div className="hidden lg:flex flex-1 flex-col min-w-0">
           <div className="px-4 py-2 border-b bg-background flex items-center justify-between gap-2">
-            <div className="text-xs text-muted-foreground truncate">
-              Live preview · <span className="font-mono">{currentPage.previewUrl}</span>
+            <div className="text-xs text-muted-foreground truncate flex items-center gap-2">
+              <span>
+                Editing: <span className="font-semibold text-foreground">{currentPage.label}</span>
+                {activeSection && (
+                  <>
+                    {" / "}
+                    <span className="font-semibold text-foreground">
+                      {sectionMeta(activePage, activeSection)?.label ?? sectionTitle(activeSection)}
+                    </span>
+                  </>
+                )}
+              </span>
+              <span className="font-mono opacity-60">{currentPage.previewUrl}</span>
             </div>
             <div className="flex items-center gap-1">
               <Button

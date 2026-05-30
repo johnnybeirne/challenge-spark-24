@@ -5,7 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Compass, Lock, LogOut, Sparkles, Upload, Zap } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ArrowRight, CalendarPlus, Camera, CheckCircle2, Circle, CircleDot, Coins, Compass, Lock, LogOut, RotateCcw, Sparkles, Upload, Zap } from "lucide-react";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { toast } from "sonner";
@@ -24,7 +35,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
-import { getSetup } from "@/components/Day1Setup";
+import { SETUP_KEY } from "@/components/Day1Setup";
 import ChallengeRecord from "@/components/ChallengeRecord";
 
 
@@ -138,6 +149,48 @@ const Dashboard = () => {
     const alreadySaved = Boolean(state.user?.bio);
     setState((prev) => (prev.user ? { ...prev, user: { ...prev.user, bio: trimmed } } : prev));
     toast.success(alreadySaved ? "Bio updated." : "Bio saved. +50 Points earned.");
+  };
+
+  const DAY1_STEP_KEY = "leadio_day1_step";
+
+  const handleResetDay1 = () => {
+    try {
+      localStorage.removeItem(SETUP_KEY);
+      localStorage.setItem(DAY1_STEP_KEY, "4");
+    } catch {}
+
+    setState((prev) => {
+      const aiOutputs = Object.fromEntries(
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(
+          ([k]) => !k.startsWith("day1_"),
+        ),
+      );
+      const tasks = Object.fromEntries(
+        Object.entries(prev.challenge.tasks ?? {}).filter(
+          ([k]) => !k.startsWith("day1_"),
+        ),
+      );
+      return {
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          currentDay: 1,
+          aiOutputs,
+          tasks,
+        },
+        training: { ...prev.training, day1Watched: false },
+        memory: {
+          ...prev.memory,
+          topic: "",
+          desiredOutcome: "",
+          audienceType: undefined as any,
+          challengeType: undefined as any,
+        },
+      };
+    });
+
+    trackEvent("day1_reset" as any, {});
+    toast.success("Day 1 reset — let's start again.");
   };
 
   const getStepStatus = (day: number) => {
@@ -295,6 +348,36 @@ const Dashboard = () => {
 
           {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
           <ChallengeRecord />
+
+          {/* Reset Day 1 — muted, bottom placement */}
+          {currentDay === 1 && (
+            <div className="flex justify-center pt-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                    <RotateCcw className="h-3 w-3" />
+                    Reset Day 1
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This clears your Day 1 answers, AI outputs, and progress so you can
+                      start the questions from scratch. Your referrals, points, and other
+                      progress are kept.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleResetDay1}>
+                      Reset Day 1
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </section>
 
 
@@ -564,7 +647,35 @@ const Dashboard = () => {
           </section>
         </div>
 
-
+        {/* Reset Day 1 — muted, bottom placement */}
+        {currentDay === 1 && (
+          <div className="flex justify-center pt-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                  <RotateCcw className="h-3 w-3" />
+                  Reset Day 1
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset Day 1?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This clears your Day 1 answers, AI outputs, and progress so you can
+                    start the questions from scratch. Your referrals, points, and other
+                    progress are kept.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleResetDay1}>
+                    Reset Day 1
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </section>
     </main>
   );

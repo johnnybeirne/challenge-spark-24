@@ -646,10 +646,11 @@ const Day1Setup = ({ onComplete }: Props) => {
       audienceType,
       challengeType,
       topicHint: topicHint.trim(),
-      desiredOutcome: topicHint.trim(),
+      desiredOutcome: outcome.trim() || topicHint.trim(),
       problem: problem.trim(),
       audience: audience.trim(),
       how: how.trim(),
+      outcome: outcome.trim(),
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });

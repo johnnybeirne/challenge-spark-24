@@ -593,10 +593,11 @@ const Day1Setup = ({ onComplete }: Props) => {
       audienceType,
       challengeType,
       topicHint: topicHint.trim(),
-      desiredOutcome: topicHint.trim(),
+      desiredOutcome: outcome.trim() || topicHint.trim(),
       problem: problem.trim(),
       audience: audience.trim(),
       how: how.trim(),
+      outcome: outcome.trim(),
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 

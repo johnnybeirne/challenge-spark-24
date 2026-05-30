@@ -192,6 +192,8 @@ const Dashboard = () => {
     trackEvent("day1_reset" as any, {});
     toast.success("Day 1 reset — let's start again.");
   };
+
+  const getStepStatus = (day: number) => {
     if (isComplete || currentDay > day) return "Complete";
     if (currentDay === day) return "In progress";
     return "Locked";

@@ -149,14 +149,10 @@ const DayChallenge = () => {
     return null;
   }
 
-  // Lock completed days — once you progress past a day, you can't go back to it.
-  // Admins bypass this so they can preview any day.
+  // Completed days are view-only — answers remain visible but nothing is editable.
   const currentDayNum = state.challenge.currentDay ?? 1;
-  if (adminChecked && !isAdmin && currentDayNum > dayNum && !state.challenge.completed) {
-    toast.info(`Day ${dayNum} is locked — you've moved on to Day ${currentDayNum}.`);
-    navigate("/challenger-dashboard", { replace: true });
-    return null;
-  }
+  const isReadOnly =
+    adminChecked && !isAdmin && (currentDayNum > dayNum || (state.challenge.completed && dayNum < 3));
 
   // Locked screen for Day 2 / Day 3 before they unlock
   if (dayLocked && (dayNum === 2 || dayNum === 3)) {

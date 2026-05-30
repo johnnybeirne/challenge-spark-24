@@ -46,23 +46,22 @@ const CountdownBottomBar = ({ sidebarCollapsed = false }: { sidebarCollapsed?: b
       )}
     >
       <div
-        className="relative flex w-full items-center justify-center gap-3 overflow-hidden border-t border-countdown/75 bg-countdown/75 px-6 py-4 text-base font-semibold text-countdown-foreground shadow-sm backdrop-blur-md sm:text-lg"
+        className="relative flex w-full items-center justify-center gap-2 overflow-hidden border-t border-white/10 bg-[hsl(220,13%,12%)] px-6 py-1.5 text-sm font-normal text-white/70"
         role="status"
         title={`Challenge ends ${new Date(endsAt).toLocaleString()}`}
         aria-label={`${Math.round(elapsedPct)}% of challenge time elapsed`}
       >
         <div
-          className="pointer-events-none absolute inset-y-0 left-0 bg-countdown-foreground/20"
+          className="pointer-events-none absolute inset-y-0 left-0 bg-white/[0.06]"
           style={{ width: `${elapsedPct}%` }}
           aria-hidden="true"
         />
-        <Clock className="relative h-6 w-6" />
-        <span className="relative tabular-nums">
+        <Clock className="relative h-3.5 w-3.5 opacity-50" />
+        <span className="relative tabular-nums tracking-wide">
           {days > 0 && <>{days}d {sep} </>}
           {hours}h {sep} {pad(minutes)}m left
         </span>
       </div>
-
     </div>
   );
 };

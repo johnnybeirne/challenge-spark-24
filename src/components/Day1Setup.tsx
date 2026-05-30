@@ -31,6 +31,7 @@ import DayVideoModal from "@/components/DayVideoModal";
 import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import { isDay1ResetOpen } from "@/lib/day1Reset";
 
 const JohnnyAvatar = () => (
   <img
@@ -1188,35 +1189,41 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
 
-                    <div className="flex flex-col items-center gap-1.5 pt-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
-                            <RotateCcw className="h-3 w-3" />
-                            Start Day 1 again
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This clears your Day 1 answers, AI outputs, and progress so you can
-                              start the questions from scratch. Your referrals, points, and other
-                              progress are kept.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleResetDay1}>
+                    {isDay1ResetOpen(state.challenge?.startedAt) ? (
+                      <div className="flex flex-col items-center gap-1.5 pt-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                              <RotateCcw className="h-3 w-3" />
                               Start Day 1 again
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <p className="text-[11px] text-muted-foreground text-center max-w-sm">
-                        If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This clears your Day 1 answers, AI outputs, and progress so you can
+                                start the questions from scratch. Your referrals, points, and other
+                                progress are kept.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={handleResetDay1}>
+                                Start Day 1 again
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <p className="text-[11px] text-muted-foreground text-center max-w-sm">
+                          If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="pt-2 text-[11px] text-muted-foreground text-center max-w-sm mx-auto">
+                        Your Challenge Promise is now locked. To change your answers, upgrade to Lifetime Challenge Access.
                       </p>
-                    </div>
+                    )}
                   </RevealControls>
                 </div>
               )}

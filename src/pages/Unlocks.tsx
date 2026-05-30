@@ -7,9 +7,9 @@ import { useAppState } from "@/context/AppContext";
 import { getNextReward, pointRewards } from "@/lib/points";
 
 const dayRewards = [
-  { day: 1, label: "Complete Day 1", credits: 10 },
-  { day: 2, label: "Complete Day 2", credits: 15 },
-  { day: 3, label: "Complete Day 3", credits: 25 },
+  { day: 1, label: "Complete Day 1", points: 10 },
+  { day: 2, label: "Complete Day 2", points: 15 },
+  { day: 3, label: "Complete Day 3", points: 25 },
 ];
 
 const StatusIcon = ({ status }: { status: "done" | "current" | "locked" }) => {
@@ -21,18 +21,18 @@ const StatusIcon = ({ status }: { status: "done" | "current" | "locked" }) => {
 const Row = ({
   status,
   label,
-  credits,
+  points,
 }: {
   status: "done" | "current" | "locked";
   label: string;
-  credits: number;
+  points: number;
 }) => (
   <li className="flex items-center justify-between px-5 py-3 text-sm">
     <span className="flex items-center gap-2.5 text-foreground">
       <StatusIcon status={status} />
       {label}
     </span>
-    <span className="font-semibold text-muted-foreground">+{credits}</span>
+    <span className="font-semibold text-muted-foreground">+{points}</span>
   </li>
 );
 
@@ -42,15 +42,15 @@ const Unlocks = () => {
   const currentDay = state.challenge?.currentDay ?? 1;
   const completed = !!state.challenge?.completed;
   const referralCount = state.network?.direct ?? 0;
-  const totalPoints = state.credits?.total ?? 0;
+  const totalPoints = state.points?.total ?? 0;
 
   const nextReward = getNextReward(totalPoints);
-  const remaining = nextReward ? Math.max(0, nextReward.credits - totalPoints) : 0;
+  const remaining = nextReward ? Math.max(0, nextReward.points - totalPoints) : 0;
   const prevThreshold = nextReward
-    ? [...pointRewards].reverse().find((r) => r.credits <= totalPoints)?.credits ?? 0
+    ? [...pointRewards].reverse().find((r) => r.points <= totalPoints)?.points ?? 0
     : 0;
   const progressPct = nextReward
-    ? Math.min(100, Math.round(((totalPoints - prevThreshold) / (nextReward.credits - prevThreshold)) * 100))
+    ? Math.min(100, Math.round(((totalPoints - prevThreshold) / (nextReward.points - prevThreshold)) * 100))
     : 100;
   const invitesNeeded = Math.max(1, Math.ceil(remaining / 50));
 
@@ -92,7 +92,7 @@ const Unlocks = () => {
               <div className="mt-4">
                 <Progress value={progressPct} className="h-2" />
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {totalPoints} / {nextReward.credits} points
+                  {totalPoints} / {nextReward.points} points
                 </div>
               </div>
 
@@ -120,7 +120,7 @@ const Unlocks = () => {
                   key={r.day}
                   status={dayStatus(r.day)}
                   label={r.label}
-                  credits={r.credits}
+                  points={r.points}
                 />
               ))}
             </ul>
@@ -134,7 +134,7 @@ const Unlocks = () => {
               <Row
                 status={referralCount > 0 ? "done" : "current"}
                 label="Invite someone who joins"
-                credits={50}
+                points={50}
               />
             </ul>
           </div>

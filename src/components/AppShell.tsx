@@ -39,7 +39,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   // The award itself is granted idempotently in applyPointRules
   // (guarded by awardedActions). This effect only handles the visible
   // toast + analytics, persisted per-browser so it never repeats.
-  const awardedActions = state.credits?.awardedActions ?? [];
+  const awardedActions = state.points?.awardedActions ?? [];
   const signupAwarded = awardedActions.includes("challenge_signup");
   const signupToastRef = useRef(false);
   useEffect(() => {

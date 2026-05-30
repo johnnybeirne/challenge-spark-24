@@ -55,7 +55,7 @@ const Dashboard = () => {
     state.challenge.currentDay > 1 ||
     Object.keys(state.challenge.tasks).length > 0 ||
     Object.keys(state.challenge.aiOutputs).some((key) => state.challenge.aiOutputs[key]) ||
-    (state.credits?.awardedActions?.length ?? 0) > 0 ||
+    (state.points?.awardedActions?.length ?? 0) > 0 ||
     Boolean(state.user?.avatarUrl) ||
     Boolean(state.user?.bio) ||
     state.challenge.calendarAdded;
@@ -70,7 +70,7 @@ const Dashboard = () => {
     ? `Continue Day ${currentDay}`
     : "Start Day 1";
   const ctaDay = isComplete ? 3 : currentDay;
-  const hasSignupPoints = (state.credits?.awardedActions ?? []).includes("challenge_signup");
+  const hasSignupPoints = (state.points?.awardedActions ?? []).includes("challenge_signup");
   const startedAt = state.challenge.startedAt ? new Date(state.challenge.startedAt) : null;
   const getDayDate = (day: number) => {
     if (!startedAt) return null;
@@ -434,7 +434,7 @@ const Dashboard = () => {
             <div>
               <p className="text-sm font-black uppercase tracking-[0.12em] text-primary">Points Earned</p>
               <div className="mt-1 flex items-end gap-2">
-                <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.credits?.total ?? 0}</span>
+                <span className="text-5xl font-black leading-none text-foreground sm:text-6xl">{state.points?.total ?? 0}</span>
                 <span className="mb-1.5 text-sm font-semibold text-muted-foreground">points</span>
               </div>
             </div>

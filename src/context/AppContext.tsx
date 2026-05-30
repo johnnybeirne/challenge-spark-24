@@ -48,7 +48,7 @@ export interface UnlockEntry {
 export interface PointActivityEntry {
   id: string;
   label: string;
-  credits: number;
+  points: number;
   timestamp: string;
 }
 
@@ -104,7 +104,7 @@ export interface AppState {
     records: ReferralRecord[];
   };
   unlocks: UnlockEntry[];
-  credits: PointsState;
+  points: PointsState;
   community: CommunityState;
   onboarding: {
     invitedCount: number;
@@ -181,7 +181,7 @@ export const defaultState: AppState = {
   network: { direct: 0, indirect: 0 },
   community: defaultCommunity,
   unlocks: [],
-  credits: defaultPoints,
+  points: defaultPoints,
   onboarding: { invitedCount: 0, invitedCompleted: false },
   training: defaultTraining,
   crossPromotion: { impressions: 0, clicks: 0, ctr: 0 },
@@ -321,21 +321,21 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
-function awardPoints(state: AppState, id: string, label: string, credits: number): AppState {
-  const current = state.credits ?? defaultPoints;
+function awardPoints(state: AppState, id: string, label: string, points: number): AppState {
+  const current = state.points ?? defaultPoints;
   if (current.awardedActions.includes(id)) return state;
 
-  const total = current.total + credits;
+  const total = current.total + points;
   return {
     ...state,
-    credits: {
+    points: {
       total,
       tier: getPointTier(total).name,
       completedDays: current.completedDays,
       awardedActions: [...current.awardedActions, id],
       unlockedRewards: getUnlockedRewards(total).map((reward) => reward.title),
       activity: [
-        { id, label, credits, timestamp: new Date().toISOString() },
+        { id, label, points, timestamp: new Date().toISOString() },
         ...current.activity,
       ].slice(0, 12),
     },
@@ -343,13 +343,13 @@ function awardPoints(state: AppState, id: string, label: string, credits: number
 }
 
 function applyPointRules(state: AppState): AppState {
-  const current = { ...defaultPoints, ...(state.credits ?? {}) };
+  const current = { ...defaultPoints, ...(state.points ?? {}) };
   // Self-heal: if the signup bonus was previously recorded but total drifted below 50,
   // drop the guard so the 50pt joining bonus is re-awarded.
   if (current.awardedActions.includes("challenge_signup") && (current.total ?? 0) < 50) {
     current.awardedActions = current.awardedActions.filter((a) => a !== "challenge_signup");
   }
-  let updated: AppState = { ...state, credits: current };
+  let updated: AppState = { ...state, points: current };
   const completedDays = new Set(current.completedDays);
 
   // Everyone gets 50 pts the moment they enter the challenge shell.
@@ -357,36 +357,36 @@ function applyPointRules(state: AppState): AppState {
 
   if (updated.challenge.currentDay > 1) {
     completedDays.add(1);
-    updated = awardPoints(updated, "complete_day_1", "You earned 10 credits for completing Day 1", 10);
+    updated = awardPoints(updated, "complete_day_1", "You earned 10 points for completing Day 1", 10);
   }
   if (updated.challenge.currentDay > 2) {
     completedDays.add(2);
-    updated = awardPoints(updated, "complete_day_2", "You earned 15 credits for completing Day 2", 15);
+    updated = awardPoints(updated, "complete_day_2", "You earned 15 points for completing Day 2", 15);
   }
   if (updated.challenge.completed || updated.challenge.currentDay > 3) {
     completedDays.add(3);
-    updated = awardPoints(updated, "complete_day_3", "You earned 25 credits for completing Day 3", 25);
+    updated = awardPoints(updated, "complete_day_3", "You earned 25 points for completing Day 3", 25);
   }
 
   if (updated.user?.avatarUrl) {
-    updated = awardPoints(updated, "profile_photo_uploaded", "You earned 50 credits for uploading your challenge photo", 50);
+    updated = awardPoints(updated, "profile_photo_uploaded", "You earned 50 points for uploading your challenge photo", 50);
   }
 
   if (updated.user?.bio && updated.user.bio.trim().length >= 20) {
-    updated = awardPoints(updated, "profile_bio_added", "You earned 50 credits for sharing who you help and how", 50);
+    updated = awardPoints(updated, "profile_bio_added", "You earned 50 points for sharing who you help and how", 50);
   }
 
   for (let i = 1; i <= updated.network.direct; i += 1) {
-    updated = awardPoints(updated, `referral_join_${i}`, "You earned 50 credits from a new referral", 50);
+    updated = awardPoints(updated, `referral_join_${i}`, "You earned 50 points from a new referral", 50);
   }
 
   return {
     ...updated,
-    credits: {
-      ...updated.credits,
-      tier: getPointTier(updated.credits.total).name,
+    points: {
+      ...updated.points,
+      tier: getPointTier(updated.points.total).name,
       completedDays: Array.from(completedDays).sort(),
-      unlockedRewards: getUnlockedRewards(updated.credits.total).map((reward) => reward.title),
+      unlockedRewards: getUnlockedRewards(updated.points.total).map((reward) => reward.title),
     },
   };
 }

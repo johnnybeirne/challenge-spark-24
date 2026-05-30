@@ -7,7 +7,7 @@ export interface PointTier {
 }
 
 export interface PointReward {
-  credits: number;
+  points: number;
   title: string;
   accessLabel: string;
 }
@@ -15,7 +15,7 @@ export interface PointReward {
 export interface PointRule {
   id: string;
   label: string;
-  credits: number;
+  points: number;
 }
 
 export const pointTiers: PointTier[] = [
@@ -27,36 +27,36 @@ export const pointTiers: PointTier[] = [
 ];
 
 export const pointRewards: PointReward[] = [
-  { credits: 50, title: "Challenge Launch Checklist", accessLabel: "Unlock access" },
-  { credits: 100, title: "AI Prompt Pack", accessLabel: "Unlock access" },
-  { credits: 150, title: "Referral Message Templates", accessLabel: "Unlock access" },
-  { credits: 250, title: "Advanced Challenge Training", accessLabel: "Unlock access" },
-  { credits: 350, title: "Community Feature Opportunity", accessLabel: "Become eligible for" },
-  { credits: 500, title: "Strategy Call Application", accessLabel: "Apply for" },
+  { points: 50, title: "Challenge Launch Checklist", accessLabel: "Unlock access" },
+  { points: 100, title: "AI Prompt Pack", accessLabel: "Unlock access" },
+  { points: 150, title: "Referral Message Templates", accessLabel: "Unlock access" },
+  { points: 250, title: "Advanced Challenge Training", accessLabel: "Unlock access" },
+  { points: 350, title: "Community Feature Opportunity", accessLabel: "Become eligible for" },
+  { points: 500, title: "Strategy Call Application", accessLabel: "Apply for" },
 ];
 
 export const pointRules: PointRule[] = [
-  { id: "complete_day_1", label: "Complete Day 1", credits: 10 },
-  { id: "complete_day_2", label: "Complete Day 2", credits: 15 },
-  { id: "complete_day_3", label: "Complete Day 3", credits: 25 },
-  { id: "referral_join", label: "Invite someone who joins", credits: 50 },
-  { id: "referral_day_1", label: "Your referral completes Day 1", credits: 10 },
-  { id: "referral_day_2", label: "Your referral completes Day 2", credits: 15 },
-  { id: "referral_day_3", label: "Your referral completes Day 3", credits: 25 },
+  { id: "complete_day_1", label: "Complete Day 1", points: 10 },
+  { id: "complete_day_2", label: "Complete Day 2", points: 15 },
+  { id: "complete_day_3", label: "Complete Day 3", points: 25 },
+  { id: "referral_join", label: "Invite someone who joins", points: 50 },
+  { id: "referral_day_1", label: "Your referral completes Day 1", points: 10 },
+  { id: "referral_day_2", label: "Your referral completes Day 2", points: 15 },
+  { id: "referral_day_3", label: "Your referral completes Day 3", points: 25 },
 ];
 
-export const getPointTier = (credits: number) =>
-  pointTiers.find((tier) => credits >= tier.min && (tier.max === null || credits <= tier.max)) ?? pointTiers[0];
+export const getPointTier = (points: number) =>
+  pointTiers.find((tier) => points >= tier.min && (tier.max === null || points <= tier.max)) ?? pointTiers[0];
 
-export const getNextTier = (credits: number) => pointTiers.find((tier) => tier.min > credits) ?? null;
+export const getNextTier = (points: number) => pointTiers.find((tier) => tier.min > points) ?? null;
 
-export const getTierProgress = (credits: number) => {
-  const tier = getPointTier(credits);
-  const nextTier = getNextTier(credits);
+export const getTierProgress = (points: number) => {
+  const tier = getPointTier(points);
+  const nextTier = getNextTier(points);
   if (!nextTier) return 100;
-  return Math.min(100, Math.round(((credits - tier.min) / (nextTier.min - tier.min)) * 100));
+  return Math.min(100, Math.round(((points - tier.min) / (nextTier.min - tier.min)) * 100));
 };
 
-export const getNextReward = (credits: number) => pointRewards.find((reward) => reward.credits > credits) ?? null;
+export const getNextReward = (points: number) => pointRewards.find((reward) => reward.points > points) ?? null;
 
-export const getUnlockedRewards = (credits: number) => pointRewards.filter((reward) => credits >= reward.credits);
+export const getUnlockedRewards = (points: number) => pointRewards.filter((reward) => points >= reward.points);

@@ -212,11 +212,11 @@ const EarnRewards = () => {
 
         {/* 2. YOUR PROGRESS — simple clarity */}
         {(() => {
-          const points = state.credits?.total ?? 0;
+          const points = state.points?.total ?? 0;
           const nextReward = getNextReward(points);
-          const threshold = nextReward?.credits ?? points;
+          const threshold = nextReward?.points ?? points;
           const prevThreshold = (() => {
-            const earned = pointRewards.map((r) => r.credits).filter((c) => c <= points);
+            const earned = pointRewards.map((r) => r.points).filter((c) => c <= points);
             return earned.length ? earned[earned.length - 1] : 0;
           })();
           const pct = nextReward
@@ -252,7 +252,7 @@ const EarnRewards = () => {
 
         {/* 3. REWARD LADDER — emphasise current + next + next major */}
         {(() => {
-          const points = state.credits?.total ?? 0;
+          const points = state.points?.total ?? 0;
           const unlockedRungs = ladder.filter((r) => points >= r.points);
           const lockedRungs = ladder.filter((r) => points < r.points);
           const justUnlocked = unlockedRungs[unlockedRungs.length - 1];
@@ -340,7 +340,7 @@ const EarnRewards = () => {
 
         {/* 4. PARTNER BONUSES */}
         {(() => {
-          const points = state.credits?.total ?? 0;
+          const points = state.points?.total ?? 0;
           return (
             <section className="mb-14">
               <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Partner bonuses</h2>

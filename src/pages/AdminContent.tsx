@@ -16,6 +16,7 @@ import {
   Monitor,
   Smartphone,
   Settings2,
+  GripVertical,
 } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";
@@ -35,6 +36,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const PAGES: { id: string; label: string; previewUrl: string; description: string }[] = [
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page" },

@@ -843,7 +843,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={how}
                         onChange={(e) => setHow(e.target.value)}
-                        placeholder={outcomePlaceholder}
+                        placeholder={processPlaceholder}
                         rows={5}
                         className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {

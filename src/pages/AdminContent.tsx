@@ -401,8 +401,8 @@ const AdminContent = () => {
       <div className="flex-1 flex min-h-0">
         {/* Left: editor */}
         <div
-          className="w-full lg:shrink-0 border-r bg-background flex flex-col"
-          style={typeof window !== "undefined" && window.innerWidth >= 1024 ? { width: panelWidth, flexShrink: 0 } : undefined}
+          className="w-full lg:!w-[var(--editor-w)] shrink-0 border-r bg-background flex flex-col"
+          style={{ ["--editor-w" as string]: `${panelWidth}px` }}
         >
           <div className="px-4 py-3 border-b">
             <div className="flex items-center justify-between gap-2">

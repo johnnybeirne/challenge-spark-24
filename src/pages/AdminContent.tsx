@@ -328,6 +328,7 @@ const AdminContent = () => {
     } else {
       addRow(name, "full");
     }
+    toast.warning("Section saved to content store, but it won't appear on the live page until a developer adds it to the page template.", { duration: 8000 });
   };
 
   const saveAll = async () => {

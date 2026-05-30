@@ -806,35 +806,22 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 3 && (() => {
-          const outcomePlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
-            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
-            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
-            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
-            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
-            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
-            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
-            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
+          const processPlaceholderMap: Record<string, string> = {
+            "b2b|solve-problem": "e.g. I diagnose where leads are leaking, then walk them through a 3-step system to fix it.",
+            "b2b|quick-win": "e.g. I help them craft a single outreach asset and ship it within 48 hours.",
+            "b2b|create-asset": "e.g. I guide them to define their offer, then build a one-page sales asset they can use immediately.",
+            "b2b|reach-milestone": "e.g. I break the milestone into 3 weekly sprints with a checkpoint at the end of each.",
+            "b2c|solve-problem": "e.g. I help them identify what's blocking them, then rebuild the habit one micro-step at a time.",
+            "b2c|quick-win": "e.g. I give them a single daily action they can complete in under 10 minutes.",
+            "b2c|create-asset": "e.g. I walk them through a simple template and help them adapt it to their life.",
+            "b2c|reach-milestone": "e.g. I break the goal into weekly targets and coach them through one focus area each week.",
           };
-          const outcomePlaceholder =
-            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The transformation, result, or change participants will experience by the end.";
-
-          const outcomeWords = how.trim().split(/\s+/).filter(Boolean).length;
-          const outcomeFeedbackPool = [
-            "I like that.",
-            "That's a meaningful outcome.",
-            "I can see why people would want that result.",
-            "Now the transformation is becoming clear.",
-            "That's the kind of result that motivates people to take action.",
-          ];
-          const outcomeFeedback =
-            outcomeWords >= 5
-              ? outcomeFeedbackPool[Math.min(Math.floor(outcomeWords / 6), outcomeFeedbackPool.length - 1)]
-              : null;
+          const processPlaceholder =
+            processPlaceholderMap[`${audienceType}|${challengeType}`] ??
+            "e.g. Describe the steps, framework, or method you take them through to create the result.";
 
           const step3Messages = [
-            "Now describe the result they'll experience by the end of your challenge.",
+            "Now describe your process — how you take them through it and create the result.",
           ];
 
           return (

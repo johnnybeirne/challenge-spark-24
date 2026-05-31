@@ -221,7 +221,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       </div>
 
       {/* Dot progress indicator */}
-      <div className="mt-auto flex items-center justify-center gap-2 pb-4 pt-8">
+      <div className="flex items-center justify-center gap-2 pb-4 pt-6">
         {questions.map((_, i) => (
           <div
             key={i}

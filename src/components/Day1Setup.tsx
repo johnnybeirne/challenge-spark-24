@@ -226,6 +226,7 @@ const renderMsg = (msg: Msg, echoMap?: EchoMap, keyPrefix = ""): React.ReactNode
         value={entry.value}
         format={entry.format}
         onSave={entry.onSave}
+        tidyContext={seg.echo}
       />
     );
   });

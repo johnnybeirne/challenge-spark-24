@@ -1093,7 +1093,6 @@ const Day1Setup = ({ onComplete }: Props) => {
           const subject = "they";
 
           const problemHintByChallenge: Record<string, string> = {
-            "solve-problem": `e.g. ${subject} keep hitting the same wall and can't figure out what's actually blocking them.`,
             "quick-win": `e.g. ${subject} feel stuck and need a fast win to rebuild momentum.`,
             "create-asset": `e.g. ${subject} don't have a clear, reusable plan they can follow with confidence.`,
             "reach-milestone": `e.g. ${subject} keep falling short of a goal that genuinely matters to them.`,

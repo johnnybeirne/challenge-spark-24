@@ -206,7 +206,6 @@ const Results = () => {
     );
   }
 
-  const tierLabel = getTierLabel(percentageScore);
   const paragraphsToRender = paragraphs.slice(0, visibleCount);
 
   const accent = (() => {

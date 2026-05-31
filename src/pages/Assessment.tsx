@@ -178,7 +178,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
         <span>{Math.round(progress)}%</span>
       </div>
       <Progress value={progress} className="mb-3 h-2" />
-      <p className="mb-12 text-center text-xs text-muted-foreground">Answer honestly — this only works if you do</p>
+      
 
       <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
         <div className="mb-10 flex items-start gap-4">

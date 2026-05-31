@@ -706,10 +706,10 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 1 && (() => {
           const step1Message =
             audienceType === "b2b"
-              ? `You got it${fn}. Describe the specific type of business or professional you work with.`
+              ? `Got it${fn}. Describe the specific type of business or professional you work with.`
               : audienceType === "b2c"
-                ? `You got it${fn}. Describe the specific type of person you work with.`
-                : `You got it${fn}. Describe who you serve.`;
+                ? `Got it${fn}. Describe the specific type of person you work with.`
+                : `Got it${fn}. Describe who you serve.`;
 
           return (
             <div className="space-y-6 animate-fade-in">

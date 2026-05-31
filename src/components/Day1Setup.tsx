@@ -1153,7 +1153,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const audienceNoun = audienceType === "b2b" ? "businesses" : "people";
           const step6Messages = [
-            `You're helping ${audienceNoun} ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me about them in detail.`,
+            challengeType === "solve-problem"
+              ? `You're helping ${audienceNoun} overcome a specific blocker — tell me more about these specific blockers.`
+              : `You're helping ${audienceNoun} ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me more about this.`,
           ];
 
           return (

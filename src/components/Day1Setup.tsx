@@ -1069,19 +1069,21 @@ const Day1Setup = ({ onComplete }: Props) => {
         )}
 
         {step === 1 && (() => {
-          const step1Message =
-            audienceType === "b2b"
-              ? `Got it${fn}. Describe the specific type of business or professional you work with.`
-              : audienceType === "b2c"
-                ? `Got it${fn}. Describe the specific type of person you work with.`
-                : `Got it${fn}. Describe who you serve.`;
+          const step1Message: Msg = audienceType
+            ? [
+                `Got it${fn}. Describe the specific type of `,
+                { echo: "audienceType" } as MsgSegment,
+                ` you work with.`,
+              ]
+            : `Got it${fn}. Describe who you serve.`;
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step1Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step1-intro"
+                  resetKey={`step1-intro-${audienceType ?? "none"}`}
                   messages={[step1Message]}
+                  echoMap={echoMap}
                   skipMakingNotes
                   onComplete={() => setStep1Phase("input")}
                 />
@@ -1089,7 +1091,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step1Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={[step1Message]} />
+                  <StaticAi messages={[step1Message]} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

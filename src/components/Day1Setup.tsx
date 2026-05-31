@@ -1072,13 +1072,20 @@ const Day1Setup = ({ onComplete }: Props) => {
             outcomeHintByChallenge[challengeType] ??
             `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
 
+          const howSnippet9 = howLower9
+            ? (howLower9.length > 60 ? `${howLower9.slice(0, 60).trimEnd()}…` : howLower9)
+            : "";
+          const processCallback9 = howSnippet9
+            ? `Love it — using ${howSnippet9}. Now the payoff. `
+            : "";
           const step9Messages = [
             subject9 !== "they" && painLower9
-              ? `Last one${fn}. So after you take ${subject9} through your process, ${painLower9} becomes what? What do they walk away with by the end of Day 3?`
+              ? `${processCallback9}Last one${fn}. After you take ${subject9} through that, ${painLower9} becomes what? What do they walk away with by the end of Day 3?`
               : subject9 !== "they"
-                ? `Last one${fn}. By the end of Day 3, what does ${subject9} walk away with?`
-                : "Finally, describe the result they'll walk away with by the end of Day 3.",
+                ? `${processCallback9}Last one${fn}. By the end of Day 3, what does ${subject9} walk away with?`
+                : `${processCallback9}Finally, describe the result they'll walk away with by the end of Day 3.`,
           ];
+
 
           return (
             <div className="space-y-6 animate-fade-in">

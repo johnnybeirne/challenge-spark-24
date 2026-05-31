@@ -252,7 +252,7 @@ const Results = () => {
     }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
-      return { label: "Enrol in Leadio Growth Accelerator", onClick: () => navigate(dest) };
+      return { label: "Join the 3-Day Challenge", onClick: () => navigate(dest) };
     }
     return { label: "Join the 3-Day Challenge", onClick: () => navigate("/challenge/join") };
   })();

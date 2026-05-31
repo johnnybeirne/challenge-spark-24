@@ -1565,11 +1565,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                   { echo: "audience" } as MsgSegment,
                   `, and you want to help them ${challengeShort}.`,
                 ],
-                `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge?`,
+                `What's happening for them right now that makes your three-day challenge the perfect solution?`,
               ]
             : [
                 `You're helping them ${challengeShort}.`,
-                `What's happening for them right now that makes the next 3 days the perfect time to take your challenge?`,
+                `What's happening for them right now that makes your three-day challenge the perfect solution?`,
               ];
 
           return (

@@ -31,8 +31,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q2",
     text: "If you stopped promoting or publishing content, would your leads drop off?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

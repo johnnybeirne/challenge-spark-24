@@ -9,6 +9,7 @@ import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
@@ -78,6 +79,7 @@ const Results = () => {
   const location = useLocation();
   const { state } = useAppState();
   const qa = useQaPreview();
+  const { t: tContent } = useSiteContent("results");
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const previewTier = (() => {
     const p = location.pathname.toLowerCase();
@@ -204,7 +206,6 @@ const Results = () => {
     );
   }
 
-  const tierLabel = getTierLabel(percentageScore);
   const paragraphsToRender = paragraphs.slice(0, visibleCount);
 
   const accent = (() => {
@@ -292,9 +293,37 @@ const Results = () => {
             </div>
           </div>
 
-          <h1 className={`mt-10 text-4xl sm:text-5xl font-black tracking-tight ${accent.text}`}>
-            {tierLabel}
-          </h1>
+          {(() => {
+            const archetypeTier: "low" | "mid" | "high" =
+              tierData?.tier === "high" || tierData?.tier === "mid" || tierData?.tier === "low"
+                ? (tierData.tier as "low" | "mid" | "high")
+                : percentageScore >= 67
+                ? "high"
+                : percentageScore >= 34
+                ? "mid"
+                : "low";
+            const defaults = {
+              low: { name: "You're a Pioneer", tagline: "You're building the foundation. Let's make it solid." },
+              mid: { name: "You're an Architect", tagline: "You have the pieces. Now let's connect them." },
+              high: { name: "You're an Authority", tagline: "You've built something real. Now let's make it grow." },
+            } as const;
+            const intro = tContent("archetypes.intro", "Based on your answers...");
+            const name = tContent(`archetypes.${archetypeTier}_name`, defaults[archetypeTier].name);
+            const tagline = tContent(`archetypes.${archetypeTier}_tagline`, defaults[archetypeTier].tagline);
+            return (
+              <div className="mt-10">
+                <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
+                  {intro}
+                </p>
+                <h1 className={`mt-3 text-4xl sm:text-5xl font-black tracking-tight ${accent.text}`}>
+                  {name}
+                </h1>
+                <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+                  {tagline}
+                </p>
+              </div>
+            );
+          })()}
         </section>
 
         {/* JOHNNY MESSAGE — flowing, no chrome */}

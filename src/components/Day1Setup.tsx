@@ -1094,10 +1094,14 @@ const Day1Setup = ({ onComplete }: Props) => {
             problemHintByChallenge[challengeType] ??
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          const subjectForMsg = whoLower || audienceLower;
-          const step2Messages = [
-            subjectForMsg
-              ? `Got it${fn}. So for ${subjectForMsg} — what's the specific problem or obstacle they're trying to overcome right now?`
+          const hasSubjectForMsg = Boolean(whoLower || audienceLower);
+          const step2Messages: Msg[] = [
+            hasSubjectForMsg
+              ? [
+                  `Got it${fn}. So for `,
+                  { echo: whoLower ? "topic" : "audience" } as MsgSegment,
+                  ` — what's the specific problem or obstacle they're trying to overcome right now?`,
+                ]
               : "Now tell me about the specific problem or obstacle they're trying to overcome.",
           ];
 
@@ -1108,6 +1112,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
                   messages={step2Messages}
+                  echoMap={echoMap}
                   onComplete={() => setStep2Phase("input")}
                 />
               )}
@@ -1115,7 +1120,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step2Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step2Messages} />
+                  <StaticAi messages={step2Messages} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

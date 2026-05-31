@@ -477,7 +477,117 @@ const Day1Setup = ({ onComplete }: Props) => {
     });
   };
 
-  const handleFoundationNext = (current: 1 | 2 | 3) => {
+  // ----- AI threading (Lovable AI Gateway via day1-thread edge function) -----
+  // We fire AI calls at two key moments: after the problem (step 2 → 3) and at
+  // the Challenge Promise (step 9 → 7). Both calls cache into aiOutputs keyed
+  // by a hash of the inputs so back/forward navigation never re-bills.
+  // Both calls are best-effort with a short navigation wait — if the AI is
+  // slow or unavailable, we fall back to the template copy and the user never
+  // sees a hung button.
+
+  const [navLoading, setNavLoading] = useState<null | "problem" | "outcome">(null);
+  // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
+  // mid-typing if the cache updates later in the same visit.
+  const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string } | null>(null);
+
+  useEffect(() => {
+    if (step !== 3) return;
+    const cached = state.challenge?.aiOutputs?.day1_problem_reaction;
+    setStep3Reaction(typeof cached === "string" && cached.trim() ? cached.trim() : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  useEffect(() => {
+    if (step !== 7) return;
+    const raw = state.challenge?.aiOutputs?.day1_promise;
+    if (typeof raw === "string" && raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.summary) && typeof parsed.promise === "string") {
+          setStep7Promise({ summary: parsed.summary, promise: parsed.promise });
+          return;
+        }
+      } catch {
+        /* fall through to null */
+      }
+    }
+    setStep7Promise(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  const ensureProblemReaction = async (): Promise<void> => {
+    const cacheKey = `${audience.trim()}|${problem.trim()}`;
+    const cachedKey = state.challenge?.aiOutputs?.day1_problem_reaction_key as string | undefined;
+    const cached = state.challenge?.aiOutputs?.day1_problem_reaction as string | undefined;
+    if (cached && cachedKey === cacheKey) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("day1-thread", {
+        body: {
+          moment: "problem-reaction",
+          inputs: { firstName, audience: audience.trim(), problem: problem.trim() },
+        },
+      });
+      if (error || !data || (data as any).fallback) return;
+      const text = (data as any).text;
+      if (typeof text !== "string" || !text.trim()) return;
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day1_problem_reaction: text.trim(),
+            day1_problem_reaction_key: cacheKey,
+          },
+        },
+      }));
+    } catch {
+      /* swallow — template fallback in UI */
+    }
+  };
+
+  const ensurePromise = async (): Promise<void> => {
+    const cacheKey = `${audience.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
+    const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
+    if (cached && cachedKey === cacheKey) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("day1-thread", {
+        body: {
+          moment: "promise",
+          inputs: {
+            firstName,
+            audience: audience.trim(),
+            topicHint: topicHint.trim(),
+            problem: problem.trim(),
+            how: how.trim(),
+            outcome: outcome.trim(),
+            challengeTypeLabel: challengeLabel(challengeType),
+          },
+        },
+      });
+      if (error || !data || (data as any).fallback) return;
+      const summary = (data as any).summary;
+      const promise = (data as any).promise;
+      if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day1_promise: JSON.stringify({ summary, promise: promise.trim() }),
+            day1_promise_key: cacheKey,
+          },
+        },
+      }));
+    } catch {
+      /* swallow — template fallback in UI */
+    }
+  };
+
+  const handleFoundationNext = async (current: 1 | 2 | 3) => {
     if (current === 1) {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
@@ -488,6 +598,14 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
       profileSaved("The problem you're solving");
+      // Hold briefly while Johnny "reads" the answer. Race the AI call against
+      // a 2.2s timeout so a slow/failed model never blocks the flow.
+      setNavLoading("problem");
+      await Promise.race([
+        ensureProblemReaction(),
+        new Promise<void>((r) => setTimeout(r, 2200)),
+      ]);
+      setNavLoading(null);
       setStep3Phase(saved?.how ? "input" : "intro");
       setStep(3);
     } else {
@@ -514,7 +632,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const handleOutcomeNext = () => {
+  const handleOutcomeNext = async () => {
     if (!outcome.trim()) return;
     persistFoundation({ outcome: outcome.trim() });
     setState((prev) => ({
@@ -528,6 +646,14 @@ const Day1Setup = ({ onComplete }: Props) => {
       href: "/challenger-dashboard",
       dedupeKey: "day1_outcome_saved",
     });
+    // Compose the Challenge Promise via AI. Give it a touch more time than
+    // the problem-reaction call since it's structured tool-call output.
+    setNavLoading("outcome");
+    await Promise.race([
+      ensurePromise(),
+      new Promise<void>((r) => setTimeout(r, 3000)),
+    ]);
+    setNavLoading(null);
     setStep7Phase("intro");
     setStep(7);
   };
@@ -565,7 +691,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Client avatar saved");
+    profileSaved("Trigger moment saved");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -850,13 +976,18 @@ const Day1Setup = ({ onComplete }: Props) => {
             processHintByChallenge[challengeType] ??
             `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
 
-          const step3Messages = [
+          const step3TemplateQuestion =
             subject3 !== "them" && painLower
               ? `That's clear${fn}. So for ${subject3} dealing with ${painLower} — what's the process you take them through to create the result?`
               : subject3 !== "them"
                 ? `That's clear${fn}. So for ${subject3} — what's the process you take them through to create the result?`
-                : "Now describe your process — the steps you take them through to create the result.",
-          ];
+                : "Now describe your process — the steps you take them through to create the result.";
+
+          // If Johnny's AI reaction landed in time, lead with it so step 3 feels
+          // like a direct response to the problem the user just typed.
+          const step3Messages = step3Reaction
+            ? [step3Reaction, step3TemplateQuestion]
+            : [step3TemplateQuestion];
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -1140,38 +1271,38 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           const challengeShort = (challengeLabel(challengeType) || "").toLowerCase();
 
-          // Placeholder embeds the user's audience so the example feels written for them.
+          // NEW step 6 = the "trigger moment". We already know WHO from step 1; this
+          // captures WHAT'S HAPPENING in their life/business right now that makes the
+          // next 3 days the perfect time to take this challenge. Same field
+          // (`topicHint`), same position, same scoring — only the meaning changes.
           const placeholderByChallenge: Record<string, string> = {
             "solve-problem": audienceLower6
-              ? `e.g. ${audienceTrim6} who are stuck on one specific blocker — the moment they hit it, everything stalls.`
-              : `e.g. The specific person who's stuck on one blocker — describe their stage and what's tripping them up.`,
+              ? `e.g. They've just hit the wall again with the same problem, and they're finally ready to admit what they've been doing isn't working.`
+              : `e.g. They've just hit the same wall again and they're finally ready to try something different.`,
             "quick-win": audienceLower6
-              ? `e.g. ${audienceTrim6} who need momentum fast — they've been thinking about this for ages and want a tangible win this week.`
-              : `e.g. Someone who needs a fast win — describe their stage and what would feel like real momentum.`,
+              ? `e.g. They've got a deadline, event, or launch in the next two weeks and they can't keep putting this off.`
+              : `e.g. They've got a deadline or event coming up and they can't put this off any longer.`,
             "create-asset": audienceLower6
-              ? `e.g. ${audienceTrim6} who don't yet have a clear plan or tool they can rely on — they want something they can keep using.`
-              : `e.g. Someone who needs a clear, reusable plan — describe their stage and what they want to walk away with.`,
+              ? `e.g. They've decided this is the moment — they're done winging it and want something solid they can keep using.`
+              : `e.g. They've decided they're done winging it and want something solid they can keep using.`,
             "reach-milestone": audienceLower6
-              ? `e.g. ${audienceTrim6} who are close to a milestone that matters but keep stalling just before they get there.`
-              : `e.g. Someone close to a key milestone — describe their stage and what's been getting in the way.`,
+              ? `e.g. They're close enough to the milestone to taste it but keep stalling at the same point every time.`
+              : `e.g. They're close to a milestone that matters but keep stalling at the same point every time.`,
           };
           const placeholder =
             placeholderByChallenge[challengeType] ??
-            (audienceLower6
-              ? `e.g. ${audienceTrim6} — get specific about their stage, situation, and what they really want.`
-              : "e.g. Describe the specific person you want to help — who they are, what stage they're at, and what they want.");
+            `e.g. What's happening for them right now that makes the next 3 days the perfect time to do this?`;
 
-          // Reframe: this is *not* re-asking who the audience is. We already have that
-          // from step 1. We're zooming in on the exact avatar this 3-day challenge is built for.
+          // Two short messages — first reflects what we already know (no re-ask),
+          // second asks the genuinely new question.
           const step6Messages = audienceLower6
             ? [
-                `You said you help ${audienceLower6}, and you want them to ${challengeShort}.`,
-                `Now zoom in for me${fn}. Within that group, who exactly is this 3-day challenge built for? Get specific about their stage, situation, and what they want.`,
+                `Okay${fn} — so you're building this for ${audienceLower6}, and you want to help them ${challengeShort}.`,
+                `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
               ]
             : [
-                challengeType === "solve-problem"
-                  ? `You're helping them overcome a specific blocker. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`
-                  : `You're helping them ${challengeShort}. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`,
+                `You're helping them ${challengeShort}.`,
+                `What's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
               ];
 
           return (
@@ -1183,6 +1314,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                   onComplete={() => setStep6Phase("input")}
                 />
               )}
+
+
 
               {step6Phase === "input" && (
                 <div className="space-y-5">
@@ -1253,9 +1386,13 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          const promise = who && pain && result && methodPhrase
+          // If the AI composed a Challenge Promise, prefer its wording (it uses
+          // the user's literal words and reads natural). Otherwise fall back to
+          // the template stitch.
+          const templatePromise = who && pain && result && methodPhrase
             ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
             : null;
+          const promise = step7Promise?.promise || templatePromise;
 
           // Highlight helper for the static reveal — renders the user-derived
           // value in bold brand accent inside the surrounding sentence.
@@ -1279,7 +1416,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</>
               : null;
 
-          const summary: string[] = [
+          const templateSummary: string[] = [
             intro,
             who ? `You're building this for ${who}.` : null,
             pain ? `Right now, they're stuck because ${pain}.` : null,
@@ -1288,16 +1425,25 @@ const Day1Setup = ({ onComplete }: Props) => {
             closing,
           ].filter((line): line is string => Boolean(line));
 
-          // Same sentences as React nodes with highlighted user values for the
-          // static reveal phase.
-          const summaryNodes: React.ReactNode[] = [
-            <>{intro}</>,
-            who ? <>You're building this for {hl(who)}.</> : null,
-            pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
-            result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
-            guideNode,
-            <>{closing}</>,
-          ].filter(Boolean) as React.ReactNode[];
+          // Use the AI summary if available — it weaves the user's words into a
+          // single coherent voice instead of stitched template sentences.
+          const summary: string[] = step7Promise?.summary?.length
+            ? step7Promise.summary
+            : templateSummary;
+
+          // For the static reveal, render highlighted nodes only when we have
+          // the template (we know where the user values are). For AI summary
+          // we render plain paragraphs — the AI already used the user's words.
+          const summaryNodes: React.ReactNode[] = step7Promise?.summary?.length
+            ? step7Promise.summary.map((s, i) => <span key={i}>{s}</span>)
+            : ([
+                <>{intro}</>,
+                who ? <>You're building this for {hl(who)}.</> : null,
+                pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
+                result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
+                guideNode,
+                <>{closing}</>,
+              ].filter(Boolean) as React.ReactNode[]);
 
           return (
             <div className="space-y-6 animate-fade-in">

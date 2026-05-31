@@ -71,8 +71,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q7",
     text: "When someone becomes a lead, do they know exactly what to do next?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

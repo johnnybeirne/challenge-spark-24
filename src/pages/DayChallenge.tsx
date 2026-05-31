@@ -242,7 +242,7 @@ const DayChallenge = () => {
     if (!value || !value.trim()) return;
     toast.success("Your dashboard is updated", {
       description: `Day ${dayNum} answer saved`,
-      position: "top-right",
+      position: "top-left",
       duration: 3500,
       action: {
         label: "Dashboard",

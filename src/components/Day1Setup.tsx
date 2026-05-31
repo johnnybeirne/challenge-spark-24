@@ -239,31 +239,19 @@ const audienceOptions = [
 const challengeOptions = [
   {
     value: "solve-problem",
-    emoji: "🎯",
-    label: "Solve a Problem",
-    description: "Overcome a specific blocker.",
-    summary: "Participants will solve a specific problem.",
+    description: "Overcome a specific blocker",
   },
   {
     value: "quick-win",
-    emoji: "⚡",
-    label: "Achieve a Quick Win",
-    description: "Deliver a meaningful result fast.",
-    summary: "Participants will achieve an immediate result.",
+    description: "Deliver a meaningful result fast",
   },
   {
     value: "create-asset",
-    emoji: "🛠",
-    label: "Create Something Valuable",
-    description: "Build something they keep using.",
-    summary: "Participants will create something valuable.",
+    description: "Build something they keep using",
   },
   {
     value: "reach-milestone",
-    emoji: "🚀",
-    label: "Reach a Milestone",
-    description: "Progress toward an important goal.",
-    summary: "Participants will achieve a meaningful milestone.",
+    description: "Progress toward an important goal",
   },
 ];
 

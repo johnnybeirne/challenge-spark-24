@@ -39,8 +39,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q3",
     text: "Can you clearly identify what is driving most of your leads?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

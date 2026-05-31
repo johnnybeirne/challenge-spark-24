@@ -79,6 +79,7 @@ const Results = () => {
   const location = useLocation();
   const { state } = useAppState();
   const qa = useQaPreview();
+  const { t: tContent } = useSiteContent("results");
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const previewTier = (() => {
     const p = location.pathname.toLowerCase();

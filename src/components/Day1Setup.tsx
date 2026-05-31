@@ -47,7 +47,7 @@ const JohnnyAvatar = () => (
 // bold/accent inline spans with a tiny pencil-to-edit affordance.
 // ---------------------------------------------------------------------------
 
-export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic";
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType";
 export type EchoSegment = { echo: EchoField };
 export type MsgSegment = string | EchoSegment;
 export type Msg = string | MsgSegment[];
@@ -59,6 +59,7 @@ export type EchoMap = Partial<
       value: string;
       onSave?: (v: string) => void;
       format?: (v: string) => string;
+      skipTidy?: boolean;
     }
   >
 >;
@@ -99,28 +100,34 @@ const echoText = (field: EchoField, map?: EchoMap): string => {
   return fmt(entry.value || "");
 };
 
-// Bold/accent inline echo with a pencil edit affordance.
+// Bold/accent inline echo with an optional pencil edit affordance.
 const EchoText = ({
   value,
   format,
   onSave,
   tidyContext,
+  skipTidy = false,
 }: {
   value: string;
   format?: (v: string) => string;
   onSave?: (v: string) => void;
   tidyContext?: string;
+  skipTidy?: boolean;
 }) => {
   const formatted = (format ?? formatList)(value || "");
   // Lightly grammar-clean the echoed fragment via AI (cached). Show the raw
   // formatted version immediately, then swap in the tidied version when it
   // arrives so the UI never blocks.
-  const cachedTidy = getTidiedSync(formatted, tidyContext);
+  const cachedTidy = skipTidy ? null : getTidiedSync(formatted, tidyContext);
   const [display, setDisplay] = useState<string>(cachedTidy ?? formatted);
   useEffect(() => {
     let cancelled = false;
     if (!formatted) {
       setDisplay("");
+      return;
+    }
+    if (skipTidy) {
+      setDisplay(formatted);
       return;
     }
     const cached = getTidiedSync(formatted, tidyContext);
@@ -135,7 +142,7 @@ const EchoText = ({
     return () => {
       cancelled = true;
     };
-  }, [formatted, tidyContext]);
+  }, [formatted, tidyContext, skipTidy]);
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -227,6 +234,7 @@ const renderMsg = (msg: Msg, echoMap?: EchoMap, keyPrefix = ""): React.ReactNode
         format={entry.format}
         onSave={entry.onSave}
         tidyContext={seg.echo}
+        skipTidy={entry.skipTidy}
       />
     );
   });
@@ -1024,12 +1032,21 @@ const Day1Setup = ({ onComplete }: Props) => {
     setTopicHint(v);
     persistFoundation({ topicHint: v } as Partial<SetupData>);
   };
+  const audienceTypeLabel =
+    audienceType === "b2b"
+      ? "business or professional"
+      : audienceType === "b2c"
+        ? "person"
+        : "";
+
   const echoMap: EchoMap = {
     audience: { value: audience, onSave: saveAudience },
     problem: { value: problem, onSave: saveProblem, format: (v) => v },
     how: { value: how, onSave: saveHow, format: (v) => v },
     outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
+    audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
+    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
   };
 
 
@@ -1052,19 +1069,21 @@ const Day1Setup = ({ onComplete }: Props) => {
         )}
 
         {step === 1 && (() => {
-          const step1Message =
-            audienceType === "b2b"
-              ? `Got it${fn}. Describe the specific type of business or professional you work with.`
-              : audienceType === "b2c"
-                ? `Got it${fn}. Describe the specific type of person you work with.`
-                : `Got it${fn}. Describe who you serve.`;
+          const step1Message: Msg = audienceType
+            ? [
+                `Got it${fn}. Describe the specific type of `,
+                { echo: "audienceType" } as MsgSegment,
+                ` you work with.`,
+              ]
+            : `Got it${fn}. Describe who you serve.`;
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step1Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step1-intro"
+                  resetKey={`step1-intro-${audienceType ?? "none"}`}
                   messages={[step1Message]}
+                  echoMap={echoMap}
                   skipMakingNotes
                   onComplete={() => setStep1Phase("input")}
                 />
@@ -1072,7 +1091,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step1Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={[step1Message]} />
+                  <StaticAi messages={[step1Message]} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1599,11 +1618,17 @@ const Day1Setup = ({ onComplete }: Props) => {
                 [
                   `Okay${fn} — so you're building this for `,
                   { echo: "audience" } as MsgSegment,
-                  `, and you want to help them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                  `, and you want to help them `,
+                  { echo: "challengeType" } as MsgSegment,
+                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
                 ],
               ]
             : [
-                `You're helping them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                [
+                  `You're helping them `,
+                  { echo: "challengeType" } as MsgSegment,
+                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                ],
               ];
 
 

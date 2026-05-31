@@ -717,6 +717,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey="step1-intro"
                   messages={[step1Message]}
+                  skipMakingNotes
                   onComplete={() => setStep1Phase("input")}
                 />
               )}

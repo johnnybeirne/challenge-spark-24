@@ -23,72 +23,72 @@ export const questions: AssessmentQuestion[] = [
     id: "q1",
     text: "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q2",
     text: "If you stopped promoting or publishing content, would your leads drop off?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q3",
     text: "Can you clearly identify what is driving most of your leads?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q4",
     text: "Are most of your leads already trusting you before you speak to them?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q5",
     text: "Do you have a system that encourages people to invite others they know?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q6",
     text: "Is your lead magnet the same for everyone who finds you?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q7",
     text: "When someone becomes a lead, do they know exactly what to do next?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q8",
     text: "Do you have something that continues to bring in leads after it’s been set up?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {
     id: "q9",
     text: "Do your leads only come in when you are actively working on it?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
 ];

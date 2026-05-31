@@ -6,6 +6,7 @@ import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { applySimulatedDate } from "@/lib/simulatedDate";
+import { CHALLENGE_DURATION_MS } from "@/lib/challengeWindow";
 
 /* ───── Types ───── */
 
@@ -170,7 +171,7 @@ export const defaultState: AppState = {
   challenge: {
     currentDay: 1,
     startedAt: new Date().toISOString(),
-    endsAt: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+    endsAt: new Date(Date.now() + CHALLENGE_DURATION_MS).toISOString(),
     tasks: {},
     aiOutputs: {},
     launchUrl: "",

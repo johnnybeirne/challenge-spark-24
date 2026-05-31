@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Crown, Sparkles } from "lucide-react";
 import { useSiteConfig, type UpgradeCardPlan } from "@/context/SiteConfigContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { useDeadline } from "@/hooks/useDeadline";
 
 function PlanCard({ plan, featured }: { plan: UpgradeCardPlan; featured?: boolean }) {
   return (
@@ -34,9 +36,15 @@ function PlanCard({ plan, featured }: { plan: UpgradeCardPlan; featured?: boolea
 const UpgradeCards = () => {
   const { config } = useSiteConfig();
   const { heading, plan1, plan2 } = config.upgradeCards;
+  const { t: tGlobal } = useSiteContent("global");
+  const deadline = useDeadline();
+  const urgency = deadline.render(
+    tGlobal("urgency.upgrade_card", `Have this live by ${deadline.dayName} — upgrade to keep momentum.`),
+  );
   return (
     <section className="mt-6">
-      <p className="mb-4 text-sm font-semibold text-foreground sm:text-base">{heading}</p>
+      <p className="mb-1 text-sm font-semibold text-foreground sm:text-base">{heading}</p>
+      <p className="mb-4 text-xs font-medium text-muted-foreground">{urgency}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         <PlanCard plan={plan1} />
         <PlanCard plan={plan2} featured />

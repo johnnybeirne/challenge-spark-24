@@ -15,18 +15,30 @@ import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
 import aiAvatar from "@/assets/ai-avatar.png";
 
-// Short empathetic line shown beneath each question. Keyed by question id; falls back gracefully.
-const EMPATHY_LINES: Record<string, string> = {
-  q1: "Most people I talk to are stuck in the hustle. No judgment — just honesty.",
-  q2: "It's okay if the answer is yes. That's where almost everyone starts.",
-  q3: "If it feels like a guess, you're not alone. Clarity is the whole point of this.",
-  q4: "Trust before the conversation is rare. Don't worry if you're not there yet.",
-  q5: "Word of mouth by accident doesn't count. A real system is different.",
-  q6: "One-size-fits-all is the default. There's a better way and we'll get to it.",
-  q7: "If the next step is fuzzy, that's normal. Most funnels lose people right here.",
-  q8: "Compounding lead flow is the goal. Few people have it yet.",
-  q9: "Be honest — this one stings for a lot of people. Including past me.",
-};
+// Typewriter component — reveals text character by character. Respects prefers-reduced-motion.
+function TypewriterText({ text, speed = 22 }: { text: string; speed?: number }) {
+  const [shown, setShown] = useState(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return text;
+    }
+    return "";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setShown(text);
+      return;
+    }
+    setShown("");
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) window.clearInterval(id);
+    }, speed);
+    return () => window.clearInterval(id);
+  }, [text, speed]);
+  return <>{shown}</>;
+}
 import Landing from "@/pages/Landing";
 
 const REF_SESSION_KEY = "challengeos_ref";

@@ -13,6 +13,20 @@ import { useQuizQuestions } from "@/hooks/useQuizQuestions";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+import aiAvatar from "@/assets/ai-avatar.png";
+
+// Short empathetic line shown beneath each question. Keyed by question id; falls back gracefully.
+const EMPATHY_LINES: Record<string, string> = {
+  q1: "Most people I talk to are stuck in the hustle. No judgment — just honesty.",
+  q2: "It's okay if the answer is yes. That's where almost everyone starts.",
+  q3: "If it feels like a guess, you're not alone. Clarity is the whole point of this.",
+  q4: "Trust before the conversation is rare. Don't worry if you're not there yet.",
+  q5: "Word of mouth by accident doesn't count. A real system is different.",
+  q6: "One-size-fits-all is the default. There's a better way and we'll get to it.",
+  q7: "If the next step is fuzzy, that's normal. Most funnels lose people right here.",
+  q8: "Compounding lead flow is the goal. Few people have it yet.",
+  q9: "Be honest — this one stings for a lot of people. Including past me.",
+};
 import Landing from "@/pages/Landing";
 
 const REF_SESSION_KEY = "challengeos_ref";
@@ -155,9 +169,28 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       <p className="mb-12 text-center text-xs text-muted-foreground">Answer honestly — this only works if you do</p>
 
       <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
-        <h1 className="mb-10 text-center text-2xl font-bold leading-tight text-foreground sm:text-3xl">
-          {q.text}
-        </h1>
+        <div className="mb-10 flex items-start gap-4">
+          <img
+            src={aiAvatar}
+            alt="Johnny B AI"
+            width={56}
+            height={56}
+            className="h-14 w-14 shrink-0 rounded-full ring-2 ring-foreground/10"
+          />
+          <div className="flex-1 min-w-0 pt-1">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Johnny B
+            </div>
+            <p className="whitespace-pre-line text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl">
+              {q.text}
+            </p>
+            {EMPATHY_LINES[q.id] && (
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {EMPATHY_LINES[q.id]}
+              </p>
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           {q.options.map((opt) => (

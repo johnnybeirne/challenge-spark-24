@@ -1044,26 +1044,16 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 5 && (() => {
-          const audienceFullLabel =
-            audienceType === "b2b"
-              ? "businesses and professionals"
-              : audienceType === "b2c"
-                ? "individuals and consumers"
-                : "your audience";
-          const step5Messages = knownAudienceType
-            ? [
-                `${Fn || "Hi there, "}you're focused on helping ${audienceFullLabel} — now let's get more specific.`,
-                "What result do you want participants to achieve?",
-              ]
-            : [
-                `Perfect${fn}, what result do you want participants to achieve?`,
-              ];
+          const step5Messages = [
+            `Great${fn} — that's a clear audience. Now, what result do you want them to achieve?`,
+          ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
                 resetKey={`step5-intro-${audienceType}`}
                 messages={step5Messages}
+                skipMakingNotes
                 onComplete={() => setStep5Phase("choose")}
               />
             )}

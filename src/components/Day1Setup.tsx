@@ -1461,9 +1461,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower5 = audienceTrim5
             ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
             : "";
-          const step5Messages = [
+          const step5Messages: Msg[] = [
             audienceLower5
-              ? `Great${fn}. With ${audienceLower5} in mind, what will your 3-day challenge help them achieve?`
+              ? [
+                  `Great${fn}. With `,
+                  { echo: "audience" } as MsgSegment,
+                  ` in mind, what will your 3-day challenge help them achieve?`,
+                ]
               : `Great${fn}. What will your 3-day challenge help them achieve?`,
           ];
           return (
@@ -1472,6 +1476,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <TypedSequence
                 resetKey={`step5-intro-${audienceType}-${audienceTrim5.length}`}
                 messages={step5Messages}
+                echoMap={echoMap}
                 skipMakingNotes
                 onComplete={() => setStep5Phase("choose")}
               />
@@ -1479,7 +1484,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
             {step5Phase === "choose" && (
               <div className="space-y-3">
-                <StaticAi messages={step5Messages} />
+                <StaticAi messages={step5Messages} echoMap={echoMap} />
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {challengeOptions.map((opt, idx) => {

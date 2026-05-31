@@ -1652,7 +1652,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower6 = audienceTrim6
             ? audienceTrim6.charAt(0).toLowerCase() + audienceTrim6.slice(1)
             : "";
-          const challengeShort = (challengeLabel(challengeType) || "").toLowerCase();
+          
 
           // NEW step 6 = the "trigger moment". We already know WHO from step 1; this
           // captures WHAT'S HAPPENING in their life/business right now that makes the

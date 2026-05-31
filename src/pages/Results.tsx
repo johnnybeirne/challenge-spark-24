@@ -9,6 +9,7 @@ import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 

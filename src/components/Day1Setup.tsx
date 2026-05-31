@@ -47,7 +47,7 @@ const JohnnyAvatar = () => (
 // bold/accent inline spans with a tiny pencil-to-edit affordance.
 // ---------------------------------------------------------------------------
 
-export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic";
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType";
 export type EchoSegment = { echo: EchoField };
 export type MsgSegment = string | EchoSegment;
 export type Msg = string | MsgSegment[];

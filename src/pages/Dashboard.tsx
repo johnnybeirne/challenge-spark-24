@@ -259,7 +259,6 @@ const Dashboard = () => {
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
           {/* PERMANENT PROFILE + QUIZ SCORE */}
-          <p className="text-center text-sm font-medium text-muted-foreground">{dashboardUrgency}</p>
 
           {/* INTRO VIDEO — welcome briefing */}
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">

@@ -547,15 +547,14 @@ const Day1Setup = ({ onComplete }: Props) => {
     setChallengeType(v);
     const description = challengeOptions.find((o) => o.value === v)?.description ?? v;
     persistFoundation({ challengeType: v, desiredOutcome: description } as Partial<SetupData>);
-    persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
     setState((prev) => ({
       ...prev,
       memory: mergeMemory(prev.memory, {
         challengeType: normalizeChallengeType(v),
-        desiredOutcome: summary,
+        desiredOutcome: description,
       }),
     }));
-    profileSaved(`Challenge type: ${label}`);
+    profileSaved(`Challenge type: ${description}`);
     setStep6Phase(saved?.topicHint ? "input" : "intro");
     setStep(6);
   };
@@ -1074,14 +1073,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         >
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
-                        <span className="flex flex-col gap-0.5">
-                          <span className="text-base font-semibold leading-tight">
-                            <span className="mr-1.5">{opt.emoji}</span>
-                            {opt.label}
-                          </span>
-                          <span className="text-sm text-muted-foreground leading-snug">
-                            {opt.description}
-                          </span>
+                        <span className="text-base font-semibold leading-tight">
+                          {opt.description}
                         </span>
                       </button>
                     );

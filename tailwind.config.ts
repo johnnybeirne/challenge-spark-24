@@ -106,6 +106,10 @@ export default {
           "0%": { opacity: "0", transform: "translateY(8px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "sonar-pulse": {
+          "0%": { transform: "scale(1)", opacity: "0.55" },
+          "100%": { transform: "scale(1.9)", opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -115,6 +119,7 @@ export default {
         "pulse-glow": "pulse-glow 2.5s ease-in-out infinite",
         "attention-pulse": "attention-pulse 1s ease-in-out 3",
         "rise-in": "rise-in 500ms ease-out both",
+        "sonar-pulse": "sonar-pulse 1.8s ease-out infinite",
       },
     },
   },

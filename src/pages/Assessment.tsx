@@ -120,13 +120,17 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center gap-4 p-6">
-        <img
-          src={aiAvatar}
-          alt="Johnny B AI"
-          width={72}
-          height={72}
-          className="h-[72px] w-[72px] rounded-full ring-2 ring-foreground/10"
-        />
+        <div className="relative h-[72px] w-[72px]">
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/40 animate-sonar-pulse" />
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/40 animate-sonar-pulse" style={{ animationDelay: "0.9s" }} />
+          <img
+            src={aiAvatar}
+            alt="Johnny B AI"
+            width={72}
+            height={72}
+            className="relative z-10 h-[72px] w-[72px] rounded-full ring-2 ring-foreground/10"
+          />
+        </div>
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Johnny B AI
         </div>

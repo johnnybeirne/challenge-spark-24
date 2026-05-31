@@ -394,6 +394,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step4Phase, setStep4Phase] = useState<ConvPhase>(saved?.audienceType ? "choose" : "intro");
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
+  const [step1Phase, setStep1Phase] = useState<"intro" | "input">(saved?.audience ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
   const [step9Phase, setStep9Phase] = useState<"intro" | "input">(saved?.outcome ? "input" : "intro");
@@ -702,27 +703,60 @@ const Day1Setup = ({ onComplete }: Props) => {
           </button>
         )}
 
-        {step === 1 && (
-          <FoundationStep
-            n={1}
-            title={
-              audienceType === "b2b"
-                ? "Which businesses or professionals do you serve?"
-                : audienceType === "b2c"
-                  ? "Which individuals or consumers do you serve?"
-                  : "Who do you serve?"
-            }
-            helper="Describe who you serve, more specifically within that choice."
-            value={audience}
-            setValue={setAudience}
-            placeholder={
-              audienceType === "b2b"
-                ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
-                : "e.g. New parents in their 30s who want to build healthier daily habits."
-            }
-            onNext={() => handleFoundationNext(1)}
-          />
-        )}
+        {step === 1 && (() => {
+          const step1Message =
+            audienceType === "b2b"
+              ? `You got it${fn}. Describe the specific type of business or professional you work with.`
+              : audienceType === "b2c"
+                ? `You got it${fn}. Describe the specific type of person you work with.`
+                : `You got it${fn}. Describe who you serve.`;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step1Phase === "intro" && (
+                <TypedSequence
+                  resetKey="step1-intro"
+                  messages={[step1Message]}
+                  onComplete={() => setStep1Phase("input")}
+                />
+              )}
+
+              {step1Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={[step1Message]} />
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={audience}
+                        onChange={(e) => setAudience(e.target.value)}
+                        placeholder={
+                          audienceType === "b2b"
+                            ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
+                            : "e.g. New parents in their 30s who want to build healthier daily habits."
+                        }
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(1);
+                        }}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={() => handleFoundationNext(1)}
+                      disabled={!audience.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {step === 2 && (() => {
           const problemPlaceholderMap: Record<string, string> = {

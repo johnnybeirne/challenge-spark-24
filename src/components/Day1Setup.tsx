@@ -1068,14 +1068,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 5 && (() => {
+          const audienceTrim5 = audience.trim().replace(/\.$/, "");
+          const audienceLower5 = audienceTrim5
+            ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
+            : "";
           const step5Messages = [
-            `Great${fn}. What will your 3-day challenge help them achieve?`,
+            audienceLower5
+              ? `Great${fn}. With ${audienceLower5} in mind, what will your 3-day challenge help them achieve?`
+              : `Great${fn}. What will your 3-day challenge help them achieve?`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
-                resetKey={`step5-intro-${audienceType}`}
+                resetKey={`step5-intro-${audienceType}-${audienceTrim5.length}`}
                 messages={step5Messages}
                 skipMakingNotes
                 onComplete={() => setStep5Phase("choose")}

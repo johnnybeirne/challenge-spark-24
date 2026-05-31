@@ -7,13 +7,11 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import type { AssessmentResult } from "@/lib/assessmentData";
 
-// Display-only mapping — must match src/pages/Results.tsx. Does NOT change scoring.
+// Display-only archetype mapping based on score (0-100). Does NOT change scoring.
 const getTierLabel = (percent: number): string => {
-  if (percent <= 20) return "Starter";
-  if (percent <= 40) return "Builder";
-  if (percent <= 60) return "Growth Partner";
-  if (percent <= 80) return "Featured Creator";
-  return "Strategic Partner";
+  if (percent <= 35) return "You're a Pioneer";
+  if (percent <= 74) return "You're an Architect";
+  return "You're an Authority";
 };
 
 const getAccent = (percent: number) => {
@@ -91,28 +89,9 @@ const DashboardProfileHeader = () => {
 
   return (
     <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-      {/* Avatar + name */}
-      <div className="flex items-center gap-4">
-        <img
-          src={avatarUrl}
-          alt={displayName}
-          width={64}
-          height={64}
-          loading="lazy"
-          className="h-16 w-16 shrink-0 rounded-full border-2 border-foreground/10 object-cover"
-        />
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            Your profile
-          </p>
-          <h2 className="truncate text-xl font-bold text-foreground sm:text-2xl">
-            {displayName}
-          </h2>
-        </div>
-      </div>
-
       {/* Quiz score — permanent */}
-      <div className="mt-5 border-t border-border pt-5">
+      <div>
+
         {hasResult ? (
           <>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">

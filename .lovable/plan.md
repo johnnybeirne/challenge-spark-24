@@ -1,24 +1,22 @@
-## Goal
-On the post-signup success screen (shown after the user finishes signup via `SignupChat`), make the headline ("Your 3-day challenge is ready, {name}.") and the subcopy ("Set aside 60 minutes each day…") appear as a typed message from Johnny B AI, matching the avatar + typewriter pattern already used elsewhere in the flow.
+## Dashboard Lead Generation Score Card Cleanup
 
-## What changes
+### Scope
+Edit only `src/components/DashboardProfileHeader.tsx` to clean up the score card on the dashboard.
 
-### `src/components/auth/SignupChat.tsx` — success-state block (lines 218–229 only)
-Replace the plain `<h1>` + `<p>` with a Johnny B AI message block:
+### Changes
+1. **Remove the avatar + name block** (lines 94–112):
+   - Remove the `<img>` avatar.
+   - Remove the "Your profile" label.
+   - Remove the user's display name.
+2. **Replace the tier/archetype label mapping** with score-based archetypes:
+   - `0–35` → **"You're a Pioneer"**
+   - `36–74` → **"You're an Architect"**
+   - `75–100` → **"You're an Authority"**
+3. **Drop the old tier names** (Starter, Builder, Growth Partner, Featured Creator, Strategic Partner) from the mapping entirely.
+4. **Preserve untouched**: the numeric score, the progress bar, the accent colors, the bar gradient, and the summary line beneath the bar.
 
-- Left: Johnny B AI avatar (`aiAvatar`) with the existing green status dot — same styling as the in-flow chat avatar (lines 239–248).
-- Right:
-  - Small "Johnny B AI" label (same muted style).
-  - Headline `successHeadline(firstName)` typed out via a typewriter effect (reuse the existing `TypingBubble` mechanic, but render as a large bold heading, not a chat bubble — a new lightweight `TypewriterText` local component, or extend `TypingBubble` with a `variant="headline"` prop).
-  - Subcopy `successSubcopy` typed out after the headline finishes (sequential reveal).
-- Action buttons (Add to Calendar / Continue / Start Day 1) remain unchanged, sitting below the typed message.
-
-Layout: centered column on mobile, avatar-left + message-right on `sm:` breakpoint, mirroring the Results page Johnny message styling so it feels consistent.
-
-### No other changes
-- No copy edits, no scoring/logic changes, no admin schema changes.
-- `ChallengeSignup.tsx` and all other call sites of `SignupChat` keep working — they only pass `successHeadline` / `successSubcopy`, and the typewriter renders whatever string they return.
-- Direct-signup path ("You're in, {first}. Day 1 starts now.") also gets the same Johnny B AI typed treatment automatically, since both paths share this success block.
-
-## Files touched
-- `src/components/auth/SignupChat.tsx` — success block + small internal typewriter helper
+### Technical Details
+- The `getTierLabel` function is the only logic that changes.
+- The avatar, name, and "Your profile" markup is simply deleted.
+- No other files are modified.
+- No backend or database changes required.

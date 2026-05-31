@@ -119,10 +119,20 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   // ── Loading screen ──
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen p-6 max-w-lg mx-auto justify-center items-center gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-lg font-semibold text-foreground">Generating your personalised recommendation…</p>
-        <p className="text-sm text-muted-foreground">This won't take long</p>
+      <div className="flex flex-col min-h-screen items-center justify-center gap-4 p-6">
+        <img
+          src={aiAvatar}
+          alt="Johnny B AI"
+          width={72}
+          height={72}
+          className="h-[72px] w-[72px] rounded-full ring-2 ring-foreground/10"
+        />
+        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          Johnny B AI
+        </div>
+        <p className="max-w-md text-center text-lg font-semibold text-foreground">
+          <TypewriterText text="Analysing your results and preparing your personalised advice..." />
+        </p>
       </div>
     );
   }
@@ -164,7 +174,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
       setTimeout(() => {
         navigate("/results");
-      }, 1800);
+      }, 2500);
     }
   };
 

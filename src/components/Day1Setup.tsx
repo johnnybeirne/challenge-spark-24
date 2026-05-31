@@ -1284,19 +1284,37 @@ const Day1Setup = ({ onComplete }: Props) => {
             outcomeHintByChallenge[challengeType] ??
             `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
 
-          const howSnippet9 = howLower9
-            ? (howLower9.length > 60 ? `${howLower9.slice(0, 60).trimEnd()}…` : howLower9)
-            : "";
-          const processCallback9 = howSnippet9
-            ? `Love it — using ${howSnippet9}. Now the payoff. `
-            : "";
-          const step9Messages = [
-            subject9 !== "they" && painLower9
-              ? `${processCallback9}Last one${fn}. After you take ${subject9} through that, ${painLower9} becomes what? What do they walk away with by the end of Day 3?`
-              : subject9 !== "they"
-                ? `${processCallback9}Last one${fn}. By the end of Day 3, what does ${subject9} walk away with?`
-                : `${processCallback9}Finally, describe the result they'll walk away with by the end of Day 3.`,
-          ];
+          const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
+          // Lead-in echo of the user's process — uses the raw field so the
+          // inline pencil can edit it (formatList stays disabled for `how`).
+          const leadIn: MsgSegment[] = howTrim9
+            ? [
+                "Love it — using ",
+                { echo: "how" } as MsgSegment,
+                ". Now the payoff. ",
+              ]
+            : [];
+          const step9Messages: Msg[] =
+            subjectField9 && painLower9
+              ? [[
+                  ...leadIn,
+                  `Last one${fn}. After you take `,
+                  { echo: subjectField9 } as MsgSegment,
+                  ` through that, `,
+                  { echo: "problem" } as MsgSegment,
+                  ` becomes what? What do they walk away with by the end of Day 3?`,
+                ]]
+              : subjectField9
+                ? [[
+                    ...leadIn,
+                    `Last one${fn}. By the end of Day 3, what does `,
+                    { echo: subjectField9 } as MsgSegment,
+                    ` walk away with?`,
+                  ]]
+                : [[
+                    ...leadIn,
+                    `Finally, describe the result they'll walk away with by the end of Day 3.`,
+                  ]];
 
 
           return (
@@ -1305,6 +1323,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey={`step9-intro-${whoTrim9.length}-${painLower9.length}-${audienceTrim9.length}`}
                   messages={step9Messages}
+                  echoMap={echoMap}
                   onComplete={() => setStep9Phase("input")}
                 />
               )}
@@ -1312,7 +1331,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step9Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step9Messages} />
+                  <StaticAi messages={step9Messages} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

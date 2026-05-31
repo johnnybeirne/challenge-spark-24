@@ -23,8 +23,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q1",
     text: "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

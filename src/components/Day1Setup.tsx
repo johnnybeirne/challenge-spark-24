@@ -1556,21 +1556,22 @@ const Day1Setup = ({ onComplete }: Props) => {
             placeholderByChallenge[challengeType] ??
             `e.g. What's happening for them right now that makes the next 3 days the perfect time to do this?`;
 
-          // Two short messages — first reflects what we already know (no re-ask),
-          // second asks the genuinely new question.
+          // Single combined Johnny message — reflects what we already know AND
+          // asks the trigger-moment question in one beat. Keeping it as one
+          // message prevents any chance of duplicate typing and ensures the
+          // answer field appears as soon as Johnny finishes.
           const step6Messages: Msg[] = audienceLower6
             ? [
                 [
                   `Okay${fn} — so you're building this for `,
                   { echo: "audience" } as MsgSegment,
-                  `, and you want to help them ${challengeShort}.`,
+                  `, and you want to help them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
                 ],
-                `What's happening for them right now that makes your three-day challenge the perfect solution?`,
               ]
             : [
-                `You're helping them ${challengeShort}.`,
-                `What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                `You're helping them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
               ];
+
 
           return (
             <div className="space-y-6 animate-fade-in">

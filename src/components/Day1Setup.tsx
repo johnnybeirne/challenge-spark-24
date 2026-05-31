@@ -266,6 +266,77 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
   </div>
 );
 
+// A compact recap of values the user has already given — used between an
+// acknowledgement and a follow-up question so we never have to glue multiple
+// user fragments into one long sentence.
+type RecapRow = { label: string; echo: EchoField };
+
+const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
+  const visible = rows.filter((r) => {
+    const entry = echoMap[r.echo];
+    return entry && (entry.value ?? "").trim().length > 0;
+  });
+  if (visible.length === 0) return null;
+  return (
+    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-2">
+      {visible.map((r) => {
+        const entry = echoMap[r.echo]!;
+        return (
+          <div
+            key={r.echo}
+            className="grid grid-cols-[78px_1fr] gap-3 items-baseline"
+          >
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+              {r.label}
+            </div>
+            <div className="text-sm md:text-base leading-snug">
+              <EchoText
+                value={entry.value}
+                format={entry.format}
+                onSave={entry.onSave}
+                tidyContext={r.echo}
+                skipTidy={entry.skipTidy}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Acknowledgement + recap + question, in Johnny's bubble. Used wherever a
+// step's message would otherwise glue two or more echoes into one sentence.
+const JohnnyRecapPanel = ({
+  leadIn,
+  acknowledgement,
+  rows,
+  question,
+  echoMap,
+}: {
+  leadIn?: string;
+  acknowledgement: string;
+  rows: RecapRow[];
+  question: string;
+  echoMap: EchoMap;
+}) => (
+  <div className="flex items-start gap-3">
+    <JohnnyAvatar />
+    <div className="flex-1 space-y-3 min-w-0">
+      {leadIn && (
+        <div className="text-sm md:text-base leading-relaxed text-foreground/80">
+          {leadIn}
+        </div>
+      )}
+      <div className="text-sm md:text-base leading-relaxed font-medium">
+        {acknowledgement}
+      </div>
+      <RecapCard rows={rows} echoMap={echoMap} />
+      <div className="text-sm md:text-base leading-relaxed">{question}</div>
+    </div>
+  </div>
+);
+
 // Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
 const DelayedFeedback = ({ text }: { text: string }) => {
   const [ready, setReady] = useState(false);

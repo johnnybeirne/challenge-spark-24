@@ -1184,14 +1184,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 />
               )}
 
-            <div className="space-y-6 animate-fade-in">
-              {step6Phase === "intro" && (
-                <TypedSequence
-                  resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
-                  messages={step6Messages}
-                  onComplete={() => setStep6Phase("input")}
-                />
-              )}
+
 
               {step6Phase === "input" && (
                 <div className="space-y-5">

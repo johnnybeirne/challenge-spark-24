@@ -59,6 +59,7 @@ export type EchoMap = Partial<
       value: string;
       onSave?: (v: string) => void;
       format?: (v: string) => string;
+      skipTidy?: boolean;
     }
   >
 >;
@@ -99,17 +100,19 @@ const echoText = (field: EchoField, map?: EchoMap): string => {
   return fmt(entry.value || "");
 };
 
-// Bold/accent inline echo with a pencil edit affordance.
+// Bold/accent inline echo with an optional pencil edit affordance.
 const EchoText = ({
   value,
   format,
   onSave,
   tidyContext,
+  skipTidy = false,
 }: {
   value: string;
   format?: (v: string) => string;
   onSave?: (v: string) => void;
   tidyContext?: string;
+  skipTidy?: boolean;
 }) => {
   const formatted = (format ?? formatList)(value || "");
   // Lightly grammar-clean the echoed fragment via AI (cached). Show the raw

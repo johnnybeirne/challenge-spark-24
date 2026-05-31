@@ -752,7 +752,7 @@ function LockedDayScreen({
             Day {dayNum} locked
           </p>
           <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
-            Day {dayNum} opens {unlockLabel.toLowerCase()}
+            Day {dayNum} opens {unlockLabel}
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Come back when Day {dayNum} unlocks — your progress is saved.

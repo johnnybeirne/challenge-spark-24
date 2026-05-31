@@ -1313,35 +1313,34 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
 
           const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
-          const step3TemplateQuestion: Msg =
-            subjectField3 && painLower
-              ? [
-                  `That's clear${fn}. So for `,
-                  { echo: subjectField3 } as MsgSegment,
-                  ` dealing with `,
-                  { echo: "problem" } as MsgSegment,
-                  ` — what's the process you take them through to create the result?`,
-                ]
-              : subjectField3
-                ? [
-                    `That's clear${fn}. So for `,
-                    { echo: subjectField3 } as MsgSegment,
-                    ` — what's the process you take them through to create the result?`,
-                  ]
-                : "Now describe your process — the steps you take them through to create the result.";
+          const step3Ack = `That's clear${fn}.`;
+          const step3Question =
+            subjectField3 || painLower
+              ? "What's the process you take them through to create the result?"
+              : "Now describe your process — the steps you take them through to create the result.";
 
-          // If Johnny's AI reaction landed in time, lead with it so step 3 feels
-          // like a direct response to the problem the user just typed.
-          const step3Messages: Msg[] = step3Reaction
-            ? [step3Reaction, step3TemplateQuestion]
-            : [step3TemplateQuestion];
+          const step3RecapRows: RecapRow[] = [];
+          if (subjectField3) {
+            step3RecapRows.push({
+              label: subjectField3 === "topic" ? "Avatar" : "Audience",
+              echo: subjectField3,
+            });
+          }
+          if (painLower) step3RecapRows.push({ label: "Problem", echo: "problem" });
+
+          // Typed intro: lead with Johnny's AI reaction (if it landed in time)
+          // followed by the short acknowledgement. The recap + question render
+          // as structured rows once the typing completes.
+          const step3IntroMessages: Msg[] = step3Reaction
+            ? [step3Reaction, step3Ack]
+            : [step3Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
-                  messages={step3Messages}
+                  messages={step3IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep3Phase("input")}
                 />
@@ -1350,7 +1349,13 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step3Messages} echoMap={echoMap} />
+                  <JohnnyRecapPanel
+                    leadIn={step3Reaction ?? undefined}
+                    acknowledgement={step3Ack}
+                    rows={step3RecapRows}
+                    question={step3Question}
+                    echoMap={echoMap}
+                  />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

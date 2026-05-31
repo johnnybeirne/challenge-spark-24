@@ -191,18 +191,14 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           />
           <div className="flex-1 min-w-0 pt-1">
             <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Johnny B
+              Johnny B AI
             </div>
             <p className="whitespace-pre-line text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl">
-              {q.text}
+              <TypewriterText text={q.text} />
             </p>
-            {EMPATHY_LINES[q.id] && (
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                {EMPATHY_LINES[q.id]}
-              </p>
-            )}
           </div>
         </div>
+
 
         <div className="grid grid-cols-2 gap-3">
           {q.options.map((opt) => (

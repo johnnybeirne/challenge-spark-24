@@ -41,17 +41,183 @@ const JohnnyAvatar = () => (
   />
 );
 
+// ---------------------------------------------------------------------------
+// Echo system — lets Johnny's messages reference the user's prior answers as
+// bold/accent inline spans with a tiny pencil-to-edit affordance.
+// ---------------------------------------------------------------------------
+
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic";
+export type EchoSegment = { echo: EchoField };
+export type MsgSegment = string | EchoSegment;
+export type Msg = string | MsgSegment[];
+
+export type EchoMap = Partial<
+  Record<
+    EchoField,
+    {
+      value: string;
+      onSave?: (v: string) => void;
+      format?: (v: string) => string;
+    }
+  >
+>;
+
+// Normalise a freeform list answer (e.g. "speakers trainers, authors and coaches")
+// into a tidy, punctuated list ("speakers, trainers, authors, and coaches").
+// Falls back to the original string when the input looks like a sentence.
+export const formatList = (raw: string): string => {
+  const cleaned = (raw || "").trim().replace(/[.!?,]+$/, "");
+  if (!cleaned) return "";
+  // Sentences pass through unchanged — only operate on short list-style input.
+  if (cleaned.length > 80) return cleaned;
+  // Split on commas, slashes, " and ", " & ", or runs of whitespace.
+  const parts = cleaned
+    .split(/\s*,\s*|\s*\/\s*|\s+and\s+|\s+&\s+|\s{2,}|\s+/i)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length <= 1) return cleaned;
+  // Dedupe case-insensitively, preserve order.
+  const seen = new Set<string>();
+  const unique = parts.filter((p) => {
+    const k = p.toLowerCase();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  if (unique.length === 1) return unique[0];
+  if (unique.length === 2) return `${unique[0]} and ${unique[1]}`;
+  return `${unique.slice(0, -1).join(", ")}, and ${unique[unique.length - 1]}`;
+};
+
+const echoText = (field: EchoField, map?: EchoMap): string => {
+  const entry = map?.[field];
+  if (!entry) return "";
+  const fmt = entry.format ?? formatList;
+  return fmt(entry.value || "");
+};
+
+// Bold/accent inline echo with a pencil edit affordance.
+const EchoText = ({
+  value,
+  format,
+  onSave,
+}: {
+  value: string;
+  format?: (v: string) => string;
+  onSave?: (v: string) => void;
+}) => {
+  const display = (format ?? formatList)(value || "");
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  useEffect(() => {
+    if (!editing) setDraft(value);
+  }, [value, editing]);
+
+  if (!display) return null;
+  if (!onSave) {
+    return <span className="font-semibold text-primary">{display}</span>;
+  }
+
+  if (editing) {
+    const commit = () => {
+      const next = draft.trim();
+      if (next && next !== value) onSave(next);
+      setEditing(false);
+    };
+    return (
+      <span className="inline-flex items-center gap-1 align-middle">
+        <input
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commit();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              setDraft(value);
+              setEditing(false);
+            }
+          }}
+          className="font-semibold text-primary bg-transparent border-b border-primary/60 focus:outline-none focus:border-primary px-0.5 min-w-[6ch]"
+          style={{ width: `${Math.max(draft.length + 1, 6)}ch` }}
+        />
+        <button
+          type="button"
+          onClick={commit}
+          aria-label="Save"
+          className="text-primary hover:text-primary/80"
+        >
+          <Check className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setDraft(value);
+            setEditing(false);
+          }}
+          aria-label="Cancel"
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <XIcon className="h-3.5 w-3.5" />
+        </button>
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1 align-middle">
+      <span className="font-semibold text-primary">{display}</span>
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        aria-label="Edit"
+        className="text-muted-foreground/60 hover:text-primary transition-colors"
+      >
+        <Pencil className="h-3 w-3" />
+      </button>
+    </span>
+  );
+};
+
+// Render a Msg as React nodes, substituting EchoText for echo segments.
+const renderMsg = (msg: Msg, echoMap?: EchoMap, keyPrefix = ""): React.ReactNode => {
+  if (typeof msg === "string") return msg;
+  return msg.map((seg, i) => {
+    if (typeof seg === "string") return <span key={`${keyPrefix}s${i}`}>{seg}</span>;
+    const entry = echoMap?.[seg.echo];
+    if (!entry) return null;
+    return (
+      <EchoText
+        key={`${keyPrefix}e${i}`}
+        value={entry.value}
+        format={entry.format}
+        onSave={entry.onSave}
+      />
+    );
+  });
+};
+
+// Flatten a Msg to a plain string for typing animation / placeholders.
+const flattenMsg = (msg: Msg, echoMap?: EchoMap): string => {
+  if (typeof msg === "string") return msg;
+  return msg
+    .map((seg) => (typeof seg === "string" ? seg : echoText(seg.echo, echoMap)))
+    .join("");
+};
+
 // Static rendering of the AI conversation block — used to keep the prior typed
 // message visible alongside the response controls (matches the look of
 // TypedSequence after typing has finished).
-const StaticAi = ({ messages }: { messages: string[] }) => (
+const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap }) => (
   <div className="flex items-start gap-3">
     <JohnnyAvatar />
     <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
           <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug">
-            {m}
+            {renderMsg(m, echoMap, `m${i}-`)}
           </div>
         </div>
       ))}
@@ -104,13 +270,18 @@ const TypedSequence = ({
   onComplete,
   resetKey,
   skipMakingNotes = false,
+  echoMap,
 }: {
-  messages: string[];
+  messages: Msg[];
   onComplete?: () => void;
   resetKey: string | number;
   skipMakingNotes?: boolean;
+  echoMap?: EchoMap;
 }) => {
-  const [shown, setShown] = useState<string[]>([]);
+  // Flatten for typing — we type plain text, then swap to rich render when each
+  // message lands in `shown`.
+  const plain = messages.map((m) => flattenMsg(m, echoMap));
+  const [shown, setShown] = useState<number[]>([]);
   const [current, setCurrent] = useState("");
   const [idx, setIdx] = useState(0);
   const [showDots, setShowDots] = useState(true);
@@ -125,18 +296,17 @@ const TypedSequence = ({
   }, [resetKey]);
 
   useEffect(() => {
-    if (idx >= messages.length) {
+    if (idx >= plain.length) {
       if (!doneRef.current) {
         doneRef.current = true;
-        // Final read-pause before advancing — gives the user a moment to absorb.
-        const last = messages[messages.length - 1] ?? "";
+        const last = plain[plain.length - 1] ?? "";
         const finalPause = last.length > 60 ? 1300 : last.length > 30 ? 1000 : 800;
         const t = setTimeout(() => onComplete?.(), finalPause);
         return () => clearTimeout(t);
       }
       return;
     }
-    const full = messages[idx];
+    const full = plain[idx];
     setShowDots(true);
     setCurrent("");
     const dotsTimer = setTimeout(() => {
@@ -147,10 +317,9 @@ const TypedSequence = ({
         setCurrent(full.slice(0, i));
         if (i >= full.length) {
           clearInterval(interval);
-          // Pause after each message — longer for longer messages.
           const betweenPause = full.length > 60 ? 1100 : full.length > 30 ? 850 : 650;
           setTimeout(() => {
-            setShown((prev) => [...prev, full]);
+            setShown((prev) => [...prev, idx]);
             setCurrent("");
             setIdx((prevIdx) => prevIdx + 1);
           }, betweenPause);
@@ -169,14 +338,14 @@ const TypedSequence = ({
     <div className="flex items-start gap-3">
       <JohnnyAvatar />
       <div className="flex-1 space-y-3 min-w-0">
-        {shown.map((m, i) => (
+        {shown.map((shownIdx, i) => (
           <div key={i} className="flex animate-fade-in">
             <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
-              {m}
+              {renderMsg(messages[shownIdx], echoMap, `t${shownIdx}-`)}
             </div>
           </div>
         ))}
-        {idx < messages.length && (
+        {idx < plain.length && (
           <div className="flex animate-fade-in">
             <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
               {isMakingNotes ? (

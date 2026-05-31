@@ -738,9 +738,9 @@ function LockedDayScreen({
   const deadline = useDeadline();
   const template = tGlobal(
     "urgency.locked_day",
-    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel.toLowerCase()}.`,
+    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel}.`,
   );
-  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel.toLowerCase() });
+  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel });
   return (
     <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
       <section className="mx-auto max-w-3xl space-y-6">
@@ -752,7 +752,7 @@ function LockedDayScreen({
             Day {dayNum} locked
           </p>
           <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
-            Day {dayNum} opens {unlockLabel.toLowerCase()}
+            Day {dayNum} opens {unlockLabel}
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Come back when Day {dayNum} unlocks — your progress is saved.

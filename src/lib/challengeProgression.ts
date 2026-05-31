@@ -1,7 +1,7 @@
 export const DAY_UNLOCK_HOURS: Record<number, number> = { 1: 0, 2: 24, 3: 48 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "short",
+  month: "long",
   day: "numeric",
 });
 

@@ -109,7 +109,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     } catch {}
   }, []);
 
-  const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
+  
 
   if (!started) {
     const landingVariant = resolvedMode === "free_training" ? "free_training" : "default";

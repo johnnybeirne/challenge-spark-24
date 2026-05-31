@@ -904,36 +904,46 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 9 && (() => {
-          const outcomePlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
-            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
-            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
-            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
-            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
-            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
-            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
-            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
-          };
-          const outcomePlaceholder =
-            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The transformation, result, or change participants will experience by the end.";
-
           const whoTrim9 = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim9 = audience.trim().replace(/\.$/, "");
+          const audienceLower9 = audienceTrim9
+            ? audienceTrim9.charAt(0).toLowerCase() + audienceTrim9.slice(1)
+            : "";
+          const whoLower9 = whoTrim9
+            ? whoTrim9.charAt(0).toLowerCase() + whoTrim9.slice(1)
+            : "";
           const painTrim9 = problem.trim().replace(/\.$/, "");
           const painLower9 = painTrim9 ? painTrim9.charAt(0).toLowerCase() + painTrim9.slice(1) : "";
           const howTrim9 = how.trim().replace(/\.$/, "");
           const howLower9 = howTrim9 ? howTrim9.charAt(0).toLowerCase() + howTrim9.slice(1) : "";
+          const subject9 = whoLower9 || audienceLower9 || "they";
+
+          // Placeholder shows the specific transformation arc using the user's own pain words.
+          const outcomeHintByChallenge: Record<string, string> = {
+            "solve-problem": painLower9
+              ? `e.g. ${subject9} will move from ${painLower9} to feeling fully in control and equipped to keep going.`
+              : `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
+            "quick-win": `e.g. ${subject9} will walk away with a tangible early win that proves what's possible.`,
+            "create-asset": `e.g. ${subject9} will leave with a practical tool or plan they can keep using long after Day 3.`,
+            "reach-milestone": `e.g. ${subject9} will make real, measurable progress toward a goal that genuinely matters to them.`,
+          };
+          const outcomePlaceholder =
+            outcomeHintByChallenge[challengeType] ??
+            `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
+
           const step9Messages = [
-            whoTrim9
-              ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
-              : "Finally, describe the result they'll experience by the end of your challenge.",
+            subject9 !== "they" && painLower9
+              ? `Last one${fn}. So after you take ${subject9} through your process, ${painLower9} becomes what? What do they walk away with by the end of Day 3?`
+              : subject9 !== "they"
+                ? `Last one${fn}. By the end of Day 3, what does ${subject9} walk away with?`
+                : "Finally, describe the result they'll walk away with by the end of Day 3.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step9Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step9-intro-${whoTrim9.length}`}
+                  resetKey={`step9-intro-${whoTrim9.length}-${painLower9.length}-${audienceTrim9.length}`}
                   messages={step9Messages}
                   onComplete={() => setStep9Phase("input")}
                 />

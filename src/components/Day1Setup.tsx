@@ -167,15 +167,17 @@ const EchoText = ({
   }
 
   return (
-    <span className="inline-flex items-center gap-1 align-middle">
-      <span className="font-semibold text-primary">{display}</span>
+    <span className="inline-flex items-center gap-1 align-middle group">
+      <span className="font-semibold text-primary underline underline-offset-2 decoration-primary/30 group-hover:decoration-primary/60 transition-all cursor-pointer">
+        {display}
+      </span>
       <button
         type="button"
         onClick={() => setEditing(true)}
         aria-label="Edit"
-        className="text-muted-foreground/60 hover:text-primary transition-colors"
+        className="text-muted-foreground hover:text-primary transition-colors"
       >
-        <Pencil className="h-3 w-3" />
+        <Pencil className="h-3.5 w-3.5" />
       </button>
     </span>
   );

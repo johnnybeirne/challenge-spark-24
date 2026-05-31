@@ -21,6 +21,7 @@ import { mergeMemory, normalizeChallengeType, copilotMemoryContext } from "@/lib
 import DictateButton from "@/components/DictateButton";
 import { useDictation } from "@/hooks/useDictation";
 import { supabase } from "@/integrations/supabase/client";
+import { tidyPhrase, getTidiedSync } from "@/lib/tidyPhrase";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
@@ -103,12 +104,39 @@ const EchoText = ({
   value,
   format,
   onSave,
+  tidyContext,
 }: {
   value: string;
   format?: (v: string) => string;
   onSave?: (v: string) => void;
+  tidyContext?: string;
 }) => {
-  const display = (format ?? formatList)(value || "");
+  const formatted = (format ?? formatList)(value || "");
+  // Lightly grammar-clean the echoed fragment via AI (cached). Show the raw
+  // formatted version immediately, then swap in the tidied version when it
+  // arrives so the UI never blocks.
+  const cachedTidy = getTidiedSync(formatted, tidyContext);
+  const [display, setDisplay] = useState<string>(cachedTidy ?? formatted);
+  useEffect(() => {
+    let cancelled = false;
+    if (!formatted) {
+      setDisplay("");
+      return;
+    }
+    const cached = getTidiedSync(formatted, tidyContext);
+    if (cached !== null) {
+      setDisplay(cached);
+      return;
+    }
+    setDisplay(formatted);
+    tidyPhrase(formatted, tidyContext).then((cleaned) => {
+      if (!cancelled) setDisplay(cleaned);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [formatted, tidyContext]);
+
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   useEffect(() => {

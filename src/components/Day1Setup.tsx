@@ -239,36 +239,24 @@ const audienceOptions = [
 const challengeOptions = [
   {
     value: "solve-problem",
-    emoji: "🎯",
-    label: "Solve a Problem",
-    description: "Overcome a specific blocker.",
-    summary: "Participants will solve a specific problem.",
+    description: "Overcome a specific blocker",
   },
   {
     value: "quick-win",
-    emoji: "⚡",
-    label: "Achieve a Quick Win",
-    description: "Deliver a meaningful result fast.",
-    summary: "Participants will achieve an immediate result.",
+    description: "Deliver a meaningful result fast",
   },
   {
     value: "create-asset",
-    emoji: "🛠",
-    label: "Create Something Valuable",
-    description: "Build something they keep using.",
-    summary: "Participants will create something valuable.",
+    description: "Build something they keep using",
   },
   {
     value: "reach-milestone",
-    emoji: "🚀",
-    label: "Reach a Milestone",
-    description: "Progress toward an important goal.",
-    summary: "Participants will achieve a meaningful milestone.",
+    description: "Progress toward an important goal",
   },
 ];
 
 const challengeLabel = (v: string) =>
-  challengeOptions.find((o) => o.value === v)?.label ?? v;
+  challengeOptions.find((o) => o.value === v)?.description ?? v;
 
 const audienceLabelShort = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
@@ -557,17 +545,16 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
-    const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
-    const label = challengeOptions.find((o) => o.value === v)?.label ?? v;
-    persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
+    const description = challengeOptions.find((o) => o.value === v)?.description ?? v;
+    persistFoundation({ challengeType: v, desiredOutcome: description } as Partial<SetupData>);
     setState((prev) => ({
       ...prev,
       memory: mergeMemory(prev.memory, {
         challengeType: normalizeChallengeType(v),
-        desiredOutcome: summary,
+        desiredOutcome: description,
       }),
     }));
-    profileSaved(`Challenge type: ${label}`);
+    profileSaved(`Challenge type: ${description}`);
     setStep6Phase(saved?.topicHint ? "input" : "intro");
     setStep(6);
   };
@@ -1086,14 +1073,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         >
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
-                        <span className="flex flex-col gap-0.5">
-                          <span className="text-base font-semibold leading-tight">
-                            <span className="mr-1.5">{opt.emoji}</span>
-                            {opt.label}
-                          </span>
-                          <span className="text-sm text-muted-foreground leading-snug">
-                            {opt.description}
-                          </span>
+                        <span className="text-base font-semibold leading-tight">
+                          {opt.description}
                         </span>
                       </button>
                     );

@@ -270,9 +270,8 @@ const SignupChat = ({
       )}
       <div className="w-full max-w-2xl">
         {signupComplete ? (
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{successHeadline(firstName)}</h1>
-            <p className="text-base text-muted-foreground mb-8 max-w-xl mx-auto">{successSubcopy}</p>
+          <div>
+            <JohnnySuccessMessage headline={successHeadline(firstName)} subcopy={successSubcopy} />
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               {renderSuccessActions ? (
                 renderSuccessActions({ firstName, redirect: redirectAfterAuth, goToRedirect })
@@ -281,6 +280,7 @@ const SignupChat = ({
               )}
             </div>
           </div>
+
         ) : mode === "signup" ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">{headline}</h1>

@@ -243,9 +243,9 @@ const Results = () => {
       ? "mid"
       : "low";
   const urgencyDefaults = {
-    low: `Have this live by ${deadline.dayName}. Your first real win is 3 days away — don't put this off.`,
-    mid: `Have this live by ${deadline.dayName}. Don't let another month pass on the same plateau.`,
-    high: `Have this live by ${deadline.dayName}. Spots are limited — the next cohort starts in days, not weeks.`,
+    low: `Your first real win is 3 days away — don't put this off. Start now and have this in place by ${deadline.dayName}.`,
+    mid: `Don't let another month pass on the same plateau. Start now and have this in place by ${deadline.dayName}.`,
+    high: `Spots are limited — the next cohort starts in days, not weeks. Start now and have this in place by ${deadline.dayName}.`,
   } as const;
   const urgencyTemplate = tGlobal(`urgency.results_${urgencyTier}`, urgencyDefaults[urgencyTier]);
   const urgencyLine = deadline.render(urgencyTemplate);

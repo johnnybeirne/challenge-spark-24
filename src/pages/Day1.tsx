@@ -29,62 +29,71 @@ const Day1 = () => {
   };
 
   if (isLocked) {
-    // Read-only view of completed Day 1 — show saved answers, no inputs.
+    // Read-only view of completed Day 1 — show the Challenge Promise only.
     let saved: any = null;
     try { saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch {}
     const memory: any = state.memory || {};
-    const items: { label: string; value: string }[] = [
-      { label: "Who you're solving for", value: saved?.audience || "" },
-      { label: "The problem you're solving", value: saved?.problem || "" },
-      { label: "How you'll solve it", value: saved?.how || memory.desiredOutcome || "" },
-      { label: "Your challenge topic", value: saved?.topicHint || memory.topic || "" },
-    ].filter((i) => i.value && i.value.trim());
+
+    const strip = (s: string) =>
+      s.replace(/^they(['’]ll| will)?\s+/i, "").replace(/^\s*/, "").replace(/\.$/, "");
+
+    const whoRaw = (saved?.topicHint?.trim() || saved?.audience?.trim() || memory.topic || "");
+    const painRaw = saved?.problem?.trim() || "";
+    const resultRaw = saved?.outcome?.trim() || saved?.how?.trim() || memory.desiredOutcome || "";
+    const who = whoRaw ? strip(whoRaw) : "";
+    const pain = painRaw ? strip(painRaw).toLowerCase() : "";
+    const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
+
+    const methodMap: Record<string, string> = {
+      "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
+      "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
+      "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
+      "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
+    };
+    const methodPhrase = saved?.challengeType
+      ? (methodMap[saved.challengeType] ?? "a clear, day-by-day structure")
+      : "";
+
+    const hasPromise = who && pain && result && methodPhrase;
 
     return (
       <div className="min-h-screen bg-background">
         <div className="app-page-container py-6 pb-24 lg:py-8">
-          <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">Day 1 is complete.</span>{" "}
-            Your answers are saved.
-          </div>
           <div className="mb-6">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
               Day 1 of 3
             </p>
-            <h1 className="text-2xl font-bold text-foreground">Define Your Challenge</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              A read-only view of what you built on Day 1.
-            </p>
+            <h1 className="text-2xl font-bold text-foreground">Day 1 Complete</h1>
           </div>
 
-          <div className="space-y-4">
-            {items.length === 0 ? (
-              <Card>
-                <CardContent className="p-5 text-sm text-muted-foreground">
-                  No saved answers found for Day 1.
-                </CardContent>
-              </Card>
-            ) : (
-              items.map((i) => (
-                <Card key={i.label}>
-                  <CardContent className="p-5">
-                    <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
-                      {i.label}
-                    </p>
-                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{i.value}</p>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
+                Challenge Promise
+              </p>
+              {hasPromise ? (
+                <p className="text-base leading-relaxed text-foreground">
+                  Help <span className="font-semibold text-primary">{who}</span> move from{" "}
+                  <span className="font-semibold text-primary">{pain}</span> to{" "}
+                  <span className="font-semibold text-primary">{result}</span> through{" "}
+                  <span className="font-semibold text-primary">{methodPhrase}</span>.
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Your Challenge Promise isn't available yet.
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
-          <Button variant="outline" className="mt-6" onClick={() => navigate("/challenger-dashboard")}>
-            Back to dashboard
+          <Button className="mt-6" onClick={() => navigate("/challenger-dashboard")}>
+            Go to dashboard
           </Button>
         </div>
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen bg-background">

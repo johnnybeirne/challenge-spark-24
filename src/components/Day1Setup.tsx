@@ -478,7 +478,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const profileSaved = (label: string) =>
     toast.success("Your dashboard is updated", {
       description: label,
-      position: "top-right",
+      position: "top-left",
       duration: 3500,
       action: {
         label: "Dashboard",

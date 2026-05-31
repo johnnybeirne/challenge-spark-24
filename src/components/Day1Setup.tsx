@@ -1179,7 +1179,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
           const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
-          const subject3 = whoLower3 || audienceLower3 || "them";
+          const subject3 = "they";
 
           // Embed the user's audience into the example so it feels like it's about *their* people.
           const processHintByChallenge: Record<string, string> = {

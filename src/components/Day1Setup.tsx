@@ -118,12 +118,16 @@ const EchoText = ({
   // Lightly grammar-clean the echoed fragment via AI (cached). Show the raw
   // formatted version immediately, then swap in the tidied version when it
   // arrives so the UI never blocks.
-  const cachedTidy = getTidiedSync(formatted, tidyContext);
+  const cachedTidy = skipTidy ? null : getTidiedSync(formatted, tidyContext);
   const [display, setDisplay] = useState<string>(cachedTidy ?? formatted);
   useEffect(() => {
     let cancelled = false;
     if (!formatted) {
       setDisplay("");
+      return;
+    }
+    if (skipTidy) {
+      setDisplay(formatted);
       return;
     }
     const cached = getTidiedSync(formatted, tidyContext);
@@ -138,7 +142,7 @@ const EchoText = ({
     return () => {
       cancelled = true;
     };
-  }, [formatted, tidyContext]);
+  }, [formatted, tidyContext, skipTidy]);
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);

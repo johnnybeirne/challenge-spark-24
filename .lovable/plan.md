@@ -1,22 +1,21 @@
-## Dashboard Lead Generation Score Card Cleanup
+## Presume Quiz Completed When Entering Day 1
 
-### Scope
-Edit only `src/components/DashboardProfileHeader.tsx` to clean up the score card on the dashboard.
+### Goal
+Anyone landing on Day 1 (`/day/1`) without a saved assessment should be treated as if they took the quiz — so the dashboard score card, gating, and any "did they take the quiz?" checks all behave as if completed.
+
+### Approach
+Add a small effect in `src/pages/DayChallenge.tsx` that runs on mount: if `state.assessment` is null/missing, seed a baseline `AssessmentResult` via `generateResult({})` from `src/lib/assessmentData.ts`. This gives a real, valid result shape (with `challengeType`, `diagnosticScore`, `diagnosticLevel`, `recommendedChallenge`, etc.) so every downstream consumer (`DashboardProfileHeader`, `AssessmentResultCard`, Results page) treats them as completed.
 
 ### Changes
-1. **Remove the avatar + name block** (lines 94–112):
-   - Remove the `<img>` avatar.
-   - Remove the "Your profile" label.
-   - Remove the user's display name.
-2. **Replace the tier/archetype label mapping** with score-based archetypes:
-   - `0–35` → **"You're a Pioneer"**
-   - `36–74` → **"You're an Architect"**
-   - `75–100` → **"You're an Authority"**
-3. **Drop the old tier names** (Starter, Builder, Growth Partner, Featured Creator, Strategic Partner) from the mapping entirely.
-4. **Preserve untouched**: the numeric score, the progress bar, the accent colors, the bar gradient, and the summary line beneath the bar.
+- **`src/pages/DayChallenge.tsx`**:
+  - Import `generateResult` from `@/lib/assessmentData`.
+  - Add a `useEffect` (no deps after first run) that checks `!state.assessment` and, if true, calls `setState((prev) => ({ ...prev, assessment: generateResult({}) }))`.
+  - This persists to localStorage automatically via the existing `AppContext` save effect (line 485).
 
-### Technical Details
-- The `getTierLabel` function is the only logic that changes.
-- The avatar, name, and "Your profile" markup is simply deleted.
-- No other files are modified.
-- No backend or database changes required.
+### Not changed
+- Scoring, layout, gating logic, or the real assessment flow at `/assessment` — users who actually take the quiz still get their real result, which overwrites the seeded default.
+- No changes to `AppContext`, `AssessmentResultCard`, or `DashboardProfileHeader`.
+
+### Technical notes
+- `generateResult({})` returns valid default values (audienceType: "mixed", challengeType: "quick_win", diagnosticScore computed from empty answers, etc.) so the score card renders a real number + archetype rather than the "Take the quiz" empty state.
+- The seed only fires once per session per user — once written, `state.assessment` is non-null and the effect no-ops.

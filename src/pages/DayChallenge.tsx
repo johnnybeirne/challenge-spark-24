@@ -24,6 +24,7 @@ import { useDeadline } from "@/hooks/useDeadline";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
+import { generateResult } from "@/lib/assessmentData";
 import { canAccessDay, getDayUnlock } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
@@ -131,6 +132,16 @@ const DayChallenge = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [dayNum]);
+
+  // Presume the quiz was completed for anyone landing inside the challenge.
+  // Seeds a baseline assessment so the dashboard score card, results page,
+  // and any "has assessment?" gates render as completed. A real assessment
+  // taken later at /assessment will overwrite this.
+  useEffect(() => {
+    if (state.assessment && "challengeType" in (state.assessment as object)) return;
+    setState((prev) => ({ ...prev, assessment: generateResult({}) }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   const { authUser } = useAppState();

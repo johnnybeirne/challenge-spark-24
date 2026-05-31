@@ -159,7 +159,13 @@ const DayChallenge = () => {
   // Locked screen for Day 2 / Day 3 before they unlock
   if (dayLocked && (dayNum === 2 || dayNum === 3)) {
     const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
-    return <LockedDayScreen dayNum={dayNum} unlockLabel={unlock.label} onBack={() => navigate("/challenger-dashboard")} />;
+    return (
+      <LockedDayScreen
+        dayNum={dayNum}
+        unlockLabel={unlock.label}
+        onBack={() => navigate("/challenger-dashboard")}
+      />
+    );
   }
 
   // Setup is now embedded in /training (the onboarding hub).

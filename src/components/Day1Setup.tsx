@@ -1088,7 +1088,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           // Subject embedded into the placeholder — prefer the more specific avatar (topicHint),
           // fall back to the broader audience description, then a generic noun.
-          const subject = whoLower || audienceLower || (audienceType === "b2b" ? "they" : "they");
+          const subject = "they";
 
           const problemHintByChallenge: Record<string, string> = {
             "solve-problem": `e.g. ${subject} keep hitting the same wall and can't figure out what's actually blocking them.`,
@@ -1179,7 +1179,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
           const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
-          const subject3 = whoLower3 || audienceLower3 || "them";
+          const subject3 = "they";
 
           // Embed the user's audience into the example so it feels like it's about *their* people.
           const processHintByChallenge: Record<string, string> = {
@@ -1275,13 +1275,11 @@ const Day1Setup = ({ onComplete }: Props) => {
           const painLower9 = painTrim9 ? painTrim9.charAt(0).toLowerCase() + painTrim9.slice(1) : "";
           const howTrim9 = how.trim().replace(/\.$/, "");
           const howLower9 = howTrim9 ? howTrim9.charAt(0).toLowerCase() + howTrim9.slice(1) : "";
-          const subject9 = whoLower9 || audienceLower9 || "they";
+          const subject9 = "they";
 
-          // Placeholder shows the specific transformation arc using the user's own pain words.
+          // Placeholder shows the specific transformation arc.
           const outcomeHintByChallenge: Record<string, string> = {
-            "solve-problem": painLower9
-              ? `e.g. ${subject9} will move from ${painLower9} to feeling fully in control and equipped to keep going.`
-              : `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
+            "solve-problem": `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
             "quick-win": `e.g. ${subject9} will walk away with a tangible early win that proves what's possible.`,
             "create-asset": `e.g. ${subject9} will leave with a practical tool or plan they can keep using long after Day 3.`,
             "reach-milestone": `e.g. ${subject9} will make real, measurable progress toward a goal that genuinely matters to them.`,

@@ -1,21 +1,14 @@
-## Presume Quiz Completed When Entering Day 1
+## Problem
+At step 6 of the Day 1 challenge setup (`src/components/Day1Setup.tsx`), the AI prompt currently says:
 
-### Goal
-Anyone landing on Day 1 (`/day/1`) without a saved assessment should be treated as if they took the quiz — so the dashboard score card, gating, and any "did they take the quiz?" checks all behave as if completed.
+> "You're helping [businesses/people] [challenge type] — tell me about them in detail."
 
-### Approach
-Add a small effect in `src/pages/DayChallenge.tsx` that runs on mount: if `state.assessment` is null/missing, seed a baseline `AssessmentResult` via `generateResult({})` from `src/lib/assessmentData.ts`. This gives a real, valid result shape (with `challengeType`, `diagnosticScore`, `diagnosticLevel`, `recommendedChallenge`, etc.) so every downstream consumer (`DashboardProfileHeader`, `AssessmentResultCard`, Results page) treats them as completed.
+The user wants the copy adjusted based on which challenge type was selected:
 
-### Changes
-- **`src/pages/DayChallenge.tsx`**:
-  - Import `generateResult` from `@/lib/assessmentData`.
-  - Add a `useEffect` (no deps after first run) that checks `!state.assessment` and, if true, calls `setState((prev) => ({ ...prev, assessment: generateResult({}) }))`.
-  - This persists to localStorage automatically via the existing `AppContext` save effect (line 485).
+- **"Overcome a specific blocker"** → "You're helping businesses overcome a specific blocker — tell me more about these specific blockers."
+- **"Deliver a meaningful result fast"** → "You're helping [businesses/people] deliver a meaningful result fast — tell me more about this."
+- **"Build something they keep using"** → "You're helping [businesses/people] build something they keep using — tell me more about this."
+- **"Progress toward an important goal"** → "You're helping [businesses/people] progress toward an important goal — tell me more about this."
 
-### Not changed
-- Scoring, layout, gating logic, or the real assessment flow at `/assessment` — users who actually take the quiz still get their real result, which overwrites the seeded default.
-- No changes to `AppContext`, `AssessmentResultCard`, or `DashboardProfileHeader`.
-
-### Technical notes
-- `generateResult({})` returns valid default values (audienceType: "mixed", challengeType: "quick_win", diagnosticScore computed from empty answers, etc.) so the score card renders a real number + archetype rather than the "Take the quiz" empty state.
-- The seed only fires once per session per user — once written, `state.assessment` is non-null and the effect no-ops.
+## Change
+Update the `step6Messages` array in `src/components/Day1Setup.tsx` (around line 1154–1157) to branch on `challengeType`, using the phrasing above.

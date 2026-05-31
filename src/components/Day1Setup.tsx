@@ -1088,7 +1088,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           // Subject embedded into the placeholder — prefer the more specific avatar (topicHint),
           // fall back to the broader audience description, then a generic noun.
-          const subject = whoLower || audienceLower || (audienceType === "b2b" ? "they" : "they");
+          const subject = "they";
 
           const problemHintByChallenge: Record<string, string> = {
             "solve-problem": `e.g. ${subject} keep hitting the same wall and can't figure out what's actually blocking them.`,

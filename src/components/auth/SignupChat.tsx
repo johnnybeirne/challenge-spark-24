@@ -34,18 +34,33 @@ export interface SignupChatProps {
   }) => ReactNode;
 }
 
-const TypingBubble = ({ text }: { text: string }) => {
-  const [shown, setShown] = useState("");
+const useTypewriter = (text: string, enabled: boolean, speed = 22) => {
+  const [shown, setShown] = useState(enabled ? "" : text);
+  const [done, setDone] = useState(!enabled);
   useEffect(() => {
+    if (!enabled) {
+      setShown(text);
+      setDone(true);
+      return;
+    }
     setShown("");
+    setDone(false);
     let i = 0;
     const id = setInterval(() => {
       i++;
       setShown(text.slice(0, i));
-      if (i >= text.length) clearInterval(id);
-    }, 18);
+      if (i >= text.length) {
+        clearInterval(id);
+        setDone(true);
+      }
+    }, speed);
     return () => clearInterval(id);
-  }, [text]);
+  }, [text, enabled, speed]);
+  return { shown, done };
+};
+
+const TypingBubble = ({ text }: { text: string }) => {
+  const { shown } = useTypewriter(text, true, 18);
   return (
     <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-5 py-3 text-base text-foreground max-w-[85%]">
       {shown}
@@ -53,6 +68,45 @@ const TypingBubble = ({ text }: { text: string }) => {
     </div>
   );
 };
+
+const JohnnySuccessMessage = ({ headline, subcopy }: { headline: string; subcopy: string }) => {
+  const headlineTyper = useTypewriter(headline, true, 28);
+  const subcopyTyper = useTypewriter(subcopy, headlineTyper.done, 18);
+  return (
+    <div className="flex items-start gap-5 sm:gap-6 text-left mb-8">
+      <div className="relative shrink-0">
+        <img
+          src={aiAvatar}
+          alt="Johnny B AI"
+          width={88}
+          height={88}
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full ring-2 ring-foreground/10"
+        />
+        <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-background" />
+      </div>
+      <div className="flex-1 min-w-0 pt-1">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          Johnny B AI
+        </div>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground">
+          {headlineTyper.shown}
+          {!headlineTyper.done && (
+            <span className="inline-block w-[3px] h-6 sm:h-8 bg-foreground/50 ml-1 animate-pulse align-middle" />
+          )}
+        </h1>
+        {headlineTyper.done && (
+          <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+            {subcopyTyper.shown}
+            {!subcopyTyper.done && (
+              <span className="inline-block w-[2px] h-4 bg-foreground/40 ml-1 animate-pulse align-middle" />
+            )}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 
 const SignupChat = ({
   product,
@@ -216,9 +270,8 @@ const SignupChat = ({
       )}
       <div className="w-full max-w-2xl">
         {signupComplete ? (
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{successHeadline(firstName)}</h1>
-            <p className="text-base text-muted-foreground mb-8 max-w-xl mx-auto">{successSubcopy}</p>
+          <div>
+            <JohnnySuccessMessage headline={successHeadline(firstName)} subcopy={successSubcopy} />
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               {renderSuccessActions ? (
                 renderSuccessActions({ firstName, redirect: redirectAfterAuth, goToRedirect })
@@ -227,6 +280,7 @@ const SignupChat = ({
               )}
             </div>
           </div>
+
         ) : mode === "signup" ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">{headline}</h1>

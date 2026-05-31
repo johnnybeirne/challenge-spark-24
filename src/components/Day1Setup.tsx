@@ -1227,24 +1227,34 @@ const Day1Setup = ({ onComplete }: Props) => {
           // back to `audience` (step 1 foundation flow) so the summary never breaks.
           const whoRaw = (topicHint?.trim() || audience?.trim() || "");
           const painRaw = problem?.trim() || "";
-          const resultRaw = outcome?.trim() || how?.trim() || "";
+          const resultRaw = outcome?.trim() || "";
+          const howRaw = how?.trim() || "";
 
           const who = whoRaw ? strip(whoRaw) : "";
           const pain = painRaw ? strip(painRaw).toLowerCase() : "";
           const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
+          // The user's own process words. Strip a leading "I " so it composes
+          // grammatically inside "by [process]" / "through [process]".
+          const howClean = howRaw
+            ? strip(howRaw).replace(/^I\s+/i, "").toLowerCase()
+            : "";
 
+          // Fallback method language by challenge type — only used if the user
+          // didn't write a process. Their actual words always win.
           const methodMap: Record<string, string> = {
             "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
             "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
             "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
             "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
           };
-          const methodPhrase = challengeType
-            ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
-            : "";
+          const methodPhrase = howClean
+            ? howClean
+            : challengeType
+              ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
+              : "";
 
           const promise = who && pain && result && methodPhrase
-            ? `Help ${who} move from ${pain} to ${result} through ${methodPhrase}.`
+            ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
             : null;
 
           // Highlight helper for the static reveal — renders the user-derived
@@ -1255,15 +1265,26 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Plain-text sentences used during typing. Missing fields are skipped
           // so we never display "You want to help ." or similar broken copy.
-          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you've shared, a clear picture is starting to emerge.`;
-          const closing = `That's what makes this challenge valuable. It creates a clear path from where they are today to where they want to be.`;
+          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`;
+          const closing = `That's what makes this challenge valuable — a clear path from where they are today to the exact result you've described.`;
+
+          const guideLine = howClean
+            ? `You'll guide them by ${howClean}.`
+            : methodPhrase
+              ? `You'll guide them through ${methodPhrase} to help them achieve that result.`
+              : null;
+          const guideNode: React.ReactNode = howClean
+            ? <>You'll guide them by {hl(howClean)}.</>
+            : methodPhrase
+              ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</>
+              : null;
 
           const summary: string[] = [
             intro,
-            who ? `You want to help ${who}.` : null,
-            pain ? `Right now, they're struggling because ${pain}.` : null,
-            result ? `By the end of this challenge, they'll have ${result}.` : null,
-            methodPhrase ? `You'll guide them through ${methodPhrase} to help them achieve that result.` : null,
+            who ? `You're building this for ${who}.` : null,
+            pain ? `Right now, they're stuck because ${pain}.` : null,
+            result ? `By the end of Day 3, they'll have ${result}.` : null,
+            guideLine,
             closing,
           ].filter((line): line is string => Boolean(line));
 
@@ -1271,10 +1292,10 @@ const Day1Setup = ({ onComplete }: Props) => {
           // static reveal phase.
           const summaryNodes: React.ReactNode[] = [
             <>{intro}</>,
-            who ? <>You want to help {hl(who)}.</> : null,
-            pain ? <>Right now, they're struggling because {hl(pain)}.</> : null,
-            result ? <>By the end of this challenge, they'll have {hl(result)}.</> : null,
-            methodPhrase ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</> : null,
+            who ? <>You're building this for {hl(who)}.</> : null,
+            pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
+            result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
+            guideNode,
             <>{closing}</>,
           ].filter(Boolean) as React.ReactNode[];
 
@@ -1282,7 +1303,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step7Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step7-summary-${audienceType}-${challengeType}-${who.length}-${pain.length}-${result.length}`}
+                  resetKey={`step7-summary-${audienceType}-${challengeType}-${who.length}-${pain.length}-${result.length}-${howClean.length}`}
                   messages={summary}
                   onComplete={() => setStep7Phase("reveal")}
                 />
@@ -1308,7 +1329,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                           <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
-                            Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
+                            Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
                           </p>
                         </div>
                       </div>

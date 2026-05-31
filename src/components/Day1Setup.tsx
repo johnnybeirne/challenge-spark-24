@@ -1056,7 +1056,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 5 && (() => {
           const step5Messages = [
-            `Great${fn} — that's a clear audience. Now, what result do you want them to achieve?`,
+            `Great${fn}. What will your 3-day challenge help them achieve?`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">

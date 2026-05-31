@@ -55,8 +55,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q5",
     text: "Do you have a system that encourages people to invite others they know?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

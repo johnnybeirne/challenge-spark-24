@@ -750,37 +750,34 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 2 && (() => {
-          const problemPlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They rely heavily on referrals and struggle to generate predictable enquiries.",
-            "b2b|quick-win": "e.g. They need a faster way to attract opportunities and generate momentum.",
-            "b2b|create-asset": "e.g. They struggle to clearly communicate the value of what they offer.",
-            "b2b|reach-milestone": "e.g. They aren't making enough progress toward the business growth they want.",
-            "b2c|solve-problem": "e.g. They struggle to stay consistent with healthy habits.",
-            "b2c|quick-win": "e.g. They want to feel more motivated, focused, and productive.",
-            "b2c|create-asset": "e.g. They don't have a practical plan they can follow with confidence.",
-            "b2c|reach-milestone": "e.g. They keep falling short of a goal they genuinely want to achieve.",
+          // Use the user's own audience/avatar words so the example feels relevant to them.
+          const whoTrim = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim = audience.trim().replace(/\.$/, "");
+          const audienceLower = audienceTrim
+            ? audienceTrim.charAt(0).toLowerCase() + audienceTrim.slice(1)
+            : "";
+          const whoLower = whoTrim
+            ? whoTrim.charAt(0).toLowerCase() + whoTrim.slice(1)
+            : "";
+          // Subject embedded into the placeholder — prefer the more specific avatar (topicHint),
+          // fall back to the broader audience description, then a generic noun.
+          const subject = whoLower || audienceLower || (audienceType === "b2b" ? "they" : "they");
+
+          const problemHintByChallenge: Record<string, string> = {
+            "solve-problem": `e.g. ${subject} keep hitting the same wall and can't figure out what's actually blocking them.`,
+            "quick-win": `e.g. ${subject} feel stuck and need a fast win to rebuild momentum.`,
+            "create-asset": `e.g. ${subject} don't have a clear, reusable plan they can follow with confidence.`,
+            "reach-milestone": `e.g. ${subject} keep falling short of a goal that genuinely matters to them.`,
           };
           const problemPlaceholder =
-            problemPlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The specific frustration, pain point, or obstacle holding them back right now.";
+            problemHintByChallenge[challengeType] ??
+            `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          const problemWords = problem.trim().split(/\s+/).filter(Boolean).length;
-          const problemFeedbackPool = [
-            "I can see why that's frustrating.",
-            "That gives me a much clearer picture.",
-            "Now we're getting to the heart of the problem.",
-            "That's exactly the kind of insight that helps build a great challenge.",
-          ];
-          const problemFeedback =
-            problemWords >= 5
-              ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
-              : null;
-
-          const whoTrim = topicHint.trim().replace(/\.$/, "");
+          const subjectForMsg = whoLower || audienceLower;
           const step2Messages = [
-            whoTrim
-              ? `Got it — ${whoTrim}. What problem or obstacle are they trying to overcome?`
-              : "Now tell me about the problem or obstacle they're trying to overcome.",
+            subjectForMsg
+              ? `Got it${fn}. So for ${subjectForMsg} — what's the specific problem or obstacle they're trying to overcome right now?`
+              : "Now tell me about the specific problem or obstacle they're trying to overcome.",
           ];
 
 
@@ -788,7 +785,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step2-intro-${whoTrim.length}`}
+                  resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
                   messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
@@ -830,36 +827,42 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 3 && (() => {
-          const processPlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. I diagnose where leads are leaking, then walk them through a 3-step system to fix it.",
-            "b2b|quick-win": "e.g. I help them craft a single outreach asset and ship it within 48 hours.",
-            "b2b|create-asset": "e.g. I guide them to define their offer, then build a one-page sales asset they can use immediately.",
-            "b2b|reach-milestone": "e.g. I break the milestone into 3 weekly sprints with a checkpoint at the end of each.",
-            "b2c|solve-problem": "e.g. I help them identify what's blocking them, then rebuild the habit one micro-step at a time.",
-            "b2c|quick-win": "e.g. I give them a single daily action they can complete in under 10 minutes.",
-            "b2c|create-asset": "e.g. I walk them through a simple template and help them adapt it to their life.",
-            "b2c|reach-milestone": "e.g. I break the goal into weekly targets and coach them through one focus area each week.",
-          };
-          const processPlaceholder =
-            processPlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. Describe the steps, framework, or method you take them through to create the result.";
-
           const whoTrim3 = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim3 = audience.trim().replace(/\.$/, "");
+          const audienceLower3 = audienceTrim3
+            ? audienceTrim3.charAt(0).toLowerCase() + audienceTrim3.slice(1)
+            : "";
+          const whoLower3 = whoTrim3
+            ? whoTrim3.charAt(0).toLowerCase() + whoTrim3.slice(1)
+            : "";
           const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
           const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
+          const subject3 = whoLower3 || audienceLower3 || "them";
+
+          // Embed the user's audience into the example so it feels like it's about *their* people.
+          const processHintByChallenge: Record<string, string> = {
+            "solve-problem": `e.g. I help ${subject3} pinpoint what's really blocking them, then walk them through a simple 3-step fix.`,
+            "quick-win": `e.g. I give ${subject3} one focused daily action they can complete in under 15 minutes to create momentum.`,
+            "create-asset": `e.g. I walk ${subject3} through a template, then help them adapt it to their own situation step by step.`,
+            "reach-milestone": `e.g. I break the goal into 3 daily targets and coach ${subject3} through one focus area each day.`,
+          };
+          const processPlaceholder =
+            processHintByChallenge[challengeType] ??
+            `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
+
           const step3Messages = [
-            whoTrim3 && painLower
-              ? `That's clear. So for ${whoTrim3} dealing with ${painLower} — how do you take them through it to create the result?`
-              : whoTrim3
-                ? `That's clear. So for ${whoTrim3} — how do you take them through it to create the result?`
-                : "Now describe your process — how you take them through it and create the result.",
+            subject3 !== "them" && painLower
+              ? `That's clear${fn}. So for ${subject3} dealing with ${painLower} — what's the process you take them through to create the result?`
+              : subject3 !== "them"
+                ? `That's clear${fn}. So for ${subject3} — what's the process you take them through to create the result?`
+                : "Now describe your process — the steps you take them through to create the result.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}`}
+                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
                   messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />
@@ -901,36 +904,46 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 9 && (() => {
-          const outcomePlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They'll move from relying on referrals to having a predictable way to generate leads.",
-            "b2b|quick-win": "e.g. They'll gain confidence by generating their first qualified opportunity.",
-            "b2b|create-asset": "e.g. They'll leave with a clear offer they can confidently present to prospects.",
-            "b2b|reach-milestone": "e.g. They'll move from uncertainty to securing their first paying clients.",
-            "b2c|solve-problem": "e.g. They'll feel more in control and confident in their daily habits.",
-            "b2c|quick-win": "e.g. They'll experience an immediate boost in confidence and momentum.",
-            "b2c|create-asset": "e.g. They'll leave with a practical tool or plan they can continue using.",
-            "b2c|reach-milestone": "e.g. They'll make meaningful progress toward a goal they've struggled to achieve.",
-          };
-          const outcomePlaceholder =
-            outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The transformation, result, or change participants will experience by the end.";
-
           const whoTrim9 = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim9 = audience.trim().replace(/\.$/, "");
+          const audienceLower9 = audienceTrim9
+            ? audienceTrim9.charAt(0).toLowerCase() + audienceTrim9.slice(1)
+            : "";
+          const whoLower9 = whoTrim9
+            ? whoTrim9.charAt(0).toLowerCase() + whoTrim9.slice(1)
+            : "";
           const painTrim9 = problem.trim().replace(/\.$/, "");
           const painLower9 = painTrim9 ? painTrim9.charAt(0).toLowerCase() + painTrim9.slice(1) : "";
           const howTrim9 = how.trim().replace(/\.$/, "");
           const howLower9 = howTrim9 ? howTrim9.charAt(0).toLowerCase() + howTrim9.slice(1) : "";
+          const subject9 = whoLower9 || audienceLower9 || "they";
+
+          // Placeholder shows the specific transformation arc using the user's own pain words.
+          const outcomeHintByChallenge: Record<string, string> = {
+            "solve-problem": painLower9
+              ? `e.g. ${subject9} will move from ${painLower9} to feeling fully in control and equipped to keep going.`
+              : `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
+            "quick-win": `e.g. ${subject9} will walk away with a tangible early win that proves what's possible.`,
+            "create-asset": `e.g. ${subject9} will leave with a practical tool or plan they can keep using long after Day 3.`,
+            "reach-milestone": `e.g. ${subject9} will make real, measurable progress toward a goal that genuinely matters to them.`,
+          };
+          const outcomePlaceholder =
+            outcomeHintByChallenge[challengeType] ??
+            `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
+
           const step9Messages = [
-            whoTrim9
-              ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
-              : "Finally, describe the result they'll experience by the end of your challenge.",
+            subject9 !== "they" && painLower9
+              ? `Last one${fn}. So after you take ${subject9} through your process, ${painLower9} becomes what? What do they walk away with by the end of Day 3?`
+              : subject9 !== "they"
+                ? `Last one${fn}. By the end of Day 3, what does ${subject9} walk away with?`
+                : "Finally, describe the result they'll walk away with by the end of Day 3.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step9Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step9-intro-${whoTrim9.length}`}
+                  resetKey={`step9-intro-${whoTrim9.length}-${painLower9.length}-${audienceTrim9.length}`}
                   messages={step9Messages}
                   onComplete={() => setStep9Phase("input")}
                 />
@@ -1055,14 +1068,20 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 5 && (() => {
+          const audienceTrim5 = audience.trim().replace(/\.$/, "");
+          const audienceLower5 = audienceTrim5
+            ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
+            : "";
           const step5Messages = [
-            `Great${fn}. What will your 3-day challenge help them achieve?`,
+            audienceLower5
+              ? `Great${fn}. With ${audienceLower5} in mind, what will your 3-day challenge help them achieve?`
+              : `Great${fn}. What will your 3-day challenge help them achieve?`,
           ];
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (
               <TypedSequence
-                resetKey={`step5-intro-${audienceType}`}
+                resetKey={`step5-intro-${audienceType}-${audienceTrim5.length}`}
                 messages={step5Messages}
                 skipMakingNotes
                 onComplete={() => setStep5Phase("choose")}
@@ -1115,40 +1134,51 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 6 && (() => {
-          const placeholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. Coaches and consultants who struggle to generate a consistent flow of qualified leads.",
-            "b2b|quick-win": "e.g. Small business owners who want to attract their first new client.",
-            "b2b|create-asset": "e.g. Experts who need a compelling offer they can confidently sell.",
-            "b2b|reach-milestone": "e.g. Service providers aiming to secure their first five paying clients.",
-            "b2c|solve-problem": "e.g. Busy parents who struggle to maintain healthy habits.",
-            "b2c|quick-win": "e.g. People who want to feel more energetic and productive.",
-            "b2c|create-asset": "e.g. Individuals who want to create a personal budget they can stick to.",
-            "b2c|reach-milestone": "e.g. Adults working toward losing their first 10 pounds.",
+          const audienceTrim6 = audience.trim().replace(/\.$/, "");
+          const audienceLower6 = audienceTrim6
+            ? audienceTrim6.charAt(0).toLowerCase() + audienceTrim6.slice(1)
+            : "";
+          const challengeShort = (challengeLabel(challengeType) || "").toLowerCase();
+
+          // Placeholder embeds the user's audience so the example feels written for them.
+          const placeholderByChallenge: Record<string, string> = {
+            "solve-problem": audienceLower6
+              ? `e.g. ${audienceTrim6} who are stuck on one specific blocker — the moment they hit it, everything stalls.`
+              : `e.g. The specific person who's stuck on one blocker — describe their stage and what's tripping them up.`,
+            "quick-win": audienceLower6
+              ? `e.g. ${audienceTrim6} who need momentum fast — they've been thinking about this for ages and want a tangible win this week.`
+              : `e.g. Someone who needs a fast win — describe their stage and what would feel like real momentum.`,
+            "create-asset": audienceLower6
+              ? `e.g. ${audienceTrim6} who don't yet have a clear plan or tool they can rely on — they want something they can keep using.`
+              : `e.g. Someone who needs a clear, reusable plan — describe their stage and what they want to walk away with.`,
+            "reach-milestone": audienceLower6
+              ? `e.g. ${audienceTrim6} who are close to a milestone that matters but keep stalling just before they get there.`
+              : `e.g. Someone close to a key milestone — describe their stage and what's been getting in the way.`,
           };
           const placeholder =
-            placeholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. Describe the specific person you want to help — who they are, what stage they're at, and what they want.";
+            placeholderByChallenge[challengeType] ??
+            (audienceLower6
+              ? `e.g. ${audienceTrim6} — get specific about their stage, situation, and what they really want.`
+              : "e.g. Describe the specific person you want to help — who they are, what stage they're at, and what they want.");
 
-          const wordCount = topicHint.trim().split(/\s+/).filter(Boolean).length;
-          const feedbackPool = [
-            `Perfect${fn}. I can already see who this challenge is designed for.`,
-            "That's helpful. Let's build on that.",
-            "Great. The audience is becoming much clearer.",
-          ];
-          const feedback = wordCount >= 4 ? feedbackPool[Math.min(Math.floor(wordCount / 6), feedbackPool.length - 1)] : null;
-
-          const audienceNoun = audienceType === "b2b" ? "businesses" : "people";
-          const step6Messages = [
-            challengeType === "solve-problem"
-              ? `You're helping ${audienceNoun} overcome a specific blocker — tell me more about these specific blockers.`
-              : `You're helping ${audienceNoun} ${(challengeLabel(challengeType) || "").toLowerCase()} — tell me more about this.`,
-          ];
+          // Reframe: this is *not* re-asking who the audience is. We already have that
+          // from step 1. We're zooming in on the exact avatar this 3-day challenge is built for.
+          const step6Messages = audienceLower6
+            ? [
+                `You said you help ${audienceLower6}, and you want them to ${challengeShort}.`,
+                `Now zoom in for me${fn}. Within that group, who exactly is this 3-day challenge built for? Get specific about their stage, situation, and what they want.`,
+              ]
+            : [
+                challengeType === "solve-problem"
+                  ? `You're helping them overcome a specific blocker. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`
+                  : `You're helping them ${challengeShort}. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`,
+              ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step6-intro-${challengeType}`}
+                  resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
                   messages={step6Messages}
                   onComplete={() => setStep6Phase("input")}
                 />
@@ -1197,24 +1227,34 @@ const Day1Setup = ({ onComplete }: Props) => {
           // back to `audience` (step 1 foundation flow) so the summary never breaks.
           const whoRaw = (topicHint?.trim() || audience?.trim() || "");
           const painRaw = problem?.trim() || "";
-          const resultRaw = outcome?.trim() || how?.trim() || "";
+          const resultRaw = outcome?.trim() || "";
+          const howRaw = how?.trim() || "";
 
           const who = whoRaw ? strip(whoRaw) : "";
           const pain = painRaw ? strip(painRaw).toLowerCase() : "";
           const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
+          // The user's own process words. Strip a leading "I " so it composes
+          // grammatically inside "by [process]" / "through [process]".
+          const howClean = howRaw
+            ? strip(howRaw).replace(/^I\s+/i, "").toLowerCase()
+            : "";
 
+          // Fallback method language by challenge type — only used if the user
+          // didn't write a process. Their actual words always win.
           const methodMap: Record<string, string> = {
             "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
             "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
             "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
             "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
           };
-          const methodPhrase = challengeType
-            ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
-            : "";
+          const methodPhrase = howClean
+            ? howClean
+            : challengeType
+              ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
+              : "";
 
           const promise = who && pain && result && methodPhrase
-            ? `Help ${who} move from ${pain} to ${result} through ${methodPhrase}.`
+            ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
             : null;
 
           // Highlight helper for the static reveal — renders the user-derived
@@ -1225,15 +1265,26 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Plain-text sentences used during typing. Missing fields are skipped
           // so we never display "You want to help ." or similar broken copy.
-          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you've shared, a clear picture is starting to emerge.`;
-          const closing = `That's what makes this challenge valuable. It creates a clear path from where they are today to where they want to be.`;
+          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`;
+          const closing = `That's what makes this challenge valuable — a clear path from where they are today to the exact result you've described.`;
+
+          const guideLine = howClean
+            ? `You'll guide them by ${howClean}.`
+            : methodPhrase
+              ? `You'll guide them through ${methodPhrase} to help them achieve that result.`
+              : null;
+          const guideNode: React.ReactNode = howClean
+            ? <>You'll guide them by {hl(howClean)}.</>
+            : methodPhrase
+              ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</>
+              : null;
 
           const summary: string[] = [
             intro,
-            who ? `You want to help ${who}.` : null,
-            pain ? `Right now, they're struggling because ${pain}.` : null,
-            result ? `By the end of this challenge, they'll have ${result}.` : null,
-            methodPhrase ? `You'll guide them through ${methodPhrase} to help them achieve that result.` : null,
+            who ? `You're building this for ${who}.` : null,
+            pain ? `Right now, they're stuck because ${pain}.` : null,
+            result ? `By the end of Day 3, they'll have ${result}.` : null,
+            guideLine,
             closing,
           ].filter((line): line is string => Boolean(line));
 
@@ -1241,10 +1292,10 @@ const Day1Setup = ({ onComplete }: Props) => {
           // static reveal phase.
           const summaryNodes: React.ReactNode[] = [
             <>{intro}</>,
-            who ? <>You want to help {hl(who)}.</> : null,
-            pain ? <>Right now, they're struggling because {hl(pain)}.</> : null,
-            result ? <>By the end of this challenge, they'll have {hl(result)}.</> : null,
-            methodPhrase ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</> : null,
+            who ? <>You're building this for {hl(who)}.</> : null,
+            pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
+            result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
+            guideNode,
             <>{closing}</>,
           ].filter(Boolean) as React.ReactNode[];
 
@@ -1252,7 +1303,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step7Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step7-summary-${audienceType}-${challengeType}-${who.length}-${pain.length}-${result.length}`}
+                  resetKey={`step7-summary-${audienceType}-${challengeType}-${who.length}-${pain.length}-${result.length}-${howClean.length}`}
                   messages={summary}
                   onComplete={() => setStep7Phase("reveal")}
                 />
@@ -1278,7 +1329,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                           <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
-                            Help {hl(who)} move from {hl(pain)} to {hl(result)} through {hl(methodPhrase)}.
+                            Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
                           </p>
                         </div>
                       </div>

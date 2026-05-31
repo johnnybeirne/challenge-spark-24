@@ -173,6 +173,7 @@ const DayChallenge = () => {
     return (
       <LockedDayScreen
         dayNum={dayNum}
+        unlockAt={unlock.unlockAt}
         unlockLabel={unlock.label}
         onBack={() => navigate("/challenger-dashboard")}
       />

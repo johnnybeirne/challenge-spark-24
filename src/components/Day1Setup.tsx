@@ -1275,13 +1275,11 @@ const Day1Setup = ({ onComplete }: Props) => {
           const painLower9 = painTrim9 ? painTrim9.charAt(0).toLowerCase() + painTrim9.slice(1) : "";
           const howTrim9 = how.trim().replace(/\.$/, "");
           const howLower9 = howTrim9 ? howTrim9.charAt(0).toLowerCase() + howTrim9.slice(1) : "";
-          const subject9 = whoLower9 || audienceLower9 || "they";
+          const subject9 = "they";
 
-          // Placeholder shows the specific transformation arc using the user's own pain words.
+          // Placeholder shows the specific transformation arc.
           const outcomeHintByChallenge: Record<string, string> = {
-            "solve-problem": painLower9
-              ? `e.g. ${subject9} will move from ${painLower9} to feeling fully in control and equipped to keep going.`
-              : `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
+            "solve-problem": `e.g. ${subject9} will move past what's been blocking them and feel back in control.`,
             "quick-win": `e.g. ${subject9} will walk away with a tangible early win that proves what's possible.`,
             "create-asset": `e.g. ${subject9} will leave with a practical tool or plan they can keep using long after Day 3.`,
             "reach-milestone": `e.g. ${subject9} will make real, measurable progress toward a goal that genuinely matters to them.`,

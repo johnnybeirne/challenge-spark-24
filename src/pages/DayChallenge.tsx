@@ -240,10 +240,12 @@ const DayChallenge = () => {
   const notifyDashboardUpdated = (key: string) => {
     const value = getOutput(key);
     if (!value || !value.trim()) return;
+    window.dispatchEvent(new CustomEvent("dashboard-flash"));
     toast.success("Your dashboard is updated", {
       description: `Day ${dayNum} answer saved`,
       position: "top-left",
       duration: 3500,
+      className: "lg:!ml-[280px]",
       action: {
         label: "Dashboard",
         onClick: () => navigate("/challenger-dashboard"),

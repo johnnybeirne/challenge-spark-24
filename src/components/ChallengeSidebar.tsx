@@ -46,6 +46,16 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     prevJoinedRef.current = hasJoinedChallenge;
   }, [hasJoinedChallenge]);
 
+  const [dashboardFlash, setDashboardFlash] = useState(false);
+  useEffect(() => {
+    const onFlash = () => {
+      setDashboardFlash(true);
+      window.setTimeout(() => setDashboardFlash(false), 1200);
+    };
+    window.addEventListener("dashboard-flash", onFlash);
+    return () => window.removeEventListener("dashboard-flash", onFlash);
+  }, []);
+
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||
@@ -90,6 +100,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const storedDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
+    
+    
     
 
 
@@ -185,7 +197,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           className={cn(
             "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
             collapsed ? "p-2" : "px-3 py-2.5",
-            dashboardActive && "ring-2 ring-primary/20 border-primary/40"
+            dashboardActive && "ring-2 ring-primary/20 border-primary/40",
+            dashboardFlash && "ring-2 ring-primary border-primary animate-pulse"
           )}
           title="Your Dashboard"
         >

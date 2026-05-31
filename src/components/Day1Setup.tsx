@@ -475,16 +475,19 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Top-right confirmation that the latest answer has been written to the
   // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).
-  const profileSaved = (label: string) =>
+  const profileSaved = (label: string) => {
+    window.dispatchEvent(new CustomEvent("dashboard-flash"));
     toast.success("Your dashboard is updated", {
       description: label,
       position: "top-left",
       duration: 3500,
+      className: "lg:!ml-[280px]",
       action: {
         label: "Dashboard",
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
+  };
 
   const handleFoundationNext = (current: 1 | 2 | 3) => {
     if (current === 1) {

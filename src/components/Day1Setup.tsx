@@ -1558,9 +1558,13 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Two short messages — first reflects what we already know (no re-ask),
           // second asks the genuinely new question.
-          const step6Messages = audienceLower6
+          const step6Messages: Msg[] = audienceLower6
             ? [
-                `Okay${fn} — so you're building this for ${audienceLower6}, and you want to help them ${challengeShort}.`,
+                [
+                  `Okay${fn} — so you're building this for `,
+                  { echo: "audience" } as MsgSegment,
+                  `, and you want to help them ${challengeShort}.`,
+                ],
                 `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge?`,
               ]
             : [
@@ -1574,6 +1578,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
                   messages={step6Messages}
+                  echoMap={echoMap}
                   onComplete={() => setStep6Phase("input")}
                 />
               )}
@@ -1582,7 +1587,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step6Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step6Messages} />
+                  <StaticAi messages={step6Messages} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

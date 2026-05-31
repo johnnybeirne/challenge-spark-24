@@ -939,12 +939,22 @@ const Day1Setup = ({ onComplete }: Props) => {
                     <Button
                       size="lg"
                       onClick={() => handleFoundationNext(2)}
-                      disabled={!problem.trim()}
+                      disabled={!problem.trim() || navLoading === "problem"}
                       className="w-full h-12 text-base font-semibold"
                     >
-                      Continue
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      {navLoading === "problem" ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Thinking…
+                        </>
+                      ) : (
+                        <>
+                          Continue
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      )}
                     </Button>
+
                   </RevealControls>
                 </div>
               )}

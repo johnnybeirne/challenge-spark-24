@@ -169,9 +169,28 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       <p className="mb-12 text-center text-xs text-muted-foreground">Answer honestly — this only works if you do</p>
 
       <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
-        <h1 className="mb-10 text-center text-2xl font-bold leading-tight text-foreground sm:text-3xl">
-          {q.text}
-        </h1>
+        <div className="mb-10 flex items-start gap-4">
+          <img
+            src={aiAvatar}
+            alt="Johnny B AI"
+            width={56}
+            height={56}
+            className="h-14 w-14 shrink-0 rounded-full ring-2 ring-foreground/10"
+          />
+          <div className="flex-1 min-w-0 pt-1">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Johnny B
+            </div>
+            <p className="whitespace-pre-line text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl">
+              {q.text}
+            </p>
+            {EMPATHY_LINES[q.id] && (
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {EMPATHY_LINES[q.id]}
+              </p>
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           {q.options.map((opt) => (

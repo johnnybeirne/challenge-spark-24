@@ -968,6 +968,32 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
+  // Echo map — wires inline edits on Johnny's reflected snippets back to state
+  // and persistence. `format: (v) => v` disables list-formatting for fields
+  // that are usually sentences (problem/outcome/how).
+  const saveAudience = (v: string) => {
+    setAudience(v);
+    persistFoundation({ audience: v });
+  };
+  const saveProblem = (v: string) => {
+    setProblem(v);
+    persistFoundation({ problem: v });
+  };
+  const saveHow = (v: string) => {
+    setHow(v);
+    persistFoundation({ how: v });
+  };
+  const saveOutcome = (v: string) => {
+    setOutcome(v);
+    persistFoundation({ outcome: v });
+  };
+  const echoMap: EchoMap = {
+    audience: { value: audience, onSave: saveAudience },
+    problem: { value: problem, onSave: saveProblem, format: (v) => v },
+    how: { value: how, onSave: saveHow, format: (v) => v },
+    outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
+    topic: { value: topicHint, format: (v) => v },
+  };
 
 
 

@@ -1186,16 +1186,27 @@ const Day1Setup = ({ onComplete }: Props) => {
             processHintByChallenge[challengeType] ??
             `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
 
-          const step3TemplateQuestion =
-            subject3 !== "them" && painLower
-              ? `That's clear${fn}. So for ${subject3} dealing with ${painLower} — what's the process you take them through to create the result?`
-              : subject3 !== "them"
-                ? `That's clear${fn}. So for ${subject3} — what's the process you take them through to create the result?`
+          const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
+          const step3TemplateQuestion: Msg =
+            subjectField3 && painLower
+              ? [
+                  `That's clear${fn}. So for `,
+                  { echo: subjectField3 } as MsgSegment,
+                  ` dealing with `,
+                  { echo: "problem" } as MsgSegment,
+                  ` — what's the process you take them through to create the result?`,
+                ]
+              : subjectField3
+                ? [
+                    `That's clear${fn}. So for `,
+                    { echo: subjectField3 } as MsgSegment,
+                    ` — what's the process you take them through to create the result?`,
+                  ]
                 : "Now describe your process — the steps you take them through to create the result.";
 
           // If Johnny's AI reaction landed in time, lead with it so step 3 feels
           // like a direct response to the problem the user just typed.
-          const step3Messages = step3Reaction
+          const step3Messages: Msg[] = step3Reaction
             ? [step3Reaction, step3TemplateQuestion]
             : [step3TemplateQuestion];
 
@@ -1205,6 +1216,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
                   messages={step3Messages}
+                  echoMap={echoMap}
                   onComplete={() => setStep3Phase("input")}
                 />
               )}
@@ -1212,7 +1224,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step3Messages} />
+                  <StaticAi messages={step3Messages} echoMap={echoMap} />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

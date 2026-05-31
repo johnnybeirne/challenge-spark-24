@@ -1184,9 +1184,6 @@ const Day1Setup = ({ onComplete }: Props) => {
                 />
               )}
 
-              {step6Phase === "input" && (
-
-          return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence

@@ -4,9 +4,8 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { generateResult } from "@/lib/assessmentData";
 import { useQuizQuestions } from "@/hooks/useQuizQuestions";
@@ -110,7 +109,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     } catch {}
   }, []);
 
-  const progress = ((current + 1) / TOTAL_QUESTIONS) * 100;
+  
 
   if (!started) {
     const landingVariant = resolvedMode === "free_training" ? "free_training" : "default";
@@ -173,15 +172,23 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     <>
       <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
     <div className="mx-auto flex min-h-screen w-[80vw] max-w-[60vw] flex-col p-6 max-md:max-w-[80vw]">
-      <div className="mb-2 flex items-center justify-between text-sm font-medium text-muted-foreground">
-        <span>{current + 1} / {TOTAL_QUESTIONS}</span>
-        <span>{Math.round(progress)}%</span>
-      </div>
-      <Progress value={progress} className="mb-3 h-2" />
-      
+      {/* Back button */}
+      <button
+        onClick={() => {
+          if (current > 0) {
+            setCurrent(current - 1);
+          } else {
+            setStarted(false);
+          }
+        }}
+        className="mb-4 flex items-center gap-1.5 self-start text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back
+      </button>
 
-      <div key={q.id} className="flex flex-1 animate-fade-in flex-col justify-center pb-16">
-        <div className="mb-10 flex items-start gap-4">
+      <div key={q.id} className="flex flex-1 animate-fade-in flex-col pt-8">
+        <div className="mb-6 flex items-start gap-4">
           <img
             src={aiAvatar}
             alt="Johnny B AI"
@@ -213,6 +220,22 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
             </Button>
           ))}
         </div>
+      </div>
+
+      {/* Dot progress indicator */}
+      <div className="mt-auto flex items-center justify-center gap-2 pb-4 pt-8">
+        {questions.map((_, i) => (
+          <div
+            key={i}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === current
+                ? "w-6 bg-primary"
+                : i < current
+                  ? "w-2 bg-primary/60"
+                  : "w-2 bg-muted-foreground/30"
+            }`}
+          />
+        ))}
       </div>
     </div>
     </>

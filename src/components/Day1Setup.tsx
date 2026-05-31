@@ -565,7 +565,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Client avatar saved");
+    profileSaved("Trigger moment saved");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };

@@ -1680,31 +1680,22 @@ const Day1Setup = ({ onComplete }: Props) => {
           // asks the trigger-moment question in one beat. Keeping it as one
           // message prevents any chance of duplicate typing and ensures the
           // answer field appears as soon as Johnny finishes.
-          const step6Messages: Msg[] = audienceLower6
-            ? [
-                [
-                  `Okay${fn} — so you're building this for `,
-                  { echo: "audience" } as MsgSegment,
-                  `, and you want to help them `,
-                  { echo: "challengeType" } as MsgSegment,
-                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
-                ],
-              ]
-            : [
-                [
-                  `You're helping them `,
-                  { echo: "challengeType" } as MsgSegment,
-                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
-                ],
-              ];
+          const step6Ack = `Okay${fn}.`;
+          const step6Question =
+            "What's happening for them right now that makes your three-day challenge the perfect solution?";
 
+          const step6RecapRows: RecapRow[] = [];
+          if (audienceLower6) step6RecapRows.push({ label: "Audience", echo: "audience" });
+          if (challengeType) step6RecapRows.push({ label: "Goal", echo: "challengeType" });
+
+          const step6IntroMessages: Msg[] = [step6Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
-                  messages={step6Messages}
+                  messages={step6IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep6Phase("input")}
                 />
@@ -1714,7 +1705,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step6Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step6Messages} echoMap={echoMap} />
+                  <JohnnyRecapPanel
+                    acknowledgement={step6Ack}
+                    rows={step6RecapRows}
+                    question={step6Question}
+                    echoMap={echoMap}
+                  />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

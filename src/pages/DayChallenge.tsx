@@ -728,20 +728,30 @@ const DayChallenge = () => {
 
 function LockedDayScreen({
   dayNum,
+  unlockAt,
   unlockLabel,
   onBack,
 }: {
   dayNum: number;
+  unlockAt: string;
   unlockLabel: string;
   onBack: () => void;
 }) {
-  const { t: tGlobal } = useSiteContent("global");
-  const deadline = useDeadline();
-  const template = tGlobal(
-    "urgency.locked_day",
-    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel}.`,
+  const [remaining, setRemaining] = useState(() =>
+    Math.max(0, new Date(unlockAt).getTime() - Date.now()),
   );
-  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel });
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRemaining(Math.max(0, new Date(unlockAt).getTime() - Date.now()));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [unlockAt]);
+
+  const totalSec = Math.floor(remaining / 1000);
+  const hh = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+  const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+  const ss = String(totalSec % 60).padStart(2, "0");
+
   return (
     <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
       <section className="mx-auto max-w-3xl space-y-6">
@@ -755,10 +765,17 @@ function LockedDayScreen({
           <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
             Day {dayNum} opens {unlockLabel}
           </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Come back when Day {dayNum} unlocks — your progress is saved.
+          <div className="mt-6 inline-flex items-baseline gap-2 rounded-2xl border border-border bg-card px-6 py-4 shadow-sm">
+            <span className="font-mono text-3xl sm:text-4xl font-black tabular-nums text-foreground">
+              {hh}:{mm}:{ss}
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              until unlock
+            </span>
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Your progress is saved — come back when the timer hits zero.
           </p>
-          <p className="mt-2 text-sm font-medium text-foreground/80">{urgency}</p>
         </div>
         <UpgradeCards />
         <div className="flex justify-center">

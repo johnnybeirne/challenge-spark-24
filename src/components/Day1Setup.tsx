@@ -925,9 +925,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
               : "Finally, describe the result they'll experience by the end of your challenge.",
           ];
-          const recap9 = whoTrim9
-            ? `Helping ${whoTrim9}${painLower9 ? ` overcome ${painLower9}` : ""}${howLower9 ? ` via ${howLower9}` : ""}.`
-            : "";
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -938,9 +935,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   onComplete={() => setStep9Phase("input")}
                 />
               )}
-              {recap9 && (
-                <p className="pl-11 text-xs italic text-muted-foreground">{recap9}</p>
-              )}
+
 
               {step9Phase === "input" && (
                 <div className="space-y-5">

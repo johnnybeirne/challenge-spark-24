@@ -209,15 +209,13 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
         <div className="grid grid-cols-2 gap-3">
           {q.options.map((opt) => (
-            <Button
+            <button
               key={opt.value}
-              size="lg"
-              variant={opt.value === "yes" ? "default" : "outline"}
               onClick={() => handleAnswer(opt.value)}
-              className="h-14 rounded-xl text-sm font-bold uppercase tracking-wide"
+              className="flex items-center justify-center rounded-2xl border-2 border-border bg-background px-4 py-5 text-base font-semibold text-foreground transition-all hover:border-primary/50 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
             >
               {opt.label}
-            </Button>
+            </button>
           ))}
         </div>
       </div>

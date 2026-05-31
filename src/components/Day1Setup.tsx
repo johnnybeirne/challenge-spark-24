@@ -1386,9 +1386,13 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          const promise = who && pain && result && methodPhrase
+          // If the AI composed a Challenge Promise, prefer its wording (it uses
+          // the user's literal words and reads natural). Otherwise fall back to
+          // the template stitch.
+          const templatePromise = who && pain && result && methodPhrase
             ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
             : null;
+          const promise = step7Promise?.promise || templatePromise;
 
           // Highlight helper for the static reveal — renders the user-derived
           // value in bold brand accent inside the surrounding sentence.
@@ -1412,7 +1416,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</>
               : null;
 
-          const summary: string[] = [
+          const templateSummary: string[] = [
             intro,
             who ? `You're building this for ${who}.` : null,
             pain ? `Right now, they're stuck because ${pain}.` : null,
@@ -1421,16 +1425,25 @@ const Day1Setup = ({ onComplete }: Props) => {
             closing,
           ].filter((line): line is string => Boolean(line));
 
-          // Same sentences as React nodes with highlighted user values for the
-          // static reveal phase.
-          const summaryNodes: React.ReactNode[] = [
-            <>{intro}</>,
-            who ? <>You're building this for {hl(who)}.</> : null,
-            pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
-            result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
-            guideNode,
-            <>{closing}</>,
-          ].filter(Boolean) as React.ReactNode[];
+          // Use the AI summary if available — it weaves the user's words into a
+          // single coherent voice instead of stitched template sentences.
+          const summary: string[] = step7Promise?.summary?.length
+            ? step7Promise.summary
+            : templateSummary;
+
+          // For the static reveal, render highlighted nodes only when we have
+          // the template (we know where the user values are). For AI summary
+          // we render plain paragraphs — the AI already used the user's words.
+          const summaryNodes: React.ReactNode[] = step7Promise?.summary?.length
+            ? step7Promise.summary.map((s, i) => <span key={i}>{s}</span>)
+            : ([
+                <>{intro}</>,
+                who ? <>You're building this for {hl(who)}.</> : null,
+                pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
+                result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
+                guideNode,
+                <>{closing}</>,
+              ].filter(Boolean) as React.ReactNode[]);
 
           return (
             <div className="space-y-6 animate-fade-in">

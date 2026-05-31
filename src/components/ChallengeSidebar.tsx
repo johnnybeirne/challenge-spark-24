@@ -196,7 +196,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           className={cn(
             "w-full rounded-xl border border-border bg-background text-left transition-all hover:bg-primary/5",
             collapsed ? "p-2" : "px-3 py-2.5",
-            dashboardActive && "ring-2 ring-primary/20 border-primary/40"
+            dashboardActive && "ring-2 ring-primary/20 border-primary/40",
+            dashboardFlash && "ring-2 ring-primary border-primary animate-pulse"
           )}
           title="Your Dashboard"
         >

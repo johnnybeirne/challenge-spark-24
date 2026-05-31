@@ -776,8 +776,11 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
               : null;
 
+          const whoTrim = topicHint.trim().replace(/\.$/, "");
           const step2Messages = [
-            "Now tell me about the problem or obstacle they're trying to overcome.",
+            whoTrim
+              ? `Got it — ${whoTrim}. What problem or obstacle are they trying to overcome?`
+              : "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
           return (

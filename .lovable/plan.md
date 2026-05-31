@@ -1,47 +1,52 @@
-## Why you're seeing "Your Challenge Promise isn't available yet"
+## Goal
+Carry the user's previous answers forward into each subsequent prompt in the Day 1 flow, so the conversation reads as one connected thread instead of independent questions.
 
-The locked Day 1 read-only view in `src/pages/Day1.tsx` builds the promise **only** from `localStorage["leadio_setup"]` (`SETUP_KEY`). That local key is wiped in three common situations, even though Day 1 was actually completed:
+## What's wrong today
+In `src/components/Day1Setup.tsx`, the Day 1 prompts are static templates that don't reference the user's prior input:
 
-1. Loading the app in a different browser / device / incognito (localStorage is per-browser, not synced).
-2. Admin "View as user" demo mode — `useLaunchDemoUser` explicitly removes `SETUP_KEY` before launching.
-3. After a `clearState()` / sign-out / browser data clear.
+- Step 6 (description): user types `"new parents in their 30s"` → clicks Continue.
+- Step 2 (problem): prompt is just `"Now tell me about the problem or obstacle they're trying to overcome."` — no mention of "new parents in their 30s".
+- Step 3 (process): `"Now describe your process — how you take them through it and create the result."` — no mention of who or what problem.
+- Step 9 (outcome): `"Finally, describe the result they'll experience by the end of your challenge."` — no callback either.
 
-When `leadio_setup` is missing, `saved` is `null`, every field is empty, so `hasPromise = false` and the fallback message renders — even though the canonical data (`state.memory.audienceType`, `memory.challengeType`, `memory.topic`, `memory.desiredOutcome`) and `state.challenge.aiOutputs.day1_foundation` / `day1_assessment` are still in Supabase and hydrated into app state.
+Order in code: step 4 (B2B/B2C) → step 5 (result type cards) → step 6 (who: topicHint) → step 2 (problem) → step 3 (process) → step 9 (outcome) → step 7 (summary).
 
-A secondary bug: even when `leadio_setup` *is* present, the `methodMap` keys are the raw setup values (`"quick-win"`, `"solve-problem"`, etc.). The memory-stored `challengeType` is normalized (`"quick_win"`, `"transformation"`, …) so it would not match the map.
+## Change
+Rewrite the intro line for steps 2, 3, and 9 so Johnny AI quotes back the most relevant prior answer(s). Keep a graceful fallback when a value is empty.
 
-## Fix
+### Step 2 — Problem
+Replace the single `step2Messages` line with a dynamic line that names the audience.
 
-Rewrite the promise derivation in the `isLocked` branch of `src/pages/Day1.tsx` to prefer canonical app state and fall back to localStorage:
+- If `topicHint` is filled: `Got it — ${topicHint}. What problem or obstacle are they trying to overcome?`
+- Fallback: existing line.
 
-1. **Who** — try in order:
-   - `state.memory.topic`
-   - parsed `state.challenge.aiOutputs.day1_assessment.transformation`
-   - parsed `day1_foundation.audience`
-   - `saved.topicHint` / `saved.audience`
+Example: `Got it — new parents in their 30s. What problem or obstacle are they trying to overcome?`
 
-2. **Pain** — try in order:
-   - parsed `day1_assessment.problem` / `day1_foundation.problem`
-   - `saved.problem`
+### Step 3 — Process
+Reference both who and the problem so the thread keeps building.
 
-3. **Result** — try in order:
-   - `state.memory.desiredOutcome`
-   - `saved.outcome` / `saved.how`
-   - parsed `day1_foundation.how`
+- If `topicHint` and `problem` are both filled: `That's clear. So for ${shortWho(topicHint)} dealing with ${shortPain(problem)} — how do you take them through it to create the result?`
+- If only `topicHint`: `That's clear. So for ${shortWho(topicHint)} — how do you take them through it to create the result?`
+- Fallback: existing line.
 
-4. **Method phrase** — build a `methodMap` keyed by **both** raw setup values and normalized memory values so either source resolves:
-   - `"solve-problem"` and `"transformation"` → "a focused, problem-solving structure…"
-   - `"quick-win"` and `"quick_win"` → "a fast, action-led plan…"
-   - `"create-asset"` and `"skill_builder"` → "a build-as-you-go process…"
-   - `"reach-milestone"` and `"launch"` → "a step-by-step path…"
-   - Resolve from `saved?.challengeType` first, else `state.memory.challengeType`.
-   - If still unknown but Day 1 is complete, fall back to `"a clear, day-by-day structure"` so the sentence still renders.
+`shortWho` / `shortPain` are small inline helpers that trim trailing punctuation and lowercase the pain string, matching the pattern already used in step 7's `strip()` helper.
 
-5. Keep the existing "Day 1 Complete" header, the Challenge Promise card, and the "Go to dashboard" button unchanged.
+### Step 9 — Outcome
+Tie the outcome back to the audience and the chosen challenge type.
 
-No changes to Day 1 setup logic, no changes to Supabase schema, no changes to Dashboard. Frontend-only edit to one file: `src/pages/Day1.tsx`.
+- If `topicHint` and `challengeType` are filled: `Last one${fn}. By the end of this challenge, what result will ${shortWho(topicHint)} walk away with?`
+- Fallback: existing line.
+
+### Step 7 — Summary
+Already references `who / pain / result / methodPhrase` — no change needed.
+
+## Technical notes
+- All edits are inside `src/components/Day1Setup.tsx`, in the `step === 2`, `step === 3`, and `step === 9` IIFE blocks, only touching the `stepNMessages` array and adding 1–2 small local helpers.
+- `topicHint`, `problem`, `audienceType`, `challengeType`, and `fn` are already in scope.
+- `TypedSequence` already takes a `resetKey`; bump the keys for steps 2/3/9 to include the upstream value (e.g. `step2-intro-${topicHint.length}`) so the typed line re-renders if the user goes back and edits.
+- No business logic, no state shape changes, no new dependencies — purely the wording of the prompts.
 
 ## Out of scope
-
-- Persisting `leadio_setup` to Supabase (canonical state already covers it; no need to duplicate).
-- Changing how the Dashboard renders the promise.
+- No changes to the cards, layout, or styling.
+- No changes to step 7's summary copy or the Challenge Promise.
+- No changes to placeholders inside the textareas (those already vary by audience+challenge type).

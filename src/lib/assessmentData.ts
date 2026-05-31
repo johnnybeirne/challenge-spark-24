@@ -63,8 +63,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q6",
     text: "Is your lead magnet the same for everyone who finds you?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

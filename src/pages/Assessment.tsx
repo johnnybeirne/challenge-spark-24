@@ -174,7 +174,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
       setTimeout(() => {
         navigate("/results");
-      }, 1800);
+      }, 2500);
     }
   };
 

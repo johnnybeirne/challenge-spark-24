@@ -7,6 +7,8 @@ import {
   getRemainingMs,
   formatRemaining,
 } from "@/lib/challengeWindow";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { useDeadline } from "@/hooks/useDeadline";
 
 interface Props {
   className?: string;
@@ -15,6 +17,8 @@ interface Props {
 
 const ChallengeCountdown = ({ className, compact = false }: Props) => {
   const { state } = useAppState();
+  const { t: tGlobal } = useSiteContent("global");
+  const deadline = useDeadline();
   const endsAt = getChallengeEndsAt(state.challenge?.startedAt, state.challenge?.endsAt);
   const [now, setNow] = useState(() => Date.now());
 
@@ -29,6 +33,10 @@ const ChallengeCountdown = ({ className, compact = false }: Props) => {
   const urgent = !expired && remaining < 6 * 60 * 60 * 1000;
 
   if (expired) {
+    const expiredTemplate = tGlobal(
+      "urgency.countdown_expired",
+      `Your window has ended. Restart and have this live by ${deadline.dayName}.`,
+    );
     return (
       <div
         className={cn(
@@ -38,7 +46,7 @@ const ChallengeCountdown = ({ className, compact = false }: Props) => {
         role="status"
       >
         <AlertCircle className="h-3.5 w-3.5" />
-        <span>Your 3-day challenge window has ended.</span>
+        <span>{deadline.render(expiredTemplate)}</span>
       </div>
     );
   }

@@ -10,6 +10,7 @@ import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useDeadline } from "@/hooks/useDeadline";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
@@ -80,6 +81,8 @@ const Results = () => {
   const { state } = useAppState();
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
+  const { t: tGlobal } = useSiteContent("global");
+  const deadline = useDeadline();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const previewTier = (() => {
     const p = location.pathname.toLowerCase();
@@ -231,12 +234,21 @@ const Results = () => {
     };
   })();
 
-  const urgencyLine = (() => {
-    const tier = tierData?.tier;
-    if (tier === "high") return "Spots are limited. The next challenge starts in days, not weeks.";
-    if (tier === "mid") return "Don't let another month pass on the same plateau. Start now.";
-    return "Your first real win is 3 days away. Don't put this off.";
-  })();
+  const urgencyTier: "low" | "mid" | "high" =
+    tierData?.tier === "high" || tierData?.tier === "mid" || tierData?.tier === "low"
+      ? (tierData.tier as "low" | "mid" | "high")
+      : percentageScore >= 67
+      ? "high"
+      : percentageScore >= 34
+      ? "mid"
+      : "low";
+  const urgencyDefaults = {
+    low: `Have this live by ${deadline.dayName}. Your first real win is 3 days away — don't put this off.`,
+    mid: `Have this live by ${deadline.dayName}. Don't let another month pass on the same plateau.`,
+    high: `Have this live by ${deadline.dayName}. Spots are limited — the next cohort starts in days, not weeks.`,
+  } as const;
+  const urgencyTemplate = tGlobal(`urgency.results_${urgencyTier}`, urgencyDefaults[urgencyTier]);
+  const urgencyLine = deadline.render(urgencyTemplate);
 
   let entryIntent: string | null = null;
   let pendingCoupon: string | null = null;

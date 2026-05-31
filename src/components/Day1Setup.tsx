@@ -989,12 +989,16 @@ const Day1Setup = ({ onComplete }: Props) => {
     setOutcome(v);
     persistFoundation({ outcome: v });
   };
+  const saveTopic = (v: string) => {
+    setTopicHint(v);
+    persistFoundation({ topicHint: v } as Partial<SetupData>);
+  };
   const echoMap: EchoMap = {
     audience: { value: audience, onSave: saveAudience },
     problem: { value: problem, onSave: saveProblem, format: (v) => v },
     how: { value: how, onSave: saveHow, format: (v) => v },
     outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
-    topic: { value: topicHint, format: (v) => v },
+    topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
   };
 
 

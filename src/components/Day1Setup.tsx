@@ -842,15 +842,22 @@ const Day1Setup = ({ onComplete }: Props) => {
             processPlaceholderMap[`${audienceType}|${challengeType}`] ??
             "e.g. Describe the steps, framework, or method you take them through to create the result.";
 
+          const whoTrim3 = topicHint.trim().replace(/\.$/, "");
+          const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
+          const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
           const step3Messages = [
-            "Now describe your process — how you take them through it and create the result.",
+            whoTrim3 && painLower
+              ? `That's clear. So for ${whoTrim3} dealing with ${painLower} — how do you take them through it to create the result?`
+              : whoTrim3
+                ? `That's clear. So for ${whoTrim3} — how do you take them through it to create the result?`
+                : "Now describe your process — how you take them through it and create the result.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step3-intro"
+                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}`}
                   messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />

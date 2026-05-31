@@ -133,6 +133,16 @@ const DayChallenge = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [dayNum]);
 
+  // Presume the quiz was completed for anyone landing inside the challenge.
+  // Seeds a baseline assessment so the dashboard score card, results page,
+  // and any "has assessment?" gates render as completed. A real assessment
+  // taken later at /assessment will overwrite this.
+  useEffect(() => {
+    if (state.assessment && "challengeType" in (state.assessment as object)) return;
+    setState((prev) => ({ ...prev, assessment: generateResult({}) }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const { authUser } = useAppState();
   const [isAdmin, setIsAdmin] = useState(false);

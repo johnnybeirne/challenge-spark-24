@@ -750,37 +750,34 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 2 && (() => {
-          const problemPlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. They rely heavily on referrals and struggle to generate predictable enquiries.",
-            "b2b|quick-win": "e.g. They need a faster way to attract opportunities and generate momentum.",
-            "b2b|create-asset": "e.g. They struggle to clearly communicate the value of what they offer.",
-            "b2b|reach-milestone": "e.g. They aren't making enough progress toward the business growth they want.",
-            "b2c|solve-problem": "e.g. They struggle to stay consistent with healthy habits.",
-            "b2c|quick-win": "e.g. They want to feel more motivated, focused, and productive.",
-            "b2c|create-asset": "e.g. They don't have a practical plan they can follow with confidence.",
-            "b2c|reach-milestone": "e.g. They keep falling short of a goal they genuinely want to achieve.",
+          // Use the user's own audience/avatar words so the example feels relevant to them.
+          const whoTrim = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim = audience.trim().replace(/\.$/, "");
+          const audienceLower = audienceTrim
+            ? audienceTrim.charAt(0).toLowerCase() + audienceTrim.slice(1)
+            : "";
+          const whoLower = whoTrim
+            ? whoTrim.charAt(0).toLowerCase() + whoTrim.slice(1)
+            : "";
+          // Subject embedded into the placeholder — prefer the more specific avatar (topicHint),
+          // fall back to the broader audience description, then a generic noun.
+          const subject = whoLower || audienceLower || (audienceType === "b2b" ? "they" : "they");
+
+          const problemHintByChallenge: Record<string, string> = {
+            "solve-problem": `e.g. ${subject} keep hitting the same wall and can't figure out what's actually blocking them.`,
+            "quick-win": `e.g. ${subject} feel stuck and need a fast win to rebuild momentum.`,
+            "create-asset": `e.g. ${subject} don't have a clear, reusable plan they can follow with confidence.`,
+            "reach-milestone": `e.g. ${subject} keep falling short of a goal that genuinely matters to them.`,
           };
           const problemPlaceholder =
-            problemPlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. The specific frustration, pain point, or obstacle holding them back right now.";
+            problemHintByChallenge[challengeType] ??
+            `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          const problemWords = problem.trim().split(/\s+/).filter(Boolean).length;
-          const problemFeedbackPool = [
-            "I can see why that's frustrating.",
-            "That gives me a much clearer picture.",
-            "Now we're getting to the heart of the problem.",
-            "That's exactly the kind of insight that helps build a great challenge.",
-          ];
-          const problemFeedback =
-            problemWords >= 5
-              ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
-              : null;
-
-          const whoTrim = topicHint.trim().replace(/\.$/, "");
+          const subjectForMsg = whoLower || audienceLower;
           const step2Messages = [
-            whoTrim
-              ? `Got it — ${whoTrim}. What problem or obstacle are they trying to overcome?`
-              : "Now tell me about the problem or obstacle they're trying to overcome.",
+            subjectForMsg
+              ? `Got it${fn}. So for ${subjectForMsg} — what's the specific problem or obstacle they're trying to overcome right now?`
+              : "Now tell me about the specific problem or obstacle they're trying to overcome.",
           ];
 
 

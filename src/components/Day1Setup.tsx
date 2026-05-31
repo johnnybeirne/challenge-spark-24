@@ -70,9 +70,11 @@ export const formatList = (raw: string): string => {
   if (!cleaned) return "";
   // Sentences pass through unchanged — only operate on short list-style input.
   if (cleaned.length > 80) return cleaned;
-  // Split on commas, slashes, " and ", " & ", or runs of whitespace.
+  // Only treat as a list if the input contains explicit list delimiters.
+  // (Single spaces are part of a phrase — never a list separator.)
+  if (!/,|\/| and | & /i.test(cleaned)) return cleaned;
   const parts = cleaned
-    .split(/\s*,\s*|\s*\/\s*|\s+and\s+|\s+&\s+|\s{2,}|\s+/i)
+    .split(/\s*,\s*|\s*\/\s*|\s+and\s+|\s+&\s+/i)
     .map((p) => p.trim())
     .filter(Boolean);
   if (parts.length <= 1) return cleaned;

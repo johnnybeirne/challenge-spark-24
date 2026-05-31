@@ -1140,39 +1140,54 @@ const Day1Setup = ({ onComplete }: Props) => {
             : "";
           const challengeShort = (challengeLabel(challengeType) || "").toLowerCase();
 
-          // Placeholder embeds the user's audience so the example feels written for them.
+          // NEW step 6 = the "trigger moment". We already know WHO from step 1; this
+          // captures WHAT'S HAPPENING in their life/business right now that makes the
+          // next 3 days the perfect time to take this challenge. Same field
+          // (`topicHint`), same position, same scoring — only the meaning changes.
           const placeholderByChallenge: Record<string, string> = {
             "solve-problem": audienceLower6
-              ? `e.g. ${audienceTrim6} who are stuck on one specific blocker — the moment they hit it, everything stalls.`
-              : `e.g. The specific person who's stuck on one blocker — describe their stage and what's tripping them up.`,
+              ? `e.g. They've just hit the wall again with the same problem, and they're finally ready to admit what they've been doing isn't working.`
+              : `e.g. They've just hit the same wall again and they're finally ready to try something different.`,
             "quick-win": audienceLower6
-              ? `e.g. ${audienceTrim6} who need momentum fast — they've been thinking about this for ages and want a tangible win this week.`
-              : `e.g. Someone who needs a fast win — describe their stage and what would feel like real momentum.`,
+              ? `e.g. They've got a deadline, event, or launch in the next two weeks and they can't keep putting this off.`
+              : `e.g. They've got a deadline or event coming up and they can't put this off any longer.`,
             "create-asset": audienceLower6
-              ? `e.g. ${audienceTrim6} who don't yet have a clear plan or tool they can rely on — they want something they can keep using.`
-              : `e.g. Someone who needs a clear, reusable plan — describe their stage and what they want to walk away with.`,
+              ? `e.g. They've decided this is the moment — they're done winging it and want something solid they can keep using.`
+              : `e.g. They've decided they're done winging it and want something solid they can keep using.`,
             "reach-milestone": audienceLower6
-              ? `e.g. ${audienceTrim6} who are close to a milestone that matters but keep stalling just before they get there.`
-              : `e.g. Someone close to a key milestone — describe their stage and what's been getting in the way.`,
+              ? `e.g. They're close enough to the milestone to taste it but keep stalling at the same point every time.`
+              : `e.g. They're close to a milestone that matters but keep stalling at the same point every time.`,
           };
           const placeholder =
             placeholderByChallenge[challengeType] ??
-            (audienceLower6
-              ? `e.g. ${audienceTrim6} — get specific about their stage, situation, and what they really want.`
-              : "e.g. Describe the specific person you want to help — who they are, what stage they're at, and what they want.");
+            `e.g. What's happening for them right now that makes the next 3 days the perfect time to do this?`;
 
-          // Reframe: this is *not* re-asking who the audience is. We already have that
-          // from step 1. We're zooming in on the exact avatar this 3-day challenge is built for.
+          // Two short messages — first reflects what we already know (no re-ask),
+          // second asks the genuinely new question.
           const step6Messages = audienceLower6
             ? [
-                `You said you help ${audienceLower6}, and you want them to ${challengeShort}.`,
-                `Now zoom in for me${fn}. Within that group, who exactly is this 3-day challenge built for? Get specific about their stage, situation, and what they want.`,
+                `Okay${fn} — so you're building this for ${audienceLower6}, and you want to help them ${challengeShort}.`,
+                `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
               ]
             : [
-                challengeType === "solve-problem"
-                  ? `You're helping them overcome a specific blocker. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`
-                  : `You're helping them ${challengeShort}. Now zoom in — who exactly is this 3-day challenge for? Get specific about their stage and situation.`,
+                `You're helping them ${challengeShort}.`,
+                `What's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
               ];
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step6Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
+                  messages={step6Messages}
+                  onComplete={() => setStep6Phase("input")}
+                />
+              )}
+
+              {step6Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={step6Messages} />
+                  <RevealControls className="space-y-5">
 
           return (
             <div className="space-y-6 animate-fade-in">

@@ -714,6 +714,51 @@ const DayChallenge = () => {
   );
 };
 
+function LockedDayScreen({
+  dayNum,
+  unlockLabel,
+  onBack,
+}: {
+  dayNum: number;
+  unlockLabel: string;
+  onBack: () => void;
+}) {
+  const { t: tGlobal } = useSiteContent("global");
+  const deadline = useDeadline();
+  const template = tGlobal(
+    "urgency.locked_day",
+    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel.toLowerCase()}.`,
+  );
+  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel.toLowerCase() });
+  return (
+    <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
+      <section className="mx-auto max-w-3xl space-y-6">
+        <div className="text-center">
+          <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <Lock className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+            Day {dayNum} locked
+          </p>
+          <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+            Day {dayNum} opens {unlockLabel.toLowerCase()}
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Come back when Day {dayNum} unlocks — your progress is saved.
+          </p>
+          <p className="mt-2 text-sm font-medium text-foreground/80">{urgency}</p>
+        </div>
+        <UpgradeCards />
+        <div className="flex justify-center">
+          <Button variant="outline" onClick={onBack}>
+            Back to dashboard
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function isValidUrl(url: string | undefined): boolean {
   if (!url) return false;
   try {

@@ -976,13 +976,18 @@ const Day1Setup = ({ onComplete }: Props) => {
             processHintByChallenge[challengeType] ??
             `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
 
-          const step3Messages = [
+          const step3TemplateQuestion =
             subject3 !== "them" && painLower
               ? `That's clear${fn}. So for ${subject3} dealing with ${painLower} — what's the process you take them through to create the result?`
               : subject3 !== "them"
                 ? `That's clear${fn}. So for ${subject3} — what's the process you take them through to create the result?`
-                : "Now describe your process — the steps you take them through to create the result.",
-          ];
+                : "Now describe your process — the steps you take them through to create the result.";
+
+          // If Johnny's AI reaction landed in time, lead with it so step 3 feels
+          // like a direct response to the problem the user just typed.
+          const step3Messages = step3Reaction
+            ? [step3Reaction, step3TemplateQuestion]
+            : [step3TemplateQuestion];
 
           return (
             <div className="space-y-6 animate-fade-in">

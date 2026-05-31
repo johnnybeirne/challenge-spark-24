@@ -912,15 +912,18 @@ const Day1Setup = ({ onComplete }: Props) => {
             outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
             "e.g. The transformation, result, or change participants will experience by the end.";
 
+          const whoTrim9 = topicHint.trim().replace(/\.$/, "");
           const step9Messages = [
-            "Finally, describe the result they'll experience by the end of your challenge.",
+            whoTrim9
+              ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
+              : "Finally, describe the result they'll experience by the end of your challenge.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step9Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step9-intro"
+                  resetKey={`step9-intro-${whoTrim9.length}`}
                   messages={step9Messages}
                   onComplete={() => setStep9Phase("input")}
                 />

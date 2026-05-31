@@ -1185,9 +1185,6 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
 
               {step6Phase === "input" && (
-                <div className="space-y-5">
-                  <StaticAi messages={step6Messages} />
-                  <RevealControls className="space-y-5">
 
           return (
             <div className="space-y-6 animate-fade-in">

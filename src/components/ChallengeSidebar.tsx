@@ -152,7 +152,6 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     ];
 
     const bottom = [
-      { path: "/profile", label: "Profile", Icon: UserIcon },
       { path: "/profile", label: "Settings", Icon: Settings },
       { path: "/mentor", label: "Support", Icon: HelpCircle },
     ];

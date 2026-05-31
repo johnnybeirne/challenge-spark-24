@@ -47,8 +47,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q4",
     text: "Are most of your leads already trusting you before you speak to them?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
   {

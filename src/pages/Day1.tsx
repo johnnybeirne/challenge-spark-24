@@ -34,25 +34,53 @@ const Day1 = () => {
     try { saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch {}
     const memory: any = state.memory || {};
 
+    // Parse canonical Day 1 outputs from app state (survives device changes & demo resets).
+    const parseJson = (raw?: string) => {
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    };
+    const aiOutputs = state.challenge?.aiOutputs ?? {};
+    const foundation = parseJson(aiOutputs.day1_foundation) ?? {};
+    const assessment = parseJson(aiOutputs.day1_assessment) ?? {};
+
     const strip = (s: string) =>
       s.replace(/^they(['’]ll| will)?\s+/i, "").replace(/^\s*/, "").replace(/\.$/, "");
+    const pick = (...vals: any[]) =>
+      vals.map((v) => (typeof v === "string" ? v.trim() : "")).find((v) => v.length > 0) || "";
 
-    const whoRaw = (saved?.topicHint?.trim() || saved?.audience?.trim() || memory.topic || "");
-    const painRaw = saved?.problem?.trim() || "";
-    const resultRaw = saved?.outcome?.trim() || saved?.how?.trim() || memory.desiredOutcome || "";
+    const whoRaw = pick(
+      memory.topic,
+      assessment.transformation,
+      foundation.audience,
+      saved?.topicHint,
+      saved?.audience,
+    );
+    const painRaw = pick(assessment.problem, foundation.problem, saved?.problem);
+    const resultRaw = pick(
+      memory.desiredOutcome,
+      saved?.outcome,
+      saved?.how,
+      foundation.how,
+    );
+
     const who = whoRaw ? strip(whoRaw) : "";
     const pain = painRaw ? strip(painRaw).toLowerCase() : "";
     const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
 
+    // Accept both raw setup keys ("solve-problem") and normalized memory keys ("transformation").
     const methodMap: Record<string, string> = {
       "solve-problem": "a focused, problem-solving structure that removes what's holding them back",
+      "transformation": "a focused, problem-solving structure that removes what's holding them back",
       "quick-win": "a fast, action-led plan that delivers a meaningful win in just a few days",
+      "quick_win": "a fast, action-led plan that delivers a meaningful win in just a few days",
       "create-asset": "a build-as-you-go process that leaves them with something valuable they can keep using",
+      "skill_builder": "a build-as-you-go process that leaves them with something valuable they can keep using",
       "reach-milestone": "a step-by-step path that moves them closer to a milestone that genuinely matters",
+      "launch": "a step-by-step path that moves them closer to a milestone that genuinely matters",
     };
-    const methodPhrase = saved?.challengeType
-      ? (methodMap[saved.challengeType] ?? "a clear, day-by-day structure")
-      : "";
+    const challengeKey = pick(saved?.challengeType, assessment.challengeType, memory.challengeType);
+    // Day 1 is complete here, so always render a method phrase — fall back to a generic one.
+    const methodPhrase = methodMap[challengeKey] ?? "a clear, day-by-day structure";
 
     const hasPromise = who && pain && result && methodPhrase;
 

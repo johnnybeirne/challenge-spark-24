@@ -201,7 +201,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
               Johnny B AI
             </div>
             <p className="whitespace-pre-line text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl">
-              <TypewriterText text={q.text} />
+              <TypewriterText text={`${current + 1}. ${q.text}`} />
             </p>
           </div>
         </div>

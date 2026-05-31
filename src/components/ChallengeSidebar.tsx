@@ -46,6 +46,16 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     prevJoinedRef.current = hasJoinedChallenge;
   }, [hasJoinedChallenge]);
 
+  const [dashboardFlash, setDashboardFlash] = useState(false);
+  useEffect(() => {
+    const onFlash = () => {
+      setDashboardFlash(true);
+      window.setTimeout(() => setDashboardFlash(false), 1200);
+    };
+    window.addEventListener("dashboard-flash", onFlash);
+    return () => window.removeEventListener("dashboard-flash", onFlash);
+  }, []);
+
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
   const hasSavedProgress =
     state.challenge.currentDay > 1 ||

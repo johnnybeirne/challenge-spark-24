@@ -783,6 +783,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               : "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
+          const recap2 = whoTrim ? `Helping ${whoTrim}.` : "";
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
@@ -791,6 +793,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                   messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
+              )}
+              {recap2 && (
+                <p className="pl-11 text-xs italic text-muted-foreground">{recap2}</p>
               )}
 
               {step2Phase === "input" && (

@@ -30,6 +30,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
+import DashboardProfileHeader from "@/components/DashboardProfileHeader";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
@@ -250,6 +251,9 @@ const Dashboard = () => {
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-20">
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
+          {/* PERMANENT PROFILE + QUIZ SCORE */}
+          <DashboardProfileHeader />
+
           {/* INTRO VIDEO — welcome briefing */}
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
@@ -432,6 +436,7 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
+        <DashboardProfileHeader />
         {(() => {
           const firstName = state.user?.name?.split(" ")[0] || "";
           const t = state.training;

@@ -1046,7 +1046,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
-    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v, skipTidy: true },
+    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
   };
 
 
@@ -1618,11 +1618,17 @@ const Day1Setup = ({ onComplete }: Props) => {
                 [
                   `Okay${fn} — so you're building this for `,
                   { echo: "audience" } as MsgSegment,
-                  `, and you want to help them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                  `, and you want to help them `,
+                  { echo: "challengeType" } as MsgSegment,
+                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
                 ],
               ]
             : [
-                `You're helping them ${challengeShort}. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                [
+                  `You're helping them `,
+                  { echo: "challengeType" } as MsgSegment,
+                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
+                ],
               ];
 
 

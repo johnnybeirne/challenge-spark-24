@@ -436,6 +436,7 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
+        <DashboardProfileHeader />
         {(() => {
           const firstName = state.user?.name?.split(" ")[0] || "";
           const t = state.training;

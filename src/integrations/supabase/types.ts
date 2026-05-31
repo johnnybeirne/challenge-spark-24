@@ -1252,6 +1252,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_questions: {
+        Row: {
+          created_at: string
+          id: string
+          option_no_label: string
+          option_yes_label: string
+          position: number
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          option_no_label?: string
+          option_yes_label?: string
+          position: number
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_no_label?: string
+          option_yes_label?: string
+          position?: number
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       referral_attributions: {
         Row: {
           bound_at: string

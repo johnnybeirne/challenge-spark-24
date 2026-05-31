@@ -8,14 +8,14 @@ import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
-import { questions, generateResult } from "@/lib/assessmentData";
+import { generateResult } from "@/lib/assessmentData";
+import { useQuizQuestions } from "@/hooks/useQuizQuestions";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
 import Landing from "@/pages/Landing";
 
 const REF_SESSION_KEY = "challengeos_ref";
-const TOTAL_QUESTIONS = questions.length;
 
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import { useQaPreview } from "@/hooks/useQaPreview";
@@ -30,6 +30,8 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const { config } = useSiteConfig();
   const [searchParams] = useSearchParams();
   const qa = useQaPreview();
+  const { questions } = useQuizQuestions();
+  const TOTAL_QUESTIONS = questions.length;
 
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench } from "lucide-react";
+import { BarChart3, Users, Activity, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Banknote, Wrench, ListChecks } from "lucide-react";
 
 const sections = [
   {
@@ -58,6 +58,13 @@ const sections = [
     icon: GraduationCap,
     to: "/owner-console/training",
     color: "text-violet-500",
+  },
+  {
+    title: "Lead Gen Quiz Questions",
+    description: "Edit the wording of the 9 quiz questions and the Yes / No button labels",
+    icon: ListChecks,
+    to: "/owner-console/lead-gen-quiz",
+    color: "text-fuchsia-500",
   },
   {
     title: "Lead Gen Quiz Responses",

@@ -783,6 +783,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               : "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
+          const recap2 = whoTrim ? `Helping ${whoTrim}.` : "";
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
@@ -791,6 +793,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                   messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
+              )}
+              {recap2 && (
+                <p className="pl-11 text-xs italic text-muted-foreground">{recap2}</p>
               )}
 
               {step2Phase === "input" && (
@@ -853,6 +858,10 @@ const Day1Setup = ({ onComplete }: Props) => {
                 : "Now describe your process — how you take them through it and create the result.",
           ];
 
+          const recap3 = whoTrim3
+            ? `Helping ${whoTrim3}${painLower ? ` overcome ${painLower}` : ""}.`
+            : "";
+
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
@@ -861,6 +870,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                   messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />
+              )}
+              {recap3 && (
+                <p className="pl-11 text-xs italic text-muted-foreground">{recap3}</p>
               )}
 
               {step3Phase === "input" && (
@@ -913,11 +925,18 @@ const Day1Setup = ({ onComplete }: Props) => {
             "e.g. The transformation, result, or change participants will experience by the end.";
 
           const whoTrim9 = topicHint.trim().replace(/\.$/, "");
+          const painTrim9 = problem.trim().replace(/\.$/, "");
+          const painLower9 = painTrim9 ? painTrim9.charAt(0).toLowerCase() + painTrim9.slice(1) : "";
+          const howTrim9 = how.trim().replace(/\.$/, "");
+          const howLower9 = howTrim9 ? howTrim9.charAt(0).toLowerCase() + howTrim9.slice(1) : "";
           const step9Messages = [
             whoTrim9
               ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
               : "Finally, describe the result they'll experience by the end of your challenge.",
           ];
+          const recap9 = whoTrim9
+            ? `Helping ${whoTrim9}${painLower9 ? ` overcome ${painLower9}` : ""}${howLower9 ? ` via ${howLower9}` : ""}.`
+            : "";
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -927,6 +946,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                   messages={step9Messages}
                   onComplete={() => setStep9Phase("input")}
                 />
+              )}
+              {recap9 && (
+                <p className="pl-11 text-xs italic text-muted-foreground">{recap9}</p>
               )}
 
               {step9Phase === "input" && (

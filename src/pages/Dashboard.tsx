@@ -39,6 +39,8 @@ import RestartDay1Button from "@/components/RestartDay1Button";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { useDeadline } from "@/hooks/useDeadline";
 
 
 const challengeSteps = [
@@ -61,6 +63,11 @@ const Dashboard = () => {
   const [bioSaving, setBioSaving] = useState(false);
   const [signupPointCount, setSignupPointCount] = useState(0);
   const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
+  const { t: tGlobal } = useSiteContent("global");
+  const deadline = useDeadline();
+  const dashboardUrgency = deadline.render(
+    tGlobal("urgency.dashboard", `Have this live by ${deadline.dayName}.`),
+  );
   const currentDay = Math.min(state.challenge.currentDay || 1, 3);
   const isComplete = state.challenge.completed || state.challenge.currentDay > 3;
   const hasProgress =
@@ -253,6 +260,7 @@ const Dashboard = () => {
 
           {/* PERMANENT PROFILE + QUIZ SCORE */}
           <DashboardProfileHeader />
+          <p className="text-center text-sm font-medium text-muted-foreground">{dashboardUrgency}</p>
 
           {/* INTRO VIDEO — welcome briefing */}
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -437,6 +445,7 @@ const Dashboard = () => {
 
       <section className="mx-auto max-w-5xl space-y-6">
         <DashboardProfileHeader />
+        <p className="text-center text-sm font-medium text-muted-foreground">{dashboardUrgency}</p>
         {(() => {
           const firstName = state.user?.name?.split(" ")[0] || "";
           const t = state.training;

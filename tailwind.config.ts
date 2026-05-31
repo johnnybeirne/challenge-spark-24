@@ -106,6 +106,14 @@ export default {
           "0%": { opacity: "0", transform: "translateY(8px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(4px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
         "sonar-pulse": {
           "0%": { transform: "scale(1)", opacity: "0.55" },
           "100%": { transform: "scale(1.9)", opacity: "0" },
@@ -119,6 +127,8 @@ export default {
         "pulse-glow": "pulse-glow 2.5s ease-in-out infinite",
         "attention-pulse": "attention-pulse 1s ease-in-out 3",
         "rise-in": "rise-in 500ms ease-out both",
+        "fade-in": "fade-in 400ms ease-out both",
+        "scale-in": "scale-in 200ms ease-out both",
         "sonar-pulse": "sonar-pulse 1.8s ease-out infinite",
       },
     },

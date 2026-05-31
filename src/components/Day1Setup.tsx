@@ -477,7 +477,117 @@ const Day1Setup = ({ onComplete }: Props) => {
     });
   };
 
-  const handleFoundationNext = (current: 1 | 2 | 3) => {
+  // ----- AI threading (Lovable AI Gateway via day1-thread edge function) -----
+  // We fire AI calls at two key moments: after the problem (step 2 → 3) and at
+  // the Challenge Promise (step 9 → 7). Both calls cache into aiOutputs keyed
+  // by a hash of the inputs so back/forward navigation never re-bills.
+  // Both calls are best-effort with a short navigation wait — if the AI is
+  // slow or unavailable, we fall back to the template copy and the user never
+  // sees a hung button.
+
+  const [navLoading, setNavLoading] = useState<null | "problem" | "outcome">(null);
+  // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
+  // mid-typing if the cache updates later in the same visit.
+  const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string } | null>(null);
+
+  useEffect(() => {
+    if (step !== 3) return;
+    const cached = state.challenge?.aiOutputs?.day1_problem_reaction;
+    setStep3Reaction(typeof cached === "string" && cached.trim() ? cached.trim() : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  useEffect(() => {
+    if (step !== 7) return;
+    const raw = state.challenge?.aiOutputs?.day1_promise;
+    if (typeof raw === "string" && raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.summary) && typeof parsed.promise === "string") {
+          setStep7Promise({ summary: parsed.summary, promise: parsed.promise });
+          return;
+        }
+      } catch {
+        /* fall through to null */
+      }
+    }
+    setStep7Promise(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  const ensureProblemReaction = async (): Promise<void> => {
+    const cacheKey = `${audience.trim()}|${problem.trim()}`;
+    const cachedKey = state.challenge?.aiOutputs?.day1_problem_reaction_key as string | undefined;
+    const cached = state.challenge?.aiOutputs?.day1_problem_reaction as string | undefined;
+    if (cached && cachedKey === cacheKey) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("day1-thread", {
+        body: {
+          moment: "problem-reaction",
+          inputs: { firstName, audience: audience.trim(), problem: problem.trim() },
+        },
+      });
+      if (error || !data || (data as any).fallback) return;
+      const text = (data as any).text;
+      if (typeof text !== "string" || !text.trim()) return;
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day1_problem_reaction: text.trim(),
+            day1_problem_reaction_key: cacheKey,
+          },
+        },
+      }));
+    } catch {
+      /* swallow — template fallback in UI */
+    }
+  };
+
+  const ensurePromise = async (): Promise<void> => {
+    const cacheKey = `${audience.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
+    const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
+    if (cached && cachedKey === cacheKey) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("day1-thread", {
+        body: {
+          moment: "promise",
+          inputs: {
+            firstName,
+            audience: audience.trim(),
+            topicHint: topicHint.trim(),
+            problem: problem.trim(),
+            how: how.trim(),
+            outcome: outcome.trim(),
+            challengeTypeLabel: challengeLabel(challengeType),
+          },
+        },
+      });
+      if (error || !data || (data as any).fallback) return;
+      const summary = (data as any).summary;
+      const promise = (data as any).promise;
+      if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day1_promise: JSON.stringify({ summary, promise: promise.trim() }),
+            day1_promise_key: cacheKey,
+          },
+        },
+      }));
+    } catch {
+      /* swallow — template fallback in UI */
+    }
+  };
+
+  const handleFoundationNext = async (current: 1 | 2 | 3) => {
     if (current === 1) {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
@@ -488,6 +598,14 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
       profileSaved("The problem you're solving");
+      // Hold briefly while Johnny "reads" the answer. Race the AI call against
+      // a 2.2s timeout so a slow/failed model never blocks the flow.
+      setNavLoading("problem");
+      await Promise.race([
+        ensureProblemReaction(),
+        new Promise<void>((r) => setTimeout(r, 2200)),
+      ]);
+      setNavLoading(null);
       setStep3Phase(saved?.how ? "input" : "intro");
       setStep(3);
     } else {
@@ -514,7 +632,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     }
   };
 
-  const handleOutcomeNext = () => {
+  const handleOutcomeNext = async () => {
     if (!outcome.trim()) return;
     persistFoundation({ outcome: outcome.trim() });
     setState((prev) => ({
@@ -528,6 +646,14 @@ const Day1Setup = ({ onComplete }: Props) => {
       href: "/challenger-dashboard",
       dedupeKey: "day1_outcome_saved",
     });
+    // Compose the Challenge Promise via AI. Give it a touch more time than
+    // the problem-reaction call since it's structured tool-call output.
+    setNavLoading("outcome");
+    await Promise.race([
+      ensurePromise(),
+      new Promise<void>((r) => setTimeout(r, 3000)),
+    ]);
+    setNavLoading(null);
     setStep7Phase("intro");
     setStep(7);
   };

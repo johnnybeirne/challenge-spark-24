@@ -776,15 +776,18 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? problemFeedbackPool[Math.min(Math.floor(problemWords / 6), problemFeedbackPool.length - 1)]
               : null;
 
+          const whoTrim = topicHint.trim().replace(/\.$/, "");
           const step2Messages = [
-            "Now tell me about the problem or obstacle they're trying to overcome.",
+            whoTrim
+              ? `Got it — ${whoTrim}. What problem or obstacle are they trying to overcome?`
+              : "Now tell me about the problem or obstacle they're trying to overcome.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step2Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step2-intro"
+                  resetKey={`step2-intro-${whoTrim.length}`}
                   messages={step2Messages}
                   onComplete={() => setStep2Phase("input")}
                 />
@@ -839,15 +842,22 @@ const Day1Setup = ({ onComplete }: Props) => {
             processPlaceholderMap[`${audienceType}|${challengeType}`] ??
             "e.g. Describe the steps, framework, or method you take them through to create the result.";
 
+          const whoTrim3 = topicHint.trim().replace(/\.$/, "");
+          const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
+          const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
           const step3Messages = [
-            "Now describe your process — how you take them through it and create the result.",
+            whoTrim3 && painLower
+              ? `That's clear. So for ${whoTrim3} dealing with ${painLower} — how do you take them through it to create the result?`
+              : whoTrim3
+                ? `That's clear. So for ${whoTrim3} — how do you take them through it to create the result?`
+                : "Now describe your process — how you take them through it and create the result.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step3-intro"
+                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}`}
                   messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />
@@ -902,15 +912,18 @@ const Day1Setup = ({ onComplete }: Props) => {
             outcomePlaceholderMap[`${audienceType}|${challengeType}`] ??
             "e.g. The transformation, result, or change participants will experience by the end.";
 
+          const whoTrim9 = topicHint.trim().replace(/\.$/, "");
           const step9Messages = [
-            "Finally, describe the result they'll experience by the end of your challenge.",
+            whoTrim9
+              ? `Last one${fn}. By the end of this challenge, what result will ${whoTrim9} walk away with?`
+              : "Finally, describe the result they'll experience by the end of your challenge.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step9Phase === "intro" && (
                 <TypedSequence
-                  resetKey="step9-intro"
+                  resetKey={`step9-intro-${whoTrim9.length}`}
                   messages={step9Messages}
                   onComplete={() => setStep9Phase("input")}
                 />

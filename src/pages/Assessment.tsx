@@ -13,6 +13,20 @@ import { useQuizQuestions } from "@/hooks/useQuizQuestions";
 import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+import aiAvatar from "@/assets/ai-avatar.png";
+
+// Short empathetic line shown beneath each question. Keyed by question id; falls back gracefully.
+const EMPATHY_LINES: Record<string, string> = {
+  q1: "Most people I talk to are stuck in the hustle. No judgment — just honesty.",
+  q2: "It's okay if the answer is yes. That's where almost everyone starts.",
+  q3: "If it feels like a guess, you're not alone. Clarity is the whole point of this.",
+  q4: "Trust before the conversation is rare. Don't worry if you're not there yet.",
+  q5: "Word of mouth by accident doesn't count. A real system is different.",
+  q6: "One-size-fits-all is the default. There's a better way and we'll get to it.",
+  q7: "If the next step is fuzzy, that's normal. Most funnels lose people right here.",
+  q8: "Compounding lead flow is the goal. Few people have it yet.",
+  q9: "Be honest — this one stings for a lot of people. Including past me.",
+};
 import Landing from "@/pages/Landing";
 
 const REF_SESSION_KEY = "challengeos_ref";

@@ -266,6 +266,77 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
   </div>
 );
 
+// A compact recap of values the user has already given — used between an
+// acknowledgement and a follow-up question so we never have to glue multiple
+// user fragments into one long sentence.
+type RecapRow = { label: string; echo: EchoField };
+
+const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
+  const visible = rows.filter((r) => {
+    const entry = echoMap[r.echo];
+    return entry && (entry.value ?? "").trim().length > 0;
+  });
+  if (visible.length === 0) return null;
+  return (
+    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-2">
+      {visible.map((r) => {
+        const entry = echoMap[r.echo]!;
+        return (
+          <div
+            key={r.echo}
+            className="grid grid-cols-[78px_1fr] gap-3 items-baseline"
+          >
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+              {r.label}
+            </div>
+            <div className="text-sm md:text-base leading-snug">
+              <EchoText
+                value={entry.value}
+                format={entry.format}
+                onSave={entry.onSave}
+                tidyContext={r.echo}
+                skipTidy={entry.skipTidy}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Acknowledgement + recap + question, in Johnny's bubble. Used wherever a
+// step's message would otherwise glue two or more echoes into one sentence.
+const JohnnyRecapPanel = ({
+  leadIn,
+  acknowledgement,
+  rows,
+  question,
+  echoMap,
+}: {
+  leadIn?: string;
+  acknowledgement: string;
+  rows: RecapRow[];
+  question: string;
+  echoMap: EchoMap;
+}) => (
+  <div className="flex items-start gap-3">
+    <JohnnyAvatar />
+    <div className="flex-1 space-y-3 min-w-0">
+      {leadIn && (
+        <div className="text-sm md:text-base leading-relaxed text-foreground/80">
+          {leadIn}
+        </div>
+      )}
+      <div className="text-sm md:text-base leading-relaxed font-medium">
+        {acknowledgement}
+      </div>
+      <RecapCard rows={rows} echoMap={echoMap} />
+      <div className="text-sm md:text-base leading-relaxed">{question}</div>
+    </div>
+  </div>
+);
+
 // Shows "Making notes..." for 2s on first mount, then reveals the live feedback text.
 const DelayedFeedback = ({ text }: { text: string }) => {
   const [ready, setReady] = useState(false);
@@ -1242,35 +1313,34 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
 
           const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
-          const step3TemplateQuestion: Msg =
-            subjectField3 && painLower
-              ? [
-                  `That's clear${fn}. So for `,
-                  { echo: subjectField3 } as MsgSegment,
-                  ` dealing with `,
-                  { echo: "problem" } as MsgSegment,
-                  ` — what's the process you take them through to create the result?`,
-                ]
-              : subjectField3
-                ? [
-                    `That's clear${fn}. So for `,
-                    { echo: subjectField3 } as MsgSegment,
-                    ` — what's the process you take them through to create the result?`,
-                  ]
-                : "Now describe your process — the steps you take them through to create the result.";
+          const step3Ack = `That's clear${fn}.`;
+          const step3Question =
+            subjectField3 || painLower
+              ? "What's the process you take them through to create the result?"
+              : "Now describe your process — the steps you take them through to create the result.";
 
-          // If Johnny's AI reaction landed in time, lead with it so step 3 feels
-          // like a direct response to the problem the user just typed.
-          const step3Messages: Msg[] = step3Reaction
-            ? [step3Reaction, step3TemplateQuestion]
-            : [step3TemplateQuestion];
+          const step3RecapRows: RecapRow[] = [];
+          if (subjectField3) {
+            step3RecapRows.push({
+              label: subjectField3 === "topic" ? "Avatar" : "Audience",
+              echo: subjectField3,
+            });
+          }
+          if (painLower) step3RecapRows.push({ label: "Problem", echo: "problem" });
+
+          // Typed intro: lead with Johnny's AI reaction (if it landed in time)
+          // followed by the short acknowledgement. The recap + question render
+          // as structured rows once the typing completes.
+          const step3IntroMessages: Msg[] = step3Reaction
+            ? [step3Reaction, step3Ack]
+            : [step3Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
-                  messages={step3Messages}
+                  messages={step3IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep3Phase("input")}
                 />
@@ -1279,7 +1349,13 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step3Messages} echoMap={echoMap} />
+                  <JohnnyRecapPanel
+                    leadIn={step3Reaction ?? undefined}
+                    acknowledgement={step3Ack}
+                    rows={step3RecapRows}
+                    question={step3Question}
+                    echoMap={echoMap}
+                  />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1338,44 +1414,30 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
 
           const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
-          // Lead-in echo of the user's process — uses the raw field so the
-          // inline pencil can edit it (formatList stays disabled for `how`).
-          const leadIn: MsgSegment[] = howTrim9
-            ? [
-                "Love it — using ",
-                { echo: "how" } as MsgSegment,
-                ". Now the payoff. ",
-              ]
-            : [];
-          const step9Messages: Msg[] =
-            subjectField9 && painLower9
-              ? [[
-                  ...leadIn,
-                  `Last one${fn}. After you take `,
-                  { echo: subjectField9 } as MsgSegment,
-                  ` through that, `,
-                  { echo: "problem" } as MsgSegment,
-                  ` becomes what? What do they walk away with by the end of Day 3?`,
-                ]]
-              : subjectField9
-                ? [[
-                    ...leadIn,
-                    `Last one${fn}. By the end of Day 3, what does `,
-                    { echo: subjectField9 } as MsgSegment,
-                    ` walk away with?`,
-                  ]]
-                : [[
-                    ...leadIn,
-                    `Finally, describe the result they'll walk away with by the end of Day 3.`,
-                  ]];
+          const step9Ack = `Last one${fn}.`;
+          const step9Question =
+            subjectField9 || painLower9
+              ? "What do they walk away with by the end of Day 3?"
+              : "Finally, describe the result they'll walk away with by the end of Day 3.";
 
+          const step9RecapRows: RecapRow[] = [];
+          if (subjectField9) {
+            step9RecapRows.push({
+              label: subjectField9 === "topic" ? "Avatar" : "Audience",
+              echo: subjectField9,
+            });
+          }
+          if (painLower9) step9RecapRows.push({ label: "Problem", echo: "problem" });
+          if (howTrim9) step9RecapRows.push({ label: "Process", echo: "how" });
+
+          const step9IntroMessages: Msg[] = [step9Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step9Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step9-intro-${whoTrim9.length}-${painLower9.length}-${audienceTrim9.length}`}
-                  messages={step9Messages}
+                  messages={step9IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep9Phase("input")}
                 />
@@ -1384,7 +1446,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step9Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step9Messages} echoMap={echoMap} />
+                  <JohnnyRecapPanel
+                    acknowledgement={step9Ack}
+                    rows={step9RecapRows}
+                    question={step9Question}
+                    echoMap={echoMap}
+                  />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1585,7 +1652,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower6 = audienceTrim6
             ? audienceTrim6.charAt(0).toLowerCase() + audienceTrim6.slice(1)
             : "";
-          const challengeShort = (challengeLabel(challengeType) || "").toLowerCase();
+          
 
           // NEW step 6 = the "trigger moment". We already know WHO from step 1; this
           // captures WHAT'S HAPPENING in their life/business right now that makes the
@@ -1613,31 +1680,22 @@ const Day1Setup = ({ onComplete }: Props) => {
           // asks the trigger-moment question in one beat. Keeping it as one
           // message prevents any chance of duplicate typing and ensures the
           // answer field appears as soon as Johnny finishes.
-          const step6Messages: Msg[] = audienceLower6
-            ? [
-                [
-                  `Okay${fn} — so you're building this for `,
-                  { echo: "audience" } as MsgSegment,
-                  `, and you want to help them `,
-                  { echo: "challengeType" } as MsgSegment,
-                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
-                ],
-              ]
-            : [
-                [
-                  `You're helping them `,
-                  { echo: "challengeType" } as MsgSegment,
-                  `. What's happening for them right now that makes your three-day challenge the perfect solution?`,
-                ],
-              ];
+          const step6Ack = `Okay${fn}.`;
+          const step6Question =
+            "What's happening for them right now that makes your three-day challenge the perfect solution?";
 
+          const step6RecapRows: RecapRow[] = [];
+          if (audienceLower6) step6RecapRows.push({ label: "Audience", echo: "audience" });
+          if (challengeType) step6RecapRows.push({ label: "Goal", echo: "challengeType" });
+
+          const step6IntroMessages: Msg[] = [step6Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step6Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step6-intro-${challengeType}-${audienceTrim6.length}`}
-                  messages={step6Messages}
+                  messages={step6IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep6Phase("input")}
                 />
@@ -1647,7 +1705,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step6Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step6Messages} echoMap={echoMap} />
+                  <JohnnyRecapPanel
+                    acknowledgement={step6Ack}
+                    rows={step6RecapRows}
+                    question={step6Question}
+                    echoMap={echoMap}
+                  />
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

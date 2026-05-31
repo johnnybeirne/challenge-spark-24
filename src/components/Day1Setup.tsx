@@ -827,36 +827,42 @@ const Day1Setup = ({ onComplete }: Props) => {
         })()}
 
         {step === 3 && (() => {
-          const processPlaceholderMap: Record<string, string> = {
-            "b2b|solve-problem": "e.g. I diagnose where leads are leaking, then walk them through a 3-step system to fix it.",
-            "b2b|quick-win": "e.g. I help them craft a single outreach asset and ship it within 48 hours.",
-            "b2b|create-asset": "e.g. I guide them to define their offer, then build a one-page sales asset they can use immediately.",
-            "b2b|reach-milestone": "e.g. I break the milestone into 3 weekly sprints with a checkpoint at the end of each.",
-            "b2c|solve-problem": "e.g. I help them identify what's blocking them, then rebuild the habit one micro-step at a time.",
-            "b2c|quick-win": "e.g. I give them a single daily action they can complete in under 10 minutes.",
-            "b2c|create-asset": "e.g. I walk them through a simple template and help them adapt it to their life.",
-            "b2c|reach-milestone": "e.g. I break the goal into weekly targets and coach them through one focus area each week.",
-          };
-          const processPlaceholder =
-            processPlaceholderMap[`${audienceType}|${challengeType}`] ??
-            "e.g. Describe the steps, framework, or method you take them through to create the result.";
-
           const whoTrim3 = topicHint.trim().replace(/\.$/, "");
+          const audienceTrim3 = audience.trim().replace(/\.$/, "");
+          const audienceLower3 = audienceTrim3
+            ? audienceTrim3.charAt(0).toLowerCase() + audienceTrim3.slice(1)
+            : "";
+          const whoLower3 = whoTrim3
+            ? whoTrim3.charAt(0).toLowerCase() + whoTrim3.slice(1)
+            : "";
           const painTrim = problem.trim().replace(/\.$/, "").replace(/^\s*/, "");
           const painLower = painTrim ? painTrim.charAt(0).toLowerCase() + painTrim.slice(1) : "";
+          const subject3 = whoLower3 || audienceLower3 || "them";
+
+          // Embed the user's audience into the example so it feels like it's about *their* people.
+          const processHintByChallenge: Record<string, string> = {
+            "solve-problem": `e.g. I help ${subject3} pinpoint what's really blocking them, then walk them through a simple 3-step fix.`,
+            "quick-win": `e.g. I give ${subject3} one focused daily action they can complete in under 15 minutes to create momentum.`,
+            "create-asset": `e.g. I walk ${subject3} through a template, then help them adapt it to their own situation step by step.`,
+            "reach-milestone": `e.g. I break the goal into 3 daily targets and coach ${subject3} through one focus area each day.`,
+          };
+          const processPlaceholder =
+            processHintByChallenge[challengeType] ??
+            `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
+
           const step3Messages = [
-            whoTrim3 && painLower
-              ? `That's clear. So for ${whoTrim3} dealing with ${painLower} — how do you take them through it to create the result?`
-              : whoTrim3
-                ? `That's clear. So for ${whoTrim3} — how do you take them through it to create the result?`
-                : "Now describe your process — how you take them through it and create the result.",
+            subject3 !== "them" && painLower
+              ? `That's clear${fn}. So for ${subject3} dealing with ${painLower} — what's the process you take them through to create the result?`
+              : subject3 !== "them"
+                ? `That's clear${fn}. So for ${subject3} — what's the process you take them through to create the result?`
+                : "Now describe your process — the steps you take them through to create the result.",
           ];
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}`}
+                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
                   messages={step3Messages}
                   onComplete={() => setStep3Phase("input")}
                 />

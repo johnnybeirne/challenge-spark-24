@@ -60,7 +60,7 @@ const sections = [
     color: "text-violet-500",
   },
   {
-    title: "Diagnostic Responses",
+    title: "Lead Gen Quiz Responses",
     description: "Edit the Johnny B AI chat shown on the results page for each score tier",
     icon: MessageCircle,
     to: "/owner-console/diagnostic-responses",

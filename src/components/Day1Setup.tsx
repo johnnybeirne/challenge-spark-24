@@ -1325,11 +1325,11 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step6Messages = audienceLower6
             ? [
                 `Okay${fn} — so you're building this for ${audienceLower6}, and you want to help them ${challengeShort}.`,
-                `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
+                `Here's what I want to know: what's happening for them right now that makes the next 3 days the perfect time to take your challenge?`,
               ]
             : [
                 `You're helping them ${challengeShort}.`,
-                `What's happening for them right now that makes the next 3 days the perfect time to take your challenge? The trigger moment.`,
+                `What's happening for them right now that makes the next 3 days the perfect time to take your challenge?`,
               ];
 
           return (

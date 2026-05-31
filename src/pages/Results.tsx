@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { getDiagnosticResult, type AssessmentResult } from "@/lib/assessmentData";
@@ -13,9 +12,9 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
-const TYPING_SPEED_MS = 22;
-const THINKING_MS = 1200;
-const BETWEEN_MESSAGES_MS = 600;
+const TYPING_SPEED_MS = 18;
+const THINKING_MS = 900;
+const BETWEEN_MESSAGES_MS = 500;
 
 const TypewriterText = ({
   text,
@@ -51,7 +50,7 @@ const TypewriterText = ({
     <span>
       {shown}
       {shown.length < text.length && (
-        <span className="ml-0.5 inline-block h-[1em] w-[2px] animate-pulse bg-foreground/50 align-[-0.12em]" />
+        <span className="ml-0.5 inline-block h-[0.9em] w-[2px] animate-pulse bg-foreground/40 align-[-0.12em]" />
       )}
     </span>
   );
@@ -63,6 +62,15 @@ type DiagnosticRow = {
   max_percent: number;
   title: string;
   messages: string[];
+};
+
+// Display-only tier labels mapped from percentage. Does NOT change scoring or DB tier thresholds.
+const getTierLabel = (percent: number): string => {
+  if (percent <= 20) return "Starter";
+  if (percent <= 40) return "Builder";
+  if (percent <= 60) return "Growth Partner";
+  if (percent <= 80) return "Featured Creator";
+  return "Strategic Partner";
 };
 
 const Results = () => {
@@ -85,6 +93,7 @@ const Results = () => {
   const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
   const percentageScore = Math.round((score / 9) * 100);
   const [animatedScore, setAnimatedScore] = useState(0);
+  const [animatedBar, setAnimatedBar] = useState(0);
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
@@ -119,37 +128,34 @@ const Results = () => {
     return match ?? rows[0];
   }, [rows, percentageScore]);
 
-  // Wait for Supabase rows before building the script — prevents mid-typing resets
-  const chatScriptSource = useMemo<string[]>(() => {
-    if (rows === null) return []; // still loading; don't start the chat yet
+  // Build paragraphs: title first, then each message as its own paragraph.
+  const paragraphSource = useMemo<string[]>(() => {
+    if (rows === null) return [];
     if (tierData) {
-      const body = tierData.messages.filter(Boolean).join("\n\n");
-      const combined = [tierData.title, body].filter(Boolean).join("\n\n");
-      return combined ? [combined] : [];
+      const list = [tierData.title, ...tierData.messages].filter((s): s is string => !!s && s.trim().length > 0);
+      return list;
     }
     if (assessment?.diagnosticTitle) {
-      const combined = [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(Boolean).join("\n\n");
-      return combined ? [combined] : [];
+      return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter((s) => s && s.trim().length > 0);
     }
     const fallback = getDiagnosticResult(score);
-    return [`${fallback.title}\n\n${fallback.message}`];
+    return [fallback.title, fallback.message].filter((s) => s && s.trim().length > 0);
   }, [rows, tierData, assessment, score]);
 
-  const [chatScript, setChatScript] = useState<string[]>([]);
+  const [paragraphs, setParagraphs] = useState<string[]>([]);
 
   useEffect(() => {
-    if (chatScript.length === 0 && chatScriptSource.length > 0) {
-      setChatScript(chatScriptSource);
+    if (paragraphs.length === 0 && paragraphSource.length > 0) {
+      setParagraphs(paragraphSource);
     }
-  }, [chatScript.length, chatScriptSource]);
+  }, [paragraphs.length, paragraphSource]);
 
-  // Sequential bubble reveal
   const [visibleCount, setVisibleCount] = useState(0);
   const [thinking, setThinking] = useState(true);
   const revealTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (chatScript.length === 0) return;
+    if (paragraphs.length === 0) return;
     setVisibleCount(0);
     setThinking(true);
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
@@ -161,10 +167,10 @@ const Results = () => {
     return () => {
       if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     };
-  }, [chatScript.length]);
+  }, [paragraphs.length]);
 
-  const handleBubbleDone = (index: number) => {
-    if (index + 1 >= chatScript.length) return;
+  const handleParagraphDone = (index: number) => {
+    if (index + 1 >= paragraphs.length) return;
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     setThinking(true);
     revealTimerRef.current = window.setTimeout(() => {
@@ -175,13 +181,14 @@ const Results = () => {
   };
 
   useEffect(() => {
-    const duration = 900;
+    const duration = 1100;
     const start = performance.now();
     let frameId: number;
     const tick = (timestamp: number) => {
       const progress = Math.min((timestamp - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setAnimatedScore(Math.round(percentageScore * eased));
+      setAnimatedBar(percentageScore * eased);
       if (progress < 1) frameId = requestAnimationFrame(tick);
     };
     frameId = requestAnimationFrame(tick);
@@ -197,214 +204,164 @@ const Results = () => {
     );
   }
 
-  const bubblesToRender = chatScript.slice(0, visibleCount);
-  const showThinkingBubble = thinking;
+  const tierLabel = getTierLabel(percentageScore);
+  const paragraphsToRender = paragraphs.slice(0, visibleCount);
 
-  const ctaCopy = (() => {
-    const deadline = new Date();
-    deadline.setDate(deadline.getDate() + 2);
-    const deadlineLabel = deadline.toLocaleDateString(undefined, { weekday: "long" });
-    const sub = `Create a simple version of your lead system and see it working by ${deadlineLabel}.`;
-    const button = "Join the 3-Day Challenge";
+  const accent = (() => {
     const tier = tierData?.tier;
     if (tier === "high") {
       return {
-        button,
-        sub,
-        stageLabel: "Operator Stage",
-        nextStep: "Scale",
-        tension: "Now let's make this scale without adding more effort.",
-        scoreColor: "text-emerald-500",
-        scoreBg: "bg-emerald-500",
-        scoreSoftBg: "bg-emerald-500/5",
-        scoreSoftBorder: "border-emerald-500/20",
-        scoreTrack: "bg-emerald-500/15",
+        text: "text-emerald-500",
+        bar: "bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600",
+        glow: "shadow-[0_0_40px_-8px_hsl(152_76%_45%/0.55)]",
       };
     }
     if (tier === "mid") {
       return {
-        button,
-        sub,
-        stageLabel: "Builder Stage",
-        nextStep: "Consistency",
-        tension: "Right now, results depend on effort. Let's make them consistent.",
-        scoreColor: "text-blue-500",
-        scoreBg: "bg-blue-500",
-        scoreSoftBg: "bg-blue-500/5",
-        scoreSoftBorder: "border-blue-500/20",
-        scoreTrack: "bg-blue-500/15",
+        text: "text-blue-500",
+        bar: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
+        glow: "shadow-[0_0_40px_-8px_hsl(217_91%_60%/0.55)]",
       };
     }
     return {
-      button,
-      sub,
-      stageLabel: "Starter Stage",
-      nextStep: "Foundation",
-      tension: "Let's get something working.",
-      scoreColor: "text-amber-500",
-      scoreBg: "bg-amber-500",
-      scoreSoftBg: "bg-amber-500/5",
-      scoreSoftBorder: "border-amber-500/20",
-      scoreTrack: "bg-amber-500/15",
+      text: "text-amber-500",
+      bar: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
+      glow: "shadow-[0_0_40px_-8px_hsl(28_95%_55%/0.55)]",
     };
   })();
 
-  
+  const urgencyLine = (() => {
+    const tier = tierData?.tier;
+    if (tier === "high") return "Spots are limited. The next challenge starts in days, not weeks.";
+    if (tier === "mid") return "Don't let another month pass on the same plateau. Start now.";
+    return "Your first real win is 3 days away. Don't put this off.";
+  })();
+
+  let entryIntent: string | null = null;
+  let pendingCoupon: string | null = null;
+  try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
+  try { pendingCoupon = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
+
+  const freeTrainingDestination = state.user
+    ? FREE_TRAINING_COURSE_PATH
+    : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
+
+  const cta = (() => {
+    if (entryIntent === "free_training") {
+      return { label: "Enrol in Free Training", onClick: () => navigate(freeTrainingDestination) };
+    }
+    if (entryIntent === "premium_course") {
+      const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
+      return { label: "Enrol in Leadio Growth Accelerator", onClick: () => navigate(dest) };
+    }
+    return { label: "Join the 3-Day Challenge", onClick: () => navigate("/challenge/join") };
+  })();
 
   return (
     <>
-      <SEO title="Your Diagnosis Results" description="See your lead generation score, personalised diagnosis, and recommended next step." canonical="/results" />
-    <div className="flex min-h-screen flex-col px-6 pb-24 pt-10 max-w-2xl mx-auto sm:px-6 lg:px-8">
-      <p className="mb-6 text-center text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Your Lead Generation Score
-      </p>
-
-      <Card className={`mb-10 ${ctaCopy.scoreSoftBorder} ${ctaCopy.scoreSoftBg} shadow-none`}>
-        <CardContent className="p-8 text-center">
-          <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-8xl sm:text-9xl font-bold tracking-tight ${ctaCopy.scoreColor}`}>
-              {animatedScore}
-            </span>
-            <span className={`text-4xl font-semibold opacity-70 ${ctaCopy.scoreColor}`}>%</span>
-          </div>
-          <p className={`mt-2 text-sm font-semibold uppercase tracking-[0.18em] ${ctaCopy.scoreColor}`}>
-            {ctaCopy.stageLabel}
+      <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
+      <div className="flex min-h-screen flex-col px-6 pb-32 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8">
+        {/* SCORE REVEAL */}
+        <section className="mb-16 text-center animate-fade-in">
+          <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+            Your Lead Generation Score
           </p>
 
-          <div
-            className={`mt-8 h-2.5 w-full overflow-hidden rounded-full ${ctaCopy.scoreTrack}`}
-            role="meter"
-            aria-valuenow={percentageScore}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Diagnostic score percentage"
-          >
-            <div
-              className={`h-full rounded-full ${ctaCopy.scoreBg} transition-[width] duration-100 ease-out`}
-              style={{ width: `${animatedScore}%` }}
-            />
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <span>Score</span>
-            <span className="font-semibold text-foreground/80">
-              Next step: <span className={ctaCopy.scoreColor}>{ctaCopy.nextStep}</span>
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <header className="mb-12">
-        <div className="flex items-start gap-3">
-          <div className="relative shrink-0">
-            <img
-              src={aiAvatar}
-              alt="Johnny B AI"
-              width={48}
-              height={48}
-              className="w-12 h-12 rounded-full border-2 border-foreground/10"
-            />
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs text-muted-foreground mb-2">Johnny B AI</div>
-            <div className="flex flex-col items-start gap-2">
-              {bubblesToRender.map((text, i) => {
-                const isLast = i === bubblesToRender.length - 1;
-                const isTitle = i === 0;
-                return (
-                  <div
-                    key={i}
-                    className={`bg-white border border-border px-4 py-2.5 max-w-[85%] w-fit animate-fade-in text-foreground/90 text-[15px] leading-6 rounded-2xl whitespace-pre-line ${
-                      i === 0 ? "rounded-tl-md" : "rounded-tl-2xl"
-                    } ${isTitle ? "font-semibold" : ""}`}
-                  >
-                    {isLast ? (
-                      <TypewriterText text={text} onDone={() => handleBubbleDone(i)} />
-                    ) : (
-                      <span>{text}</span>
-                    )}
-                  </div>
-                );
-              })}
-              {showThinkingBubble && (
-                <div className="bg-white border border-border rounded-2xl rounded-tl-md px-4 py-3 w-fit animate-fade-in">
-                  <TypingDots />
-                </div>
-              )}
+          <div className="relative">
+            <div className={`text-[8rem] sm:text-[10rem] font-black leading-none tracking-tighter ${accent.text}`}>
+              {animatedScore}
             </div>
-
+            <p className="mt-2 text-sm font-medium uppercase tracking-[0.25em] text-muted-foreground">
+              out of 100
+            </p>
           </div>
-        </div>
-      </header>
 
-      <div className="space-y-4">
-        {(() => {
-          let entryIntent: string | null = null;
-          let pendingCoupon: string | null = null;
-          try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
-          try { pendingCoupon = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
+          <div className="mx-auto mt-10 max-w-md">
+            <div
+              className="h-3 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
+              role="meter"
+              aria-valuenow={percentageScore}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Diagnostic score"
+            >
+              <div
+                className={`h-full rounded-full ${accent.bar} ${accent.glow} transition-[width] duration-100 ease-out`}
+                style={{ width: `${animatedBar}%` }}
+              />
+            </div>
+          </div>
 
-          const freeTrainingDestination = state.user
-            ? FREE_TRAINING_COURSE_PATH
-            : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
+          <h1 className={`mt-10 text-4xl sm:text-5xl font-black tracking-tight ${accent.text}`}>
+            {tierLabel}
+          </h1>
+        </section>
 
-          if (entryIntent === "free_training") {
-            return (
-              <>
-                <Button
-                  className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                  onClick={() => navigate(freeTrainingDestination)}
-                >
-                  Enrol in Free Training
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-                <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "18px" }}>
-                  Get your personalised starting point, then jump straight into the free Challenge Growth Blueprint.
-                </p>
-              </>
-            );
-          }
-
-          if (entryIntent === "premium_course") {
-            const premiumDest = pendingCoupon
-              ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}`
-              : "/premium/enrol";
-            return (
-              <>
-                <Button
-                  className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                  onClick={() => navigate(premiumDest)}
-                >
-                  Enrol in Leadio Growth Accelerator
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-                {pendingCoupon && (
-                  <p className="text-center text-sm font-bold text-success">
-                    Coupon {pendingCoupon} will be applied at checkout.
-                  </p>
+        {/* JOHNNY MESSAGE — flowing, no chrome */}
+        <section className="mb-20">
+          <div className="flex items-start gap-5 sm:gap-6">
+            <div className="relative shrink-0">
+              <img
+                src={aiAvatar}
+                alt="Johnny B AI"
+                width={88}
+                height={88}
+                className="w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-2 ring-foreground/10"
+              />
+              <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-background" />
+            </div>
+            <div className="flex-1 min-w-0 pt-1">
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Johnny B
+              </div>
+              <div className="space-y-6">
+                {paragraphsToRender.map((text, i) => {
+                  const isLast = i === paragraphsToRender.length - 1;
+                  const isLead = i === 0;
+                  return (
+                    <p
+                      key={i}
+                      className={`animate-fade-in whitespace-pre-line text-foreground/90 ${
+                        isLead
+                          ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight text-foreground"
+                          : "text-lg sm:text-xl leading-[1.6]"
+                      }`}
+                    >
+                      {isLast ? (
+                        <TypewriterText text={text} onDone={() => handleParagraphDone(i)} />
+                      ) : (
+                        <span>{text}</span>
+                      )}
+                    </p>
+                  );
+                })}
+                {thinking && (
+                  <div className="animate-fade-in pt-1">
+                    <TypingDots />
+                  </div>
                 )}
-              </>
-            );
-          }
+              </div>
+            </div>
+          </div>
+        </section>
 
-          // Default: challenge intent
-          return (
-            <>
-              <Button
-                className="h-[60px] w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                onClick={() => navigate("/challenge/join")}
-              >
-                {ctaCopy.button}
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-              <p className="text-center leading-7 text-muted-foreground max-w-md mx-auto" style={{ fontSize: "20px" }}>
-                {ctaCopy.sub}
-              </p>
-            </>
-          );
-        })()}
+        {/* SINGLE DOMINANT CTA */}
+        <section className="space-y-4">
+          <Button
+            size="lg"
+            onClick={cta.onClick}
+            className="h-[72px] w-full gap-3 rounded-2xl text-lg sm:text-xl font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
+          >
+            {cta.label}
+            <ArrowRight className="w-6 h-6" />
+          </Button>
+          <p className="text-center text-base sm:text-lg font-medium text-muted-foreground">
+            {pendingCoupon && entryIntent === "premium_course"
+              ? `Coupon ${pendingCoupon} will be applied at checkout.`
+              : urgencyLine}
+          </p>
+        </section>
       </div>
-    </div>
     </>
   );
 };

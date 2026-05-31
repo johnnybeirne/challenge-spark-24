@@ -738,9 +738,9 @@ function LockedDayScreen({
   const deadline = useDeadline();
   const template = tGlobal(
     "urgency.locked_day",
-    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel.toLowerCase()}.`,
+    `Have this live by ${deadline.dayName} — Day ${dayNum} opens ${unlockLabel}.`,
   );
-  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel.toLowerCase() });
+  const urgency = deadline.render(template, { n: dayNum, when: unlockLabel });
   return (
     <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
       <section className="mx-auto max-w-3xl space-y-6">

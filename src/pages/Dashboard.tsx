@@ -443,7 +443,7 @@ const Dashboard = () => {
 
       <section className="mx-auto max-w-5xl space-y-6">
         
-        <p className="text-center text-sm font-medium text-muted-foreground">{dashboardUrgency}</p>
+        
         {(() => {
           const firstName = state.user?.name?.split(" ")[0] || "";
           const t = state.training;

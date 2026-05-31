@@ -1053,7 +1053,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <StaticAi messages={step5Messages} />
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
-                  {challengeOptions.map((opt) => {
+                  {challengeOptions.map((opt, idx) => {
                     const selected = challengeType === opt.value;
                     return (
                       <button
@@ -1061,19 +1061,26 @@ const Day1Setup = ({ onComplete }: Props) => {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => handleChallenge(opt.value)}
-                        className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
-                          selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                        style={{ animationDelay: `${idx * 140}ms`, animationFillMode: "both" }}
+                        className={`group relative overflow-hidden flex items-center gap-3 p-4 rounded-xl border text-left opacity-0 animate-fade-in transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/60 active:scale-[0.98] ${
+                          selected
+                            ? "border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-md shadow-primary/10"
+                            : "border-border bg-card"
                         }`}
                       >
                         <span
-                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                            selected ? "border-primary" : "border-muted-foreground/40"
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-primary/5 to-transparent"
+                        />
+                        <span
+                          className={`relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                            selected ? "border-primary scale-110" : "border-muted-foreground/40 group-hover:border-primary/60"
                           }`}
                           aria-hidden
                         >
-                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary animate-scale-in" />}
                         </span>
-                        <span className="text-base font-semibold leading-tight">
+                        <span className="relative text-base font-semibold leading-tight">
                           {opt.description}
                         </span>
                       </button>

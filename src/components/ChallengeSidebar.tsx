@@ -100,16 +100,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
     const storedDay = state.challenge.currentDay ?? 1;
     const challengeCompleted = !!state.challenge.completed;
     const dashboardActive = location.pathname === "/challenger-dashboard";
-    const [dashboardFlash, setDashboardFlash] = useState(false);
-    useEffect(() => {
-      const onFlash = () => {
-        setDashboardFlash(true);
-        const t = setTimeout(() => setDashboardFlash(false), 1200);
-        return () => clearTimeout(t);
-      };
-      window.addEventListener("dashboard-flash", onFlash);
-      return () => window.removeEventListener("dashboard-flash", onFlash);
-    }, []);
+    
     
     
 

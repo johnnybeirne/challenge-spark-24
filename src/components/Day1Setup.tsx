@@ -256,7 +256,7 @@ const challengeOptions = [
 ];
 
 const challengeLabel = (v: string) =>
-  challengeOptions.find((o) => o.value === v)?.label ?? v;
+  challengeOptions.find((o) => o.value === v)?.description ?? v;
 
 const audienceLabelShort = (v: "b2b" | "b2c") =>
   v === "b2b" ? "businesses" : "consumers";
@@ -545,8 +545,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
-    const summary = challengeOptions.find((o) => o.value === v)?.summary ?? "";
-    const label = challengeOptions.find((o) => o.value === v)?.label ?? v;
+    const description = challengeOptions.find((o) => o.value === v)?.description ?? v;
+    persistFoundation({ challengeType: v, desiredOutcome: description } as Partial<SetupData>);
     persistFoundation({ challengeType: v, desiredOutcome: summary } as Partial<SetupData>);
     setState((prev) => ({
       ...prev,

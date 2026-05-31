@@ -87,8 +87,8 @@ export const questions: AssessmentQuestion[] = [
     id: "q9",
     text: "Do your leads only come in when you are actively working on it?",
     options: [
-      { label: "I do", value: "yes" },
-      { label: "Not yet", value: "no" },
+      { label: "Yes", value: "yes" },
+      { label: "Not really", value: "no" },
     ],
   },
 ];

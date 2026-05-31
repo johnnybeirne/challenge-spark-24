@@ -104,7 +104,7 @@ const ROUTES: RouteRow[] = [
   { route: "/owner-console/activity", purpose: "Activity feed", access: "Admin", status: "Detected" },
   { route: "/owner-console/training", purpose: "Training admin", access: "Admin", status: "Detected" },
   { route: "/owner-console/view-as-user", purpose: "Impersonation", access: "Admin", status: "Detected" },
-  { route: "/owner-console/diagnostic-responses", purpose: "Assessment responses", access: "Admin", status: "Detected" },
+  { route: "/owner-console/diagnostic-responses", purpose: "Lead gen quiz responses", access: "Admin", status: "Detected" },
   { route: "/owner-console/features", purpose: "Internal feature overview", access: "Admin", status: "Detected" },
   { route: "/owner-console/waitlist", purpose: "Waitlist admin (entries + referrer)", access: "Admin", status: "Detected" },
   { route: "/owner-console/waitlist-email", purpose: "Waitlist email composer", access: "Admin", status: "Detected" },

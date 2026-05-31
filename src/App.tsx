@@ -56,7 +56,7 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";
 import AdminBios from "@/pages/AdminBios";
-import AdminDiagnosticResponses from "@/pages/AdminDiagnosticResponses";
+import AdminLeadGenQuizResponses from "@/pages/AdminLeadGenQuizResponses";
 import AdminContent from "@/pages/AdminContent";
 
 import AdminCoupons from "@/pages/AdminCoupons";
@@ -227,7 +227,7 @@ const App = () => (
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />
                 <Route path="bios" element={<AdminBios />} />
-                <Route path="diagnostic-responses" element={<AdminDiagnosticResponses />} />
+                <Route path="diagnostic-responses" element={<AdminLeadGenQuizResponses />} />
                 <Route path="overview" element={<AdminOverview />} />
                 <Route path="features" element={<Navigate to="/owner-console/overview?tab=features" replace />} />
                 <Route path="coupons" element={<AdminCoupons />} />

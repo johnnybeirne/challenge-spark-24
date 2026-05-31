@@ -25,7 +25,7 @@ const TIER_LABELS: Record<string, string> = {
 
 const TIER_ORDER = ["low", "mid", "high"];
 
-const AdminDiagnosticResponses = () => {
+const AdminLeadGenQuizResponses = () => {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
 
@@ -115,7 +115,7 @@ const AdminDiagnosticResponses = () => {
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <MessageCircle className="h-6 w-6 text-primary" />
-          Diagnostic Chat Responses
+          Lead Gen Quiz Responses
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Edit the chat shown on the Results page. Each tier uses one or more chat bubbles. The first bubble is the title.
@@ -184,4 +184,4 @@ const AdminDiagnosticResponses = () => {
   );
 };
 
-export default AdminDiagnosticResponses;
+export default AdminLeadGenQuizResponses;

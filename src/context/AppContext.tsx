@@ -468,25 +468,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (authUser) {
       (async () => {
-        await migrateLocalToSupabase(authUser.id);
-        const remote = await loadFromSupabase(authUser.id);
-
-        // Hydrate the full assessment from ai_user_context (cross-device source of truth).
-        let remoteAssessment: AppState["assessment"] | null = null;
         try {
-          const { data: aiCtx } = await supabase
-            .from("ai_user_context")
-            .select("assessment")
-            .eq("user_id", authUser.id)
-            .maybeSingle();
-          const raw = (aiCtx as { assessment?: unknown } | null)?.assessment;
-          if (raw && typeof raw === "object") {
-            remoteAssessment = raw as AppState["assessment"];
-          }
-        } catch {}
+          await migrateLocalToSupabase(authUser.id);
+          if (cancelled) return;
+          const remote = await loadFromSupabase(authUser.id);
+          if (cancelled) return;
 
-        if (remote) {
-          setStateRaw((prev) => checkAndTriggerUnlocks({
+          // Hydrate the full assessment from ai_user_context (cross-device source of truth).
+          let remoteAssessment: AppState["assessment"] | null = null;
+          try {
+            const { data: aiCtx } = await supabase
+              .from("ai_user_context")
+              .select("assessment")
+              .eq("user_id", authUser.id)
+              .maybeSingle();
+            const raw = (aiCtx as { assessment?: unknown } | null)?.assessment;
+            if (raw && typeof raw === "object") {
+              remoteAssessment = raw as AppState["assessment"];
+            }
+          } catch {}
+          if (cancelled) return;
+
+          if (remote) {
+            setStateRaw((prev) => checkAndTriggerUnlocks({
               ...prev,
               ...remote,
               assessment: remoteAssessment ?? remote.assessment ?? prev.assessment,
@@ -498,16 +502,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               partnerAsset: prev.partnerAsset,
               partnerPerformance: prev.partnerPerformance,
             }));
-          prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
-        } else {
-          // New user with no remote state — still award the signup bonus & run unlock rules.
-          setStateRaw((prev) => checkAndTriggerUnlocks(
-            remoteAssessment ? { ...prev, assessment: remoteAssessment } : prev
-          ));
+            prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
+          } else {
+            // New user with no remote state — still award the signup bonus & run unlock rules.
+            setStateRaw((prev) => checkAndTriggerUnlocks(
+              remoteAssessment ? { ...prev, assessment: remoteAssessment } : prev
+            ));
+          }
+          setSyncEnabled(true);
+        } catch {
+          setSyncEnabled(false);
+        } finally {
+          if (!cancelled) {
+            window.clearTimeout(hydrationTimeout);
+            setHydrated(true);
+          }
         }
-        setHydrated(true);
-
-        setSyncEnabled(true);
       })();
     } else {
       try {

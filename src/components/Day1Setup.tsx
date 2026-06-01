@@ -1793,6 +1793,11 @@ const Day1Setup = ({ onComplete }: Props) => {
               <div className="space-y-3">
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
                 <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} bare />
+                {superpower.trim() && (
+                  <p className="text-xs text-muted-foreground leading-snug">
+                    Your superpower is also saved to your dashboard.
+                  </p>
+                )}
 
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 

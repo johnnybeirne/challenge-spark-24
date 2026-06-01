@@ -35,6 +35,7 @@ interface ProblemInputs {
 interface PromiseInputs {
   firstName?: string;
   audience?: string; // step 1 — broad audience
+  superpower?: string; // step 10 — what the builder does better than anyone
   topicHint?: string; // step 6 — trigger moment
   problem?: string;
   how?: string;

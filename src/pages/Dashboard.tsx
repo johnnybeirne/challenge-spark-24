@@ -442,6 +442,9 @@ const Dashboard = () => {
       </header>
 
       <section className="mx-auto max-w-5xl space-y-6">
+        <DashboardArchetypeStrip />
+
+
         
         
         {(() => {

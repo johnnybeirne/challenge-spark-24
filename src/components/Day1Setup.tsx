@@ -1286,6 +1286,57 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
+        {step === 10 && (() => {
+          const audienceTrim10 = audience.trim().replace(/\.$/, "");
+          const step10Message: Msg =
+            `So${fn}, what's your superpower? What do you do better than anyone else?`;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step10Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step10-intro-${audienceTrim10.length}`}
+                  messages={[step10Message]}
+                  echoMap={echoMap}
+                  skipMakingNotes
+                  onComplete={() => setStep10Phase("input")}
+                />
+              )}
+
+              {step10Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={[step10Message]} echoMap={echoMap} />
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={superpower}
+                        onChange={(e) => setSuperpower(e.target.value)}
+                        placeholder="e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding."
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
+                        }}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleSuperpowerNext}
+                      disabled={!superpower.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+
         {step === 2 && (() => {
           // Use the user's own audience/avatar words so the example feels relevant to them.
           const whoTrim = topicHint.trim().replace(/\.$/, "");

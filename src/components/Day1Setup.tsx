@@ -1791,7 +1791,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             {step5Phase === "choose" && (
               <div className="space-y-3">
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
-                <RecapCard rows={recapRowsBefore(5)} echoMap={echoMap} />
+                <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} />
 
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 

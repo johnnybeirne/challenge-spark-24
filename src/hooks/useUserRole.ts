@@ -8,11 +8,11 @@
 // Do NOT use this for: scoring, unlock logic, payments, RLS-equivalent gates.
 
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStage } from "@/hooks/useUserStage";
 import { usePremium } from "@/hooks/usePremium";
 import { usePromoter } from "@/hooks/usePromoter";
+import { checkHasRole } from "@/lib/adminRole";
 import {
   ROLE_PERMISSIONS,
   ROLE_PRIMARY_CTA,
@@ -41,7 +41,7 @@ export type UseUserRoleResult = {
 };
 
 export function useUserRole(): UseUserRoleResult {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const stage = useUserStage();
   const { isPremium } = usePremium();
   const { promoter, loading: promoterLoading } = usePromoter();
@@ -68,10 +68,7 @@ export function useUserRole(): UseUserRoleResult {
     setAdminChecked(false);
     (async () => {
       try {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: user.id,
-          _role: "admin",
-        });
+        const data = await checkHasRole(user.id, "admin", session?.access_token);
         if (cancelled) return;
         const result = !!data;
         adminCache.set(user.id, result);
@@ -87,7 +84,7 @@ export function useUserRole(): UseUserRoleResult {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, session?.access_token]);
 
   return useMemo(() => {
     const role = deriveLeadioRole({

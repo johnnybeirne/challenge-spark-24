@@ -38,6 +38,7 @@ import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
 import { SETUP_KEY } from "@/components/Day1Setup";
 import ChallengeRecord from "@/components/ChallengeRecord";
+import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";

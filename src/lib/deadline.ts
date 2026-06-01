@@ -2,11 +2,12 @@
 // Every urgency message in the app should render through here so the
 // "Have this live by {day}" copy stays personal and live for each user.
 
-export const DEADLINE_OFFSET_DAYS = 3;
+// 3-day challenge: signup day = Day 1, +1 = Day 2, +2 = Day 3 (deadline).
+export const DEADLINE_OFFSET_DAYS = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Returns the deadline Date = anchor + 3 days.
+ * Returns the deadline Date = anchor + 2 days (Day 3 of the challenge).
  * Anchor falls back to "now" so the message is never empty even for
  * pre-signup visitors (landing pages, etc).
  */

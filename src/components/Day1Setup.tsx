@@ -1373,11 +1373,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
-          const step10Message: Msg = [
-            `So${fn}, you work with `,
-            { echo: "audience" } as MsgSegment,
-            `. What's your superpower? What do you do for them better than anyone else?`,
-          ];
+          const step10Message: Msg = renderTemplate(
+            "step-3",
+            `So${fn}, you work with ${audienceTrim10 || "them"}. What's your superpower? What do you do for them better than anyone else?`,
+          );
 
 
           return (

@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
 import { mergeMemory, normalizeChallengeType, copilotMemoryContext } from "@/lib/personalisation";
@@ -1213,31 +1214,39 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Cumulative recap rows for the current step. Each prior answer is its own
   // labelled row — never combined. RecapCard hides rows whose value is empty.
-  const recapRowsBefore = (currentStep: number): RecapRow[] => {
+  const recapRowsBefore = (currentStep: number, skip: EchoField[] = []): RecapRow[] => {
     const rows: RecapRow[] = [];
-    const after = (s: number) => ![4, 1].includes(currentStep) || currentStep > s; // placeholder, real checks below
-    void after; // silence unused
     const onSteps = (...steps: number[]) => steps.includes(currentStep);
-    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim()) {
+    const skipSet = new Set<string>(skip);
+    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
       rows.push({ label: "You work with:", echo: "audience" });
     }
-    if (onSteps(5, 2, 3, 9, 7) && superpower.trim()) {
+    if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });
     }
-    if (onSteps(2, 3, 9, 7) && challengeType) {
+    if (onSteps(2, 3, 9, 7) && challengeType && !skipSet.has("challengeType")) {
       rows.push({ label: "Your goal:", echo: "challengeType" });
     }
-    if (onSteps(3, 9, 7) && problem.trim()) {
+    if (onSteps(3, 9, 7) && problem.trim() && !skipSet.has("problem")) {
       rows.push({ label: "The problem:", echo: "problem" });
     }
-    if (onSteps(9, 7) && how.trim()) {
+    if (onSteps(9, 7) && how.trim() && !skipSet.has("how")) {
       rows.push({ label: "Your process:", echo: "how" });
     }
-    if (onSteps(7) && outcome.trim()) {
+    if (onSteps(7) && outcome.trim() && !skipSet.has("outcome")) {
       rows.push({ label: "The result:", echo: "outcome" });
     }
     return rows;
   };
+
+  // Day 1 visible step order for "Step X of N" progress header.
+  // Step 8 (AI builder) is excluded — it's the post-setup builder, not a setup step.
+  const STEP_ORDER: number[] = [4, 1, 10, 5, 2, 3, 9, 7];
+  const TOTAL_STEPS = STEP_ORDER.length;
+  const stepIndex = STEP_ORDER.indexOf(step);
+  const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
+  const showProgress = stepNumber > 0;
+
 
 
 
@@ -1258,6 +1267,16 @@ const Day1Setup = ({ onComplete }: Props) => {
             Back
           </button>
         )}
+
+        {showProgress && (
+          <div className="mb-6 space-y-2">
+            <div className="text-sm font-medium text-muted-foreground">
+              Step {stepNumber} of {TOTAL_STEPS}
+            </div>
+            <Progress value={(stepNumber / TOTAL_STEPS) * 100} className="h-2" />
+          </div>
+        )}
+
 
         {step === 1 && (() => {
           const step1Message: Msg = audienceType
@@ -1343,7 +1362,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               {step10Phase === "input" && (
                 <div className="space-y-5">
                   <StaticAi messages={[step10Message]} echoMap={echoMap} />
-                  <RecapCard rows={recapRowsBefore(10)} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(10, ["audience"])} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1426,7 +1445,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               {step2Phase === "input" && (
                 <div className="space-y-5">
                   <StaticAi messages={step2Messages} echoMap={echoMap} />
-                  <RecapCard rows={recapRowsBefore(2)} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(2, whoLower ? [] : ["audience"])} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1772,7 +1791,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             {step5Phase === "choose" && (
               <div className="space-y-3">
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
-                <RecapCard rows={recapRowsBefore(5)} echoMap={echoMap} />
+                <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} />
 
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 

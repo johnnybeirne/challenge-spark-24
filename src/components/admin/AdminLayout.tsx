@@ -92,9 +92,7 @@ const AdminLayout = () => {
             : `Your signed-in account (${user.email}) does not have admin access.`}
         </p>
         <Button asChild variant="outline">
-          <Link to={switchHref} onClick={() => supabase.auth.signOut()}>
-            Sign out & log in as admin
-          </Link>
+          <Link to={switchHref}>Sign in as admin</Link>
         </Button>
       </div>
     );

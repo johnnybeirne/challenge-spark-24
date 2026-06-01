@@ -7,13 +7,14 @@ import {
 } from "@/lib/premium";
 import { useAuth } from "@/hooks/useAuth";
 
-export const usePremium = () => {
+export const usePremium = (enabled = true) => {
   const { user } = useAuth();
   const [premium, setPremiumState] = useState<boolean>(() => isPremiumUser());
   const [coupon, setCoupon] = useState<string | null>(() => getAppliedCoupon());
 
   useEffect(() => {
     let cancelled = false;
+    if (!enabled) return () => { cancelled = true; };
 
     const refresh = async () => {
       await fetchPremiumFromSupabase(user?.id ?? null);
@@ -35,7 +36,7 @@ export const usePremium = () => {
       cancelled = true;
       window.removeEventListener(PREMIUM_CHANGED_EVENT, onLocal);
     };
-  }, [user?.id]);
+  }, [enabled, user?.id]);
 
   return { isPremium: premium, coupon };
 };

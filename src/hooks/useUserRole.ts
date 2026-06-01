@@ -43,8 +43,18 @@ export type UseUserRoleResult = {
 export function useUserRole(): UseUserRoleResult {
   const { user } = useAuth();
   const stage = useUserStage();
-  const { isPremium } = usePremium();
-  const { promoter, loading: promoterLoading } = usePromoter();
+  const suppressBackgroundRoleQueries = typeof window !== "undefined" && (
+    window.location.pathname === "/owner-console" ||
+    window.location.pathname.startsWith("/owner-console/") ||
+    window.location.pathname === "/admin" ||
+    window.location.pathname.startsWith("/admin/") ||
+    window.location.pathname === "/challenge/join" ||
+    window.location.pathname === "/join" ||
+    window.location.pathname === "/blueprint/join" ||
+    window.location.pathname === "/blueprint-join"
+  );
+  const { isPremium } = usePremium(!suppressBackgroundRoleQueries);
+  const { promoter, loading: promoterLoading } = usePromoter(!suppressBackgroundRoleQueries);
 
   const [isAdmin, setIsAdmin] = useState<boolean>(() =>
     user ? adminCache.get(user.id) ?? false : false
@@ -54,7 +64,7 @@ export function useUserRole(): UseUserRoleResult {
   );
 
   useEffect(() => {
-    if (!user) {
+    if (!user || suppressBackgroundRoleQueries) {
       setIsAdmin(false);
       setAdminChecked(true);
       return;
@@ -87,7 +97,7 @@ export function useUserRole(): UseUserRoleResult {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, suppressBackgroundRoleQueries]);
 
   return useMemo(() => {
     const role = deriveLeadioRole({

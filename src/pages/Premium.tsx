@@ -141,7 +141,7 @@ const Premium = () => {
         toast({ title: "Coupon could not be applied", description: redemption.reason, variant: "destructive" });
         return;
       }
-      setPremium(true, effectiveApplied.code);
+      await setPremium(true, effectiveApplied.code);
       toast({ title: "Premium access confirmed", description: "Your course area is being prepared." });
       return;
     }

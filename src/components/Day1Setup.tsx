@@ -944,8 +944,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
       profileSaved("Who you serve");
-      setStep5Phase(saved?.challengeType ? "choose" : "intro");
-      setStep(5);
+      setStep10Phase(saved?.superpower ? "input" : "intro");
+      setStep(10);
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });

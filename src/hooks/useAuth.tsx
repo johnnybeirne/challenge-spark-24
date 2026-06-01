@@ -23,6 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    const loadingFallback = window.setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 3500);
+
     // Honor a post-login redirect target set by admin "View as" before Supabase
     // hydrates the session from the URL hash. Runs regardless of which auth
     // event fires (SIGNED_IN vs INITIAL_SESSION) and survives the Site-URL
@@ -46,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 1) Subscribe FIRST so we don't miss an event
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
+        if (!mounted) return;
         setSession(newSession);
         setUser(newSession?.user ?? null);
         setLoading(false);
@@ -64,18 +70,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     // 2) Then hydrate from storage
-    supabase.auth.getSession().then(({ data: { session: existing } }) => {
-      setSession(existing);
-      setUser(existing?.user ?? null);
-      setLoading(false);
-      const uid = existing?.user?.id;
-      if (uid) consumeRedirect();
-      if (uid) {
-        setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
-      }
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session: existing } }) => {
+        if (!mounted) return;
+        setSession(existing);
+        setUser(existing?.user ?? null);
+        const uid = existing?.user?.id;
+        if (uid) consumeRedirect();
+        if (uid) {
+          setTimeout(() => { bindAttributionToUser(uid).catch(() => {}); }, 0);
+        }
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setSession(null);
+        setUser(null);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      window.clearTimeout(loadingFallback);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signInWithMagicLink = async (email: string, metadata?: Record<string, string>) => {

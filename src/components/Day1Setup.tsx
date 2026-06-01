@@ -264,7 +264,7 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
     <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
-          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug">
+          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug whitespace-pre-line">
             {renderMsg(m, echoMap, `m${i}-`)}
           </div>
         </div>

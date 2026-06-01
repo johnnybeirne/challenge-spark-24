@@ -7,12 +7,10 @@ import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { state, hydrated } = useAppState();
   const { user, loading } = useAuth();
+  const isDemoUser = !!state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1";
 
+  if (isDemoUser) return <>{children}</>;
   if (loading || (user && !hydrated)) return <Spinner />;
-
-  if (!user && state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1") {
-    return <>{children}</>;
-  }
 
   if (!user) {
     if (state.assessment) return <Navigate to="/results" replace />;
@@ -26,9 +24,10 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 export const PartnerGuard = ({ children }: { children: React.ReactNode }) => {
   const { state, hydrated } = useAppState();
   const { user, loading } = useAuth();
+  const isDemoUser = !!state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1";
 
+  if (isDemoUser) return <>{children}</>;
   if (loading || (user && !hydrated)) return <Spinner />;
-  if (!user && state.user && sessionStorage.getItem(DEMO_USER_KEY) === "1") return <>{children}</>;
   if (!user) return <Navigate to="/challenge/join" replace />;
 
   const role = state.user?.role;

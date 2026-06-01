@@ -372,6 +372,9 @@ const Dashboard = () => {
 
 
 
+          {/* YOUR CHALLENGE — recap from Day 1 answers */}
+          <YourChallengeRecap />
+
           {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
           <ChallengeRecord />
 

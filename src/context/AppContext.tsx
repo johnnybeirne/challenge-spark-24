@@ -451,10 +451,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (authLoading) return;
 
+    let cancelled = false;
+    const hydrationTimeout = window.setTimeout(() => {
+      if (cancelled || !authUser) return;
+      setHydrated(true);
+      setSyncEnabled(false);
+    }, APP_HYDRATION_TIMEOUT_MS);
+
     setSyncEnabled(false);
 
     if (authUser && (isAuthEntryRoute || isOwnerConsoleRoute)) {
       setHydrated(true);
+      window.clearTimeout(hydrationTimeout);
       return;
     }
 
@@ -518,7 +526,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {}
       setHydrated(true);
       setSyncEnabled(false);
+      window.clearTimeout(hydrationTimeout);
     }
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(hydrationTimeout);
+    };
   }, [authUser, authLoading, isAuthEntryRoute, isOwnerConsoleRoute]);
 
   // Pre-auth only: cache assessment/memory/training in localStorage so anonymous

@@ -66,12 +66,9 @@ const Leaderboard = () => {
       if (signups) {
         // Resolve bios via profiles (email match — waitlist has no FK to profiles).
         const emails = (signups as any[]).map((s) => (s.email || "").toLowerCase()).filter(Boolean);
-        const { data: profileRows } = emails.length
-          ? await supabase
-              .from("profiles")
-              .select("email, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
-              .in("email", emails)
-          : { data: [] as any[] };
+        // Profile enrichment now happens server-side inside public_waitlist_leaderboard view;
+        // we skip the client-side email join (email is no longer publicly readable).
+        const profileRows: any[] = [];
         const profileMap = new Map<string, ProfileBio>(
           (profileRows || []).map((p: any) => [String(p.email || "").toLowerCase(), p])
         );
@@ -151,8 +148,8 @@ const Leaderboard = () => {
 
         const userIds = Array.from(userByPartner.values()).filter(Boolean) as string[];
         const { data: proProfiles } = userIds.length
-          ? await supabase
-              .from("profiles")
+          ? await (supabase
+              .from("public_profiles" as any) as any)
               .select("user_id, name, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
               .in("user_id", userIds)
           : { data: [] as any[] };

@@ -48,8 +48,8 @@ export function useCrossPromo(slots = 3) {
 
         // Get names
         const userIds = promoters.map((p: any) => p.user_id);
-        const { data: profiles } = await supabase
-          .from("profiles")
+        const { data: profiles } = await (supabase
+          .from("public_profiles" as any) as any)
           .select("user_id, name, direct_referral_count, indirect_referral_count")
           .in("user_id", userIds);
 

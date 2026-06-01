@@ -79,8 +79,8 @@ const RewardDetail = () => {
       setUnlockCount(Math.max(1, Math.floor(Math.random() * 20 + 5)));
 
       // Get partner name
-      const { data: profile } = await supabase
-        .from("profiles")
+      const { data: profile } = await (supabase
+        .from("public_profiles" as any) as any)
         .select("name")
         .eq("user_id", allAssets[idx].user_id)
         .single();

@@ -25,18 +25,16 @@ const AdminDay1Steps = () => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
   }, []);
 
-  // Auto-save on every change (debounced) so edits go live immediately
-  // without requiring the admin to click Save.
+  // Auto-save on every change so edits go live immediately, with no debounce
+  // — storage writes are cheap and we never want a navigation to lose an edit.
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    const t = setTimeout(() => {
-      saveDay1Steps(steps);
-    }, 300);
-    return () => clearTimeout(t);
+    saveDay1Steps(steps);
   }, [steps]);
+
 
   const updateStep = (id: string, message: string) =>
     setSteps((prev) =>

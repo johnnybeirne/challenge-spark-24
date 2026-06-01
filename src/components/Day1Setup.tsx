@@ -767,14 +767,8 @@ const Day1Setup = ({ onComplete }: Props) => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
   }, [builderHistory, builderLoading]);
 
-  // If audience type came from memory (not saved), write it into setup so the
-  // rest of the flow treats it as confirmed and we never re-ask B2B vs B2C.
-  useEffect(() => {
-    if (!saved?.audienceType && memoryAudienceType) {
-      persistFoundation({ audienceType: memoryAudienceType });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Audience type is only set when the user explicitly picks a card on this step.
+  // Do NOT auto-fill from memory/quiz — the user must actively choose.
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 

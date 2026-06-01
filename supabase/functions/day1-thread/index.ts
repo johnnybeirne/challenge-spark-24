@@ -138,6 +138,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const userPrompt = [
     firstName ? `Builder's first name: ${firstName}` : null,
     `Audience (their words): ${audience}`,
+    superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
     trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,
     `Problem the audience is stuck on (their words): ${problem}`,
     `Process — how the builder takes them through it (their words): ${how}`,

@@ -5,6 +5,7 @@ import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import Spinner from "@/components/Spinner";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const AdminLayout = () => {

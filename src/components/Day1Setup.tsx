@@ -1721,7 +1721,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 4 && (() => {
           const step4Messages = [
-            `Hi ${firstName}, let's start by identifying who you want to help.`,
+            renderTemplate("step-1", `Hi ${firstName}, let's start by identifying who you want to help.`),
           ];
 
           return (

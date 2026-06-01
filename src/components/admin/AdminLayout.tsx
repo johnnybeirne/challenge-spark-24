@@ -13,14 +13,24 @@ const AdminLayout = () => {
   const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
+  const [roleCheckFailed, setRoleCheckFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setRoleCheckFailed(false);
+    setCheckingRole(true);
+    const roleTimeout = window.setTimeout(() => {
+      if (!cancelled) {
+        setCheckingRole(false);
+        setRoleCheckFailed(true);
+      }
+    }, 6000);
 
     const checkAdminRole = async () => {
       if (!userId) {
         setIsAdmin(false);
         setCheckingRole(false);
+        window.clearTimeout(roleTimeout);
         return;
       }
 
@@ -31,7 +41,9 @@ const AdminLayout = () => {
 
       if (!cancelled) {
         setIsAdmin(Boolean(data) && !error);
+        setRoleCheckFailed(!!error);
         setCheckingRole(false);
+        window.clearTimeout(roleTimeout);
       }
     };
 
@@ -39,6 +51,7 @@ const AdminLayout = () => {
 
     return () => {
       cancelled = true;
+      window.clearTimeout(roleTimeout);
     };
   }, [userId]);
 
@@ -75,7 +88,9 @@ const AdminLayout = () => {
         <Shield className="h-10 w-10 text-primary" />
         <h1 className="text-xl font-bold">Owner Access</h1>
         <p className="text-sm text-muted-foreground">
-          Your signed-in account ({user.email}) does not have admin access.
+          {roleCheckFailed
+            ? "We couldn't verify owner access. Please refresh, or sign out and log in again."
+            : `Your signed-in account (${user.email}) does not have admin access.`}
         </p>
         <Button asChild variant="outline">
           <Link to={switchHref} onClick={() => supabase.auth.signOut()}>

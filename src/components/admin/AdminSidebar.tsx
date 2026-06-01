@@ -30,6 +30,7 @@ const items = [
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training system", url: "/owner-console/training", icon: GraduationCap },
+  { title: "Day 1 step editor", url: "/owner-console/day1-steps", icon: MessagesSquare },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },

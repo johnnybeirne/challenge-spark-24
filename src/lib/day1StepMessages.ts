@@ -142,12 +142,17 @@ export const useDay1Templates = (): Record<string, string> => {
 
   useEffect(() => {
     const refresh = () => setMap(toMap(loadDay1Steps()));
-    window.addEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
-    window.addEventListener("storage", (e) => {
+    const onStorage = (e: StorageEvent) => {
       if (e.key === DAY1_STORAGE_KEY) refresh();
-    });
+    };
+    window.addEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+    window.addEventListener("storage", onStorage);
+    // Refresh whenever the tab regains focus, in case edits happened elsewhere.
+    window.addEventListener("focus", refresh);
     return () => {
       window.removeEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", refresh);
     };
   }, []);
 

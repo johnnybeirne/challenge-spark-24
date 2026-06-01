@@ -910,6 +910,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           inputs: {
             firstName,
             audience: audience.trim(),
+            superpower: superpower.trim(),
             topicHint: topicHint.trim(),
             problem: problem.trim(),
             how: how.trim(),

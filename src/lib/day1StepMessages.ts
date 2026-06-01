@@ -122,12 +122,17 @@ export const saveDay1Steps = (steps: Day1StepMessage[]) => {
 export const renderDay1Preview = (
   template: string,
   values: Record<Day1TagKey, string> = DAY1_EXAMPLE_VALUES,
-): string =>
-  template.replace(/\[([a-z_]+)\]/gi, (match, raw) => {
+): string => {
+  const substituted = template.replace(/\[([a-z_]+)\]/gi, (match, raw) => {
     const key = String(raw).toLowerCase() as Day1TagKey;
     const value = values[key];
     return value && value.length > 0 ? value : match;
   });
+  // Fix English article agreement: " a apple" -> " an apple", " A Apple" -> " An Apple".
+  return substituted.replace(/\b(a|A)\s+([aeiouAEIOU])/g, (_m, art: string, vowel: string) =>
+    `${art}${art === "A" ? "n" : "n"} ${vowel}`,
+  );
+};
 
 // React hook — returns a live map of step id → message that re-renders
 // whenever the admin saves new templates (same tab or other tabs).

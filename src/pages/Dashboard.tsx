@@ -292,7 +292,8 @@ const Dashboard = () => {
                       "";
                     const fn = rawName.split(" ")[0] || "";
                     const greeting = fn ? `Welcome ${fn}.` : "Welcome.";
-                    return archetypeLabel ? `${greeting} You're a ${archetypeLabel}.` : greeting;
+                    const article = archetypeLabel && /^[aeiou]/i.test(archetypeLabel) ? "an" : "a";
+                    return archetypeLabel ? `${greeting} You're ${article} ${archetypeLabel}.` : greeting;
                   })()}
                 </p>
 

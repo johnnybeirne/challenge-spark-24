@@ -1581,15 +1581,20 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower5 = audienceTrim5
             ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
             : "";
-          const step5Messages: Msg[] = [
-            audienceLower5
-              ? [
-                  `Great${fn}. With `,
+          const step5Messages: Msg[] = audienceLower5
+            ? [
+                `Great${fn}.`,
+                [
+                  `With `,
                   { echo: "audience" } as MsgSegment,
                   ` in mind, what will your 3-day challenge help them achieve?`,
-                ]
-              : `Great${fn}. What will your 3-day challenge help them achieve?`,
-          ];
+                ],
+              ]
+            : [
+                `Great${fn}.`,
+                `What will your 3-day challenge help them achieve?`,
+              ];
+
           return (
           <div className="space-y-3 animate-fade-in">
             {step5Phase === "intro" && (

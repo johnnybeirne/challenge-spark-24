@@ -46,7 +46,7 @@ export async function refreshAiContext(authUser: User | null, state: AppState): 
 
     await supabase
       .from("ai_user_context")
-      .upsert(payload, { onConflict: "user_id" });
+      .upsert(payload as any, { onConflict: "user_id" });
   } catch (e) {
     // Non-fatal: AI calls degrade gracefully without context.
     console.warn("refreshAiContext failed", e);

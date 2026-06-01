@@ -1500,15 +1500,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? "What's the process you take them through to create the result?"
               : "Now describe your process — the steps you take them through to create the result.";
 
-          const step3RecapRows: RecapRow[] = [];
-          if (subjectField3) {
-            step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim3),
-              echo: subjectField3,
-            });
-          }
-          if (superpower.trim()) step3RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
-          if (painLower) step3RecapRows.push({ label: "Their problem is:", echo: "problem" });
+
+
 
 
 

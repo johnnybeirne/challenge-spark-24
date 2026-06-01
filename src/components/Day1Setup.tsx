@@ -1031,8 +1031,11 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep(1);
   };
   const handleSuperpowerNext = () => {
-    if (!superpower.trim()) return;
-    persistFoundation({ superpower: superpower.trim() } as Partial<SetupData>);
+    const trimmed = superpower.trim();
+    if (!trimmed) return;
+    const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    setSuperpower(capitalized);
+    persistFoundation({ superpower: capitalized } as Partial<SetupData>);
     profileSaved("Your superpower");
     setStep5Phase(saved?.challengeType ? "choose" : "intro");
     setStep(5);

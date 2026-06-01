@@ -71,11 +71,11 @@ const PartnerDashboard = () => {
 
         if (promoters?.length) {
           const userIds = promoters.map((p: any) => p.user_id);
-          const { data: profiles } = await supabase
-            .from("profiles")
+          const { data: profiles } = await (supabase
+            .from("public_profiles" as any) as any)
             .select("user_id, name")
             .in("user_id", userIds);
-          const nameMap = new Map((profiles || []).map((p) => [p.user_id, p.name]));
+          const nameMap = new Map(((profiles || []) as any[]).map((p: any) => [p.user_id, p.name]));
 
           setTopPartners(
             promoters.map((p: any) => ({

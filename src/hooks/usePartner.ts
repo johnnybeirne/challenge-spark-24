@@ -168,8 +168,8 @@ export function usePartner() {
       );
       let nameMap = new Map<string, string>();
       if (allUserIds.length) {
-        const { data: profs } = await supabase
-          .from("profiles")
+        const { data: profs } = await (supabase
+          .from("public_profiles" as any) as any)
           .select("user_id,name")
           .in("user_id", allUserIds);
         nameMap = new Map((profs || []).map((p: any) => [p.user_id, p.name || ""]));

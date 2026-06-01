@@ -1,8 +1,11 @@
 // Editable Day 1 step messages with bracket-tag templating.
 // Used by the admin Day 1 Step Editor for live preview + persistence,
 // and consumed by src/components/Day1Setup.tsx via useDay1Templates().
+// Persistence layer: Supabase (`day1_step_messages`) with localStorage cache
+// for offline / first-paint and cross-tab fallback.
 
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 export type Day1TagKey =

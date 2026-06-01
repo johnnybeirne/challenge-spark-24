@@ -535,9 +535,9 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Sequence: 4 audience-type → 1 who you serve → 5 result type → 6 avatar detail
+// Sequence: 4 audience-type → 1 who you serve → 10 superpower → 5 result type → 6 avatar detail
 // → 2 problem → 3 process → 9 result → 7 promise → 8 AI builder.
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },

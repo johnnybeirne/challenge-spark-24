@@ -619,7 +619,7 @@ const FoundationStep = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="min-h-[140px] text-base"
+          className="min-h-[70px] text-base"
         />
         {length > 0 && (
           <p className="text-xs text-muted-foreground">{length} characters</p>
@@ -1355,8 +1355,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                             ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
                             : "e.g. New parents in their 30s who want to build healthier daily habits."
                         }
-                        rows={5}
-                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(1);
                         }}
@@ -1410,8 +1410,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         value={superpower}
                         onChange={(e) => setSuperpower(e.target.value)}
                         placeholder="e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding."
-                        rows={5}
-                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
                         }}
@@ -1492,8 +1492,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         value={problem}
                         onChange={(e) => setProblem(e.target.value)}
                         placeholder={problemPlaceholder}
-                        rows={5}
-                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
@@ -1599,8 +1599,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         value={how}
                         onChange={(e) => setHow(e.target.value)}
                         placeholder={processPlaceholder}
-                        rows={5}
-                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                         }}
@@ -1692,8 +1692,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         value={outcome}
                         onChange={(e) => setOutcome(e.target.value)}
                         placeholder={outcomePlaceholder}
-                        rows={5}
-                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
                         }}

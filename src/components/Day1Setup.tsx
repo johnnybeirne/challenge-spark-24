@@ -473,7 +473,7 @@ const TypedSequence = ({
       <div className="flex-1 space-y-3 min-w-0">
         {shown.map((shownIdx, i) => (
           <div key={i} className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
               {renderMsg(messages[shownIdx], echoMap, `t${shownIdx}-`)}
             </div>
           </div>

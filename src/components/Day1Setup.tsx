@@ -506,6 +506,7 @@ export interface SetupData {
   audience?: string;
   how?: string;
   outcome?: string;
+  superpower?: string;
 }
 
 /** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */

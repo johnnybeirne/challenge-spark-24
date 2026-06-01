@@ -1,6 +1,9 @@
 // Editable Day 1 step messages with bracket-tag templating.
-// Used by the admin Day 1 Step Editor for live preview + persistence.
-// Storage is local-only; wiring into Day1Setup.tsx is intentionally out of scope.
+// Used by the admin Day 1 Step Editor for live preview + persistence,
+// and consumed by src/components/Day1Setup.tsx via useDay1Templates().
+
+import { useEffect, useState } from "react";
+
 
 export type Day1TagKey =
   | "first_name"

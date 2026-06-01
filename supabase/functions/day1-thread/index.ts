@@ -124,6 +124,7 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const audience = sanitise(inputs.audience);
   const trigger = sanitise(inputs.topicHint);
+  const superpower = sanitise(inputs.superpower);
   const problem = sanitise(inputs.problem);
   const how = sanitise(inputs.how);
   const outcome = sanitise(inputs.outcome);

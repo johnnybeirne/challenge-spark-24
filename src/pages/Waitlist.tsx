@@ -22,6 +22,36 @@ interface WaitlistEntry {
   created_at: string;
 }
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const WAITLIST_JOIN_TIMEOUT_MS = 15000;
+
+const joinWaitlistPublicly = async (body: {
+  first_name: string;
+  surname: string;
+  email: string;
+  referred_by_code: string | null;
+}) => {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), WAITLIST_JOIN_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/waitlist-join`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(payload?.error || "Waitlist signup failed");
+    return payload as { data?: WaitlistEntry; existing?: WaitlistEntry };
+  } finally {
+    window.clearTimeout(timeout);
+  }
+};
+
 const Section = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <section className={`px-5 py-16 sm:px-6 md:py-24 lg:px-8 ${className}`}>
     <div className="mx-auto w-full max-w-6xl">{children}</div>
@@ -115,24 +145,16 @@ const Waitlist = () => {
 
     setLoading(true);
     try {
-      const { data: resp, error: fnErr } = await supabase.functions.invoke("waitlist-join", {
-        body: {
-          first_name: trimmedFirst,
-          surname: trimmedSurname,
-          email: trimmed,
-          referred_by_code: refCode || null,
-        },
+      const resp = await joinWaitlistPublicly({
+        first_name: trimmedFirst,
+        surname: trimmedSurname,
+        email: trimmed,
+        referred_by_code: refCode || null,
       });
 
-      if (fnErr) {
-        toast.error("Something went wrong. Please try again.");
-        console.error(fnErr);
-        return;
-      }
-
       const trimmedName = `${trimmedFirst} ${trimmedSurname}`.trim();
-      const existing = (resp as { existing?: WaitlistEntry })?.existing;
-      const data = (resp as { data?: WaitlistEntry })?.data;
+      const existing = resp.existing;
+      const data = resp.data;
 
       if (existing) {
         toast.info("You're already on the list — we re-sent your invite link.");
@@ -148,6 +170,9 @@ const Waitlist = () => {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Signup is taking too long. Please try again.");
     } finally {
       setLoading(false);
     }

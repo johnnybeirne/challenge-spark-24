@@ -15,7 +15,6 @@ import CountdownBottomBar from "./CountdownBottomBar";
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
-import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { trackEvent } from "@/lib/analytics";
 
@@ -26,7 +25,6 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join";
-  const { role } = useUserRole();
   const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const authenticated = !!authUser || !!state.user;

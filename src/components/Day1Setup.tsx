@@ -1331,7 +1331,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step1Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step1-intro-${audienceType ?? "none"}`}
+                  resetKey={`step1-intro-${audienceType ?? "none"}-${step1Message.length}-${step1Message.slice(0, 32)}`}
                   messages={[step1Message]}
                   echoMap={echoMap}
                   skipMakingNotes

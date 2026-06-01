@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,27 +19,19 @@ import {
 
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
-  const isFirstRender = useRef(true);
 
   useEffect(() => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
   }, []);
 
-  // Auto-save on every change so edits go live immediately, with no debounce
-  // — storage writes are cheap and we never want a navigation to lose an edit.
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    saveDay1Steps(steps);
-  }, [steps]);
-
-
+  // Save immediately on every keystroke — synchronous and unconditional so
+  // there is zero chance an edit fails to reach the live /day/1 flow.
   const updateStep = (id: string, message: string) =>
-    setSteps((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, message } : s)),
-    );
+    setSteps((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, message } : s));
+      saveDay1Steps(next);
+      return next;
+    });
 
   const handleSave = () => {
     saveDay1Steps(steps);
@@ -49,6 +41,7 @@ const AdminDay1Steps = () => {
 
   const handleResetAll = () => {
     setSteps(defaultDay1Steps);
+    saveDay1Steps(defaultDay1Steps);
     toast.message("Reverted to defaults.");
   };
 

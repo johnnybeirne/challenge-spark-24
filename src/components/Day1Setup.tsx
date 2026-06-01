@@ -284,14 +284,15 @@ const audienceLabel = (value: string) =>
   isPluralValue(value) ? "Your audience are:" : "Your audience is:";
 
 
-const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
+const RecapCard = ({ rows, echoMap, bare = false }: { rows: RecapRow[]; echoMap: EchoMap; bare?: boolean }) => {
   const visible = rows.filter((r) => {
     const entry = echoMap[r.echo];
     return entry && (entry.value ?? "").trim().length > 0;
   });
   if (visible.length === 0) return null;
   return (
-    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5">
+    <div className={bare ? "space-y-1.5" : "rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5"}>
+
       {visible.map((r) => {
         const entry = echoMap[r.echo]!;
         const wrappedFormat = (v: string) => {

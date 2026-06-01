@@ -122,6 +122,35 @@ export const saveDay1Steps = (steps: Day1StepMessage[]) => {
   window.dispatchEvent(new Event(DAY1_STEPS_UPDATED_EVENT));
 };
 
+/**
+ * Persist Day 1 step messages to Supabase so edits sync across browsers
+ * and devices. Also writes to localStorage for instant local feedback.
+ */
+export const saveDay1StepsRemote = async (
+  steps: Day1StepMessage[],
+): Promise<{ error: unknown }> => {
+  saveDay1Steps(steps);
+  const { error } = await supabase
+    .from("day1_step_messages")
+    .upsert(
+      steps.map((s) => ({ id: s.id, message: s.message })),
+      { onConflict: "id" },
+    );
+  return { error };
+};
+
+const fetchDay1StepsRemote = async (): Promise<Day1StepMessage[] | null> => {
+  const { data, error } = await supabase
+    .from("day1_step_messages")
+    .select("id, message");
+  if (error || !data) return null;
+  const byId = new Map(data.map((r) => [r.id, r.message] as const));
+  return defaultDay1Steps.map((def) => ({
+    ...def,
+    message: byId.get(def.id) ?? def.message,
+  }));
+};
+
 export const renderDay1Preview = (
   template: string,
   values: Record<Day1TagKey, string> = DAY1_EXAMPLE_VALUES,
@@ -138,7 +167,7 @@ export const renderDay1Preview = (
 };
 
 // React hook — returns a live map of step id → message that re-renders
-// whenever the admin saves new templates (same tab or other tabs).
+// whenever the admin saves new templates (same tab, other tabs, or other devices via realtime).
 export const useDay1Templates = (): Record<string, string> => {
   const toMap = (list: Day1StepMessage[]) =>
     list.reduce<Record<string, string>>((acc, s) => {
@@ -149,21 +178,46 @@ export const useDay1Templates = (): Record<string, string> => {
   const [map, setMap] = useState<Record<string, string>>(() => toMap(loadDay1Steps()));
 
   useEffect(() => {
-    const refresh = () => setMap(toMap(loadDay1Steps()));
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === DAY1_STORAGE_KEY) refresh();
+    let cancelled = false;
+
+    const applyRemote = async () => {
+      const remote = await fetchDay1StepsRemote();
+      if (cancelled || !remote) return;
+      // Cache locally so next mount is instant.
+      window.localStorage.setItem(DAY1_STORAGE_KEY, JSON.stringify(remote));
+      setMap(toMap(remote));
     };
-    window.addEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+
+    const refreshLocal = () => setMap(toMap(loadDay1Steps()));
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === DAY1_STORAGE_KEY) refreshLocal();
+    };
+
+    applyRemote();
+
+    const channel = supabase
+      .channel("day1_step_messages_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "day1_step_messages" },
+        () => applyRemote(),
+      )
+      .subscribe();
+
+    window.addEventListener(DAY1_STEPS_UPDATED_EVENT, refreshLocal);
     window.addEventListener("storage", onStorage);
-    // Refresh whenever the tab regains focus, in case edits happened elsewhere.
-    window.addEventListener("focus", refresh);
+    window.addEventListener("focus", applyRemote);
+
     return () => {
-      window.removeEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+      cancelled = true;
+      supabase.removeChannel(channel);
+      window.removeEventListener(DAY1_STEPS_UPDATED_EVENT, refreshLocal);
       window.removeEventListener("storage", onStorage);
-      window.removeEventListener("focus", refresh);
+      window.removeEventListener("focus", applyRemote);
     };
   }, []);
 
   return map;
 };
+
 

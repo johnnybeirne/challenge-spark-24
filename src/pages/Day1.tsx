@@ -30,9 +30,17 @@ const Day1 = () => {
 
   if (isLocked) {
     // Read-only view of completed Day 1 — show the Challenge Promise only.
+    // Prefer DB-synced aiOutputs.day1Setup; fall back to localStorage for
+    // pre-auth or legacy state.
     let saved: any = null;
-    try { saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch {}
+    const aiSetup = (state.challenge?.aiOutputs as Record<string, unknown> | undefined)?.day1Setup;
+    try {
+      if (typeof aiSetup === "string") saved = JSON.parse(aiSetup);
+      else if (aiSetup && typeof aiSetup === "object") saved = aiSetup;
+      if (!saved) saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null");
+    } catch {}
     const memory: any = state.memory || {};
+
 
     // Parse canonical Day 1 outputs from app state (survives device changes & demo resets).
     const parseJson = (raw?: string) => {

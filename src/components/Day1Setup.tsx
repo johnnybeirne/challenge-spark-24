@@ -490,8 +490,10 @@ const TypedSequence = ({
 
 };
 
-export const SETUP_KEY = "leadio_setup";
+export const SETUP_KEY = "leadio_day1_setup";
 const DAY1_STEP_KEY = "leadio_day1_step";
+// Legacy key (pre-refactor); read for back-compat so users mid-flow don't lose state.
+const LEGACY_SETUP_KEY = "leadio_setup";
 
 export interface SetupData {
   completed: boolean;
@@ -506,16 +508,27 @@ export interface SetupData {
   outcome?: string;
 }
 
-export const getSetup = (): SetupData | null => {
+/** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */
+const readSetupRaw = (aiOutputs?: Record<string, unknown>): any => {
   try {
-    const raw = localStorage.getItem(SETUP_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed?.completed ? parsed : null;
+    const fromDb = aiOutputs?.day1Setup;
+    if (fromDb && typeof fromDb === "string") return JSON.parse(fromDb);
+    if (fromDb && typeof fromDb === "object") return fromDb;
+  } catch {}
+  try {
+    const raw = localStorage.getItem(SETUP_KEY) || localStorage.getItem(LEGACY_SETUP_KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 };
+
+export const getSetup = (): SetupData | null => {
+  // Backwards-compatible: used by callers outside the component that don't have state.
+  const parsed = readSetupRaw();
+  return parsed?.completed ? parsed : null;
+};
+
 
 interface Props {
   onComplete: (data: SetupData) => void;
@@ -620,15 +633,37 @@ const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
 
+  // Source of truth: state.challenge.aiOutputs.day1Setup (DB-synced).
+  // localStorage is kept ONLY as a pre-auth fallback so anonymous users can
+  // resume mid-flow. Anything we write here is also pushed into aiOutputs.
+  const initialAiOutputs = state.challenge?.aiOutputs as Record<string, unknown> | undefined;
+
+  const persistedStepValue = (() => {
+    const fromDb = initialAiOutputs?.day1Step;
+    if (typeof fromDb === "number") return fromDb;
+    if (typeof fromDb === "string" && fromDb !== "") {
+      const n = Number(fromDb);
+      if (!Number.isNaN(n)) return n;
+    }
+    try {
+      const raw = localStorage.getItem(DAY1_STEP_KEY);
+      return raw ? Number(raw) : 0;
+    } catch { return 0; }
+  })() as Step;
+
   const handleResetDay1 = () => {
     try {
       localStorage.removeItem(SETUP_KEY);
+      localStorage.removeItem(LEGACY_SETUP_KEY);
       localStorage.setItem(DAY1_STEP_KEY, "4");
     } catch {}
     setState((prev) => {
       const aiOutputs = Object.fromEntries(
-        Object.entries(prev.challenge.aiOutputs ?? {}).filter(([k]) => !k.startsWith("day1_")),
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(
+          ([k]) => !k.startsWith("day1_") && k !== "day1Setup" && k !== "day1Step",
+        ),
       );
+      aiOutputs.day1Step = "4" as any;
       const tasks = Object.fromEntries(
         Object.entries(prev.challenge.tasks ?? {}).filter(([k]) => !k.startsWith("day1_")),
       );
@@ -650,13 +685,12 @@ const Day1Setup = ({ onComplete }: Props) => {
     try { window.location.reload(); } catch {}
   };
 
-  // Restore prior in-progress assessment from saved setup + persisted step
-  const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
-  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
+  // Restore prior in-progress assessment from saved setup + persisted step.
+  const saved = readSetupRaw(initialAiOutputs);
+  const persistedStep = persistedStepValue;
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
 
   // Audience type may already be known from earlier surfaces (signup, assessment).
-  // Pull it from saved setup first, then from memory, so Day 1 never re-asks B2B vs B2C.
   const memoryAudienceType =
     state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
       ? (state.memory.audienceType as "b2b" | "b2c")
@@ -668,6 +702,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
+
 
   const [step, setStep] = useState<Step>(initialStep);
 
@@ -716,7 +751,18 @@ const Day1Setup = ({ onComplete }: Props) => {
   useEffect(() => {
     trackEvent("onboarding_viewed", { step });
     try { localStorage.setItem(DAY1_STEP_KEY, String(step)); } catch {}
-  }, [step]);
+    // Persist current step into challenge_progress.ai_outputs (DB-synced) so
+    // refreshing on another device keeps the wizard at the same step.
+    if (authUser) {
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: { ...prev.challenge.aiOutputs, day1Step: String(step) },
+        },
+      }));
+    }
+  }, [step, authUser, setState]);
 
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
@@ -726,15 +772,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // rest of the flow treats it as confirmed and we never re-ask B2B vs B2C.
   useEffect(() => {
     if (!saved?.audienceType && memoryAudienceType) {
-      try {
-        const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-        if (!current.audienceType) {
-          localStorage.setItem(
-            SETUP_KEY,
-            JSON.stringify({ ...current, audienceType: memoryAudienceType }),
-          );
-        }
-      } catch {}
+      persistFoundation({ audienceType: memoryAudienceType });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -748,12 +786,37 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (prev !== undefined) setStep(prev);
   };
   // Persist foundation answers progressively so refresh doesn't wipe them.
+  // Writes to BOTH localStorage (pre-auth fallback) and
+  // challenge_progress.ai_outputs.day1Setup (DB-synced source of truth).
   const persistFoundation = (patch: Partial<SetupData>) => {
     try {
-      const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-      localStorage.setItem(SETUP_KEY, JSON.stringify({ ...current, ...patch }));
+      const current = JSON.parse(localStorage.getItem(SETUP_KEY) || localStorage.getItem(LEGACY_SETUP_KEY) || "{}");
+      const merged = { ...current, ...patch };
+      localStorage.setItem(SETUP_KEY, JSON.stringify(merged));
+      if (authUser) {
+        setState((prev) => {
+          let existing: any = {};
+          try {
+            const fromState = prev.challenge.aiOutputs?.day1Setup;
+            if (typeof fromState === "string") existing = JSON.parse(fromState);
+            else if (fromState && typeof fromState === "object") existing = fromState;
+          } catch {}
+          return {
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: {
+                ...prev.challenge.aiOutputs,
+                day1Setup: JSON.stringify({ ...existing, ...patch }),
+              },
+            },
+          };
+        });
+      }
     } catch {}
   };
+
+
 
   // Top-right confirmation that the latest answer has been written to the
   // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).
@@ -1019,6 +1082,9 @@ const Day1Setup = ({ onComplete }: Props) => {
         ...prev.challenge,
         aiOutputs: {
           ...prev.challenge.aiOutputs,
+          // Mirror the wizard's full draft into DB-synced aiOutputs so it
+          // survives cross-device login.
+          day1Setup: JSON.stringify(data),
           day1_assessment: JSON.stringify({
             problem: problem.trim(),
             audience: audience.trim(),
@@ -1030,6 +1096,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       },
     }));
+
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });

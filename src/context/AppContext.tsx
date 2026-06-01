@@ -500,27 +500,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [authUser, authLoading]);
 
-  // Save assessment to localStorage (works pre-auth)
+  // Pre-auth only: cache assessment/memory/training in localStorage so anonymous
+  // visitors don't lose their data before signing up. Once authenticated, the
+  // database is the single source of truth (via useSupabaseSync) and we MUST NOT
+  // mirror state back to localStorage — otherwise stale local data can shadow
+  // the DB on the next load and break cross-device persistence.
   useEffect(() => {
+    if (authUser) return;
     if (state.assessment) {
       try {
         localStorage.setItem("challengeos_assessment", JSON.stringify(state.assessment));
       } catch {}
     }
-  }, [state.assessment]);
+  }, [authUser, state.assessment]);
 
   useEffect(() => {
+    if (authUser) return;
     try {
       localStorage.setItem("challengeos_memory", JSON.stringify(state.memory));
       localStorage.setItem("leadio_memory", JSON.stringify(state.memory));
     } catch {}
-  }, [state.memory]);
+  }, [authUser, state.memory]);
 
   useEffect(() => {
+    if (authUser) return;
     try {
       localStorage.setItem("leadio_training", JSON.stringify(state.training));
     } catch {}
-  }, [state.training]);
+  }, [authUser, state.training]);
+
 
   // Supabase sync hook
   useSupabaseSync(authUser ?? null, state, prevUnlocksRef, syncEnabled);

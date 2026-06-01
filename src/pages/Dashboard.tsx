@@ -171,9 +171,10 @@ const Dashboard = () => {
     setState((prev) => {
       const aiOutputs = Object.fromEntries(
         Object.entries(prev.challenge.aiOutputs ?? {}).filter(
-          ([k]) => !k.startsWith("day1_"),
+          ([k]) => !k.startsWith("day1_") && k !== "day1Setup" && k !== "day1Step",
         ),
       );
+      aiOutputs.day1Step = "4" as any;
       const tasks = Object.fromEntries(
         Object.entries(prev.challenge.tasks ?? {}).filter(
           ([k]) => !k.startsWith("day1_"),
@@ -187,6 +188,7 @@ const Dashboard = () => {
           aiOutputs,
           tasks,
         },
+
         training: { ...prev.training, day1Watched: false },
         memory: {
           ...prev.memory,

@@ -1,47 +1,80 @@
 // Premium access state for Leadio LMS.
-// Coupons are stored in the public.coupons table; redemption goes through
-// the redeem_coupon RPC. Local premium flag stays in localStorage so we can
-// keep iterating without rebuilding the full purchase pipeline.
+// Source of truth lives in Supabase (`profiles.is_premium` and
+// `profiles.partner_code_used`). A small in-memory cache is hydrated by
+// `usePremium` so synchronous callers can still read the current value
+// without refactoring every call site to async.
+//
+// localStorage is intentionally NOT used here so the same account on a
+// different browser/device always sees the correct premium state.
 
 import { supabase } from "@/integrations/supabase/client";
 
-const PREMIUM_KEY = "leadio_premium_access";
-const COUPON_KEY = "leadio_premium_coupon";
 const PREMIUM_EVENT = "leadio:premium-changed";
 
-export const isPremiumUser = (): boolean => {
-  if (typeof window === "undefined") return false;
-  try {
-    // Preview override: admin/dev simulating a tier
-    const preview = sessionStorage.getItem("leadio_preview_tier");
-    if (preview === "free") return false;
-    if (preview === "paid") return true;
-    return localStorage.getItem(PREMIUM_KEY) === "true";
-  } catch {
-    return false;
-  }
-};
+// Module-level cache, populated by usePremium / fetchPremiumFromSupabase.
+let cachedPremium = false;
+let cachedCoupon: string | null = null;
 
-export const getAppliedCoupon = (): string | null => {
+const isPreviewOverride = (): "free" | "paid" | null => {
   if (typeof window === "undefined") return null;
   try {
-    return localStorage.getItem(COUPON_KEY);
-  } catch {
-    return null;
-  }
+    const preview = sessionStorage.getItem("leadio_preview_tier");
+    if (preview === "free" || preview === "paid") return preview;
+  } catch {}
+  return null;
 };
 
-export const setPremium = (value: boolean, coupon?: string) => {
-  if (typeof window === "undefined") return;
+export const isPremiumUser = (): boolean => {
+  const override = isPreviewOverride();
+  if (override === "free") return false;
+  if (override === "paid") return true;
+  return cachedPremium;
+};
+
+export const getAppliedCoupon = (): string | null => cachedCoupon;
+
+/** Refresh the cache from Supabase for the currently authenticated user. */
+export const fetchPremiumFromSupabase = async (): Promise<{ premium: boolean; coupon: string | null }> => {
   try {
-    if (value) {
-      localStorage.setItem(PREMIUM_KEY, "true");
-      if (coupon) localStorage.setItem(COUPON_KEY, coupon.toUpperCase());
-    } else {
-      localStorage.removeItem(PREMIUM_KEY);
-      localStorage.removeItem(COUPON_KEY);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      cachedPremium = false;
+      cachedCoupon = null;
+      return { premium: false, coupon: null };
     }
-    window.dispatchEvent(new CustomEvent(PREMIUM_EVENT));
+    const { data } = await supabase
+      .from("profiles")
+      .select("is_premium, partner_code_used")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    cachedPremium = !!data?.is_premium;
+    cachedCoupon = (data?.partner_code_used as string | null) ?? null;
+  } catch {
+    // leave cache as-is
+  }
+  return { premium: cachedPremium, coupon: cachedCoupon };
+};
+
+/** Update premium state in Supabase and notify subscribers. */
+export const setPremium = async (value: boolean, coupon?: string): Promise<void> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const patch: Record<string, unknown> = { is_premium: value };
+      if (value) {
+        if (coupon) patch.partner_code_used = coupon.toUpperCase();
+        patch.premium_since = new Date().toISOString();
+      } else {
+        patch.partner_code_used = null;
+        patch.premium_since = null;
+      }
+      await (supabase.from("profiles") as any).update(patch).eq("user_id", user.id);
+    }
+    cachedPremium = value;
+    cachedCoupon = value ? (coupon ? coupon.toUpperCase() : cachedCoupon) : null;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(PREMIUM_EVENT));
+    }
   } catch {
     /* no-op */
   }

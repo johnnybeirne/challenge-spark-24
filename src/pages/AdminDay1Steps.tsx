@@ -19,10 +19,24 @@ import {
 
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
   }, []);
+
+  // Auto-save on every change (debounced) so edits go live immediately
+  // without requiring the admin to click Save.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const t = setTimeout(() => {
+      saveDay1Steps(steps);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [steps]);
 
   const updateStep = (id: string, message: string) =>
     setSteps((prev) =>
@@ -37,7 +51,7 @@ const AdminDay1Steps = () => {
 
   const handleResetAll = () => {
     setSteps(defaultDay1Steps);
-    toast.message("Reverted to defaults — click Save to apply.");
+    toast.message("Reverted to defaults.");
   };
 
   const handleResetOne = (id: string) => {
@@ -45,6 +59,7 @@ const AdminDay1Steps = () => {
     if (!def) return;
     updateStep(id, def.message);
   };
+
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">

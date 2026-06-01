@@ -139,7 +139,7 @@ export const saveDay1StepsRemote = async (
   return { error };
 };
 
-const fetchDay1StepsRemote = async (): Promise<Day1StepMessage[] | null> => {
+export const fetchDay1StepsRemote = async (): Promise<Day1StepMessage[] | null> => {
   const { data, error } = await supabase
     .from("day1_step_messages")
     .select("id, message");
@@ -150,6 +150,7 @@ const fetchDay1StepsRemote = async (): Promise<Day1StepMessage[] | null> => {
     message: byId.get(def.id) ?? def.message,
   }));
 };
+
 
 export const renderDay1Preview = (
   template: string,

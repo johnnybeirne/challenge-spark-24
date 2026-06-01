@@ -43,8 +43,14 @@ export type UseUserRoleResult = {
 export function useUserRole(): UseUserRoleResult {
   const { user } = useAuth();
   const stage = useUserStage();
-  const { isPremium } = usePremium();
-  const { promoter, loading: promoterLoading } = usePromoter();
+  const isOwnerConsoleRoute = typeof window !== "undefined" && (
+    window.location.pathname === "/owner-console" ||
+    window.location.pathname.startsWith("/owner-console/") ||
+    window.location.pathname === "/admin" ||
+    window.location.pathname.startsWith("/admin/")
+  );
+  const { isPremium } = usePremium(!isOwnerConsoleRoute);
+  const { promoter, loading: promoterLoading } = usePromoter(!isOwnerConsoleRoute);
 
   const [isAdmin, setIsAdmin] = useState<boolean>(() =>
     user ? adminCache.get(user.id) ?? false : false
@@ -54,7 +60,7 @@ export function useUserRole(): UseUserRoleResult {
   );
 
   useEffect(() => {
-    if (!user) {
+    if (!user || isOwnerConsoleRoute) {
       setIsAdmin(false);
       setAdminChecked(true);
       return;
@@ -87,7 +93,7 @@ export function useUserRole(): UseUserRoleResult {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, isOwnerConsoleRoute]);
 
   return useMemo(() => {
     const role = deriveLeadioRole({

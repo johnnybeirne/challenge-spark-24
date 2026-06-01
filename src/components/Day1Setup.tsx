@@ -1082,6 +1082,9 @@ const Day1Setup = ({ onComplete }: Props) => {
         ...prev.challenge,
         aiOutputs: {
           ...prev.challenge.aiOutputs,
+          // Mirror the wizard's full draft into DB-synced aiOutputs so it
+          // survives cross-device login.
+          day1Setup: JSON.stringify(data),
           day1_assessment: JSON.stringify({
             problem: problem.trim(),
             audience: audience.trim(),
@@ -1093,6 +1096,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       },
     }));
+
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });

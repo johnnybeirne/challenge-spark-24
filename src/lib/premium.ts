@@ -33,11 +33,15 @@ export const isPremiumUser = (): boolean => {
 
 export const getAppliedCoupon = (): string | null => cachedCoupon;
 
-/** Refresh the cache from Supabase for the currently authenticated user. */
-export const fetchPremiumFromSupabase = async (): Promise<{ premium: boolean; coupon: string | null }> => {
+/** Refresh the cache from Supabase for a known authenticated user. */
+export const fetchPremiumFromSupabase = async (userId?: string | null): Promise<{ premium: boolean; coupon: string | null }> => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    let resolvedUserId = userId;
+    if (typeof resolvedUserId === "undefined") {
+      const { data: { session } } = await supabase.auth.getSession();
+      resolvedUserId = session?.user?.id ?? null;
+    }
+    if (!resolvedUserId) {
       cachedPremium = false;
       cachedCoupon = null;
       return { premium: false, coupon: null };
@@ -45,7 +49,7 @@ export const fetchPremiumFromSupabase = async (): Promise<{ premium: boolean; co
     const { data } = await supabase
       .from("profiles")
       .select("is_premium, partner_code_used")
-      .eq("user_id", user.id)
+      .eq("user_id", resolvedUserId)
       .maybeSingle();
     cachedPremium = !!data?.is_premium;
     cachedCoupon = (data?.partner_code_used as string | null) ?? null;

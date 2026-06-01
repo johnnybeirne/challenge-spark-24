@@ -764,9 +764,10 @@ function LockedDayScreen({
             Day {dayNum} opens {unlockLabel}
           </h1>
           <div className="mt-6 inline-flex items-baseline gap-2 rounded-2xl border border-border bg-card px-6 py-4 shadow-sm">
-            <span className="font-mono text-3xl sm:text-4xl font-black tabular-nums text-foreground">
+            <span className="font-mono text-3xl sm:text-4xl font-black tabular-nums text-orange-500">
               {hh}:{mm}:{ss}
             </span>
+
             <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               until unlock
             </span>

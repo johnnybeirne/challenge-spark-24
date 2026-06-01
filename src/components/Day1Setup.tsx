@@ -1570,6 +1570,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               echo: subjectField9,
             });
           }
+          if (superpower.trim()) step9RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
           if (painLower9) step9RecapRows.push({ label: "Their problem is:", echo: "problem" });
           if (howTrim9) step9RecapRows.push({ label: "Your process is:", echo: "how" });
 

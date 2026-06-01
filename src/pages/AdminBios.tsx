@@ -1131,18 +1131,19 @@ const AdminBios = () => {
               </div>
 
               <div className="mt-5 flex items-center justify-between gap-2 pt-4 border-t">
-                {openRow.waitlist_id ? (
+                {(openRow.waitlist_id || openRow.profile_user_id) ? (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => deleteOne(openRow)}
                     className="text-destructive hover:text-destructive gap-1.5"
                   >
-                    <Trash2 className="h-3.5 w-3.5" /> Delete signup
+                    <Trash2 className="h-3.5 w-3.5" /> Delete registrant
                   </Button>
                 ) : (
                   <div />
                 )}
+
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setOpenRow(null)} disabled={saving}>
                     Cancel

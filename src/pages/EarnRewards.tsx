@@ -108,7 +108,7 @@ const EarnRewards = () => {
       if (!contribs?.length) { setAssets([]); setLoading(false); return; }
       const userIds = [...new Set(contribs.map((c: any) => c.user_id))];
       const { data: profiles } = await (supabase.from("public_profiles" as any) as any).select("user_id, name").in("user_id", userIds as string[]);
-      const nameMap = new Map((profiles || []).map((p) => [p.user_id, p.name]));
+      const nameMap = new Map(((profiles || []) as any[]).map((p: any) => [p.user_id, p.name]));
       setAssets(contribs.map((c: any) => ({ ...c, partner_name: nameMap.get(c.user_id) || "Builder" })));
       setLoading(false);
     })();

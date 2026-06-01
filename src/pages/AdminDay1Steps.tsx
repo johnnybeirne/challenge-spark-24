@@ -12,6 +12,7 @@ import {
   DAY1_TAG_KEYS,
   Day1StepMessage,
   defaultDay1Steps,
+  fetchDay1StepsRemote,
   loadDay1Steps,
   renderDay1Preview,
   saveDay1Steps,
@@ -21,10 +22,25 @@ import {
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
   const [saving, setSaving] = useState(false);
+  const [hydrating, setHydrating] = useState(true);
 
   useEffect(() => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
+    let cancelled = false;
+    (async () => {
+      const remote = await fetchDay1StepsRemote();
+      if (cancelled) return;
+      if (remote) {
+        setSteps(remote);
+        saveDay1Steps(remote);
+      }
+      setHydrating(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
 
   // Local cache updates immediately on every keystroke so the editor stays
   // snappy; remote sync happens on explicit Save (and on Reset).
@@ -78,9 +94,10 @@ const AdminDay1Steps = () => {
           <Button variant="ghost" size="sm" onClick={handleResetAll} className="gap-2">
             <RotateCcw className="h-4 w-4" /> Reset all
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="gap-2">
-            <Save className="h-4 w-4" /> {saving ? "Syncing…" : "Save"}
+          <Button onClick={handleSave} disabled={saving || hydrating} className="gap-2">
+            <Save className="h-4 w-4" /> {hydrating ? "Loading…" : saving ? "Syncing…" : "Save"}
           </Button>
+
         </div>
       </header>
 

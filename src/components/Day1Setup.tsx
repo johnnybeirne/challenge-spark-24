@@ -34,6 +34,12 @@ import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
+import {
+  defaultDay1Steps,
+  renderDay1Preview,
+  useDay1Templates,
+  type Day1TagKey,
+} from "@/lib/day1StepMessages";
 
 const JohnnyAvatar = () => (
   <img

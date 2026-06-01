@@ -1,55 +1,44 @@
-## Goal
+## The actual problem
 
-Continue the "You're an [archetype}" narrative thread from the quiz Results page into the challenger dashboard, so the user feels like one conversation — not "took a quiz" → "landed in a tool".
+You're right — I patched the wrong layer. The flow is: **Quiz → Signup → Challenge dashboard**. By the time someone is on `/challenger-dashboard`, they've already completed the quiz. The "Take the quiz" card should never appear there.
 
-## Where it lives today
+The reason it shows: `state.assessment` is **only saved to localStorage**, never to the backend.
 
-- **Results page** (`src/pages/Results.tsx`) — large hero: *"Based on your answers… You're an Architect"* + tagline + Johnny message.
-- **Dashboard** (`/challenger-dashboard`) — opens with training video card, then `AssessmentResultCard` (shows score % + "Builder Stage" + diagnostic title). The archetype name ("Architect") is **never shown**. A `DashboardProfileHeader` component exists that *does* compute the archetype, but it's imported and never rendered.
+- `src/pages/Assessment.tsx` writes the result into `state.assessment`.
+- `src/context/AppContext.tsx` persists `challengeos_assessment` to `localStorage`.
+- Nothing writes the full assessment to Supabase, and nothing hydrates it back on login.
 
-So the thread literally breaks the moment they hit the dashboard.
+So if the user signs in on a different browser, clears storage, or arrives via an admin "view as" session, the dashboard has no assessment to read — and the strip falls back to "Take the quiz", even though they're mid-challenge.
 
-## Recommendation: a single "Architect strip" as the dashboard's first row
+`ai_user_context` is written by `src/lib/aiContext.ts`, but it only stores stale/derived fields (`assessment_type`, `assessment_score`) that don't match the real shape (`diagnosticScore`, `diagnosticLevel`, `challengeType`), and it's never read back.
 
-Add one slim, personal banner at the very top of `/challenger-dashboard` — above the training video — that picks up where Results left off:
+## Plan
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ 👤  Welcome back, Johnny — Architect · 62/100               │
-│     "You have the pieces. Now let's connect them."          │
-│     The next 3 days are built around that. ── Day 1 active  │
-└─────────────────────────────────────────────────────────────┘
-```
+### 1. Persist the real assessment to the backend
 
-Why first row, above the video:
+Add an `assessment jsonb` column to `public.ai_user_context` (nullable, default `null`). Store the full `AssessmentResult` object there on completion — that's the same shape `state.assessment` already uses, so no mapping work needed downstream.
 
-- It's the literal continuation of the Results page hero — same words, same tone, same accent colour.
-- The training video card below then reads as *"…and here's how we start"* instead of a cold open.
-- One row, no extra clicks — doesn't compete with the existing "Your progress" / Day 1-2-3 card.
+Update `src/lib/aiContext.ts` (or the Assessment completion handler) to upsert the full assessment JSON into that column whenever it changes.
 
-## What the strip contains
+### 2. Hydrate `state.assessment` from the backend on login
 
-1. **Archetype label** — "Architect" (Pioneer / Architect / Authority), reusing `getTierLabel` already in `DashboardProfileHeader.tsx`.
-2. **Score chip** — "62 / 100" with the same accent colour as Results (amber / blue / emerald via `getAccent`).
-3. **Tagline** — the same one Results showed ("You have the pieces. Now let's connect them."), pulled from `archetypes.{tier}_tagline` site content so it stays in sync.
-4. **Bridge sentence** — one line connecting archetype → challenge, e.g. *"Your 3-day challenge is shaped around what an Architect needs next."*
-5. **Quiet "Review your diagnosis" link** → back to `/results` for anyone who wants the full Johnny message again.
+In `src/context/AppContext.tsx` (or `useSupabaseSync`), when the user is authenticated and `state.assessment` is empty, fetch `ai_user_context.assessment` and set it into state. Backend wins over localStorage when both exist.
 
-## What changes vs. what stays
+### 3. Fix the dashboard strip
 
-- **Keep** `AssessmentResultCard` where it is (below the video) — it carries the *mode* CTA ("Continue 3-Day Challenge") and the longer diagnostic message. Different job.
-- **Remove** the orphaned `DashboardProfileHeader` import or repurpose its archetype logic inside the new strip — no duplicate score cards.
-- **Don't** add the archetype again inside the sidebar / profile area — one canonical place keeps the thread clear.
+In `src/components/DashboardArchetypeStrip.tsx`:
 
-## Alternative placements (if the top strip feels too prominent)
+- While the assessment is still loading (auth resolved, hydration in-flight), render a quiet skeleton — not the "Take the quiz" CTA.
+- If the user is inside the challenge (has `challenge_progress` / is on the challenger dashboard) and somehow still has no assessment, render a neutral welcome header with **no quiz CTA** (the quiz is upstream of signup — surfacing it here is wrong).
+- Keep the existing "live" version (archetype name, score, "Review diagnosis" link) for the normal case.
 
-- **B. Inline eyebrow on the training video card** — "For Architects: here's how Day 1 looks for you." Lighter touch, but loses the score continuity.
-- **C. Merge into `AssessmentResultCard**` — add the archetype name above the existing "Builder Stage" line. Cleanest code, but buries it below the video so the *first* thing the user sees is still generic.
-
-Recommend **A** (top strip). B is the fallback if you want the dashboard to stay video-first.
+The "Take the quiz" fallback should only ever appear on pre-signup surfaces, not on `/challenger-dashboard`.
 
 ## Technical notes
 
-- New component: `src/components/DashboardArchetypeStrip.tsx`. Reads `state.assessment` + `useSiteContent("results")` for the archetype copy. No new data — everything is already in state.
-- Render it in `src/pages/Dashboard.tsx` as the first child of the `<section className="mx-auto max-w-5xl space-y-6">` block (around line 444), before the training video.
-- Hidden when `state.assessment` is null (returning user who never took the quiz) — fall back to the existing "Take the quiz" CTA already in `DashboardProfileHeader`.
+- Migration: `ALTER TABLE public.ai_user_context ADD COLUMN assessment jsonb;` — no new table, no new RLS work (existing policies cover it).
+- Write path: extend the existing upsert in `src/lib/aiContext.ts` to include `assessment: state.assessment`.
+- Read path: small one-shot select on auth, merged into `state.assessment` if local is empty.
+- No changes to scoring, Results page, or the admin editor for diagnostic responses.
+
+Want me to proceed with this?

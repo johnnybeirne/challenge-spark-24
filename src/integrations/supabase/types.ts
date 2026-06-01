@@ -55,6 +55,7 @@ export type Database = {
       }
       ai_user_context: {
         Row: {
+          assessment: Json | null
           assessment_score: number | null
           assessment_type: string | null
           build_goal: string | null
@@ -73,6 +74,7 @@ export type Database = {
           weak_dimension: string | null
         }
         Insert: {
+          assessment?: Json | null
           assessment_score?: number | null
           assessment_type?: string | null
           build_goal?: string | null
@@ -91,6 +93,7 @@ export type Database = {
           weak_dimension?: string | null
         }
         Update: {
+          assessment?: Json | null
           assessment_score?: number | null
           assessment_type?: string | null
           build_goal?: string | null

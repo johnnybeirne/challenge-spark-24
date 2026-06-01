@@ -271,6 +271,12 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
 // user fragments into one long sentence.
 type RecapRow = { label: string; echo: EchoField };
 
+const sentenceCase = (s: string) => {
+  const trimmed = (s || "").trim();
+  if (!trimmed) return trimmed;
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+};
+
 const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
   const visible = rows.filter((r) => {
     const entry = echoMap[r.echo];
@@ -278,32 +284,33 @@ const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) =>
   });
   if (visible.length === 0) return null;
   return (
-    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-2">
+    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5">
       {visible.map((r) => {
         const entry = echoMap[r.echo]!;
+        const wrappedFormat = (v: string) => {
+          const formatted = entry.format ? entry.format(v) : v;
+          return sentenceCase(formatted);
+        };
         return (
           <div
             key={r.echo}
-            className="grid grid-cols-[78px_1fr] gap-3 items-baseline"
+            className="text-sm md:text-base leading-snug text-foreground/80"
           >
-            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-              {r.label}
-            </div>
-            <div className="text-sm md:text-base leading-snug">
-              <EchoText
-                value={entry.value}
-                format={entry.format}
-                onSave={entry.onSave}
-                tidyContext={r.echo}
-                skipTidy={entry.skipTidy}
-              />
-            </div>
+            <span>{r.label} </span>
+            <EchoText
+              value={entry.value}
+              format={wrappedFormat}
+              onSave={entry.onSave}
+              tidyContext={r.echo}
+              skipTidy={entry.skipTidy}
+            />
           </div>
         );
       })}
     </div>
   );
 };
+
 
 // Acknowledgement + recap + question, in Johnny's bubble. Used wherever a
 // step's message would otherwise glue two or more echoes into one sentence.
@@ -1322,11 +1329,12 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step3RecapRows: RecapRow[] = [];
           if (subjectField3) {
             step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Avatar" : "Audience",
+              label: subjectField3 === "topic" ? "Your avatar is" : "Your audience is",
               echo: subjectField3,
             });
           }
-          if (painLower) step3RecapRows.push({ label: "Problem", echo: "problem" });
+          if (painLower) step3RecapRows.push({ label: "Their problem is", echo: "problem" });
+
 
           // Typed intro: lead with Johnny's AI reaction (if it landed in time)
           // followed by the short acknowledgement. The recap + question render
@@ -1423,12 +1431,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step9RecapRows: RecapRow[] = [];
           if (subjectField9) {
             step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Avatar" : "Audience",
+              label: subjectField9 === "topic" ? "Your avatar is" : "Your audience is",
               echo: subjectField9,
             });
           }
-          if (painLower9) step9RecapRows.push({ label: "Problem", echo: "problem" });
-          if (howTrim9) step9RecapRows.push({ label: "Process", echo: "how" });
+          if (painLower9) step9RecapRows.push({ label: "Their problem is", echo: "problem" });
+          if (howTrim9) step9RecapRows.push({ label: "Your process is", echo: "how" });
+
 
           const step9IntroMessages: Msg[] = [step9Ack];
 
@@ -1685,13 +1694,15 @@ const Day1Setup = ({ onComplete }: Props) => {
           // asks the trigger-moment question in one beat. Keeping it as one
           // message prevents any chance of duplicate typing and ensures the
           // answer field appears as soon as Johnny finishes.
-          const step6Ack = `Okay${fn}.`;
+          const step6Ack = `Great${fn}.`;
+
           const step6Question =
             "What's happening for them right now that makes your three-day challenge the perfect solution?";
 
           const step6RecapRows: RecapRow[] = [];
-          if (audienceLower6) step6RecapRows.push({ label: "Audience", echo: "audience" });
-          if (challengeType) step6RecapRows.push({ label: "Goal", echo: "challengeType" });
+          if (audienceLower6) step6RecapRows.push({ label: "Your audience is", echo: "audience" });
+          if (challengeType) step6RecapRows.push({ label: "Your goal is", echo: "challengeType" });
+
 
           const step6IntroMessages: Msg[] = [step6Ack];
 

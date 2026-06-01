@@ -1160,10 +1160,24 @@ export type Database = {
             referencedColumns: ["invite_code"]
           },
           {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["invite_code"]
+          },
+          {
             foreignKeyName: "profiles_referred_by_parent_fkey"
             columns: ["referred_by_parent"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["invite_code"]
+          },
+          {
+            foreignKeyName: "profiles_referred_by_parent_fkey"
+            columns: ["referred_by_parent"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["invite_code"]
           },
         ]
@@ -1634,6 +1648,79 @@ export type Database = {
           slug: string | null
           status: Database["public"]["Enums"]["partner_status"] | null
           total_score: number | null
+        }
+        Relationships: []
+      }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          direct_referral_count: number | null
+          facebook_url: string | null
+          first_name: string | null
+          indirect_referral_count: number | null
+          instagram_url: string | null
+          invite_code: string | null
+          linkedin_url: string | null
+          name: string | null
+          surname: string | null
+          user_id: string | null
+          website_url: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          direct_referral_count?: number | null
+          facebook_url?: string | null
+          first_name?: string | null
+          indirect_referral_count?: number | null
+          instagram_url?: string | null
+          invite_code?: string | null
+          linkedin_url?: string | null
+          name?: string | null
+          surname?: string | null
+          user_id?: string | null
+          website_url?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          direct_referral_count?: number | null
+          facebook_url?: string | null
+          first_name?: string | null
+          indirect_referral_count?: number | null
+          instagram_url?: string | null
+          invite_code?: string | null
+          linkedin_url?: string | null
+          name?: string | null
+          surname?: string | null
+          user_id?: string | null
+          website_url?: string | null
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
+      public_waitlist_leaderboard: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          confirmed_invites: number | null
+          created_at: string | null
+          current_tier: string | null
+          facebook_url: string | null
+          first_name: string | null
+          instagram_url: string | null
+          linkedin_url: string | null
+          name: string | null
+          referral_code: string | null
+          surname: string | null
+          website_url: string | null
+          youtube_url: string | null
         }
         Relationships: []
       }

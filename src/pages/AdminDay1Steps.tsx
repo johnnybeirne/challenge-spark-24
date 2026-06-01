@@ -78,8 +78,8 @@ const AdminDay1Steps = () => {
           <Button variant="ghost" size="sm" onClick={handleResetAll} className="gap-2">
             <RotateCcw className="h-4 w-4" /> Reset all
           </Button>
-          <Button onClick={handleSave} className="gap-2">
-            <Save className="h-4 w-4" /> Save
+          <Button onClick={handleSave} disabled={saving} className="gap-2">
+            <Save className="h-4 w-4" /> {saving ? "Syncing…" : "Save"}
           </Button>
         </div>
       </header>

@@ -1068,6 +1068,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       audience: audience.trim(),
       how: how.trim(),
       outcome: outcome.trim(),
+      superpower: superpower.trim(),
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Lock, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,27 +8,15 @@ import { pointRewards } from "@/lib/points";
 
 const ladder = pointRewards.map((r) => ({ points: r.points, name: r.title }));
 
-const STORAGE_KEY = "leadio.unlockedRewards.v1";
-
 const RedeemPoints = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const points = state.points?.total ?? 0;
 
-  // Auto-unlock anything the user has reached (no spending)
-  const [unlocked, setUnlocked] = useState<number[]>([]);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const prev: (string | number)[] = raw ? JSON.parse(raw) : [];
-      const reached = ladder.filter((l) => points >= l.points).map((l) => l.points);
-      const merged = Array.from(new Set([...prev.map(Number).filter(Boolean), ...reached]));
-      setUnlocked(merged);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-    } catch {
-      setUnlocked(ladder.filter((l) => points >= l.points).map((l) => l.points));
-    }
-  }, [points]);
+  // Unlocked milestones are fully derived from `points` (which is canonical in
+  // Supabase via state.points). No local cache needed — keeps the page
+  // consistent across devices and browsers.
+
 
   const next = useMemo(
     () => ladder.find((l) => l.points > points) ?? ladder[ladder.length - 1],

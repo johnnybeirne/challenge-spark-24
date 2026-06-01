@@ -349,11 +349,11 @@ const JohnnyRecapPanel = ({
           {leadIn}
         </div>
       )}
-      <div className="text-sm md:text-base leading-relaxed font-medium">
+      <div className="text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
         {acknowledgement}
       </div>
       <RecapCard rows={rows} echoMap={echoMap} />
-      <div className="text-sm md:text-base leading-relaxed">{question}</div>
+      <div className="text-sm md:text-base leading-relaxed whitespace-pre-line">{question}</div>
     </div>
   </div>
 );

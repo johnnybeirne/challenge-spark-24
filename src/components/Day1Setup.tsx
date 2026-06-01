@@ -1041,8 +1041,9 @@ const Day1Setup = ({ onComplete }: Props) => {
       }),
     }));
     profileSaved(`Challenge type: ${description}`);
-    setStep6Phase(saved?.topicHint ? "input" : "intro");
-    setStep(6);
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
+
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;

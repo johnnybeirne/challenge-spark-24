@@ -1331,7 +1331,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step1Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step1-intro-${audienceType ?? "none"}-${step1Message.length}-${step1Message.slice(0, 32)}`}
+                  resetKey={`step1-intro-${audienceType ?? "none"}-${step1Message.length}-${step1Message}`}
                   messages={[step1Message]}
                   echoMap={echoMap}
                   skipMakingNotes
@@ -1735,7 +1735,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-3 animate-fade-in">
             {step4Phase === "intro" && (
               <TypedSequence
-                resetKey="step4-intro"
+                resetKey={`step4-intro-${step4Messages.join("\n")}`}
                 messages={step4Messages}
                 skipMakingNotes
                 onComplete={() => setStep4Phase("choose")}

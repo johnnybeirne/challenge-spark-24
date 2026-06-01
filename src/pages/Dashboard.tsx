@@ -258,9 +258,10 @@ const Dashboard = () => {
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-20">
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
 
-          {/* PERMANENT PROFILE + QUIZ SCORE */}
+          <DashboardArchetypeStrip />
 
           {/* INTRO VIDEO — welcome briefing */}
+
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">

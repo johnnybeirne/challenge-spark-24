@@ -1254,6 +1254,33 @@ const Day1Setup = ({ onComplete }: Props) => {
   const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
   const showProgress = stepNumber > 0;
 
+  // ---- Editable Day 1 step messages ----------------------------------------
+  // Templates come from the admin Day 1 Step Editor (/owner-console/day1-steps).
+  // Bracket tags like [first_name] / [audience] are substituted with the
+  // current user's real answers so the live flow uses the admin's wording.
+  const day1Templates = useDay1Templates();
+  const defaultsById = defaultDay1Steps.reduce<Record<string, string>>((acc, s) => {
+    acc[s.id] = s.message;
+    return acc;
+  }, {});
+  const liveTagValues: Record<Day1TagKey, string> = {
+    first_name: firstName && firstName !== "there" ? firstName : "",
+    audience: (audience || topicHint || "").trim(),
+    superpower: (superpower || "").trim(),
+    challenge_type: (challengeLabel(challengeType) || "").toLowerCase(),
+    problem: (problem || "").trim(),
+    process: (how || "").trim(),
+    outcome: (outcome || "").trim(),
+    promise: (step7Promise?.promise || "").trim(),
+  };
+  const renderTemplate = (id: string, fallback: string): string => {
+    const tpl = day1Templates[id] ?? defaultsById[id] ?? fallback;
+    const rendered = renderDay1Preview(tpl, liveTagValues);
+    // Strip any unresolved [tag] placeholders so the user never sees raw brackets.
+    return rendered.replace(/\s*\[[a-z_]+\]/gi, "").replace(/\s+/g, " ").trim();
+  };
+
+
 
 
 

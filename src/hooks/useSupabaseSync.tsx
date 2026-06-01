@@ -244,7 +244,8 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
         startedAt,
         endsAt: getChallengeEndsAt(startedAt, base.endsAt),
         tasks: base.tasks ?? {},
-        aiOutputs,
+        aiOutputs: aiOutputs as Record<string, string>,
+
         launchUrl: base.launchUrl ?? "",
         completed: base.completed ?? false,
         calendarAdded: base.calendarAdded ?? false,

@@ -1,26 +1,55 @@
-## Problem
+## Goal
 
-Placeholder examples use the user's full audience/topic text as the grammatical subject:
+Continue the "You're an [archetype}" narrative thread from the quiz Results page into the challenger dashboard, so the user feels like one conversation — not "took a quiz" → "landed in a tool".
 
-```ts
-const subject = whoLower || audienceLower || "they";
-"e.g. ${subject} keep hitting the same wall..."
+## Where it lives today
+
+- **Results page** (`src/pages/Results.tsx`) — large hero: *"Based on your answers… You're an Architect"* + tagline + Johnny message.
+- **Dashboard** (`/challenger-dashboard`) — opens with training video card, then `AssessmentResultCard` (shows score % + "Builder Stage" + diagnostic title). The archetype name ("Architect") is **never shown**. A `DashboardProfileHeader` component exists that *does* compute the archetype, but it's imported and never rendered.
+
+So the thread literally breaks the moment they hit the dashboard.
+
+## Recommendation: a single "Architect strip" as the dashboard's first row
+
+Add one slim, personal banner at the very top of `/challenger-dashboard` — above the training video — that picks up where Results left off:
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ 👤  Welcome back, Johnny — Architect · 62/100               │
+│     "You have the pieces. Now let's connect them."          │
+│     The next 3 days are built around that. ── Day 1 active  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-When the user's answer is a sentence ("they've hit the wall again"), the placeholder reads as gibberish:
-*"e.g. they've hit the wall again keep hitting the same wall and can't figure out what's actually blocking them."*
+Why first row, above the video:
 
-## Fix
+- It's the literal continuation of the Results page hero — same words, same tone, same accent colour.
+- The training video card below then reads as *"…and here's how we start"* instead of a cold open.
+- One row, no extra clicks — doesn't compete with the existing "Your progress" / Day 1-2-3 card.
 
-Stop interpolating the raw answer into example sentences. Use a clean pronoun (`"they"`) as the subject inside `e.g.` hints across all three affected steps in `src/components/Day1Setup.tsx`:
+## What the strip contains
 
-1. **Step 2** (line ~1087) — `problemHintByChallenge` map
-2. **Step 3** (line ~1178) — `processHintByChallenge` map and `processPlaceholder` fallback
-3. **Step 9** (line ~1262) — same pattern if present (verify)
+1. **Archetype label** — "Architect" (Pioneer / Architect / Authority), reusing `getTierLabel` already in `DashboardProfileHeader.tsx`.
+2. **Score chip** — "62 / 100" with the same accent colour as Results (amber / blue / emerald via `getAccent`).
+3. **Tagline** — the same one Results showed ("You have the pieces. Now let's connect them."), pulled from `archetypes.{tier}_tagline` site content so it stays in sync.
+4. **Bridge sentence** — one line connecting archetype → challenge, e.g. *"Your 3-day challenge is shaped around what an Architect needs next."*
+5. **Quiet "Review your diagnosis" link** → back to `/results` for anyone who wants the full Johnny message again.
 
-Replace `subject = whoLower || audienceLower || "they"` with a fixed `"they"` for placeholder interpolation. The echoed-back text inside Johnny's question (where the user's words read naturally with a pencil-edit affordance) is unaffected.
+## What changes vs. what stays
 
-## Out of scope
+- **Keep** `AssessmentResultCard` where it is (below the video) — it carries the *mode* CTA ("Continue 3-Day Challenge") and the longer diagnostic message. Different job.
+- **Remove** the orphaned `DashboardProfileHeader` import or repurpose its archetype logic inside the new strip — no duplicate score cards.
+- **Don't** add the archetype again inside the sidebar / profile area — one canonical place keeps the thread clear.
 
-- No changes to the AI question copy, echo rendering, or pencil editor.
-- No changes to state, persistence, or scoring.
+## Alternative placements (if the top strip feels too prominent)
+
+- **B. Inline eyebrow on the training video card** — "For Architects: here's how Day 1 looks for you." Lighter touch, but loses the score continuity.
+- **C. Merge into `AssessmentResultCard**` — add the archetype name above the existing "Builder Stage" line. Cleanest code, but buries it below the video so the *first* thing the user sees is still generic.
+
+Recommend **A** (top strip). B is the fallback if you want the dashboard to stay video-first.
+
+## Technical notes
+
+- New component: `src/components/DashboardArchetypeStrip.tsx`. Reads `state.assessment` + `useSiteContent("results")` for the archetype copy. No new data — everything is already in state.
+- Render it in `src/pages/Dashboard.tsx` as the first child of the `<section className="mx-auto max-w-5xl space-y-6">` block (around line 444), before the training video.
+- Hidden when `state.assessment` is null (returning user who never took the quiz) — fall back to the existing "Take the quiz" CTA already in `DashboardProfileHeader`.

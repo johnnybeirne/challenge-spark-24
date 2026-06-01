@@ -1828,6 +1828,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const step6RecapRows: RecapRow[] = [];
           if (audienceLower6) step6RecapRows.push({ label: audienceLabel(audienceTrim6), echo: "audience" });
+          if (superpower.trim()) step6RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
           if (challengeType) step6RecapRows.push({ label: "Your goal is:", echo: "challengeType" });
 
 

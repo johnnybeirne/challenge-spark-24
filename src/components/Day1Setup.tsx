@@ -1431,12 +1431,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step9RecapRows: RecapRow[] = [];
           if (subjectField9) {
             step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Avatar" : "Audience",
+              label: subjectField9 === "topic" ? "Your avatar is" : "Your audience is",
               echo: subjectField9,
             });
           }
-          if (painLower9) step9RecapRows.push({ label: "Problem", echo: "problem" });
-          if (howTrim9) step9RecapRows.push({ label: "Process", echo: "how" });
+          if (painLower9) step9RecapRows.push({ label: "Their problem is", echo: "problem" });
+          if (howTrim9) step9RecapRows.push({ label: "Your process is", echo: "how" });
+
 
           const step9IntroMessages: Msg[] = [step9Ack];
 

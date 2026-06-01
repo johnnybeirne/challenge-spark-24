@@ -1268,6 +1268,16 @@ const Day1Setup = ({ onComplete }: Props) => {
           </button>
         )}
 
+        {showProgress && (
+          <div className="mb-6 space-y-2">
+            <div className="text-sm font-medium text-muted-foreground">
+              Step {stepNumber} of {TOTAL_STEPS}
+            </div>
+            <Progress value={(stepNumber / TOTAL_STEPS) * 100} className="h-2" />
+          </div>
+        )}
+
+
         {step === 1 && (() => {
           const step1Message: Msg = audienceType
             ? [

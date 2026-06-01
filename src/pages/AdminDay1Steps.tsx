@@ -41,6 +41,7 @@ const AdminDay1Steps = () => {
 
   const handleResetAll = () => {
     setSteps(defaultDay1Steps);
+    saveDay1Steps(defaultDay1Steps);
     toast.message("Reverted to defaults.");
   };
 

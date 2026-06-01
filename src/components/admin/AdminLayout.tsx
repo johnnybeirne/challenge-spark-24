@@ -5,7 +5,6 @@ import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import Spinner from "@/components/Spinner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const AdminLayout = () => {
@@ -92,9 +91,7 @@ const AdminLayout = () => {
             : `Your signed-in account (${user.email}) does not have admin access.`}
         </p>
         <Button asChild variant="outline">
-          <Link to={switchHref} onClick={() => supabase.auth.signOut()}>
-            Sign out & log in as admin
-          </Link>
+          <Link to={switchHref}>Sign in as admin</Link>
         </Button>
       </div>
     );

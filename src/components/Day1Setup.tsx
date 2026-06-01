@@ -619,7 +619,7 @@ const FoundationStep = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="min-h-[140px] text-base"
+          className="min-h-[70px] text-base"
         />
         {length > 0 && (
           <p className="text-xs text-muted-foreground">{length} characters</p>

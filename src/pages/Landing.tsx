@@ -141,10 +141,6 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
           fetchPriority="high"
           className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
         />
-        <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
-          <p className="text-xs font-black text-primary">{t("hero.image_overlay_eyebrow", "The real question")}</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-foreground">{t("hero.image_overlay_text", "Is your lead flow inconsistent because of attention, trust, conversion, or follow-up?")}</p>
-        </div>
       </div>
     </div>
   </section>

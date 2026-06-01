@@ -17,6 +17,47 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const AUTH_ACTION_TIMEOUT_MS = 12000;
+
+const authErrorText = (error: unknown) => {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String((error as { message?: unknown }).message ?? "");
+  return String(error ?? "");
+};
+
+const isAuthLockOrNetworkError = (error: unknown) => {
+  const message = authErrorText(error).toLowerCase();
+  return message.includes("lock") || message.includes("failed to fetch") || message.includes("aborterror");
+};
+
+const clearSupabaseAuthStorage = () => {
+  try {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    const projectRef = projectId || (url ? new URL(url).hostname.split(".")[0] : "");
+    const keys = new Set<string>(projectRef ? [`sb-${projectRef}-auth-token`] : []);
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("sb-") && key.endsWith("-auth-token")) keys.add(key);
+    }
+    keys.forEach((key) => localStorage.removeItem(key));
+  } catch {}
+};
+
+const withAuthTimeout = async <T,>(promise: Promise<T>, message: string): Promise<T> => {
+  let timeoutId: number | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutId = window.setTimeout(() => reject(new Error(message)), AUTH_ACTION_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) window.clearTimeout(timeoutId);
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -24,6 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    const suppressRecoverableAuthLock = (event: PromiseRejectionEvent) => {
+      if (isAuthLockOrNetworkError(event.reason)) event.preventDefault();
+    };
+    window.addEventListener("unhandledrejection", suppressRecoverableAuthLock);
     const loadingFallback = window.setTimeout(() => {
       if (mounted) setLoading(false);
     }, 3500);
@@ -92,6 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false;
+      window.removeEventListener("unhandledrejection", suppressRecoverableAuthLock);
       window.clearTimeout(loadingFallback);
       subscription.unsubscribe();
     };
@@ -115,8 +161,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    return { data, error };
+    clearSupabaseAuthStorage();
+    const attempt = () => withAuthTimeout(
+      supabase.auth.signInWithPassword({ email, password }),
+      "Sign in took too long. Please try again."
+    );
+
+    try {
+      const result = await attempt();
+      if (result.error && isAuthLockOrNetworkError(result.error)) {
+        clearSupabaseAuthStorage();
+        return await attempt();
+      }
+      setSession(result.data.session);
+      setUser(result.data.user);
+      return result;
+    } catch (error) {
+      if (isAuthLockOrNetworkError(error)) {
+        clearSupabaseAuthStorage();
+        try {
+          return await attempt();
+        } catch (retryError) {
+          return { data: null, error: retryError };
+        }
+      }
+      return { data: null, error };
+    }
   };
 
   const resetPassword = async (email: string) => {

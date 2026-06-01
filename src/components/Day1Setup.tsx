@@ -2036,7 +2036,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Start Day 1 again?</AlertDialogTitle>
+                              <AlertDialogTitle className="text-destructive">WARNING. Are you sure?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 This clears your Day 1 answers, AI outputs, and progress so you can
                                 start the questions from scratch. Your referrals, points, and other
@@ -2045,7 +2045,10 @@ const Day1Setup = ({ onComplete }: Props) => {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={handleResetDay1}>
+                              <AlertDialogAction
+                                onClick={handleResetDay1}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
                                 Start Day 1 again
                               </AlertDialogAction>
                             </AlertDialogFooter>

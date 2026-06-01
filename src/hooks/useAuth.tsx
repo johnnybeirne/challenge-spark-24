@@ -45,7 +45,7 @@ const clearSupabaseAuthStorage = () => {
 };
 
 const withAuthTimeout = async <T,>(promise: Promise<T>, message: string): Promise<T> => {
-  let timeoutId: ReturnType<typeof window.setTimeout> | undefined;
+  let timeoutId: number | undefined;
   try {
     return await Promise.race([
       promise,

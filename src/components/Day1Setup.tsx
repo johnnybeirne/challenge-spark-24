@@ -264,7 +264,7 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
     <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
-          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug">
+          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug whitespace-pre-line">
             {renderMsg(m, echoMap, `m${i}-`)}
           </div>
         </div>
@@ -349,11 +349,11 @@ const JohnnyRecapPanel = ({
           {leadIn}
         </div>
       )}
-      <div className="text-sm md:text-base leading-relaxed font-medium">
+      <div className="text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
         {acknowledgement}
       </div>
       <RecapCard rows={rows} echoMap={echoMap} />
-      <div className="text-sm md:text-base leading-relaxed">{question}</div>
+      <div className="text-sm md:text-base leading-relaxed whitespace-pre-line">{question}</div>
     </div>
   </div>
 );
@@ -473,14 +473,14 @@ const TypedSequence = ({
       <div className="flex-1 space-y-3 min-w-0">
         {shown.map((shownIdx, i) => (
           <div key={i} className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
               {renderMsg(messages[shownIdx], echoMap, `t${shownIdx}-`)}
             </div>
           </div>
         ))}
         {idx < plain.length && (
           <div className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px] whitespace-pre-line">
               {isMakingNotes ? (
                 <span className="italic text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>
               ) : showDots ? (
@@ -1276,9 +1276,16 @@ const Day1Setup = ({ onComplete }: Props) => {
   const renderTemplate = (id: string, fallback: string): string => {
     const tpl = day1Templates[id] ?? defaultsById[id] ?? fallback;
     const rendered = renderDay1Preview(tpl, liveTagValues);
-    // Strip any unresolved [tag] placeholders so the user never sees raw brackets.
-    return rendered.replace(/\s*\[[a-z_]+\]/gi, "").replace(/\s+/g, " ").trim();
+    // Strip any unresolved [tag] placeholders but preserve newlines / paragraph breaks.
+    return rendered
+      .replace(/\s*\[[a-z_]+\]/gi, "")
+      .split("\n")
+      .map((line) => line.replace(/[ \t]+/g, " ").trim())
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
   };
+
 
 
 

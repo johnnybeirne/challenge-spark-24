@@ -490,8 +490,10 @@ const TypedSequence = ({
 
 };
 
-export const SETUP_KEY = "leadio_setup";
+export const SETUP_KEY = "leadio_day1_setup";
 const DAY1_STEP_KEY = "leadio_day1_step";
+// Legacy key (pre-refactor); read for back-compat so users mid-flow don't lose state.
+const LEGACY_SETUP_KEY = "leadio_setup";
 
 export interface SetupData {
   completed: boolean;
@@ -506,16 +508,27 @@ export interface SetupData {
   outcome?: string;
 }
 
-export const getSetup = (): SetupData | null => {
+/** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */
+const readSetupRaw = (aiOutputs?: Record<string, unknown>): any => {
   try {
-    const raw = localStorage.getItem(SETUP_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed?.completed ? parsed : null;
+    const fromDb = aiOutputs?.day1Setup;
+    if (fromDb && typeof fromDb === "string") return JSON.parse(fromDb);
+    if (fromDb && typeof fromDb === "object") return fromDb;
+  } catch {}
+  try {
+    const raw = localStorage.getItem(SETUP_KEY) || localStorage.getItem(LEGACY_SETUP_KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 };
+
+export const getSetup = (): SetupData | null => {
+  // Backwards-compatible: used by callers outside the component that don't have state.
+  const parsed = readSetupRaw();
+  return parsed?.completed ? parsed : null;
+};
+
 
 interface Props {
   onComplete: (data: SetupData) => void;

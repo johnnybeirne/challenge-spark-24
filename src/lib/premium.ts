@@ -34,9 +34,10 @@ export const isPremiumUser = (): boolean => {
 export const getAppliedCoupon = (): string | null => cachedCoupon;
 
 /** Refresh the cache from Supabase for the currently authenticated user. */
-export const fetchPremiumFromSupabase = async (userId?: string | null): Promise<{ premium: boolean; coupon: string | null }> => {
+export const fetchPremiumFromSupabase = async (): Promise<{ premium: boolean; coupon: string | null }> => {
   try {
-    if (!userId) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       cachedPremium = false;
       cachedCoupon = null;
       return { premium: false, coupon: null };
@@ -44,7 +45,7 @@ export const fetchPremiumFromSupabase = async (userId?: string | null): Promise<
     const { data } = await supabase
       .from("profiles")
       .select("is_premium, partner_code_used")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .maybeSingle();
     cachedPremium = !!data?.is_premium;
     cachedCoupon = (data?.partner_code_used as string | null) ?? null;

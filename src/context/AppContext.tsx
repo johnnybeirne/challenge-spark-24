@@ -436,14 +436,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (authLoading) return;
 
     setSyncEnabled(false);
-    const isAdminRoute = window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/") || window.location.pathname === "/owner-console" || window.location.pathname.startsWith("/owner-console/");
 
     if (authUser) {
-      if (isAdminRoute) {
-        setHydrated(true);
-        setSyncEnabled(false);
-        return;
-      }
       (async () => {
         await migrateLocalToSupabase(authUser.id);
         const remote = await loadFromSupabase(authUser.id);
@@ -537,12 +531,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
   // Supabase sync hook
-  const isAdminRoute = window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/") || window.location.pathname === "/owner-console" || window.location.pathname.startsWith("/owner-console/");
-  useSupabaseSync(authUser ?? null, state, prevUnlocksRef, syncEnabled && !isAdminRoute);
+  useSupabaseSync(authUser ?? null, state, prevUnlocksRef, syncEnabled);
 
   // Debounced AI context snapshot — keeps ai_user_context fresh for KB-aware AI.
   useEffect(() => {
-    if (!authUser || isAdminRoute) return;
+    if (!authUser) return;
     const t = setTimeout(() => {
       import("@/lib/aiContext").then(({ refreshAiContext }) => {
         refreshAiContext(authUser, state);

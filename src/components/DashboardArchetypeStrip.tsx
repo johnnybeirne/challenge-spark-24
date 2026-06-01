@@ -91,11 +91,8 @@ const DashboardArchetypeStrip = () => {
   const archetypeName = rawName.replace(/^you'?re\s+(an?|the)\s+/i, "").trim() || cfg.name;
   const tagline = tContent(`archetypes.${tier}_tagline`, cfg.tagline);
 
-  const firstName =
-    state.user?.name?.split(" ")[0] ||
-    (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name?.split(" ")[0] ||
-    (authUser?.user_metadata as { name?: string } | undefined)?.name?.split(" ")[0] ||
-    "";
+
+
 
   return (
     <section

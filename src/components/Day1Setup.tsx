@@ -480,7 +480,7 @@ const TypedSequence = ({
         ))}
         {idx < plain.length && (
           <div className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px]">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px] whitespace-pre-line">
               {isMakingNotes ? (
                 <span className="italic text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>
               ) : showDots ? (

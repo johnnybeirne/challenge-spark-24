@@ -1700,8 +1700,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             "What's happening for them right now that makes your three-day challenge the perfect solution?";
 
           const step6RecapRows: RecapRow[] = [];
-          if (audienceLower6) step6RecapRows.push({ label: "Audience", echo: "audience" });
-          if (challengeType) step6RecapRows.push({ label: "Goal", echo: "challengeType" });
+          if (audienceLower6) step6RecapRows.push({ label: "Your audience is", echo: "audience" });
+          if (challengeType) step6RecapRows.push({ label: "Your goal is", echo: "challengeType" });
+
 
           const step6IntroMessages: Msg[] = [step6Ack];
 

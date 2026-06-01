@@ -227,18 +227,10 @@ const SignupChat = ({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmitLogin || loading) return;
-    try {
-      if (redirectAfterAuth === "/admin" || redirectAfterAuth.startsWith("/admin/") || redirectAfterAuth === "/owner-console" || redirectAfterAuth.startsWith("/owner-console/")) {
-        sessionStorage.setItem("leadio_admin_login_pending", "1");
-      }
-    } catch {}
     setLoading(true);
     const { error } = await signIn(loginEmail.trim().toLowerCase(), loginPassword);
     setLoading(false);
-    if (error) {
-      try { sessionStorage.removeItem("leadio_admin_login_pending"); } catch {}
-      return toast.error(error.message || "Login failed");
-    }
+    if (error) return toast.error(error.message || "Login failed");
     navigate(redirectAfterAuth);
   };
 

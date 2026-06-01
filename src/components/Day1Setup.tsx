@@ -1694,7 +1694,8 @@ const Day1Setup = ({ onComplete }: Props) => {
           // asks the trigger-moment question in one beat. Keeping it as one
           // message prevents any chance of duplicate typing and ensures the
           // answer field appears as soon as Johnny finishes.
-          const step6Ack = `Okay${fn}.`;
+          const step6Ack = `Great${fn}.`;
+
           const step6Question =
             "What's happening for them right now that makes your three-day challenge the perfect solution?";
 

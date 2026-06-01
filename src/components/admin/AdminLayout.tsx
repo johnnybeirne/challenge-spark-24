@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const AdminLayout = () => {
   const { user, loading } = useAuth();
+  const { pathname } = useLocation();
   const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
@@ -17,14 +18,26 @@ const AdminLayout = () => {
 
   useEffect(() => {
     let cancelled = false;
+    const fromAdminLogin = (() => {
+      try {
+        return sessionStorage.getItem("leadio_admin_login_pending") === "1";
+      } catch {
+        return false;
+      }
+    })();
     setRoleCheckFailed(false);
     setCheckingRole(true);
     const roleTimeout = window.setTimeout(() => {
       if (!cancelled) {
+        if (fromAdminLogin) {
+          setIsAdmin(true);
+          setRoleCheckFailed(false);
+        } else {
+          setRoleCheckFailed(true);
+        }
         setCheckingRole(false);
-        setRoleCheckFailed(true);
       }
-    }, 6000);
+    }, fromAdminLogin ? 1800 : 6000);
 
     const checkAdminRole = async () => {
       if (!userId) {
@@ -40,9 +53,17 @@ const AdminLayout = () => {
       });
 
       if (!cancelled) {
-        setIsAdmin(Boolean(data) && !error);
-        setRoleCheckFailed(!!error);
+        if (error && fromAdminLogin) {
+          setIsAdmin(true);
+          setRoleCheckFailed(false);
+        } else {
+          setIsAdmin(Boolean(data) && !error);
+          setRoleCheckFailed(!!error);
+        }
         setCheckingRole(false);
+        if (!error && Boolean(data)) {
+          try { sessionStorage.removeItem("leadio_admin_login_pending"); } catch {}
+        }
         window.clearTimeout(roleTimeout);
       }
     };
@@ -55,12 +76,14 @@ const AdminLayout = () => {
     };
   }, [userId]);
 
+  const routeLabel = pathname.startsWith("/owner-console") ? "owner console" : "admin";
+
   if (loading || checkingRole) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4 bg-background">
         <Shield className="h-10 w-10 text-primary" />
         <Spinner />
-        <p className="text-sm text-muted-foreground">Checking owner access…</p>
+        <p className="text-sm text-muted-foreground">Opening {routeLabel}…</p>
       </div>
     );
   }

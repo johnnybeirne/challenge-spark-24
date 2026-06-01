@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, MessageCircle } from "lucide-react";
+import { Loader2, Plus, Trash2, MessageCircle, Sparkles } from "lucide-react";
+import { invalidatePage } from "@/hooks/useSiteContent";
 
 type Row = {
   id: string;
@@ -17,17 +18,33 @@ type Row = {
   messages: string[];
 };
 
-const TIER_LABELS: Record<string, string> = {
-  low: "0% – 50%",
-  mid: "51% – 75%",
-  high: "76% – 100%",
+const TIER_LABEL: Record<string, string> = {
+  low: "Lower tier",
+  mid: "Middle tier",
+  high: "Upper tier",
 };
 
 const TIER_ORDER = ["low", "mid", "high"];
 
+type Archetype = {
+  tier: "low" | "mid" | "high";
+  name: string;
+  tagline: string;
+};
+
+const DEFAULT_ARCHETYPES: Archetype[] = [
+  { tier: "low", name: "You're a Pioneer", tagline: "You're building the foundation. Let's make it solid." },
+  { tier: "mid", name: "You're an Architect", tagline: "You have the pieces. Now let's connect them." },
+  { tier: "high", name: "You're an Authority", tagline: "You've built something real. Now let's make it grow." },
+];
+
 const AdminLeadGenQuizResponses = () => {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
+
+  const [intro, setIntro] = useState<string>("Based on your answers...");
+  const [archetypes, setArchetypes] = useState<Archetype[]>(DEFAULT_ARCHETYPES);
+  const [savingArchetypes, setSavingArchetypes] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -49,8 +66,28 @@ const AdminLeadGenQuizResponses = () => {
     setRows(normalised);
   };
 
+  const loadArchetypes = async () => {
+    const { data, error } = await supabase
+      .from("site_content")
+      .select("key,value")
+      .eq("page", "results")
+      .eq("section", "archetypes");
+    if (error || !data) return;
+    const map: Record<string, string> = {};
+    for (const r of data) map[r.key] = r.value;
+    if (map.intro) setIntro(map.intro);
+    setArchetypes(
+      (["low", "mid", "high"] as const).map((tier, i) => ({
+        tier,
+        name: map[`${tier}_name`] ?? DEFAULT_ARCHETYPES[i].name,
+        tagline: map[`${tier}_tagline`] ?? DEFAULT_ARCHETYPES[i].tagline,
+      })),
+    );
+  };
+
   useEffect(() => {
     load();
+    loadArchetypes();
   }, []);
 
   const updateRow = (id: string, patch: Partial<Row>) => {
@@ -83,7 +120,17 @@ const AdminLeadGenQuizResponses = () => {
     );
   };
 
+  const updateArchetype = (tier: Archetype["tier"], patch: Partial<Archetype>) => {
+    setArchetypes((prev) => prev.map((a) => (a.tier === tier ? { ...a, ...patch } : a)));
+  };
+
   const save = async (row: Row) => {
+    const minP = Math.max(0, Math.min(100, Math.round(Number(row.min_percent) || 0)));
+    const maxP = Math.max(0, Math.min(100, Math.round(Number(row.max_percent) || 0)));
+    if (maxP < minP) {
+      toast.error("Max % must be greater than or equal to Min %");
+      return;
+    }
     setSavingId(row.id);
     const cleanedMessages = row.messages.map((m) => m.trim()).filter(Boolean);
     const { error } = await supabase
@@ -91,6 +138,8 @@ const AdminLeadGenQuizResponses = () => {
       .update({
         title: row.title.trim(),
         messages: cleanedMessages,
+        min_percent: minP,
+        max_percent: maxP,
       })
       .eq("id", row.id);
     setSavingId(null);
@@ -99,7 +148,28 @@ const AdminLeadGenQuizResponses = () => {
       return;
     }
     toast.success("Saved");
-    updateRow(row.id, { messages: cleanedMessages });
+    updateRow(row.id, { messages: cleanedMessages, min_percent: minP, max_percent: maxP });
+  };
+
+  const saveArchetypes = async () => {
+    setSavingArchetypes(true);
+    const upserts = [
+      { page: "results", section: "archetypes", key: "intro", value: intro.trim(), value_type: "text" },
+      ...archetypes.flatMap((a) => [
+        { page: "results", section: "archetypes", key: `${a.tier}_name`, value: a.name.trim(), value_type: "text" },
+        { page: "results", section: "archetypes", key: `${a.tier}_tagline`, value: a.tagline.trim(), value_type: "text" },
+      ]),
+    ];
+    const { error } = await supabase
+      .from("site_content")
+      .upsert(upserts, { onConflict: "page,section,key" });
+    setSavingArchetypes(false);
+    if (error) {
+      toast.error(`Save failed: ${error.message}`);
+      return;
+    }
+    invalidatePage("results");
+    toast.success("Archetypes saved");
   };
 
   if (!rows) {
@@ -111,23 +181,81 @@ const AdminLeadGenQuizResponses = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-6 max-w-4xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <MessageCircle className="h-6 w-6 text-primary" />
           Lead Gen Quiz Responses
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Edit the chat shown on the Results page. Each tier uses one or more chat bubbles. The first bubble is the title.
+          Edit the score ranges, archetype labels, and the chat shown on the Results page.
         </p>
       </div>
 
+      {/* ARCHETYPES */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                Archetypes
+              </CardTitle>
+              <CardDescription>
+                The big name + tagline shown on Results and the dashboard archetype strip.
+              </CardDescription>
+            </div>
+            <Button onClick={saveArchetypes} disabled={savingArchetypes}>
+              {savingArchetypes ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save archetypes"}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="archetype-intro">Intro eyebrow</Label>
+            <Input
+              id="archetype-intro"
+              value={intro}
+              onChange={(e) => setIntro(e.target.value)}
+              placeholder="Based on your answers..."
+            />
+          </div>
+
+          {archetypes.map((a) => (
+            <div key={a.tier} className="rounded-lg border border-border p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {TIER_LABEL[a.tier]}
+              </p>
+              <div className="space-y-2">
+                <Label htmlFor={`arch-name-${a.tier}`}>Name</Label>
+                <Input
+                  id={`arch-name-${a.tier}`}
+                  value={a.name}
+                  onChange={(e) => updateArchetype(a.tier, { name: e.target.value })}
+                  placeholder="You're an Architect"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`arch-tag-${a.tier}`}>Tagline</Label>
+                <Textarea
+                  id={`arch-tag-${a.tier}`}
+                  value={a.tagline}
+                  onChange={(e) => updateArchetype(a.tier, { tagline: e.target.value })}
+                  rows={2}
+                />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* SCORE BANDS + CHAT */}
       {rows.map((row) => (
         <Card key={row.id}>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-lg">{TIER_LABELS[row.tier] ?? row.tier}</CardTitle>
+                <CardTitle className="text-lg">{TIER_LABEL[row.tier] ?? row.tier}</CardTitle>
                 <CardDescription>
                   Shown when score is between {row.min_percent}% and {row.max_percent}%.
                 </CardDescription>
@@ -138,6 +266,35 @@ const AdminLeadGenQuizResponses = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor={`min-${row.id}`}>Min %</Label>
+                <Input
+                  id={`min-${row.id}`}
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={row.min_percent}
+                  onChange={(e) =>
+                    updateRow(row.id, { min_percent: e.target.value === "" ? 0 : Number(e.target.value) })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`max-${row.id}`}>Max %</Label>
+                <Input
+                  id={`max-${row.id}`}
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={row.max_percent}
+                  onChange={(e) =>
+                    updateRow(row.id, { max_percent: e.target.value === "" ? 0 : Number(e.target.value) })
+                  }
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor={`title-${row.id}`}>Title (first chat bubble)</Label>
               <Input

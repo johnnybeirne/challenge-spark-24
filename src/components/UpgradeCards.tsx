@@ -25,9 +25,18 @@ function PlanCard({ plan, featured }: { plan: UpgradeCardPlan; featured?: boolea
         <h3 className="mt-3 text-base font-bold text-foreground">{plan.name}</h3>
         <p className="mt-2 text-2xl font-black text-foreground">{plan.price}</p>
         <p className="mt-2 flex-1 text-sm text-muted-foreground">{plan.description}</p>
-        <Button asChild className="mt-4 w-full" variant={featured ? "default" : "outline"}>
+        <Button
+          asChild
+          className={
+            featured
+              ? "mt-4 w-full"
+              : "mt-4 w-full bg-orange-500 text-white hover:bg-orange-600 border-transparent"
+          }
+          variant={featured ? "default" : "outline"}
+        >
           <Link to={plan.ctaLink}>{plan.ctaText}</Link>
         </Button>
+
       </CardContent>
     </Card>
   );

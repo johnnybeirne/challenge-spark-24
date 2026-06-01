@@ -148,7 +148,7 @@ const StepEditorCard = ({
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Live preview
           </p>
-          <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm md:text-base leading-relaxed text-foreground/90">
+          <div className="whitespace-pre-line rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm md:text-base leading-relaxed text-foreground/90">
             {preview.trim().length > 0 ? preview : (
               <span className="text-muted-foreground italic">Preview appears here as you type.</span>
             )}

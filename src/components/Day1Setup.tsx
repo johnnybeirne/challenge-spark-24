@@ -1276,9 +1276,16 @@ const Day1Setup = ({ onComplete }: Props) => {
   const renderTemplate = (id: string, fallback: string): string => {
     const tpl = day1Templates[id] ?? defaultsById[id] ?? fallback;
     const rendered = renderDay1Preview(tpl, liveTagValues);
-    // Strip any unresolved [tag] placeholders so the user never sees raw brackets.
-    return rendered.replace(/\s*\[[a-z_]+\]/gi, "").replace(/\s+/g, " ").trim();
+    // Strip any unresolved [tag] placeholders but preserve newlines / paragraph breaks.
+    return rendered
+      .replace(/\s*\[[a-z_]+\]/gi, "")
+      .split("\n")
+      .map((line) => line.replace(/[ \t]+/g, " ").trim())
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
   };
+
 
 
 

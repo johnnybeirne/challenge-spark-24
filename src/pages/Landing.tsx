@@ -128,7 +128,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
             {t("hero.cta_label", "Start the quiz")}
             <ArrowRight className="h-4 w-4" />
           </Button>
-          <p className="text-sm font-medium text-muted-foreground">{t("hero.cta_note", "No signup required to get your diagnosis.")}</p>
+          
         </div>
       </div>
 

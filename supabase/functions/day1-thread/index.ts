@@ -35,6 +35,7 @@ interface ProblemInputs {
 interface PromiseInputs {
   firstName?: string;
   audience?: string; // step 1 — broad audience
+  superpower?: string; // step 10 — what the builder does better than anyone
   topicHint?: string; // step 6 — trigger moment
   problem?: string;
   how?: string;
@@ -123,6 +124,7 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const audience = sanitise(inputs.audience);
   const trigger = sanitise(inputs.topicHint);
+  const superpower = sanitise(inputs.superpower);
   const problem = sanitise(inputs.problem);
   const how = sanitise(inputs.how);
   const outcome = sanitise(inputs.outcome);
@@ -136,6 +138,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const userPrompt = [
     firstName ? `Builder's first name: ${firstName}` : null,
     `Audience (their words): ${audience}`,
+    superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
     trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,
     `Problem the audience is stuck on (their words): ${problem}`,
     `Process — how the builder takes them through it (their words): ${how}`,

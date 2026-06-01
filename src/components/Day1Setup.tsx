@@ -47,7 +47,7 @@ const JohnnyAvatar = () => (
 // bold/accent inline spans with a tiny pencil-to-edit affordance.
 // ---------------------------------------------------------------------------
 
-export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType";
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType" | "superpower";
 export type EchoSegment = { echo: EchoField };
 export type MsgSegment = string | EchoSegment;
 export type Msg = string | MsgSegment[];
@@ -506,6 +506,7 @@ export interface SetupData {
   audience?: string;
   how?: string;
   outcome?: string;
+  superpower?: string;
 }
 
 /** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */
@@ -534,9 +535,9 @@ interface Props {
   onComplete: (data: SetupData) => void;
 }
 
-// Sequence: 4 audience-type → 1 who you serve → 5 result type → 6 avatar detail
+// Sequence: 4 audience-type → 1 who you serve → 10 superpower → 5 result type → 6 avatar detail
 // → 2 problem → 3 process → 9 result → 7 promise → 8 AI builder.
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },
@@ -696,7 +697,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
 
   const initialStep: Step = (() => {
-    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
+    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || persistedStep === 10 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
 
@@ -709,6 +710,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step1Phase, setStep1Phase] = useState<"intro" | "input">(saved?.audience ? "input" : "intro");
+  const [step10Phase, setStep10Phase] = useState<"intro" | "input">(saved?.superpower ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
   const [step9Phase, setStep9Phase] = useState<"intro" | "input">(saved?.outcome ? "input" : "intro");
@@ -732,6 +734,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [audience, setAudience] = useState<string>(saved?.audience ?? "");
   const [how, setHow] = useState<string>(saved?.how ?? "");
   const [outcome, setOutcome] = useState<string>(saved?.outcome ?? "");
+  const [superpower, setSuperpower] = useState<string>(saved?.superpower ?? "");
 
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
@@ -770,9 +773,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Sequence: 4 → 1 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
+  // Sequence: 4 → 1 → 10 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 1: 4, 5: 1, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
+    const baseMap: Record<number, Step> = { 1: 4, 10: 1, 5: 10, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -896,7 +899,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const ensurePromise = async (): Promise<void> => {
-    const cacheKey = `${audience.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const cacheKey = `${audience.trim()}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
     const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
     const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
     if (cached && cachedKey === cacheKey) return;
@@ -907,6 +910,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           inputs: {
             firstName,
             audience: audience.trim(),
+            superpower: superpower.trim(),
             topicHint: topicHint.trim(),
             problem: problem.trim(),
             how: how.trim(),
@@ -940,8 +944,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!audience.trim()) return;
       persistFoundation({ audience: audience.trim() });
       profileSaved("Who you serve");
-      setStep5Phase(saved?.challengeType ? "choose" : "intro");
-      setStep(5);
+      setStep10Phase(saved?.superpower ? "input" : "intro");
+      setStep(10);
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
@@ -1017,6 +1021,13 @@ const Day1Setup = ({ onComplete }: Props) => {
     // Next: describe who you serve more specifically (open text).
     setStep(1);
   };
+  const handleSuperpowerNext = () => {
+    if (!superpower.trim()) return;
+    persistFoundation({ superpower: superpower.trim() } as Partial<SetupData>);
+    profileSaved("Your superpower");
+    setStep5Phase(saved?.challengeType ? "choose" : "intro");
+    setStep(5);
+  };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const description = challengeOptions.find((o) => o.value === v)?.description ?? v;
@@ -1057,6 +1068,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       audience: audience.trim(),
       how: how.trim(),
       outcome: outcome.trim(),
+      superpower: superpower.trim(),
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 
@@ -1114,6 +1126,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       audience: audience.trim(),
       how: how.trim(),
       outcome: outcome.trim(),
+      superpower: superpower.trim(),
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });
@@ -1174,6 +1187,10 @@ const Day1Setup = ({ onComplete }: Props) => {
     setTopicHint(v);
     persistFoundation({ topicHint: v } as Partial<SetupData>);
   };
+  const saveSuperpower = (v: string) => {
+    setSuperpower(v);
+    persistFoundation({ superpower: v } as Partial<SetupData>);
+  };
   const audienceTypeLabel =
     audienceType === "b2b"
       ? "business or professional"
@@ -1187,6 +1204,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     how: { value: how, onSave: saveHow, format: (v) => v },
     outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
+    superpower: { value: superpower, onSave: saveSuperpower, format: (v) => v },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
     challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
   };
@@ -1267,6 +1285,57 @@ const Day1Setup = ({ onComplete }: Props) => {
             </div>
           );
         })()}
+
+        {step === 10 && (() => {
+          const audienceTrim10 = audience.trim().replace(/\.$/, "");
+          const step10Message: Msg =
+            `So${fn}, what's your superpower? What do you do better than anyone else?`;
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {step10Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step10-intro-${audienceTrim10.length}`}
+                  messages={[step10Message]}
+                  echoMap={echoMap}
+                  skipMakingNotes
+                  onComplete={() => setStep10Phase("input")}
+                />
+              )}
+
+              {step10Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={[step10Message]} echoMap={echoMap} />
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={superpower}
+                        onChange={(e) => setSuperpower(e.target.value)}
+                        placeholder="e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding."
+                        rows={5}
+                        className="min-h-[140px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
+                        }}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      onClick={handleSuperpowerNext}
+                      disabled={!superpower.trim()}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
 
         {step === 2 && (() => {
           // Use the user's own audience/avatar words so the example feels relevant to them.
@@ -1397,6 +1466,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               echo: subjectField3,
             });
           }
+          if (superpower.trim()) step3RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
           if (painLower) step3RecapRows.push({ label: "Their problem is:", echo: "problem" });
 
 
@@ -1500,6 +1570,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               echo: subjectField9,
             });
           }
+          if (superpower.trim()) step9RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
           if (painLower9) step9RecapRows.push({ label: "Their problem is:", echo: "problem" });
           if (howTrim9) step9RecapRows.push({ label: "Your process is:", echo: "how" });
 
@@ -1757,6 +1828,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const step6RecapRows: RecapRow[] = [];
           if (audienceLower6) step6RecapRows.push({ label: audienceLabel(audienceTrim6), echo: "audience" });
+          if (superpower.trim()) step6RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
           if (challengeType) step6RecapRows.push({ label: "Your goal is:", echo: "challengeType" });
 
 

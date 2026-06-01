@@ -1635,7 +1635,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <div className="space-y-5">
                   <JohnnyRecapPanel
                     acknowledgement={step9Ack}
-                    rows={step9RecapRows}
+                    rows={recapRowsBefore(9)}
                     question={step9Question}
                     echoMap={echoMap}
                   />

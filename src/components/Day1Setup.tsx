@@ -1950,6 +1950,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                     </div>
                   </div>
 
+                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
+
                   <RevealControls className="space-y-6">
                     {/* Challenge Promise */}
                     {promise && (

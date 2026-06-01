@@ -751,7 +751,18 @@ const Day1Setup = ({ onComplete }: Props) => {
   useEffect(() => {
     trackEvent("onboarding_viewed", { step });
     try { localStorage.setItem(DAY1_STEP_KEY, String(step)); } catch {}
-  }, [step]);
+    // Persist current step into challenge_progress.ai_outputs (DB-synced) so
+    // refreshing on another device keeps the wizard at the same step.
+    if (authUser) {
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: { ...prev.challenge.aiOutputs, day1Step: String(step) },
+        },
+      }));
+    }
+  }, [step, authUser, setState]);
 
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
@@ -761,15 +772,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // rest of the flow treats it as confirmed and we never re-ask B2B vs B2C.
   useEffect(() => {
     if (!saved?.audienceType && memoryAudienceType) {
-      try {
-        const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-        if (!current.audienceType) {
-          localStorage.setItem(
-            SETUP_KEY,
-            JSON.stringify({ ...current, audienceType: memoryAudienceType }),
-          );
-        }
-      } catch {}
+      persistFoundation({ audienceType: memoryAudienceType });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -783,12 +786,37 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (prev !== undefined) setStep(prev);
   };
   // Persist foundation answers progressively so refresh doesn't wipe them.
+  // Writes to BOTH localStorage (pre-auth fallback) and
+  // challenge_progress.ai_outputs.day1Setup (DB-synced source of truth).
   const persistFoundation = (patch: Partial<SetupData>) => {
     try {
-      const current = JSON.parse(localStorage.getItem(SETUP_KEY) || "{}");
-      localStorage.setItem(SETUP_KEY, JSON.stringify({ ...current, ...patch }));
+      const current = JSON.parse(localStorage.getItem(SETUP_KEY) || localStorage.getItem(LEGACY_SETUP_KEY) || "{}");
+      const merged = { ...current, ...patch };
+      localStorage.setItem(SETUP_KEY, JSON.stringify(merged));
+      if (authUser) {
+        setState((prev) => {
+          let existing: any = {};
+          try {
+            const fromState = prev.challenge.aiOutputs?.day1Setup;
+            if (typeof fromState === "string") existing = JSON.parse(fromState);
+            else if (fromState && typeof fromState === "object") existing = fromState;
+          } catch {}
+          return {
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: {
+                ...prev.challenge.aiOutputs,
+                day1Setup: JSON.stringify({ ...existing, ...patch }),
+              },
+            },
+          };
+        });
+      }
     } catch {}
   };
+
+
 
   // Top-right confirmation that the latest answer has been written to the
   // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).

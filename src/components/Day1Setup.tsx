@@ -633,15 +633,37 @@ const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
 
+  // Source of truth: state.challenge.aiOutputs.day1Setup (DB-synced).
+  // localStorage is kept ONLY as a pre-auth fallback so anonymous users can
+  // resume mid-flow. Anything we write here is also pushed into aiOutputs.
+  const initialAiOutputs = state.challenge?.aiOutputs as Record<string, unknown> | undefined;
+
+  const persistedStepValue = (() => {
+    const fromDb = initialAiOutputs?.day1Step;
+    if (typeof fromDb === "number") return fromDb;
+    if (typeof fromDb === "string" && fromDb !== "") {
+      const n = Number(fromDb);
+      if (!Number.isNaN(n)) return n;
+    }
+    try {
+      const raw = localStorage.getItem(DAY1_STEP_KEY);
+      return raw ? Number(raw) : 0;
+    } catch { return 0; }
+  })() as Step;
+
   const handleResetDay1 = () => {
     try {
       localStorage.removeItem(SETUP_KEY);
+      localStorage.removeItem(LEGACY_SETUP_KEY);
       localStorage.setItem(DAY1_STEP_KEY, "4");
     } catch {}
     setState((prev) => {
       const aiOutputs = Object.fromEntries(
-        Object.entries(prev.challenge.aiOutputs ?? {}).filter(([k]) => !k.startsWith("day1_")),
+        Object.entries(prev.challenge.aiOutputs ?? {}).filter(
+          ([k]) => !k.startsWith("day1_") && k !== "day1Setup" && k !== "day1Step",
+        ),
       );
+      aiOutputs.day1Step = "4" as any;
       const tasks = Object.fromEntries(
         Object.entries(prev.challenge.tasks ?? {}).filter(([k]) => !k.startsWith("day1_")),
       );
@@ -663,13 +685,12 @@ const Day1Setup = ({ onComplete }: Props) => {
     try { window.location.reload(); } catch {}
   };
 
-  // Restore prior in-progress assessment from saved setup + persisted step
-  const saved = (() => { try { return JSON.parse(localStorage.getItem(SETUP_KEY) || "null"); } catch { return null; } })();
-  const persistedStep = (() => { try { return Number(localStorage.getItem(DAY1_STEP_KEY)) as Step; } catch { return 0 as Step; } })();
+  // Restore prior in-progress assessment from saved setup + persisted step.
+  const saved = readSetupRaw(initialAiOutputs);
+  const persistedStep = persistedStepValue;
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
 
   // Audience type may already be known from earlier surfaces (signup, assessment).
-  // Pull it from saved setup first, then from memory, so Day 1 never re-asks B2B vs B2C.
   const memoryAudienceType =
     state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
       ? (state.memory.audienceType as "b2b" | "b2c")
@@ -681,6 +702,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
+
 
   const [step, setStep] = useState<Step>(initialStep);
 

@@ -1126,6 +1126,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       audience: audience.trim(),
       how: how.trim(),
       outcome: outcome.trim(),
+      superpower: superpower.trim(),
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });

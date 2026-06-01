@@ -5,7 +5,6 @@ import {
   fetchPremiumFromSupabase,
   PREMIUM_CHANGED_EVENT,
 } from "@/lib/premium";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 export const usePremium = () => {

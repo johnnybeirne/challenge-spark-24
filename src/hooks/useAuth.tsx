@@ -161,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    clearSupabaseAuthStorage();
     const attempt = () => withAuthTimeout(
       supabase.auth.signInWithPassword({ email, password }),
       "Sign in took too long. Please try again."

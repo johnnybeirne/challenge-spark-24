@@ -162,7 +162,7 @@ const EchoText = ({
       setEditing(false);
     };
     return (
-      <span className="inline-flex items-center gap-1 align-middle">
+      <span className="inline-flex flex-wrap items-center gap-1 align-middle max-w-full">
         <input
           autoFocus
           value={draft}
@@ -177,9 +177,9 @@ const EchoText = ({
               setEditing(false);
             }
           }}
-          className="font-semibold text-primary bg-transparent border-b border-primary/60 focus:outline-none focus:border-primary px-0.5 min-w-[6ch]"
-          style={{ width: `${Math.max(draft.length + 1, 6)}ch` }}
+          className="font-semibold text-primary bg-transparent border-b border-primary/60 focus:outline-none focus:border-primary px-0.5 min-w-[6ch] max-w-full flex-1"
         />
+
         <button
           type="button"
           onClick={commit}

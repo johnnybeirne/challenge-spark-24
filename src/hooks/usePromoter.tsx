@@ -19,13 +19,14 @@ export interface PromoterRecord {
   created_at: string;
 }
 
-export function usePromoter() {
+export function usePromoter(enabled = true) {
   const { user } = useAuth();
   const [promoter, setPromoter] = useState<PromoterRecord | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
 
   const fetchPromoter = async () => {
-    if (!user) { setLoading(false); return; }
+    if (!enabled || !user) { setPromoter(null); setLoading(false); return; }
+    setLoading(true);
     try {
       const { data } = await (supabase.from("promoters") as any)
         .select("*")
@@ -38,7 +39,7 @@ export function usePromoter() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchPromoter(); }, [user]);
+  useEffect(() => { fetchPromoter(); }, [enabled, user]);
 
   const becomePromoter = async () => {
     if (!user) return null;

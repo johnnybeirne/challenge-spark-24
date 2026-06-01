@@ -1393,7 +1393,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step3RecapRows: RecapRow[] = [];
           if (subjectField3) {
             step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Your avatar is:" : audienceLabel(audienceTrim3),
+              label: subjectField3 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim3),
               echo: subjectField3,
             });
           }
@@ -1496,7 +1496,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step9RecapRows: RecapRow[] = [];
           if (subjectField9) {
             step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Your avatar is:" : audienceLabel(audienceTrim9),
+              label: subjectField9 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim9),
               echo: subjectField9,
             });
           }

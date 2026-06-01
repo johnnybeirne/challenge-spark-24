@@ -1021,6 +1021,13 @@ const Day1Setup = ({ onComplete }: Props) => {
     // Next: describe who you serve more specifically (open text).
     setStep(1);
   };
+  const handleSuperpowerNext = () => {
+    if (!superpower.trim()) return;
+    persistFoundation({ superpower: superpower.trim() } as Partial<SetupData>);
+    profileSaved("Your superpower");
+    setStep5Phase(saved?.challengeType ? "choose" : "intro");
+    setStep(5);
+  };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const description = challengeOptions.find((o) => o.value === v)?.description ?? v;

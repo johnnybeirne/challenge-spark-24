@@ -51,7 +51,19 @@ const NEXT_STEP: Record<UserStage, { label: string; href: string }> = {
 
 export const useUserStage = (): StageFlags => {
   const { state } = useAppState();
-  const { isPremium } = usePremium();
+  const suppressPremiumCheck = typeof window !== "undefined" && (
+    window.location.pathname === "/owner-console" ||
+    window.location.pathname.startsWith("/owner-console/") ||
+    window.location.pathname === "/admin" ||
+    window.location.pathname.startsWith("/admin/") ||
+    window.location.pathname === "/challenge/join" ||
+    window.location.pathname === "/join" ||
+    window.location.pathname === "/blueprint/join" ||
+    window.location.pathname === "/blueprint-join" ||
+    window.location.pathname === "/waitlist" ||
+    window.location.pathname === "/waitlist/thanks"
+  );
+  const { isPremium } = usePremium(!suppressPremiumCheck);
 
   return useMemo(() => {
     const tasks = state.challenge?.tasks ?? {};

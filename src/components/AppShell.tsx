@@ -24,7 +24,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
-  const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join";
+  const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
   const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const authenticated = !!authUser || !!state.user;

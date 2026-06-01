@@ -51,7 +51,9 @@ export function useUserRole(): UseUserRoleResult {
     window.location.pathname === "/challenge/join" ||
     window.location.pathname === "/join" ||
     window.location.pathname === "/blueprint/join" ||
-    window.location.pathname === "/blueprint-join"
+    window.location.pathname === "/blueprint-join" ||
+    window.location.pathname === "/waitlist" ||
+    window.location.pathname === "/waitlist/thanks"
   );
   const { isPremium } = usePremium(!suppressBackgroundRoleQueries);
   const { promoter, loading: promoterLoading } = usePromoter(!suppressBackgroundRoleQueries);

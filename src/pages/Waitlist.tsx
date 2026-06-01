@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ interface WaitlistEntry {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-const WAITLIST_JOIN_TIMEOUT_MS = 15000;
+const WAITLIST_JOIN_TIMEOUT_MS = 65000;
 
 const joinWaitlistPublicly = async (body: {
   first_name: string;
@@ -75,16 +75,6 @@ const Waitlist = () => {
   const [loading, setLoading] = useState(false);
   const [signedUp, setSignedUp] = useState<WaitlistEntry | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [totalSignups, setTotalSignups] = useState(0);
-
-  const loadCount = useCallback(async () => {
-    const { count } = await supabase
-      .from("waitlist_signups")
-      .select("id", { count: "exact", head: true });
-    if (count !== null) setTotalSignups(count);
-  }, []);
-
-  useEffect(() => { loadCount(); }, [loadCount]);
 
   const sendInviteEmail = async (entry: WaitlistEntry) => {
     const url = `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`;
@@ -163,7 +153,6 @@ const Waitlist = () => {
         navigate(`/waitlist/thanks?ref=${existing.referral_code}`, { state: { name: existing.name || trimmedName || null } });
       } else if (data) {
         toast.success("You're in! Check your inbox.");
-        loadCount();
         sendInviteEmail(data);
         try { sessionStorage.setItem("waitlist:name", trimmedName); } catch {}
         navigate(`/waitlist/thanks?ref=${data.referral_code}`, { state: { name: trimmedName || null } });

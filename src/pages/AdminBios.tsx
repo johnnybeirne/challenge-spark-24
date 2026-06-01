@@ -395,40 +395,59 @@ const AdminBios = () => {
     });
   };
 
+  const deleteRow = async (r: BioRow): Promise<string | null> => {
+    if (r.waitlist_id) {
+      const { error } = await supabase.from("waitlist_signups").delete().eq("id", r.waitlist_id);
+      if (error) return error.message;
+    }
+    if (r.profile_user_id) {
+      const { error } = await supabase.from("profiles").delete().eq("user_id", r.profile_user_id);
+      if (error) return error.message;
+    }
+    return null;
+  };
+
   const deleteSelected = async () => {
-    const ids = filtered
-      .filter((r) => selected.has(r.key) && r.waitlist_id)
-      .map((r) => r.waitlist_id!) as string[];
-    if (ids.length === 0) {
-      toast.info("Only waitlist rows can be deleted here.");
+    const targets = filtered.filter((r) => selected.has(r.key));
+    if (targets.length === 0) {
+      toast.info("No rows selected.");
       return;
     }
-    if (!window.confirm(`Delete ${ids.length} waitlist signup${ids.length === 1 ? "" : "s"}? This cannot be undone.`))
+    if (!window.confirm(`Delete ${targets.length} registrant${targets.length === 1 ? "" : "s"}? This cannot be undone.`))
       return;
-    const { error } = await supabase.from("waitlist_signups").delete().in("id", ids);
-    if (error) {
-      toast.error(`Failed to delete: ${error.message}`);
-      return;
+    let failed = 0;
+    let firstError: string | null = null;
+    for (const r of targets) {
+      const err = await deleteRow(r);
+      if (err) {
+        failed += 1;
+        if (!firstError) firstError = err;
+      }
     }
-    toast.success(`Deleted ${ids.length} signup${ids.length === 1 ? "" : "s"}.`);
+    if (failed > 0) {
+      toast.error(`Failed to delete ${failed} of ${targets.length}${firstError ? `: ${firstError}` : ""}`);
+    } else {
+      toast.success(`Deleted ${targets.length} registrant${targets.length === 1 ? "" : "s"}.`);
+    }
     await load();
   };
 
   const deleteOne = async (r: BioRow) => {
-    if (!r.waitlist_id) {
-      toast.info("Only waitlist rows can be deleted.");
+    if (!r.waitlist_id && !r.profile_user_id) {
+      toast.info("Nothing to delete for this row.");
       return;
     }
-    if (!window.confirm(`Delete waitlist signup for ${r.email}? This cannot be undone.`)) return;
-    const { error } = await supabase.from("waitlist_signups").delete().eq("id", r.waitlist_id);
-    if (error) {
-      toast.error(`Failed: ${error.message}`);
+    if (!window.confirm(`Delete registrant ${r.email || r.name || ""}? This cannot be undone.`)) return;
+    const err = await deleteRow(r);
+    if (err) {
+      toast.error(`Failed: ${err}`);
       return;
     }
     toast.success("Deleted.");
     setOpenRow(null);
     await load();
   };
+
 
   const clearFlag = async (r: BioRow) => {
     if (!r.waitlist_id) return;
@@ -914,17 +933,18 @@ const AdminBios = () => {
                                     </DropdownMenuItem>
                                   </>
                                 )}
-                                {r.waitlist_id && (
+                                {(r.waitlist_id || r.profile_user_id) && (
                                   <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                       onClick={() => deleteOne(r)}
                                       className="text-destructive focus:text-destructive"
                                     >
-                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete signup
+                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete registrant
                                     </DropdownMenuItem>
                                   </>
                                 )}
+
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </td>
@@ -1111,18 +1131,19 @@ const AdminBios = () => {
               </div>
 
               <div className="mt-5 flex items-center justify-between gap-2 pt-4 border-t">
-                {openRow.waitlist_id ? (
+                {(openRow.waitlist_id || openRow.profile_user_id) ? (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => deleteOne(openRow)}
                     className="text-destructive hover:text-destructive gap-1.5"
                   >
-                    <Trash2 className="h-3.5 w-3.5" /> Delete signup
+                    <Trash2 className="h-3.5 w-3.5" /> Delete registrant
                   </Button>
                 ) : (
                   <div />
                 )}
+
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setOpenRow(null)} disabled={saving}>
                     Cancel

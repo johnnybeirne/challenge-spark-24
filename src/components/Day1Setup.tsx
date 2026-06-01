@@ -1597,16 +1597,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? "What do they walk away with by the end of Day 3?"
               : "Finally, describe the result they'll walk away with by the end of Day 3.";
 
-          const step9RecapRows: RecapRow[] = [];
-          if (subjectField9) {
-            step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim9),
-              echo: subjectField9,
-            });
-          }
-          if (superpower.trim()) step9RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
-          if (painLower9) step9RecapRows.push({ label: "Their problem is:", echo: "problem" });
-          if (howTrim9) step9RecapRows.push({ label: "Your process is:", echo: "how" });
+
+
 
 
 

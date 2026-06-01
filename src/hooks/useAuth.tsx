@@ -19,7 +19,7 @@ const AUTH_REQUEST_TIMEOUT_MS = 15000;
 const AUTH_TIMEOUT_MESSAGE = "Auth request timed out. Check Supabase project health and try again.";
 
 const withAuthTimeout = async <T,>(request: Promise<T>): Promise<T> => {
-  let timeoutId: ReturnType<typeof window.setTimeout>;
+  let timeoutId: number | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timeoutId = window.setTimeout(() => reject(new Error(AUTH_TIMEOUT_MESSAGE)), AUTH_REQUEST_TIMEOUT_MS);
   });
@@ -27,7 +27,7 @@ const withAuthTimeout = async <T,>(request: Promise<T>): Promise<T> => {
   try {
     return await Promise.race([request, timeout]);
   } finally {
-    window.clearTimeout(timeoutId!);
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
   }
 };
 

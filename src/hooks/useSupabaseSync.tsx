@@ -217,25 +217,37 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
     const unlocksRaw = localStorage.getItem("challengeos_unlocks");
     const memoryRaw = localStorage.getItem("leadio_memory") || localStorage.getItem("challengeos_memory");
     const trainingRaw = localStorage.getItem("leadio_training");
+    const assessmentRaw = localStorage.getItem("challengeos_assessment");
+    const day1SetupRaw = localStorage.getItem("leadio_day1_setup");
+    const day1StepRaw = localStorage.getItem("leadio_day1_step");
 
-    if (!challengeRaw && !unlocksRaw && !memoryRaw && !trainingRaw) return null;
+    if (!challengeRaw && !unlocksRaw && !memoryRaw && !trainingRaw && !assessmentRaw && !day1SetupRaw && !day1StepRaw) return null;
 
     const challenge = challengeRaw ? JSON.parse(challengeRaw) : null;
     const unlocks = unlocksRaw ? JSON.parse(unlocksRaw) : [];
     const memory = memoryRaw ? JSON.parse(memoryRaw) : null;
     const training = trainingRaw ? JSON.parse(trainingRaw) : null;
+    const assessment = assessmentRaw ? JSON.parse(assessmentRaw) : null;
+    const day1Setup = day1SetupRaw ? JSON.parse(day1SetupRaw) : null;
+    const day1Step = day1StepRaw ? Number(day1StepRaw) : null;
 
-    if (challenge) {
-      const startedAt = ensureStartedAt(challenge.startedAt);
+    // Merge pre-auth day1 wizard draft into challenge.ai_outputs so it persists.
+    const aiOutputs: Record<string, unknown> = { ...(challenge?.aiOutputs ?? {}) };
+    if (day1Setup) aiOutputs.day1Setup = day1Setup;
+    if (day1Step != null && !Number.isNaN(day1Step)) aiOutputs.day1Step = day1Step;
+
+    if (challenge || day1Setup || day1Step != null) {
+      const base = challenge ?? {};
+      const startedAt = ensureStartedAt(base.startedAt);
       await saveChallengeProgress(userId, {
-        currentDay: challenge.currentDay ?? 1,
+        currentDay: base.currentDay ?? 1,
         startedAt,
-        endsAt: getChallengeEndsAt(startedAt, challenge.endsAt),
-        tasks: challenge.tasks ?? {},
-        aiOutputs: challenge.aiOutputs ?? {},
-        launchUrl: challenge.launchUrl ?? "",
-        completed: challenge.completed ?? false,
-        calendarAdded: challenge.calendarAdded ?? false,
+        endsAt: getChallengeEndsAt(startedAt, base.endsAt),
+        tasks: base.tasks ?? {},
+        aiOutputs,
+        launchUrl: base.launchUrl ?? "",
+        completed: base.completed ?? false,
+        calendarAdded: base.calendarAdded ?? false,
       });
     }
 
@@ -253,8 +265,22 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       await saveTraining(userId, { ...fallbackTraining, ...training });
     }
 
+    if (assessment && typeof assessment === "object") {
+      try {
+        await (supabase.from("ai_user_context") as any).upsert(
+          { user_id: userId, assessment },
+          { onConflict: "user_id" }
+        );
+      } catch {}
+    }
+
     clearLocalStorage();
+    try {
+      localStorage.removeItem("leadio_day1_setup");
+      localStorage.removeItem("leadio_day1_step");
+    } catch {}
     return null;
+
   } catch {
     return null;
   }

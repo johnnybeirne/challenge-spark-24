@@ -1450,7 +1450,6 @@ const Day1Setup = ({ onComplete }: Props) => {
             problemHintByChallenge[challengeType] ??
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          const hasSubjectForMsg = Boolean(whoLower || audienceLower);
           const step2Subject = whoLower || audienceLower;
           const step2Messages: Msg[] = [
             renderTemplate(

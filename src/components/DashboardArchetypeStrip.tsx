@@ -40,9 +40,43 @@ const DashboardArchetypeStrip = () => {
   const { t: tContent } = useSiteContent("results");
 
   const assessment = state.assessment as AssessmentResult | null;
-  if (!assessment || !("challengeType" in (assessment as object))) return null;
+  const hasResult = !!assessment && "challengeType" in (assessment as object);
 
-  const score = assessment.diagnosticScore ?? 0;
+  const firstName =
+    state.user?.name?.split(" ")[0] ||
+    (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name?.split(" ")[0] ||
+    (authUser?.user_metadata as { name?: string } | undefined)?.name?.split(" ")[0] ||
+    "";
+
+  if (!hasResult) {
+    return (
+      <section className="rounded-2xl border border-dashed border-border bg-card p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
+            </p>
+            <p className="mt-1.5 text-base font-semibold text-foreground sm:text-lg">
+              Discover whether you're a Pioneer, Architect, or Authority.
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Take the 2-minute quiz so your 3-day challenge fits where you are right now.
+            </p>
+          </div>
+          <Link
+            to="/assessment"
+            className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-wide text-primary-foreground transition-colors hover:bg-primary/90 sm:self-center"
+          >
+            Take the quiz
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  const score = assessment!.diagnosticScore ?? 0;
+
   const percent = Math.round((score / 9) * 100);
   const tier =
     assessment.diagnosticLevel === "low" ||
@@ -57,11 +91,8 @@ const DashboardArchetypeStrip = () => {
   const archetypeName = rawName.replace(/^you'?re\s+(an?|the)\s+/i, "").trim() || cfg.name;
   const tagline = tContent(`archetypes.${tier}_tagline`, cfg.tagline);
 
-  const firstName =
-    state.user?.name?.split(" ")[0] ||
-    (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name?.split(" ")[0] ||
-    (authUser?.user_metadata as { name?: string } | undefined)?.name?.split(" ")[0] ||
-    "";
+
+
 
   return (
     <section

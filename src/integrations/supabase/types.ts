@@ -481,6 +481,27 @@ export type Database = {
           },
         ]
       }
+      day1_step_messages: {
+        Row: {
+          id: string
+          message: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id: string
+          message: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          message?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       diagnostic_responses: {
         Row: {
           created_at: string

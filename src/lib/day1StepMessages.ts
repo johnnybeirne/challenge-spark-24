@@ -111,9 +111,12 @@ export const loadDay1Steps = (): Day1StepMessage[] => {
   }
 };
 
+export const DAY1_STEPS_UPDATED_EVENT = "day1-steps-updated";
+
 export const saveDay1Steps = (steps: Day1StepMessage[]) => {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(DAY1_STORAGE_KEY, JSON.stringify(steps));
+  window.dispatchEvent(new Event(DAY1_STEPS_UPDATED_EVENT));
 };
 
 export const renderDay1Preview = (
@@ -125,3 +128,29 @@ export const renderDay1Preview = (
     const value = values[key];
     return value && value.length > 0 ? value : match;
   });
+
+// React hook — returns a live map of step id → message that re-renders
+// whenever the admin saves new templates (same tab or other tabs).
+export const useDay1Templates = (): Record<string, string> => {
+  const toMap = (list: Day1StepMessage[]) =>
+    list.reduce<Record<string, string>>((acc, s) => {
+      acc[s.id] = s.message;
+      return acc;
+    }, {});
+
+  const [map, setMap] = useState<Record<string, string>>(() => toMap(loadDay1Steps()));
+
+  useEffect(() => {
+    const refresh = () => setMap(toMap(loadDay1Steps()));
+    window.addEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+    window.addEventListener("storage", (e) => {
+      if (e.key === DAY1_STORAGE_KEY) refresh();
+    });
+    return () => {
+      window.removeEventListener(DAY1_STEPS_UPDATED_EVENT, refresh);
+    };
+  }, []);
+
+  return map;
+};
+

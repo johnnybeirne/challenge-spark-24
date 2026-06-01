@@ -1187,6 +1187,10 @@ const Day1Setup = ({ onComplete }: Props) => {
     setTopicHint(v);
     persistFoundation({ topicHint: v } as Partial<SetupData>);
   };
+  const saveSuperpower = (v: string) => {
+    setSuperpower(v);
+    persistFoundation({ superpower: v } as Partial<SetupData>);
+  };
   const audienceTypeLabel =
     audienceType === "b2b"
       ? "business or professional"

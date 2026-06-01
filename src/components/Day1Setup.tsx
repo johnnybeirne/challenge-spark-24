@@ -284,14 +284,15 @@ const audienceLabel = (value: string) =>
   isPluralValue(value) ? "Your audience are:" : "Your audience is:";
 
 
-const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
+const RecapCard = ({ rows, echoMap, bare = false }: { rows: RecapRow[]; echoMap: EchoMap; bare?: boolean }) => {
   const visible = rows.filter((r) => {
     const entry = echoMap[r.echo];
     return entry && (entry.value ?? "").trim().length > 0;
   });
   if (visible.length === 0) return null;
   return (
-    <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5">
+    <div className={bare ? "space-y-1.5" : "rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5"}>
+
       {visible.map((r) => {
         const entry = echoMap[r.echo]!;
         const wrappedFormat = (v: string) => {
@@ -1791,7 +1792,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             {step5Phase === "choose" && (
               <div className="space-y-3">
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
-                <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} />
+                <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} bare />
 
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 

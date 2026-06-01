@@ -933,17 +933,18 @@ const AdminBios = () => {
                                     </DropdownMenuItem>
                                   </>
                                 )}
-                                {r.waitlist_id && (
+                                {(r.waitlist_id || r.profile_user_id) && (
                                   <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                       onClick={() => deleteOne(r)}
                                       className="text-destructive focus:text-destructive"
                                     >
-                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete signup
+                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete registrant
                                     </DropdownMenuItem>
                                   </>
                                 )}
+
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </td>

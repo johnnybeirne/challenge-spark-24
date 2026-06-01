@@ -277,6 +277,12 @@ const sentenceCase = (s: string) => {
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 };
 
+const isPluralValue = (s: string) => /,|\s(and|&|\+|\/)\s/i.test((s || "").trim());
+
+const audienceLabel = (value: string) =>
+  isPluralValue(value) ? "Your audience are:" : "Your audience is:";
+
+
 const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
   const visible = rows.filter((r) => {
     const entry = echoMap[r.echo];
@@ -1329,11 +1335,12 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step3RecapRows: RecapRow[] = [];
           if (subjectField3) {
             step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Your avatar is" : "Your audience is",
+              label: subjectField3 === "topic" ? "Your avatar is:" : audienceLabel(audienceTrim3),
               echo: subjectField3,
             });
           }
-          if (painLower) step3RecapRows.push({ label: "Their problem is", echo: "problem" });
+          if (painLower) step3RecapRows.push({ label: "Their problem is:", echo: "problem" });
+
 
 
           // Typed intro: lead with Johnny's AI reaction (if it landed in time)
@@ -1431,12 +1438,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step9RecapRows: RecapRow[] = [];
           if (subjectField9) {
             step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Your avatar is" : "Your audience is",
+              label: subjectField9 === "topic" ? "Your avatar is:" : audienceLabel(audienceTrim9),
               echo: subjectField9,
             });
           }
-          if (painLower9) step9RecapRows.push({ label: "Their problem is", echo: "problem" });
-          if (howTrim9) step9RecapRows.push({ label: "Your process is", echo: "how" });
+          if (painLower9) step9RecapRows.push({ label: "Their problem is:", echo: "problem" });
+          if (howTrim9) step9RecapRows.push({ label: "Your process is:", echo: "how" });
+
 
 
           const step9IntroMessages: Msg[] = [step9Ack];
@@ -1700,8 +1708,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             "What's happening for them right now that makes your three-day challenge the perfect solution?";
 
           const step6RecapRows: RecapRow[] = [];
-          if (audienceLower6) step6RecapRows.push({ label: "Your audience is", echo: "audience" });
-          if (challengeType) step6RecapRows.push({ label: "Your goal is", echo: "challengeType" });
+          if (audienceLower6) step6RecapRows.push({ label: audienceLabel(audienceTrim6), echo: "audience" });
+          if (challengeType) step6RecapRows.push({ label: "Your goal is:", echo: "challengeType" });
+
 
 
           const step6IntroMessages: Msg[] = [step6Ack];

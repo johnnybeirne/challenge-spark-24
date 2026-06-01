@@ -690,12 +690,10 @@ const Day1Setup = ({ onComplete }: Props) => {
   const persistedStep = persistedStepValue;
   const hasFoundation = !!(saved?.problem && saved?.audience && saved?.how);
 
-  // Audience type may already be known from earlier surfaces (signup, assessment).
-  const memoryAudienceType =
-    state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
-      ? (state.memory.audienceType as "b2b" | "b2c")
-      : null;
-  const knownAudienceType: "b2b" | "b2c" | null = saved?.audienceType ?? null;
+  // Audience type must always be picked explicitly on this step.
+  // Never pre-select from memory, quiz, or prior saved value.
+  const knownAudienceType: "b2b" | "b2c" | null = null;
+
 
   const initialStep: Step = (() => {
     if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;

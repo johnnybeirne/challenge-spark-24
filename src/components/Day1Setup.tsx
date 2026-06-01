@@ -277,6 +277,12 @@ const sentenceCase = (s: string) => {
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 };
 
+const isPluralValue = (s: string) => /,|\s(and|&|\+|\/)\s/i.test((s || "").trim());
+
+const audienceLabel = (value: string) =>
+  isPluralValue(value) ? "Your audience are:" : "Your audience is:";
+
+
 const RecapCard = ({ rows, echoMap }: { rows: RecapRow[]; echoMap: EchoMap }) => {
   const visible = rows.filter((r) => {
     const entry = echoMap[r.echo];

@@ -690,7 +690,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
-  const [challengeType, setChallengeType] = useState<string>(saved?.challengeType ?? "");
+  const [challengeType, setChallengeType] = useState<string>("");
   const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
   const { isListening: isDictating, toggle: toggleDictation } = useDictation();
 

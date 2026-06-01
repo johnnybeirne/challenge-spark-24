@@ -1,20 +1,44 @@
 import { useEffect, useState } from "react";
-import { isPremiumUser, getAppliedCoupon, PREMIUM_CHANGED_EVENT } from "@/lib/premium";
+import {
+  isPremiumUser,
+  getAppliedCoupon,
+  fetchPremiumFromSupabase,
+  PREMIUM_CHANGED_EVENT,
+} from "@/lib/premium";
+import { supabase } from "@/integrations/supabase/client";
 
 export const usePremium = () => {
   const [premium, setPremiumState] = useState<boolean>(() => isPremiumUser());
   const [coupon, setCoupon] = useState<string | null>(() => getAppliedCoupon());
 
   useEffect(() => {
-    const update = () => {
+    let cancelled = false;
+
+    const refresh = async () => {
+      await fetchPremiumFromSupabase();
+      if (cancelled) return;
       setPremiumState(isPremiumUser());
       setCoupon(getAppliedCoupon());
     };
-    window.addEventListener(PREMIUM_CHANGED_EVENT, update);
-    window.addEventListener("storage", update);
+
+    // Initial load
+    refresh();
+
+    // Refresh whenever auth state changes (login / logout / token refresh)
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      refresh();
+    });
+
+    const onLocal = () => {
+      setPremiumState(isPremiumUser());
+      setCoupon(getAppliedCoupon());
+    };
+    window.addEventListener(PREMIUM_CHANGED_EVENT, onLocal);
+
     return () => {
-      window.removeEventListener(PREMIUM_CHANGED_EVENT, update);
-      window.removeEventListener("storage", update);
+      cancelled = true;
+      sub.subscription.unsubscribe();
+      window.removeEventListener(PREMIUM_CHANGED_EVENT, onLocal);
     };
   }, []);
 

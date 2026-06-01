@@ -1211,6 +1211,35 @@ const Day1Setup = ({ onComplete }: Props) => {
     challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
   };
 
+  // Cumulative recap rows for the current step. Each prior answer is its own
+  // labelled row — never combined. RecapCard hides rows whose value is empty.
+  const recapRowsBefore = (currentStep: number): RecapRow[] => {
+    const rows: RecapRow[] = [];
+    const after = (s: number) => ![4, 1].includes(currentStep) || currentStep > s; // placeholder, real checks below
+    void after; // silence unused
+    const onSteps = (...steps: number[]) => steps.includes(currentStep);
+    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim()) {
+      rows.push({ label: "You work with:", echo: "audience" });
+    }
+    if (onSteps(5, 2, 3, 9, 7) && superpower.trim()) {
+      rows.push({ label: "Your superpower:", echo: "superpower" });
+    }
+    if (onSteps(2, 3, 9, 7) && challengeType) {
+      rows.push({ label: "Your goal:", echo: "challengeType" });
+    }
+    if (onSteps(3, 9, 7) && problem.trim()) {
+      rows.push({ label: "The problem:", echo: "problem" });
+    }
+    if (onSteps(9, 7) && how.trim()) {
+      rows.push({ label: "Your process:", echo: "how" });
+    }
+    if (onSteps(7) && outcome.trim()) {
+      rows.push({ label: "The result:", echo: "outcome" });
+    }
+    return rows;
+  };
+
+
 
 
   return (

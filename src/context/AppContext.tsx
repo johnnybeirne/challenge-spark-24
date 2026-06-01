@@ -423,6 +423,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [syncEnabled, setSyncEnabled] = useState(false);
   const prevUnlocksRef = useRef<string[]>([]);
   const qa = useQaPreview();
+  const isAuthEntryRoute = typeof window !== "undefined" && (
+    window.location.pathname === "/challenge/join" ||
+    window.location.pathname === "/join" ||
+    window.location.pathname === "/blueprint/join" ||
+    window.location.pathname === "/blueprint-join"
+  );
 
   // Display state with any QA simulated-date override applied.
   // The override is NEVER persisted — useSupabaseSync below receives the raw state.
@@ -436,6 +442,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (authLoading) return;
 
     setSyncEnabled(false);
+
+    if (authUser && isAuthEntryRoute) {
+      setHydrated(true);
+      return;
+    }
 
     if (authUser) {
       (async () => {
@@ -498,7 +509,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setHydrated(true);
       setSyncEnabled(false);
     }
-  }, [authUser, authLoading]);
+  }, [authUser, authLoading, isAuthEntryRoute]);
 
   // Pre-auth only: cache assessment/memory/training in localStorage so anonymous
   // visitors don't lose their data before signing up. Once authenticated, the

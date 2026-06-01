@@ -5,9 +5,10 @@ import {
   fetchPremiumFromSupabase,
   PREMIUM_CHANGED_EVENT,
 } from "@/lib/premium";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export const usePremium = () => {
+  const { user } = useAuth();
   const [premium, setPremiumState] = useState<boolean>(() => isPremiumUser());
   const [coupon, setCoupon] = useState<string | null>(() => getAppliedCoupon());
 
@@ -15,7 +16,7 @@ export const usePremium = () => {
     let cancelled = false;
 
     const refresh = async () => {
-      await fetchPremiumFromSupabase();
+      await fetchPremiumFromSupabase(user?.id ?? null);
       if (cancelled) return;
       setPremiumState(isPremiumUser());
       setCoupon(getAppliedCoupon());
@@ -23,11 +24,6 @@ export const usePremium = () => {
 
     // Initial load
     refresh();
-
-    // Refresh whenever auth state changes (login / logout / token refresh)
-    const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      refresh();
-    });
 
     const onLocal = () => {
       setPremiumState(isPremiumUser());
@@ -37,10 +33,9 @@ export const usePremium = () => {
 
     return () => {
       cancelled = true;
-      sub.subscription.unsubscribe();
       window.removeEventListener(PREMIUM_CHANGED_EVENT, onLocal);
     };
-  }, []);
+  }, [user?.id]);
 
   return { isPremium: premium, coupon };
 };

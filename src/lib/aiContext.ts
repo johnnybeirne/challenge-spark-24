@@ -29,8 +29,9 @@ export async function refreshAiContext(authUser: User | null, state: AppState): 
 
     const payload = {
       user_id: authUser.id,
+      assessment: (assessment as any) ?? null,
       assessment_type: (assessment as any)?.identityType ?? (assessment as any)?.type ?? null,
-      assessment_score: (assessment as any)?.score ?? (assessment as any)?.percent ?? null,
+      assessment_score: (assessment as any)?.score ?? (assessment as any)?.percent ?? (assessment as any)?.diagnosticScore ?? null,
       weak_dimension: (assessment as any)?.weakDimension ?? (assessment as any)?.lowestDimension ?? null,
       lms_progress: (state as any).training ?? {},
       completed_modules: completedModules,

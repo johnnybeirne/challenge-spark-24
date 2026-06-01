@@ -111,8 +111,8 @@ const AdminDay1Steps = () => {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button onClick={handleSave} className="gap-2">
-          <Save className="h-4 w-4" /> Save all changes
+        <Button onClick={handleSave} disabled={saving} className="gap-2">
+          <Save className="h-4 w-4" /> {saving ? "Syncing…" : "Save all changes"}
         </Button>
       </div>
     </div>

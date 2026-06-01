@@ -207,6 +207,8 @@ export function generatePartnerCode(): string {
   return code;
 }
 
+const APP_HYDRATION_TIMEOUT_MS = 6000;
+
 /* ───── Unlock engine ───── */
 
 interface UnlockDef {

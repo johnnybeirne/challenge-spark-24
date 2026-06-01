@@ -1545,10 +1545,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
           const step3Ack = `That's clear${fn}.`;
-          const step3Question =
+          const step3Question = renderTemplate(
+            "step-6",
             subjectField3 || painLower
               ? "What's the process you take them through to create the result?"
-              : "Now describe your process — the steps you take them through to create the result.";
+              : "Now describe your process — the steps you take them through to create the result.",
+          );
 
 
 

@@ -1795,7 +1795,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} bare />
                 {superpower.trim() && (
                   <p className="text-xs text-muted-foreground leading-snug">
-                    Your superpower is also saved to your dashboard.
+                    Note: I am saving these to your Dashboard
                   </p>
                 )}
 

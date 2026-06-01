@@ -68,7 +68,7 @@ export const setPremium = async (value: boolean, coupon?: string): Promise<void>
         patch.partner_code_used = null;
         patch.premium_since = null;
       }
-      await supabase.from("profiles").update(patch).eq("user_id", user.id);
+      await (supabase.from("profiles") as any).update(patch).eq("user_id", user.id);
     }
     cachedPremium = value;
     cachedCoupon = value ? (coupon ? coupon.toUpperCase() : cachedCoupon) : null;

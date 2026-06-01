@@ -7,10 +7,9 @@ import { Shield } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { checkHasRole } from "@/lib/adminRole";
 
 const AdminLayout = () => {
-  const { user, session, loading } = useAuth();
+  const { user, loading } = useAuth();
   const { pathname } = useLocation();
   const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
@@ -48,13 +47,10 @@ const AdminLayout = () => {
         return;
       }
 
-      let data = false;
-      let error: unknown = null;
-      try {
-        data = await checkHasRole(userId, "admin", session?.access_token);
-      } catch (roleError) {
-        error = roleError;
-      }
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
       if (!cancelled) {
         if (error && fromAdminLogin) {
           setIsAdmin(true);
@@ -77,7 +73,7 @@ const AdminLayout = () => {
       cancelled = true;
       window.clearTimeout(roleTimeout);
     };
-  }, [userId, session?.access_token]);
+  }, [userId]);
 
   const routeLabel = pathname.startsWith("/owner-console") ? "owner console" : "admin";
 

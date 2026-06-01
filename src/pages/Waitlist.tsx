@@ -24,7 +24,7 @@ interface WaitlistEntry {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-const WAITLIST_JOIN_TIMEOUT_MS = 15000;
+const WAITLIST_JOIN_TIMEOUT_MS = 65000;
 
 const joinWaitlistPublicly = async (body: {
   first_name: string;

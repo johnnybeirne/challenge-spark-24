@@ -429,6 +429,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.location.pathname === "/blueprint/join" ||
     window.location.pathname === "/blueprint-join"
   );
+  const isOwnerConsoleRoute = typeof window !== "undefined" && (
+    window.location.pathname === "/owner-console" ||
+    window.location.pathname.startsWith("/owner-console/") ||
+    window.location.pathname === "/admin" ||
+    window.location.pathname.startsWith("/admin/")
+  );
 
   // Display state with any QA simulated-date override applied.
   // The override is NEVER persisted — useSupabaseSync below receives the raw state.
@@ -443,7 +449,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setSyncEnabled(false);
 
-    if (authUser && isAuthEntryRoute) {
+    if (authUser && (isAuthEntryRoute || isOwnerConsoleRoute)) {
       setHydrated(true);
       return;
     }
@@ -509,7 +515,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setHydrated(true);
       setSyncEnabled(false);
     }
-  }, [authUser, authLoading, isAuthEntryRoute]);
+  }, [authUser, authLoading, isAuthEntryRoute, isOwnerConsoleRoute]);
 
   // Pre-auth only: cache assessment/memory/training in localStorage so anonymous
   // visitors don't lose their data before signing up. Once authenticated, the
@@ -546,7 +552,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Debounced AI context snapshot — keeps ai_user_context fresh for KB-aware AI.
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || isAuthEntryRoute || isOwnerConsoleRoute) return;
     const t = setTimeout(() => {
       import("@/lib/aiContext").then(({ refreshAiContext }) => {
         refreshAiContext(authUser, state);
@@ -562,6 +568,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     (state.user as any)?.isPremium,
     (state.user as any)?.directReferralCount,
     state.memory,
+    isAuthEntryRoute,
+    isOwnerConsoleRoute,
   ]);
 
   // Wrap setState to auto-run unlock checks

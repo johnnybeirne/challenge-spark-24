@@ -1451,14 +1451,14 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
           const hasSubjectForMsg = Boolean(whoLower || audienceLower);
+          const step2Subject = whoLower || audienceLower;
           const step2Messages: Msg[] = [
-            hasSubjectForMsg
-              ? [
-                  `Got it${fn}. So for `,
-                  { echo: whoLower ? "topic" : "audience" } as MsgSegment,
-                  ` — what's the specific problem or obstacle they're trying to overcome right now?`,
-                ]
-              : "Now tell me about the specific problem or obstacle they're trying to overcome.",
+            renderTemplate(
+              "step-5",
+              step2Subject
+                ? `Got it${fn}. So for ${step2Subject} — what's the specific problem or obstacle they're trying to overcome right now?`
+                : "Now tell me about the specific problem or obstacle they're trying to overcome.",
+            ),
           ];
 
 

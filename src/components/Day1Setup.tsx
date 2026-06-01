@@ -1313,13 +1313,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
 
         {step === 1 && (() => {
-          const step1Message: Msg = audienceType
-            ? [
-                `Got it${fn}. Describe the specific type of `,
-                { echo: "audienceType" } as MsgSegment,
-                ` you work with.`,
-              ]
-            : `Got it${fn}. Describe who you serve.`;
+          const step1Message: Msg = renderTemplate(
+            "step-2",
+            audienceType
+              ? `Got it${fn}. Describe the specific type of audience you work with.`
+              : `Got it${fn}. Describe who you serve.`,
+          );
 
           return (
             <div className="space-y-6 animate-fade-in">

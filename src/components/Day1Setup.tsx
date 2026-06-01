@@ -1211,6 +1211,35 @@ const Day1Setup = ({ onComplete }: Props) => {
     challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
   };
 
+  // Cumulative recap rows for the current step. Each prior answer is its own
+  // labelled row — never combined. RecapCard hides rows whose value is empty.
+  const recapRowsBefore = (currentStep: number): RecapRow[] => {
+    const rows: RecapRow[] = [];
+    const after = (s: number) => ![4, 1].includes(currentStep) || currentStep > s; // placeholder, real checks below
+    void after; // silence unused
+    const onSteps = (...steps: number[]) => steps.includes(currentStep);
+    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim()) {
+      rows.push({ label: "You work with:", echo: "audience" });
+    }
+    if (onSteps(5, 2, 3, 9, 7) && superpower.trim()) {
+      rows.push({ label: "Your superpower:", echo: "superpower" });
+    }
+    if (onSteps(2, 3, 9, 7) && challengeType) {
+      rows.push({ label: "Your goal:", echo: "challengeType" });
+    }
+    if (onSteps(3, 9, 7) && problem.trim()) {
+      rows.push({ label: "The problem:", echo: "problem" });
+    }
+    if (onSteps(9, 7) && how.trim()) {
+      rows.push({ label: "Your process:", echo: "how" });
+    }
+    if (onSteps(7) && outcome.trim()) {
+      rows.push({ label: "The result:", echo: "outcome" });
+    }
+    return rows;
+  };
+
+
 
 
   return (
@@ -1254,6 +1283,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               {step1Phase === "input" && (
                 <div className="space-y-5">
                   <StaticAi messages={[step1Message]} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(1)} echoMap={echoMap} />
+
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1312,6 +1343,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               {step10Phase === "input" && (
                 <div className="space-y-5">
                   <StaticAi messages={[step10Message]} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(10)} echoMap={echoMap} />
+
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1393,6 +1426,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               {step2Phase === "input" && (
                 <div className="space-y-5">
                   <StaticAi messages={step2Messages} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(2)} echoMap={echoMap} />
+
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
@@ -1465,15 +1500,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? "What's the process you take them through to create the result?"
               : "Now describe your process — the steps you take them through to create the result.";
 
-          const step3RecapRows: RecapRow[] = [];
-          if (subjectField3) {
-            step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim3),
-              echo: subjectField3,
-            });
-          }
-          if (superpower.trim()) step3RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
-          if (painLower) step3RecapRows.push({ label: "Their problem is:", echo: "problem" });
+
+
 
 
 
@@ -1501,7 +1529,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   <JohnnyRecapPanel
                     leadIn={step3Reaction ?? undefined}
                     acknowledgement={step3Ack}
-                    rows={step3RecapRows}
+                    rows={recapRowsBefore(3)}
                     question={step3Question}
                     echoMap={echoMap}
                   />
@@ -1569,16 +1597,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? "What do they walk away with by the end of Day 3?"
               : "Finally, describe the result they'll walk away with by the end of Day 3.";
 
-          const step9RecapRows: RecapRow[] = [];
-          if (subjectField9) {
-            step9RecapRows.push({
-              label: subjectField9 === "topic" ? "Your challenge will help them with:" : audienceLabel(audienceTrim9),
-              echo: subjectField9,
-            });
-          }
-          if (superpower.trim()) step9RecapRows.push({ label: "Your superpower is:", echo: "superpower" });
-          if (painLower9) step9RecapRows.push({ label: "Their problem is:", echo: "problem" });
-          if (howTrim9) step9RecapRows.push({ label: "Your process is:", echo: "how" });
+
+
 
 
 
@@ -1600,7 +1620,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <div className="space-y-5">
                   <JohnnyRecapPanel
                     acknowledgement={step9Ack}
-                    rows={step9RecapRows}
+                    rows={recapRowsBefore(9)}
                     question={step9Question}
                     echoMap={echoMap}
                   />
@@ -1752,6 +1772,8 @@ const Day1Setup = ({ onComplete }: Props) => {
             {step5Phase === "choose" && (
               <div className="space-y-3">
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
+                <RecapCard rows={recapRowsBefore(5)} echoMap={echoMap} />
+
                 <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
                   {challengeOptions.map((opt, idx) => {
@@ -1912,6 +1934,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                       ))}
                     </div>
                   </div>
+
+                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
 
                   <RevealControls className="space-y-6">
                     {/* Challenge Promise */}

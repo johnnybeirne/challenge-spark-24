@@ -899,7 +899,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const ensurePromise = async (): Promise<void> => {
-    const cacheKey = `${audience.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const cacheKey = `${audience.trim()}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
     const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
     const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
     if (cached && cachedKey === cacheKey) return;

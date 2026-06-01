@@ -34,6 +34,12 @@ import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
+import {
+  defaultDay1Steps,
+  renderDay1Preview,
+  useDay1Templates,
+  type Day1TagKey,
+} from "@/lib/day1StepMessages";
 
 const JohnnyAvatar = () => (
   <img
@@ -1248,6 +1254,33 @@ const Day1Setup = ({ onComplete }: Props) => {
   const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
   const showProgress = stepNumber > 0;
 
+  // ---- Editable Day 1 step messages ----------------------------------------
+  // Templates come from the admin Day 1 Step Editor (/owner-console/day1-steps).
+  // Bracket tags like [first_name] / [audience] are substituted with the
+  // current user's real answers so the live flow uses the admin's wording.
+  const day1Templates = useDay1Templates();
+  const defaultsById = defaultDay1Steps.reduce<Record<string, string>>((acc, s) => {
+    acc[s.id] = s.message;
+    return acc;
+  }, {});
+  const liveTagValues: Record<Day1TagKey, string> = {
+    first_name: firstName && firstName !== "there" ? firstName : "",
+    audience: (audience || topicHint || "").trim(),
+    superpower: (superpower || "").trim(),
+    challenge_type: (challengeLabel(challengeType) || "").toLowerCase(),
+    problem: (problem || "").trim(),
+    process: (how || "").trim(),
+    outcome: (outcome || "").trim(),
+    promise: (step7Promise?.promise || "").trim(),
+  };
+  const renderTemplate = (id: string, fallback: string): string => {
+    const tpl = day1Templates[id] ?? defaultsById[id] ?? fallback;
+    const rendered = renderDay1Preview(tpl, liveTagValues);
+    // Strip any unresolved [tag] placeholders so the user never sees raw brackets.
+    return rendered.replace(/\s*\[[a-z_]+\]/gi, "").replace(/\s+/g, " ").trim();
+  };
+
+
 
 
 
@@ -1280,13 +1313,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
 
         {step === 1 && (() => {
-          const step1Message: Msg = audienceType
-            ? [
-                `Got it${fn}. Describe the specific type of `,
-                { echo: "audienceType" } as MsgSegment,
-                ` you work with.`,
-              ]
-            : `Got it${fn}. Describe who you serve.`;
+          const step1Message: Msg = renderTemplate(
+            "step-2",
+            audienceType
+              ? `Got it${fn}. Describe the specific type of audience you work with.`
+              : `Got it${fn}. Describe who you serve.`,
+          );
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -1341,11 +1373,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
-          const step10Message: Msg = [
-            `So${fn}, you work with `,
-            { echo: "audience" } as MsgSegment,
-            `. What's your superpower? What do you do for them better than anyone else?`,
-          ];
+          const step10Message: Msg = renderTemplate(
+            "step-3",
+            `So${fn}, you work with ${audienceTrim10 || "them"}. What's your superpower? What do you do for them better than anyone else?`,
+          );
 
 
           return (
@@ -1419,15 +1450,14 @@ const Day1Setup = ({ onComplete }: Props) => {
             problemHintByChallenge[challengeType] ??
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          const hasSubjectForMsg = Boolean(whoLower || audienceLower);
+          const step2Subject = whoLower || audienceLower;
           const step2Messages: Msg[] = [
-            hasSubjectForMsg
-              ? [
-                  `Got it${fn}. So for `,
-                  { echo: whoLower ? "topic" : "audience" } as MsgSegment,
-                  ` — what's the specific problem or obstacle they're trying to overcome right now?`,
-                ]
-              : "Now tell me about the specific problem or obstacle they're trying to overcome.",
+            renderTemplate(
+              "step-5",
+              step2Subject
+                ? `Got it${fn}. So for ${step2Subject} — what's the specific problem or obstacle they're trying to overcome right now?`
+                : "Now tell me about the specific problem or obstacle they're trying to overcome.",
+            ),
           ];
 
 
@@ -1515,10 +1545,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
           const step3Ack = `That's clear${fn}.`;
-          const step3Question =
+          const step3Question = renderTemplate(
+            "step-6",
             subjectField3 || painLower
               ? "What's the process you take them through to create the result?"
-              : "Now describe your process — the steps you take them through to create the result.";
+              : "Now describe your process — the steps you take them through to create the result.",
+          );
 
 
 
@@ -1612,10 +1644,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
           const step9Ack = `Last one${fn}.`;
-          const step9Question =
+          const step9Question = renderTemplate(
+            "step-7",
             subjectField9 || painLower9
               ? "What do they walk away with by the end of Day 3?"
-              : "Finally, describe the result they'll walk away with by the end of Day 3.";
+              : "Finally, describe the result they'll walk away with by the end of Day 3.",
+          );
 
 
 
@@ -1687,7 +1721,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 4 && (() => {
           const step4Messages = [
-            `Hi ${firstName}, let's start by identifying who you want to help.`,
+            renderTemplate("step-1", `Hi ${firstName}, let's start by identifying who you want to help.`),
           ];
 
           return (
@@ -1763,19 +1797,14 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower5 = audienceTrim5
             ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
             : "";
-          const step5Messages: Msg[] = audienceLower5
-            ? [
-                `Great${fn}.`,
-                [
-                  `With `,
-                  { echo: "audience" } as MsgSegment,
-                  ` in mind, what will your 3-day challenge help them achieve?`,
-                ],
-              ]
-            : [
-                `Great${fn}.`,
-                `What will your 3-day challenge help them achieve?`,
-              ];
+          const step5Messages: Msg[] = [
+            renderTemplate(
+              "step-4",
+              audienceLower5
+                ? `Great${fn}. With ${audienceLower5} in mind, what will your 3-day challenge help them achieve?`
+                : `Great${fn}. What will your 3-day challenge help them achieve?`,
+            ),
+          ];
 
           return (
           <div className="space-y-3 animate-fade-in">
@@ -1895,7 +1924,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Plain-text sentences used during typing. Missing fields are skipped
           // so we never display "You want to help ." or similar broken copy.
-          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`;
+          const intro = renderTemplate(
+            "step-8",
+            `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`,
+          );
           const closing = `That's what makes this challenge valuable — a clear path from where they are today to the exact result you've described.`;
 
           const guideLine = howClean

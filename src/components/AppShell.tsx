@@ -24,6 +24,7 @@ const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();
   const { pathname } = useLocation();
+  const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const { role } = useUserRole();
   const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -32,7 +33,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const showChallengerMobileNav = showChallengeSidebar && isChallengerShell;
   const hideCopilotRoutes = ["/assess", "/assessment"];
-  const showCopilotChat = authenticated && !hideCopilotRoutes.includes(pathname);
+  const showCopilotChat = authenticated && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
 
   // Subtle confirmation for the +50 "challenge started" momentum reward.

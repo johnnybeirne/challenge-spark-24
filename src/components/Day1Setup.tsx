@@ -1536,7 +1536,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   <JohnnyRecapPanel
                     leadIn={step3Reaction ?? undefined}
                     acknowledgement={step3Ack}
-                    rows={step3RecapRows}
+                    rows={recapRowsBefore(3)}
                     question={step3Question}
                     echoMap={echoMap}
                   />

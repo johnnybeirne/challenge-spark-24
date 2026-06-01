@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState 
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
+import { supabase } from "@/integrations/supabase/client";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";

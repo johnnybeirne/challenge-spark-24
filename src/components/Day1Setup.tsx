@@ -1924,7 +1924,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           // Plain-text sentences used during typing. Missing fields are skipped
           // so we never display "You want to help ." or similar broken copy.
-          const intro = `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`;
+          const intro = renderTemplate(
+            "step-8",
+            `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`,
+          );
           const closing = `That's what makes this challenge valuable — a clear path from where they are today to the exact result you've described.`;
 
           const guideLine = howClean

@@ -36,7 +36,7 @@ const DEFAULTS = {
 } as const;
 
 const DashboardArchetypeStrip = () => {
-  const { state, authUser } = useAppState();
+  const { state, authUser, hydrated } = useAppState();
   const { t: tContent } = useSiteContent("results");
 
   const assessment = state.assessment as AssessmentResult | null;
@@ -52,31 +52,31 @@ const DashboardArchetypeStrip = () => {
     "";
 
   if (!hasResult) {
+    // The user is inside the challenger dashboard — they've already taken the quiz upstream
+    // of signup. If the assessment hasn't hydrated yet, show a quiet skeleton; otherwise
+    // render a neutral welcome (NEVER prompt them to take a quiz they've already done).
+    const stillLoading = !hydrated;
     return (
-      <section className="rounded-2xl border border-dashed border-border bg-card p-4 shadow-sm sm:p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
+      <section className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5" aria-busy={stillLoading}>
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
+          </p>
+          {stillLoading ? (
+            <>
+              <div className="mt-2 h-6 w-2/3 animate-pulse rounded-md bg-muted" />
+              <div className="mt-2 h-4 w-1/2 animate-pulse rounded-md bg-muted/70" />
+            </>
+          ) : (
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Let's keep building. Your challenge is waiting below.
             </p>
-            <p className="mt-1.5 text-base font-semibold text-foreground sm:text-lg">
-              Discover whether you're a Pioneer, Architect, or Authority.
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Take the 2-minute quiz so your 3-day challenge fits where you are right now.
-            </p>
-          </div>
-          <Link
-            to="/assessment"
-            className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-wide text-primary-foreground transition-colors hover:bg-primary/90 sm:self-center"
-          >
-            Take the quiz
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          )}
         </div>
       </section>
     );
   }
+
 
   const score = assessment!.diagnosticScore ?? 0;
 

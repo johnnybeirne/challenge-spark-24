@@ -1,0 +1,1 @@
+ALTER TABLE public.ai_user_context ADD COLUMN IF NOT EXISTS assessment jsonb;

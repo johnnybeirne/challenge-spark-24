@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState 
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
+import { supabase } from "@/integrations/supabase/client";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
@@ -440,10 +441,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (async () => {
         await migrateLocalToSupabase(authUser.id);
         const remote = await loadFromSupabase(authUser.id);
+
+        // Hydrate the full assessment from ai_user_context (cross-device source of truth).
+        let remoteAssessment: AppState["assessment"] | null = null;
+        try {
+          const { data: aiCtx } = await supabase
+            .from("ai_user_context")
+            .select("assessment")
+            .eq("user_id", authUser.id)
+            .maybeSingle();
+          const raw = (aiCtx as { assessment?: unknown } | null)?.assessment;
+          if (raw && typeof raw === "object") {
+            remoteAssessment = raw as AppState["assessment"];
+          }
+        } catch {}
+
         if (remote) {
           setStateRaw((prev) => checkAndTriggerUnlocks({
               ...prev,
               ...remote,
+              assessment: remoteAssessment ?? remote.assessment ?? prev.assessment,
               community: prev.community,
               referrals: prev.referrals,
               onboarding: prev.onboarding,
@@ -455,9 +472,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           prevUnlocksRef.current = (remote.unlocks || []).map((u) => u.id);
         } else {
           // New user with no remote state — still award the signup bonus & run unlock rules.
-          setStateRaw((prev) => checkAndTriggerUnlocks(prev));
+          setStateRaw((prev) => checkAndTriggerUnlocks(
+            remoteAssessment ? { ...prev, assessment: remoteAssessment } : prev
+          ));
         }
         setHydrated(true);
+
         setSyncEnabled(true);
       })();
     } else {

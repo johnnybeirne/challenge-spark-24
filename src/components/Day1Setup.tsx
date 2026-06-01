@@ -2083,7 +2083,12 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="rounded-xl border border-border bg-card/60 p-4 text-sm space-y-2">
 
               <p className="font-semibold text-foreground">
-                A <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
+                {(() => {
+                  const label = challengeLabel(challengeType);
+                  const article = /^[aeiou]/i.test(label) ? "An" : "A";
+                  return article;
+                })()}{" "}
+                <span className="text-primary">{challengeLabel(challengeType)}</span> challenge for{" "}
                 <span className="text-primary">{audienceLabelShort(audienceType as "b2b" | "b2c")}</span>
                 {topicHint && <> — <span className="text-muted-foreground">{topicHint}</span></>}
               </p>

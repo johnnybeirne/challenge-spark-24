@@ -15,6 +15,25 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
 }
 
+const AUTH_REQUEST_TIMEOUT_MS = 15000;
+const AUTH_TIMEOUT_MESSAGE = "Auth request timed out. Check Supabase project health and try again.";
+
+const withAuthTimeout = async <T,>(request: Promise<T>): Promise<T> => {
+  let timeoutId: number | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(AUTH_TIMEOUT_MESSAGE)), AUTH_REQUEST_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([request, timeout]);
+  } finally {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  }
+};
+
+const normalizeAuthError = (error: unknown) =>
+  error instanceof Error ? error : new Error("Authentication request failed. Please try again.");
+
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -98,37 +117,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithMagicLink = async (email: string, metadata?: Record<string, string>) => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
-    });
-    return { error };
+    try {
+      const { error } = await withAuthTimeout(supabase.auth.signInWithOtp({
+        email,
+        options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
+      }));
+      return { error };
+    } catch (error) {
+      return { error: normalizeAuthError(error) };
+    }
   };
 
   const signUp = async (email: string, password: string, metadata?: Record<string, string>) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
-    });
-    return { data, error };
+    try {
+      const { data, error } = await withAuthTimeout(supabase.auth.signUp({
+        email,
+        password,
+        options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
+      }));
+      return { data, error };
+    } catch (error) {
+      return { data: null, error: normalizeAuthError(error) };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    return { data, error };
+    try {
+      const { data, error } = await withAuthTimeout(supabase.auth.signInWithPassword({ email, password }));
+      return { data, error };
+    } catch (error) {
+      return { data: null, error: normalizeAuthError(error) };
+    }
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    return { error };
+    try {
+      const { error } = await withAuthTimeout(supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      }));
+      return { error };
+    } catch (error) {
+      return { error: normalizeAuthError(error) };
+    }
   };
 
   const updatePassword = async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    return { error };
+    try {
+      const { error } = await withAuthTimeout(supabase.auth.updateUser({ password }));
+      return { error };
+    } catch (error) {
+      return { error: normalizeAuthError(error) };
+    }
   };
 
   const signOut = async () => { await supabase.auth.signOut(); };

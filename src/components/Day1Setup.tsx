@@ -1289,7 +1289,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
           const step10Message: Msg =
-            `So${fn}, what's your superpower? What do you do better than anyone else?`;
+            `So${fn}, you work with ${audienceTrim10}. What's your superpower? What do you do for them better than anyone else?`;
 
           return (
             <div className="space-y-6 animate-fade-in">

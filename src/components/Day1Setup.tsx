@@ -1329,11 +1329,12 @@ const Day1Setup = ({ onComplete }: Props) => {
           const step3RecapRows: RecapRow[] = [];
           if (subjectField3) {
             step3RecapRows.push({
-              label: subjectField3 === "topic" ? "Avatar" : "Audience",
+              label: subjectField3 === "topic" ? "Your avatar is" : "Your audience is",
               echo: subjectField3,
             });
           }
-          if (painLower) step3RecapRows.push({ label: "Problem", echo: "problem" });
+          if (painLower) step3RecapRows.push({ label: "Their problem is", echo: "problem" });
+
 
           // Typed intro: lead with Johnny's AI reaction (if it landed in time)
           // followed by the short acknowledgement. The recap + question render

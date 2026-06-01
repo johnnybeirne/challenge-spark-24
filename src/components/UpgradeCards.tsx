@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Crown, Sparkles } from "lucide-react";
+import { Crown, Sparkles, Gift, ArrowRight } from "lucide-react";
+
 import { useSiteConfig, type UpgradeCardPlan } from "@/context/SiteConfigContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
@@ -54,11 +55,33 @@ const UpgradeCards = () => {
     <section className="mt-6">
       <p className="mb-1 text-sm font-semibold text-foreground sm:text-base">{heading}</p>
       <p className="mb-4 text-xs font-medium text-muted-foreground">{urgency}</p>
+
+      <Link
+        to="/earn"
+        className="mb-3 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-4 py-3 transition hover:border-primary/50 hover:bg-primary/10"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <Gift className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-foreground">
+              Unlock with reward points
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Refer a friend and earn points toward lifetime access.
+            </p>
+          </div>
+        </div>
+        <ArrowRight className="h-4 w-4 shrink-0 text-primary" />
+      </Link>
+
       <div className="grid gap-3 sm:grid-cols-2">
         <PlanCard plan={plan1} />
         <PlanCard plan={plan2} featured />
       </div>
     </section>
+
   );
 };
 

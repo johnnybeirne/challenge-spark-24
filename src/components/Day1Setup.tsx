@@ -1644,10 +1644,12 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
           const step9Ack = `Last one${fn}.`;
-          const step9Question =
+          const step9Question = renderTemplate(
+            "step-7",
             subjectField9 || painLower9
               ? "What do they walk away with by the end of Day 3?"
-              : "Finally, describe the result they'll walk away with by the end of Day 3.";
+              : "Finally, describe the result they'll walk away with by the end of Day 3.",
+          );
 
 
 

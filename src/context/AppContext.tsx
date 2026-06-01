@@ -427,7 +427,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.location.pathname === "/challenge/join" ||
     window.location.pathname === "/join" ||
     window.location.pathname === "/blueprint/join" ||
-    window.location.pathname === "/blueprint-join"
+    window.location.pathname === "/blueprint-join" ||
+    window.location.pathname === "/waitlist" ||
+    window.location.pathname === "/waitlist/thanks"
   );
   const isOwnerConsoleRoute = typeof window !== "undefined" && (
     window.location.pathname === "/owner-console" ||

@@ -695,8 +695,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     state.memory?.audienceType === "b2b" || state.memory?.audienceType === "b2c"
       ? (state.memory.audienceType as "b2b" | "b2c")
       : null;
-  const knownAudienceType: "b2b" | "b2c" | null =
-    saved?.audienceType ?? memoryAudienceType;
+  const knownAudienceType: "b2b" | "b2c" | null = saved?.audienceType ?? null;
 
   const initialStep: Step = (() => {
     if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;

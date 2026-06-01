@@ -697,7 +697,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
 
   const initialStep: Step = (() => {
-    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
+    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || persistedStep === 10 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
 
@@ -710,6 +710,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step1Phase, setStep1Phase] = useState<"intro" | "input">(saved?.audience ? "input" : "intro");
+  const [step10Phase, setStep10Phase] = useState<"intro" | "input">(saved?.superpower ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
   const [step9Phase, setStep9Phase] = useState<"intro" | "input">(saved?.outcome ? "input" : "intro");

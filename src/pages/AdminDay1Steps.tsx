@@ -15,17 +15,19 @@ import {
   loadDay1Steps,
   renderDay1Preview,
   saveDay1Steps,
+  saveDay1StepsRemote,
 } from "@/lib/day1StepMessages";
 
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
   }, []);
 
-  // Save immediately on every keystroke — synchronous and unconditional so
-  // there is zero chance an edit fails to reach the live /day/1 flow.
+  // Local cache updates immediately on every keystroke so the editor stays
+  // snappy; remote sync happens on explicit Save (and on Reset).
   const updateStep = (id: string, message: string) =>
     setSteps((prev) => {
       const next = prev.map((s) => (s.id === id ? { ...s, message } : s));
@@ -33,16 +35,25 @@ const AdminDay1Steps = () => {
       return next;
     });
 
-  const handleSave = () => {
-    saveDay1Steps(steps);
-    trackEvent("admin_training_updated", { surface: "day1_step_editor" });
-    toast.success("Day 1 step messages updated");
+  const persistRemote = async (next: Day1StepMessage[], successMsg: string) => {
+    setSaving(true);
+    const { error } = await saveDay1StepsRemote(next);
+    setSaving(false);
+    if (error) {
+      toast.error("Could not sync to the cloud. Local edits still saved.");
+      return;
+    }
+    toast.success(successMsg);
   };
 
-  const handleResetAll = () => {
+  const handleSave = async () => {
+    await persistRemote(steps, "Day 1 step messages synced to the cloud");
+    trackEvent("admin_training_updated", { surface: "day1_step_editor" });
+  };
+
+  const handleResetAll = async () => {
     setSteps(defaultDay1Steps);
-    saveDay1Steps(defaultDay1Steps);
-    toast.message("Reverted to defaults.");
+    await persistRemote(defaultDay1Steps, "Reverted to defaults and synced.");
   };
 
   const handleResetOne = (id: string) => {
@@ -50,6 +61,7 @@ const AdminDay1Steps = () => {
     if (!def) return;
     updateStep(id, def.message);
   };
+
 
 
   return (

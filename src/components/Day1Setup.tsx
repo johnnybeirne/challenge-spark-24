@@ -773,9 +773,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   const advance = (next: Step) => setTimeout(() => setStep(next), 250);
 
-  // Sequence: 4 → 1 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
+  // Sequence: 4 → 1 → 10 → 5 → 6 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 1: 4, 5: 1, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
+    const baseMap: Record<number, Step> = { 1: 4, 10: 1, 5: 10, 6: 5, 2: 6, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };

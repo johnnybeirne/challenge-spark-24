@@ -173,6 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearSupabaseAuthStorage();
         return await attempt();
       }
+      setSession(result.data.session);
+      setUser(result.data.user);
       return result;
     } catch (error) {
       if (isAuthLockOrNetworkError(error)) {

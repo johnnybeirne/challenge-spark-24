@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, Navigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
@@ -8,49 +8,67 @@ import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY = 600;
+
 const AdminLayout = () => {
   const { user, loading } = useAuth();
   const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
   const [roleCheckFailed, setRoleCheckFailed] = useState(false);
+  const [redirectToJoin, setRedirectToJoin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     setRoleCheckFailed(false);
+    setRedirectToJoin(false);
     setCheckingRole(true);
-    const roleTimeout = window.setTimeout(() => {
-      if (!cancelled) {
-        setCheckingRole(false);
-        setRoleCheckFailed(true);
-      }
-    }, 6000);
 
-    const checkAdminRole = async () => {
-      if (!userId) {
+    if (!userId) {
+      setIsAdmin(false);
+      setCheckingRole(false);
+      return;
+    }
+
+    const attempt = async (n: number): Promise<void> => {
+      try {
+        const { data, error } = await supabase.rpc("has_role", {
+          _user_id: userId,
+          _role: "admin",
+        });
+        if (cancelled) return;
+        if (error) throw error;
+        if (data) {
+          setIsAdmin(true);
+          setCheckingRole(false);
+          return;
+        }
+        // No role found — not necessarily an error, but retry in case roles
+        // are still hydrating right after login.
+        if (n < MAX_RETRIES) {
+          setTimeout(() => { if (!cancelled) attempt(n + 1); }, RETRY_BASE_DELAY * 2 ** n);
+          return;
+        }
         setIsAdmin(false);
         setCheckingRole(false);
-        window.clearTimeout(roleTimeout);
-        return;
-      }
-
-      const { data, error } = await supabase.rpc("has_role", {
-        _user_id: userId,
-        _role: "admin",
-      });
-      if (!cancelled) {
-        setIsAdmin(Boolean(data) && !error);
-        setRoleCheckFailed(!!error);
+      } catch (err) {
+        if (cancelled) return;
+        console.warn(`[AdminLayout] owner-access check attempt ${n + 1} failed`, err);
+        if (n < MAX_RETRIES) {
+          setTimeout(() => { if (!cancelled) attempt(n + 1); }, RETRY_BASE_DELAY * 2 ** n);
+          return;
+        }
+        setRoleCheckFailed(true);
         setCheckingRole(false);
-        window.clearTimeout(roleTimeout);
+        setRedirectToJoin(true);
       }
     };
 
-    checkAdminRole();
+    attempt(0);
 
     return () => {
       cancelled = true;
-      window.clearTimeout(roleTimeout);
     };
   }, [userId]);
 
@@ -62,6 +80,11 @@ const AdminLayout = () => {
         <p className="text-sm text-muted-foreground">Checking owner access…</p>
       </div>
     );
+  }
+
+  if (redirectToJoin) {
+    const currentPath = window.location.pathname;
+    return <Navigate to={`/join?mode=login&redirect=${encodeURIComponent(currentPath)}`} replace />;
   }
 
   if (!user) {
@@ -88,7 +111,7 @@ const AdminLayout = () => {
         <h1 className="text-xl font-bold">Owner Access</h1>
         <p className="text-sm text-muted-foreground">
           {roleCheckFailed
-            ? "We couldn't verify owner access. Please refresh, or sign out and log in again."
+            ? "We couldn't verify owner access. Redirecting to sign in…"
             : `Your signed-in account (${user.email}) does not have admin access.`}
         </p>
         <Button asChild variant="outline">
@@ -97,6 +120,7 @@ const AdminLayout = () => {
       </div>
     );
   }
+
 
   return (
     <SidebarProvider>

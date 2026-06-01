@@ -256,11 +256,22 @@ const Dashboard = () => {
     };
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
+    const archetypeLabel = (() => {
+      const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
+      if (!a) return "";
+      const tier =
+        a.diagnosticLevel === "low" || a.diagnosticLevel === "mid" || a.diagnosticLevel === "high"
+          ? a.diagnosticLevel
+          : (() => {
+              const pct = Math.round(((a.diagnosticScore ?? 0) / 9) * 100);
+              return pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
+            })();
+      return { low: "Pioneer", mid: "Architect", high: "Authority" }[tier];
+    })();
+
     return (
       <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-20">
         <section className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
-
-          <DashboardArchetypeStrip />
 
           {/* INTRO VIDEO — welcome briefing */}
 
@@ -279,8 +290,8 @@ const Dashboard = () => {
                       authUser?.email?.split("@")[0] ||
                       "";
                     const fn = rawName.split(" ")[0] || "";
-                    const base = cfg.videoTitle || "Watch this first";
-                    return fn ? `${base} ${fn}` : base;
+                    const greeting = fn ? `Welcome ${fn}.` : "Welcome.";
+                    return archetypeLabel ? `${greeting} You're a ${archetypeLabel}.` : greeting;
                   })()}
                 </p>
 

@@ -177,6 +177,27 @@ const Unsubscribe = () => {
               </div>
               <h1 className="text-xl font-bold">{interpolate(config.already_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.already_body, vars)}</p>
+
+              {config.feedback_enabled && (
+                <div className="pt-2 space-y-2 text-left">
+                  <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
+                  <Textarea
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder={config.feedback_placeholder}
+                    rows={3}
+                  />
+                  <Button
+                    className="w-full"
+                    disabled={submitting || !reason.trim()}
+                    onClick={() => sendFeedback(false)}
+                  >
+                    {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                    {config.feedback_submit_label}
+                  </Button>
+                </div>
+              )}
+
               {config.resubscribe_enabled && (
                 <Button variant="outline" onClick={resubscribe} disabled={submitting} className="w-full">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}

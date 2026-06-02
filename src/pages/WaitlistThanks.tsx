@@ -91,13 +91,24 @@ const WaitlistThanks = () => {
         setLoading(false);
         return;
       }
-      const { data } = await supabase
-        .from("waitlist_signups")
-        .select("id,email,name,referral_code,confirmed_invites,waitlist_position")
+      const { data } = await (supabase
+        .from("public_waitlist_signup" as any) as any)
+        .select("name,first_name,surname,referral_code,confirmed_invites,waitlist_position")
         .eq("referral_code", ref)
         .maybeSingle();
       if (!cancelled) {
-        setEntry(data ?? null);
+        setEntry(
+          data
+            ? {
+                id: data.referral_code,
+                email: "",
+                name: data.name ?? null,
+                referral_code: data.referral_code,
+                confirmed_invites: data.confirmed_invites ?? 0,
+                waitlist_position: data.waitlist_position ?? 0,
+              }
+            : null,
+        );
         setLoading(false);
       }
     })();

@@ -1724,6 +1724,36 @@ export type Database = {
         }
         Relationships: []
       }
+      public_waitlist_signup: {
+        Row: {
+          confirmed_invites: number | null
+          current_tier: string | null
+          first_name: string | null
+          name: string | null
+          referral_code: string | null
+          surname: string | null
+          waitlist_position: number | null
+        }
+        Insert: {
+          confirmed_invites?: number | null
+          current_tier?: string | null
+          first_name?: string | null
+          name?: string | null
+          referral_code?: string | null
+          surname?: string | null
+          waitlist_position?: number | null
+        }
+        Update: {
+          confirmed_invites?: number | null
+          current_tier?: string | null
+          first_name?: string | null
+          name?: string | null
+          referral_code?: string | null
+          surname?: string | null
+          waitlist_position?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_adjust_partner_score: {

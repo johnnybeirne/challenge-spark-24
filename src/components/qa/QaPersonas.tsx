@@ -44,13 +44,27 @@ const QaPersonas = () => {
           Overlays tasks, AI outputs, points, referrals and dates. Nothing is saved to the database.
         </p>
       )}
-      <button
-        onClick={() => select("")}
-        disabled={!current}
-        className="w-full rounded border border-border bg-background px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted disabled:opacity-50"
-      >
-        Clear persona
-      </button>
+      <div className="grid grid-cols-2 gap-1.5">
+        <button
+          onClick={() => select("")}
+          disabled={!current}
+          className="rounded border border-border bg-background px-2 py-1 text-[11px] font-bold uppercase hover:bg-muted disabled:opacity-50"
+        >
+          Clear
+        </button>
+        <button
+          onClick={() => { window.location.href = "/challenger-dashboard"; }}
+          disabled={!current}
+          className="rounded border border-primary bg-primary px-2 py-1 text-[11px] font-bold uppercase text-primary-foreground hover:opacity-90 disabled:opacity-50"
+        >
+          Go to dashboard
+        </button>
+      </div>
+      {current && (
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          Persona only changes challenge/task/points state. Open the dashboard or a day page to see it.
+        </p>
+      )}
     </div>
   );
 };

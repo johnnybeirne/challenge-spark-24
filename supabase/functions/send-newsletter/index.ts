@@ -10,7 +10,17 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const FROM = "Johnny Beirne <johnny@johnnybeirne.com>";
-const APP_BASE_URL = "https://leadio.johnnybeirne.com";
+const DEFAULT_APP_BASE_URL = "https://leadio.johnnybeirne.com";
+
+async function getAppBaseUrl(admin: ReturnType<typeof createClient>): Promise<string> {
+  try {
+    const { data } = await admin.from("newsletter_settings").select("app_base_url").eq("id", 1).maybeSingle();
+    const v = (data?.app_base_url ?? "").toString().trim().replace(/\/+$/, "");
+    return v || DEFAULT_APP_BASE_URL;
+  } catch {
+    return DEFAULT_APP_BASE_URL;
+  }
+}
 
 function genToken() {
   return crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
@@ -74,9 +84,9 @@ function autolinkUrlTokens(html: string): string {
 }
 
 function ensureUnsubscribeFooter(html: string, unsubscribeUrl: string): string {
-  if (html.includes("{{unsubscribe_url}}") || html.toLowerCase().includes("unsubscribe")) {
-    return html;
-  }
+  // Only skip if a real unsubscribe token/link is already present — not just the word "unsubscribe".
+  if (html.includes("{{unsubscribe_url}}")) return html;
+  if (/href\s*=\s*["'][^"']*\/unsubscribe\?token=/i.test(html)) return html;
   const footer = `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#94a3b8;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
     <a href="${unsubscribeUrl}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a>
   </div>`;
@@ -117,6 +127,9 @@ Deno.serve(async (req) => {
     const { data: campaign, error: cErr } = await admin
       .from("newsletter_campaigns").select("*").eq("id", campaignId).single();
     if (cErr || !campaign) throw new Error("Campaign not found");
+
+    const APP_BASE_URL = await getAppBaseUrl(admin);
+
 
     // ---------- TEST MODE ----------
     if (mode === "test") {

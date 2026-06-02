@@ -747,6 +747,24 @@ export type Database = {
           },
         ]
       }
+      newsletter_settings: {
+        Row: {
+          app_base_url: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          app_base_url?: string
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          app_base_url?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_suppressions: {
         Row: {
           email: string
@@ -1496,6 +1514,93 @@ export type Database = {
           unlocked_at?: string
           user_id?: string
           value?: number
+        }
+        Relationships: []
+      }
+      unsubscribe_feedback: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          reason?: string
+        }
+        Relationships: []
+      }
+      unsubscribe_page_config: {
+        Row: {
+          already_body: string
+          already_heading: string
+          confirm_button_label: string
+          done_body: string
+          done_heading: string
+          error_body: string
+          error_heading: string
+          feedback_enabled: boolean
+          feedback_placeholder: string
+          feedback_prompt: string
+          feedback_skip_label: string
+          feedback_submit_label: string
+          id: number
+          ready_body: string
+          ready_heading: string
+          resubscribe_enabled: boolean
+          resubscribe_label: string
+          resubscribe_success: string
+          updated_at: string
+        }
+        Insert: {
+          already_body?: string
+          already_heading?: string
+          confirm_button_label?: string
+          done_body?: string
+          done_heading?: string
+          error_body?: string
+          error_heading?: string
+          feedback_enabled?: boolean
+          feedback_placeholder?: string
+          feedback_prompt?: string
+          feedback_skip_label?: string
+          feedback_submit_label?: string
+          id?: number
+          ready_body?: string
+          ready_heading?: string
+          resubscribe_enabled?: boolean
+          resubscribe_label?: string
+          resubscribe_success?: string
+          updated_at?: string
+        }
+        Update: {
+          already_body?: string
+          already_heading?: string
+          confirm_button_label?: string
+          done_body?: string
+          done_heading?: string
+          error_body?: string
+          error_heading?: string
+          feedback_enabled?: boolean
+          feedback_placeholder?: string
+          feedback_prompt?: string
+          feedback_skip_label?: string
+          feedback_submit_label?: string
+          id?: number
+          ready_body?: string
+          ready_heading?: string
+          resubscribe_enabled?: boolean
+          resubscribe_label?: string
+          resubscribe_success?: string
+          updated_at?: string
         }
         Relationships: []
       }

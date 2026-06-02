@@ -11,6 +11,7 @@ import RightRail from "./RightRail";
 import BottomNav from "./BottomNav";
 import BackButton from "./BackButton";
 import CountdownBottomBar from "./CountdownBottomBar";
+import QaModePanel from "./QaModePanel";
 
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
@@ -97,6 +98,8 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
       </div>
       {showCopilotChat && <AiCopilotChat />}
       {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={sidebarCollapsed} />}
+      <QaModePanel />
+
 
     </div>
   );

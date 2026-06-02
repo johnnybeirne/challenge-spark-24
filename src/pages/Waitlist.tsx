@@ -147,12 +147,10 @@ const Waitlist = () => {
       const data = resp.data;
 
       if (existing) {
-        toast.info("You're already on the list — we re-sent your invite link.");
         sendInviteEmail(existing);
         try { sessionStorage.setItem("waitlist:name", existing.name || trimmedName || ""); } catch {}
         navigate(`/waitlist/thanks?ref=${existing.referral_code}`, { state: { name: existing.name || trimmedName || null } });
       } else if (data) {
-        toast.success("You're in! Check your inbox.");
         sendInviteEmail(data);
         try { sessionStorage.setItem("waitlist:name", trimmedName); } catch {}
         navigate(`/waitlist/thanks?ref=${data.referral_code}`, { state: { name: trimmedName || null } });

@@ -81,7 +81,7 @@ const Unsubscribe = () => {
     setSubmitting(true);
     try {
       const data = await post({});
-      if (data.ok) setState(config.feedback_enabled ? "feedback" : "done");
+      if (data.ok) setState("done");
       else { setState("error"); setErrMsg(data.error || "Failed."); }
     } catch { setState("error"); setErrMsg("Network error."); }
     finally { setSubmitting(false); }
@@ -167,6 +167,26 @@ const Unsubscribe = () => {
               </div>
               <h1 className="text-xl font-bold">{interpolate(config.done_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.done_body, vars)}</p>
+              {config.feedback_enabled && (
+                <div className="pt-2 space-y-2 text-left">
+                  <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
+                  <Textarea
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder={config.feedback_placeholder}
+                    rows={3}
+                  />
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1" disabled={submitting} onClick={() => sendFeedback(true)}>
+                      {config.feedback_skip_label}
+                    </Button>
+                    <Button className="flex-1" disabled={submitting || !reason.trim()} onClick={() => sendFeedback(false)}>
+                      {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                      {config.feedback_submit_label}
+                    </Button>
+                  </div>
+                </div>
+              )}
               {config.resubscribe_enabled && (
                 <Button variant="outline" onClick={resubscribe} disabled={submitting} className="w-full">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}

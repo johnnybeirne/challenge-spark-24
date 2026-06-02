@@ -236,13 +236,16 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       }
     : state.community;
 
-  // currentDay: highest day reachable by timing OR by progress.
+  // currentDay: force to highest day reached by timing OR progress.
+  // We intentionally ignore the stored currentDay so the persona can move
+  // BACK to an earlier day (e.g. "Fresh signup") even if state was advanced.
   const progressDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 3 : persona.dayProgress[1] >= 1 ? 2 : 1;
-  const currentDay = Math.min(3, Math.max(state.challenge.currentDay, timing.currentDay, progressDay));
+  const currentDay = Math.min(3, Math.max(timing.currentDay, progressDay));
 
   return {
     ...state,
-    user: { ...state.user, joinedAt: timing.joinedAtIso },
+    user: { ...baseUser, joinedAt: timing.joinedAtIso },
+
     challenge: {
       ...state.challenge,
       startedAt: timing.startedAtIso,

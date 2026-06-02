@@ -3,6 +3,7 @@
 
 import type { AppState } from "@/context/AppContext";
 import { getChallengeEndsAt, CHALLENGE_DURATION_MS } from "@/lib/challengeWindow";
+import { seedCompletedDayData } from "@/lib/qaSeedData";
 
 export interface SimulatedTiming {
   joinedAtIso: string;
@@ -49,15 +50,21 @@ export function describeSimulatedDay(timing: SimulatedTiming): string {
 export function applySimulatedDate(state: AppState, simulatedIso: string | null | undefined): AppState {
   if (!simulatedIso || !state.user) return state;
   const t = computeSimulatedTiming(simulatedIso);
+  const currentDay = Math.max(state.challenge.currentDay, t.currentDay);
+  const completedThroughDay = t.completed ? 3 : Math.max(0, Math.min(3, currentDay - 1));
+  const seeded = seedCompletedDayData(state, completedThroughDay);
   return {
     ...state,
+    memory: seeded.memory,
     user: { ...state.user, joinedAt: t.joinedAtIso },
     challenge: {
       ...state.challenge,
       startedAt: t.startedAtIso,
       endsAt: t.endsAtIso,
-      currentDay: Math.max(state.challenge.currentDay, t.currentDay),
+      currentDay,
       completed: state.challenge.completed || t.completed,
+      tasks: seeded.tasks,
+      aiOutputs: seeded.aiOutputs,
     },
   };
 }

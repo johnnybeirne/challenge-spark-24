@@ -5,6 +5,7 @@
 import type { AppState, UnlockEntry } from "@/context/AppContext";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
+import { seedCompletedDayData } from "@/lib/qaSeedData";
 
 export type PersonaId =
   | "fresh"
@@ -177,6 +178,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       if (t.isTextarea && t.sample) aiOutputs[`day${day}_${t.key}`] = t.sample;
     });
   });
+  const completedThroughDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 2 : persona.dayProgress[1] >= 1 ? 1 : 0;
+  const seeded = seedCompletedDayData({ ...state, challenge: { ...state.challenge, tasks, aiOutputs } }, completedThroughDay);
 
   // 3. Points + unlocks per fully-completed day.
   const completedDays: number[] = [];
@@ -245,6 +248,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   return {
     ...state,
     user: { ...baseUser, joinedAt: timing.joinedAtIso },
+    memory: seeded.memory,
 
     challenge: {
       ...state.challenge,
@@ -252,8 +256,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       endsAt: timing.endsAtIso,
       currentDay,
       completed,
-      tasks,
-      aiOutputs,
+      tasks: seeded.tasks,
+      aiOutputs: seeded.aiOutputs,
       launchUrl,
     },
     points: {

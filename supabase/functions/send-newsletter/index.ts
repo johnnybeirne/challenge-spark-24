@@ -134,7 +134,17 @@ Deno.serve(async (req) => {
     // ---------- TEST MODE ----------
     if (mode === "test") {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");
-      const token = genToken();
+      const testEmailLower = testEmail.trim().toLowerCase();
+      // Reuse or create a real unsubscribe token so the test link works end-to-end.
+      let token: string;
+      const { data: existingTok } = await admin
+        .from("newsletter_unsubscribe_tokens").select("token").eq("email", testEmailLower).maybeSingle();
+      if (existingTok?.token) {
+        token = existingTok.token;
+      } else {
+        token = genToken();
+        await admin.from("newsletter_unsubscribe_tokens").insert({ token, email: testEmailLower });
+      }
       const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
       const vars = { name: (testName ?? "").trim() || "there", email: testEmail, unsubscribe_url: unsubscribeUrl, referral_url: `${APP_BASE_URL}/waitlist?ref=PREVIEW123`, referral_code: "PREVIEW123" };
       const html = ensureUnsubscribeFooter(substitute(autolinkUrlTokens(normalizeBraces(campaign.html_body ?? "")), vars), unsubscribeUrl);

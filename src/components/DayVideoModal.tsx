@@ -35,8 +35,11 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
       if (cancelled) return;
       setUserId(user?.id ?? null);
 
-      let dismissed = false;
-      if (user) {
+      // Always check localStorage first — works for guests and authed users
+      // and avoids re-showing the modal if a DB write previously failed.
+      let dismissed = localStorage.getItem(storageKey(dayNum)) === "1";
+
+      if (!dismissed && user) {
         const { data } = await supabase
           .from("profiles")
           .select("video_modal_dismissed")
@@ -44,32 +47,44 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
           .maybeSingle();
         const map = (data?.video_modal_dismissed ?? {}) as Record<string, boolean>;
         dismissed = !!map[String(dayNum)];
-      } else {
-        dismissed = localStorage.getItem(storageKey(dayNum)) === "1";
+        if (dismissed) localStorage.setItem(storageKey(dayNum), "1");
       }
       if (!dismissed) setOpen(true);
     })();
     return () => { cancelled = true; };
   }, [dayNum]);
 
-  const handleOpenChange = async (next: boolean) => {
-    setOpen(next);
-    if (!next && dontShow) {
-      if (userId) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("video_modal_dismissed")
-          .eq("user_id", userId)
-          .maybeSingle();
-        const map = { ...((data?.video_modal_dismissed ?? {}) as Record<string, boolean>), [String(dayNum)]: true };
-        await supabase
-          .from("profiles")
-          .update({ video_modal_dismissed: map })
-          .eq("user_id", userId);
-      } else {
-        localStorage.setItem(storageKey(dayNum), "1");
-      }
+  const persistDismissal = async (uid: string | null) => {
+    // Always persist locally so dismissal sticks regardless of network/RLS.
+    localStorage.setItem(storageKey(dayNum), "1");
+    if (!uid) return;
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("video_modal_dismissed")
+        .eq("user_id", uid)
+        .maybeSingle();
+      const map = {
+        ...((data?.video_modal_dismissed ?? {}) as Record<string, boolean>),
+        [String(dayNum)]: true,
+      };
+      await supabase
+        .from("profiles")
+        .update({ video_modal_dismissed: map })
+        .eq("user_id", uid);
+    } catch (err) {
+      console.warn("[DayVideoModal] failed to persist dismissal to profile", err);
     }
+  };
+
+  const handleDontShowChange = (checked: boolean) => {
+    setDontShow(checked);
+    if (checked) void persistDismissal(userId);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next && dontShow) void persistDismissal(userId);
   };
 
   return (

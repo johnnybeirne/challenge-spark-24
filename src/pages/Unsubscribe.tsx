@@ -152,7 +152,7 @@ const Unsubscribe = () => {
                 </Button>
               </div>
               {config.resubscribe_enabled && (
-                <Button variant="ghost" onClick={resubscribe} disabled={submitting} className="w-full">
+                <Button onClick={resubscribe} disabled={submitting} className="w-full bg-orange-500 text-white hover:bg-orange-600">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   {config.resubscribe_label}
                 </Button>
@@ -188,7 +188,7 @@ const Unsubscribe = () => {
                 </div>
               )}
               {config.resubscribe_enabled && (
-                <Button variant="outline" onClick={resubscribe} disabled={submitting} className="w-full">
+                <Button onClick={resubscribe} disabled={submitting} className="w-full bg-orange-500 text-white hover:bg-orange-600">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   {config.resubscribe_label}
                 </Button>
@@ -225,7 +225,7 @@ const Unsubscribe = () => {
               )}
 
               {config.resubscribe_enabled && (
-                <Button variant="outline" onClick={resubscribe} disabled={submitting} className="w-full">
+                <Button onClick={resubscribe} disabled={submitting} className="w-full bg-orange-500 text-white hover:bg-orange-600">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   {config.resubscribe_label}
                 </Button>

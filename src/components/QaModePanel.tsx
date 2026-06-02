@@ -15,6 +15,7 @@ import {
 } from "@/lib/qaPreview";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import QaSimulatedDate from "@/components/qa/QaSimulatedDate";
+import QaPersonas from "@/components/qa/QaPersonas";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },

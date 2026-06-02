@@ -84,9 +84,9 @@ function autolinkUrlTokens(html: string): string {
 }
 
 function ensureUnsubscribeFooter(html: string, unsubscribeUrl: string): string {
-  if (html.includes("{{unsubscribe_url}}") || html.toLowerCase().includes("unsubscribe")) {
-    return html;
-  }
+  // Only skip if a real unsubscribe token/link is already present — not just the word "unsubscribe".
+  if (html.includes("{{unsubscribe_url}}")) return html;
+  if (/href\s*=\s*["'][^"']*\/unsubscribe\?token=/i.test(html)) return html;
   const footer = `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#94a3b8;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
     <a href="${unsubscribeUrl}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a>
   </div>`;

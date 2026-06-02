@@ -5,6 +5,7 @@
 import type { AppState, UnlockEntry } from "@/context/AppContext";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
+import { seedCompletedDayData } from "@/lib/qaSeedData";
 
 export type PersonaId =
   | "fresh"
@@ -133,56 +134,6 @@ const DAY_UNLOCKS: Record<1 | 2 | 3, { id: string; name: string; value: number; 
 };
 
 const SAMPLE_LAUNCH_URL = "https://example.com/your-challenge";
-const SAMPLE_CHALLENGE_NAME = "Consistent Leads Challenge";
-const SAMPLE_DAY1_SETUP = {
-  completed: true,
-  audienceType: "b2b" as const,
-  challengeType: "solve-problem",
-  topicHint: "consistent lead generation",
-  desiredOutcome: "create a simple lead system they can keep using",
-  problem: "their growth depends on constant outreach and posting",
-  audience: "coaches and consultants who want more qualified leads",
-  how: "a focused 3-day diagnostic that shows where their current lead flow is leaking",
-  outcome: "create a simple lead system they can keep using",
-  superpower: "turning expertise into clear diagnostics",
-};
-const SAMPLE_DAY1_PROMISE =
-  "Help coaches and consultants move from inconsistent outreach to a simple lead system they can keep using through a focused 3-day diagnostic.";
-const SAMPLE_DAY1_OUTPUTS: Record<string, string> = {
-  day1Setup: JSON.stringify(SAMPLE_DAY1_SETUP),
-  day1_foundation: JSON.stringify({
-    problem: SAMPLE_DAY1_SETUP.problem,
-    audience: SAMPLE_DAY1_SETUP.audience,
-    how: SAMPLE_DAY1_SETUP.how,
-  }),
-  day1_assessment: JSON.stringify({
-    problem: SAMPLE_DAY1_SETUP.problem,
-    audience: SAMPLE_DAY1_SETUP.audience,
-    how: SAMPLE_DAY1_SETUP.how,
-    audienceType: SAMPLE_DAY1_SETUP.audienceType,
-    challengeType: SAMPLE_DAY1_SETUP.challengeType,
-    transformation: SAMPLE_DAY1_SETUP.topicHint,
-  }),
-  day1_promise: JSON.stringify({
-    summary: [
-      `Audience: ${SAMPLE_DAY1_SETUP.audience}`,
-      `Problem: ${SAMPLE_DAY1_SETUP.problem}`,
-      `Outcome: ${SAMPLE_DAY1_SETUP.outcome}`,
-    ],
-    promise: SAMPLE_DAY1_PROMISE,
-  }),
-  day1_title: SAMPLE_CHALLENGE_NAME,
-  day1_transformation: "Turn inconsistent promotion into a repeatable lead-generation habit.",
-  day1_quick_win: "Spot the biggest leak in their current lead flow.",
-  day1_outcome: SAMPLE_DAY1_SETUP.outcome,
-  day1_structure: "Day 1: diagnose the leak. Day 2: build the quiz. Day 3: launch the invite loop.",
-};
-
-const seedIfEmpty = (outputs: Record<string, string>, seed: Record<string, string>) => {
-  Object.entries(seed).forEach(([key, value]) => {
-    if (!outputs[key]?.trim()) outputs[key] = value;
-  });
-};
 
 const STUB_USER = {
   name: "Persona Preview",
@@ -227,7 +178,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       if (t.isTextarea && t.sample) aiOutputs[`day${day}_${t.key}`] = t.sample;
     });
   });
-  if (persona.dayProgress[1] >= 1) seedIfEmpty(aiOutputs, SAMPLE_DAY1_OUTPUTS);
+  const completedThroughDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 2 : persona.dayProgress[1] >= 1 ? 1 : 0;
+  const seeded = seedCompletedDayData({ ...state, challenge: { ...state.challenge, tasks, aiOutputs } }, completedThroughDay);
 
   // 3. Points + unlocks per fully-completed day.
   const completedDays: number[] = [];
@@ -296,17 +248,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   return {
     ...state,
     user: { ...baseUser, joinedAt: timing.joinedAtIso },
-    memory: persona.dayProgress[1] >= 1
-      ? {
-          ...state.memory,
-          name: state.memory.name || baseUser.name,
-          audienceType: state.memory.audienceType || "b2b",
-          challengeType: state.memory.challengeType || "transformation",
-          topic: state.memory.topic || SAMPLE_DAY1_SETUP.audience,
-          desiredOutcome: state.memory.desiredOutcome || SAMPLE_DAY1_SETUP.outcome,
-          challengeName: state.memory.challengeName || SAMPLE_CHALLENGE_NAME,
-        }
-      : state.memory,
+    memory: seeded.memory,
 
     challenge: {
       ...state.challenge,
@@ -314,8 +256,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       endsAt: timing.endsAtIso,
       currentDay,
       completed,
-      tasks,
-      aiOutputs,
+      tasks: seeded.tasks,
+      aiOutputs: seeded.aiOutputs,
       launchUrl,
     },
     points: {

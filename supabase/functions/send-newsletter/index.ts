@@ -128,6 +128,9 @@ Deno.serve(async (req) => {
       .from("newsletter_campaigns").select("*").eq("id", campaignId).single();
     if (cErr || !campaign) throw new Error("Campaign not found");
 
+    const APP_BASE_URL = await getAppBaseUrl(admin);
+
+
     // ---------- TEST MODE ----------
     if (mode === "test") {
       if (!testEmail || !testEmail.includes("@")) throw new Error("Valid testEmail required");

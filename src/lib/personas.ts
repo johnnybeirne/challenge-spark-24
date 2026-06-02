@@ -134,14 +134,35 @@ const DAY_UNLOCKS: Record<1 | 2 | 3, { id: string; name: string; value: number; 
 
 const SAMPLE_LAUNCH_URL = "https://example.com/your-challenge";
 
+const STUB_USER = {
+  name: "Persona Preview",
+  email: "persona@preview.local",
+  inviteCode: "PERSONA",
+  referredBy: null,
+  role: "participant" as const,
+  joinedAt: new Date().toISOString(),
+  isFoundingPartner: false,
+  foundingPartnerRank: null,
+  foundingPartnerJoinedAt: null,
+  isEligibleForPromotion: false,
+  qualityScore: 0,
+  adminBoost: 0,
+  adminBadge: null,
+  submittedUrl: null,
+};
+
 /** Apply persona overlay. Pure — never mutates input or persists. */
 export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const persona = getPersona(personaId);
-  if (!persona || !state.user) return state;
+  if (!persona) return state;
+  // If there's no user yet (pre-auth admin preview, demo session) synthesize
+  // a stub so the overlay always renders. Never persisted.
+  const baseUser = state.user ?? STUB_USER;
 
   // 1. Timing — backdate joined / startedAt / currentDay / completed / endsAt.
   const startedIso = new Date(Date.now() - persona.elapsedHours * 60 * 60 * 1000).toISOString();
   const timing = computeSimulatedTiming(startedIso);
+
 
   // 2. Tasks + AI outputs.
   const tasks: Record<string, boolean> = { ...state.challenge.tasks };

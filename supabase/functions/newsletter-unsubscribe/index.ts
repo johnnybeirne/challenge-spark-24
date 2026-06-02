@@ -58,6 +58,23 @@ Deno.serve(async (req) => {
       return json({ ok: true, resubscribed: true, email: row.email });
     }
 
+    // POST — feedback only
+    if (action === "feedback") {
+      const trimmedReason = (reason ?? "").trim().slice(0, 2000);
+      if (!trimmedReason) return json({ ok: false, error: "Feedback is empty" }, 400);
+
+      const { error: feedbackError } = await admin
+        .from("unsubscribe_feedback")
+        .insert({ email: row.email, reason: trimmedReason });
+
+      if (feedbackError) {
+        console.error("unsubscribe_feedback insert error:", feedbackError);
+        return json({ ok: false, error: "Could not save feedback" }, 500);
+      }
+
+      return json({ ok: true, feedbackSaved: true, email: row.email });
+    }
+
     // POST — confirm unsubscribe (+ optional feedback)
     await admin.from("newsletter_suppressions").upsert(
       { email: row.email },
@@ -66,7 +83,14 @@ Deno.serve(async (req) => {
 
     const trimmedReason = (reason ?? "").trim().slice(0, 2000);
     if (trimmedReason) {
-      await admin.from("unsubscribe_feedback").insert({ email: row.email, reason: trimmedReason });
+      const { error: feedbackError } = await admin
+        .from("unsubscribe_feedback")
+        .insert({ email: row.email, reason: trimmedReason });
+
+      if (feedbackError) {
+        console.error("unsubscribe_feedback insert error:", feedbackError);
+        return json({ ok: false, error: "Could not save feedback" }, 500);
+      }
     }
 
     return json({ ok: true, email: row.email });

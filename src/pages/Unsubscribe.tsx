@@ -51,6 +51,7 @@ const Unsubscribe = () => {
   const [submitting, setSubmitting] = useState(false);
   const [reason, setReason] = useState("");
   const [config, setConfig] = useState<PageConfig>(FALLBACK);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   useEffect(() => {
     if (!token) { setState("error"); setErrMsg(FALLBACK.error_body); return; }
@@ -90,9 +91,18 @@ const Unsubscribe = () => {
   const sendFeedback = async (skip: boolean) => {
     setSubmitting(true);
     try {
-      if (!skip && reason.trim()) await post({ reason: reason.trim() });
+      if (!skip && reason.trim()) {
+        const data = await post({ action: "feedback", reason: reason.trim() });
+        if (!data.ok) {
+          setState("error");
+          setErrMsg(data.error || "Could not save feedback.");
+          return;
+        }
+      }
+      setFeedbackSent(true);
       setState("done");
-    } finally { setSubmitting(false); }
+    } catch { setState("error"); setErrMsg("Network error."); }
+    finally { setSubmitting(false); }
   };
 
   const resubscribe = async () => {
@@ -167,7 +177,7 @@ const Unsubscribe = () => {
               </div>
               <h1 className="text-xl font-bold">{interpolate(config.done_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.done_body, vars)}</p>
-              {config.feedback_enabled && (
+              {config.feedback_enabled && !feedbackSent && (
                 <div className="pt-2 space-y-2 text-left">
                   <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
                   <Textarea
@@ -187,6 +197,11 @@ const Unsubscribe = () => {
                   </div>
                 </div>
               )}
+              {feedbackSent && (
+                <p className="rounded-md bg-green-100 px-4 py-3 text-sm font-medium text-green-700">
+                  Thank you for your feedback.
+                </p>
+              )}
               {config.resubscribe_enabled && (
                 <Button onClick={resubscribe} disabled={submitting} className="w-full bg-orange-500 text-white hover:bg-orange-600">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
@@ -204,7 +219,7 @@ const Unsubscribe = () => {
               <h1 className="text-xl font-bold">{interpolate(config.already_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.already_body, vars)}</p>
 
-              {config.feedback_enabled && (
+              {config.feedback_enabled && !feedbackSent && (
                 <div className="pt-2 space-y-2 text-left">
                   <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
                   <Textarea
@@ -222,6 +237,11 @@ const Unsubscribe = () => {
                     {config.feedback_submit_label}
                   </Button>
                 </div>
+              )}
+              {feedbackSent && (
+                <p className="rounded-md bg-green-100 px-4 py-3 text-sm font-medium text-green-700">
+                  Thank you for your feedback.
+                </p>
               )}
 
               {config.resubscribe_enabled && (

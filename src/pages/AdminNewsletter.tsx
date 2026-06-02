@@ -305,6 +305,7 @@ const AdminNewsletter = () => {
           <TabsTrigger value="templates">Templates ({templates.length})</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns ({campaigns.length})</TabsTrigger>
           <TabsTrigger value="unsubscribes">Unsubscribes ({suppressions.length})</TabsTrigger>
+          <TabsTrigger value="unsubscribe-page">Unsubscribe page</TabsTrigger>
         </TabsList>
 
         {/* COMPOSE */}

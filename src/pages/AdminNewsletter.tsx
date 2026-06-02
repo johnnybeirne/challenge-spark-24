@@ -682,6 +682,10 @@ const AdminNewsletter = () => {
             </table>
           </CardContent></Card>
         </TabsContent>
+
+        <TabsContent value="unsubscribe-page">
+          <AdminUnsubscribePage />
+        </TabsContent>
       </Tabs>
 
       {/* SAVE TEMPLATE DIALOG */}

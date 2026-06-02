@@ -4,6 +4,7 @@
 
 import { setPreviewTier as setLegacyPreviewTier } from "@/lib/previewTier";
 import type { EntryIntent } from "@/lib/entryIntent";
+import type { PersonaId } from "@/lib/personas";
 
 export type QaTier = "free" | "trial" | "paid" | "admin";
 export type QaAssessmentMode = EntryIntent;
@@ -35,6 +36,8 @@ export interface QaPreviewState {
   assessmentMode?: QaAssessmentMode;
   /** ISO date string. When set, the app treats the user as if they joined on this date. */
   simulatedJoinedAt?: string | null;
+  /** Persona preset id. When set, the app overlays a full simulated journey. */
+  persona?: PersonaId | null;
 }
 
 const KEY = "leadioPreviewState";

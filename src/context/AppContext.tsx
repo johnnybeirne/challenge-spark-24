@@ -7,6 +7,7 @@ import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { applySimulatedDate } from "@/lib/simulatedDate";
+import { applyPersona } from "@/lib/personas";
 import { CHALLENGE_DURATION_MS } from "@/lib/challengeWindow";
 
 /* ───── Types ───── */
@@ -440,12 +441,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.location.pathname.startsWith("/admin/")
   );
 
-  // Display state with any QA simulated-date override applied.
+  // Display state with any QA simulated-date / persona override applied.
   // The override is NEVER persisted — useSupabaseSync below receives the raw state.
-  const displayState = useMemo(
-    () => (qa.active && qa.simulatedJoinedAt ? applySimulatedDate(state, qa.simulatedJoinedAt) : state),
-    [state, qa.active, qa.simulatedJoinedAt]
-  );
+  const displayState = useMemo(() => {
+    if (!qa.active) return state;
+    if (qa.persona) return applyPersona(state, qa.persona);
+    if (qa.simulatedJoinedAt) return applySimulatedDate(state, qa.simulatedJoinedAt);
+    return state;
+  }, [state, qa.active, qa.persona, qa.simulatedJoinedAt]);
 
   // Hydrate state from Supabase when user authenticates
   useEffect(() => {

@@ -1,66 +1,70 @@
 ## Goal
 
-1. Fix the unsubscribe link at the bottom of newsletter emails so it always lands on a working URL.
-2. Give admins control of the `/unsubscribe` page copy and add two new features: a "reason for leaving" prompt and a "resubscribe" option.
+The current QA "Simulated Signup Date" only backdates `joinedAt` / `startedAt` and bumps `currentDay`. It does **not** simulate completion data — so clicking Day 2 lands on a locked "Day 1 still in progress" state because every `challenge.tasks[*]` is false, `aiOutputs` is empty, `points`/`network` are zeros, and `community`/`training` flags are off.
 
----
+We will add **persona presets** to the QA panel that produce a believable end-to-end user state as a read-only overlay (same pattern as `applySimulatedDate` — never written to Supabase).
 
-## Part 1 — Fix the broken unsubscribe link
+## Personas
 
-Two real bugs in `supabase/functions/send-newsletter/index.ts` (and same in `send-welcome-email/index.ts`):
+Each preset answers: "What does the app look like for someone who is exactly here?"
 
-- **Bug A — auto-footer silently skipped.** `ensureUnsubscribeFooter` returns the HTML untouched whenever it contains the word "unsubscribe" anywhere (case-insensitive). Templates that mention the word but don't include the `{{unsubscribe_url}}` token end up with no working link at all.
-- **Bug B — hardcoded base URL.** `APP_BASE_URL` is pinned to `https://leadio.johnnybeirne.com`. If a recipient opens from anywhere else, or the published domain changes, links go to a domain they didn't sign up on.
+1. **Fresh signup** — Day 1, joined 0h ago, nothing done.
+2. **Mid Day 1** — joined 4h ago, ~half of Day 1 tasks checked, sample AI outputs for those.
+3. **Finished Day 1** — joined 26h ago, all Day 1 tasks done, AI outputs filled, `points.completedDays:[1]`, +50 pts, Day 1 unlock awarded, `currentDay=2`.
+4. **Mid Day 2** — joined 36h ago, Day 1 complete + half of Day 2 done.
+5. **Finished Day 2** — joined 50h ago, Days 1–2 complete, +100 pts total, blueprint + playbook unlocks.
+6. **Day 3 launched (no referrals)** — joined 60h ago, all tasks done, valid `launchUrl`, `completed=true`, 3 unlocks awarded, 0 direct referrals (Builder Circle still locked).
+7. **Community unlocked** — same as #6 but `network.direct=3`, `community.unlocked=true` with timestamp/reason.
+8. **Expired window** — joined 80h ago, partial progress, `endsAt` in the past.
 
-Fixes:
-- Change the footer guard so it only skips when a real `{{unsubscribe_url}}` token (or an `<a>` whose href contains `/unsubscribe?token=`) is already present in the HTML — not just the word "unsubscribe".
-- Move `APP_BASE_URL` into a new `newsletter_settings` row (single-row table) so it's editable from the admin and used by both edge functions. Keep `leadio.johnnybeirne.com` as the default.
-- Apply the same two fixes to `send-welcome-email`.
+(Final exact set can be trimmed; these are the building blocks.)
 
-## Part 2 — Editable unsubscribe landing page
+## How it works
 
-New single-row config table `unsubscribe_page_config` (admin-only write, public read) with fields for each state's heading + body:
-- ready (`heading`, `body`, `confirm_button_label`)
-- done (`heading`, `body`)
-- already (`heading`, `body`)
-- error (`heading`, `body`)
-- feedback: `enabled` (bool), `prompt`, `placeholder`, `skip_label`, `submit_label`
-- resubscribe: `enabled` (bool), `label`, `success_message`
+```text
+QA panel (preset dropdown)
+        │
+        ▼
+updateQaState({ active:true, persona:"day1_done", simulatedJoinedAt:... })
+        │
+        ▼
+AppContext: displayState = applyPersona(state, qa.persona, qa.simulatedJoinedAt)
+        │
+        ▼
+All pages read the overlay; raw `state` is what useSupabaseSync sees → DB untouched
+```
 
-New table `unsubscribe_feedback` (insert allowed for the unsubscribe edge function only via service role; admin-only read) with columns: `email`, `reason`, `created_at`.
+`applyPersona` extends today's `applySimulatedDate`:
+- Sets `challenge.startedAt` / `endsAt` / `currentDay` / `completed` from the persona's elapsed hours (reusing `computeSimulatedTiming`).
+- Marks `challenge.tasks[dayN_<key>] = true` for every task in `dayConfig` up to the persona's progress point. Generates short placeholder strings into `challenge.aiOutputs[...]` for textarea tasks so the UI renders filled answers.
+- Sets `challenge.launchUrl` for personas at/past Day 3.
+- Bumps `points.total`, `points.completedDays`, `points.awardedActions` to match (reusing `awardPoints` shape so `points.tier` and `unlockedRewards` derive correctly).
+- Fills `network.direct` / `referrals.count` for community personas.
+- Sets `community.unlocked` / `community.unlockedAt` / `entryReason` when appropriate.
+- Sets `training.day1Watched` / `day2Watched` / `day3Watched` to true for completed days.
+- Adds matching `unlocks[]` entries (`day1_blueprint`, `day2_playbook`, `day3_checklist`) via the same logic that lives in AppContext today (extract to a shared helper if needed).
 
-## Part 3 — Edge function changes (`newsletter-unsubscribe`)
+## Files
 
-Extend the existing function with two new actions on POST:
-- `{ token, reason }` — confirms unsubscribe AND stores the optional feedback reason (skips if empty).
-- `{ token, action: "resubscribe" }` — deletes the row from `newsletter_suppressions` for the email tied to the token, so they start receiving emails again. Returns `{ ok: true, resubscribed: true, email }`.
+**New**
+- `src/lib/personas.ts` — `PERSONAS` array (id, label, description, elapsedHours, dayProgress, referrals, community flag) + `applyPersona(state, personaId)` pure function. Imports `dayConfig` to know task keys.
 
-GET response also returns the current `unsubscribe_page_config` so the page can render in one round-trip.
+**Edit**
+- `src/lib/qaPreview.ts` — add `persona?: PersonaId | null` to `QaPreviewState`, default `null`.
+- `src/lib/simulatedDate.ts` — keep `applySimulatedDate` as the date-only path; have `applyPersona` call into it for the timing override so behavior stays consistent.
+- `src/context/AppContext.tsx` — replace the `displayState` memo so it composes both: `qa.persona ? applyPersona(state, qa.persona) : (qa.simulatedJoinedAt ? applySimulatedDate(state, qa.simulatedJoinedAt) : state)`.
+- `src/components/qa/QaSimulatedDate.tsx` (or a sibling `QaPersonas.tsx` mounted next to it in `QaModePanel`) — add a "Persona" select listing the presets, with a one-line description and a "Clear persona" button. Selecting a persona auto-fills the simulated date so the calendar reflects it.
 
-## Part 4 — Frontend
+**No DB changes. No edge function changes.**
 
-`src/pages/Unsubscribe.tsx`:
-- Read copy from the GET response (fallback to current hardcoded strings if config is missing).
-- After confirm: show feedback prompt (textarea + Submit / Skip) when `feedback.enabled`. Submitting POSTs `{ token, reason }`; Skip just moves on.
-- On the "done" state, render a "Resubscribe" button when `resubscribe.enabled`. Clicking POSTs `{ token, action: "resubscribe" }` and swaps to a success message.
+## Guardrails
 
-`src/pages/AdminNewsletter.tsx`:
-- New "Unsubscribe page" tab (or section) with form fields for every config value above, plus an editable "App base URL" field (drives Part 1 fix).
-- New "Feedback" panel listing recent `unsubscribe_feedback` rows (email, reason, date) — read-only.
+- Overlay is read-only; `useSupabaseSync` continues to receive raw `state`, so nothing leaks into Supabase even if you click around.
+- Persona overlay is a strict superset of the existing date simulator — clearing the persona returns to today's behavior.
+- All persona task/AI-output generation uses `dayConfig` as the source of truth, so adding/removing real tasks doesn't break the simulator.
 
----
+## Out of scope
 
-## Technical details
-
-**Files touched**
-- `supabase/migrations/<new>.sql` — `unsubscribe_page_config` (single row, default copy seeded), `unsubscribe_feedback`, `newsletter_settings` (single row with `app_base_url`). GRANTs + RLS for all three.
-- `supabase/functions/newsletter-unsubscribe/index.ts` — feedback + resubscribe handling, return page config on GET.
-- `supabase/functions/send-newsletter/index.ts` — footer guard fix, read `app_base_url` from `newsletter_settings`.
-- `supabase/functions/send-welcome-email/index.ts` — same two fixes.
-- `src/pages/Unsubscribe.tsx` — render dynamic copy, feedback step, resubscribe button.
-- `src/pages/AdminNewsletter.tsx` — new editor section + feedback list.
-
-**Out of scope**
-- Changing the email design/branding of the auto-appended footer beyond the bug fix.
-- Building a full WYSIWYG for the landing page (plain text fields only).
-- Migrating to Lovable Emails (memory says Resend stays — no DNS changes).
+- Seeding real test rows in Supabase (we picked the overlay route).
+- Simulating other users on the leaderboard / Builder Circle feed.
+- Per-task granular toggles (can be added later on top of personas).

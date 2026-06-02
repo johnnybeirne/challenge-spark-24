@@ -51,7 +51,7 @@ const Unsubscribe = () => {
   const [submitting, setSubmitting] = useState(false);
   const [reason, setReason] = useState("");
   const [config, setConfig] = useState<PageConfig>(FALLBACK);
-  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackStatus, setFeedbackStatus] = useState<"idle" | "sent" | "skipped">("idle");
 
   useEffect(() => {
     if (!token) { setState("error"); setErrMsg(FALLBACK.error_body); return; }
@@ -99,7 +99,7 @@ const Unsubscribe = () => {
           return;
         }
       }
-      setFeedbackSent(true);
+      setFeedbackStatus(skip ? "skipped" : "sent");
       setState("done");
     } catch { setState("error"); setErrMsg("Network error."); }
     finally { setSubmitting(false); }
@@ -177,7 +177,7 @@ const Unsubscribe = () => {
               </div>
               <h1 className="text-xl font-bold">{interpolate(config.done_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.done_body, vars)}</p>
-              {config.feedback_enabled && !feedbackSent && (
+              {config.feedback_enabled && feedbackStatus === "idle" && (
                 <div className="pt-2 space-y-2 text-left">
                   <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
                   <Textarea
@@ -197,7 +197,7 @@ const Unsubscribe = () => {
                   </div>
                 </div>
               )}
-              {feedbackSent && (
+              {feedbackStatus === "sent" && (
                 <p className="rounded-md bg-green-100 px-4 py-3 text-sm font-medium text-green-700">
                   Thank you for your feedback.
                 </p>
@@ -219,7 +219,7 @@ const Unsubscribe = () => {
               <h1 className="text-xl font-bold">{interpolate(config.already_heading, vars)}</h1>
               <p className="text-sm text-muted-foreground">{interpolate(config.already_body, vars)}</p>
 
-              {config.feedback_enabled && !feedbackSent && (
+              {config.feedback_enabled && feedbackStatus === "idle" && (
                 <div className="pt-2 space-y-2 text-left">
                   <p className="text-sm font-medium text-center">{interpolate(config.feedback_prompt, vars)}</p>
                   <Textarea
@@ -238,7 +238,7 @@ const Unsubscribe = () => {
                   </Button>
                 </div>
               )}
-              {feedbackSent && (
+              {feedbackStatus === "sent" && (
                 <p className="rounded-md bg-green-100 px-4 py-3 text-sm font-medium text-green-700">
                   Thank you for your feedback.
                 </p>

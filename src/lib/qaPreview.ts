@@ -4,6 +4,7 @@
 
 import { setPreviewTier as setLegacyPreviewTier } from "@/lib/previewTier";
 import type { EntryIntent } from "@/lib/entryIntent";
+import type { PersonaId } from "@/lib/personas";
 
 export type QaTier = "free" | "trial" | "paid" | "admin";
 export type QaAssessmentMode = EntryIntent;

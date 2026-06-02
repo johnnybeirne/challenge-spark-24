@@ -445,8 +445,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // The override is NEVER persisted — useSupabaseSync below receives the raw state.
   const displayState = useMemo(() => {
     if (!qa.active) return state;
-    if (qa.persona) return applyPersona(state, qa.persona);
-    if (qa.simulatedJoinedAt) return applySimulatedDate(state, qa.simulatedJoinedAt);
+    try {
+      if (qa.persona) return applyPersona(state, qa.persona);
+      if (qa.simulatedJoinedAt) return applySimulatedDate(state, qa.simulatedJoinedAt);
+    } catch (err) {
+      // QA overlay must never break the app — log and fall through to real state.
+      console.error("[QA] overlay failed, falling back to real state", err);
+    }
     return state;
   }, [state, qa.active, qa.persona, qa.simulatedJoinedAt]);
 

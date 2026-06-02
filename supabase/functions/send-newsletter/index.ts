@@ -10,7 +10,17 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const FROM = "Johnny Beirne <johnny@johnnybeirne.com>";
-const APP_BASE_URL = "https://leadio.johnnybeirne.com";
+const DEFAULT_APP_BASE_URL = "https://leadio.johnnybeirne.com";
+
+async function getAppBaseUrl(admin: ReturnType<typeof createClient>): Promise<string> {
+  try {
+    const { data } = await admin.from("newsletter_settings").select("app_base_url").eq("id", 1).maybeSingle();
+    const v = (data?.app_base_url ?? "").toString().trim().replace(/\/+$/, "");
+    return v || DEFAULT_APP_BASE_URL;
+  } catch {
+    return DEFAULT_APP_BASE_URL;
+  }
+}
 
 function genToken() {
   return crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");

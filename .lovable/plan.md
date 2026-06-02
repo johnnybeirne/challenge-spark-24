@@ -1,67 +1,66 @@
 ## Goal
 
-Add a cumulative recap beneath Johnny B AI's message on **every** Day 1 step (after the first). Each prior answer renders on its own labelled line — never combined. Pull values from existing profile state (`echoMap`). No question/step/flow changes.
+1. Fix the unsubscribe link at the bottom of newsletter emails so it always lands on a working URL.
+2. Give admins control of the `/unsubscribe` page copy and add two new features: a "reason for leaving" prompt and a "resubscribe" option.
 
-## Step sequence and what each recap shows
+---
 
-Canonical Day 1 order is `4 → 1 → 10 → 5 → 2 → 3 → 9 → 7 → 8`. The recap on each step shows every answer captured before that step:
+## Part 1 — Fix the broken unsubscribe link
 
-| Step | Question being asked | Recap rows shown above the question |
-|------|----------------------|-------------------------------------|
-| 4 | Audience type (b2b/b2c) | — (first step, nothing to show) |
-| 1 | Who specifically you serve | — (audience type pick is implied by next answer) |
-| 10 | Superpower | You work with: {audience} |
-| 5 | Challenge type | You work with / Your superpower |
-| 2 | Specific problem | + Your goal |
-| 3 | Your process | + The problem |
-| 9 | Outcome | + Your process |
-| 7 | Review / promise | + The result |
+Two real bugs in `supabase/functions/send-newsletter/index.ts` (and same in `send-welcome-email/index.ts`):
 
-Step 8 is the final locked promise view — unchanged.
+- **Bug A — auto-footer silently skipped.** `ensureUnsubscribeFooter` returns the HTML untouched whenever it contains the word "unsubscribe" anywhere (case-insensitive). Templates that mention the word but don't include the `{{unsubscribe_url}}` token end up with no working link at all.
+- **Bug B — hardcoded base URL.** `APP_BASE_URL` is pinned to `https://leadio.johnnybeirne.com`. If a recipient opens from anywhere else, or the published domain changes, links go to a domain they didn't sign up on.
 
-## Implementation
+Fixes:
+- Change the footer guard so it only skips when a real `{{unsubscribe_url}}` token (or an `<a>` whose href contains `/unsubscribe?token=`) is already present in the HTML — not just the word "unsubscribe".
+- Move `APP_BASE_URL` into a new `newsletter_settings` row (single-row table) so it's editable from the admin and used by both edge functions. Keep `leadio.johnnybeirne.com` as the default.
+- Apply the same two fixes to `send-welcome-email`.
 
-All edits in `src/components/Day1Setup.tsx`.
+## Part 2 — Editable unsubscribe landing page
 
-1. **Add one helper inside the component** (near the existing `echoMap`):
+New single-row config table `unsubscribe_page_config` (admin-only write, public read) with fields for each state's heading + body:
+- ready (`heading`, `body`, `confirm_button_label`)
+- done (`heading`, `body`)
+- already (`heading`, `body`)
+- error (`heading`, `body`)
+- feedback: `enabled` (bool), `prompt`, `placeholder`, `skip_label`, `submit_label`
+- resubscribe: `enabled` (bool), `label`, `success_message`
 
-   ```ts
-   const recapRowsBefore = (step: number): RecapRow[] => {
-     const rows: RecapRow[] = [];
-     const push = (when: boolean, label: string, echo: EchoField) => {
-       if (when) rows.push({ label, echo });
-     };
-     // Order matches the user's flow so lines stack chronologically.
-     push(step !== 4 && step !== 1 && !!audience.trim(),     "You work with:",   "audience");
-     push(step !== 4 && step !== 1 && step !== 10 && !!superpower.trim(),
-                                                              "Your superpower:", "superpower");
-     push(["2","3","9","7"].includes(String(step)) && !!challengeType,
-                                                              "Your goal:",       "challengeType");
-     push(["3","9","7"].includes(String(step)) && !!problem.trim(),
-                                                              "The problem:",     "problem");
-     push(["9","7"].includes(String(step)) && !!how.trim(),   "Your process:",    "how");
-     push(step === 7 && !!outcome.trim(),                     "The result:",      "outcome");
-     return rows;
-   };
-   ```
+New table `unsubscribe_feedback` (insert allowed for the unsubscribe edge function only via service role; admin-only read) with columns: `email`, `reason`, `created_at`.
 
-   `RecapCard` already hides rows whose `echoMap` value is empty, so this stays safe if a field is missing.
+## Part 3 — Edge function changes (`newsletter-unsubscribe`)
 
-2. **Render `<RecapCard rows={recapRowsBefore(step)} echoMap={echoMap} />` directly below Johnny's message** on each step that currently lacks one:
+Extend the existing function with two new actions on POST:
+- `{ token, reason }` — confirms unsubscribe AND stores the optional feedback reason (skips if empty).
+- `{ token, action: "resubscribe" }` — deletes the row from `newsletter_suppressions` for the email tied to the token, so they start receiving emails again. Returns `{ ok: true, resubscribed: true, email }`.
 
-   - Step 1 (`step1Phase === "input"`) — below the `StaticAi` message
-   - Step 10 — below the `StaticAi` message
-   - Step 5 — below Johnny's prompt, above the challenge-type cards
-   - Step 2 — below the `StaticAi` message
-   - Step 7 — below the existing promise message (in addition to the existing summary)
+GET response also returns the current `unsubscribe_page_config` so the page can render in one round-trip.
 
-3. **Steps 3 and 9** already use `JohnnyRecapPanel` with their own row arrays. Replace those local arrays with `recapRowsBefore(3)` / `recapRowsBefore(9)` so labelling is consistent and cumulative across the whole flow.
+## Part 4 — Frontend
 
-4. **Labels** match the user's example ("You work with:", "Your superpower:") and drop the trailing "is/are" form. The existing `audienceLabel` helper used only by step 3/9 recaps becomes unused and can stay or be deleted later — no behavior change either way.
+`src/pages/Unsubscribe.tsx`:
+- Read copy from the GET response (fallback to current hardcoded strings if config is missing).
+- After confirm: show feedback prompt (textarea + Submit / Skip) when `feedback.enabled`. Submitting POSTs `{ token, reason }`; Skip just moves on.
+- On the "done" state, render a "Resubscribe" button when `resubscribe.enabled`. Clicking POSTs `{ token, action: "resubscribe" }` and swaps to a success message.
 
-5. **No other changes**: the questions, placeholders, input fields, navigation, persistence, `echoMap`, and pencil-edit affordances stay exactly as they are. `RecapCard` already wraps each value in `EchoText`, so inline pencil-editing continues to work in the new recap rows too.
+`src/pages/AdminNewsletter.tsx`:
+- New "Unsubscribe page" tab (or section) with form fields for every config value above, plus an editable "App base URL" field (drives Part 1 fix).
+- New "Feedback" panel listing recent `unsubscribe_feedback` rows (email, reason, date) — read-only.
 
-## Out of scope
+---
 
-- No new fields, no schema changes, no analytics changes.
-- Step 4 (first screen) and step 8 (locked completion view) keep their current layout — there is nothing prior to recap on step 4, and step 8 is the final promise card.
+## Technical details
+
+**Files touched**
+- `supabase/migrations/<new>.sql` — `unsubscribe_page_config` (single row, default copy seeded), `unsubscribe_feedback`, `newsletter_settings` (single row with `app_base_url`). GRANTs + RLS for all three.
+- `supabase/functions/newsletter-unsubscribe/index.ts` — feedback + resubscribe handling, return page config on GET.
+- `supabase/functions/send-newsletter/index.ts` — footer guard fix, read `app_base_url` from `newsletter_settings`.
+- `supabase/functions/send-welcome-email/index.ts` — same two fixes.
+- `src/pages/Unsubscribe.tsx` — render dynamic copy, feedback step, resubscribe button.
+- `src/pages/AdminNewsletter.tsx` — new editor section + feedback list.
+
+**Out of scope**
+- Changing the email design/branding of the auto-appended footer beyond the bug fix.
+- Building a full WYSIWYG for the landing page (plain text fields only).
+- Migrating to Lovable Emails (memory says Resend stays — no DNS changes).

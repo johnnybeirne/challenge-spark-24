@@ -7,6 +7,7 @@ import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { applySimulatedDate } from "@/lib/simulatedDate";
+import { applyPersona } from "@/lib/personas";
 import { CHALLENGE_DURATION_MS } from "@/lib/challengeWindow";
 
 /* ───── Types ───── */

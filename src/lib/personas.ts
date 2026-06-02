@@ -134,14 +134,35 @@ const DAY_UNLOCKS: Record<1 | 2 | 3, { id: string; name: string; value: number; 
 
 const SAMPLE_LAUNCH_URL = "https://example.com/your-challenge";
 
+const STUB_USER = {
+  name: "Persona Preview",
+  email: "persona@preview.local",
+  inviteCode: "PERSONA",
+  referredBy: null,
+  role: "participant" as const,
+  joinedAt: new Date().toISOString(),
+  isFoundingPartner: false,
+  foundingPartnerRank: null,
+  foundingPartnerJoinedAt: null,
+  isEligibleForPromotion: false,
+  qualityScore: 0,
+  adminBoost: 0,
+  adminBadge: null,
+  submittedUrl: null,
+};
+
 /** Apply persona overlay. Pure — never mutates input or persists. */
 export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const persona = getPersona(personaId);
-  if (!persona || !state.user) return state;
+  if (!persona) return state;
+  // If there's no user yet (pre-auth admin preview, demo session) synthesize
+  // a stub so the overlay always renders. Never persisted.
+  const baseUser = state.user ?? STUB_USER;
 
   // 1. Timing — backdate joined / startedAt / currentDay / completed / endsAt.
   const startedIso = new Date(Date.now() - persona.elapsedHours * 60 * 60 * 1000).toISOString();
   const timing = computeSimulatedTiming(startedIso);
+
 
   // 2. Tasks + AI outputs.
   const tasks: Record<string, boolean> = { ...state.challenge.tasks };
@@ -215,13 +236,16 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       }
     : state.community;
 
-  // currentDay: highest day reachable by timing OR by progress.
+  // currentDay: force to highest day reached by timing OR progress.
+  // We intentionally ignore the stored currentDay so the persona can move
+  // BACK to an earlier day (e.g. "Fresh signup") even if state was advanced.
   const progressDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 3 : persona.dayProgress[1] >= 1 ? 2 : 1;
-  const currentDay = Math.min(3, Math.max(state.challenge.currentDay, timing.currentDay, progressDay));
+  const currentDay = Math.min(3, Math.max(timing.currentDay, progressDay));
 
   return {
     ...state,
-    user: { ...state.user, joinedAt: timing.joinedAtIso },
+    user: { ...baseUser, joinedAt: timing.joinedAtIso },
+
     challenge: {
       ...state.challenge,
       startedAt: timing.startedAtIso,

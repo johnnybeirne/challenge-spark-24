@@ -152,6 +152,7 @@ Deno.serve(async (req) => {
       await admin.from("newsletter_unsubscribe_tokens").insert({ token, email: emailLower });
     }
 
+    const APP_BASE_URL = await getAppBaseUrl(admin);
     const unsubscribeUrl = `${APP_BASE_URL}/unsubscribe?token=${token}`;
     const referralCode = signup.referral_code ?? "";
     const referralUrl = referralCode ? `${APP_BASE_URL}/waitlist?ref=${referralCode}` : `${APP_BASE_URL}/waitlist`;

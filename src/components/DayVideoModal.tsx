@@ -99,7 +99,7 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
           <Checkbox
             id={`dont-show-day-${dayNum}`}
             checked={dontShow}
-            onCheckedChange={(v) => setDontShow(v === true)}
+            onCheckedChange={(v) => handleDontShowChange(v === true)}
           />
           <Label htmlFor={`dont-show-day-${dayNum}`} className="text-sm text-muted-foreground font-normal">
             Don't show this again

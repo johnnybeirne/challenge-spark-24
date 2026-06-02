@@ -151,6 +151,12 @@ const Unsubscribe = () => {
                   {config.feedback_submit_label}
                 </Button>
               </div>
+              {config.resubscribe_enabled && (
+                <Button variant="ghost" onClick={resubscribe} disabled={submitting} className="w-full">
+                  {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  {config.resubscribe_label}
+                </Button>
+              )}
             </>
           )}
 

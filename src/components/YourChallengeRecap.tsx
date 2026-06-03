@@ -3,7 +3,7 @@ import { useAppState } from "@/context/AppContext";
 import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 
 const CHALLENGE_GOAL_LABELS: Record<string, string> = {
-  "solve-problem": "Overcome a specific blocker",
+  "solve-problem": "Remove a specific blocker",
   "quick-win": "Deliver a meaningful result fast",
   "create-asset": "Build something they keep using",
   "reach-milestone": "Progress toward an important goal",

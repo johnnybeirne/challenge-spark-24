@@ -10,6 +10,16 @@ import { trackEvent } from "@/lib/analytics";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import { renderDay2Preview, useDay2ButtonLabels } from "@/lib/day2ButtonLabels";
+
+// Map admin row id -> ButtonKey used in this screen.
+const ADMIN_ID_TO_KEY: Record<string, ButtonKey> = {
+  s1_audience_fit: "audience_fit",
+  s1_problem_gap: "problem_gap",
+  s1_share_trigger: "share_trigger",
+  s1_superpower_question: "superpower_question",
+  s1_buy_decision: "buy_decision",
+};
 
 const JohnnyAvatar = () => (
   <img

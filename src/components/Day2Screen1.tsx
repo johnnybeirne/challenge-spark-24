@@ -15,9 +15,36 @@ const JohnnyAvatar = () => (
   <img
     src={johnnyAvatar}
     alt="Johnny AI"
-    className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border"
+    className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
   />
 );
+
+type ButtonKey =
+  | "audience_fit"
+  | "problem_gap"
+  | "share_trigger"
+  | "superpower_question"
+  | "buy_decision";
+
+interface QuizButton {
+  key: ButtonKey;
+  label: string;
+}
+
+interface InsightState {
+  text: string;
+  editing: boolean;
+  draft: string;
+  loading: boolean;
+}
+
+const BUTTON_ORDER: ButtonKey[] = [
+  "audience_fit",
+  "problem_gap",
+  "share_trigger",
+  "superpower_question",
+  "buy_decision",
+];
 
 const Day2Screen1 = () => {
   const navigate = useNavigate();
@@ -34,97 +61,148 @@ const Day2Screen1 = () => {
   const audience = setup?.audience || "";
   const superpower = setup?.superpower || "";
   const problem = setup?.problem || "";
+  const how = setup?.how || "";
+  const outcome = setup?.outcome || "";
+  const day1Inputs = { firstName, audience, superpower, problem, how, outcome };
+
+  const savedOpener = (state.challenge.aiOutputs.day2_s1_opener as string) || "";
+  const parseJson = <T,>(raw: unknown, fallback: T): T => {
+    if (typeof raw !== "string" || !raw) return fallback;
+    try { return JSON.parse(raw) as T; } catch { return fallback; }
+  };
+  const savedButtons = parseJson<QuizButton[]>(state.challenge.aiOutputs.day2_s1_buttons, []);
+  const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
 
 
-  const savedExplanation = (state.challenge.aiOutputs.day2_screen1_explanation as string) || "";
-  const savedPositioning = (state.challenge.aiOutputs.day2_screen1_positioning as string) || "";
+  const [opener, setOpener] = useState<string>(savedOpener);
+  const [openerLoading, setOpenerLoading] = useState(false);
 
-  const [explanation, setExplanation] = useState<string>(savedExplanation);
-  const [loadingExplain, setLoadingExplain] = useState(false);
+  const [buttons, setButtons] = useState<QuizButton[]>(savedButtons);
+  const [buttonsLoading, setButtonsLoading] = useState(false);
 
-  const [positioning, setPositioning] = useState<string>(savedPositioning);
-  const [loadingPos, setLoadingPos] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
+  const initialInsights: Record<ButtonKey, InsightState> = BUTTON_ORDER.reduce(
+    (acc, k) => {
+      acc[k] = {
+        text: savedInsightsRaw[k] || "",
+        editing: false,
+        draft: savedInsightsRaw[k] || "",
+        loading: false,
+      };
+      return acc;
+    },
+    {} as Record<ButtonKey, InsightState>,
+  );
+  const [insights, setInsights] = useState<Record<ButtonKey, InsightState>>(initialInsights);
 
-  // Auto-generate explanation on first mount
-  useEffect(() => {
-    if (explanation || loadingExplain) return;
-    void generateExplanation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const updateInsight = (key: ButtonKey, patch: Partial<InsightState>) =>
+    setInsights((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
 
-  const persist = (key: string, value: string) => {
+  const persist = (key: string, value: unknown) => {
+    const stringified = typeof value === "string" ? value : JSON.stringify(value);
     setState((prev) => ({
       ...prev,
       challenge: {
         ...prev.challenge,
-        aiOutputs: { ...prev.challenge.aiOutputs, [key]: value },
+        aiOutputs: { ...prev.challenge.aiOutputs, [key]: stringified },
       },
     }));
   };
 
-  const generateExplanation = async () => {
-    setLoadingExplain(true);
+
+  // Auto-generate opener + buttons on first mount
+  useEffect(() => {
+    if (!opener && !openerLoading) void generateOpener();
+    if (buttons.length === 0 && !buttonsLoading) void generateButtons();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const generateOpener = async () => {
+    setOpenerLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {
-        body: {
-          moment: "explain",
-          inputs: { firstName, audience, superpower, problem },
-        },
+        body: { moment: "opener", inputs: day1Inputs },
       });
       if (error) throw error;
-      if (data?.fallback || !data?.text) {
-        const fb = `${firstName ? `${firstName}, ` : ""}let me show you something that is going to change how you think about lead generation.\n\nQuiz marketing is the act of joining a conversation ${audience || "your audience"} is already having with themselves. In under three minutes a quiz listens, measures, and hands back a personalised next step — no forks, no maze.\n\nA generic PDF tells ${audience || "them"} what to do, gets saved with a dozen others, and sits forgotten in a downloads folder. A quiz is different. It mirrors where they are right now, names the tension they feel, and points to the one move that resolves it.\n\nThat matters for you because ${superpower ? `your superpower — ${superpower} — ` : "what you do best "}only lands once they have admitted the gap themselves. The quiz makes them say the pain out loud. Then you arrive as the person who can close it.\n\nThat is the whole shift: stop teaching the answer up front, start mirroring the question. The conversion happens inside the quiz, not after it.`;
-        setExplanation(fb);
-        persist("day2_screen1_explanation", fb);
-      } else {
-        setExplanation(data.text);
-        persist("day2_screen1_explanation", data.text);
+      const text =
+        (data?.text as string | undefined) ||
+        `${firstName ? `${firstName}, ` : ""}here is the shift that changes everything about how you bring in ${audience || "your audience"}. Quiz marketing meets them inside the conversation they are already having with themselves, then hands them one clear next step.`;
+      setOpener(text);
+      persist("day2_s1_opener", text);
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "opener" });
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't reach Johnny right now.");
+    } finally {
+      setOpenerLoading(false);
+    }
+  };
+
+  const generateButtons = async () => {
+    setButtonsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("day2-thread", {
+        body: { moment: "buttons", inputs: day1Inputs },
+      });
+      if (error) throw error;
+      const list = (data?.buttons as QuizButton[] | undefined) || [];
+      if (list.length === 5) {
+        setButtons(list);
+        persist("day2_s1_buttons", list);
       }
-      trackEvent("day_training_viewed", { day: 2, surface: "day2_screen1", mode: "explain" });
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "buttons" });
     } catch (err: any) {
       toast.error(err?.message || "Couldn't reach Johnny right now.");
     } finally {
-      setLoadingExplain(false);
+      setButtonsLoading(false);
     }
   };
 
-  const generatePositioning = async () => {
-    setLoadingPos(true);
+  const generateInsight = async (btn: QuizButton) => {
+    updateInsight(btn.key, { loading: true });
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {
         body: {
-          moment: "positioning",
-          inputs: { firstName, audience, superpower, problem },
+          moment: "insight",
+          key: btn.key,
+          label: btn.label,
+          inputs: day1Inputs,
         },
       });
       if (error) throw error;
-      const fb = `My quiz helps ${audience || "my audience"} see exactly where they are stuck${problem ? ` with ${problem}` : ""} so they can take the next clear step, powered by ${superpower || "what I do best"}.`;
-      const text = data?.fallback || !data?.text ? fb : data.text;
-      setPositioning(text);
-      setDraft(text);
-      persist("day2_screen1_positioning", text);
-      trackEvent("day_training_viewed", { day: 2, surface: "day2_screen1", mode: "positioning" });
+      const text = (data?.text as string | undefined) || "";
+      if (!text) throw new Error("Empty response");
+      updateInsight(btn.key, { text, draft: text, loading: false });
+      const nextMap = { ...savedInsightsRaw };
+      setInsights((prev) => {
+        const merged: Record<string, string> = {};
+        BUTTON_ORDER.forEach((k) => {
+          merged[k] = k === btn.key ? text : prev[k].text;
+        });
+        persist("day2_s1_insights", merged);
+        return prev;
+      });
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: `insight_${btn.key}` });
     } catch (err: any) {
+      updateInsight(btn.key, { loading: false });
       toast.error(err?.message || "Couldn't reach Johnny right now.");
-    } finally {
-      setLoadingPos(false);
     }
   };
 
-  const savePositioning = () => {
-    const next = draft.trim();
+  const saveInsight = (key: ButtonKey) => {
+    const next = insights[key].draft.trim();
     if (!next) return;
-    setPositioning(next);
-    persist("day2_screen1_positioning", next);
-    setEditing(false);
+    updateInsight(key, { text: next, editing: false });
+    const merged: Record<string, string> = {};
+    BUTTON_ORDER.forEach((k) => {
+      merged[k] = k === key ? next : insights[k].text;
+    });
+    persist("day2_s1_insights", merged);
   };
+
+  const allOpened = BUTTON_ORDER.every((k) => insights[k].text.trim().length > 0);
 
   const handleContinue = () => {
-    trackEvent("day_training_viewed", { day: 2, surface: "day2_screen1", mode: "continue" });
-    // Screens 2-6 will be built next. For now, return to dashboard.
-    toast.success("Screen 1 saved. Next screens coming soon.");
+    trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "continue" });
+    toast.success("Step 1 saved. Next screens coming soon.");
     navigate("/challenger-dashboard");
   };
 
@@ -151,124 +229,149 @@ const Day2Screen1 = () => {
           What is quiz marketing and why it will work for you.
         </h1>
 
-        {/* Johnny explanation */}
+        {/* Johnny opener */}
         <div className="flex items-start gap-3 mb-8">
           <JohnnyAvatar />
-          <div className="flex-1 min-w-0 space-y-3">
-            {!explanation && loadingExplain && (
+          <div className="flex-1 min-w-0">
+            {!opener && openerLoading && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Johnny is thinking…
               </div>
             )}
-            {explanation && (
-              <div className="prose prose-sm md:prose-base max-w-none text-foreground prose-p:leading-relaxed prose-p:my-2.5">
-                <ReactMarkdown>{explanation}</ReactMarkdown>
+            {opener && (
+              <div className="prose prose-sm md:prose-base max-w-none text-foreground prose-p:leading-relaxed prose-p:my-2">
+                <ReactMarkdown>{opener}</ReactMarkdown>
               </div>
             )}
           </div>
         </div>
 
-        {/* Positioning generator */}
-        {explanation && !positioning && (
-          <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 sm:p-6 animate-fade-in">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-primary mb-2">
-              Your next move
-            </p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Let Johnny turn what you told him on Day 1 into a one-sentence
-              positioning statement for your quiz. You can edit it after.
-            </p>
-            <Button
-              onClick={generatePositioning}
-              disabled={loadingPos}
-              size="lg"
-              className="w-full sm:w-auto"
-            >
-              {loadingPos ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Generating…
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4" /> Generate my quiz positioning statement
-                </>
-              )}
-            </Button>
+        {/* Buttons */}
+        {buttonsLoading && buttons.length === 0 && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
+            <Loader2 className="h-4 w-4 animate-spin" /> Lining up your five angles…
           </div>
         )}
 
-        {/* Positioning result + inline edit */}
-        {positioning && (
-          <div className="rounded-2xl border-2 border-primary/40 bg-card p-5 sm:p-6 animate-fade-in space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
-                Your quiz positioning
-              </p>
-              {!editing && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDraft(positioning);
-                    setEditing(true);
-                  }}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary"
+        {buttons.length === 5 && (
+          <div className="space-y-3">
+            {buttons.map((btn) => {
+              const ins = insights[btn.key];
+              const opened = ins.text.trim().length > 0;
+              return (
+                <div
+                  key={btn.key}
+                  className={`rounded-2xl border-2 transition-colors ${
+                    opened
+                      ? "border-primary/40 bg-card"
+                      : "border-border bg-card hover:border-primary/30"
+                  }`}
                 >
-                  <Pencil className="h-3.5 w-3.5" /> Edit
-                </button>
-              )}
-            </div>
+                  {!opened ? (
+                    <button
+                      type="button"
+                      onClick={() => generateInsight(btn)}
+                      disabled={ins.loading}
+                      className="w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-4 text-left"
+                    >
+                      <span className="text-sm sm:text-base font-medium text-foreground">
+                        {btn.label}
+                      </span>
+                      <span className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+                        {ins.loading ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-3.5 w-3.5" /> Generate
+                          </>
+                        )}
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="px-4 sm:px-5 py-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+                          {btn.label}
+                        </p>
+                        {!ins.editing && (
+                          <button
+                            type="button"
+                            onClick={() => updateInsight(btn.key, { editing: true, draft: ins.text })}
+                            className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary"
+                          >
+                            <Pencil className="h-3.5 w-3.5" /> Edit
+                          </button>
+                        )}
+                      </div>
 
-            {editing ? (
-              <div className="space-y-3">
-                <Textarea
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  className="min-h-[120px] text-base leading-relaxed"
-                  autoFocus
-                />
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setDraft(positioning);
-                      setEditing(false);
-                    }}
-                  >
-                    <XIcon className="h-4 w-4" /> Cancel
-                  </Button>
-                  <Button size="sm" onClick={savePositioning} disabled={!draft.trim()}>
-                    <Check className="h-4 w-4" /> Save
-                  </Button>
+                      <div className="flex items-start gap-3">
+                        <JohnnyAvatar />
+                        <div className="flex-1 min-w-0">
+                          {ins.editing ? (
+                            <div className="space-y-3">
+                              <Textarea
+                                value={ins.draft}
+                                onChange={(e) => updateInsight(btn.key, { draft: e.target.value })}
+                                className="min-h-[110px] text-sm md:text-base leading-relaxed"
+                                autoFocus
+                              />
+                              <div className="flex gap-2 justify-end">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    updateInsight(btn.key, { editing: false, draft: ins.text })
+                                  }
+                                >
+                                  <XIcon className="h-4 w-4" /> Cancel
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => saveInsight(btn.key)}
+                                  disabled={!ins.draft.trim()}
+                                >
+                                  <Check className="h-4 w-4" /> Save
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm md:text-base leading-relaxed text-foreground whitespace-pre-line">
+                              {ins.text}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {!ins.editing && (
+                        <div className="flex justify-end">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => generateInsight(btn)}
+                            disabled={ins.loading}
+                          >
+                            {ins.loading ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Sparkles className="h-3.5 w-3.5" />
+                            )}
+                            Regenerate
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <p className="text-base sm:text-lg leading-relaxed font-medium text-foreground">
-                {positioning}
-              </p>
-            )}
-
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={generatePositioning}
-                disabled={loadingPos || editing}
-              >
-                {loadingPos ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                Regenerate
-              </Button>
-            </div>
+              );
+            })}
           </div>
         )}
 
         {/* Continue */}
-        {positioning && !editing && (
+        {allOpened && (
           <div className="mt-8 flex justify-end animate-fade-in">
             <Button size="lg" onClick={handleContinue}>
               Continue <ArrowRight className="h-4 w-4" />

@@ -159,8 +159,9 @@ const EchoText = ({
   }, [value, editing]);
 
   if (!display) return null;
+  const displayCased = display.charAt(0).toUpperCase() + display.slice(1);
   if (!onSave) {
-    return <span className="font-semibold text-primary">{display}</span>;
+    return <span className="font-semibold text-primary">{displayCased}</span>;
   }
 
   if (editing) {

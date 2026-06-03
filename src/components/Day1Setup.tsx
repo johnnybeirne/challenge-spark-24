@@ -215,7 +215,7 @@ const EchoText = ({
   return (
     <span className="inline-flex items-center gap-1 align-middle group">
       <span className="font-semibold text-primary underline underline-offset-2 decoration-primary/30 group-hover:decoration-primary/60 transition-all cursor-pointer">
-        {display}
+        {displayCased}
       </span>
       <button
         type="button"

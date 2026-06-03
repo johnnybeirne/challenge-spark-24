@@ -502,6 +502,33 @@ export type Database = {
         }
         Relationships: []
       }
+      day2_button_labels: {
+        Row: {
+          id: string
+          label: string
+          screen: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id: string
+          label: string
+          screen: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          label?: string
+          screen?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       diagnostic_responses: {
         Row: {
           created_at: string

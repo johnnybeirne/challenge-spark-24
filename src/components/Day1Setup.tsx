@@ -1612,14 +1612,38 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
           const step2Subject = whoLower || audienceLower;
-          const step2Messages: Msg[] = [
-            renderTemplate(
-              "step-5",
-              step2Subject
-                ? `Got it${fn}. So for ${step2Subject} — what's the specific problem or obstacle they're trying to overcome right now?`
-                : "Now tell me about the specific problem or obstacle they're trying to overcome.",
-            ),
-          ];
+          // Build step-5 as segments so [challenge_type] renders as a quoted,
+          // accent-coloured echo of what they picked in step 4.
+          const step5Tpl =
+            day1Templates["step-5"] ??
+            defaultsById["step-5"] ??
+            (step2Subject
+              ? `Got it${fn}. So for ${step2Subject} — what's the specific problem or obstacle they're trying to overcome right now?`
+              : "Now tell me about the specific problem or obstacle they're trying to overcome.");
+          // Resolve every tag EXCEPT [challenge_type] / [audience] which become segments.
+          const partialValues: Record<string, string> = { ...liveTagValues, challenge_type: "\u0000CT\u0000", audience: "\u0000AUD\u0000" };
+          const resolved = renderDay1Preview(step5Tpl, partialValues)
+            .replace(/\s*\[[a-z_]+\]/gi, "");
+          const buildSegments = (text: string): MsgSegment[] => {
+            const parts: MsgSegment[] = [];
+            const re = /\u0000(CT|AUD)\u0000/g;
+            let last = 0;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(text)) !== null) {
+              if (m.index > last) parts.push(text.slice(last, m.index));
+              if (m[1] === "CT") {
+                parts.push('"');
+                parts.push({ echo: "challengeType" } as EchoSegment);
+                parts.push('"');
+              } else {
+                parts.push({ echo: "audience" } as EchoSegment);
+              }
+              last = m.index + m[0].length;
+            }
+            if (last < text.length) parts.push(text.slice(last));
+            return parts;
+          };
+          const step2Messages: Msg[] = [buildSegments(resolved)];
 
 
           return (

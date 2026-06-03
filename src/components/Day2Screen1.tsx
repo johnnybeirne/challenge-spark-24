@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Loader2, ArrowRight, Pencil, Check, X as XIcon } from "lucide-react";
+import { Sparkles, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import { useAppState } from "@/context/AppContext";
 import { getSetup } from "@/components/Day1Setup";
 import { supabase } from "@/integrations/supabase/client";

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useAppState } from "@/context/AppContext";
+import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 
 const CHALLENGE_GOAL_LABELS: Record<string, string> = {
   "solve-problem": "Overcome a specific blocker",
@@ -34,19 +35,15 @@ const readJson = (value: unknown): Record<string, any> => {
 const YourChallengeRecap = () => {
   const { state } = useAppState();
 
-  const { audience, superpower, goal, promise } = useMemo(() => {
+  const { audience, superpower, goal } = useMemo(() => {
     const outputs = state.challenge?.aiOutputs ?? {};
     const setup = readJson(outputs.day1Setup);
-    const promiseObj = readJson(outputs.day1_promise);
     return {
       audience: (setup.audience ?? "").trim(),
       superpower: (setup.superpower ?? "").trim(),
       goal: goalLabel(setup.challengeType),
-      promise: (promiseObj.promise ?? "").trim(),
     };
   }, [state.challenge?.aiOutputs]);
-
-  if (!audience && !superpower && !goal && !promise) return null;
 
   const rows: Array<{ label: string; value: string }> = [];
   if (audience) {
@@ -57,7 +54,8 @@ const YourChallengeRecap = () => {
   }
   if (superpower) rows.push({ label: "Your superpower is:", value: sentenceCase(superpower) });
   if (goal) rows.push({ label: "Your goal is:", value: sentenceCase(goal) });
-  if (promise) rows.push({ label: "Your challenge promise:", value: sentenceCase(promise) });
+
+  if (rows.length === 0) return null;
 
   return (
     <section className="space-y-2">
@@ -72,9 +70,16 @@ const YourChallengeRecap = () => {
             <span className="font-medium text-primary">{r.value}</span>
           </div>
         ))}
+        <div className="pt-2">
+          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-1">
+            Challenge Promise
+          </div>
+          <ChallengePromiseCard variant="inline" />
+        </div>
       </div>
     </section>
   );
 };
 
 export default YourChallengeRecap;
+

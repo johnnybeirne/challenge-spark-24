@@ -75,7 +75,9 @@ export type AnalyticsEvent =
   | "training_section_disabled"
   | "training_section_enabled"
   | "profile_updated"
-  | "your_dashboard_viewed";
+  | "your_dashboard_viewed"
+  | "promise_polished"
+  | "promise_edited";
 
 
 export async function trackEvent(

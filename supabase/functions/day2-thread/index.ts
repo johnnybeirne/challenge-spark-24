@@ -289,9 +289,10 @@ function fallbackInsight(key: string, p: ReturnType<typeof builderProfile>): str
   const sp = p.superpower || "what you do best";
   const prob = p.problem || "what they're stuck on";
   const fn = p.firstName ? `${p.firstName}, ` : "";
+  const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : fn;
   switch (key) {
     case "audience_fit":
-      return `${fn}${aud} are already having a private conversation about ${prob}. A quiz steps into that conversation in under three minutes and hands back one clear next step instead of another generic PDF.`;
+      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand. A quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
     case "problem_gap":
       return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis. Your quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
     case "share_trigger":

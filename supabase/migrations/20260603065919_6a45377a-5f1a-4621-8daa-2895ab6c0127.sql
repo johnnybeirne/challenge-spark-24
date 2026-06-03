@@ -1,0 +1,1 @@
+ALTER TABLE public.user_memory ADD COLUMN IF NOT EXISTS challenge_title_override text NOT NULL DEFAULT '';

@@ -140,11 +140,45 @@ const Day2Screen1 = () => {
   };
 
 
-  // Auto-generate opener + buttons once Day 1 inputs are hydrated.
+  // Build button list from admin-edited templates with Day 1 substitution.
+  // The label set is now fully editable from /owner-console/day2-buttons.
+  useEffect(() => {
+    if (!day1Ready) return;
+    if (adminLabels.length === 0) return;
+    const values = {
+      first_name: firstName,
+      audience,
+      superpower,
+      problem,
+      how,
+      outcome,
+    };
+    const computed: QuizButton[] = adminLabels
+      .map((row) => {
+        const key = ADMIN_ID_TO_KEY[row.id];
+        if (!key) return null;
+        const label = renderDay2Preview(row.label, values).trim();
+        if (!label) return null;
+        return { key, label } as QuizButton;
+      })
+      .filter((b): b is QuizButton => b !== null);
+
+    if (computed.length === 0) return;
+
+    setButtons((prev) => {
+      const sameLength = prev.length === computed.length;
+      const sameLabels = sameLength && prev.every((b, i) => b.label === computed[i].label && b.key === computed[i].key);
+      if (sameLabels) return prev;
+      persist("day2_s1_buttons", computed);
+      return computed;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [day1Ready, adminLabels, firstName, audience, superpower, problem, how, outcome]);
+
+  // Auto-generate opener once Day 1 inputs are hydrated.
   useEffect(() => {
     if (!day1Ready) return;
     if (!opener && !openerLoading) void generateOpener();
-    if (buttons.length === 0 && !buttonsLoading) void generateButtons();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [day1Ready]);
 
@@ -169,25 +203,6 @@ const Day2Screen1 = () => {
     }
   };
 
-  const generateButtons = async () => {
-    setButtonsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("day2-thread", {
-        body: { moment: "buttons", inputs: day1Inputs },
-      });
-      if (error) throw error;
-      const list = (data?.buttons as QuizButton[] | undefined) || [];
-      if (list.length === 5) {
-        setButtons(list);
-        persist("day2_s1_buttons", list);
-      }
-      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "buttons" });
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't reach Johnny right now.");
-    } finally {
-      setButtonsLoading(false);
-    }
-  };
 
   const generateInsight = async (btn: QuizButton) => {
     updateInsight(btn.key, { loading: true });

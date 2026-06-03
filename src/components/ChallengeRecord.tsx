@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Circle, Clock, ExternalLink, Quote, Target } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, Circle, Clock, ExternalLink, Pencil, Quote, Target, X } from "lucide-react";
 
 import { useAppState } from "@/context/AppContext";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import RestartDay1Button from "@/components/RestartDay1Button";
 
 const readJsonObject = (value: unknown): Record<string, string> => {
@@ -109,6 +110,73 @@ const EmptyDay = ({ day, href }: { day: number; href: string }) => (
   </div>
 );
 
+
+const EditableTitle = ({ identity }: { identity: ReturnType<typeof useChallengeIdentity> }) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(identity.topic);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editing) {
+      setDraft(identity.topic);
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      });
+    }
+  }, [editing, identity.topic]);
+
+  const save = () => {
+    identity.setTopic(draft);
+    setEditing(false);
+  };
+  const cancel = () => {
+    setDraft(identity.topic);
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="mt-2 flex items-center gap-2">
+        <Input
+          ref={inputRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") { e.preventDefault(); save(); }
+            if (e.key === "Escape") { e.preventDefault(); cancel(); }
+          }}
+          placeholder="Lead Generation"
+          className="h-10 text-lg font-bold"
+          maxLength={48}
+          aria-label="Edit challenge topic"
+        />
+        <Button type="button" size="icon" variant="default" onClick={save} aria-label="Save title">
+          <Check className="h-4 w-4" />
+        </Button>
+        <Button type="button" size="icon" variant="ghost" onClick={cancel} aria-label="Cancel">
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2 flex items-start gap-2">
+      <h3 className="text-2xl font-bold leading-tight text-foreground">{identity.title}</h3>
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className="mt-1 rounded-md p-1 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+        aria-label="Edit challenge title"
+        title="Edit challenge title"
+      >
+        <Pencil className="h-4 w-4" />
+      </button>
+    </div>
+  );
+};
+
 const ChallengeRecord = () => {
   const { state } = useAppState();
   const identity = useChallengeIdentity();
@@ -206,9 +274,7 @@ const ChallengeRecord = () => {
           <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
             Challenge identity
           </p>
-          <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground">
-            {identity.title}
-          </h3>
+          <EditableTitle identity={identity} />
           {day1.promise && (
             <div className="mt-4 flex gap-3 rounded-xl bg-background/50 p-4">
               <Quote className="h-5 w-5 shrink-0 text-primary/60" />

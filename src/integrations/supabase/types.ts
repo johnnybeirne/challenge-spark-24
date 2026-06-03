@@ -1608,6 +1608,7 @@ export type Database = {
         Row: {
           audience_type: string
           challenge_name: string
+          challenge_title_override: string
           challenge_type: string
           created_at: string
           desired_outcome: string
@@ -1620,6 +1621,7 @@ export type Database = {
         Insert: {
           audience_type?: string
           challenge_name?: string
+          challenge_title_override?: string
           challenge_type?: string
           created_at?: string
           desired_outcome?: string
@@ -1632,6 +1634,7 @@ export type Database = {
         Update: {
           audience_type?: string
           challenge_name?: string
+          challenge_title_override?: string
           challenge_type?: string
           created_at?: string
           desired_outcome?: string

@@ -8,7 +8,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
 import TopBar from "./TopBar";
 import RightRail from "./RightRail";
-import BottomNav from "./BottomNav";
+
 import BackButton from "./BackButton";
 import CountdownBottomBar from "./CountdownBottomBar";
 import QaModePanel from "./QaModePanel";
@@ -31,7 +31,6 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
-  const showChallengerMobileNav = showChallengeSidebar && isChallengerShell;
   const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !isAuthEntryRoute && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
@@ -82,7 +81,7 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
       className="experience-root min-h-screen bg-background overflow-x-hidden"
     >
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
-      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengerMobileNav ? "pb-20 lg:pb-0" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
+      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         {showChallengeSidebar && <TopBar />}
         <div className={showChallengeSidebar ? "flex w-full" : undefined}>
           <div className="min-w-0 flex-1">
@@ -94,7 +93,6 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}
-        {showChallengerMobileNav && <BottomNav />}
       </div>
       {showCopilotChat && <AiCopilotChat />}
       {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={sidebarCollapsed} />}

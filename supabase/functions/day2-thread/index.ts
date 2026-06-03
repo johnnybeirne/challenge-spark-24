@@ -78,9 +78,23 @@ interface Day1Inputs {
   problem?: string;
   how?: string;
   outcome?: string;
+  expertType?: unknown;
+  expertTypePhrase?: string;
+}
+
+function formatExpertTypes(arr: string[]): string {
+  const lower = arr.map((v) => v.toLowerCase());
+  if (lower.length === 0) return "";
+  if (lower.length === 1) return lower[0];
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
 }
 
 function builderProfile(inputs: Day1Inputs) {
+  const rawExpert = Array.isArray(inputs.expertType)
+    ? (inputs.expertType as unknown[]).map((v) => sanitise(v, 40)).filter(Boolean)
+    : [];
+  const expertPhrase = sanitise(inputs.expertTypePhrase, 200) || formatExpertTypes(rawExpert);
   return {
     firstName: sanitise(inputs.firstName, 40),
     audience: sanitise(inputs.audience),
@@ -88,6 +102,8 @@ function builderProfile(inputs: Day1Inputs) {
     problem: sanitise(inputs.problem),
     how: sanitise(inputs.how),
     outcome: sanitise(inputs.outcome),
+    expertTypes: rawExpert,
+    expertPhrase,
   };
 }
 

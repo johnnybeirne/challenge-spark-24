@@ -100,10 +100,7 @@ const Field = ({ label, value }: { label: string; value: string }) => (
 
 const EmptyDay = ({ day, href }: { day: number; href: string }) => (
   <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 text-center">
-    <p className="text-sm text-muted-foreground">
-      Nothing recorded yet for Day {day}.
-    </p>
-    <Button asChild size="sm" variant="outline" className="mt-3 gap-2">
+    <Button asChild size="sm" variant="outline" className="gap-2">
       <Link to={href}>
         Open Day {day}
         <ArrowRight className="h-4 w-4" />

@@ -952,10 +952,21 @@ const Day1Setup = ({ onComplete }: Props) => {
   const handleFoundationNext = async (current: 1 | 2 | 3) => {
     if (current === 1) {
       if (!audience.trim()) return;
-      persistFoundation({ audience: audience.trim() });
+      const raw = audience.trim();
+      persistFoundation({ audience: raw });
       profileSaved("Who you serve");
       setStep10Phase(saved?.superpower ? "input" : "intro");
       setStep(10);
+      // Fire-and-forget AI polish so "speakers trainers authors coaches"
+      // becomes "speakers, trainers, authors, and coaches" before the
+      // superpower coach message echoes it. Only overwrites if the user
+      // hasn't edited the audience in the meantime.
+      polishAudience({ audience: raw, audienceType }).then((polished) => {
+        const clean = (polished || "").trim();
+        if (!clean || clean === raw) return;
+        setAudience((current) => (current.trim() === raw ? clean : current));
+        persistFoundation({ audience: clean });
+      });
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });

@@ -315,7 +315,7 @@ const ChallengeRecord = () => {
                       {c.label}
                     </p>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
-                      {c.value}
+                      {c.value.replace(/\s*(Day\s*\d+\s*:)/g, (_, m, idx) => (idx === 0 ? m : `\n${m}`)).trim()}
                     </p>
                   </div>
                 ))}

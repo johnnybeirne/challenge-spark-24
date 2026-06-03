@@ -313,76 +313,17 @@ const Day2Screen1 = () => {
                     </button>
                   ) : (
                     <div className="px-4 sm:px-5 py-4 space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
-                          {btn.label}
-                        </p>
-                        {!ins.editing && (
-                          <button
-                            type="button"
-                            onClick={() => updateInsight(btn.key, { editing: true, draft: ins.text })}
-                            className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary"
-                          >
-                            <Pencil className="h-3.5 w-3.5" /> Edit
-                          </button>
-                        )}
-                      </div>
-
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+                        {btn.label}
+                      </p>
                       <div className="flex items-start gap-3">
                         <JohnnyAvatar />
                         <div className="flex-1 min-w-0">
-                          {ins.editing ? (
-                            <div className="space-y-3">
-                              <Textarea
-                                value={ins.draft}
-                                onChange={(e) => updateInsight(btn.key, { draft: e.target.value })}
-                                className="min-h-[110px] text-sm md:text-base leading-relaxed"
-                                autoFocus
-                              />
-                              <div className="flex gap-2 justify-end">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    updateInsight(btn.key, { editing: false, draft: ins.text })
-                                  }
-                                >
-                                  <XIcon className="h-4 w-4" /> Cancel
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  onClick={() => saveInsight(btn.key)}
-                                  disabled={!ins.draft.trim()}
-                                >
-                                  <Check className="h-4 w-4" /> Save
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="text-sm md:text-base leading-relaxed text-foreground whitespace-pre-line">
-                              {ins.text}
-                            </p>
-                          )}
+                          <p className="text-sm md:text-base leading-relaxed text-foreground whitespace-pre-line">
+                            {ins.text}
+                          </p>
                         </div>
                       </div>
-
-                      {!ins.editing && (
-                        <div className="flex justify-end">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => generateInsight(btn)}
-                            disabled={ins.loading}
-                          >
-                            {ins.loading ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <Sparkles className="h-3.5 w-3.5" />
-                            )}
-                            Regenerate
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>

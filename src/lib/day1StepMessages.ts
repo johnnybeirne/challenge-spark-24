@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 export type Day1TagKey =
   | "first_name"
   | "audience"
+  | "expert_type"
   | "superpower"
   | "challenge_type"
   | "problem"
@@ -29,6 +30,7 @@ export const DAY1_STORAGE_KEY = "admin.day1StepMessages.v1";
 export const DAY1_EXAMPLE_VALUES: Record<Day1TagKey, string> = {
   first_name: "Johnny",
   audience: "independent coaches and consultants",
+  expert_type: "coach and course creator",
   superpower: "making complex ideas feel simple",
   challenge_type: "quick-win",
   problem: "they can't explain what they do in one sentence",
@@ -51,9 +53,15 @@ export const defaultDay1Steps: Day1StepMessage[] = [
   },
   {
     id: "step-2",
-    label: "Step 2 of 8 — Who specifically",
+    label: "Step 2 of 9 — Who specifically",
     message:
       "Got it [first_name]. Tell me a bit more — who specifically do you help inside that group?",
+  },
+  {
+    id: "step-2b",
+    label: "Step 3 of 9 — Expert type",
+    message:
+      "Which best describes you, [first_name]? Pick any that apply.",
   },
   {
     id: "step-3",

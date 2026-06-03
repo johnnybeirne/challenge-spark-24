@@ -579,7 +579,7 @@ const audienceOptions = [
 const challengeOptions = [
   {
     value: "solve-problem",
-    description: "Overcome a specific blocker",
+    description: "Remove a specific blocker",
   },
   {
     value: "quick-win",

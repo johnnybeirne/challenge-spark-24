@@ -84,7 +84,12 @@ const Day2Screen1 = () => {
     if (typeof raw !== "string" || !raw) return fallback;
     try { return JSON.parse(raw) as T; } catch { return fallback; }
   };
-  const savedButtons = parseJson<QuizButton[]>(state.challenge.aiOutputs.day2_s1_buttons, []);
+  const rawSavedButtons = parseJson<QuizButton[]>(state.challenge.aiOutputs.day2_s1_buttons, []);
+  // Discard any previously cached buttons that leaked the literal "unknown"
+  // placeholder so they regenerate with the now-hydrated Day 1 data.
+  const savedButtons = rawSavedButtons.some((b) => /\bunknown\b/i.test(b?.label || ""))
+    ? []
+    : rawSavedButtons;
   const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
 
 

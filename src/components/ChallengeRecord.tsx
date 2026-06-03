@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Circle, Clock, ExternalLink, Quote, Target } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, Circle, Clock, ExternalLink, Pencil, Quote, Target, X } from "lucide-react";
 
 import { useAppState } from "@/context/AppContext";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import RestartDay1Button from "@/components/RestartDay1Button";
 
 const readJsonObject = (value: unknown): Record<string, string> => {

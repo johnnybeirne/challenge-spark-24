@@ -98,14 +98,16 @@ const Day2Screen1 = () => {
     setInsights((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
 
   const persist = (key: string, value: unknown) => {
+    const stringified = typeof value === "string" ? value : JSON.stringify(value);
     setState((prev) => ({
       ...prev,
       challenge: {
         ...prev.challenge,
-        aiOutputs: { ...prev.challenge.aiOutputs, [key]: value },
+        aiOutputs: { ...prev.challenge.aiOutputs, [key]: stringified },
       },
     }));
   };
+
 
   // Auto-generate opener + buttons on first mount
   useEffect(() => {

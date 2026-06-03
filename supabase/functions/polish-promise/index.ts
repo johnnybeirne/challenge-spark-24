@@ -19,7 +19,7 @@ Rules:
 - Keep it concise — roughly the same length as the raw input combined.
 - Lowercase the RESULT and METHOD fragments unless they contain a proper noun.
 - Use "their" / "them" naturally if pronouns are inconsistent.
-- Output the sentence ONLY. No markdown, no commentary, no prefix. Do NOT wrap the whole sentence in quotes — only the pain phrase.
+- Output the sentence ONLY. No markdown, no commentary, no prefix. Do NOT wrap the whole sentence in quotes — only the pain phrase.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

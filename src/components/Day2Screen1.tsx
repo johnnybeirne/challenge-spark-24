@@ -114,6 +114,15 @@ const Day2Screen1 = () => {
     ? []
     : rawSavedButtons;
   const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
+  // If the cached audience_fit insight predates the expert-type personalisation,
+  // clear it so the next view regenerates with the new prompt.
+  if (
+    expertTypePhrase &&
+    savedInsightsRaw.audience_fit &&
+    !/as a /i.test(savedInsightsRaw.audience_fit)
+  ) {
+    delete savedInsightsRaw.audience_fit;
+  }
 
 
   const [opener, setOpener] = useState<string>(savedOpener);

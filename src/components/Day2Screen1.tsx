@@ -66,8 +66,13 @@ const Day2Screen1 = () => {
   const day1Inputs = { firstName, audience, superpower, problem, how, outcome };
 
   const savedOpener = (state.challenge.aiOutputs.day2_s1_opener as string) || "";
-  const savedButtons = (state.challenge.aiOutputs.day2_s1_buttons as QuizButton[] | undefined) || [];
-  const savedInsightsRaw = (state.challenge.aiOutputs.day2_s1_insights as Record<string, string> | undefined) || {};
+  const parseJson = <T,>(raw: unknown, fallback: T): T => {
+    if (typeof raw !== "string" || !raw) return fallback;
+    try { return JSON.parse(raw) as T; } catch { return fallback; }
+  };
+  const savedButtons = parseJson<QuizButton[]>(state.challenge.aiOutputs.day2_s1_buttons, []);
+  const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
+
 
   const [opener, setOpener] = useState<string>(savedOpener);
   const [openerLoading, setOpenerLoading] = useState(false);

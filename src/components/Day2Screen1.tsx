@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { renderDay2Preview, useDay2ButtonLabels } from "@/lib/day2ButtonLabels";
+import Day2Screen2 from "@/components/Day2Screen2";
 
 // Map admin row id -> ButtonKey used in this screen.
 const ADMIN_ID_TO_KEY: Record<string, ButtonKey> = {

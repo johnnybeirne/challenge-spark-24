@@ -277,7 +277,7 @@ const ChallengeRecord = () => {
         <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 shadow-md sm:p-7">
           <Target className="absolute right-4 top-4 h-10 w-10 text-primary/15" />
           <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
-            Challenge identity
+            Suggested Challenge Title
           </p>
           <EditableTitle identity={identity} />
         </section>

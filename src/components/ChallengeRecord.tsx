@@ -90,12 +90,17 @@ const Section = ({
   );
 };
 
+const sentenceCase = (s: string) => {
+  const t = (s || "").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+};
+
 const Field = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-lg border border-border/60 bg-background/60 p-3">
-    <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
-      {label}
+    <p className="text-sm font-semibold text-muted-foreground">
+      {sentenceCase(label)}
     </p>
-    <p className="mt-1 whitespace-pre-wrap text-sm font-medium text-foreground">{value}</p>
+    <p className="mt-1 whitespace-pre-wrap text-sm font-medium text-foreground">{sentenceCase(value)}</p>
   </div>
 );
 

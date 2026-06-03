@@ -983,8 +983,10 @@ const Day1Setup = ({ onComplete }: Props) => {
       const raw = audience.trim();
       persistFoundation({ audience: raw });
       profileSaved("Who you serve");
-      setStep10Phase(saved?.superpower ? "input" : "intro");
-      setStep(10);
+      setStep11Phase(
+        Array.isArray(saved?.expertType) && saved.expertType.length > 0 ? "choose" : "intro",
+      );
+      setStep(11);
       // Fire-and-forget AI polish so "speakers trainers authors coaches"
       // becomes "speakers, trainers, authors, and coaches" before the
       // superpower coach message echoes it. Only overwrites if the user

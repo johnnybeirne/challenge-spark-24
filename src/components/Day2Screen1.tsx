@@ -226,7 +226,7 @@ const Day2Screen1 = () => {
 
         {/* Title */}
         <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground mb-8">
-          What is quiz marketing and why it will work for you.
+          What is quiz marketing and why it will work for you{firstName ? `, ${firstName}` : ""}.
         </h1>
 
         {/* Johnny opener */}

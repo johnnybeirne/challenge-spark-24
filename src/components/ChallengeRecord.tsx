@@ -335,7 +335,7 @@ const ChallengeRecord = () => {
           eyebrow={dayEyebrow(2)}
 
           title="Lead Magnet Quiz"
-          description="The quiz you designed as the entry point to your challenge."
+          
           status={dayStatus(2)}
         >
           {day2.length === 0 ? (

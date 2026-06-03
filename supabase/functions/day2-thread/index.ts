@@ -370,6 +370,142 @@ async function handleInsight(payload: { key?: string; label?: string; inputs?: D
   );
 }
 
+// ---------- SCREEN 2: OPENER ----------
+async function handleOpenerS2(inputs: Day1Inputs): Promise<Response> {
+  const p = builderProfile(inputs);
+  const expertOpener = p.expertPhrase ? `as a ${p.expertPhrase}, ` : "";
+  const fbText = `${p.firstName ? `${p.firstName}, ` : ""}${expertOpener}the lead magnet you choose is the first proof of how you think. A quiz lets ${p.audience || "your audience"} feel that judgement in under three minutes — no other format does that.`;
+
+  const prompt = [
+    "Source material — only use these ideas:",
+    KB,
+    "",
+    "Builder:",
+    p.firstName ? `- First name: ${p.firstName}` : null,
+    p.expertPhrase ? `- Expert type(s) (use verbatim): ${p.expertPhrase}` : null,
+    p.audience ? `- Audience (their words): ${p.audience}` : null,
+    "",
+    "Write Johnny's spoken opener for Day 2 Screen 2 — the screen that contrasts a quiz with PDFs, discovery calls, checklists and webinars.",
+    "Constraints:",
+    "- EXACTLY two sentences.",
+    "- The FIRST sentence MUST begin with the first name followed by a comma, then weave in the expert type using the phrase 'as a {expert phrase},' if provided.",
+    "- Set up that — compared to other lead magnets — a quiz returns a personalised verdict in under three minutes.",
+    "- Reference their audience in their own words if provided.",
+    "- Plain text. No headings. No emojis. No exclamation marks unless natural. Do not wrap in quotes.",
+  ].filter(Boolean).join("\n");
+
+  const resp = await callGateway({
+    model: MODEL,
+    messages: [
+      { role: "system", content: JOHNNY_VOICE },
+      { role: "user", content: prompt },
+    ],
+    temperature: 0.6,
+  });
+
+  if (resp.status === 429) return fallback("rate-limited", { text: fbText });
+  if (resp.status === 402) return fallback("payment-required", { text: fbText });
+  if (!resp.ok) {
+    console.error("opener_s2 gateway error", resp.status, await resp.text());
+    return fallback("gateway-error", { text: fbText });
+  }
+  const data = await resp.json();
+  const text = stripQuotes(data?.choices?.[0]?.message?.content?.trim() || "");
+  if (!text) return fallback("empty-response", { text: fbText });
+  return new Response(JSON.stringify({ text }), {
+    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+// ---------- SCREEN 2: INSIGHT ----------
+const INSIGHT_BRIEFS_S2: Record<string, string> = {
+  quiz_vs_pdf:
+    "Why a quiz beats a PDF for an expert like THIS builder. Open by naming the builder's expert type(s) as 'As a {expert phrase},'. Anchor in Section 1 and Section 3 — PDFs are one-size-fits-all and sit forgotten; a quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets an expert's judgement land at scale.",
+  quiz_vs_calls:
+    "How a quiz replaces discovery calls for this builder's expert type. Anchor in Section 1 (B2B optimisation / risk mitigation) and Section 3 — discovery calls are high-friction and depend on the expert being on the phone; a quiz delivers the diagnostic part instantly and at scale, so prospects arrive at any later conversation already self-qualified.",
+  quiz_vs_checklist:
+    "Why this builder's audience engages more with a quiz than a checklist. Reference the audience in the builder's own words. Anchor in Section 3 — checklists are shallow and generic; a quiz asks for explicit choices (zero-party data) and produces a result the reader could not have reached alone, which is what creates real engagement.",
+  quiz_prequalifies:
+    "How a quiz pre-qualifies leads before they join the builder's 3-day challenge. Reference the audience in the builder's own words. Anchor in Section 2 (present state, preferred future, pitfall) and Section 3 — the quiz segments leads automatically so the people who opt into the challenge already match the profile.",
+  quiz_vs_webinar:
+    "Why a quiz builds more trust than a free webinar for this builder's expert type. Open by naming the builder's expert type(s) as 'As a {expert phrase},'. Anchor in Section 3 — a webinar asks for 45–90 minutes before any value is delivered; a quiz inverts that by delivering a personalised reflection in under three minutes, and trust is built by accurate reflection rather than airtime.",
+};
+
+function fallbackInsightS2(key: string, p: ReturnType<typeof builderProfile>): string {
+  const aud = p.audience || "your audience";
+  const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : "";
+  switch (key) {
+    case "quiz_vs_pdf":
+      return `${expertOpener}a PDF tells every reader the same thing and sits forgotten in a downloads folder — it asks ${aud} to do the diagnostic work themselves. A quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets your judgement actually land at scale.`;
+    case "quiz_vs_calls":
+      return `${expertOpener}discovery calls are expensive on time and depend on you being on the phone before anything useful happens. A quiz delivers the diagnostic part instantly and at scale, so ${aud} arrive at any later conversation already self-qualified, with context, and warmer.`;
+    case "quiz_vs_checklist":
+      return `A checklist is shallow and generic — it gives ${aud} the same boxes everyone else gets and asks them to apply it themselves. A quiz asks for explicit choices and uses those answers to produce a result they could not have reached alone, and that asymmetry is what makes them lean in instead of skim.`;
+    case "quiz_prequalifies":
+      return `Because a quiz captures present state, preferred future and the pitfall in between, it segments ${aud} automatically before they ever land on your challenge page. The people who opt into the 3-day challenge already match the profile, so the room is warmer and the work is easier.`;
+    case "quiz_vs_webinar":
+      return `${expertOpener}a free webinar asks ${aud} for 45 to 90 minutes of attention before any personalised value is delivered — that is a big ask from a cold lead. A quiz inverts the trade: it returns an accurate reflection in under three minutes, and trust gets built by that accuracy, not by airtime.`;
+    default:
+      return `${expertOpener}compared to other lead magnets, a quiz returns a personalised next step for ${aud} in under three minutes — that is where the trust is earned.`;
+  }
+}
+
+async function handleInsightS2(payload: { key?: string; label?: string; inputs?: Day1Inputs }): Promise<Response> {
+  const key = sanitise(payload.key, 60);
+  const label = sanitise(payload.label, 200);
+  const p = builderProfile(payload.inputs || {});
+  const brief = INSIGHT_BRIEFS_S2[key];
+  const fb = fallbackInsightS2(key, p);
+
+  if (!brief) return fallback("unknown-key", { text: fb });
+
+  const prompt = [
+    "Source material — only use these ideas:",
+    KB,
+    "",
+    "Builder's Day 1 data (use their own words verbatim):",
+    p.firstName ? `- first name: ${p.firstName}` : null,
+    p.audience ? `- audience: ${p.audience}` : null,
+    p.superpower ? `- superpower: ${p.superpower}` : null,
+    p.problem ? `- problem: ${p.problem}` : null,
+    p.how ? `- how they deliver: ${p.how}` : null,
+    p.outcome ? `- outcome: ${p.outcome}` : null,
+    p.expertPhrase ? `- expert type(s) (use verbatim as 'As a ${p.expertPhrase},' when the brief calls for it): ${p.expertPhrase}` : null,
+    "",
+    `Button the builder just clicked: "${label}"`,
+    `Insight brief: ${brief}`,
+    "",
+    "Write Johnny's spoken answer.",
+    "Constraints:",
+    "- EXACTLY two or three sentences.",
+    "- Use the audience and (where relevant) expert type in the builder's own words — do not paraphrase those nouns.",
+    "- Stay strictly inside the source material above (Section 3 in particular).",
+    "- Plain text. No headings. No bullet points. No emojis. No exclamation marks unless natural. Do not wrap in quotes.",
+  ].filter(Boolean).join("\n");
+
+  const resp = await callGateway({
+    model: MODEL,
+    messages: [
+      { role: "system", content: JOHNNY_VOICE },
+      { role: "user", content: prompt },
+    ],
+    temperature: 0.7,
+  });
+
+  if (resp.status === 429) return fallback("rate-limited", { text: fb });
+  if (resp.status === 402) return fallback("payment-required", { text: fb });
+  if (!resp.ok) {
+    console.error("insight_s2 gateway error", resp.status, await resp.text());
+    return fallback("gateway-error", { text: fb });
+  }
+  const data = await resp.json();
+  const text = stripQuotes(data?.choices?.[0]?.message?.content?.trim() || "");
+  if (!text) return fallback("empty-response", { text: fb });
+  return new Response(JSON.stringify({ text }), {
+    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {

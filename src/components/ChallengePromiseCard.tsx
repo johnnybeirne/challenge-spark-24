@@ -173,13 +173,13 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
         </>
       ) : (
         <>
-          <p className="text-base leading-relaxed text-foreground">
+          <p className="text-base leading-relaxed text-foreground rounded-xl border border-border bg-background px-4 py-3">
             {loading && !displayText ? (
               <span className="inline-flex items-center gap-2 text-muted-foreground">
                 <Sparkles className="h-4 w-4 animate-pulse" /> Polishing your promise…
               </span>
             ) : (
-              <span className="font-medium text-primary">{displayText}</span>
+              <span className="font-medium text-foreground">{displayText}</span>
             )}
           </p>
           {displayText && (

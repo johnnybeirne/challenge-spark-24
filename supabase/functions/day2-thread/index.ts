@@ -78,9 +78,23 @@ interface Day1Inputs {
   problem?: string;
   how?: string;
   outcome?: string;
+  expertType?: unknown;
+  expertTypePhrase?: string;
+}
+
+function formatExpertTypes(arr: string[]): string {
+  const lower = arr.map((v) => v.toLowerCase());
+  if (lower.length === 0) return "";
+  if (lower.length === 1) return lower[0];
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
 }
 
 function builderProfile(inputs: Day1Inputs) {
+  const rawExpert = Array.isArray(inputs.expertType)
+    ? (inputs.expertType as unknown[]).map((v) => sanitise(v, 40)).filter(Boolean)
+    : [];
+  const expertPhrase = sanitise(inputs.expertTypePhrase, 200) || formatExpertTypes(rawExpert);
   return {
     firstName: sanitise(inputs.firstName, 40),
     audience: sanitise(inputs.audience),
@@ -88,6 +102,8 @@ function builderProfile(inputs: Day1Inputs) {
     problem: sanitise(inputs.problem),
     how: sanitise(inputs.how),
     outcome: sanitise(inputs.outcome),
+    expertTypes: rawExpert,
+    expertPhrase,
   };
 }
 
@@ -257,7 +273,7 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
 // ---------- INSIGHT ----------
 const INSIGHT_BRIEFS: Record<string, string> = {
   audience_fit:
-    "Why a quiz fits THIS audience specifically. Anchor in Section 1 — joining the conversation they're already having, frictionless micro-commitments, hyper-individual results — and whichever of B2B (optimisation, risk mitigation, benchmarking) or B2C (identity validation, self-discovery, curated recommendations) applies.",
+    "Why a quiz is the best lead magnet for experts like THIS builder specifically. Open by naming the builder's expert type(s) in the form 'As a {expert phrase},' (e.g. 'As a coach and course creator,'). Then explain — using Section 1 — why a quiz beats a generic PDF for an expert who sells expertise: it joins the conversation their audience is already having with themselves, returns a personalised next step in under three minutes, and turns zero-party data into immediate authority. Reference their audience in their own words.",
   problem_gap:
     "How a quiz exposes the specific problem the audience can't see in themselves. Anchor in Section 2 — Expert Axis: they can name pain and desired future but cannot diagnose their own systemic pitfall. The quiz reveals the pitfall, which is where the builder's authority lands.",
   share_trigger:
@@ -273,9 +289,10 @@ function fallbackInsight(key: string, p: ReturnType<typeof builderProfile>): str
   const sp = p.superpower || "what you do best";
   const prob = p.problem || "what they're stuck on";
   const fn = p.firstName ? `${p.firstName}, ` : "";
+  const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : fn;
   switch (key) {
     case "audience_fit":
-      return `${fn}${aud} are already having a private conversation about ${prob}. A quiz steps into that conversation in under three minutes and hands back one clear next step instead of another generic PDF.`;
+      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand. A quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
     case "problem_gap":
       return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis. Your quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
     case "share_trigger":
@@ -309,6 +326,7 @@ async function handleInsight(payload: { key?: string; label?: string; inputs?: D
     p.problem ? `- problem: ${p.problem}` : null,
     p.how ? `- how they deliver: ${p.how}` : null,
     p.outcome ? `- outcome: ${p.outcome}` : null,
+    p.expertPhrase ? `- expert type(s) (use verbatim as 'As a ${p.expertPhrase},' when the brief calls for it): ${p.expertPhrase}` : null,
     "",
     `Button the builder just clicked: "${label}"`,
     `Insight brief: ${brief}`,

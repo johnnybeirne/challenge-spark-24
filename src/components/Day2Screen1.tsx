@@ -88,7 +88,18 @@ const Day2Screen1 = () => {
   const problem = ((setup?.problem as string) || "").trim();
   const how = ((setup?.how as string) || "").trim();
   const outcome = ((setup?.outcome as string) || "").trim();
-  const day1Inputs = { firstName, audience, superpower, problem, how, outcome };
+  const expertTypeArr = Array.isArray(setup?.expertType)
+    ? (setup!.expertType as unknown[]).map((v) => String(v || "").trim()).filter(Boolean)
+    : [];
+  const formatExpertTypes = (arr: string[]): string => {
+    const lower = arr.map((v) => v.toLowerCase());
+    if (lower.length === 0) return "";
+    if (lower.length === 1) return lower[0];
+    if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+    return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
+  };
+  const expertTypePhrase = formatExpertTypes(expertTypeArr);
+  const day1Inputs = { firstName, audience, superpower, problem, how, outcome, expertType: expertTypeArr, expertTypePhrase };
   const day1Ready = Boolean(audience && superpower && problem);
 
   const savedOpener = (state.challenge.aiOutputs.day2_s1_opener as string) || "";
@@ -103,6 +114,15 @@ const Day2Screen1 = () => {
     ? []
     : rawSavedButtons;
   const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
+  // If the cached audience_fit insight predates the expert-type personalisation,
+  // clear it so the next view regenerates with the new prompt.
+  if (
+    expertTypePhrase &&
+    savedInsightsRaw.audience_fit &&
+    !/as a /i.test(savedInsightsRaw.audience_fit)
+  ) {
+    delete savedInsightsRaw.audience_fit;
+  }
 
 
   const [opener, setOpener] = useState<string>(savedOpener);

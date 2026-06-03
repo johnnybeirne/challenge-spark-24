@@ -1082,6 +1082,37 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep5Phase(saved?.challengeType ? "choose" : "intro");
     setStep(5);
   };
+
+  const toggleExpertType = (label: string) => {
+    setExpertType((prev) => {
+      const next = prev.includes(label)
+        ? prev.filter((v) => v !== label)
+        : [...prev, label];
+      persistFoundation({ expertType: next } as Partial<SetupData>);
+      return next;
+    });
+  };
+
+  const persistExpertTypeToProfile = async (values: string[]) => {
+    if (!authUser?.id) return;
+    try {
+      await (supabase as any)
+        .from("profiles")
+        .update({ expert_type: values })
+        .eq("user_id", authUser.id);
+    } catch {
+      /* best-effort — already mirrored into aiOutputs */
+    }
+  };
+
+  const handleExpertTypeNext = () => {
+    if (expertType.length === 0) return;
+    persistFoundation({ expertType } as Partial<SetupData>);
+    void persistExpertTypeToProfile(expertType);
+    profileSaved("Your expert types");
+    setStep10Phase(saved?.superpower ? "input" : "intro");
+    setStep(10);
+  };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const description = challengeOptions.find((o) => o.value === v)?.description ?? v;

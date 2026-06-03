@@ -315,10 +315,12 @@ const ChallengeRecord = () => {
                       {c.label}
                     </p>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
-                      {c.value
-                        .replace(/\s*(Day\s*\d+\s*:)/g, (_, m, idx) => (idx === 0 ? m : `\n${m}`))
-                        .replace(/(^|[\n.!?:]\s*)([a-z])/g, (_, p, ch) => p + ch.toUpperCase())
-                        .trim()}
+                      {sentenceCase(
+                        c.value
+                          .replace(/\s*(Day\s*\d+\s*:)/g, (_, m, idx) => (idx === 0 ? m : `\n${m}`))
+                          .replace(/(^|[\n.!?:]\s*)([a-z])/g, (_, p, ch) => p + ch.toUpperCase())
+                          .trim()
+                      )}
                     </p>
                   </div>
                 ))}

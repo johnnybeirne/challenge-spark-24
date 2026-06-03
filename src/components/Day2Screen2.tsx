@@ -11,16 +11,32 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { renderDay2Preview, useDay2ButtonLabels } from "@/lib/day2ButtonLabels";
-import Day2Screen2 from "@/components/Day2Screen2";
 
-// Map admin row id -> ButtonKey used in this screen.
+type ButtonKey =
+  | "quiz_vs_pdf"
+  | "quiz_vs_calls"
+  | "quiz_vs_checklist"
+  | "quiz_prequalifies"
+  | "quiz_vs_webinar";
+
 const ADMIN_ID_TO_KEY: Record<string, ButtonKey> = {
-  s1_audience_fit: "audience_fit",
-  s1_problem_gap: "problem_gap",
-  s1_share_trigger: "share_trigger",
-  s1_superpower_question: "superpower_question",
-  s1_buy_decision: "buy_decision",
+  s2_quiz_vs_pdf: "quiz_vs_pdf",
+  s2_quiz_vs_calls: "quiz_vs_calls",
+  s2_quiz_vs_checklist: "quiz_vs_checklist",
+  s2_quiz_prequalifies: "quiz_prequalifies",
+  s2_quiz_vs_webinar: "quiz_vs_webinar",
 };
+
+const BUTTON_ORDER: ButtonKey[] = [
+  "quiz_vs_pdf",
+  "quiz_vs_calls",
+  "quiz_vs_checklist",
+  "quiz_prequalifies",
+  "quiz_vs_webinar",
+];
+
+interface QuizButton { key: ButtonKey; label: string }
+interface InsightState { text: string; loading: boolean }
 
 const JohnnyAvatar = () => (
   <img
@@ -29,33 +45,6 @@ const JohnnyAvatar = () => (
     className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
   />
 );
-
-type ButtonKey =
-  | "audience_fit"
-  | "problem_gap"
-  | "share_trigger"
-  | "superpower_question"
-  | "buy_decision";
-
-interface QuizButton {
-  key: ButtonKey;
-  label: string;
-}
-
-interface InsightState {
-  text: string;
-  editing: boolean;
-  draft: string;
-  loading: boolean;
-}
-
-const BUTTON_ORDER: ButtonKey[] = [
-  "audience_fit",
-  "problem_gap",
-  "share_trigger",
-  "superpower_question",
-  "buy_decision",
-];
 
 const readSetupFromState = (aiOutputs: Record<string, unknown> | undefined) => {
   const raw = aiOutputs?.day1Setup;
@@ -66,16 +55,14 @@ const readSetupFromState = (aiOutputs: Record<string, unknown> | undefined) => {
   return null;
 };
 
-const Day2Screen1 = () => {
+const Day2Screen2 = () => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
-  // Source of truth: DB-synced aiOutputs.day1Setup. Fall back to localStorage
-  // via getSetup() only when state hasn't hydrated yet.
   const setupFromState = readSetupFromState(state.challenge?.aiOutputs as Record<string, unknown> | undefined);
   const setup = (setupFromState ?? getSetup()) as Record<string, unknown> | null;
 
-  const adminLabels = useDay2ButtonLabels("screen_1");
+  const adminLabels = useDay2ButtonLabels("screen_2");
 
   const rawName =
     (state.user?.name as string | undefined) ||
@@ -101,47 +88,21 @@ const Day2Screen1 = () => {
   };
   const expertTypePhrase = formatExpertTypes(expertTypeArr);
   const day1Inputs = { firstName, audience, superpower, problem, how, outcome, expertType: expertTypeArr, expertTypePhrase };
-  const day1Ready = Boolean(audience && superpower && problem);
+  const day1Ready = Boolean(audience && (superpower || problem));
 
-  const savedOpener = (state.challenge.aiOutputs.day2_s1_opener as string) || "";
   const parseJson = <T,>(raw: unknown, fallback: T): T => {
     if (typeof raw !== "string" || !raw) return fallback;
     try { return JSON.parse(raw) as T; } catch { return fallback; }
   };
-  const rawSavedButtons = parseJson<QuizButton[]>(state.challenge.aiOutputs.day2_s1_buttons, []);
-  // Discard any previously cached buttons that leaked the literal "unknown"
-  // placeholder so they regenerate with the now-hydrated Day 1 data.
-  const savedButtons = rawSavedButtons.some((b) => /\bunknown\b/i.test(b?.label || ""))
-    ? []
-    : rawSavedButtons;
-  const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s1_insights, {});
-  // If the cached audience_fit insight predates the expert-type personalisation,
-  // clear it so the next view regenerates with the new prompt.
-  if (
-    expertTypePhrase &&
-    savedInsightsRaw.audience_fit &&
-    !/as a /i.test(savedInsightsRaw.audience_fit)
-  ) {
-    delete savedInsightsRaw.audience_fit;
-  }
 
+  const savedOpener = (state.challenge.aiOutputs.day2_s2_opener as string) || "";
+  const savedInsightsRaw = parseJson<Record<string, string>>(state.challenge.aiOutputs.day2_s2_insights, {});
 
   const [opener, setOpener] = useState<string>(savedOpener);
   const [openerLoading, setOpenerLoading] = useState(false);
 
-  const [buttons, setButtons] = useState<QuizButton[]>(savedButtons);
-  const [buttonsLoading, setButtonsLoading] = useState(false);
-
   const initialInsights: Record<ButtonKey, InsightState> = BUTTON_ORDER.reduce(
-    (acc, k) => {
-      acc[k] = {
-        text: savedInsightsRaw[k] || "",
-        editing: false,
-        draft: savedInsightsRaw[k] || "",
-        loading: false,
-      };
-      return acc;
-    },
+    (acc, k) => { acc[k] = { text: savedInsightsRaw[k] || "", loading: false }; return acc; },
     {} as Record<ButtonKey, InsightState>,
   );
   const [insights, setInsights] = useState<Record<ButtonKey, InsightState>>(initialInsights);
@@ -153,70 +114,49 @@ const Day2Screen1 = () => {
     const stringified = typeof value === "string" ? value : JSON.stringify(value);
     setState((prev) => ({
       ...prev,
-      challenge: {
-        ...prev.challenge,
-        aiOutputs: { ...prev.challenge.aiOutputs, [key]: stringified },
-      },
+      challenge: { ...prev.challenge, aiOutputs: { ...prev.challenge.aiOutputs, [key]: stringified } },
     }));
   };
 
+  // Build buttons from admin labels with Day 1 substitution.
+  const tagValues = {
+    first_name: firstName,
+    audience,
+    expert_type: expertTypePhrase,
+    superpower,
+    problem,
+    how,
+    outcome,
+  };
+  const buttons: QuizButton[] = adminLabels
+    .map((row) => {
+      const key = ADMIN_ID_TO_KEY[row.id];
+      if (!key) return null;
+      const label = renderDay2Preview(row.label, tagValues).trim();
+      if (!label) return null;
+      return { key, label } as QuizButton;
+    })
+    .filter((b): b is QuizButton => b !== null);
 
-  // Build button list from admin-edited templates with Day 1 substitution.
-  // The label set is now fully editable from /owner-console/day2-buttons.
-  useEffect(() => {
-    if (!day1Ready) return;
-    if (adminLabels.length === 0) return;
-    const values = {
-      first_name: firstName,
-      audience,
-      superpower,
-      problem,
-      how,
-      outcome,
-    };
-    const computed: QuizButton[] = adminLabels
-      .map((row) => {
-        const key = ADMIN_ID_TO_KEY[row.id];
-        if (!key) return null;
-        const label = renderDay2Preview(row.label, values).trim();
-        if (!label) return null;
-        return { key, label } as QuizButton;
-      })
-      .filter((b): b is QuizButton => b !== null);
-
-    if (computed.length === 0) return;
-
-    setButtons((prev) => {
-      const sameLength = prev.length === computed.length;
-      const sameLabels = sameLength && prev.every((b, i) => b.label === computed[i].label && b.key === computed[i].key);
-      if (sameLabels) return prev;
-      persist("day2_s1_buttons", computed);
-      return computed;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [day1Ready, adminLabels, firstName, audience, superpower, problem, how, outcome]);
-
-  // Auto-generate opener once Day 1 inputs are hydrated.
   useEffect(() => {
     if (!day1Ready) return;
     if (!opener && !openerLoading) void generateOpener();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [day1Ready]);
 
-
   const generateOpener = async () => {
     setOpenerLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {
-        body: { moment: "opener", inputs: day1Inputs },
+        body: { moment: "opener_s2", inputs: day1Inputs },
       });
       if (error) throw error;
       const text =
         (data?.text as string | undefined) ||
-        `${firstName ? `${firstName}, ` : ""}here is the shift that changes everything about how you bring in ${audience || "your audience"}. Quiz marketing meets them inside the conversation they are already having with themselves, then hands them one clear next step.`;
+        `${firstName ? `${firstName}, ` : ""}${expertTypePhrase ? `as a ${expertTypePhrase}, ` : ""}the lead magnet you choose is the first proof of how you think. A quiz lets ${audience || "your audience"} feel that judgement in under three minutes — no other format does that.`;
       setOpener(text);
-      persist("day2_s1_opener", text);
-      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "opener" });
+      persist("day2_s2_opener", text);
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s2", mode: "opener" });
     } catch (err: any) {
       toast.error(err?.message || "Couldn't reach Johnny right now.");
     } finally {
@@ -224,72 +164,64 @@ const Day2Screen1 = () => {
     }
   };
 
-
   const generateInsight = async (btn: QuizButton) => {
     updateInsight(btn.key, { loading: true });
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {
-        body: {
-          moment: "insight",
-          key: btn.key,
-          label: btn.label,
-          inputs: day1Inputs,
-        },
+        body: { moment: "insight_s2", key: btn.key, label: btn.label, inputs: day1Inputs },
       });
       if (error) throw error;
       const text = (data?.text as string | undefined) || "";
       if (!text) throw new Error("Empty response");
-      updateInsight(btn.key, { text, draft: text, loading: false });
-      const nextMap = { ...savedInsightsRaw };
+      updateInsight(btn.key, { text, loading: false });
       setInsights((prev) => {
         const merged: Record<string, string> = {};
-        BUTTON_ORDER.forEach((k) => {
-          merged[k] = k === btn.key ? text : prev[k].text;
-        });
-        persist("day2_s1_insights", merged);
+        BUTTON_ORDER.forEach((k) => { merged[k] = k === btn.key ? text : prev[k].text; });
+        persist("day2_s2_insights", merged);
         return prev;
       });
-      trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: `insight_${btn.key}` });
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s2", mode: `insight_${btn.key}` });
     } catch (err: any) {
       updateInsight(btn.key, { loading: false });
       toast.error(err?.message || "Couldn't reach Johnny right now.");
     }
   };
 
-
-
-
   const allOpened = BUTTON_ORDER.every((k) => insights[k].text.trim().length > 0);
 
-  const step = (state.challenge.aiOutputs.day2_step as string) || "1";
-  if (step === "2") return <Day2Screen2 />;
-
   const handleContinue = () => {
-    trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "continue" });
-    persist("day2_step", "2");
+    trackEvent("day_training_viewed", { day: 2, surface: "day2_s2", mode: "continue" });
+    persist("day2_step", "3");
+    toast.success("Step 2 saved. Next screens coming soon.");
+    navigate("/challenger-dashboard");
   };
+
+  const handleBack = () => persist("day2_step", "1");
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12 pb-24">
         {/* Progress */}
         <div className="mb-6 flex items-center justify-between">
-          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
-            Day 2 · Step 1 of 6
-          </p>
+          <button
+            type="button"
+            onClick={handleBack}
+            className="text-[11px] font-black uppercase tracking-[0.18em] text-primary hover:underline"
+          >
+            Day 2 · Step 2 of 6
+          </button>
           <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <span
                 key={n}
-                className={`h-1.5 w-6 rounded-full ${n === 1 ? "bg-primary" : "bg-muted"}`}
+                className={`h-1.5 w-6 rounded-full ${n <= 2 ? "bg-primary" : "bg-muted"}`}
               />
             ))}
           </div>
         </div>
 
-        {/* Title */}
         <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground mb-8">
-          What is quiz marketing and why it will work for you{firstName ? `, ${firstName}` : ""}.
+          Why a quiz beats other lead magnets{firstName ? `, ${firstName}` : ""}.
         </h1>
 
         {/* Johnny opener */}
@@ -298,8 +230,7 @@ const Day2Screen1 = () => {
           <div className="flex-1 min-w-0">
             {!opener && openerLoading && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Johnny is thinking…
+                <Loader2 className="h-4 w-4 animate-spin" /> Johnny is thinking…
               </div>
             )}
             {opener && (
@@ -311,12 +242,6 @@ const Day2Screen1 = () => {
         </div>
 
         {/* Buttons */}
-        {buttonsLoading && buttons.length === 0 && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
-            <Loader2 className="h-4 w-4 animate-spin" /> Lining up your five angles…
-          </div>
-        )}
-
         {buttons.length === 5 && (
           <div className="space-y-3">
             {buttons.map((btn) => {
@@ -326,9 +251,7 @@ const Day2Screen1 = () => {
                 <div
                   key={btn.key}
                   className={`rounded-2xl border-2 transition-colors ${
-                    opened
-                      ? "border-primary/40 bg-card"
-                      : "border-border bg-card hover:border-primary/30"
+                    opened ? "border-primary/40 bg-card" : "border-border bg-card hover:border-primary/30"
                   }`}
                 >
                   {!opened ? (
@@ -338,26 +261,18 @@ const Day2Screen1 = () => {
                       disabled={ins.loading}
                       className="w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-4 text-left"
                     >
-                      <span className="text-sm sm:text-base font-medium text-foreground">
-                        {btn.label}
-                      </span>
+                      <span className="text-sm sm:text-base font-medium text-foreground">{btn.label}</span>
                       <span className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                         {ins.loading ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating
-                          </>
+                          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating</>
                         ) : (
-                          <>
-                            <Sparkles className="h-3.5 w-3.5" /> Generate
-                          </>
+                          <><Sparkles className="h-3.5 w-3.5" /> Generate</>
                         )}
                       </span>
                     </button>
                   ) : (
                     <div className="px-4 sm:px-5 py-4 space-y-3">
-                      <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
-                        {btn.label}
-                      </p>
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{btn.label}</p>
                       <div className="flex items-start gap-3">
                         <JohnnyAvatar />
                         <div className="flex-1 min-w-0">
@@ -374,7 +289,6 @@ const Day2Screen1 = () => {
           </div>
         )}
 
-        {/* Continue */}
         {allOpened && (
           <div className="mt-8 flex justify-end animate-fade-in">
             <Button size="lg" onClick={handleContinue}>
@@ -387,4 +301,4 @@ const Day2Screen1 = () => {
   );
 };
 
-export default Day2Screen1;
+export default Day2Screen2;

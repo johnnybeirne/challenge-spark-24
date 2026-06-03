@@ -45,10 +45,17 @@ export const defaultDay2Buttons: Day2ButtonLabel[] = [
   { id: "s1_share_trigger",       screen: "screen_1", sort_order: 3, label: "What makes [audience] share their quiz result" },
   { id: "s1_superpower_question", screen: "screen_1", sort_order: 4, label: "How [superpower] becomes a quiz question" },
   { id: "s1_buy_decision",        screen: "screen_1", sort_order: 5, label: "Why [audience] invest after taking a quiz" },
+
+  { id: "s2_quiz_vs_pdf",         screen: "screen_2", sort_order: 1, label: "Why a quiz beats a PDF for experts like you" },
+  { id: "s2_quiz_vs_calls",       screen: "screen_2", sort_order: 2, label: "How a quiz replaces discovery calls for [expert_type]" },
+  { id: "s2_quiz_vs_checklist",   screen: "screen_2", sort_order: 3, label: "Why [audience] engage more with a quiz than a checklist" },
+  { id: "s2_quiz_prequalifies",   screen: "screen_2", sort_order: 4, label: "How a quiz pre-qualifies leads before they join your challenge" },
+  { id: "s2_quiz_vs_webinar",     screen: "screen_2", sort_order: 5, label: "Why a quiz builds more trust than a free webinar for [expert_type]" },
 ];
 
 export const SCREEN_LABELS: Record<string, string> = {
   screen_1: "Day 2 Screen 1 — What is quiz marketing",
+  screen_2: "Day 2 Screen 2 — Why a quiz beats other lead magnets",
 };
 
 export const DAY2_BUTTONS_UPDATED_EVENT = "day2-buttons-updated";

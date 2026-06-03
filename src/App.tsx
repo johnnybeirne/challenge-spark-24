@@ -55,6 +55,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1Steps from "@/pages/AdminDay1Steps";
+import AdminDay2Buttons from "@/pages/AdminDay2Buttons";
 import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";
 import AdminBios from "@/pages/AdminBios";
 import AdminLeadGenQuizResponses from "@/pages/AdminLeadGenQuizResponses";

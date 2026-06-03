@@ -35,11 +35,12 @@ const readJson = (value: unknown): Record<string, any> => {
 const YourChallengeRecap = () => {
   const { state } = useAppState();
 
-  const { audience, superpower, goal } = useMemo(() => {
+  const { audience, problem, superpower, goal } = useMemo(() => {
     const outputs = state.challenge?.aiOutputs ?? {};
     const setup = readJson(outputs.day1Setup);
     return {
       audience: (setup.audience ?? "").trim(),
+      problem: (setup.problem ?? "").trim(),
       superpower: (setup.superpower ?? "").trim(),
       goal: goalLabel(setup.challengeType),
     };
@@ -52,6 +53,7 @@ const YourChallengeRecap = () => {
       value: sentenceCase(audience),
     });
   }
+  if (problem) rows.push({ label: "Their problem is:", value: sentenceCase(problem) });
   if (superpower) rows.push({ label: "Your superpower is:", value: sentenceCase(superpower) });
   if (goal) rows.push({ label: "Your goal is:", value: sentenceCase(goal) });
 

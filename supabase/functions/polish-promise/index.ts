@@ -12,13 +12,14 @@ const SYSTEM_PROMPT = `You polish a Challenge Promise into one clean, natural En
 You will be given four fragments: WHO (audience), PAIN (current struggle), RESULT (desired outcome), METHOD (how).
 
 Rules:
-- Return ONE sentence in the shape: "Help <who> move from <pain> to <result> through <method>."
-- Fix grammar, capitalisation, articles, pronouns and obvious typos so it reads naturally.
+- Return ONE sentence in the shape: Help <who> move from "<pain>" to <result> through <method>.
+- The PAIN fragment MUST be wrapped in straight double quotes ("...") exactly as the user phrased it (you may fix only obvious typos/casing inside the quotes, but keep their wording).
+- Fix grammar, capitalisation, articles, pronouns and obvious typos in the rest of the sentence so it reads naturally.
 - Preserve the user's meaning and voice. Do NOT invent new ideas, examples or details.
 - Keep it concise — roughly the same length as the raw input combined.
-- Lowercase the middle fragments unless they contain a proper noun.
+- Lowercase the RESULT and METHOD fragments unless they contain a proper noun.
 - Use "their" / "them" naturally if pronouns are inconsistent.
-- Output the sentence ONLY. No quotes, no markdown, no commentary, no prefix.`;
+- Output the sentence ONLY. No markdown, no commentary, no prefix. Do NOT wrap the whole sentence in quotes — only the pain phrase.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

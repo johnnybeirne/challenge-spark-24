@@ -27,6 +27,8 @@ import { canAccessDay, getDayUnlock } from "@/lib/challengeProgression";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
+import Day2Screen1 from "@/components/Day2Screen1";
+
 import DayVideoModal from "@/components/DayVideoModal";
 import UpgradeCards from "@/components/UpgradeCards";
 import { supabase } from "@/integrations/supabase/client";
@@ -178,19 +180,11 @@ const DayChallenge = () => {
     );
   }
 
-  // Day 2 — intentionally cleared. Shell only; content will be rebuilt.
+  // Day 2 — Screen 1 of 6 (rebuild in progress).
   if (dayNum === 2) {
-    return (
-      <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
-        <div className="mb-6">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-            Day 2 of 3
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">Day 2</h1>
-        </div>
-      </div>
-    );
+    return <Day2Screen1 />;
   }
+
 
 
 

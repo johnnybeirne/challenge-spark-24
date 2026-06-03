@@ -178,6 +178,22 @@ const DayChallenge = () => {
     );
   }
 
+  // Day 2 — intentionally cleared. Shell only; content will be rebuilt.
+  if (dayNum === 2) {
+    return (
+      <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
+        <div className="mb-6">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+            Day 2 of 3
+          </p>
+          <h1 className="text-2xl font-bold text-foreground">Day 2</h1>
+        </div>
+      </div>
+    );
+  }
+
+
+
   // Setup is now embedded in /training (the onboarding hub).
   // Day 1 focuses purely on training, tasks, and AI help.
 

@@ -159,8 +159,9 @@ const EchoText = ({
   }, [value, editing]);
 
   if (!display) return null;
+  const displayCased = display.charAt(0).toUpperCase() + display.slice(1);
   if (!onSave) {
-    return <span className="font-semibold text-primary">{display}</span>;
+    return <span className="font-semibold text-primary">{displayCased}</span>;
   }
 
   if (editing) {
@@ -214,7 +215,7 @@ const EchoText = ({
   return (
     <span className="inline-flex items-center gap-1 align-middle group">
       <span className="font-semibold text-primary underline underline-offset-2 decoration-primary/30 group-hover:decoration-primary/60 transition-all cursor-pointer">
-        {display}
+        {displayCased}
       </span>
       <button
         type="button"

@@ -5,10 +5,12 @@ import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 const Day1 = () => {
   const navigate = useNavigate();
-  const { state, setState } = useAppState();
+  const { state, setState, authUser } = useAppState();
+
   const isLocked = (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {
@@ -29,15 +31,27 @@ const Day1 = () => {
   };
 
   if (isLocked) {
-    // Read-only view of completed Day 1 — show the Challenge Promise card.
+    const rawName =
+      (state.user?.name as string | undefined) ||
+      (authUser?.user_metadata?.full_name as string | undefined) ||
+      (authUser?.user_metadata?.name as string | undefined) ||
+      (authUser?.user_metadata?.first_name as string | undefined) ||
+      "";
+    const firstName = rawName.trim().split(/\s+/)[0] || "there";
+
+    // Read-only view of completed Day 1 — match Day 1 conversational style.
     return (
       <div className="min-h-screen bg-background">
         <div className="app-page-container py-6 pb-24 lg:py-8">
-          <div className="mb-6">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-              Day 1 of 3
-            </p>
-            <h1 className="text-2xl font-bold text-foreground">Day 1 Complete</h1>
+          <div className="flex items-start gap-3 mb-6">
+            <img
+              src={johnnyAvatar}
+              alt="Johnny AI"
+              className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+            />
+            <div className="flex-1 min-w-0 text-sm md:text-base leading-relaxed">
+              Nice work, {firstName}. Day 1 is locked in — here's the challenge promise you shaped together.
+            </div>
           </div>
 
           <ChallengePromiseCard />
@@ -49,6 +63,7 @@ const Day1 = () => {
       </div>
     );
   }
+
 
 
   return (

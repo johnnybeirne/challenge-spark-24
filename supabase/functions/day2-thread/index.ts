@@ -242,6 +242,10 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
     .filter(Boolean)
     .slice(0, 5);
   if (clean.length !== 5) return fallback("bad-shape", { buttons: fb });
+  // Reject any label that leaked the literal placeholder.
+  if (clean.some((l) => /\bunknown\b/i.test(l))) {
+    return fallback("placeholder-leaked", { buttons: fb });
+  }
 
   const buttons = BUTTON_TOPICS.map((t, i) => ({ key: t.key, label: clean[i] }));
   return new Response(

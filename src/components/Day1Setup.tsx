@@ -55,7 +55,7 @@ const JohnnyAvatar = () => (
 // bold/accent inline spans with a tiny pencil-to-edit affordance.
 // ---------------------------------------------------------------------------
 
-export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType" | "superpower";
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType" | "superpower" | "expertType";
 export type EchoSegment = { echo: EchoField };
 export type MsgSegment = string | EchoSegment;
 export type Msg = string | MsgSegment[];
@@ -516,7 +516,29 @@ export interface SetupData {
   how?: string;
   outcome?: string;
   superpower?: string;
+  expertType?: string[];
 }
+
+export const EXPERT_TYPE_OPTIONS = [
+  "Coach",
+  "Consultant",
+  "Course creator",
+  "Trainer",
+  "Speaker",
+  "Author",
+] as const;
+export type ExpertType = (typeof EXPERT_TYPE_OPTIONS)[number];
+
+// Format an array of expert types into a natural English phrase, lowercased
+// so it can sit inside a sentence ("As a coach and course creator…").
+export const formatExpertTypes = (values: string[] | undefined): string => {
+  const arr = (values || []).map((v) => String(v || "").trim()).filter(Boolean);
+  if (arr.length === 0) return "";
+  const lower = arr.map((v) => v.toLowerCase());
+  if (lower.length === 1) return lower[0];
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
+};
 
 /** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */
 const readSetupRaw = (aiOutputs?: Record<string, unknown>): any => {

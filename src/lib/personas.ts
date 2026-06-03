@@ -6,6 +6,12 @@ import type { AppState, UnlockEntry } from "@/context/AppContext";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";
+import { generateResult } from "@/lib/assessmentData";
+
+const SAMPLE_ASSESSMENT_ANSWERS: Record<string, string> = {
+  q1: "yes", q2: "yes", q3: "no", q4: "yes", q5: "no",
+  q6: "yes", q7: "yes", q8: "no", q9: "yes",
+};
 
 export type PersonaId =
   | "fresh"

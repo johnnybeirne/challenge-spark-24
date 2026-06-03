@@ -55,7 +55,7 @@ const JohnnyAvatar = () => (
 // bold/accent inline spans with a tiny pencil-to-edit affordance.
 // ---------------------------------------------------------------------------
 
-export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType" | "superpower";
+export type EchoField = "audience" | "how" | "problem" | "outcome" | "topic" | "audienceType" | "challengeType" | "superpower" | "expertType";
 export type EchoSegment = { echo: EchoField };
 export type MsgSegment = string | EchoSegment;
 export type Msg = string | MsgSegment[];
@@ -516,7 +516,29 @@ export interface SetupData {
   how?: string;
   outcome?: string;
   superpower?: string;
+  expertType?: string[];
 }
+
+export const EXPERT_TYPE_OPTIONS = [
+  "Coach",
+  "Consultant",
+  "Course creator",
+  "Trainer",
+  "Speaker",
+  "Author",
+] as const;
+export type ExpertType = (typeof EXPERT_TYPE_OPTIONS)[number];
+
+// Format an array of expert types into a natural English phrase, lowercased
+// so it can sit inside a sentence ("As a coach and course creator…").
+export const formatExpertTypes = (values: string[] | undefined): string => {
+  const arr = (values || []).map((v) => String(v || "").trim()).filter(Boolean);
+  if (arr.length === 0) return "";
+  const lower = arr.map((v) => v.toLowerCase());
+  if (lower.length === 1) return lower[0];
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`;
+  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
+};
 
 /** Read the wizard draft. DB (aiOutputs.day1Setup) wins; localStorage is pre-auth fallback. */
 const readSetupRaw = (aiOutputs?: Record<string, unknown>): any => {
@@ -546,7 +568,7 @@ interface Props {
 
 // Sequence: 4 audience-type → 1 who you serve → 10 superpower → 5 result type → 6 avatar detail
 // → 2 problem → 3 process → 9 result → 7 promise → 8 AI builder.
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 const audienceOptions = [
   { value: "b2b" as const, label: "Businesses / Professionals", icon: Briefcase },
@@ -706,7 +728,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
 
   const initialStep: Step = (() => {
-    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || persistedStep === 10 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
+    if (persistedStep === 1 || persistedStep === 2 || persistedStep === 3 || persistedStep === 9 || persistedStep === 10 || persistedStep === 11 || (persistedStep >= 4 && persistedStep <= 8)) return persistedStep as Step;
     return 4;
   })();
 
@@ -719,6 +741,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [step5Phase, setStep5Phase] = useState<ConvPhase>(saved?.challengeType ? "choose" : "intro");
   const [step6Phase, setStep6Phase] = useState<"intro" | "input">(saved?.topicHint ? "input" : "intro");
   const [step1Phase, setStep1Phase] = useState<"intro" | "input">(saved?.audience ? "input" : "intro");
+  const [step11Phase, setStep11Phase] = useState<ConvPhase>(
+    Array.isArray(saved?.expertType) && saved.expertType.length > 0 ? "choose" : "intro",
+  );
   const [step10Phase, setStep10Phase] = useState<"intro" | "input">(saved?.superpower ? "input" : "intro");
   const [step2Phase, setStep2Phase] = useState<"intro" | "input">(saved?.problem ? "input" : "intro");
   const [step3Phase, setStep3Phase] = useState<"intro" | "input">(saved?.how ? "input" : "intro");
@@ -744,6 +769,9 @@ const Day1Setup = ({ onComplete }: Props) => {
   const [how, setHow] = useState<string>(saved?.how ?? "");
   const [outcome, setOutcome] = useState<string>(saved?.outcome ?? "");
   const [superpower, setSuperpower] = useState<string>(saved?.superpower ?? "");
+  const [expertType, setExpertType] = useState<string[]>(
+    Array.isArray(saved?.expertType) ? (saved.expertType as string[]) : [],
+  );
 
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
@@ -784,7 +812,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Sequence: 4 → 1 → 10 → 5 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 1: 4, 10: 1, 5: 10, 2: 5, 3: 2, 9: 3, 7: 9 };
+    const baseMap: Record<number, Step> = { 1: 4, 11: 1, 10: 11, 5: 10, 2: 5, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -909,7 +937,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const ensurePromise = async (): Promise<void> => {
-    const cacheKey = `${audience.trim()}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const expertTypePhrase = formatExpertTypes(expertType);
+    const cacheKey = `${audience.trim()}|${expertTypePhrase}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
     const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
     const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
     if (cached && cachedKey === cacheKey) return;
@@ -920,6 +949,8 @@ const Day1Setup = ({ onComplete }: Props) => {
           inputs: {
             firstName,
             audience: audience.trim(),
+            expertType: [...expertType],
+            expertTypeLabel: expertTypePhrase,
             superpower: superpower.trim(),
             topicHint: topicHint.trim(),
             problem: problem.trim(),
@@ -955,8 +986,10 @@ const Day1Setup = ({ onComplete }: Props) => {
       const raw = audience.trim();
       persistFoundation({ audience: raw });
       profileSaved("Who you serve");
-      setStep10Phase(saved?.superpower ? "input" : "intro");
-      setStep(10);
+      setStep11Phase(
+        Array.isArray(saved?.expertType) && saved.expertType.length > 0 ? "choose" : "intro",
+      );
+      setStep(11);
       // Fire-and-forget AI polish so "speakers trainers authors coaches"
       // becomes "speakers, trainers, authors, and coaches" before the
       // superpower coach message echoes it. Only overwrites if the user
@@ -1052,6 +1085,37 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep5Phase(saved?.challengeType ? "choose" : "intro");
     setStep(5);
   };
+
+  const toggleExpertType = (label: string) => {
+    setExpertType((prev) => {
+      const next = prev.includes(label)
+        ? prev.filter((v) => v !== label)
+        : [...prev, label];
+      persistFoundation({ expertType: next } as Partial<SetupData>);
+      return next;
+    });
+  };
+
+  const persistExpertTypeToProfile = async (values: string[]) => {
+    if (!authUser?.id) return;
+    try {
+      await (supabase as any)
+        .from("profiles")
+        .update({ expert_type: values })
+        .eq("user_id", authUser.id);
+    } catch {
+      /* best-effort — already mirrored into aiOutputs */
+    }
+  };
+
+  const handleExpertTypeNext = () => {
+    if (expertType.length === 0) return;
+    persistFoundation({ expertType } as Partial<SetupData>);
+    void persistExpertTypeToProfile(expertType);
+    profileSaved("Your expert types");
+    setStep10Phase(saved?.superpower ? "input" : "intro");
+    setStep(10);
+  };
   const handleChallenge = (v: string) => {
     setChallengeType(v);
     const description = challengeOptions.find((o) => o.value === v)?.description ?? v;
@@ -1094,6 +1158,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       how: how.trim(),
       outcome: outcome.trim(),
       superpower: superpower.trim(),
+      expertType: [...expertType],
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 
@@ -1152,6 +1217,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       how: how.trim(),
       outcome: outcome.trim(),
       superpower: superpower.trim(),
+      expertType: [...expertType],
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });
@@ -1223,6 +1289,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         ? "person"
         : "";
 
+  const expertTypePhrase = formatExpertTypes(expertType);
   const echoMap: EchoMap = {
     audience: { value: audience, onSave: saveAudience },
     problem: { value: problem, onSave: saveProblem, format: (v) => v },
@@ -1232,6 +1299,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     superpower: { value: superpower, onSave: saveSuperpower, format: (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v) },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
     challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
+    expertType: { value: expertTypePhrase, format: (v) => v, skipTidy: true },
   };
 
   // Cumulative recap rows for the current step. Each prior answer is its own
@@ -1240,8 +1308,11 @@ const Day1Setup = ({ onComplete }: Props) => {
     const rows: RecapRow[] = [];
     const onSteps = (...steps: number[]) => steps.includes(currentStep);
     const skipSet = new Set<string>(skip);
-    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
+    if (onSteps(11, 10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
       rows.push({ label: "You work with:", echo: "audience" });
+    }
+    if (onSteps(10, 5, 2, 3, 9, 7) && expertTypePhrase && !skipSet.has("expertType")) {
+      rows.push({ label: "You are:", echo: "expertType" });
     }
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });
@@ -1263,7 +1334,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Day 1 visible step order for "Step X of N" progress header.
   // Step 8 (AI builder) is excluded — it's the post-setup builder, not a setup step.
-  const STEP_ORDER: number[] = [4, 1, 10, 5, 2, 3, 9, 7];
+  const STEP_ORDER: number[] = [4, 1, 11, 10, 5, 2, 3, 9, 7];
   const TOTAL_STEPS = STEP_ORDER.length;
   const stepIndex = STEP_ORDER.indexOf(step);
   const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
@@ -1281,6 +1352,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const liveTagValues: Record<Day1TagKey, string> = {
     first_name: firstName && firstName !== "there" ? firstName : "",
     audience: (audience || topicHint || "").trim(),
+    expert_type: expertTypePhrase,
     superpower: (superpower || "").trim(),
     challenge_type: (challengeLabel(challengeType) || "").toLowerCase(),
     problem: (problem || "").trim(),
@@ -1392,6 +1464,72 @@ const Day1Setup = ({ onComplete }: Props) => {
             </div>
           );
         })()}
+
+        {step === 11 && (() => {
+          const step11Message: Msg = renderTemplate(
+            "step-2b",
+            `Which best describes you${fn}? Pick any that apply.`,
+          );
+          return (
+            <div className="space-y-3 animate-fade-in">
+              {step11Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step11-intro-${firstName}`}
+                  messages={[step11Message]}
+                  echoMap={echoMap}
+                  skipMakingNotes
+                  onComplete={() => setStep11Phase("choose")}
+                />
+              )}
+              {step11Phase === "choose" && (
+                <div className="space-y-3">
+                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(11)} echoMap={echoMap} />
+                  <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {EXPERT_TYPE_OPTIONS.map((opt) => {
+                      const selected = expertType.includes(opt);
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          role="checkbox"
+                          aria-checked={selected}
+                          onClick={() => toggleExpertType(opt)}
+                          className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                            selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                          }`}
+                        >
+                          <span
+                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
+                              selected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                            }`}
+                            aria-hidden
+                          >
+                            {selected && <Check className="h-3.5 w-3.5 text-primary-foreground" />}
+                          </span>
+                          <span className="text-base font-semibold leading-tight">{opt}</span>
+                        </button>
+                      );
+                    })}
+                  </RevealControls>
+                  <RevealControls>
+                    <Button
+                      size="lg"
+                      onClick={handleExpertTypeNext}
+                      disabled={expertType.length === 0}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+
 
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");

@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 export type Day2TagKey =
   | "first_name"
   | "audience"
+  | "expert_type"
   | "superpower"
   | "problem"
   | "how"
@@ -27,6 +28,7 @@ export const DAY2_STORAGE_KEY = "admin.day2ButtonLabels.v1";
 export const DAY2_EXAMPLE_VALUES: Record<Day2TagKey, string> = {
   first_name: "Johnny",
   audience: "independent coaches",
+  expert_type: "coach and course creator",
   superpower: "making complex ideas feel simple",
   problem: "can't explain what they do in one sentence",
   how: "a 3-step clarity framework",
@@ -38,7 +40,7 @@ export const DAY2_TAG_KEYS: Day2TagKey[] = Object.keys(
 ) as Day2TagKey[];
 
 export const defaultDay2Buttons: Day2ButtonLabel[] = [
-  { id: "s1_audience_fit",        screen: "screen_1", sort_order: 1, label: "Why a quiz works for [audience]" },
+  { id: "s1_audience_fit",        screen: "screen_1", sort_order: 1, label: "Why a quiz is the best lead magnet for experts like you" },
   { id: "s1_problem_gap",         screen: "screen_1", sort_order: 2, label: "How a quiz reveals [problem] they can't see" },
   { id: "s1_share_trigger",       screen: "screen_1", sort_order: 3, label: "What makes [audience] share their quiz result" },
   { id: "s1_superpower_question", screen: "screen_1", sort_order: 4, label: "How [superpower] becomes a quiz question" },

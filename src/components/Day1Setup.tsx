@@ -1496,7 +1496,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           role="checkbox"
                           aria-checked={selected}
                           onClick={() => toggleExpertType(opt)}
-                          className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                          className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:bg-muted/50 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                             selected ? "border-primary bg-primary/10" : "border-border bg-card"
                           }`}
                         >

@@ -40,8 +40,8 @@ export const DAY2_TAG_KEYS: Day2TagKey[] = Object.keys(
 ) as Day2TagKey[];
 
 export const defaultDay2Buttons: Day2ButtonLabel[] = [
-  { id: "s1_audience_fit",        screen: "screen_1", sort_order: 1, label: "Why a quiz is the best lead magnet for experts like you" },
-  { id: "s1_problem_gap",         screen: "screen_1", sort_order: 2, label: "How a quiz reveals [problem] they can't see" },
+  { id: "s1_audience_fit",        screen: "screen_1", sort_order: 1, label: "Why a quiz is the best lead magnet for experts like [expert_type]" },
+  { id: "s1_problem_gap",         screen: "screen_1", sort_order: 2, label: "How a quiz reveals the gap your [audience] can't see yet" },
   { id: "s1_share_trigger",       screen: "screen_1", sort_order: 3, label: "What makes [audience] share their quiz result" },
   { id: "s1_superpower_question", screen: "screen_1", sort_order: 4, label: "How [superpower] becomes a quiz question" },
   { id: "s1_buy_decision",        screen: "screen_1", sort_order: 5, label: "Why [audience] invest after taking a quiz" },

@@ -1116,6 +1116,7 @@ export type Database = {
           direct_referral_count: number
           email: string | null
           entry_intent: string | null
+          expert_type: string[]
           facebook_url: string | null
           first_name: string | null
           id: string
@@ -1145,6 +1146,7 @@ export type Database = {
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null
+          expert_type?: string[]
           facebook_url?: string | null
           first_name?: string | null
           id?: string
@@ -1174,6 +1176,7 @@ export type Database = {
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null
+          expert_type?: string[]
           facebook_url?: string | null
           first_name?: string | null
           id?: string

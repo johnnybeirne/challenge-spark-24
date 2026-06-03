@@ -124,13 +124,13 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
   };
 
   const resetToAi = () => {
-    setDraft(polished || (fragments ? `Help ${fragments.who} move from ${fragments.pain} to ${fragments.result} through ${fragments.method}.` : ""));
+    setDraft(polished || (fragments ? `Help ${fragments.who} move from "${fragments.pain}" to ${fragments.result} through ${fragments.method}.` : ""));
   };
 
   const displayText =
     (userEdit && userEdit.trim()) ||
     polished ||
-    (fragments ? `Help ${fragments.who} move from ${fragments.pain} to ${fragments.result} through ${fragments.method}.` : "");
+    (fragments ? `Help ${fragments.who} move from "${fragments.pain}" to ${fragments.result} through ${fragments.method}.` : "");
 
   if (!fragments && !displayText) {
     const empty = (

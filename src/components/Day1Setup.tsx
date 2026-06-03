@@ -812,7 +812,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Sequence: 4 → 1 → 10 → 5 → 2 → 3 → 9 → 7 → 8.
   const goBack = () => {
-    const baseMap: Record<number, Step> = { 1: 4, 10: 1, 5: 10, 2: 5, 3: 2, 9: 3, 7: 9 };
+    const baseMap: Record<number, Step> = { 1: 4, 11: 1, 10: 11, 5: 10, 2: 5, 3: 2, 9: 3, 7: 9 };
     const prev = baseMap[step as number];
     if (prev !== undefined) setStep(prev);
   };
@@ -937,7 +937,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   };
 
   const ensurePromise = async (): Promise<void> => {
-    const cacheKey = `${audience.trim()}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
+    const expertTypePhrase = formatExpertTypes(expertType);
+    const cacheKey = `${audience.trim()}|${expertTypePhrase}|${superpower.trim()}|${topicHint.trim()}|${problem.trim()}|${how.trim()}|${outcome.trim()}|${challengeType}`;
     const cachedKey = state.challenge?.aiOutputs?.day1_promise_key as string | undefined;
     const cached = state.challenge?.aiOutputs?.day1_promise as string | undefined;
     if (cached && cachedKey === cacheKey) return;
@@ -948,6 +949,8 @@ const Day1Setup = ({ onComplete }: Props) => {
           inputs: {
             firstName,
             audience: audience.trim(),
+            expertType: [...expertType],
+            expertTypeLabel: expertTypePhrase,
             superpower: superpower.trim(),
             topicHint: topicHint.trim(),
             problem: problem.trim(),
@@ -1284,6 +1287,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         ? "person"
         : "";
 
+  const expertTypePhrase = formatExpertTypes(expertType);
   const echoMap: EchoMap = {
     audience: { value: audience, onSave: saveAudience },
     problem: { value: problem, onSave: saveProblem, format: (v) => v },
@@ -1293,6 +1297,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     superpower: { value: superpower, onSave: saveSuperpower, format: (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v) },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
     challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
+    expertType: { value: expertTypePhrase, format: (v) => v, skipTidy: true },
   };
 
   // Cumulative recap rows for the current step. Each prior answer is its own
@@ -1301,8 +1306,11 @@ const Day1Setup = ({ onComplete }: Props) => {
     const rows: RecapRow[] = [];
     const onSteps = (...steps: number[]) => steps.includes(currentStep);
     const skipSet = new Set<string>(skip);
-    if (onSteps(10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
+    if (onSteps(11, 10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
       rows.push({ label: "You work with:", echo: "audience" });
+    }
+    if (onSteps(10, 5, 2, 3, 9, 7) && expertTypePhrase && !skipSet.has("expertType")) {
+      rows.push({ label: "You are:", echo: "expertType" });
     }
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });

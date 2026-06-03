@@ -6,6 +6,12 @@ import type { AppState, UnlockEntry } from "@/context/AppContext";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";
+import { generateResult } from "@/lib/assessmentData";
+
+const SAMPLE_ASSESSMENT_ANSWERS: Record<string, string> = {
+  q1: "yes", q2: "yes", q3: "no", q4: "yes", q5: "no",
+  q6: "yes", q7: "yes", q8: "no", q9: "yes",
+};
 
 export type PersonaId =
   | "fresh"
@@ -245,10 +251,16 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const progressDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 3 : persona.dayProgress[1] >= 1 ? 2 : 1;
   const currentDay = Math.min(3, Math.max(timing.currentDay, progressDay));
 
+  const assessment = state.assessment ?? ({
+    ...generateResult(SAMPLE_ASSESSMENT_ANSWERS),
+    mode: "challenge",
+  } as AppState["assessment"]);
+
   return {
     ...state,
     user: { ...baseUser, joinedAt: timing.joinedAtIso },
     memory: seeded.memory,
+    assessment,
 
     challenge: {
       ...state.challenge,

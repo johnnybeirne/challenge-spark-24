@@ -5,10 +5,12 @@ import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 const Day1 = () => {
   const navigate = useNavigate();
-  const { state, setState } = useAppState();
+  const { state, setState, authUser } = useAppState();
+
   const isLocked = (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {

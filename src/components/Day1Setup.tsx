@@ -1983,14 +1983,28 @@ const Day1Setup = ({ onComplete }: Props) => {
           const audienceLower5 = audienceTrim5
             ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
             : "";
-          const step5Messages: Msg[] = [
-            renderTemplate(
-              "step-4",
-              audienceLower5
-                ? `Great${fn}. With ${audienceLower5} in mind, what will your 3-day challenge help them achieve?`
-                : `Great${fn}. What will your 3-day challenge help them achieve?`,
-            ),
-          ];
+          const step5Tpl =
+            day1Templates["step-4"] ??
+            defaultsById["step-4"] ??
+            (audienceLower5
+              ? `Great${fn}. With [audience] in mind, what will your 3-day challenge help them achieve?`
+              : `Great${fn}. What will your 3-day challenge help them achieve?`);
+          const step5PartialValues: Record<string, string> = { ...liveTagValues, audience: "\u0000AUD\u0000" };
+          const step5Resolved = renderDay1Preview(step5Tpl, step5PartialValues).replace(/\s*\[[a-z_]+\]/gi, "");
+          const buildStep5Segments = (text: string): MsgSegment[] => {
+            const parts: MsgSegment[] = [];
+            const re = /\u0000AUD\u0000/g;
+            let last = 0;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(text)) !== null) {
+              if (m.index > last) parts.push(text.slice(last, m.index));
+              parts.push({ echo: "audience" } as EchoSegment);
+              last = m.index + m[0].length;
+            }
+            if (last < text.length) parts.push(text.slice(last));
+            return parts;
+          };
+          const step5Messages: Msg[] = [buildStep5Segments(step5Resolved)];
 
           return (
           <div className="space-y-3 animate-fade-in">

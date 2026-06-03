@@ -127,10 +127,23 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
     setDraft(polished || (fragments ? `Help ${fragments.who} move from "${fragments.pain}" to ${fragments.result} through ${fragments.method}.` : ""));
   };
 
-  const displayText =
+  const rawDisplay =
     (userEdit && userEdit.trim()) ||
     polished ||
     (fragments ? `Help ${fragments.who} move from "${fragments.pain}" to ${fragments.result} through ${fragments.method}.` : "");
+
+  // Ensure the pain fragment is wrapped in double quotes for grammar, even if
+  // the cached AI-polished version was generated before the prompt was updated.
+  const ensurePainQuoted = (text: string, pain?: string) => {
+    if (!text || !pain) return text;
+    const trimmed = pain.trim().replace(/^["“”']+|["“”']+$/g, "");
+    if (!trimmed) return text;
+    if (text.includes(`"${trimmed}"`)) return text;
+    const idx = text.toLowerCase().indexOf(trimmed.toLowerCase());
+    if (idx === -1) return text;
+    return text.slice(0, idx) + `"${text.slice(idx, idx + trimmed.length)}"` + text.slice(idx + trimmed.length);
+  };
+  const displayText = ensurePainQuoted(rawDisplay, fragments?.pain);
 
   if (!fragments && !displayText) {
     const empty = (

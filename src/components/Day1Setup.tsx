@@ -171,7 +171,7 @@ const EchoText = ({
       setEditing(false);
     };
     return (
-      <span className="inline-flex flex-wrap items-center gap-1 align-middle max-w-full">
+      <span className="flex flex-wrap items-center gap-1 w-full mt-1">
         <input
           autoFocus
           value={draft}
@@ -186,7 +186,7 @@ const EchoText = ({
               setEditing(false);
             }
           }}
-          className="font-semibold text-primary bg-transparent border-b border-primary/60 focus:outline-none focus:border-primary px-0.5 min-w-[6ch] max-w-full flex-1"
+          className="font-semibold text-primary bg-transparent border-b border-primary/60 focus:outline-none focus:border-primary px-0.5 flex-1 min-w-0 w-full"
         />
 
         <button

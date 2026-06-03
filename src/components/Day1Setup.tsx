@@ -1313,7 +1313,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       rows.push({ label: "You work with:", echo: "audience" });
     }
     if (onSteps(10, 5, 2, 3, 9, 7) && expertTypePhrase && !skipSet.has("expertType")) {
-      rows.push({ label: "You are a:", echo: "expertType" });
+      const article = /^[aeiou]/i.test(expertTypePhrase) ? "an" : "a";
+      rows.push({ label: `You are ${article}:`, echo: "expertType" });
     }
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });

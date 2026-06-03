@@ -251,10 +251,16 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const progressDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 3 : persona.dayProgress[1] >= 1 ? 2 : 1;
   const currentDay = Math.min(3, Math.max(timing.currentDay, progressDay));
 
+  const assessment = state.assessment ?? ({
+    ...generateResult(SAMPLE_ASSESSMENT_ANSWERS),
+    mode: "challenge",
+  } as AppState["assessment"]);
+
   return {
     ...state,
     user: { ...baseUser, joinedAt: timing.joinedAtIso },
     memory: seeded.memory,
+    assessment,
 
     challenge: {
       ...state.challenge,

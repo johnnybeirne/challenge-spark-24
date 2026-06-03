@@ -261,10 +261,12 @@ const Day2Screen1 = () => {
 
   const allOpened = BUTTON_ORDER.every((k) => insights[k].text.trim().length > 0);
 
+  const step = (state.challenge.aiOutputs.day2_step as string) || "1";
+  if (step === "2") return <Day2Screen2 />;
+
   const handleContinue = () => {
     trackEvent("day_training_viewed", { day: 2, surface: "day2_s1", mode: "continue" });
-    toast.success("Step 1 saved. Next screens coming soon.");
-    navigate("/challenger-dashboard");
+    persist("day2_step", "2");
   };
 
   return (

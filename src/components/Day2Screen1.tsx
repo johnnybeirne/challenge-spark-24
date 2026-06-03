@@ -46,11 +46,24 @@ const BUTTON_ORDER: ButtonKey[] = [
   "buy_decision",
 ];
 
+const readSetupFromState = (aiOutputs: Record<string, unknown> | undefined) => {
+  const raw = aiOutputs?.day1Setup;
+  try {
+    if (raw && typeof raw === "string") return JSON.parse(raw);
+    if (raw && typeof raw === "object") return raw as Record<string, unknown>;
+  } catch {}
+  return null;
+};
+
 const Day2Screen1 = () => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
-  const setup = getSetup();
+  // Source of truth: DB-synced aiOutputs.day1Setup. Fall back to localStorage
+  // via getSetup() only when state hasn't hydrated yet.
+  const setupFromState = readSetupFromState(state.challenge?.aiOutputs as Record<string, unknown> | undefined);
+  const setup = (setupFromState ?? getSetup()) as Record<string, unknown> | null;
+
   const rawName =
     (state.user?.name as string | undefined) ||
     (authUser?.user_metadata?.full_name as string | undefined) ||
@@ -58,12 +71,13 @@ const Day2Screen1 = () => {
     (authUser?.user_metadata?.first_name as string | undefined) ||
     "";
   const firstName = rawName.trim().split(/\s+/)[0] || "";
-  const audience = setup?.audience || "";
-  const superpower = setup?.superpower || "";
-  const problem = setup?.problem || "";
-  const how = setup?.how || "";
-  const outcome = setup?.outcome || "";
+  const audience = ((setup?.audience as string) || "").trim();
+  const superpower = ((setup?.superpower as string) || "").trim();
+  const problem = ((setup?.problem as string) || "").trim();
+  const how = ((setup?.how as string) || "").trim();
+  const outcome = ((setup?.outcome as string) || "").trim();
   const day1Inputs = { firstName, audience, superpower, problem, how, outcome };
+  const day1Ready = Boolean(audience && superpower && problem);
 
   const savedOpener = (state.challenge.aiOutputs.day2_s1_opener as string) || "";
   const parseJson = <T,>(raw: unknown, fallback: T): T => {
@@ -109,12 +123,14 @@ const Day2Screen1 = () => {
   };
 
 
-  // Auto-generate opener + buttons on first mount
+  // Auto-generate opener + buttons once Day 1 inputs are hydrated.
   useEffect(() => {
+    if (!day1Ready) return;
     if (!opener && !openerLoading) void generateOpener();
     if (buttons.length === 0 && !buttonsLoading) void generateButtons();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [day1Ready]);
+
 
   const generateOpener = async () => {
     setOpenerLoading(true);

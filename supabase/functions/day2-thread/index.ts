@@ -163,16 +163,26 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
   const p = builderProfile(inputs);
   const fb = fallbackButtons(p);
 
+  // If we don't have the core Day 1 nouns, return deterministic fallbacks
+  // rather than asking the model to invent — that's where "(unknown)" leaked
+  // into labels.
+  if (!p.audience || !p.superpower || !p.problem) {
+    return new Response(
+      JSON.stringify({ buttons: fb, fallback: true, reason: "missing-day1-inputs" }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   const prompt = [
     "Source material — only use these ideas:",
     KB,
     "",
-    "Builder's Day 1 data (use their own words verbatim):",
-    p.audience ? `- audience: ${p.audience}` : "- audience: (unknown)",
-    p.superpower ? `- superpower: ${p.superpower}` : "- superpower: (unknown)",
-    p.problem ? `- problem their audience is stuck on: ${p.problem}` : "- problem: (unknown)",
-    p.how ? `- how they deliver: ${p.how}` : "- how: (unknown)",
-    p.outcome ? `- outcome they help create: ${p.outcome}` : "- outcome: (unknown)",
+    "Builder's Day 1 data (use their own words verbatim — never write the word 'unknown'):",
+    `- audience: ${p.audience}`,
+    `- superpower: ${p.superpower}`,
+    `- problem their audience is stuck on: ${p.problem}`,
+    p.how ? `- how they deliver: ${p.how}` : null,
+    p.outcome ? `- outcome they help create: ${p.outcome}` : null,
     "",
     "Write FIVE short button labels for a screen titled 'What is quiz marketing and why it will work for you'.",
     "Each label MUST:",
@@ -181,6 +191,7 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
     "- reference something specific from the builder's Day 1 data (audience, problem, superpower, delivery method, or outcome) — use their own words for those nouns",
     "- relate that specific thing DIRECTLY to quiz marketing (not generic marketing)",
     "- be distinct from the other four (no overlap)",
+    "- NEVER contain the literal word 'unknown' or any placeholder",
     "Anchors to cover, in this exact order:",
     "1) Why a quiz fits THEIR audience",
     "2) How a quiz exposes the specific problem their audience can't see",
@@ -190,7 +201,8 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
     "",
     "Return ONLY a JSON object in this exact shape, no prose, no markdown fences:",
     `{"labels":["label1","label2","label3","label4","label5"]}`,
-  ].join("\n");
+  ].filter(Boolean).join("\n");
+
 
   const resp = await callGateway({
     model: MODEL,
@@ -230,6 +242,10 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
     .filter(Boolean)
     .slice(0, 5);
   if (clean.length !== 5) return fallback("bad-shape", { buttons: fb });
+  // Reject any label that leaked the literal placeholder.
+  if (clean.some((l) => /\bunknown\b/i.test(l))) {
+    return fallback("placeholder-leaked", { buttons: fb });
+  }
 
   const buttons = BUTTON_TOPICS.map((t, i) => ({ key: t.key, label: clean[i] }));
   return new Response(

@@ -208,16 +208,8 @@ const Day2Screen1 = () => {
     }
   };
 
-  const saveInsight = (key: ButtonKey) => {
-    const next = insights[key].draft.trim();
-    if (!next) return;
-    updateInsight(key, { text: next, editing: false });
-    const merged: Record<string, string> = {};
-    BUTTON_ORDER.forEach((k) => {
-      merged[k] = k === key ? next : insights[k].text;
-    });
-    persist("day2_s1_insights", merged);
-  };
+
+
 
   const allOpened = BUTTON_ORDER.every((k) => insights[k].text.trim().length > 0);
 

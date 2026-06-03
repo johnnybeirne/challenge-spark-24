@@ -326,6 +326,7 @@ async function handleInsight(payload: { key?: string; label?: string; inputs?: D
     p.problem ? `- problem: ${p.problem}` : null,
     p.how ? `- how they deliver: ${p.how}` : null,
     p.outcome ? `- outcome: ${p.outcome}` : null,
+    p.expertPhrase ? `- expert type(s) (use verbatim as 'As a ${p.expertPhrase},' when the brief calls for it): ${p.expertPhrase}` : null,
     "",
     `Button the builder just clicked: "${label}"`,
     `Insight brief: ${brief}`,

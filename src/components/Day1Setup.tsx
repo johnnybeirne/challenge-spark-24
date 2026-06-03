@@ -1465,6 +1465,72 @@ const Day1Setup = ({ onComplete }: Props) => {
           );
         })()}
 
+        {step === 11 && (() => {
+          const step11Message: Msg = renderTemplate(
+            "step-2b",
+            `Which best describes you${fn}? Pick any that apply.`,
+          );
+          return (
+            <div className="space-y-3 animate-fade-in">
+              {step11Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step11-intro-${firstName}`}
+                  messages={[step11Message]}
+                  echoMap={echoMap}
+                  skipMakingNotes
+                  onComplete={() => setStep11Phase("choose")}
+                />
+              )}
+              {step11Phase === "choose" && (
+                <div className="space-y-3">
+                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(11)} echoMap={echoMap} />
+                  <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {EXPERT_TYPE_OPTIONS.map((opt) => {
+                      const selected = expertType.includes(opt);
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          role="checkbox"
+                          aria-checked={selected}
+                          onClick={() => toggleExpertType(opt)}
+                          className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                            selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                          }`}
+                        >
+                          <span
+                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
+                              selected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                            }`}
+                            aria-hidden
+                          >
+                            {selected && <Check className="h-3.5 w-3.5 text-primary-foreground" />}
+                          </span>
+                          <span className="text-base font-semibold leading-tight">{opt}</span>
+                        </button>
+                      );
+                    })}
+                  </RevealControls>
+                  <RevealControls>
+                    <Button
+                      size="lg"
+                      onClick={handleExpertTypeNext}
+                      disabled={expertType.length === 0}
+                      className="w-full h-12 text-base font-semibold"
+                    >
+                      Continue
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </RevealControls>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+
+
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
           const step10Message: Msg = renderTemplate(

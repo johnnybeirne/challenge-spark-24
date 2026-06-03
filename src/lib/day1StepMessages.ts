@@ -65,7 +65,7 @@ export const defaultDay1Steps: Day1StepMessage[] = [
     id: "step-4",
     label: "Step 4 of 8 — Challenge type",
     message:
-      "Love it — [superpower]. What kind of result do you want this challenge to deliver for [audience]?",
+      "Love it. What kind of result do you want this challenge to deliver for [audience]?",
   },
   {
     id: "step-5",

@@ -40,7 +40,14 @@ Every decision is driven by three forces. When aligned, they produce clarity and
 2. Preferred Future (Pleasure): what success looks like in practical terms over the next 30 to 90 days. When mapped visually, engagement rises.
 3. Pitfalls (Constraints): what is actually preventing progress — often without the participant realising it. The Expert Axis: people are qualified to describe their pain and their desired future, but not qualified to diagnose their own systemic problem. Your quiz reveals the pitfalls — that is where your authority lands.
 Tension is the motivational pull created when someone sees their current reality, their desired reality and the obstacles in between. People invest to resolve tension, not stress. The quiz is the mirror that makes the next step feel achievable.
-Belief shift mechanics: open with the mindset that mirrors the voice in their head; name the contrast between what they want and what they want to stop; handle objections by asking about them; anchor identity tiers with progress-oriented labels.`;
+Belief shift mechanics: open with the mindset that mirrors the voice in their head; name the contrast between what they want and what they want to stop; handle objections by asking about them; anchor identity tiers with progress-oriented labels.
+
+SECTION 3 — WHY A QUIZ BEATS OTHER LEAD MAGNETS
+PDFs / cheatsheets / ebooks: one-size-fits-all, passive consumption, no diagnosis. They tell every reader the same thing and rely on the reader to self-apply. They produce downloads, not decisions. A quiz returns a tailored result and one specific next step, so the reader leaves with a verdict instead of homework.
+Discovery calls: high friction, expensive on time, awkward for the prospect, and dependent on the expert being on the phone. A quiz delivers the diagnostic part of the call instantly and at scale — the prospect arrives at any later conversation already self-qualified, with context, and warmer.
+Checklists: shallow engagement, gamified but generic, no personalisation, no insight. A quiz asks for explicit choices (zero-party data) and uses those answers to produce a result the reader could not have arrived at alone — that asymmetry is what creates engagement and shareability.
+Webinars / live trainings: high commitment up front (45–90 minutes), require trust before the value is delivered. A quiz inverts that: it delivers personalised value in under three minutes, then earns the right to ask for the larger commitment. Trust is built by accurate reflection, not by airtime.
+Pre-qualification: because a quiz captures the participant's present state, preferred future and primary pitfall, it segments leads automatically. The expert can route the right people into the right offer (challenge, call, programme) and politely route the rest away — so the next step (e.g. joining your 3-day challenge) is opted into by people who already match.`;
 
 const sanitise = (s: unknown, max = 600): string => {
   if (typeof s !== "string") return "";

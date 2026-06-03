@@ -21,13 +21,20 @@ const JohnnyAvatar = () => (
 
 const Day2Screen1 = () => {
   const navigate = useNavigate();
-  const { state, setState } = useAppState();
+  const { state, setState, authUser } = useAppState();
 
   const setup = getSetup();
-  const firstName = state.user?.name?.split(" ")[0] || "";
+  const rawName =
+    (state.user?.name as string | undefined) ||
+    (authUser?.user_metadata?.full_name as string | undefined) ||
+    (authUser?.user_metadata?.name as string | undefined) ||
+    (authUser?.user_metadata?.first_name as string | undefined) ||
+    "";
+  const firstName = rawName.trim().split(/\s+/)[0] || "";
   const audience = setup?.audience || "";
   const superpower = setup?.superpower || "";
   const problem = setup?.problem || "";
+
 
   const savedExplanation = (state.challenge.aiOutputs.day2_screen1_explanation as string) || "";
   const savedPositioning = (state.challenge.aiOutputs.day2_screen1_positioning as string) || "";

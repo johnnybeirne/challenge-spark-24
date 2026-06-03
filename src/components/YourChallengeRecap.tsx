@@ -73,8 +73,8 @@ const YourChallengeRecap = () => {
           </div>
         ))}
         <div className="pt-2">
-          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mb-1">
-            Challenge Promise
+          <div className="font-bold uppercase tracking-[0.18em] text-primary mb-1" style={{ fontSize: "20pt" }}>
+            {state.memory?.name?.split(" ")[0] ? `${state.memory.name.split(" ")[0]} ` : ""}Your Challenge Promise
           </div>
           <ChallengePromiseCard variant="inline" />
         </div>

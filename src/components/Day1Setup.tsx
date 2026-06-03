@@ -1332,7 +1332,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Day 1 visible step order for "Step X of N" progress header.
   // Step 8 (AI builder) is excluded — it's the post-setup builder, not a setup step.
-  const STEP_ORDER: number[] = [4, 1, 10, 5, 2, 3, 9, 7];
+  const STEP_ORDER: number[] = [4, 1, 11, 10, 5, 2, 3, 9, 7];
   const TOTAL_STEPS = STEP_ORDER.length;
   const stepIndex = STEP_ORDER.indexOf(step);
   const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
@@ -1350,6 +1350,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   const liveTagValues: Record<Day1TagKey, string> = {
     first_name: firstName && firstName !== "there" ? firstName : "",
     audience: (audience || topicHint || "").trim(),
+    expert_type: expertTypePhrase,
     superpower: (superpower || "").trim(),
     challenge_type: (challengeLabel(challengeType) || "").toLowerCase(),
     problem: (problem || "").trim(),

@@ -275,14 +275,6 @@ const ChallengeRecord = () => {
             Challenge identity
           </p>
           <EditableTitle identity={identity} />
-          {day1.promise && (
-            <div className="mt-4 flex gap-3 rounded-xl bg-background/50 p-4">
-              <Quote className="h-5 w-5 shrink-0 text-primary/60" />
-              <p className="whitespace-pre-wrap text-base font-semibold leading-snug text-foreground">
-                {day1.promise}
-              </p>
-            </div>
-          )}
         </section>
       )}
 

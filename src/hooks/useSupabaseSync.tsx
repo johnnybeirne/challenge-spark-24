@@ -182,6 +182,7 @@ export async function saveMemory(userId: string, memory: UserMemory) {
         topic: memory.topic,
         desired_outcome: memory.desiredOutcome,
         challenge_name: memory.challengeName,
+        challenge_title_override: memory.challengeTitleOverride,
       },
       { onConflict: "user_id" }
     );

@@ -1535,10 +1535,26 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
-          const step10Message: Msg = renderTemplate(
-            "step-3",
-            `So${fn}, you work with ${audienceTrim10 || "them"}. What's your superpower? What do you do for them better than anyone else?`,
-          );
+          const step10Tpl =
+            day1Templates["step-3"] ??
+            defaultsById["step-3"] ??
+            `So${fn}, you work with [audience]. What's your superpower? What do you do for them better than anyone else?`;
+          const step10PartialValues: Record<string, string> = { ...liveTagValues, audience: "\u0000AUD\u0000" };
+          const step10Resolved = renderDay1Preview(step10Tpl, step10PartialValues).replace(/\s*\[[a-z_]+\]/gi, "");
+          const buildStep10Segments = (text: string): MsgSegment[] => {
+            const parts: MsgSegment[] = [];
+            const re = /\u0000AUD\u0000/g;
+            let last = 0;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(text)) !== null) {
+              if (m.index > last) parts.push(text.slice(last, m.index));
+              parts.push({ echo: "audience" } as EchoSegment);
+              last = m.index + m[0].length;
+            }
+            if (last < text.length) parts.push(text.slice(last));
+            return parts;
+          };
+          const step10Message: Msg = buildStep10Segments(step10Resolved);
 
 
           return (

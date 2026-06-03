@@ -8,6 +8,8 @@ export interface UserMemory {
   topic: string;
   desiredOutcome: string;
   challengeName: string;
+  /** AI-polished or user-edited topic that overrides the heuristic in useChallengeIdentity. */
+  challengeTitleOverride: string;
 }
 
 export const defaultMemory: UserMemory = {
@@ -17,6 +19,7 @@ export const defaultMemory: UserMemory = {
   topic: "",
   desiredOutcome: "",
   challengeName: "",
+  challengeTitleOverride: "",
 };
 
 export const normalizeChallengeType = (value?: string): MemoryChallengeType => {

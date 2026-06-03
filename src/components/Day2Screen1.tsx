@@ -74,6 +74,8 @@ const Day2Screen1 = () => {
   const setupFromState = readSetupFromState(state.challenge?.aiOutputs as Record<string, unknown> | undefined);
   const setup = (setupFromState ?? getSetup()) as Record<string, unknown> | null;
 
+  const adminLabels = useDay2ButtonLabels("screen_1");
+
   const rawName =
     (state.user?.name as string | undefined) ||
     (authUser?.user_metadata?.full_name as string | undefined) ||

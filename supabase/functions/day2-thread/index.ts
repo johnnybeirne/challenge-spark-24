@@ -273,7 +273,7 @@ async function handleButtons(inputs: Day1Inputs): Promise<Response> {
 // ---------- INSIGHT ----------
 const INSIGHT_BRIEFS: Record<string, string> = {
   audience_fit:
-    "Why a quiz fits THIS audience specifically. Anchor in Section 1 — joining the conversation they're already having, frictionless micro-commitments, hyper-individual results — and whichever of B2B (optimisation, risk mitigation, benchmarking) or B2C (identity validation, self-discovery, curated recommendations) applies.",
+    "Why a quiz is the best lead magnet for experts like THIS builder specifically. Open by naming the builder's expert type(s) in the form 'As a {expert phrase},' (e.g. 'As a coach and course creator,'). Then explain — using Section 1 — why a quiz beats a generic PDF for an expert who sells expertise: it joins the conversation their audience is already having with themselves, returns a personalised next step in under three minutes, and turns zero-party data into immediate authority. Reference their audience in their own words.",
   problem_gap:
     "How a quiz exposes the specific problem the audience can't see in themselves. Anchor in Section 2 — Expert Axis: they can name pain and desired future but cannot diagnose their own systemic pitfall. The quiz reveals the pitfall, which is where the builder's authority lands.",
   share_trigger:

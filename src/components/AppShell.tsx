@@ -8,7 +8,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import ChallengeSidebar from "./ChallengeSidebar";
 import TopBar from "./TopBar";
 import RightRail from "./RightRail";
-import BottomNav from "./BottomNav";
+
 import BackButton from "./BackButton";
 import CountdownBottomBar from "./CountdownBottomBar";
 import QaModePanel from "./QaModePanel";
@@ -31,7 +31,6 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
-  const showChallengerMobileNav = showChallengeSidebar && isChallengerShell;
   const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !isAuthEntryRoute && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);

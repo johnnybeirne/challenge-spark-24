@@ -1158,6 +1158,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       how: how.trim(),
       outcome: outcome.trim(),
       superpower: superpower.trim(),
+      expertType: [...expertType],
     };
     try { localStorage.setItem(SETUP_KEY, JSON.stringify(data)); } catch {}
 
@@ -1216,6 +1217,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       how: how.trim(),
       outcome: outcome.trim(),
       superpower: superpower.trim(),
+      expertType: [...expertType],
     };
     try { localStorage.removeItem(DAY1_STEP_KEY); } catch {}
     trackEvent("day_completed", { day: 1 });

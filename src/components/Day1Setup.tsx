@@ -2200,6 +2200,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step7Phase === "reveal" && (
                 <div className="space-y-6 animate-fade-in">
+                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
                   {/* Render the full summary statically once typing finishes */}
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
@@ -2210,7 +2212,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                     </div>
                   </div>
 
-                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
 
 
                   <RevealControls className="space-y-6">

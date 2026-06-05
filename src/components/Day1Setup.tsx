@@ -1149,6 +1149,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     profileSaved("Result saved");
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
+  };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
     persistFoundation({ topicHint: topicHint.trim() } as Partial<SetupData>);

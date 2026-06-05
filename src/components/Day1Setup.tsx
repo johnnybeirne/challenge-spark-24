@@ -777,6 +777,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Refinement answers
   const [audienceType, setAudienceType] = useState<"b2b" | "b2c" | null>(knownAudienceType);
   const [challengeType, setChallengeType] = useState<string>("");
+  const [step5Result, setStep5Result] = useState<string>(saved?.desiredOutcome ?? "");
   const [topicHint, setTopicHint] = useState<string>(saved?.topicHint ?? "");
   const { isListening: isDictating, toggle: toggleDictation } = useDictation();
 
@@ -1132,6 +1133,22 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
 
+  };
+  const handleStep5ResultNext = () => {
+    const text = step5Result.trim();
+    if (!text) return;
+    setChallengeType("custom");
+    persistFoundation({ challengeType: "custom", desiredOutcome: text } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType("custom"),
+        desiredOutcome: text,
+      }),
+    }));
+    profileSaved("Result saved");
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   };
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
@@ -2052,42 +2069,34 @@ const Day1Setup = ({ onComplete }: Props) => {
                   </p>
                 )}
 
-                <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-
-                  {challengeOptions.map((opt, idx) => {
-                    const selected = challengeType === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => handleChallenge(opt.value)}
-                        style={{ animationDelay: `${idx * 140}ms`, animationFillMode: "both" }}
-                        className={`group relative overflow-hidden flex items-center gap-3 p-4 rounded-xl border text-left opacity-0 animate-fade-in transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/60 active:scale-[0.98] ${
-                          selected
-                            ? "border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-md shadow-primary/10"
-                            : "border-border bg-card"
-                        }`}
-                      >
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-primary/5 to-transparent"
-                        />
-                        <span
-                          className={`relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-                            selected ? "border-primary scale-110" : "border-muted-foreground/40 group-hover:border-primary/60"
-                          }`}
-                          aria-hidden
-                        >
-                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary animate-scale-in" />}
-                        </span>
-                        <span className="relative text-base font-semibold leading-tight">
-                          {opt.description}
-                        </span>
-                      </button>
-                    );
-                  })}
+                <RevealControls className="space-y-5">
+                  <div className="space-y-2">
+                    <DictatedTextarea
+                      autoFocus
+                      value={step5Result}
+                      onChange={(e) => setStep5Result(e.target.value)}
+                      placeholder="Type the result your challenge will deliver…"
+                      rows={3}
+                      className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleStep5ResultNext();
+                      }}
+                    />
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      e.g. Land their first paying client, Launch their first online course, Get their first 100 email subscribers.
+                    </p>
+                  </div>
+                  <Button
+                    size="lg"
+                    onClick={handleStep5ResultNext}
+                    disabled={!step5Result.trim()}
+                    className="w-full h-12 text-base font-semibold"
+                  >
+                    Continue
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
                 </RevealControls>
+
               </div>
             )}
           </div>

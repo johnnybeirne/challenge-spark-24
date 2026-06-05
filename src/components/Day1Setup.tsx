@@ -1467,6 +1467,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(1);
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. First-time entrepreneurs launching their first paid offer.</li>
+                        <li>e.g. Busy mums returning to work after maternity leave.</li>
+                        <li>e.g. Freelance designers wanting to attract higher-paying clients.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

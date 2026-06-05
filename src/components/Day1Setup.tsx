@@ -1430,8 +1430,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step1Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={[step1Message]} echoMap={echoMap} />
                   <RecapCard rows={recapRowsBefore(1)} echoMap={echoMap} />
+                  <StaticAi messages={[step1Message]} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1485,8 +1485,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
               {step11Phase === "choose" && (
                 <div className="space-y-3">
-                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
                   <RecapCard rows={recapRowsBefore(11)} echoMap={echoMap} />
+                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
                   <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {EXPERT_TYPE_OPTIONS.map((opt) => {
                       const selected = expertType.includes(opt);
@@ -1571,8 +1571,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step10Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={[step10Message]} echoMap={echoMap} />
                   <RecapCard rows={recapRowsBefore(10)} echoMap={echoMap} />
+                  <StaticAi messages={[step10Message]} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1677,8 +1677,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step2Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step2Messages} echoMap={echoMap} />
                   <RecapCard rows={recapRowsBefore(2, whoLower ? [] : ["audience"])} echoMap={echoMap} />
+                  <StaticAi messages={step2Messages} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1780,10 +1780,11 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5">
+                  <RecapCard rows={recapRowsBefore(3)} echoMap={echoMap} />
                   <JohnnyRecapPanel
                     leadIn={step3Reaction ?? undefined}
                     acknowledgement={step3Ack}
-                    rows={recapRowsBefore(3)}
+                    rows={[]}
                     question={step3Question}
                     echoMap={echoMap}
                   />
@@ -1874,9 +1875,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step9Phase === "input" && (
                 <div className="space-y-5">
+                  <RecapCard rows={recapRowsBefore(9)} echoMap={echoMap} />
                   <JohnnyRecapPanel
                     acknowledgement={step9Ack}
-                    rows={recapRowsBefore(9)}
+                    rows={[]}
                     question={step9Question}
                     echoMap={echoMap}
                   />
@@ -2036,8 +2038,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
             {step5Phase === "choose" && (
               <div className="space-y-3">
-                <StaticAi messages={step5Messages} echoMap={echoMap} />
                 <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} bare />
+                <StaticAi messages={step5Messages} echoMap={echoMap} />
                 {superpower.trim() && (
                   <p className="text-xs text-muted-foreground leading-snug">
                     Note: I am saving these to your Dashboard
@@ -2198,6 +2200,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step7Phase === "reveal" && (
                 <div className="space-y-6 animate-fade-in">
+                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
                   {/* Render the full summary statically once typing finishes */}
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
@@ -2208,7 +2212,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                     </div>
                   </div>
 
-                  <RecapCard rows={recapRowsBefore(7)} echoMap={echoMap} />
+
 
 
                   <RevealControls className="space-y-6">

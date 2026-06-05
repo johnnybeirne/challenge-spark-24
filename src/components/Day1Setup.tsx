@@ -1485,8 +1485,8 @@ const Day1Setup = ({ onComplete }: Props) => {
               )}
               {step11Phase === "choose" && (
                 <div className="space-y-3">
-                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
                   <RecapCard rows={recapRowsBefore(11)} echoMap={echoMap} />
+                  <StaticAi messages={[step11Message]} echoMap={echoMap} />
                   <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {EXPERT_TYPE_OPTIONS.map((opt) => {
                       const selected = expertType.includes(opt);

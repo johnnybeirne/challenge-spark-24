@@ -1951,6 +1951,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. A one-line pitch they're confident saying out loud to any prospect.</li>
+                        <li>e.g. A simple lead-gen system bringing in 3–5 qualified conversations a week.</li>
+                        <li>e.g. Their first paying client booked and onboarded by the end of Day 3.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

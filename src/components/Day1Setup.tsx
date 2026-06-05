@@ -1875,9 +1875,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step9Phase === "input" && (
                 <div className="space-y-5">
+                  <RecapCard rows={recapRowsBefore(9)} echoMap={echoMap} />
                   <JohnnyRecapPanel
                     acknowledgement={step9Ack}
-                    rows={recapRowsBefore(9)}
+                    rows={[]}
                     question={step9Question}
                     echoMap={echoMap}
                   />

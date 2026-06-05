@@ -1467,6 +1467,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(1);
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. First-time entrepreneurs launching their first paid offer.</li>
+                        <li>e.g. Busy mums returning to work after maternity leave.</li>
+                        <li>e.g. Freelance designers wanting to attract higher-paying clients.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"
@@ -1604,6 +1609,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. Turning messy ideas into a clear step-by-step plan people can actually follow.</li>
+                        <li>e.g. Spotting the one bottleneck that's quietly holding someone's business back.</li>
+                        <li>e.g. Helping nervous beginners take action without overthinking it.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"
@@ -1731,7 +1741,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
                       />
-                      
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. They can't explain what they do in one clear sentence.</li>
+                        <li>e.g. They keep getting "let me think about it" instead of yeses.</li>
+                        <li>e.g. They're stuck creating content that doesn't bring in leads.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"
@@ -1839,7 +1853,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                         }}
                       />
-                      
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. I start with a quick audit, then walk them through a simple 3-step framework.</li>
+                        <li>e.g. I give them one focused daily action and review their progress each day.</li>
+                        <li>e.g. I hand them a fill-in-the-blank template and coach them to adapt it to their situation.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"
@@ -1933,6 +1951,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. A one-line pitch they're confident saying out loud to any prospect.</li>
+                        <li>e.g. A simple lead-gen system bringing in 3–5 qualified conversations a week.</li>
+                        <li>e.g. Their first paying client booked and onboarded by the end of Day 3.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

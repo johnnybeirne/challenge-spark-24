@@ -1134,6 +1134,21 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep(2);
 
   };
+  const handleStep5ResultNext = () => {
+    const text = step5Result.trim();
+    if (!text) return;
+    setChallengeType("custom");
+    persistFoundation({ challengeType: "custom", desiredOutcome: text } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType("custom"),
+        desiredOutcome: text,
+      }),
+    }));
+    profileSaved("Result saved");
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   const handleTopicNext = () => {
     if (!topicHint.trim()) return;
     persistFoundation({ topicHint: topicHint.trim() } as Partial<SetupData>);

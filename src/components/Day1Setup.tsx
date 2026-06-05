@@ -2025,11 +2025,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             ? audienceTrim5.charAt(0).toLowerCase() + audienceTrim5.slice(1)
             : "";
           const step5Tpl =
-            day1Templates["step-4"] ??
-            defaultsById["step-4"] ??
-            (audienceLower5
-              ? `Great${fn}. With [audience] in mind, what will your 3-day challenge help them achieve?`
-              : `Great${fn}. What will your 3-day challenge help them achieve?`);
+            day1Templates["step-5"] ??
+            defaultsById["step-5"] ??
+            `What result will your challenge deliver for [audience]?`;
           const step5PartialValues: Record<string, string> = { ...liveTagValues, audience: "\u0000AUD\u0000" };
           const step5Resolved = renderDay1Preview(step5Tpl, step5PartialValues).replace(/\s*\[[a-z_]+\]/gi, "");
           const buildStep5Segments = (text: string): MsgSegment[] => {

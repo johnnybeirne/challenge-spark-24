@@ -2118,10 +2118,21 @@ const Day1Setup = ({ onComplete }: Props) => {
                       }}
                     />
                     <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                      <li>e.g. Land their first paying client.</li>
-                      <li>e.g. Launch their first online course.</li>
-                      <li>e.g. Get their first 100 email subscribers.</li>
+                      {audienceType === "b2c" ? (
+                        <>
+                          <li>e.g. Lose their first 5kg without giving up their social life.</li>
+                          <li>e.g. Sleep through the night consistently for a full week.</li>
+                          <li>e.g. Build a morning routine they actually stick to.</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>e.g. Land their first paying client.</li>
+                          <li>e.g. Launch their first online course.</li>
+                          <li>e.g. Get their first 100 email subscribers.</li>
+                        </>
+                      )}
                     </ul>
+
 
                   </div>
                   <Button

@@ -1481,9 +1481,19 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>e.g. First-time entrepreneurs launching their first paid offer.</li>
-                        <li>e.g. Busy mums returning to work after maternity leave.</li>
-                        <li>e.g. Freelance designers wanting to attract higher-paying clients.</li>
+                        {audienceType === "b2c" ? (
+                          <>
+                            <li>e.g. Busy mums returning to work after maternity leave.</li>
+                            <li>e.g. Men over 40 wanting to lose 10kg without giving up their social life.</li>
+                            <li>e.g. First-time home buyers nervous about getting a mortgage.</li>
+                          </>
+                        ) : (
+                          <>
+                            <li>e.g. Independent coaches in their first 12 months wanting their first paying clients.</li>
+                            <li>e.g. Service-based agency owners stuck under £10k/month.</li>
+                            <li>e.g. SaaS founders struggling to convert free trials into paid users.</li>
+                          </>
+                        )}
                       </ul>
                     </div>
                     <Button

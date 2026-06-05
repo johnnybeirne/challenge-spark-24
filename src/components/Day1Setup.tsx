@@ -2038,8 +2038,8 @@ const Day1Setup = ({ onComplete }: Props) => {
 
             {step5Phase === "choose" && (
               <div className="space-y-3">
-                <StaticAi messages={step5Messages} echoMap={echoMap} />
                 <RecapCard rows={recapRowsBefore(5, ["audience"])} echoMap={echoMap} bare />
+                <StaticAi messages={step5Messages} echoMap={echoMap} />
                 {superpower.trim() && (
                   <p className="text-xs text-muted-foreground leading-snug">
                     Note: I am saving these to your Dashboard

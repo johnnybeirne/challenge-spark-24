@@ -79,7 +79,7 @@ export const defaultDay1Steps: Day1StepMessage[] = [
     id: "step-5",
     label: "Step 5 of 8 — Specific problem",
     message:
-      "Nice. A [challenge_type] challenge it is. What's the single most painful problem [audience] face right now?",
+      "What result will your challenge deliver for [audience]?",
   },
   {
     id: "step-6",

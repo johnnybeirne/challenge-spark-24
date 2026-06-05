@@ -1741,7 +1741,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
                       />
-                      
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. They can't explain what they do in one clear sentence.</li>
+                        <li>e.g. They keep getting "let me think about it" instead of yeses.</li>
+                        <li>e.g. They're stuck creating content that doesn't bring in leads.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

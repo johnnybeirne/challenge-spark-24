@@ -2117,9 +2117,12 @@ const Day1Setup = ({ onComplete }: Props) => {
                         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleStep5ResultNext();
                       }}
                     />
-                    <p className="text-xs text-muted-foreground leading-snug">
-                      e.g. Land their first paying client, Launch their first online course, Get their first 100 email subscribers.
-                    </p>
+                    <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                      <li>e.g. Land their first paying client.</li>
+                      <li>e.g. Launch their first online course.</li>
+                      <li>e.g. Get their first 100 email subscribers.</li>
+                    </ul>
+
                   </div>
                   <Button
                     size="lg"

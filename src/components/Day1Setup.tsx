@@ -1853,7 +1853,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                         }}
                       />
-                      
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. I start with a quick audit, then walk them through a simple 3-step framework.</li>
+                        <li>e.g. I give them one focused daily action and review their progress each day.</li>
+                        <li>e.g. I hand them a fill-in-the-blank template and coach them to adapt it to their situation.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

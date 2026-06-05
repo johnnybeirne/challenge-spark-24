@@ -1433,8 +1433,21 @@ const Day1Setup = ({ onComplete }: Props) => {
               : `Got it${fn}. Describe who you serve.`,
           );
 
+          const step1AudienceTypeDisplay =
+            audienceType === "b2b"
+              ? "Businesses / professionals"
+              : audienceType === "b2c"
+                ? "Individuals / consumers"
+                : "";
+
           return (
             <div className="space-y-6 animate-fade-in">
+              {step1AudienceTypeDisplay && (
+                <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 text-sm md:text-base leading-snug text-foreground/80">
+                  <span>You serve: </span>
+                  <span className="font-medium text-primary">{step1AudienceTypeDisplay}</span>
+                </div>
+              )}
               {step1Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step1-intro-${audienceType ?? "none"}-${step1Message.length}-${step1Message}`}

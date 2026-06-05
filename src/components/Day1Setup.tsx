@@ -1609,6 +1609,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
                         }}
                       />
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        <li>e.g. Turning messy ideas into a clear step-by-step plan people can actually follow.</li>
+                        <li>e.g. Spotting the one bottleneck that's quietly holding someone's business back.</li>
+                        <li>e.g. Helping nervous beginners take action without overthinking it.</li>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

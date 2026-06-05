@@ -1679,6 +1679,20 @@ const Day1Setup = ({ onComplete }: Props) => {
           };
           const step2Messages: Msg[] = [buildSegments(resolved)];
 
+          // Step 6 (this step) shows the user's exact Step 5 typed answer
+          // ("desiredOutcome") wherever the goal/challengeType is echoed —
+          // both in the recap row and in Johnny's AI message — instead of
+          // the generic "Custom" label.
+          const step6GoalText = (step5Result || "").trim();
+          const step6EchoMap: EchoMap = {
+            ...echoMap,
+            challengeType: {
+              value: step6GoalText,
+              format: (v) => v,
+              skipTidy: true,
+            },
+          };
+
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -1692,7 +1706,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <TypedSequence
                   resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
                   messages={step2Messages}
-                  echoMap={echoMap}
+                  echoMap={step6EchoMap}
                   onComplete={() => setStep2Phase("input")}
                 />
               )}
@@ -1700,8 +1714,9 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step2Phase === "input" && (
                 <div className="space-y-5">
-                  <RecapCard rows={recapRowsBefore(2, whoLower ? [] : ["audience"])} echoMap={echoMap} />
-                  <StaticAi messages={step2Messages} echoMap={echoMap} />
+                  <RecapCard rows={recapRowsBefore(2, whoLower ? [] : ["audience"])} echoMap={step6EchoMap} />
+                  <StaticAi messages={step2Messages} echoMap={step6EchoMap} />
+
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">

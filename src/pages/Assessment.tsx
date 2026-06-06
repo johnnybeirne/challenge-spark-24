@@ -234,23 +234,32 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           </div>
 
           {/* Question */}
-          <div className="text-center mb-10 md:mb-14">
-            <h1 className="font-fraunces italic font-semibold text-3xl md:text-4xl leading-[1.15] text-foreground">
+          <div className="text-center mb-8 md:mb-10">
+            <h1 className="font-fraunces italic font-semibold text-xl md:text-2xl leading-[1.25] text-foreground">
               <TypewriterText text={q.text} />
             </h1>
           </div>
 
           {/* Answer buttons */}
-          <div className="grid grid-cols-1 gap-4">
-            {q.options.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleAnswer(opt.value)}
-                className="w-full py-5 rounded-2xl border-2 border-border bg-card text-foreground font-semibold text-lg hover:border-primary hover:bg-background transition-all active:scale-[0.99]"
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="grid grid-cols-1 gap-3">
+            {q.options.map((opt) => {
+              const isSelected = selected === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => handleAnswer(opt.value)}
+                  disabled={selected !== null}
+                  className={`w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3 ${
+                    isSelected
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-card text-foreground hover:border-primary hover:bg-background"
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected && <CheckCircle2 className="h-5 w-5 text-primary" />}
+                </button>
+              );
+            })}
           </div>
         </div>
 

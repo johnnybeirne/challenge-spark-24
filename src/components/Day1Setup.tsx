@@ -1483,15 +1483,15 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
                         {audienceType === "b2c" ? (
                           <>
-                            <li>e.g. Busy mums returning to work after maternity leave.</li>
-                            <li>e.g. Men over 40 wanting to lose 10kg without giving up their social life.</li>
-                            <li>e.g. First-time home buyers nervous about getting a mortgage.</li>
+                            <li>Busy mums returning to work after maternity leave.</li>
+                            <li>Men over 40 wanting to lose 10kg without giving up their social life.</li>
+                            <li>First-time home buyers nervous about getting a mortgage.</li>
                           </>
                         ) : (
                           <>
-                            <li>e.g. Independent coaches in their first 12 months wanting their first paying clients.</li>
-                            <li>e.g. Service-based agency owners stuck under £10k/month.</li>
-                            <li>e.g. SaaS founders struggling to convert free trials into paid users.</li>
+                            <li>Independent coaches in their first 12 months wanting their first paying clients.</li>
+                            <li>Service-based agency owners stuck under £10k/month.</li>
+                            <li>SaaS founders struggling to convert free trials into paid users.</li>
                           </>
                         )}
                       </ul>
@@ -1634,9 +1634,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>e.g. Turning messy ideas into a clear step-by-step plan people can actually follow.</li>
-                        <li>e.g. Spotting the one bottleneck that's quietly holding someone's business back.</li>
-                        <li>e.g. Helping nervous beginners take action without overthinking it.</li>
+                        <li>Turning messy ideas into a clear step-by-step plan people can actually follow.</li>
+                        <li>Spotting the one bottleneck that's quietly holding someone's business back.</li>
+                        <li>Helping nervous beginners take action without overthinking it.</li>
                       </ul>
                     </div>
                     <Button
@@ -1742,9 +1742,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>e.g. They can't explain what they do in one clear sentence.</li>
-                        <li>e.g. They keep getting "let me think about it" instead of yeses.</li>
-                        <li>e.g. They're stuck creating content that doesn't bring in leads.</li>
+                        <li>They can't explain what they do in one clear sentence.</li>
+                        <li>They keep getting "let me think about it" instead of yeses.</li>
+                        <li>They're stuck creating content that doesn't bring in leads.</li>
                       </ul>
                     </div>
                     <Button
@@ -1854,9 +1854,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>e.g. I start with a quick audit, then walk them through a simple 3-step framework.</li>
-                        <li>e.g. I give them one focused daily action and review their progress each day.</li>
-                        <li>e.g. I hand them a fill-in-the-blank template and coach them to adapt it to their situation.</li>
+                        <li>I start with a quick audit, then walk them through a simple 3-step framework.</li>
+                        <li>I give them one focused daily action and review their progress each day.</li>
+                        <li>I hand them a fill-in-the-blank template and coach them to adapt it to their situation.</li>
                       </ul>
                     </div>
                     <Button
@@ -1952,9 +1952,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>e.g. A one-line pitch they're confident saying out loud to any prospect.</li>
-                        <li>e.g. A simple lead-gen system bringing in 3–5 qualified conversations a week.</li>
-                        <li>e.g. Their first paying client booked and onboarded by the end of Day 3.</li>
+                        <li>A one-line pitch they're confident saying out loud to any prospect.</li>
+                        <li>A simple lead-gen system bringing in 3–5 qualified conversations a week.</li>
+                        <li>Their first paying client booked and onboarded by the end of Day 3.</li>
                       </ul>
                     </div>
                     <Button
@@ -2121,15 +2121,15 @@ const Day1Setup = ({ onComplete }: Props) => {
                     <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
                       {audienceType === "b2c" ? (
                         <>
-                          <li>e.g. Lose their first 5kg without giving up their social life.</li>
-                          <li>e.g. Sleep through the night consistently for a full week.</li>
-                          <li>e.g. Build a morning routine they actually stick to.</li>
+                          <li>Lose their first 5kg without giving up their social life.</li>
+                          <li>Sleep through the night consistently for a full week.</li>
+                          <li>Build a morning routine they actually stick to.</li>
                         </>
                       ) : (
                         <>
-                          <li>e.g. Land their first paying client.</li>
-                          <li>e.g. Launch their first online course.</li>
-                          <li>e.g. Get their first 100 email subscribers.</li>
+                          <li>Land their first paying client.</li>
+                          <li>Launch their first online course.</li>
+                          <li>Get their first 100 email subscribers.</li>
                         </>
                       )}
                     </ul>

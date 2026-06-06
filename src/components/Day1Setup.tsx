@@ -1586,10 +1586,12 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               <RecapCard rows={recapRowsBefore(10, ["expertType"])} echoMap={echoMap} bare />
 
+              <StaticAi messages={[step10Message]} echoMap={echoMap} />
+
               {step10Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step10-intro-${audienceTrim10.length}`}
-                  messages={[step10Message]}
+                  messages={[]}
                   echoMap={echoMap}
                   skipMakingNotes
                   onComplete={() => setStep10Phase("input")}
@@ -1598,8 +1600,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step10Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={[step10Message]} echoMap={echoMap} />
-
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

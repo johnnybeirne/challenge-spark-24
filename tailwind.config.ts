@@ -76,7 +76,7 @@ export default {
         sm: ["1rem", { lineHeight: "1.5rem" }],
       },
       fontFamily: {
-        fraunces: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+        montserrat: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {

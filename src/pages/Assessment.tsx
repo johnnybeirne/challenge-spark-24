@@ -13,6 +13,7 @@ import { mergeMemory, normalizeChallengeType } from "@/lib/personalisation";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
 import aiAvatar from "@/assets/ai-avatar.png";
+import assessmentBg from "@/assets/assessment-bg.png.asset.json";
 
 // Typewriter component — reveals text character by character. Respects prefers-reduced-motion.
 function TypewriterText({ text, speed = 22 }: { text: string; speed?: number }) {

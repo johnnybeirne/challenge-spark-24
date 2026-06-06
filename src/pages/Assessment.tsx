@@ -241,7 +241,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
           {/* Question */}
           <div className="text-center mb-8 md:mb-10">
-            <h1 className="font-fraunces italic font-semibold text-xl md:text-2xl leading-[1.25] text-foreground">
+            <h1 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground">
               <TypewriterText text={q.text} />
             </h1>
           </div>

@@ -259,15 +259,23 @@ const Results = () => {
     ? FREE_TRAINING_COURSE_PATH
     : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
+  const challengeLabel = (() => {
+    const fmt = new Intl.DateTimeFormat("en-US", { weekday: "long" });
+    const today = new Date();
+    const liveBy = new Date(today);
+    liveBy.setDate(today.getDate() + 2);
+    return `Join the 3-Day Challenge — start ${fmt.format(today)}, live by ${fmt.format(liveBy)}.`;
+  })();
+
   const cta = (() => {
     if (entryIntent === "free_training") {
       return { label: "Enrol in Free Training", onClick: () => navigate(freeTrainingDestination) };
     }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
-      return { label: "Join the 3-Day Challenge", onClick: () => navigate(dest) };
+      return { label: challengeLabel, onClick: () => navigate(dest) };
     }
-    return { label: "Join the 3-Day Challenge", onClick: () => navigate("/challenge/join") };
+    return { label: challengeLabel, onClick: () => navigate("/challenge/join") };
   })();
 
   return (

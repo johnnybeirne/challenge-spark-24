@@ -146,41 +146,48 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   if (!q) return null;
 
   const handleAnswer = (answer: string) => {
+    if (selected) return; // prevent double clicks during light-up
+    setSelected(answer);
     const updated = { ...answers, [q.id]: answer };
-    setAnswers(updated);
 
     // Track
     trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
 
-    if (current < TOTAL_QUESTIONS - 1) {
-      setCurrent(current + 1);
-    } else {
-      // Complete — show loading then navigate
-      setLoading(true);
-      const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-      const result = generateResult(updated);
+    const advance = () => {
+      setAnswers(updated);
+      setSelected(null);
+      if (current < TOTAL_QUESTIONS - 1) {
+        setCurrent(current + 1);
+      } else {
+        // Complete — show loading then navigate
+        setLoading(true);
+        const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+        const result = generateResult(updated);
 
-      trackEvent("assessment_completed", { 
-        score: result.diagnosticScore,
-        level: result.diagnosticLevel,
-        timeTaken,
-      });
-      trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
-      trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
+        trackEvent("assessment_completed", {
+          score: result.diagnosticScore,
+          level: result.diagnosticLevel,
+          timeTaken,
+        });
+        trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
+        trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 
-      setState((prev) => ({
-        ...prev,
-        assessment: { ...result, mode: resolvedMode ?? "challenge" } as any,
-        memory: mergeMemory(prev.memory, {
-          audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
-          challengeType: normalizeChallengeType(result.challengeType),
-        }),
-      }));
+        setState((prev) => ({
+          ...prev,
+          assessment: { ...result, mode: resolvedMode ?? "challenge" } as any,
+          memory: mergeMemory(prev.memory, {
+            audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
+            challengeType: normalizeChallengeType(result.challengeType),
+          }),
+        }));
 
-      setTimeout(() => {
-        navigate("/results");
-      }, 4000);
-    }
+        setTimeout(() => {
+          navigate("/results");
+        }, 4000);
+      }
+    };
+
+    setTimeout(advance, 380);
   };
 
   return (

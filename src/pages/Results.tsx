@@ -280,7 +280,7 @@ const Results = () => {
   return (
     <>
       <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
-      <div className="flex min-h-screen flex-col px-6 pb-6 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8">
+      <div className="flex min-h-screen flex-col px-6 pt-16 pb-[74px] max-w-2xl mx-auto sm:px-6 lg:px-8">
         {/* SCORE REVEAL */}
         <section className="mb-16 text-center animate-fade-in">
           <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">

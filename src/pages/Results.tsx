@@ -273,7 +273,7 @@ const Results = () => {
   return (
     <>
       <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
-      <div className="flex min-h-screen flex-col px-6 pb-32 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8">
+      <div className="flex min-h-screen flex-col px-6 pb-6 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8">
         {/* SCORE REVEAL */}
         <section className="mb-16 text-center animate-fade-in">
           <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
@@ -339,7 +339,7 @@ const Results = () => {
         </section>
 
         {/* JOHNNY MESSAGE — flowing, no chrome */}
-        <section className="mb-20">
+        <section className="mb-10">
           <div className="flex items-start gap-5 sm:gap-6">
             <div className="relative shrink-0">
               <img
@@ -355,39 +355,56 @@ const Results = () => {
               <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Johnny B
               </div>
-              <div className="space-y-6">
-                {paragraphsToRender.map((text, i) => {
-                  const isLast = i === paragraphsToRender.length - 1;
-                  const isLead = i === 0;
-                  return (
+              {/* Reserve the full final height so the layout never shifts as text types in. */}
+              <div className="relative">
+                <div className="invisible space-y-6" aria-hidden="true">
+                  {paragraphs.map((text, i) => (
                     <p
-                      key={i}
-                      className={`animate-fade-in whitespace-pre-line text-foreground/90 ${
-                        isLead
-                          ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight text-foreground"
+                      key={`ph-${i}`}
+                      className={`whitespace-pre-line ${
+                        i === 0
+                          ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight"
                           : "text-lg sm:text-xl leading-[1.6]"
                       }`}
                     >
-                      {isLast ? (
-                        <TypewriterText text={text} onDone={() => handleParagraphDone(i)} />
-                      ) : (
-                        <span>{text}</span>
-                      )}
+                      {text}
                     </p>
-                  );
-                })}
-                {thinking && (
-                  <div className="animate-fade-in pt-1">
-                    <TypingDots />
-                  </div>
-                )}
+                  ))}
+                </div>
+                <div className="absolute inset-0 space-y-6">
+                  {paragraphsToRender.map((text, i) => {
+                    const isLast = i === paragraphsToRender.length - 1;
+                    const isLead = i === 0;
+                    return (
+                      <p
+                        key={i}
+                        className={`whitespace-pre-line text-foreground/90 ${
+                          isLead
+                            ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight text-foreground"
+                            : "text-lg sm:text-xl leading-[1.6]"
+                        }`}
+                      >
+                        {isLast ? (
+                          <TypewriterText text={text} onDone={() => handleParagraphDone(i)} />
+                        ) : (
+                          <span>{text}</span>
+                        )}
+                      </p>
+                    );
+                  })}
+                  {thinking && (
+                    <div className="pt-1">
+                      <TypingDots />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SINGLE DOMINANT CTA */}
-        <section className="space-y-4">
+        {/* SINGLE DOMINANT CTA — pinned to bottom */}
+        <section className="mt-auto space-y-4 pt-4">
           <Button
             size="lg"
             onClick={cta.onClick}
@@ -403,6 +420,7 @@ const Results = () => {
           </p>
         </section>
       </div>
+
     </>
   );
 };

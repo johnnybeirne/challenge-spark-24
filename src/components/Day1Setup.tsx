@@ -1686,12 +1686,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           return (
             <div className="space-y-6 animate-fade-in">
-              {audience.trim() && (
-                <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 text-sm md:text-base leading-snug text-foreground/80">
-                  <span>You work with: </span>
-                  <span className="font-medium text-primary">{sentenceCase(audience.trim())}</span>
-                </div>
-              )}
+              <RecapCard rows={recapRowsBefore(2)} echoMap={step6EchoMap} />
               {step2Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
@@ -1704,7 +1699,6 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step2Phase === "input" && (
                 <div className="space-y-5">
-                  <RecapCard rows={recapRowsBefore(2, whoLower ? [] : ["audience"])} echoMap={step6EchoMap} />
                   <StaticAi messages={step2Messages} echoMap={step6EchoMap} />
 
 

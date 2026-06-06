@@ -267,22 +267,22 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
               );
             })}
           </div>
-        </div>
 
-        {/* Progress */}
-        <div className="mt-10 md:mt-12 flex items-center gap-3">
-          {questions.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === current
-                  ? "w-8 bg-primary"
-                  : i < current
-                    ? "w-1.5 bg-primary/50"
-                    : "w-1.5 bg-border"
-              }`}
-            />
-          ))}
+          {/* Progress (inside card) */}
+          <div className="mt-8 md:mt-10 flex items-center justify-center gap-2">
+            {questions.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === current
+                    ? "w-8 bg-primary"
+                    : i < current
+                      ? "w-1.5 bg-primary/50"
+                      : "w-1.5 bg-border"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

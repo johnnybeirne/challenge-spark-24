@@ -198,10 +198,10 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       {/* Blurred app screenshot background */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-cover bg-center scale-110"
-        style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(18px)" }}
+        className="absolute inset-0 bg-cover bg-center scale-105"
+        style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(4px)" }}
       />
-      <div aria-hidden className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+      <div aria-hidden className="absolute inset-0 bg-foreground/20" />
       <div className="relative w-full max-w-[420px] flex flex-col items-center">
         {/* Main card */}
         <div

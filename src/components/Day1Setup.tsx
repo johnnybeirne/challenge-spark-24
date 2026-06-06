@@ -1134,6 +1134,20 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep(2);
 
   };
+  const saveChallengeLabel = (text: string) => {
+    const next = text.trim();
+    if (!next) return;
+    setChallengeType("custom");
+    persistFoundation({ challengeType: "custom", desiredOutcome: next } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType("custom"),
+        desiredOutcome: next,
+      }),
+    }));
+    profileSaved("Your goal");
+  };
   const handleStep5ResultNext = () => {
     const text = step5Result.trim();
     if (!text) return;
@@ -1316,7 +1330,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
     superpower: { value: superpower, onSave: saveSuperpower, format: (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v) },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
-    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
+    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true, onSave: saveChallengeLabel },
     expertType: { value: expertTypePhrase, format: (v) => v, skipTidy: true },
   };
 

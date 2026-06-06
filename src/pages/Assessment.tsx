@@ -194,7 +194,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     <>
       <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
     <div className="min-h-screen w-full bg-background flex items-start md:items-center justify-center p-4 md:p-6">
-      <div className="w-full max-w-[640px] flex flex-col items-center">
+      <div className="w-full max-w-[420px] flex flex-col items-center">
         {/* Main card */}
         <div
           key={q.id}

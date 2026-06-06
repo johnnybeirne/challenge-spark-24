@@ -1330,7 +1330,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
     superpower: { value: superpower, onSave: saveSuperpower, format: (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v) },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },
-    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true },
+    challengeType: { value: challengeLabel(challengeType) || "", format: (v) => v.toLowerCase(), skipTidy: true, onSave: saveChallengeLabel },
     expertType: { value: expertTypePhrase, format: (v) => v, skipTidy: true },
   };
 

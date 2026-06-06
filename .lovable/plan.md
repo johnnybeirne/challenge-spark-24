@@ -1,50 +1,24 @@
-# Quiz UI Redesign — Bold Editorial
+# Fix: Johnny's long message disappears on Day 1 · Step 3
 
-Pure visual refresh of the question screen at `/assessment`. Same 9 questions, same scoring, same admin editor (`/admin/lead-gen-quiz`), same results flow.
+## What's happening
+On Step 3 (Process), the intro phase uses `TypedSequence` to type out two messages: Johnny's long AI reaction to the Step 2 problem, then a short acknowledgement ("That's clear, [name]."). When typing completes, the component unmounts and the view flips to the `input` phase, which renders `JohnnyRecapPanel` instead.
 
-## Scope (what changes)
+`JohnnyRecapPanel` does receive `leadIn={step3Reaction}`, so in theory the long reaction should remain. In practice it disappears for one (or both) of these reasons:
 
-Only the question-rendering block inside `src/pages/Assessment.tsx`:
-- Centered 640px column.
-- White card with `rounded-[40px]`, hairline border `#E2E8F0`, soft shadow.
-- Avatar centered at top, larger (80px), inside a hairline ring.
-- "JOHNNY B AI" label rendered in accent blue, wide tracking, small caps.
-- Question text centered, **Fraunces serif, italic, semibold**, ~text-3xl/4xl.
-- Two answer buttons **stacked full-width** (not side by side), large hairline rounded-2xl, hover border → accent blue.
-- Back link sits above the card, left-aligned.
-- Progress dots below the card — active dot becomes a short capsule.
-- Accent color: `#2563EB` (mapped to existing `--primary` token, not hardcoded).
+1. `step3Reaction` is only snapshotted into local state once, on step entry (effect dep `[step]`). If the AI reaction arrives in the cache *after* the user is already on Step 3, the long message gets typed from the live `aiOutputs` cache (because `step3IntroMessages` is rebuilt each render), but `leadIn` reads the stale `null` snapshot — so it's blank in the input phase.
+2. Even when the snapshot is populated, the typed bubble (rounded chat bubble, full text weight) is visually replaced by `leadIn` rendered as dim `text-foreground/80` with no bubble — to the user it reads as "the message vanished".
 
-## Out of scope (do not touch)
+Net effect: the long, detailed message the user saw while typing disappears the moment the typing finishes.
 
-- `Landing.tsx` (start screen) — unchanged.
-- Loading screen between last answer and `/results` — unchanged.
-- `useQuizQuestions`, `questions`, `generateResult`, `assessmentData.ts` — unchanged.
-- `AdminLeadGenQuiz.tsx` — unchanged.
-- Routing, scoring, analytics events, memory writes — unchanged.
-- All other pages.
+## Fix (Day 1 Step 3 only, `src/components/Day1Setup.tsx`)
 
-## Technical details
+Scope: only the `step === 3` block (around lines 1750–1850) and the `step3Reaction` snapshot effect. No changes to any other step, file, or component.
 
-1. **Font**: install Fraunces via `@fontsource/fraunces` (weights 400, 600; italic 400) and import in `src/main.tsx`. Add `fraunces` to `tailwind.config.ts` `fontFamily`. Inter is already loaded.
-2. **Tokens**: use existing semantic tokens where they match (`bg-background`, `text-foreground`, `border-border`, `text-primary`, `bg-card`). Avoid raw hex in JSX per design system rule.
-3. **Markup change**: replace the `<div key={q.id} ...>` block (the avatar + question + 2-button grid + dot progress) with the new composition. Keep the same React state (`current`, `answers`, `handleAnswer`, `questions`) — only JSX/classes change.
-4. **Buttons**: keep `q.options.map(...)` so admin-edited Yes/No labels still flow through. Change `grid-cols-2` → `grid-cols-1` (stacked) and restyle.
-5. **Progress dots**: keep `questions.map((_, i) => ...)` — restyle so the active dot is a wider capsule and others are small dots.
-6. **Back button**: keep current behavior (`current > 0 ? setCurrent(current-1) : setStarted(false)`), restyle to match the new icon + label style.
-7. **SEO, mode resolution, referral capture, partner tracking, typewriter, loading screen**: untouched.
+1. **Make the snapshot reflect the live cache.** Update the `step3Reaction` snapshot effect to also re-sync when `state.challenge.aiOutputs.day1_problem_reaction` changes, so a late-arriving AI reaction is captured even if the user is already on Step 3.
+2. **Stop replacing the typed message.** In the Step 3 render, don't swap the `TypedSequence` out for `JohnnyRecapPanel` on completion. Instead, after typing finishes, keep the same Johnny bubble(s) on screen and reveal the input controls below them.
+   - Concretely: render the long reaction + short acknowledgement as persistent Johnny bubbles (using the same styling the `TypedSequence` uses). On first visit, animate them in via `TypedSequence`; once `step3Phase === "input"`, render the identical bubbles statically so the layout and visible text don't change.
+   - Below the persistent bubbles, render the existing `RecapCard`, the question line, and the `RevealControls` (textarea + Continue) exactly as today.
+3. **No content, copy, styling-token, or behavior changes elsewhere.** The acknowledgement text, question text, recap rows, placeholder, textarea, and Continue button remain identical.
 
-## Conflicts / risks
-
-None I can see. Admin editing keeps working because we still render `q.text` and `q.options[].label`. Scoring is purely off `answers` map keyed by `q.id`. No DB or analytics shape changes.
-
-## Files
-
-- `src/pages/Assessment.tsx` — JSX swap inside the active-question return.
-- `src/main.tsx` — add `@fontsource/fraunces` imports.
-- `tailwind.config.ts` — add `fraunces` font family.
-- `package.json` (via `bun add @fontsource/fraunces`).
-
-## Verification
-
-Manually load `/assessment`, click start, confirm: card layout matches direction, Fraunces renders, hover state goes blue, dots advance, all 9 questions complete, loading screen shows, `/results` renders normally.
+## Result
+Johnny's long reaction stays visible on Step 3 from the moment it finishes typing through to when the user clicks Continue — no flicker, no disappearance, no other changes.

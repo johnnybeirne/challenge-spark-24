@@ -195,8 +195,12 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
     <div className="min-h-screen w-full bg-background flex items-start md:items-center justify-center p-4 md:p-6">
       <div className="w-full max-w-[640px] flex flex-col items-center">
-        {/* Back link */}
-        <div className="w-full mb-6">
+        {/* Main card */}
+        <div
+          key={q.id}
+          className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
+        >
+          {/* Back link (inside card) */}
           <button
             onClick={() => {
               if (current > 0) {
@@ -205,18 +209,12 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                 setStarted(false);
               }
             }}
-            className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors group"
+            className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back
           </button>
-        </div>
 
-        {/* Main card */}
-        <div
-          key={q.id}
-          className="w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
-        >
           {/* Identity header */}
           <div className="flex flex-col items-center mb-10 md:mb-12">
             <div className="mb-4 p-1 rounded-full border border-border">

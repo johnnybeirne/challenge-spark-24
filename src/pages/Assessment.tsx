@@ -241,7 +241,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           </div>
 
           {/* Answer buttons */}
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
             {q.options.map((opt) => {
               const isSelected = selected === opt.value;
               return (

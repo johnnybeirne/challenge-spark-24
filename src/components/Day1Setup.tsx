@@ -887,7 +887,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     const cached = state.challenge?.aiOutputs?.day1_problem_reaction;
     setStep3Reaction(typeof cached === "string" && cached.trim() ? cached.trim() : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  }, [step, state.challenge?.aiOutputs?.day1_problem_reaction]);
 
   useEffect(() => {
     if (step !== 7) return;

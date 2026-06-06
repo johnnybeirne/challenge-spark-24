@@ -205,7 +205,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                 setStarted(false);
               }
             }}
-            className="flex items-center gap-2 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors group"
+            className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back

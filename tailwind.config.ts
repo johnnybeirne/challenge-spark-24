@@ -75,6 +75,9 @@ export default {
         xs: ["1rem", { lineHeight: "1.5rem" }],
         sm: ["1rem", { lineHeight: "1.5rem" }],
       },
+      fontFamily: {
+        fraunces: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

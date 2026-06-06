@@ -185,69 +185,82 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   return (
     <>
       <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
-    <div className="mx-auto flex min-h-screen w-[80vw] max-w-[60vw] flex-col p-6 max-md:max-w-[80vw]">
-      {/* Back button */}
-      <button
-        onClick={() => {
-          if (current > 0) {
-            setCurrent(current - 1);
-          } else {
-            setStarted(false);
-          }
-        }}
-        className="mb-4 flex items-center gap-1.5 self-start text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </button>
+    <div className="min-h-screen w-full bg-background flex items-start md:items-center justify-center p-4 md:p-6">
+      <div className="w-full max-w-[640px] flex flex-col items-center">
+        {/* Back link */}
+        <div className="w-full mb-6">
+          <button
+            onClick={() => {
+              if (current > 0) {
+                setCurrent(current - 1);
+              } else {
+                setStarted(false);
+              }
+            }}
+            className="flex items-center gap-2 text-sm font-medium text-foreground/50 hover:text-foreground transition-colors group"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back
+          </button>
+        </div>
 
-      <div key={q.id} className="flex flex-1 animate-fade-in flex-col pt-8">
-        <div className="mb-6 flex items-start gap-4">
-          <img
-            src={aiAvatar}
-            alt="Johnny B AI"
-            width={56}
-            height={56}
-            className="h-14 w-14 shrink-0 rounded-full ring-2 ring-foreground/10"
-          />
-          <div className="flex-1 min-w-0 pt-1">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Johnny B AI
+        {/* Main card */}
+        <div
+          key={q.id}
+          className="w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
+        >
+          {/* Identity header */}
+          <div className="flex flex-col items-center mb-10 md:mb-12">
+            <div className="mb-4 p-1 rounded-full border border-border">
+              <img
+                src={aiAvatar}
+                alt="Johnny B AI"
+                width={80}
+                height={80}
+                className="h-20 w-20 rounded-full object-cover"
+              />
             </div>
-            <p className="whitespace-pre-line text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl">
-              <TypewriterText text={`${current + 1}. ${q.text}`} />
-            </p>
+            <span className="text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
+              Johnny B AI
+            </span>
+          </div>
+
+          {/* Question */}
+          <div className="text-center mb-10 md:mb-14">
+            <h1 className="font-fraunces italic font-semibold text-3xl md:text-4xl leading-[1.15] text-foreground">
+              <TypewriterText text={q.text} />
+            </h1>
+          </div>
+
+          {/* Answer buttons */}
+          <div className="grid grid-cols-1 gap-4">
+            {q.options.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => handleAnswer(opt.value)}
+                className="w-full py-5 rounded-2xl border-2 border-border bg-card text-foreground font-semibold text-lg hover:border-primary hover:bg-background transition-all active:scale-[0.99]"
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
 
-
-        <div className="grid grid-cols-2 gap-3">
-          {q.options.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => handleAnswer(opt.value)}
-              className="flex items-center justify-center rounded-2xl border-2 border-border bg-background px-4 py-5 text-base font-semibold text-foreground transition-all hover:border-primary/50 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              {opt.label}
-            </button>
+        {/* Progress */}
+        <div className="mt-10 md:mt-12 flex items-center gap-3">
+          {questions.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === current
+                  ? "w-8 bg-primary"
+                  : i < current
+                    ? "w-1.5 bg-primary/50"
+                    : "w-1.5 bg-border"
+              }`}
+            />
           ))}
         </div>
-      </div>
-
-      {/* Dot progress indicator */}
-      <div className="flex items-center justify-center gap-2 pb-4 pt-6">
-        {questions.map((_, i) => (
-          <div
-            key={i}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === current
-                ? "w-6 bg-primary"
-                : i < current
-                  ? "w-2 bg-primary/60"
-                  : "w-2 bg-muted-foreground/30"
-            }`}
-          />
-        ))}
       </div>
     </div>
     </>

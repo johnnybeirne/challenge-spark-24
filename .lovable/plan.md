@@ -1,38 +1,50 @@
-## Goal
+# Quiz UI Redesign — Bold Editorial
 
-On every Day 1 step, render the recap card above Johnny's AI message (currently it sits below). No content, styling, input, or button changes — only vertical order.
+Pure visual refresh of the question screen at `/assessment`. Same 9 questions, same scoring, same admin editor (`/admin/lead-gen-quiz`), same results flow.
 
-## Scope
+## Scope (what changes)
 
-Single file: `src/components/Day1Setup.tsx`. Nothing else touched.
+Only the question-rendering block inside `src/pages/Assessment.tsx`:
+- Centered 640px column.
+- White card with `rounded-[40px]`, hairline border `#E2E8F0`, soft shadow.
+- Avatar centered at top, larger (80px), inside a hairline ring.
+- "JOHNNY B AI" label rendered in accent blue, wide tracking, small caps.
+- Question text centered, **Fraunces serif, italic, semibold**, ~text-3xl/4xl.
+- Two answer buttons **stacked full-width** (not side by side), large hairline rounded-2xl, hover border → accent blue.
+- Back link sits above the card, left-aligned.
+- Progress dots below the card — active dot becomes a short capsule.
+- Accent color: `#2563EB` (mapped to existing `--primary` token, not hardcoded).
 
-## Changes per step
+## Out of scope (do not touch)
 
-In each step's static phase (the one rendered after the typed intro completes), move the `RecapCard` so it appears before the Johnny message block.
+- `Landing.tsx` (start screen) — unchanged.
+- Loading screen between last answer and `/results` — unchanged.
+- `useQuizQuestions`, `questions`, `generateResult`, `assessmentData.ts` — unchanged.
+- `AdminLeadGenQuiz.tsx` — unchanged.
+- Routing, scoring, analytics events, memory writes — unchanged.
+- All other pages.
 
-**Simple swaps** — move `<RecapCard …>` above `<StaticAi …>`:
+## Technical details
 
-- Step 1 — lines 1433–1434
-- Step 11 — lines 1488–1489
-- Step 10 — lines 1574–1575
-- Step 2 — lines 1680–1681
-- Step 5 — lines 2039–2040 (bare variant, unchanged)
+1. **Font**: install Fraunces via `@fontsource/fraunces` (weights 400, 600; italic 400) and import in `src/main.tsx`. Add `fraunces` to `tailwind.config.ts` `fontFamily`. Inter is already loaded.
+2. **Tokens**: use existing semantic tokens where they match (`bg-background`, `text-foreground`, `border-border`, `text-primary`, `bg-card`). Avoid raw hex in JSX per design system rule.
+3. **Markup change**: replace the `<div key={q.id} ...>` block (the avatar + question + 2-button grid + dot progress) with the new composition. Keep the same React state (`current`, `answers`, `handleAnswer`, `questions`) — only JSX/classes change.
+4. **Buttons**: keep `q.options.map(...)` so admin-edited Yes/No labels still flow through. Change `grid-cols-2` → `grid-cols-1` (stacked) and restyle.
+5. **Progress dots**: keep `questions.map((_, i) => ...)` — restyle so the active dot is a wider capsule and others are small dots.
+6. **Back button**: keep current behavior (`current > 0 ? setCurrent(current-1) : setStarted(false)`), restyle to match the new icon + label style.
+7. **SEO, mode resolution, referral capture, partner tracking, typewriter, loading screen**: untouched.
 
-**Step 7** (lines 2200–2211): move the standalone `<RecapCard rows={recapRowsBefore(7)} …>` above the `<div className="flex items-start gap-3">…<JohnnyAvatar/>…</div>` summary block.
+## Conflicts / risks
 
-**Steps 3 and 9** use `JohnnyRecapPanel`, which bundles acknowledgement + recap + question inside Johnny's bubble. To put the recap above Johnny without changing the message content:
+None I can see. Admin editing keeps working because we still render `q.text` and `q.options[].label`. Scoring is purely off `answers` map keyed by `q.id`. No DB or analytics shape changes.
 
-- Render `<RecapCard rows={recapRowsBefore(3)} echoMap={echoMap} />` above `<JohnnyRecapPanel …>` and pass `rows={[]}` to the panel so it no longer renders the recap internally. `RecapCard` already returns `null` when there are no visible rows, so the panel's internal call becomes a no-op. Same treatment for step 9 with `recapRowsBefore(9)`.
-- This keeps the leadIn, acknowledgement, and question text inside Johnny's bubble exactly as today; only the recap moves out and up.
+## Files
 
-## Out of scope (unchanged)
-
-- Typed intro phase (no recap rendered there today; not adding one).
-- Recap content, row labels, `recapRowsBefore` logic, echo editing.
-- Johnny message wording, avatar, styling, spacing classes.
-- Input cards, textareas, option buttons, Continue buttons.
-- Any file outside `src/components/Day1Setup.tsx`.
+- `src/pages/Assessment.tsx` — JSX swap inside the active-question return.
+- `src/main.tsx` — add `@fontsource/fraunces` imports.
+- `tailwind.config.ts` — add `fraunces` font family.
+- `package.json` (via `bun add @fontsource/fraunces`).
 
 ## Verification
 
-Visit each Day 1 step in preview and confirm order is: recap → Johnny message → input/controls. Confirm steps 3 and 9 still show Johnny's acknowledgement and question inside the bubble (just without the embedded recap).
+Manually load `/assessment`, click start, confirm: card layout matches direction, Fraunces renders, hover state goes blue, dots advance, all 9 questions complete, loading screen shows, `/results` renders normally.

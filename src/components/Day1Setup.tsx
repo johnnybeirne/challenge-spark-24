@@ -1600,6 +1600,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step10Phase === "input" && (
                 <div className="space-y-5">
+                  <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea
                         autoFocus

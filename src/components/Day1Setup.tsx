@@ -1134,6 +1134,20 @@ const Day1Setup = ({ onComplete }: Props) => {
     setStep(2);
 
   };
+  const saveChallengeLabel = (text: string) => {
+    const next = text.trim();
+    if (!next) return;
+    setChallengeType("custom");
+    persistFoundation({ challengeType: "custom", desiredOutcome: next } as Partial<SetupData>);
+    setState((prev) => ({
+      ...prev,
+      memory: mergeMemory(prev.memory, {
+        challengeType: normalizeChallengeType("custom"),
+        desiredOutcome: next,
+      }),
+    }));
+    profileSaved("Your goal");
+  };
   const handleStep5ResultNext = () => {
     const text = step5Result.trim();
     if (!text) return;

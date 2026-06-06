@@ -61,6 +61,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);

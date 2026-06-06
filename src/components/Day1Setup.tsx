@@ -1796,7 +1796,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             <div className="space-y-6 animate-fade-in">
               {step3Phase === "intro" && (
                 <TypedSequence
-                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}`}
+                  resetKey={`step3-intro-${whoTrim3.length}-${painLower.length}-${audienceTrim3.length}-${step3Reaction ? "r" : "n"}`}
                   messages={step3IntroMessages}
                   echoMap={echoMap}
                   onComplete={() => setStep3Phase("input")}
@@ -1806,14 +1806,35 @@ const Day1Setup = ({ onComplete }: Props) => {
 
               {step3Phase === "input" && (
                 <div className="space-y-5">
+                  {/* Persistent Johnny bubbles — identical styling to TypedSequence so the
+                      long reaction stays visible after typing completes. */}
+                  <div className="flex items-start gap-3">
+                    <JohnnyAvatar />
+                    <div className="flex-1 space-y-3 min-w-0">
+                      {step3Reaction && (
+                        <div className="flex">
+                          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                            {step3Reaction}
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex">
+                        <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
+                          {step3Ack}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <RecapCard rows={recapRowsBefore(3)} echoMap={echoMap} />
-                  <JohnnyRecapPanel
-                    leadIn={step3Reaction ?? undefined}
-                    acknowledgement={step3Ack}
-                    rows={[]}
-                    question={step3Question}
-                    echoMap={echoMap}
-                  />
+
+                  <div className="flex items-start gap-3">
+                    <JohnnyAvatar />
+                    <div className="flex-1 min-w-0 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                      {step3Question}
+                    </div>
+                  </div>
+
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
                       <DictatedTextarea

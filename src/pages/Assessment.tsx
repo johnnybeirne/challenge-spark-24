@@ -61,6 +61,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
@@ -145,41 +146,48 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   if (!q) return null;
 
   const handleAnswer = (answer: string) => {
+    if (selected) return; // prevent double clicks during light-up
+    setSelected(answer);
     const updated = { ...answers, [q.id]: answer };
-    setAnswers(updated);
 
     // Track
     trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
 
-    if (current < TOTAL_QUESTIONS - 1) {
-      setCurrent(current + 1);
-    } else {
-      // Complete — show loading then navigate
-      setLoading(true);
-      const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-      const result = generateResult(updated);
+    const advance = () => {
+      setAnswers(updated);
+      setSelected(null);
+      if (current < TOTAL_QUESTIONS - 1) {
+        setCurrent(current + 1);
+      } else {
+        // Complete — show loading then navigate
+        setLoading(true);
+        const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+        const result = generateResult(updated);
 
-      trackEvent("assessment_completed", { 
-        score: result.diagnosticScore,
-        level: result.diagnosticLevel,
-        timeTaken,
-      });
-      trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
-      trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
+        trackEvent("assessment_completed", {
+          score: result.diagnosticScore,
+          level: result.diagnosticLevel,
+          timeTaken,
+        });
+        trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
+        trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 
-      setState((prev) => ({
-        ...prev,
-        assessment: { ...result, mode: resolvedMode ?? "challenge" } as any,
-        memory: mergeMemory(prev.memory, {
-          audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
-          challengeType: normalizeChallengeType(result.challengeType),
-        }),
-      }));
+        setState((prev) => ({
+          ...prev,
+          assessment: { ...result, mode: resolvedMode ?? "challenge" } as any,
+          memory: mergeMemory(prev.memory, {
+            audienceType: result.audienceType === "mixed" ? "" : result.audienceType,
+            challengeType: normalizeChallengeType(result.challengeType),
+          }),
+        }));
 
-      setTimeout(() => {
-        navigate("/results");
-      }, 4000);
-    }
+        setTimeout(() => {
+          navigate("/results");
+        }, 4000);
+      }
+    };
+
+    setTimeout(advance, 380);
   };
 
   return (
@@ -226,23 +234,32 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           </div>
 
           {/* Question */}
-          <div className="text-center mb-10 md:mb-14">
-            <h1 className="font-fraunces italic font-semibold text-3xl md:text-4xl leading-[1.15] text-foreground">
+          <div className="text-center mb-8 md:mb-10">
+            <h1 className="font-fraunces italic font-semibold text-xl md:text-2xl leading-[1.25] text-foreground">
               <TypewriterText text={q.text} />
             </h1>
           </div>
 
           {/* Answer buttons */}
-          <div className="grid grid-cols-1 gap-4">
-            {q.options.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleAnswer(opt.value)}
-                className="w-full py-5 rounded-2xl border-2 border-border bg-card text-foreground font-semibold text-lg hover:border-primary hover:bg-background transition-all active:scale-[0.99]"
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="grid grid-cols-1 gap-3">
+            {q.options.map((opt) => {
+              const isSelected = selected === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => handleAnswer(opt.value)}
+                  disabled={selected !== null}
+                  className={`w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3 ${
+                    isSelected
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-card text-foreground hover:border-primary hover:bg-background"
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected && <CheckCircle2 className="h-5 w-5 text-primary" />}
+                </button>
+              );
+            })}
           </div>
         </div>
 

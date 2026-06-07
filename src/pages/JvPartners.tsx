@@ -144,63 +144,25 @@ const JvPartners = () => {
             </Card>
           </section>
 
-          {/* ─── HOW IT WORKS — ANIMATED VERTICAL FLOWCHART ─── */}
+          {/* ─── HOW IT WORKS — ANIMATED VERTICAL JOURNEY ─── */}
           <section className="mb-12">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">
               How it works
             </h2>
-            <div ref={flow.ref} className="flex flex-col items-center">
-              {HOW_IT_WORKS.map((step, i) => {
-                const stepDelay = i * 450;
-                const arrowDelay = stepDelay + 250;
-                return (
-                  <div key={i} className="w-full flex flex-col items-center">
-                    <Card
-                      className="w-full max-w-md border-2 border-border hover:border-primary/40 transition-colors shadow-sm"
-                      style={{
-                        opacity: flow.inView ? 1 : 0,
-                        transform: flow.inView ? "translateY(0) scale(1)" : "translateY(16px) scale(0.97)",
-                        transition: `opacity 500ms ease-out ${stepDelay}ms, transform 500ms cubic-bezier(0.34,1.56,0.64,1) ${stepDelay}ms`,
-                      }}
-                    >
-                      <CardContent className="p-5 flex items-start gap-4">
-                        <div className="flex flex-col items-center shrink-0">
-                          <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                            <step.icon className="h-5 w-5 text-primary" />
-                          </div>
-                          <span className="text-[10px] font-mono text-muted-foreground mt-1.5 tracking-widest">
-                            STEP {String(i + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-                        <div className="flex-1 pt-0.5">
-                          <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
-                          <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {i < HOW_IT_WORKS.length - 1 && (
-                      <div
-                        className="flex flex-col items-center py-2 overflow-hidden"
-                        aria-hidden="true"
-                        style={{
-                          opacity: flow.inView ? 1 : 0,
-                          transform: flow.inView ? "scaleY(1)" : "scaleY(0)",
-                          transformOrigin: "top",
-                          transition: `opacity 350ms ease-out ${arrowDelay}ms, transform 400ms ease-out ${arrowDelay}ms`,
-                        }}
-                      >
-                        <div className="w-px h-6 bg-border" />
-                        <div className="h-7 w-7 rounded-full bg-background border-2 border-primary/30 flex items-center justify-center">
-                          <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="w-px h-6 bg-border" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="flex flex-col items-center">
+              {JOURNEY.map((step, i) => (
+                <JourneyStepRow
+                  key={i}
+                  step={step}
+                  index={i}
+                  isLast={i === JOURNEY.length - 1}
+                  nextKind={JOURNEY[i + 1]?.kind}
+                />
+              ))}
             </div>
           </section>
+
+
 
           {/* ─── LEADERBOARD MOCKUP — ANIMATED ─── */}
           <section className="mb-12">

@@ -219,7 +219,7 @@ const JOURNEY: JourneyItem[] = [
 const BENEFITS = [
   { icon: Eye, title: "Compounding visibility", desc: "Every invite your referrals send keeps your name circulating." },
   { icon: Network, title: "Network-driven reach", desc: "You tap into a system that grows itself, not just a one-off promo." },
-  { icon: Trophy, title: "Permanent leaderboard placement", desc: "Origin attribution means early partners stay visible as the network scales." },
+  { icon: Trophy, title: "Stay visible by staying active.", desc: "The more you promote, the more visible you stay. Every new wave of referrals keeps your name in front of a growing audience." },
   { icon: Gift, title: "Featured reward placement", desc: "Your bonus sits on the rewards ladder, earned by motivated participants." },
   { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and Leadio does the rest." },
 ];

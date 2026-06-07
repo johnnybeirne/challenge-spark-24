@@ -203,7 +203,7 @@ const SparkleRow = () => (
 );
 
 const JOURNEY: JourneyItem[] = [
-  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "Share by email and on social." },
+  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "Share by email and on social.", visual: <ShareIconsRow /> },
   { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
   { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },
   { kind: "journey", icon: Network,   title: "They invite. Then they invite.", sub: "Your name stays at the origin.", visual: <BranchingGlyph /> },

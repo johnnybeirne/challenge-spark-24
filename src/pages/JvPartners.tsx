@@ -281,7 +281,7 @@ function StepLearnMoreLink({
         onToggle();
       }}
       aria-expanded={expanded}
-      className={`text-xs font-semibold ${color} underline underline-offset-2 focus:outline-none transition-colors shrink-0 ${className}`}
+      className={`!text-[11px] leading-none font-semibold ${color} underline underline-offset-2 focus:outline-none transition-colors shrink-0 ${className}`}
     >
       {expanded ? "Hide" : "Learn more"}
     </button>

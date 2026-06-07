@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Megaphone, Trophy, Gift, Network,
-  TrendingUp, Users, Eye, Sparkles, ChevronRight, Repeat,
+  TrendingUp, Users, Eye, Sparkles, ChevronRight, Repeat, ArrowDown, Medal,
 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";

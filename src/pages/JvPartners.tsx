@@ -385,28 +385,6 @@ const JvPartners = () => {
             </p>
           </header>
 
-          {/* ─── THE OFFER ─── */}
-          <section className="mb-12">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-              <CardContent className="p-6 sm:p-8">
-                <h2 className="text-lg font-semibold text-foreground mb-3">The JV partner benefit</h2>
-                <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
-                  You promote to your audience.
-                  Every person you send in earns you visibility on the
-                  {" "}<span className="font-semibold">Top Referrers leaderboard</span> — seen by every single challenge participant.
-                  The people you invite then invite others, and your name stays at the top as the
-                  {" "}<span className="font-semibold">origin of that growth</span>.
-                </p>
-                <p className="text-sm sm:text-base text-foreground/90 leading-relaxed mt-4">
-                  Your bonus product or service is featured as a reward on the
-                  {" "}<span className="font-semibold">rewards ladder</span>, putting your brand in front of every participant who hits that points threshold.
-                </p>
-                <p className="text-sm sm:text-base text-foreground/90 leading-relaxed mt-4 italic">
-                  No complex tracking — just compounding visibility the more your referrals engage and invite others.
-                </p>
-              </CardContent>
-            </Card>
-          </section>
 
           {/* ─── HOW IT WORKS — ANIMATED VERTICAL JOURNEY ─── */}
           <section className="mb-12">

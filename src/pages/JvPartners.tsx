@@ -63,7 +63,7 @@ const SparkleRow = () => (
 );
 
 const JOURNEY: JourneyItem[] = [
-  { kind: "journey", icon: Megaphone, title: "You promote once",         sub: "One link. One post." },
+  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "One link. One post." },
   { kind: "journey", icon: SparklesIcon, title: "They get diagnosed",    sub: "A personalised result they can't ignore.", visual: <ArchetypeChips /> },
   { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
   { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },

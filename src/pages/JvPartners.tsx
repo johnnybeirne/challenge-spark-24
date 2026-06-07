@@ -255,7 +255,7 @@ const JvPartners = () => {
     <>
       <SEO
         title="JV Partner Program | Leadio"
-        description="Promote once. Land on the Top Referrers leaderboard. Get featured on the rewards ladder. Compounding visibility through the Leadio referral network."
+        description="Promote to your audience. Land on the Top Referrers leaderboard. Get featured on the rewards ladder. Compounding visibility through the Leadio referral network."
         canonical="/jv"
       />
       <div className="min-h-screen bg-background">

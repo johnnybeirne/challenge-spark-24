@@ -8,7 +8,7 @@ import {
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
   Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
 } from "lucide-react";
-import ActivityFeed from "@/components/ActivityFeed";
+
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";

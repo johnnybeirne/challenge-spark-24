@@ -56,7 +56,7 @@ const BENEFITS = [
   { icon: Network, title: "Network-driven reach", desc: "You tap into a system that grows itself, not just a one-off promo." },
   { icon: Trophy, title: "Permanent leaderboard placement", desc: "Origin attribution means early partners stay visible as the network scales." },
   { icon: Gift, title: "Featured reward placement", desc: "Your bonus sits on the rewards ladder, earned by motivated participants." },
-  { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and the platform does the rest." },
+  { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and Leadio does the rest." },
 ];
 
 const LEADERBOARD = [

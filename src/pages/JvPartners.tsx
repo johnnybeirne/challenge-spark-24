@@ -89,6 +89,102 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
+type JourneyItem = (typeof JOURNEY)[number];
+
+function JourneyStepRow({
+  step,
+  index,
+  isLast,
+  nextKind,
+}: {
+  step: JourneyItem;
+  index: number;
+  isLast: boolean;
+  nextKind?: JourneyKind;
+}) {
+  const card = useInView<HTMLDivElement>(0.25);
+  const line = useInView<HTMLDivElement>(0.5);
+
+  const isReward = step.kind === "reward";
+  const isOutcome = step.kind === "outcome";
+
+  const cardBorder = isReward
+    ? "border-amber-500/60 ring-1 ring-amber-500/30 animate-pulse"
+    : isOutcome
+      ? "border-emerald-500/60 ring-1 ring-emerald-500/20"
+      : "border-border hover:border-primary/40";
+
+  const iconWrap = isReward
+    ? "bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400"
+    : isOutcome
+      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+      : "bg-primary text-primary-foreground border-primary";
+
+  const lineColor =
+    nextKind === "reward"
+      ? "bg-amber-500/60"
+      : nextKind === "outcome"
+        ? "bg-emerald-500/60"
+        : "bg-primary/50";
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      <Card
+        ref={card.ref}
+        className={`w-full max-w-md border-2 ${cardBorder} transition-colors shadow-sm`}
+        style={{
+          opacity: card.inView ? 1 : 0,
+          transform: card.inView ? "translateY(0)" : "translateY(16px)",
+          transition: "opacity 500ms ease-out, transform 500ms ease-out",
+        }}
+      >
+        <CardContent className="p-5 flex items-start gap-4">
+          <div className="flex flex-col items-center shrink-0">
+            <div
+              className={`h-11 w-11 rounded-full border-2 flex items-center justify-center font-semibold ${iconWrap}`}
+            >
+              {isReward ? (
+                <Gift className="h-5 w-5" />
+              ) : isOutcome ? (
+                <InfinityIcon className="h-5 w-5" />
+              ) : (
+                <span className="text-sm">{index + 1}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex-1 pt-0.5">
+            {step.badge && (
+              <Badge
+                variant="outline"
+                className="mb-2 border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/10 text-[10px] uppercase tracking-wider font-semibold"
+              >
+                {step.badge}
+              </Badge>
+            )}
+            <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+          </div>
+        </CardContent>
+      </Card>
+      {!isLast && (
+        <div
+          ref={line.ref}
+          className="flex flex-col items-center py-2 overflow-hidden"
+          aria-hidden="true"
+          style={{
+            transform: line.inView ? "scaleY(1)" : "scaleY(0)",
+            transformOrigin: "top",
+            transition: "transform 450ms ease-out",
+          }}
+        >
+          <div className={`w-0.5 h-10 ${lineColor} rounded-full`} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 const JvPartners = () => {
   const board = useInView<HTMLDivElement>(0.2);
 

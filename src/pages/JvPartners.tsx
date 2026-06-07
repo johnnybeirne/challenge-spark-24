@@ -6,8 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
-  Mail, Linkedin, Facebook, MessageCircle,
+  Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
 } from "lucide-react";
+import ActivityFeed from "@/components/ActivityFeed";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
@@ -601,6 +605,78 @@ const JvPartners = () => {
                 );
               })}
             </div>
+          </section>
+
+          {/* ─── LIVE ACTIVITY ─── */}
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              What's happening now
+            </h2>
+            <p className="text-xs text-muted-foreground mb-3">
+              Early builders are already launching and inviting others.
+            </p>
+            <ActivityFeed limit={5} title="" />
+          </section>
+
+          {/* ─── WHY GO EARLY ─── */}
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              Why go early
+            </h2>
+            <Card className="border-border">
+              <CardContent className="p-5">
+                <ul className="space-y-2.5">
+                  {[
+                    "Founding JV partner status",
+                    "Priority visibility across the network",
+                    "Larger network ownership as it scales",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <Shield className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                      <span className="text-sm text-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-muted-foreground mt-4 italic">
+                  Visibility inside the network is based on contribution and activity — not just early access.
+                </p>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* ─── FAQ ─── */}
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              Common questions
+            </h2>
+            <Card className="border-border">
+              <CardContent className="p-2 sm:p-3">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="bonus">
+                    <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline px-3">
+                      <span className="flex items-start gap-2.5 text-left">
+                        <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        Why do I need to contribute a bonus?
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-xs text-muted-foreground leading-relaxed px-3 pl-10">
+                      Because this is a shared growth network — every JV partner brings value so everyone benefits.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="first" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline px-3">
+                      <span className="flex items-start gap-2.5 text-left">
+                        <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        Do I have to go first?
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-xs text-muted-foreground leading-relaxed px-3 pl-10">
+                      Early JV partners receive more visibility and lock in their network position earlier — but growth continues as the network expands.
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+            </Card>
           </section>
 
           {/* ─── CTA ─── */}

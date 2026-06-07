@@ -158,6 +158,36 @@ const adminGroups: FeatureGroup[] = [
     ],
   },
   {
+    title: "Challenge experience updates",
+    items: [
+      {
+        title: "Day 1 nine-step sequence",
+        does: "Day 1 now runs as a 9-step guided flow: expert-type selection, superpower, delivery method, audience, problem, promise (auto-generated), challenge title, focus mode confirmation, and recap. Step numbers and a progress bar are visible throughout, with inline recap lines and contextual examples on every step.",
+        matters: "Removes ambiguity about what the user is being asked for at each beat and lets the owner see what new participants will experience.",
+      },
+      {
+        title: "Day 1 reset window",
+        does: "Participants get a 24-hour window to reset Day 1 answers and re-run the flow.",
+        matters: "Forgives early misfires without admin intervention.",
+      },
+      {
+        title: "Day 2 six-screen flow",
+        does: "Day 2 is a 6-screen build sequence sourced from the knowledge base, with 5 generate buttons on every screen, a quiz blueprint PDF generation step, and a prompt pack upsell.",
+        matters: "Turns Day 2 into a shippable quiz blueprint instead of a single long form.",
+      },
+      {
+        title: "Quiz archetypes and Johnny B AI host",
+        does: "Lead-gen quiz now maps to three archetypes — Pioneer, Architect, Authority — with Johnny B AI delivering each question conversationally with typing animation, progress dots at the bottom, and a dynamic urgency date on the CTA.",
+        matters: "Makes the quiz feel like a real conversation and personalises the result instead of returning a generic score.",
+      },
+      {
+        title: "Rewards system (points)",
+        does: "Reward currency is renamed from credits to points across the app. Full tier ladder is exposed: Starter, Builder, Growth Partner, Featured Creator, Strategic Partner. Buy-points and full-suite options are available, JV partners trigger a double unlock, and every price is editable from the admin.",
+        matters: "Clear, consistent reward economy that the owner can re-price without code changes.",
+      },
+    ],
+  },
+  {
     title: "Documentation",
     items: [
       {
@@ -168,6 +198,7 @@ const adminGroups: FeatureGroup[] = [
     ],
   },
 ];
+
 
 const userGroups: FeatureGroup[] = [
   {

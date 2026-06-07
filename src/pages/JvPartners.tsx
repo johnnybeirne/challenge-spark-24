@@ -385,6 +385,10 @@ function JourneyStepRow({
             </span>
           </>
         )}
+        <StepHelpTooltip
+          text={tooltip ?? ""}
+          className={isReward ? "top-2 left-2" : "top-2 right-2"}
+        />
         <CardContent className="p-4 flex items-start justify-center gap-4">
           {/* Big number / icon */}
           <div

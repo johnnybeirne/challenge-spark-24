@@ -213,7 +213,7 @@ const JOURNEY: JourneyItem[] = [
   { kind: "journey", icon: Megaphone, title: "You promote",               sub: "Share by email and on social.", visual: <ShareIconsRow /> },
   { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
   { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },
-  { kind: "journey", icon: Network,   title: "They invite. Then they invite.", sub: "Your name stays at the origin.", visual: <BranchingGlyph /> },
+  { kind: "journey", icon: Network,   title: "People invite people who invite people.", sub: "Your name stays at the origin.", visual: <BranchingGlyph /> },
   { kind: "reward",  icon: Gift,      title: "Your offer = Their reward",  sub: "Earned, not advertised.", visual: <SparkleRow /> },
   { kind: "outcome", icon: InfinityIcon, title: "Your reach compounds",  sub: "One promotion. Infinite waves." },
 ];

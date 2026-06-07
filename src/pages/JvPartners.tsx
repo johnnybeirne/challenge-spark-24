@@ -258,18 +258,52 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
+function StepHelpTooltip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  if (!text) return null;
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="More about this step"
+          className="absolute top-2 right-2 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/70 hover:text-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-colors"
+          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
+          <HelpCircle className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="top"
+        align="end"
+        sideOffset={6}
+        className="w-72 text-xs leading-relaxed text-muted-foreground"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        {text}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function JourneyStepRow({
   step,
   index,
   journeyNumber,
   isLast,
   nextKind,
+  tooltip,
 }: {
   step: JourneyItem;
   index: number;
   journeyNumber: number | null;
   isLast: boolean;
   nextKind?: JourneyKind;
+  tooltip?: string;
 }) {
   const card = useInView<HTMLDivElement>(0.25);
   const line = useInView<HTMLDivElement>(0.5);

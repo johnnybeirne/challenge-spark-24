@@ -381,11 +381,17 @@ export function scanBuiltFeatures(): FeatureScan {
       workflow: [
         "Owner signs in and lands on the Owner Console hub.",
         "Checks analytics, signups, and the activity feed for the latest movement.",
-        "Edits any public copy, challenge day, training video, or diagnostic reply in the visual editor.",
-        "Reviews promoter applications, JV partners, coupons, and approves payouts.",
+        "Reviews new JV partner applications coming in from /jv-apply and decides who to onboard.",
+        "Manages JV partner step tooltip content shown on the /jv-partners landing page.",
+        "Edits Day 1 and Day 2 step content and the generate-button labels used inside each day.",
+        "Edits quiz archetype names and the result messages shown for Pioneer, Architect, and Authority.",
+        "Manages the rewards ladder prices and the JV partner bonus rewards.",
+        "Edits any other public copy, training video, or diagnostic reply in the visual editor.",
+        "Reviews promoter applications, JV partner records, coupons, and approves payouts.",
         "Sends a newsletter or waitlist email when there is something to announce.",
         "Uses View as User to walk the full challenger experience before publishing.",
       ],
+
       snapshot: "The admin experience gives one operator end-to-end control over content, partners, money, and quality.",
     },
     user: {

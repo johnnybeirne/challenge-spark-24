@@ -320,19 +320,24 @@ function JourneyStepRow({
             {isReward ? (
               <Icon className="h-6 w-6" />
             ) : (
-              <span className="text-lg tabular-nums">{String(journeyNumber).padStart(2, "0")}</span>
+              <Icon className="h-6 w-6 text-primary" />
             )}
           </div>
           {/* Punchline */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
+              {!isReward && journeyNumber !== null && (
+                <span className="text-[11px] font-mono font-bold tabular-nums text-primary/70 shrink-0">
+                  {String(journeyNumber).padStart(2, "0")}
+                </span>
+              )}
               <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
             </div>
             <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
             {step.visual}
           </div>
         </CardContent>
+
       </Card>
       {!isLast && (
         <div

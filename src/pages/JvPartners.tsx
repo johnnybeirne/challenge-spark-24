@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
-  Mail, Linkedin, Facebook, MessageCircle, Shield,
+  Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
@@ -256,18 +258,52 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
+function StepHelpTooltip({ text, className = "top-2 right-2" }: { text: string; className?: string }) {
+  const [open, setOpen] = useState(false);
+  if (!text) return null;
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="More about this step"
+          className={`absolute z-10 inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/70 hover:text-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-colors ${className}`}
+          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
+          <HelpCircle className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="top"
+        align="end"
+        sideOffset={6}
+        className="w-72 text-xs leading-relaxed text-muted-foreground"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        {text}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function JourneyStepRow({
   step,
   index,
   journeyNumber,
   isLast,
   nextKind,
+  tooltip,
 }: {
   step: JourneyItem;
   index: number;
   journeyNumber: number | null;
   isLast: boolean;
   nextKind?: JourneyKind;
+  tooltip?: string;
 }) {
   const card = useInView<HTMLDivElement>(0.25);
   const line = useInView<HTMLDivElement>(0.5);
@@ -292,6 +328,10 @@ function JourneyStepRow({
           <InfinityIcon
             className="absolute -right-6 -bottom-6 h-40 w-40 text-white/15"
             aria-hidden="true"
+          />
+          <StepHelpTooltip
+            text={tooltip ?? ""}
+            className="top-2 right-2 text-white/80 hover:text-white hover:bg-white/15"
           />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">
@@ -345,6 +385,10 @@ function JourneyStepRow({
             </span>
           </>
         )}
+        <StepHelpTooltip
+          text={tooltip ?? ""}
+          className={isReward ? "top-2 left-2" : "top-2 right-2"}
+        />
         <CardContent className="p-4 flex items-start justify-center gap-4">
           {/* Big number / icon */}
           <div
@@ -415,8 +459,18 @@ function JourneyStepRow({
 
 
 
+const DEFAULT_STEP_TOOLTIPS: string[] = [
+  "Share your unique JV partner link by email, social media, or to your existing audience. There is no minimum promotion requirement. The more you promote the more visible you become.",
+  "Every person you send in gets a personalised 3-day challenge experience. They build something real and are rewarded for inviting others.",
+  "The Top Referrers leaderboard is visible to every challenge participant every day. The more people you send in the higher you appear and the more new participants see your name.",
+  "Every participant inside the challenge is rewarded with points for inviting others. The people you originally sent in now send new people in and those new people can see you at the origin of that growth.",
+  "Your product or service appears on the rewards ladder as a double unlock bonus. Participants who hit the points threshold unlock your offer alongside the main reward. This is earned placement not advertising.",
+  "Every promotion you make starts a new wave. Each wave brings new participants who invite new people. Your visibility grows with every wave not just the ones you personally started.",
+];
+
 const JvPartners = () => {
   const board = useInView<HTMLDivElement>(0.2);
+  const { t } = useSiteContent("jv-partners");
 
   useEffect(() => {
     trackEvent("partners_page_viewed");
@@ -471,6 +525,7 @@ const JvPartners = () => {
                       journeyNumber={num}
                       isLast={i === JOURNEY.length - 1}
                       nextKind={JOURNEY[i + 1]?.kind}
+                      tooltip={t(`step_tooltips.step_${i + 1}`, DEFAULT_STEP_TOOLTIPS[i] ?? "")}
                     />
                   );
                 });

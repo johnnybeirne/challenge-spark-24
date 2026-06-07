@@ -4,32 +4,50 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowRight, Crown, Megaphone, Trophy, Gift, Network,
-  TrendingUp, Users, Eye, Sparkles, ChevronRight, Repeat, ArrowDown, Medal,
+  ArrowRight, Crown, Trophy, Gift, Network,
+  TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 
-const HOW_IT_WORKS = [
+type JourneyKind = "journey" | "reward" | "outcome";
+const JOURNEY: { kind: JourneyKind; title: string; desc: string; badge?: string }[] = [
   {
-    icon: Megaphone,
-    title: "Promote once to your audience",
-    desc: "One share. One email. One post. You point your audience at the 3-day challenge with your partner link.",
+    kind: "journey",
+    title: "Every time you promote, more new people promote you",
+    desc: "Every person you send in is rewarded for inviting new people. The new people they invite are rewarded for inviting new people. Your audience constantly grows.",
   },
   {
-    icon: Trophy,
-    title: "Land on the Top Referrers leaderboard",
-    desc: "Every signup you send in lifts you on a leaderboard seen by every participant inside the challenge.",
+    kind: "journey",
+    title: "They take the quiz",
+    desc: "Each person gets a personalised diagnosis — Pioneer, Architect, or Authority. They feel understood before they even sign up.",
   },
   {
-    icon: Repeat,
-    title: "Your referrals invite others — you stay at the top",
-    desc: "Participants are rewarded for inviting more builders. That second and third wave still traces back to you as the origin.",
+    kind: "journey",
+    title: "They join the challenge",
+    desc: "Motivated by their result they sign up and start building their own challenge in 3 days.",
   },
   {
-    icon: Gift,
-    title: "Your bonus becomes a reward on the ladder",
-    desc: "Your product or service is featured on the rewards ladder — earned by participants who hit a points threshold. Your brand lands in front of every active builder.",
+    kind: "reward",
+    title: "You appear on the leaderboard",
+    desc: "Every signup you send lifts you on the Top Referrers board — visible to every single participant inside the challenge.",
+    badge: "Your reward",
+  },
+  {
+    kind: "journey",
+    title: "They invite new people",
+    desc: "Every participant is rewarded for inviting new people. The people you sent in now send new people in — and your name stays at the origin of that growth.",
+  },
+  {
+    kind: "reward",
+    title: "Your offer is featured as a reward",
+    desc: "Your product or service sits on the rewards ladder as a double unlock — earned by participants, not served as an ad.",
+    badge: "Your reward",
+  },
+  {
+    kind: "outcome",
+    title: "Your reach compounds",
+    desc: "The more you promote, the more people you have promoting you to new people. One promotion starts it. Every promotion grows it.",
   },
 ];
 

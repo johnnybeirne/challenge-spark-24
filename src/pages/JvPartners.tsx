@@ -258,35 +258,33 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
-function StepHelpTooltip({ text, className = "top-2 right-2" }: { text: string; className?: string }) {
-  const [open, setOpen] = useState(false);
-  if (!text) return null;
+function StepLearnMoreLink({
+  expanded,
+  onToggle,
+  variant = "primary",
+  className = "",
+}: {
+  expanded: boolean;
+  onToggle: () => void;
+  variant?: "primary" | "onDark";
+  className?: string;
+}) {
+  const color =
+    variant === "onDark"
+      ? "text-white hover:text-white/80"
+      : "text-primary hover:text-primary/80";
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label="More about this step"
-          className={`absolute z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background shadow-sm ring-1 ring-foreground/20 hover:bg-foreground/90 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all ${className}`}
-          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-        >
-          <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        align="end"
-        sideOffset={6}
-        className="w-72 text-xs leading-relaxed text-muted-foreground"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        {text}
-      </PopoverContent>
-    </Popover>
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+      aria-expanded={expanded}
+      className={`text-xs font-semibold ${color} underline underline-offset-2 focus:outline-none transition-colors shrink-0 ${className}`}
+    >
+      {expanded ? "Hide" : "Learn more"}
+    </button>
   );
 }
 

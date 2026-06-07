@@ -628,28 +628,6 @@ const JvPartners = () => {
             </Card>
           </section>
 
-          {/* ─── NETWORK EFFECT ─── */}
-          <section className="mb-12">
-            <Card className="border-primary/20 bg-primary/5">
-              <CardContent className="p-6 text-center">
-                <h2 className="text-base font-semibold text-foreground mb-4">
-                  Your one promotion, multiplied
-                </h2>
-                <div className="flex items-center gap-2 text-xs text-foreground font-medium justify-center flex-wrap">
-                  <Badge variant="secondary" className="gap-1"><Users className="h-3 w-3" /> You</Badge>
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                  <Badge variant="secondary">Your audience</Badge>
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                  <Badge variant="secondary">Their invites</Badge>
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                  <Badge variant="secondary" className="gap-1"><TrendingUp className="h-3 w-3" /> Network growth</Badge>
-                </div>
-                <p className="text-xs text-muted-foreground mt-4 max-w-md mx-auto leading-relaxed">
-                  Every wave traces back to you. The leaderboard remembers the origin.
-                </p>
-              </CardContent>
-            </Card>
-          </section>
 
           {/* ─── WHAT YOU GET ─── */}
           <section className="mb-12">

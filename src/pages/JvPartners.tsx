@@ -4,32 +4,50 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowRight, Crown, Megaphone, Trophy, Gift, Network,
-  TrendingUp, Users, Eye, Sparkles, ChevronRight, Repeat, ArrowDown, Medal,
+  ArrowRight, Crown, Trophy, Gift, Network,
+  TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 
-const HOW_IT_WORKS = [
+type JourneyKind = "journey" | "reward" | "outcome";
+const JOURNEY: { kind: JourneyKind; title: string; desc: string; badge?: string }[] = [
   {
-    icon: Megaphone,
-    title: "Promote once to your audience",
-    desc: "One share. One email. One post. You point your audience at the 3-day challenge with your partner link.",
+    kind: "journey",
+    title: "Every time you promote, more new people promote you",
+    desc: "Every person you send in is rewarded for inviting new people. The new people they invite are rewarded for inviting new people. Your audience constantly grows.",
   },
   {
-    icon: Trophy,
-    title: "Land on the Top Referrers leaderboard",
-    desc: "Every signup you send in lifts you on a leaderboard seen by every participant inside the challenge.",
+    kind: "journey",
+    title: "They take the quiz",
+    desc: "Each person gets a personalised diagnosis — Pioneer, Architect, or Authority. They feel understood before they even sign up.",
   },
   {
-    icon: Repeat,
-    title: "Your referrals invite others — you stay at the top",
-    desc: "Participants are rewarded for inviting more builders. That second and third wave still traces back to you as the origin.",
+    kind: "journey",
+    title: "They join the challenge",
+    desc: "Motivated by their result they sign up and start building their own challenge in 3 days.",
   },
   {
-    icon: Gift,
-    title: "Your bonus becomes a reward on the ladder",
-    desc: "Your product or service is featured on the rewards ladder — earned by participants who hit a points threshold. Your brand lands in front of every active builder.",
+    kind: "reward",
+    title: "You appear on the leaderboard",
+    desc: "Every signup you send lifts you on the Top Referrers board — visible to every single participant inside the challenge.",
+    badge: "Your reward",
+  },
+  {
+    kind: "journey",
+    title: "They invite new people",
+    desc: "Every participant is rewarded for inviting new people. The people you sent in now send new people in — and your name stays at the origin of that growth.",
+  },
+  {
+    kind: "reward",
+    title: "Your offer is featured as a reward",
+    desc: "Your product or service sits on the rewards ladder as a double unlock — earned by participants, not served as an ad.",
+    badge: "Your reward",
+  },
+  {
+    kind: "outcome",
+    title: "Your reach compounds",
+    desc: "The more you promote, the more people you have promoting you to new people. One promotion starts it. Every promotion grows it.",
   },
 ];
 
@@ -71,8 +89,103 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
+type JourneyItem = (typeof JOURNEY)[number];
+
+function JourneyStepRow({
+  step,
+  index,
+  isLast,
+  nextKind,
+}: {
+  step: JourneyItem;
+  index: number;
+  isLast: boolean;
+  nextKind?: JourneyKind;
+}) {
+  const card = useInView<HTMLDivElement>(0.25);
+  const line = useInView<HTMLDivElement>(0.5);
+
+  const isReward = step.kind === "reward";
+  const isOutcome = step.kind === "outcome";
+
+  const cardBorder = isReward
+    ? "border-amber-500/60 ring-1 ring-amber-500/30 animate-pulse"
+    : isOutcome
+      ? "border-emerald-500/60 ring-1 ring-emerald-500/20"
+      : "border-border hover:border-primary/40";
+
+  const iconWrap = isReward
+    ? "bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400"
+    : isOutcome
+      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+      : "bg-primary text-primary-foreground border-primary";
+
+  const lineColor =
+    nextKind === "reward"
+      ? "bg-amber-500/60"
+      : nextKind === "outcome"
+        ? "bg-emerald-500/60"
+        : "bg-primary/50";
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      <Card
+        ref={card.ref}
+        className={`w-full max-w-md border-2 ${cardBorder} transition-colors shadow-sm`}
+        style={{
+          opacity: card.inView ? 1 : 0,
+          transform: card.inView ? "translateY(0)" : "translateY(16px)",
+          transition: "opacity 500ms ease-out, transform 500ms ease-out",
+        }}
+      >
+        <CardContent className="p-5 flex items-start gap-4">
+          <div className="flex flex-col items-center shrink-0">
+            <div
+              className={`h-11 w-11 rounded-full border-2 flex items-center justify-center font-semibold ${iconWrap}`}
+            >
+              {isReward ? (
+                <Gift className="h-5 w-5" />
+              ) : isOutcome ? (
+                <InfinityIcon className="h-5 w-5" />
+              ) : (
+                <span className="text-sm">{index + 1}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex-1 pt-0.5">
+            {step.badge && (
+              <Badge
+                variant="outline"
+                className="mb-2 border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/10 text-[10px] uppercase tracking-wider font-semibold"
+              >
+                {step.badge}
+              </Badge>
+            )}
+            <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+          </div>
+        </CardContent>
+      </Card>
+      {!isLast && (
+        <div
+          ref={line.ref}
+          className="flex flex-col items-center py-2 overflow-hidden"
+          aria-hidden="true"
+          style={{
+            transform: line.inView ? "scaleY(1)" : "scaleY(0)",
+            transformOrigin: "top",
+            transition: "transform 450ms ease-out",
+          }}
+        >
+          <div className={`w-0.5 h-10 ${lineColor} rounded-full`} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 const JvPartners = () => {
-  const flow = useInView<HTMLDivElement>(0.15);
   const board = useInView<HTMLDivElement>(0.2);
 
   useEffect(() => {
@@ -126,63 +239,25 @@ const JvPartners = () => {
             </Card>
           </section>
 
-          {/* ─── HOW IT WORKS — ANIMATED VERTICAL FLOWCHART ─── */}
+          {/* ─── HOW IT WORKS — ANIMATED VERTICAL JOURNEY ─── */}
           <section className="mb-12">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">
               How it works
             </h2>
-            <div ref={flow.ref} className="flex flex-col items-center">
-              {HOW_IT_WORKS.map((step, i) => {
-                const stepDelay = i * 450;
-                const arrowDelay = stepDelay + 250;
-                return (
-                  <div key={i} className="w-full flex flex-col items-center">
-                    <Card
-                      className="w-full max-w-md border-2 border-border hover:border-primary/40 transition-colors shadow-sm"
-                      style={{
-                        opacity: flow.inView ? 1 : 0,
-                        transform: flow.inView ? "translateY(0) scale(1)" : "translateY(16px) scale(0.97)",
-                        transition: `opacity 500ms ease-out ${stepDelay}ms, transform 500ms cubic-bezier(0.34,1.56,0.64,1) ${stepDelay}ms`,
-                      }}
-                    >
-                      <CardContent className="p-5 flex items-start gap-4">
-                        <div className="flex flex-col items-center shrink-0">
-                          <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                            <step.icon className="h-5 w-5 text-primary" />
-                          </div>
-                          <span className="text-[10px] font-mono text-muted-foreground mt-1.5 tracking-widest">
-                            STEP {String(i + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-                        <div className="flex-1 pt-0.5">
-                          <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
-                          <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {i < HOW_IT_WORKS.length - 1 && (
-                      <div
-                        className="flex flex-col items-center py-2 overflow-hidden"
-                        aria-hidden="true"
-                        style={{
-                          opacity: flow.inView ? 1 : 0,
-                          transform: flow.inView ? "scaleY(1)" : "scaleY(0)",
-                          transformOrigin: "top",
-                          transition: `opacity 350ms ease-out ${arrowDelay}ms, transform 400ms ease-out ${arrowDelay}ms`,
-                        }}
-                      >
-                        <div className="w-px h-6 bg-border" />
-                        <div className="h-7 w-7 rounded-full bg-background border-2 border-primary/30 flex items-center justify-center">
-                          <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="w-px h-6 bg-border" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="flex flex-col items-center">
+              {JOURNEY.map((step, i) => (
+                <JourneyStepRow
+                  key={i}
+                  step={step}
+                  index={i}
+                  isLast={i === JOURNEY.length - 1}
+                  nextKind={JOURNEY[i + 1]?.kind}
+                />
+              ))}
             </div>
           </section>
+
+
 
           {/* ─── LEADERBOARD MOCKUP — ANIMATED ─── */}
           <section className="mb-12">

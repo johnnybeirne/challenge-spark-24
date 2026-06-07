@@ -395,10 +395,6 @@ function JourneyStepRow({
             </span>
           </>
         )}
-        <StepHelpTooltip
-          text={tooltip ?? ""}
-          className={isReward ? "top-2 left-2" : "top-2 right-2"}
-        />
         <CardContent className="p-4 flex items-start justify-center gap-4">
           {/* Big number / icon */}
           <div
@@ -415,13 +411,26 @@ function JourneyStepRow({
             )}
           </div>
           {/* Punchline */}
-          <div className="min-w-0 flex flex-col items-center text-center">
-            <div className="flex items-center justify-center gap-2 mb-0.5">
+          <div className="min-w-0 flex-1 flex flex-col items-center text-center">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-0.5">
               {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
               <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
+              {hasTooltip && (
+                <StepLearnMoreLink
+                  expanded={expanded}
+                  onToggle={() => setExpanded((v) => !v)}
+                />
+              )}
             </div>
             <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
             {step.visual && <div className="flex justify-center w-full">{step.visual}</div>}
+            {hasTooltip && expanded && (
+              <div className="mt-3 pt-3 border-t border-border w-full">
+                <p className="text-xs text-muted-foreground leading-relaxed text-left">
+                  {tooltip}
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
 

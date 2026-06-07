@@ -267,7 +267,7 @@ const JvPartners = () => {
               <Crown className="h-3.5 w-3.5" /> JV Partner Program
             </Badge>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4">
-              Promote once. Stay visible forever.
+              Promote to your audience. Stay visible forever.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Leadio is an evergreen 3-day challenge that grows itself through referrals.

@@ -337,7 +337,7 @@ function JourneyStepRow({
             </span>
           </>
         )}
-        <CardContent className="p-4 flex items-center justify-center gap-4">
+        <CardContent className="p-4 flex items-start justify-center gap-4">
           {/* Big number / icon */}
           <div
             className={`h-14 w-14 rounded-full border-2 flex items-center justify-center shrink-0 font-bold ${numberCircle}`}

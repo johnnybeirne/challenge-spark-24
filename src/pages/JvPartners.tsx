@@ -144,38 +144,43 @@ const BranchingGlyph = () => {
           </text>
         </g>
 
-        {/* Tier 1 nodes */}
+        {/* Tier 1 people */}
         {tier1.map((p, i) => (
-          <circle
+          <g
             key={`n1-${i}`}
-            cx={p.x}
-            cy={p.y}
-            r="5.5"
-            fill="hsl(var(--primary))"
-            fillOpacity="0.85"
             style={{
               transform: inView ? "scale(1)" : "scale(0)",
               transformOrigin: `${p.x}px ${p.y}px`,
               transition: `transform 600ms cubic-bezier(0.34,1.56,0.64,1) ${900 + i * 180}ms`,
             }}
-          />
+          >
+            <circle cx={p.x} cy={p.y - 3} r="2.4" fill="hsl(var(--primary))" fillOpacity="0.9" />
+            <path
+              d={`M ${p.x - 4} ${p.y + 5} Q ${p.x - 4} ${p.y - 0.5} ${p.x} ${p.y - 0.5} Q ${p.x + 4} ${p.y - 0.5} ${p.x + 4} ${p.y + 5} Z`}
+              fill="hsl(var(--primary))"
+              fillOpacity="0.85"
+            />
+          </g>
         ))}
-        {/* Tier 2 nodes */}
+        {/* Tier 2 people */}
         {tier2.map((p, i) => (
-          <circle
+          <g
             key={`n2-${i}`}
-            cx={p.x}
-            cy={p.y}
-            r="3.5"
-            fill="hsl(var(--primary))"
-            fillOpacity="0.55"
             style={{
               transform: inView ? "scale(1)" : "scale(0)",
               transformOrigin: `${p.x}px ${p.y}px`,
               transition: `transform 550ms cubic-bezier(0.34,1.56,0.64,1) ${1900 + i * 90}ms`,
             }}
-          />
+          >
+            <circle cx={p.x} cy={p.y - 2} r="1.6" fill="hsl(var(--primary))" fillOpacity="0.65" />
+            <path
+              d={`M ${p.x - 2.6} ${p.y + 3.5} Q ${p.x - 2.6} ${p.y} ${p.x} ${p.y} Q ${p.x + 2.6} ${p.y} ${p.x + 2.6} ${p.y + 3.5} Z`}
+              fill="hsl(var(--primary))"
+              fillOpacity="0.6"
+            />
+          </g>
         ))}
+
       </svg>
       <div
         className="flex items-center justify-between mt-1.5 text-[10px] font-mono font-bold text-primary/80 px-1"

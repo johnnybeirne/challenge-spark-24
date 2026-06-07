@@ -225,12 +225,13 @@ const BENEFITS = [
 ];
 
 const LEADERBOARD = [
-  { rank: 1, name: "Your Name", refs: 142, you: true,  medal: "text-amber-500" },
-  { rank: 2, name: "Sarah K.",  refs:  87, you: false, medal: "text-slate-400" },
-  { rank: 3, name: "Marcus T.", refs:  64, you: false, medal: "text-amber-700" },
-  { rank: 4, name: "Priya R.",  refs:  41, you: false },
-  { rank: 5, name: "Devon L.",  refs:  28, you: false },
+  { rank: 1, name: "Your Name", bio: "Your bonus, your audience, your spot at #1.", you: true,  medal: "text-amber-500" },
+  { rank: 2, name: "Sarah K.",  bio: "Funnel coach — free swipe file for challenge takers.", you: false, medal: "text-slate-400" },
+  { rank: 3, name: "Marcus T.", bio: "Offer strategist — 1:1 audit for the first 20 signups.", you: false, medal: "text-amber-700" },
+  { rank: 4, name: "Priya R.",  bio: "Email copywriter — free 5-day sequence template.", you: false },
+  { rank: 5, name: "Devon L.",  bio: "Launch mentor — bonus call for everyone who completes Day 3.", you: false },
 ];
+
 
 /** Trigger when an element first scrolls into view. */
 function useInView<T extends HTMLElement>(threshold = 0.2) {

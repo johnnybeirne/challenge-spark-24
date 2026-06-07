@@ -319,11 +319,8 @@ const JvPartners = () => {
                           )}
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-foreground tabular-nums">{row.refs}</p>
-                        <p className="text-[10px] text-muted-foreground -mt-0.5">referrals</p>
-                      </div>
                     </li>
+
                   ))}
                 </ol>
                 <p className="text-[11px] text-muted-foreground text-center mt-4 italic">

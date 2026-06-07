@@ -331,7 +331,7 @@ function JourneyStepRow({
           />
           <StepHelpTooltip
             text={tooltip ?? ""}
-            className="top-2 right-2 text-white/80 hover:text-white hover:bg-white/15"
+            className="top-2 right-2 !bg-white !text-foreground hover:!bg-white/90 ring-white/40"
           />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">

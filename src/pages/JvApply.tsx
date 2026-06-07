@@ -15,6 +15,7 @@ import {
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import jbLogo from "@/assets/johnny-beirne-logo.png.asset.json";
 
 const LIST_SIZES = ["Under 500", "500 to 1k", "1k to 5k", "5k to 10k", "10k plus"] as const;
 
@@ -94,6 +95,9 @@ const JvApply = () => {
       />
       <main className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 pb-24">
+          <div className="flex justify-center mb-8">
+            <img src={jbLogo.url} alt="Johnny Beirne" className="h-16 w-auto" loading="eager" />
+          </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-6 text-center">
             Leadio JV Partner Application
           </h1>

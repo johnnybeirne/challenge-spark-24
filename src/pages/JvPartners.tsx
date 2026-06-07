@@ -90,7 +90,7 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
 }
 
 const JvPartners = () => {
-  const flow = useInView<HTMLDivElement>(0.15);
+  const board = useInView<HTMLDivElement>(0.2);
   const board = useInView<HTMLDivElement>(0.2);
 
   useEffect(() => {

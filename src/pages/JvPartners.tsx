@@ -37,6 +37,7 @@ const ShareIconsRow = () => (
 );
 
 import { SEO } from "@/components/SEO";
+import jbLogo from "@/assets/johnny-beirne-logo.png.asset.json";
 import { trackEvent } from "@/lib/analytics";
 
 type JourneyKind = "journey" | "reward" | "outcome";

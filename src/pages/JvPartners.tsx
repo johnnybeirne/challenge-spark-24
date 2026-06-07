@@ -583,17 +583,23 @@ const JvPartners = () => {
               What you get
             </h2>
             <div className="grid sm:grid-cols-2 gap-3">
-              {BENEFITS.map((b, i) => (
-                <Card key={i} className="border-border">
-                  <CardContent className="p-4 flex items-start gap-3">
-                    <b.icon className="h-4 w-4 text-primary mt-1 shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{b.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{b.desc}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {BENEFITS.map((b, i) => {
+                const isLastOrphan = i === BENEFITS.length - 1 && BENEFITS.length % 2 === 1;
+                return (
+                  <Card
+                    key={i}
+                    className={`border-border ${isLastOrphan ? "sm:col-span-2 sm:w-1/2 sm:mx-auto" : ""}`}
+                  >
+                    <CardContent className="p-4 flex items-start gap-3">
+                      <b.icon className="h-4 w-4 text-primary mt-1 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{b.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{b.desc}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </section>
 

@@ -42,17 +42,126 @@ const LeaderboardGlyph = () => (
   </div>
 );
 
-const BranchingGlyph = () => (
-  <div className="flex items-center gap-2 mt-2 text-[11px] font-mono text-muted-foreground">
-    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">1</span>
-    <ChevronRight className="h-3 w-3" />
-    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">3</span>
-    <ChevronRight className="h-3 w-3" />
-    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">9</span>
-    <ChevronRight className="h-3 w-3" />
-    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">27+</span>
-  </div>
-);
+const BranchingGlyph = () => {
+  const { ref, inView } = useInView<HTMLDivElement>(0.35);
+  // Tier positions (x coords); root at center
+  const root = { x: 110, y: 14 };
+  const tier1 = [40, 110, 180].map((x) => ({ x, y: 54 }));
+  const tier2: { x: number; y: number }[] = [];
+  tier1.forEach((p) => {
+    [-22, 0, 22].forEach((dx) => tier2.push({ x: p.x + dx, y: 94 }));
+  });
+  return (
+    <div ref={ref} className="mt-3 w-full">
+      <svg
+        viewBox="0 0 220 104"
+        className="w-full h-auto overflow-visible"
+        aria-hidden="true"
+      >
+        {/* Tier 1 branches (root → 3) */}
+        {tier1.map((p, i) => (
+          <line
+            key={`b1-${i}`}
+            x1={root.x}
+            y1={root.y}
+            x2={p.x}
+            y2={p.y}
+            stroke="hsl(var(--primary))"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeDasharray="80"
+            strokeDashoffset={inView ? 0 : 80}
+            style={{ transition: `stroke-dashoffset 500ms ease-out ${150 + i * 60}ms`, opacity: 0.7 }}
+          />
+        ))}
+        {/* Tier 2 branches (3 → 9) */}
+        {tier1.map((p, pi) =>
+          [-22, 0, 22].map((dx, ci) => (
+            <line
+              key={`b2-${pi}-${ci}`}
+              x1={p.x}
+              y1={p.y}
+              x2={p.x + dx}
+              y2={94}
+              stroke="hsl(var(--primary))"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeDasharray="50"
+              strokeDashoffset={inView ? 0 : 50}
+              style={{
+                transition: `stroke-dashoffset 450ms ease-out ${500 + pi * 80 + ci * 40}ms`,
+                opacity: 0.45,
+              }}
+            />
+          )),
+        )}
+        {/* Root node (YOU) */}
+        <g
+          style={{
+            transform: inView ? "scale(1)" : "scale(0)",
+            transformOrigin: `${root.x}px ${root.y}px`,
+            transition: "transform 400ms cubic-bezier(0.34,1.56,0.64,1) 0ms",
+          }}
+        >
+          <circle cx={root.x} cy={root.y} r="10" fill="hsl(var(--primary))" />
+          <text
+            x={root.x}
+            y={root.y + 3}
+            textAnchor="middle"
+            className="fill-primary-foreground"
+            style={{ fontSize: 8, fontWeight: 700 }}
+          >
+            YOU
+          </text>
+        </g>
+        {/* Tier 1 nodes */}
+        {tier1.map((p, i) => (
+          <circle
+            key={`n1-${i}`}
+            cx={p.x}
+            cy={p.y}
+            r="5.5"
+            fill="hsl(var(--primary))"
+            fillOpacity="0.85"
+            style={{
+              transform: inView ? "scale(1)" : "scale(0)",
+              transformOrigin: `${p.x}px ${p.y}px`,
+              transition: `transform 400ms cubic-bezier(0.34,1.56,0.64,1) ${350 + i * 60}ms`,
+            }}
+          />
+        ))}
+        {/* Tier 2 nodes */}
+        {tier2.map((p, i) => (
+          <circle
+            key={`n2-${i}`}
+            cx={p.x}
+            cy={p.y}
+            r="3.5"
+            fill="hsl(var(--primary))"
+            fillOpacity="0.55"
+            style={{
+              transform: inView ? "scale(1)" : "scale(0)",
+              transformOrigin: `${p.x}px ${p.y}px`,
+              transition: `transform 350ms cubic-bezier(0.34,1.56,0.64,1) ${750 + i * 35}ms`,
+            }}
+          />
+        ))}
+      </svg>
+      <div
+        className="flex items-center justify-between mt-1.5 text-[10px] font-mono font-bold text-primary/80 px-1"
+        style={{
+          opacity: inView ? 1 : 0,
+          transition: "opacity 400ms ease-out 1100ms",
+        }}
+      >
+        <span>1</span>
+        <span>3</span>
+        <span>9</span>
+        <span className="text-primary">→ ∞</span>
+      </div>
+    </div>
+  );
+};
 
 const SparkleRow = () => (
   <div className="flex items-center gap-1 mt-2 text-amber-500">

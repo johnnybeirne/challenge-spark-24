@@ -304,17 +304,25 @@ const JvPartners = () => {
               How it works
             </h2>
             <div className="flex flex-col items-center">
-              {JOURNEY.map((step, i) => (
-                <JourneyStepRow
-                  key={i}
-                  step={step}
-                  index={i}
-                  isLast={i === JOURNEY.length - 1}
-                  nextKind={JOURNEY[i + 1]?.kind}
-                />
-              ))}
+              {(() => {
+                let journeyCount = 0;
+                return JOURNEY.map((step, i) => {
+                  const num = step.kind === "journey" ? ++journeyCount : null;
+                  return (
+                    <JourneyStepRow
+                      key={i}
+                      step={step}
+                      index={i}
+                      journeyNumber={num}
+                      isLast={i === JOURNEY.length - 1}
+                      nextKind={JOURNEY[i + 1]?.kind}
+                    />
+                  );
+                });
+              })()}
             </div>
           </section>
+
 
 
 

@@ -376,17 +376,39 @@ function JourneyStepRow({
       {!isLast && (
         <div
           ref={line.ref}
-          className="flex flex-col items-center py-1.5 overflow-hidden"
+          className="flex justify-center py-2"
           aria-hidden="true"
-          style={{
-            transform: line.inView ? "scaleY(1)" : "scaleY(0)",
-            transformOrigin: "top",
-            transition: "transform 450ms ease-out",
-          }}
         >
-          <div className={`w-[3px] h-8 rounded-full bg-gradient-to-b ${lineColor}`} />
+          <svg width="20" height="56" viewBox="0 0 20 56" className="overflow-visible">
+            <line
+              x1="10"
+              y1="2"
+              x2="10"
+              y2="44"
+              stroke={arrowStroke}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray="44"
+              strokeDashoffset={line.inView ? 0 : 44}
+              style={{ transition: "stroke-dashoffset 1400ms cubic-bezier(0.4,0,0.2,1)" }}
+            />
+            <polyline
+              points="4,42 10,52 16,42"
+              fill="none"
+              stroke={arrowStroke}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                opacity: line.inView ? 1 : 0,
+                transform: line.inView ? "translateY(0)" : "translateY(-6px)",
+                transition: "opacity 500ms ease-out 1200ms, transform 600ms cubic-bezier(0.34,1.56,0.64,1) 1200ms",
+              }}
+            />
+          </svg>
         </div>
       )}
+
     </div>
   );
 }

@@ -124,12 +124,9 @@ export async function resolvePartnerBySlug(
   if (!key) return null;
   if (_resolvedCache.has(key)) return _resolvedCache.get(key) ?? null;
 
-  const { data } = await (supabase.from("partners") as any)
-    .select("id, slug, display_name, parent_partner_id, status")
-    .ilike("slug", key)
-    .maybeSingle();
-
-  const resolved = (data as ResolvedPartner | null) ?? null;
+  const { data } = await (supabase.rpc as any)("resolve_partner_by_slug", { p_slug: key });
+  const row = Array.isArray(data) ? data[0] : data;
+  const resolved = (row as ResolvedPartner | null) ?? null;
   _resolvedCache.set(key, resolved);
   return resolved;
 }

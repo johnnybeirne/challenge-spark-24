@@ -2012,11 +2012,24 @@ export type Database = {
         Returns: undefined
       }
       redeem_coupon: { Args: { p_code: string }; Returns: Json }
+      resolve_partner_by_slug: {
+        Args: { p_slug: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          id: string
+          landing_path: string
+          parent_partner_id: string
+          slug: string
+          status: Database["public"]["Enums"]["partner_status"]
+        }[]
+      }
       set_welcome_auto_send: { Args: { p_enabled: boolean }; Returns: boolean }
       track_partner_assessment: {
         Args: { p_partner_code: string }
         Returns: undefined
       }
+      validate_coupon: { Args: { p_code: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

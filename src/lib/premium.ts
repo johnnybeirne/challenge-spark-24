@@ -93,26 +93,16 @@ export const validateCoupon = async (raw: string): Promise<CouponResult> => {
   const code = (raw || "").trim().toUpperCase();
   if (!code) return { ok: false, reason: "Enter a coupon code" };
 
-  const { data, error } = await supabase
-    .from("coupons")
-    .select("code, label, final_price, original_price, is_active, expires_at, max_redemptions, redemption_count")
-    .ilike("code", code)
-    .maybeSingle();
-
+  const { data, error } = await (supabase.rpc as any)("validate_coupon", { p_code: code });
   if (error || !data) return { ok: false, reason: "Coupon not recognised" };
-  if (!data.is_active) return { ok: false, reason: "Coupon is inactive" };
-  if (data.expires_at && new Date(data.expires_at) < new Date()) {
-    return { ok: false, reason: "Coupon has expired" };
-  }
-  if (data.max_redemptions != null && data.redemption_count >= data.max_redemptions) {
-    return { ok: false, reason: "Coupon fully redeemed" };
-  }
+  const r = data as any;
+  if (!r.ok) return { ok: false, reason: r.reason ?? "Coupon not recognised" };
   return {
     ok: true,
-    code: data.code,
-    finalPrice: data.final_price,
-    originalPrice: data.original_price,
-    label: data.label || "",
+    code: r.code,
+    finalPrice: r.final_price,
+    originalPrice: r.original_price,
+    label: r.label || "",
   };
 };
 

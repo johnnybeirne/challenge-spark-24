@@ -15,6 +15,7 @@ import {
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import jbLogo from "@/assets/johnny-beirne-logo.png.asset.json";
 
 const LIST_SIZES = ["Under 500", "500 to 1k", "1k to 5k", "5k to 10k", "10k plus"] as const;
 

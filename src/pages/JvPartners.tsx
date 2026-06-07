@@ -6,8 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
-  Mail, Linkedin, Facebook, MessageCircle,
+  Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
 } from "lucide-react";
+import ActivityFeed from "@/components/ActivityFeed";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">

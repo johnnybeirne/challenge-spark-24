@@ -258,7 +258,7 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
-function StepHelpTooltip({ text }: { text: string }) {
+function StepHelpTooltip({ text, className = "top-2 right-2" }: { text: string; className?: string }) {
   const [open, setOpen] = useState(false);
   if (!text) return null;
   return (
@@ -267,7 +267,7 @@ function StepHelpTooltip({ text }: { text: string }) {
         <button
           type="button"
           aria-label="More about this step"
-          className="absolute top-2 right-2 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/70 hover:text-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-colors"
+          className={`absolute z-10 inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/70 hover:text-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-colors ${className}`}
           onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}

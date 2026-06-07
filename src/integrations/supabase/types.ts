@@ -610,6 +610,48 @@ export type Database = {
         }
         Relationships: []
       }
+      jv_applications: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          list_size: string
+          notes: string | null
+          product_name: string
+          product_url: string | null
+          retail_value_cents: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          list_size: string
+          notes?: string | null
+          product_name: string
+          product_url?: string | null
+          retail_value_cents: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          list_size?: string
+          notes?: string | null
+          product_name?: string
+          product_url?: string | null
+          retail_value_cents?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kb_documents: {
         Row: {
           content: string

@@ -505,8 +505,19 @@ const JvPartners = () => {
       <div className="min-h-screen bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-24">
 
+          {/* ─── JB LOGO ─── */}
+          <div className="flex justify-center mb-8">
+            <img
+              src={jbLogo.url}
+              alt="Johnny Beirne"
+              className="h-16 w-auto"
+              loading="eager"
+            />
+          </div>
+
           {/* ─── HERO ─── */}
           <header className="text-center mb-12">
+
             <div className="inline-flex items-center gap-3 mb-5">
               <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/60" />
               <Crown className="h-3.5 w-3.5 text-primary" />

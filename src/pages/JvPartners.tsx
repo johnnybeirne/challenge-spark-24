@@ -558,7 +558,7 @@ const JvPartners = () => {
           {/* ─── LEADERBOARD MOCKUP — ANIMATED ─── */}
           <section className="mb-12">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 text-center">
-              How challenge takers discover you
+              JV Partner Leaderboard
             </h2>
             <Card ref={board.ref} className="border-border overflow-hidden shadow-md">
               {/* Mock app chrome */}

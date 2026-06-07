@@ -468,7 +468,7 @@ const JvPartners = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-semibold text-foreground">Top Referrers · This Week</h3>
+                    <h3 className="text-sm font-semibold text-foreground">Top Partners · This Week</h3>
                   </div>
                   <Badge variant="secondary" className="text-[10px] gap-1.5">
                     <span className="relative flex h-1.5 w-1.5">

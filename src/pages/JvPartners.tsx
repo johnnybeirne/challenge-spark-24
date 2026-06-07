@@ -1,54 +1,75 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowRight, Crown, Trophy, Gift, Network,
+  ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 
 type JourneyKind = "journey" | "reward" | "outcome";
-const JOURNEY: { kind: JourneyKind; title: string; desc: string; badge?: string }[] = [
-  {
-    kind: "journey",
-    title: "Every time you promote, more new people promote you",
-    desc: "Every person you send in is rewarded for inviting new people. The new people they invite are rewarded for inviting new people. Your audience constantly grows.",
-  },
-  {
-    kind: "journey",
-    title: "They take the quiz",
-    desc: "Each person gets a personalised diagnosis — Pioneer, Architect, or Authority. They feel understood before they even sign up.",
-  },
-  {
-    kind: "journey",
-    title: "They join the challenge",
-    desc: "Motivated by their result they sign up and start building their own challenge in 3 days.",
-  },
-  {
-    kind: "reward",
-    title: "You appear on the leaderboard",
-    desc: "Every signup you send lifts you on the Top Referrers board — visible to every single participant inside the challenge.",
-    badge: "Your reward",
-  },
-  {
-    kind: "journey",
-    title: "They invite new people",
-    desc: "Every participant is rewarded for inviting new people. The people you sent in now send new people in — and your name stays at the origin of that growth.",
-  },
-  {
-    kind: "reward",
-    title: "Your offer is featured as a reward",
-    desc: "Your product or service sits on the rewards ladder as a double unlock — earned by participants, not served as an ad.",
-    badge: "Your reward",
-  },
-  {
-    kind: "outcome",
-    title: "Your reach compounds",
-    desc: "The more you promote, the more people you have promoting you to new people. One promotion starts it. Every promotion grows it.",
-  },
+type JourneyItem = {
+  kind: JourneyKind;
+  title: string;
+  sub: string;
+  icon: typeof Megaphone;
+  visual?: ReactNode;
+};
+
+/** Tiny visual glyphs that replace paragraphs of copy. */
+const ArchetypeChips = () => (
+  <div className="flex flex-wrap gap-1.5 mt-2">
+    {["Pioneer", "Architect", "Authority"].map((a) => (
+      <span
+        key={a}
+        className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+      >
+        {a}
+      </span>
+    ))}
+  </div>
+);
+
+const LeaderboardGlyph = () => (
+  <div className="flex items-end gap-1 mt-2 h-8">
+    <Crown className="h-3 w-3 text-amber-500 self-start -mb-0.5" />
+    <div className="w-3 h-6 rounded-sm bg-amber-500/80" />
+    <div className="w-3 h-4 rounded-sm bg-amber-500/50" />
+    <div className="w-3 h-3 rounded-sm bg-amber-500/30" />
+  </div>
+);
+
+const BranchingGlyph = () => (
+  <div className="flex items-center gap-2 mt-2 text-[11px] font-mono text-muted-foreground">
+    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">1</span>
+    <ChevronRight className="h-3 w-3" />
+    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">3</span>
+    <ChevronRight className="h-3 w-3" />
+    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">9</span>
+    <ChevronRight className="h-3 w-3" />
+    <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">27+</span>
+  </div>
+);
+
+const SparkleRow = () => (
+  <div className="flex items-center gap-1 mt-2 text-amber-500">
+    <SparklesIcon className="h-3.5 w-3.5" />
+    <SparklesIcon className="h-3 w-3 opacity-70" />
+    <SparklesIcon className="h-2.5 w-2.5 opacity-50" />
+  </div>
+);
+
+const JOURNEY: JourneyItem[] = [
+  { kind: "journey", icon: Megaphone, title: "You promote once",         sub: "One link. One post." },
+  { kind: "journey", icon: SparklesIcon, title: "They get diagnosed",    sub: "A personalised result they can't ignore.", visual: <ArchetypeChips /> },
+  { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
+  { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },
+  { kind: "journey", icon: Network,   title: "They invite. Then they invite.", sub: "Your name stays at the origin.", visual: <BranchingGlyph /> },
+  { kind: "reward",  icon: Gift,      title: "Your offer = the reward",  sub: "Earned, not advertised.", visual: <SparkleRow /> },
+  { kind: "outcome", icon: InfinityIcon, title: "Your reach compounds",  sub: "One promotion. Infinite waves." },
 ];
 
 const BENEFITS = [
@@ -89,16 +110,16 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
-type JourneyItem = (typeof JOURNEY)[number];
-
 function JourneyStepRow({
   step,
   index,
+  journeyNumber,
   isLast,
   nextKind,
 }: {
   step: JourneyItem;
   index: number;
+  journeyNumber: number | null;
   isLast: boolean;
   nextKind?: JourneyKind;
 }) {
@@ -107,69 +128,106 @@ function JourneyStepRow({
 
   const isReward = step.kind === "reward";
   const isOutcome = step.kind === "outcome";
+  const Icon = step.icon;
+
+  // Outcome card = the finale. Render distinct, full-bleed gradient.
+  if (isOutcome) {
+    return (
+      <div className="w-full flex flex-col items-center">
+        <Card
+          ref={card.ref}
+          className="w-full max-w-md border-0 shadow-lg overflow-hidden relative bg-gradient-to-br from-primary via-primary/90 to-emerald-500"
+          style={{
+            opacity: card.inView ? 1 : 0,
+            transform: card.inView ? "translateY(0) scale(1)" : "translateY(16px) scale(0.97)",
+            transition: "opacity 600ms ease-out, transform 600ms cubic-bezier(0.34,1.56,0.64,1)",
+          }}
+        >
+          <InfinityIcon
+            className="absolute -right-6 -bottom-6 h-40 w-40 text-white/15"
+            aria-hidden="true"
+          />
+          <CardContent className="p-6 relative">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
+                The payoff
+              </span>
+            </div>
+            <p className="text-xl font-bold text-white mb-1">{step.title}</p>
+            <p className="text-sm text-white/85 leading-snug">{step.sub}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const cardBorder = isReward
-    ? "border-amber-500/60 ring-1 ring-amber-500/30 animate-pulse"
-    : isOutcome
-      ? "border-emerald-500/60 ring-1 ring-emerald-500/20"
-      : "border-border hover:border-primary/40";
+    ? "border-amber-500/60 ring-2 ring-amber-500/20 animate-pulse-soft"
+    : "border-border hover:border-primary/40";
 
-  const iconWrap = isReward
-    ? "bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400"
-    : isOutcome
-      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
-      : "bg-primary text-primary-foreground border-primary";
+  const numberCircle = isReward
+    ? "bg-amber-500 text-white border-amber-500 shadow-[0_0_0_4px_rgba(245,158,11,0.15)]"
+    : "bg-primary text-primary-foreground border-primary shadow-[0_0_0_4px_hsl(var(--primary)/0.12)]";
 
   const lineColor =
     nextKind === "reward"
-      ? "bg-amber-500/60"
+      ? "from-primary/60 to-amber-500/70"
       : nextKind === "outcome"
-        ? "bg-emerald-500/60"
-        : "bg-primary/50";
+        ? "from-amber-500/70 to-emerald-500/70"
+        : "from-primary/50 to-primary/60";
 
   return (
     <div className="w-full flex flex-col items-center">
       <Card
         ref={card.ref}
-        className={`w-full max-w-md border-2 ${cardBorder} transition-colors shadow-sm`}
+        className={`w-full max-w-md border-2 ${cardBorder} transition-colors shadow-sm relative overflow-hidden`}
         style={{
           opacity: card.inView ? 1 : 0,
           transform: card.inView ? "translateY(0)" : "translateY(16px)",
           transition: "opacity 500ms ease-out, transform 500ms ease-out",
         }}
       >
-        <CardContent className="p-5 flex items-start gap-4">
-          <div className="flex flex-col items-center shrink-0">
-            <div
-              className={`h-11 w-11 rounded-full border-2 flex items-center justify-center font-semibold ${iconWrap}`}
-            >
-              {isReward ? (
-                <Gift className="h-5 w-5" />
-              ) : isOutcome ? (
-                <InfinityIcon className="h-5 w-5" />
-              ) : (
-                <span className="text-sm">{index + 1}</span>
-              )}
-            </div>
-          </div>
-          <div className="flex-1 pt-0.5">
-            {step.badge && (
-              <Badge
-                variant="outline"
-                className="mb-2 border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/10 text-[10px] uppercase tracking-wider font-semibold"
-              >
-                {step.badge}
-              </Badge>
+        {isReward && (
+          <>
+            <Gift
+              className="absolute -right-3 -bottom-3 h-20 w-20 text-amber-500/10"
+              aria-hidden="true"
+            />
+            <span className="absolute top-2.5 right-2.5 text-[9px] font-mono font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500 text-white">
+              REWARD
+            </span>
+          </>
+        )}
+        <CardContent className="p-4 flex items-center gap-4">
+          {/* Big number / icon */}
+          <div
+            className={`h-14 w-14 rounded-full border-2 flex items-center justify-center shrink-0 font-bold ${numberCircle}`}
+            style={{
+              transform: card.inView ? "scale(1)" : "scale(0.85)",
+              transition: "transform 500ms cubic-bezier(0.34,1.56,0.64,1) 100ms",
+            }}
+          >
+            {isReward ? (
+              <Icon className="h-6 w-6" />
+            ) : (
+              <span className="text-lg tabular-nums">{String(journeyNumber).padStart(2, "0")}</span>
             )}
-            <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+          </div>
+          {/* Punchline */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
+              <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
+            {step.visual}
           </div>
         </CardContent>
       </Card>
       {!isLast && (
         <div
           ref={line.ref}
-          className="flex flex-col items-center py-2 overflow-hidden"
+          className="flex flex-col items-center py-1.5 overflow-hidden"
           aria-hidden="true"
           style={{
             transform: line.inView ? "scaleY(1)" : "scaleY(0)",
@@ -177,12 +235,13 @@ function JourneyStepRow({
             transition: "transform 450ms ease-out",
           }}
         >
-          <div className={`w-0.5 h-10 ${lineColor} rounded-full`} />
+          <div className={`w-[3px] h-8 rounded-full bg-gradient-to-b ${lineColor}`} />
         </div>
       )}
     </div>
   );
 }
+
 
 
 const JvPartners = () => {

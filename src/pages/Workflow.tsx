@@ -459,6 +459,40 @@ const Workflow = () => {
               Personalised diagnosis · AI-assisted build · enforced shipping · referral-powered community.
             </p>
           </motion.section>
+
+          {/* Admin operations workflow */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.7 }}
+            className="mt-16 rounded-2xl border bg-card/60 p-8 backdrop-blur-xl"
+          >
+            <div className="mb-6 text-center">
+              <Badge variant="outline" className="mb-3">Admin operations</Badge>
+              <h3 className="text-2xl font-bold tracking-tight">Behind the scenes — what the owner does.</h3>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+                The recurring admin workflow that keeps the live experience tuned.
+              </p>
+            </div>
+            <ol className="mx-auto grid max-w-3xl gap-3 text-sm">
+              {[
+                "Review JV partner applications coming in from /jv-apply and decide who to onboard.",
+                "Manage JV partner step tooltip content shown on the /jv-partners landing page.",
+                "Edit Day 1 and Day 2 step content and the generate-button labels used inside each day.",
+                "Edit quiz archetype names (Pioneer, Architect, Authority) and their result messages.",
+                "Manage the rewards ladder prices and the JV partner bonus rewards.",
+              ].map((line, i) => (
+                <li key={line} className="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {i + 1}
+                  </span>
+                  <span className="text-foreground">{line}</span>
+                </li>
+              ))}
+            </ol>
+          </motion.section>
+
         </div>
       </div>
     </>

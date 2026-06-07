@@ -47,6 +47,7 @@ import RewardDetail from "@/pages/RewardDetail";
 import Rewards from "@/pages/Rewards";
 
 import Partners from "@/pages/Partners";
+import JvPartners from "@/pages/JvPartners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";

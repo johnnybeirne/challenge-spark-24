@@ -47,6 +47,7 @@ import RewardDetail from "@/pages/RewardDetail";
 import Rewards from "@/pages/Rewards";
 
 import Partners from "@/pages/Partners";
+import JvPartners from "@/pages/JvPartners";
 import PartnerDashboard from "@/pages/PartnerDashboard";
 import PartnerPerformance from "@/pages/PartnerPerformance";
 import AdminAnalytics from "@/pages/AdminAnalytics";
@@ -150,6 +151,8 @@ const App = () => (
                 <Route path="/blueprint-join" element={<RedirectKeepingQuery to="/blueprint/join" />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/partners" element={<Partners />} />
+                <Route path="/jv" element={<JvPartners />} />
+                <Route path="/jv-partners" element={<JvPartners />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />

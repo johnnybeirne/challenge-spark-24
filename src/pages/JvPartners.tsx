@@ -225,12 +225,13 @@ const BENEFITS = [
 ];
 
 const LEADERBOARD = [
-  { rank: 1, name: "Your Name", refs: 142, you: true,  medal: "text-amber-500" },
-  { rank: 2, name: "Sarah K.",  refs:  87, you: false, medal: "text-slate-400" },
-  { rank: 3, name: "Marcus T.", refs:  64, you: false, medal: "text-amber-700" },
-  { rank: 4, name: "Priya R.",  refs:  41, you: false },
-  { rank: 5, name: "Devon L.",  refs:  28, you: false },
+  { rank: 1, name: "Your Name", bio: "Your bonus, your audience, your spot at #1.", you: true,  medal: "text-amber-500" },
+  { rank: 2, name: "Sarah K.",  bio: "Funnel coach — free swipe file for challenge takers.", you: false, medal: "text-slate-400" },
+  { rank: 3, name: "Marcus T.", bio: "Offer strategist — 1:1 audit for the first 20 signups.", you: false, medal: "text-amber-700" },
+  { rank: 4, name: "Priya R.",  bio: "Email copywriter — free 5-day sequence template.", you: false },
+  { rank: 5, name: "Devon L.",  bio: "Launch mentor — bonus call for everyone who completes Day 3.", you: false },
 ];
+
 
 /** Trigger when an element first scrolls into view. */
 function useInView<T extends HTMLElement>(threshold = 0.2) {
@@ -467,7 +468,7 @@ const JvPartners = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-semibold text-foreground">Top Referrers · This Week</h3>
+                    <h3 className="text-sm font-semibold text-foreground">Top Partners · This Week</h3>
                   </div>
                   <Badge variant="secondary" className="text-[10px] gap-1.5">
                     <span className="relative flex h-1.5 w-1.5">
@@ -509,7 +510,9 @@ const JvPartners = () => {
                             <span className="ml-2 text-[10px] font-mono uppercase tracking-wider text-primary">you</span>
                           )}
                         </p>
+                        <p className="text-[11px] text-muted-foreground truncate leading-snug">{row.bio}</p>
                       </div>
+
                     </li>
 
                   ))}

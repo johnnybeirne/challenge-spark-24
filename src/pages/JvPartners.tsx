@@ -376,67 +376,79 @@ function JourneyStepRow({
 
   return (
     <div className="w-full flex flex-col items-center">
-      <Card
-        ref={card.ref}
-        className={`w-full max-w-md border-2 ${cardBorder} transition-colors shadow-sm relative overflow-hidden`}
-        style={{
-          opacity: card.inView ? 1 : 0,
-          transform: card.inView ? "translateY(0)" : "translateY(16px)",
-          transition: "opacity 500ms ease-out, transform 500ms ease-out",
-        }}
-      >
-        {isReward && (
-          <>
-            <Gift
-              className="absolute -right-3 -bottom-3 h-20 w-20 text-amber-500/10"
-              aria-hidden="true"
-            />
-            <span className="absolute top-2.5 right-2.5 text-[9px] font-mono font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500 text-white">
-              REWARD
-            </span>
-          </>
-        )}
-        <CardContent className="p-4 flex items-start justify-center gap-4">
-          {/* Big number / icon */}
-          <div
-            className={`h-14 w-14 rounded-full border-2 flex items-center justify-center shrink-0 font-bold ${numberCircle}`}
-            style={{
-              transform: card.inView ? "scale(1)" : "scale(0.85)",
-              transition: "transform 500ms cubic-bezier(0.34,1.56,0.64,1) 100ms",
-            }}
-          >
-            {journeyNumber !== null ? (
-              <span className="text-lg tabular-nums">{String(journeyNumber).padStart(2, "0")}</span>
-            ) : (
-              <Icon className="h-6 w-6" />
-            )}
-          </div>
-          {/* Punchline */}
-          <div className="min-w-0 flex-1 flex flex-col items-center text-center">
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-0.5">
-              {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
-              <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
-              {hasTooltip && (
-                <StepLearnMoreLink
-                  expanded={expanded}
-                  onToggle={() => setExpanded((v) => !v)}
-                />
+      <div className="relative w-full max-w-md">
+        <Card
+          ref={card.ref}
+          className={`w-full border-2 ${cardBorder} transition-colors shadow-sm relative overflow-hidden`}
+          style={{
+            opacity: card.inView ? 1 : 0,
+            transform: card.inView ? "translateY(0)" : "translateY(16px)",
+            transition: "opacity 500ms ease-out, transform 500ms ease-out",
+          }}
+        >
+          {isReward && (
+            <>
+              <Gift
+                className="absolute -right-3 -bottom-3 h-20 w-20 text-amber-500/10"
+                aria-hidden="true"
+              />
+              <span className="absolute top-2.5 right-2.5 text-[9px] font-mono font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500 text-white">
+                REWARD
+              </span>
+            </>
+          )}
+          <CardContent className="p-4 flex items-start justify-center gap-4">
+            {/* Big number / icon */}
+            <div
+              className={`h-14 w-14 rounded-full border-2 flex items-center justify-center shrink-0 font-bold ${numberCircle}`}
+              style={{
+                transform: card.inView ? "scale(1)" : "scale(0.85)",
+                transition: "transform 500ms cubic-bezier(0.34,1.56,0.64,1) 100ms",
+              }}
+            >
+              {journeyNumber !== null ? (
+                <span className="text-lg tabular-nums">{String(journeyNumber).padStart(2, "0")}</span>
+              ) : (
+                <Icon className="h-6 w-6" />
               )}
             </div>
-            <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
-            {step.visual && <div className="flex justify-center w-full">{step.visual}</div>}
-            {hasTooltip && expanded && (
-              <div className="mt-3 pt-3 border-t border-border w-full">
-                <p className="text-xs text-muted-foreground leading-relaxed text-left">
-                  {tooltip}
-                </p>
+            {/* Punchline */}
+            <div className="min-w-0 flex-1 flex flex-col items-center text-center">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-0.5">
+                {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
+                <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
               </div>
-            )}
+              <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
+              {step.visual && <div className="flex justify-center w-full">{step.visual}</div>}
+              {hasTooltip && expanded && (
+                <div className="mt-3 pt-3 border-t border-border w-full">
+                  <p className="text-xs text-muted-foreground leading-relaxed text-left">
+                    {tooltip}
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+
+
+        </Card>
+        {hasTooltip && (
+          <div className="absolute top-1/2 -translate-y-1/2 left-full ml-2 hidden sm:block">
+            <StepLearnMoreLink
+              expanded={expanded}
+              onToggle={() => setExpanded((v) => !v)}
+            />
           </div>
-        </CardContent>
-
-
-      </Card>
+        )}
+        {hasTooltip && (
+          <div className="sm:hidden mt-2 flex justify-center">
+            <StepLearnMoreLink
+              expanded={expanded}
+              onToggle={() => setExpanded((v) => !v)}
+            />
+          </div>
+        )}
+      </div>
       {!isLast && (
         <div
           ref={line.ref}

@@ -685,7 +685,7 @@ const JvPartners = () => {
             <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-                  Ready to plug in?
+                  Early JV partners are being accepted now.
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
                   Apply to become a JV partner. Share your bonus, get featured on the rewards ladder, and promote to land on the leaderboard.

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,40 @@ const BENEFITS = [
   { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and the platform does the rest." },
 ];
 
+const LEADERBOARD = [
+  { rank: 1, name: "Your Name", refs: 142, you: true,  medal: "text-amber-500" },
+  { rank: 2, name: "Sarah K.",  refs:  87, you: false, medal: "text-slate-400" },
+  { rank: 3, name: "Marcus T.", refs:  64, you: false, medal: "text-amber-700" },
+  { rank: 4, name: "Priya R.",  refs:  41, you: false },
+  { rank: 5, name: "Devon L.",  refs:  28, you: false },
+];
+
+/** Trigger when an element first scrolls into view. */
+function useInView<T extends HTMLElement>(threshold = 0.2) {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
 const JvPartners = () => {
+  const flow = useInView<HTMLDivElement>(0.15);
+  const board = useInView<HTMLDivElement>(0.2);
+
   useEffect(() => {
     trackEvent("partners_page_viewed");
   }, []);
@@ -93,50 +126,70 @@ const JvPartners = () => {
             </Card>
           </section>
 
-          {/* ─── HOW IT WORKS — VERTICAL FLOWCHART ─── */}
+          {/* ─── HOW IT WORKS — ANIMATED VERTICAL FLOWCHART ─── */}
           <section className="mb-12">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">
               How it works
             </h2>
-            <div className="flex flex-col items-center">
-              {HOW_IT_WORKS.map((step, i) => (
-                <div key={i} className="w-full flex flex-col items-center">
-                  <Card className="w-full max-w-md border-2 border-border hover:border-primary/40 transition-colors shadow-sm">
-                    <CardContent className="p-5 flex items-start gap-4">
-                      <div className="flex flex-col items-center shrink-0">
-                        <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                          <step.icon className="h-5 w-5 text-primary" />
+            <div ref={flow.ref} className="flex flex-col items-center">
+              {HOW_IT_WORKS.map((step, i) => {
+                const stepDelay = i * 450;
+                const arrowDelay = stepDelay + 250;
+                return (
+                  <div key={i} className="w-full flex flex-col items-center">
+                    <Card
+                      className="w-full max-w-md border-2 border-border hover:border-primary/40 transition-colors shadow-sm"
+                      style={{
+                        opacity: flow.inView ? 1 : 0,
+                        transform: flow.inView ? "translateY(0) scale(1)" : "translateY(16px) scale(0.97)",
+                        transition: `opacity 500ms ease-out ${stepDelay}ms, transform 500ms cubic-bezier(0.34,1.56,0.64,1) ${stepDelay}ms`,
+                      }}
+                    >
+                      <CardContent className="p-5 flex items-start gap-4">
+                        <div className="flex flex-col items-center shrink-0">
+                          <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                            <step.icon className="h-5 w-5 text-primary" />
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground mt-1.5 tracking-widest">
+                            STEP {String(i + 1).padStart(2, "0")}
+                          </span>
                         </div>
-                        <span className="text-[10px] font-mono text-muted-foreground mt-1.5 tracking-widest">
-                          STEP {String(i + 1).padStart(2, "0")}
-                        </span>
+                        <div className="flex-1 pt-0.5">
+                          <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    {i < HOW_IT_WORKS.length - 1 && (
+                      <div
+                        className="flex flex-col items-center py-2 overflow-hidden"
+                        aria-hidden="true"
+                        style={{
+                          opacity: flow.inView ? 1 : 0,
+                          transform: flow.inView ? "scaleY(1)" : "scaleY(0)",
+                          transformOrigin: "top",
+                          transition: `opacity 350ms ease-out ${arrowDelay}ms, transform 400ms ease-out ${arrowDelay}ms`,
+                        }}
+                      >
+                        <div className="w-px h-6 bg-border" />
+                        <div className="h-7 w-7 rounded-full bg-background border-2 border-primary/30 flex items-center justify-center">
+                          <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="w-px h-6 bg-border" />
                       </div>
-                      <div className="flex-1 pt-0.5">
-                        <p className="text-sm font-semibold text-foreground mb-1.5">{step.title}</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  {i < HOW_IT_WORKS.length - 1 && (
-                    <div className="flex flex-col items-center py-2" aria-hidden="true">
-                      <div className="w-px h-6 bg-border" />
-                      <div className="h-7 w-7 rounded-full bg-background border-2 border-primary/30 flex items-center justify-center">
-                        <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <div className="w-px h-6 bg-border" />
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
 
-          {/* ─── LEADERBOARD MOCKUP ─── */}
+          {/* ─── LEADERBOARD MOCKUP — ANIMATED ─── */}
           <section className="mb-12">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 text-center">
               What every participant sees
             </h2>
-            <Card className="border-border overflow-hidden shadow-md">
+            <Card ref={board.ref} className="border-border overflow-hidden shadow-md">
               {/* Mock app chrome */}
               <div className="bg-muted/50 border-b border-border px-4 py-2.5 flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-destructive/50" />
@@ -150,16 +203,16 @@ const JvPartners = () => {
                     <Trophy className="h-4 w-4 text-primary" />
                     <h3 className="text-sm font-semibold text-foreground">Top Referrers · This Week</h3>
                   </div>
-                  <Badge variant="secondary" className="text-[10px]">LIVE</Badge>
+                  <Badge variant="secondary" className="text-[10px] gap-1.5">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                    </span>
+                    LIVE
+                  </Badge>
                 </div>
                 <ol className="space-y-2">
-                  {[
-                    { rank: 1, name: "Your Name", refs: 142, you: true, medal: "text-amber-500" },
-                    { rank: 2, name: "Sarah K.",   refs:  87, you: false, medal: "text-slate-400" },
-                    { rank: 3, name: "Marcus T.",  refs:  64, you: false, medal: "text-amber-700" },
-                    { rank: 4, name: "Priya R.",   refs:  41, you: false },
-                    { rank: 5, name: "Devon L.",   refs:  28, you: false },
-                  ].map((row) => (
+                  {LEADERBOARD.map((row, i) => (
                     <li
                       key={row.rank}
                       className={`flex items-center gap-3 rounded-lg px-3 py-2.5 border ${
@@ -167,6 +220,11 @@ const JvPartners = () => {
                           ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
                           : "bg-muted/30 border-border"
                       }`}
+                      style={{
+                        opacity: board.inView ? 1 : 0,
+                        transform: board.inView ? "translateX(0)" : "translateX(-12px)",
+                        transition: `opacity 400ms ease-out ${i * 120}ms, transform 400ms ease-out ${i * 120}ms`,
+                      }}
                     >
                       <div className="w-6 flex justify-center">
                         {row.rank <= 3 ? (

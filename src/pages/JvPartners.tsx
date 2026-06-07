@@ -479,7 +479,7 @@ function JourneyStepRow({
 
 
 const DEFAULT_STEP_TOOLTIPS: string[] = [
-  "Share your unique JV partner link by email, social media, or to your existing audience. There is no minimum promotion requirement. The more you promote the more visible you become.",
+  "Share your unique partner link with your audience. There is no minimum promotion requirement. The more you promote the more visible you become.",
   "Every person you send in gets a personalised 3-day challenge experience. They build something real and are rewarded for inviting others.",
   "The Top Referrers leaderboard is visible to every challenge participant every day. The more people you send in the higher you appear and the more new participants see your name.",
   "Every participant inside the challenge is rewarded with points for inviting others. The people you originally sent in now send new people in and those new people can see you at the origin of that growth.",

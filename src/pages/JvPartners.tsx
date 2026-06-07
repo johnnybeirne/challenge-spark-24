@@ -225,7 +225,7 @@ const BENEFITS = [
 ];
 
 const LEADERBOARD = [
-  { rank: 1, name: "Your Name", bio: "That's you — front and centre for every new participant.", you: true,  medal: "text-amber-500" },
+  { rank: 1, name: "Alex M.",    bio: "Growth advisor turning newsletter audiences into thriving paid communities.", you: false, medal: "text-amber-500" },
   { rank: 2, name: "Sarah K.",  bio: "Funnel coach helping solo founders turn cold traffic into paying customers.", you: false, medal: "text-slate-400" },
   { rank: 3, name: "Marcus T.", bio: "Offer strategist who has helped 400+ creators package what they actually sell.", you: false, medal: "text-amber-700" },
   { rank: 4, name: "Priya R.",  bio: "Email copywriter behind some of the highest-converting launch sequences in B2B.", you: false },

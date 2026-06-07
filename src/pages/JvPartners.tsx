@@ -225,12 +225,13 @@ const BENEFITS = [
 ];
 
 const LEADERBOARD = [
-  { rank: 1, name: "Your Name", bio: "Your bonus, your audience, your spot at #1.", you: true,  medal: "text-amber-500" },
-  { rank: 2, name: "Sarah K.",  bio: "Funnel coach — free swipe file for challenge takers.", you: false, medal: "text-slate-400" },
-  { rank: 3, name: "Marcus T.", bio: "Offer strategist — 1:1 audit for the first 20 signups.", you: false, medal: "text-amber-700" },
-  { rank: 4, name: "Priya R.",  bio: "Email copywriter — free 5-day sequence template.", you: false },
-  { rank: 5, name: "Devon L.",  bio: "Launch mentor — bonus call for everyone who completes Day 3.", you: false },
+  { rank: 1, name: "Your Name", bio: "That's you — front and centre for every new participant.", you: true,  medal: "text-amber-500" },
+  { rank: 2, name: "Sarah K.",  bio: "Funnel coach helping solo founders turn cold traffic into paying customers.", you: false, medal: "text-slate-400" },
+  { rank: 3, name: "Marcus T.", bio: "Offer strategist who has helped 400+ creators package what they actually sell.", you: false, medal: "text-amber-700" },
+  { rank: 4, name: "Priya R.",  bio: "Email copywriter behind some of the highest-converting launch sequences in B2B.", you: false },
+  { rank: 5, name: "Devon L.",  bio: "Launch mentor guiding first-time founders from idea to live in under 30 days.", you: false },
 ];
+
 
 
 /** Trigger when an element first scrolls into view. */

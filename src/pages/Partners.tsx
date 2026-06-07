@@ -177,15 +177,8 @@ const Partners = () => {
       <SEO title="Partner Program" description="Promote the challenge, contribute value, and grow your audience through the Leadio partner network." canonical="/partners" />
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24">
-        {/* ─── URGENCY BANNER ─── */}
-        {!loading && slotsRemaining > 0 && (
-          <div className="mb-6 rounded-lg bg-primary/10 border border-primary/20 px-4 py-3 flex items-center gap-2">
-            <Shield className="h-4 w-4 text-primary shrink-0" />
-            <p className="text-sm text-foreground font-medium">
-              <span className="text-primary font-bold">{slotsRemaining}</span> founding partner spot{slotsRemaining !== 1 ? "s" : ""} remaining
-            </p>
-          </div>
-        )}
+
+
 
         {/* ─── HEADER ─── */}
         <div className="mb-10 text-center">

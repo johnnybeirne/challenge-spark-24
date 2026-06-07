@@ -627,9 +627,6 @@ const JvPartners = () => {
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-muted-foreground mt-4 italic">
-                  Visibility inside the network is based on contribution and activity — not just early access.
-                </p>
               </CardContent>
             </Card>
           </section>

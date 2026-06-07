@@ -102,17 +102,6 @@ const JvApply = () => {
             Leadio JV Partner Application
           </h1>
 
-          {/* Video placeholder */}
-          <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden border border-border flex items-center justify-center mb-5">
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <div className="h-14 w-14 rounded-full bg-background/80 border border-border flex items-center justify-center shadow-sm">
-                <Play className="h-6 w-6 ml-0.5" />
-              </div>
-              <span className="text-sm font-medium">
-                {t("intro.video_label", "Video coming soon")}
-              </span>
-            </div>
-          </div>
 
           {/* Intro lines */}
           <p className="text-base text-foreground/90 leading-relaxed text-center mb-2">

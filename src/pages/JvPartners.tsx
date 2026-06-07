@@ -444,7 +444,7 @@ const JvPartners = () => {
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4">
-              Promote to your audience. Stay visible forever.
+              We turn your audience into your biggest promoters.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Leadio is an evergreen 3-day challenge that grows itself through referrals.

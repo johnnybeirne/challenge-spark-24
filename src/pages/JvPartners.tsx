@@ -544,8 +544,7 @@ const JvPartners = () => {
               We turn your audience into your biggest promoters.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
-              Leadio is an evergreen 3-day challenge that grows itself through referrals.
-              Every participant is rewarded for inviting others, compounding your reach with every new signup.
+              Leadio is an evergreen 3-day challenge that shows people how to run their own evergreen 3-day challenge. Every participant is rewarded for inviting others, giving you a constant stream of new leads.
             </p>
           </header>
 

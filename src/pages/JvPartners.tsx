@@ -400,7 +400,7 @@ const JvPartners = () => {
               {(() => {
                 let journeyCount = 0;
                 return JOURNEY.map((step, i) => {
-                  const num = step.kind === "journey" ? ++journeyCount : null;
+                  const num = ++journeyCount;
                   return (
                     <JourneyStepRow
                       key={i}

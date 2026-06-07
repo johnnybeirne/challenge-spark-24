@@ -519,7 +519,7 @@ const JvPartners = () => {
                   ))}
                 </ol>
                 <p className="text-[11px] text-muted-foreground text-center mt-4 italic">
-                  Visible to every participant, every day of the challenge.
+                  Visible to every challenge participant on an evergreen basis.
                 </p>
               </CardContent>
             </Card>

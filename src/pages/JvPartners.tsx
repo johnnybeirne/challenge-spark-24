@@ -104,17 +104,19 @@ const BranchingGlyph = () => {
             transition: "transform 700ms cubic-bezier(0.34,1.56,0.64,1) 0ms",
           }}
         >
-          <circle cx={root.x} cy={root.y} r="10" fill="hsl(var(--primary))" />
+          <circle cx={root.x} cy={root.y} r="14" fill="#10b981" />
           <text
             x={root.x}
-            y={root.y + 3}
+            y={root.y + 2}
             textAnchor="middle"
-            className="fill-primary-foreground"
-            style={{ fontSize: 8, fontWeight: 700 }}
+            dominantBaseline="middle"
+            fill="#ffffff"
+            style={{ fontSize: 7, fontWeight: 800, letterSpacing: 0.5 }}
           >
             YOU
           </text>
         </g>
+
         {/* Tier 1 nodes */}
         {tier1.map((p, i) => (
           <circle

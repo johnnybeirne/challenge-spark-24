@@ -448,7 +448,7 @@ const JvPartners = () => {
                   Ready to plug in?
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
-                  Apply to become a JV partner. Share your bonus, get featured on the rewards ladder, and promote once to land on the leaderboard.
+                  Apply to become a JV partner. Share your bonus, get featured on the rewards ladder, and promote to land on the leaderboard.
                 </p>
                 <Button asChild size="lg" className="gap-2 min-h-[48px] w-full sm:w-auto">
                   <Link to="/partners" onClick={() => trackEvent("partner_application_started")}>

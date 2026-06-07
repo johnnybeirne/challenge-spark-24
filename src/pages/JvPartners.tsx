@@ -8,7 +8,7 @@ import {
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
   Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
 } from "lucide-react";
-import ActivityFeed from "@/components/ActivityFeed";
+
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -607,16 +607,6 @@ const JvPartners = () => {
             </div>
           </section>
 
-          {/* ─── LIVE ACTIVITY ─── */}
-          <section className="mb-10">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-              What's happening now
-            </h2>
-            <p className="text-xs text-muted-foreground mb-3">
-              Early builders are already launching and inviting others.
-            </p>
-            <ActivityFeed limit={5} title="" />
-          </section>
 
           {/* ─── WHY GO EARLY ─── */}
           <section className="mb-10">

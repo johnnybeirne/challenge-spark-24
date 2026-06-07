@@ -65,6 +65,7 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "rewards", label: "Rewards", previewUrl: "/bonus-vault", description: "Rewards page copy" },
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
   { id: "jv-apply", label: "JV Partner Application", previewUrl: "/jv-apply", description: "Application page copy + confirmation email" },
+  { id: "jv-partners", label: "JV Partners", previewUrl: "/jv-partners", description: "JV Partners landing page copy" },
 ];
 
 // Maps DB section id -> friendly label + "where it appears" hint + iframe anchor.
@@ -80,6 +81,9 @@ const SECTION_META: Record<string, Record<string, { label: string; hint: string;
     faq: { label: "FAQ", hint: "Accordion of questions and answers.", anchor: "faq" },
     cta: { label: "Final CTA", hint: "Bottom call-to-action band.", anchor: "cta" },
     sticky: { label: "Sticky bottom bar", hint: "Persistent bar pinned to the bottom of the page.", anchor: "cta" },
+  },
+  "jv-partners": {
+    step_tooltips: { label: "JV Partner Step Tooltips", hint: "Tooltip text shown when a visitor hovers or taps the help icon on each journey step card.", anchor: "" },
   },
 };
 

@@ -63,7 +63,7 @@ const SparkleRow = () => (
 );
 
 const JOURNEY: JourneyItem[] = [
-  { kind: "journey", icon: Megaphone, title: "You promote once",         sub: "One link. One post." },
+  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "One link. One post." },
   { kind: "journey", icon: SparklesIcon, title: "They get diagnosed",    sub: "A personalised result they can't ignore.", visual: <ArchetypeChips /> },
   { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
   { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },
@@ -255,7 +255,7 @@ const JvPartners = () => {
     <>
       <SEO
         title="JV Partner Program | Leadio"
-        description="Promote once. Land on the Top Referrers leaderboard. Get featured on the rewards ladder. Compounding visibility through the Leadio referral network."
+        description="Promote to your audience. Land on the Top Referrers leaderboard. Get featured on the rewards ladder. Compounding visibility through the Leadio referral network."
         canonical="/jv"
       />
       <div className="min-h-screen bg-background">
@@ -267,7 +267,7 @@ const JvPartners = () => {
               <Crown className="h-3.5 w-3.5" /> JV Partner Program
             </Badge>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4">
-              Promote once. Stay visible forever.
+              Promote to your audience. Stay visible forever.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Leadio is an evergreen 3-day challenge that grows itself through referrals.
@@ -281,7 +281,7 @@ const JvPartners = () => {
               <CardContent className="p-6 sm:p-8">
                 <h2 className="text-lg font-semibold text-foreground mb-3">The JV partner benefit</h2>
                 <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
-                  You promote <span className="font-semibold text-primary">once</span> to your audience.
+                  You promote to your audience.
                   Every person you send in earns you visibility on the
                   {" "}<span className="font-semibold">Top Referrers leaderboard</span> — seen by every single challenge participant.
                   The people you invite then invite others, and your name stays at the top as the
@@ -448,7 +448,7 @@ const JvPartners = () => {
                   Ready to plug in?
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
-                  Apply to become a JV partner. Share your bonus, get featured on the rewards ladder, and promote once to land on the leaderboard.
+                  Apply to become a JV partner. Share your bonus, get featured on the rewards ladder, and promote to land on the leaderboard.
                 </p>
                 <Button asChild size="lg" className="gap-2 min-h-[48px] w-full sm:w-auto">
                   <Link to="/partners" onClick={() => trackEvent("partner_application_started")}>

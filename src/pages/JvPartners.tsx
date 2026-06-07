@@ -525,6 +525,7 @@ const JvPartners = () => {
                       journeyNumber={num}
                       isLast={i === JOURNEY.length - 1}
                       nextKind={JOURNEY[i + 1]?.kind}
+                      tooltip={t(`step_tooltips.step_${i + 1}`, DEFAULT_STEP_TOOLTIPS[i] ?? "")}
                     />
                   );
                 });

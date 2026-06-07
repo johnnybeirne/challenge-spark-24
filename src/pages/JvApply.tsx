@@ -215,7 +215,7 @@ const JvApply = () => {
 
               <div className="space-y-1.5">
                 <Label htmlFor="retail_value">
-                  {t("form.label_retail_value", "Retail value of your product")}{" "}
+                  {t("form.label_retail_value", "Value of your product")}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
                 <div className="relative">

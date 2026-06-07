@@ -91,7 +91,6 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
 
 const JvPartners = () => {
   const board = useInView<HTMLDivElement>(0.2);
-  const board = useInView<HTMLDivElement>(0.2);
 
   useEffect(() => {
     trackEvent("partners_page_viewed");

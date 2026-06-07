@@ -258,35 +258,33 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
-function StepHelpTooltip({ text, className = "top-2 right-2" }: { text: string; className?: string }) {
-  const [open, setOpen] = useState(false);
-  if (!text) return null;
+function StepLearnMoreLink({
+  expanded,
+  onToggle,
+  variant = "primary",
+  className = "",
+}: {
+  expanded: boolean;
+  onToggle: () => void;
+  variant?: "primary" | "onDark";
+  className?: string;
+}) {
+  const color =
+    variant === "onDark"
+      ? "text-white hover:text-white/80"
+      : "text-primary hover:text-primary/80";
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label="More about this step"
-          className={`absolute z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background shadow-sm ring-1 ring-foreground/20 hover:bg-foreground/90 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all ${className}`}
-          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-        >
-          <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        align="end"
-        sideOffset={6}
-        className="w-72 text-xs leading-relaxed text-muted-foreground"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        {text}
-      </PopoverContent>
-    </Popover>
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+      aria-expanded={expanded}
+      className={`text-xs font-semibold ${color} underline underline-offset-2 focus:outline-none transition-colors shrink-0 ${className}`}
+    >
+      {expanded ? "Hide" : "Learn more"}
+    </button>
   );
 }
 
@@ -311,6 +309,8 @@ function JourneyStepRow({
   const isReward = step.kind === "reward";
   const isOutcome = step.kind === "outcome";
   const Icon = step.icon;
+  const [expanded, setExpanded] = useState(false);
+  const hasTooltip = Boolean(tooltip && tooltip.trim().length > 0);
 
   // Outcome card = the finale. Render distinct, full-bleed gradient.
   if (isOutcome) {
@@ -329,18 +329,28 @@ function JourneyStepRow({
             className="absolute -right-6 -bottom-6 h-40 w-40 text-white/15"
             aria-hidden="true"
           />
-          <StepHelpTooltip
-            text={tooltip ?? ""}
-            className="top-2 right-2 !bg-white !text-foreground hover:!bg-white/90 ring-white/40"
-          />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
                 The payoff
               </span>
             </div>
-            <p className="text-xl font-bold text-white mb-1">{step.title}</p>
+            <div className="flex items-start justify-between gap-3 mb-1">
+              <p className="text-xl font-bold text-white">{step.title}</p>
+              {hasTooltip && (
+                <StepLearnMoreLink
+                  variant="onDark"
+                  expanded={expanded}
+                  onToggle={() => setExpanded((v) => !v)}
+                />
+              )}
+            </div>
             <p className="text-sm text-white/85 leading-snug">{step.sub}</p>
+            {hasTooltip && expanded && (
+              <div className="mt-3 pt-3 border-t border-white/25">
+                <p className="text-sm text-white/90 leading-relaxed">{tooltip}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -385,10 +395,6 @@ function JourneyStepRow({
             </span>
           </>
         )}
-        <StepHelpTooltip
-          text={tooltip ?? ""}
-          className={isReward ? "top-2 left-2" : "top-2 right-2"}
-        />
         <CardContent className="p-4 flex items-start justify-center gap-4">
           {/* Big number / icon */}
           <div
@@ -405,13 +411,26 @@ function JourneyStepRow({
             )}
           </div>
           {/* Punchline */}
-          <div className="min-w-0 flex flex-col items-center text-center">
-            <div className="flex items-center justify-center gap-2 mb-0.5">
+          <div className="min-w-0 flex-1 flex flex-col items-center text-center">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-0.5">
               {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
               <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
+              {hasTooltip && (
+                <StepLearnMoreLink
+                  expanded={expanded}
+                  onToggle={() => setExpanded((v) => !v)}
+                />
+              )}
             </div>
             <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
             {step.visual && <div className="flex justify-center w-full">{step.visual}</div>}
+            {hasTooltip && expanded && (
+              <div className="mt-3 pt-3 border-t border-border w-full">
+                <p className="text-xs text-muted-foreground leading-relaxed text-left">
+                  {tooltip}
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
 
@@ -460,7 +479,7 @@ function JourneyStepRow({
 
 
 const DEFAULT_STEP_TOOLTIPS: string[] = [
-  "Share your unique JV partner link by email, social media, or to your existing audience. There is no minimum promotion requirement. The more you promote the more visible you become.",
+  "Share your unique partner link with your audience. There is no minimum promotion requirement. The more you promote the more visible you become.",
   "Every person you send in gets a personalised 3-day challenge experience. They build something real and are rewarded for inviting others.",
   "The Top Referrers leaderboard is visible to every challenge participant every day. The more people you send in the higher you appear and the more new participants see your name.",
   "Every participant inside the challenge is rewarded with points for inviting others. The people you originally sent in now send new people in and those new people can see you at the origin of that growth.",

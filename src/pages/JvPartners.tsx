@@ -329,6 +329,10 @@ function JourneyStepRow({
             className="absolute -right-6 -bottom-6 h-40 w-40 text-white/15"
             aria-hidden="true"
           />
+          <StepHelpTooltip
+            text={tooltip ?? ""}
+            className="top-2 right-2 text-white/80 hover:text-white hover:bg-white/15"
+          />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">

@@ -64,6 +64,7 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "unlocks", label: "Unlocks", previewUrl: "/unlocks", description: "Unlocks page copy" },
   { id: "rewards", label: "Rewards", previewUrl: "/bonus-vault", description: "Rewards page copy" },
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
+  { id: "jv-apply", label: "JV Partner Application", previewUrl: "/jv-apply", description: "Application page copy + confirmation email" },
 ];
 
 // Maps DB section id -> friendly label + "where it appears" hint + iframe anchor.

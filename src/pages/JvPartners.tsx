@@ -510,7 +510,9 @@ const JvPartners = () => {
                             <span className="ml-2 text-[10px] font-mono uppercase tracking-wider text-primary">you</span>
                           )}
                         </p>
+                        <p className="text-[11px] text-muted-foreground truncate leading-snug">{row.bio}</p>
                       </div>
+
                     </li>
 
                   ))}

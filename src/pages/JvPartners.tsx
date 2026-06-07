@@ -267,12 +267,12 @@ function StepHelpTooltip({ text, className = "top-2 right-2" }: { text: string; 
         <button
           type="button"
           aria-label="More about this step"
-          className={`absolute z-10 inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/70 hover:text-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-colors ${className}`}
+          className={`absolute z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background shadow-sm ring-1 ring-foreground/20 hover:bg-foreground/90 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all ${className}`}
           onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
         >
-          <HelpCircle className="h-4 w-4" />
+          <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -331,7 +331,7 @@ function JourneyStepRow({
           />
           <StepHelpTooltip
             text={tooltip ?? ""}
-            className="top-2 right-2 text-white/80 hover:text-white hover:bg-white/15"
+            className="top-2 right-2 !bg-white !text-foreground hover:!bg-white/90 ring-white/40"
           />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">

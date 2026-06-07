@@ -110,6 +110,16 @@ const adminGroups: FeatureGroup[] = [
         matters: "Supports revenue-share relationships with their own landing pages and coupons.",
       },
       {
+        title: "JV partner landing page",
+        does: "Public marketing page at /jv-partners with an animated scroll journey, leaderboard mockup, benefit cards, learn-more tooltips per step, and a live activity feed.",
+        matters: "Pitches the JV programme without engineering changes and routes interested partners to the application.",
+      },
+      {
+        title: "JV partner application",
+        does: "Public application form at /jv-apply that captures partner details, emails the admin notification to johnny@johnnybeirne.com, and sends a confirmation email to the applicant.",
+        matters: "Turns interest from /jv-partners into a reviewable lead with both sides notified automatically.",
+      },
+      {
         title: "Coupons",
         does: "Creates and edits coupons applied through partner links or direct entry.",
         matters: "Enables promotions, partner discounts, and campaign tracking.",
@@ -126,6 +136,7 @@ const adminGroups: FeatureGroup[] = [
       },
     ],
   },
+
   {
     title: "Communications",
     items: [

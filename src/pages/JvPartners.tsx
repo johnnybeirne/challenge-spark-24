@@ -6,12 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
-  Mail, Linkedin, Facebook, MessageCircle, Shield, HelpCircle,
+  Mail, Linkedin, Facebook, MessageCircle, Shield,
 } from "lucide-react";
-
-import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
-} from "@/components/ui/accordion";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
@@ -631,40 +627,6 @@ const JvPartners = () => {
             </Card>
           </section>
 
-          {/* ─── FAQ ─── */}
-          <section className="mb-10">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-              Common questions
-            </h2>
-            <Card className="border-border">
-              <CardContent className="p-2 sm:p-3">
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="bonus">
-                    <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline px-3">
-                      <span className="flex items-start gap-2.5 text-left">
-                        <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        Why do I need to contribute a bonus?
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-xs text-muted-foreground leading-relaxed px-3 pl-10">
-                      Because this is a shared growth network — every JV partner brings value so everyone benefits.
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="first" className="border-b-0">
-                    <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline px-3">
-                      <span className="flex items-start gap-2.5 text-left">
-                        <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        Do I have to go first?
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-xs text-muted-foreground leading-relaxed px-3 pl-10">
-                      Early JV partners receive more visibility and lock in their network position earlier — but growth continues as the network expands.
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-            </Card>
-          </section>
 
           {/* ─── CTA ─── */}
           <section className="mb-4">

@@ -434,9 +434,15 @@ const JvPartners = () => {
 
           {/* ─── HERO ─── */}
           <header className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 gap-1.5">
-              <Crown className="h-3.5 w-3.5" /> JV Partner Program
-            </Badge>
+            <div className="inline-flex items-center gap-3 mb-5">
+              <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/60" />
+              <Crown className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] font-mono font-semibold tracking-[0.22em] uppercase text-primary">
+                JV Partner Program
+              </span>
+              <span className="h-px w-8 bg-gradient-to-l from-transparent to-primary/60" />
+            </div>
+
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4">
               Promote to your audience. Stay visible forever.
             </h1>

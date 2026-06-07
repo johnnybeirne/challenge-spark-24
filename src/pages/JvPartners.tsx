@@ -326,8 +326,8 @@ function JourneyStepRow({
           {/* Punchline */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              {!isReward && journeyNumber !== null && (
-                <span className="text-[11px] font-mono font-bold tabular-nums text-primary/70 shrink-0">
+              {journeyNumber !== null && (
+                <span className={`text-[11px] font-mono font-bold tabular-nums shrink-0 ${isReward ? "text-amber-600" : "text-primary/70"}`}>
                   {String(journeyNumber).padStart(2, "0")}
                 </span>
               )}

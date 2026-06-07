@@ -41,7 +41,40 @@ const BENEFITS = [
   { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and the platform does the rest." },
 ];
 
+const LEADERBOARD = [
+  { rank: 1, name: "Your Name", refs: 142, you: true,  medal: "text-amber-500" },
+  { rank: 2, name: "Sarah K.",  refs:  87, you: false, medal: "text-slate-400" },
+  { rank: 3, name: "Marcus T.", refs:  64, you: false, medal: "text-amber-700" },
+  { rank: 4, name: "Priya R.",  refs:  41, you: false },
+  { rank: 5, name: "Devon L.",  refs:  28, you: false },
+];
+
+/** Trigger when an element first scrolls into view. */
+function useInView<T extends HTMLElement>(threshold = 0.2) {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
 const JvPartners = () => {
+  const flow = useInView<HTMLDivElement>(0.15);
+  const board = useInView<HTMLDivElement>(0.2);
+
   useEffect(() => {
     trackEvent("partners_page_viewed");
   }, []);

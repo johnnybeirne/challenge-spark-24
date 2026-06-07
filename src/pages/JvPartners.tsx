@@ -309,6 +309,8 @@ function JourneyStepRow({
   const isReward = step.kind === "reward";
   const isOutcome = step.kind === "outcome";
   const Icon = step.icon;
+  const [expanded, setExpanded] = useState(false);
+  const hasTooltip = Boolean(tooltip && tooltip.trim().length > 0);
 
   // Outcome card = the finale. Render distinct, full-bleed gradient.
   if (isOutcome) {
@@ -327,18 +329,28 @@ function JourneyStepRow({
             className="absolute -right-6 -bottom-6 h-40 w-40 text-white/15"
             aria-hidden="true"
           />
-          <StepHelpTooltip
-            text={tooltip ?? ""}
-            className="top-2 right-2 !bg-white !text-foreground hover:!bg-white/90 ring-white/40"
-          />
           <CardContent className="p-6 relative">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
                 The payoff
               </span>
             </div>
-            <p className="text-xl font-bold text-white mb-1">{step.title}</p>
+            <div className="flex items-start justify-between gap-3 mb-1">
+              <p className="text-xl font-bold text-white">{step.title}</p>
+              {hasTooltip && (
+                <StepLearnMoreLink
+                  variant="onDark"
+                  expanded={expanded}
+                  onToggle={() => setExpanded((v) => !v)}
+                />
+              )}
+            </div>
             <p className="text-sm text-white/85 leading-snug">{step.sub}</p>
+            {hasTooltip && expanded && (
+              <div className="mt-3 pt-3 border-t border-white/25">
+                <p className="text-sm text-white/90 leading-relaxed">{tooltip}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

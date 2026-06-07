@@ -52,10 +52,11 @@ const BranchingGlyph = () => {
     [-22, 0, 22].forEach((dx) => tier2.push({ x: p.x + dx, y: 94 }));
   });
   return (
-    <div ref={ref} className="mt-3 w-full">
+    <div ref={ref} className="mt-3 w-full sm:-ml-[72px] sm:w-[calc(100%+72px)]">
       <svg
         viewBox="0 0 220 104"
         className="w-full h-auto overflow-visible"
+        preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
       >
         {/* Tier 1 branches (root → 3) */}
@@ -71,7 +72,7 @@ const BranchingGlyph = () => {
             strokeLinecap="round"
             strokeDasharray="80"
             strokeDashoffset={inView ? 0 : 80}
-            style={{ transition: `stroke-dashoffset 500ms ease-out ${150 + i * 60}ms`, opacity: 0.7 }}
+            style={{ transition: `stroke-dashoffset 1100ms ease-out ${300 + i * 180}ms`, opacity: 0.7 }}
           />
         ))}
         {/* Tier 2 branches (3 → 9) */}
@@ -89,7 +90,7 @@ const BranchingGlyph = () => {
               strokeDasharray="50"
               strokeDashoffset={inView ? 0 : 50}
               style={{
-                transition: `stroke-dashoffset 450ms ease-out ${500 + pi * 80 + ci * 40}ms`,
+                transition: `stroke-dashoffset 950ms ease-out ${1300 + pi * 200 + ci * 100}ms`,
                 opacity: 0.45,
               }}
             />
@@ -100,7 +101,7 @@ const BranchingGlyph = () => {
           style={{
             transform: inView ? "scale(1)" : "scale(0)",
             transformOrigin: `${root.x}px ${root.y}px`,
-            transition: "transform 400ms cubic-bezier(0.34,1.56,0.64,1) 0ms",
+            transition: "transform 700ms cubic-bezier(0.34,1.56,0.64,1) 0ms",
           }}
         >
           <circle cx={root.x} cy={root.y} r="10" fill="hsl(var(--primary))" />
@@ -126,7 +127,7 @@ const BranchingGlyph = () => {
             style={{
               transform: inView ? "scale(1)" : "scale(0)",
               transformOrigin: `${p.x}px ${p.y}px`,
-              transition: `transform 400ms cubic-bezier(0.34,1.56,0.64,1) ${350 + i * 60}ms`,
+              transition: `transform 600ms cubic-bezier(0.34,1.56,0.64,1) ${900 + i * 180}ms`,
             }}
           />
         ))}
@@ -142,7 +143,7 @@ const BranchingGlyph = () => {
             style={{
               transform: inView ? "scale(1)" : "scale(0)",
               transformOrigin: `${p.x}px ${p.y}px`,
-              transition: `transform 350ms cubic-bezier(0.34,1.56,0.64,1) ${750 + i * 35}ms`,
+              transition: `transform 550ms cubic-bezier(0.34,1.56,0.64,1) ${1900 + i * 90}ms`,
             }}
           />
         ))}
@@ -151,9 +152,10 @@ const BranchingGlyph = () => {
         className="flex items-center justify-between mt-1.5 text-[10px] font-mono font-bold text-primary/80 px-1"
         style={{
           opacity: inView ? 1 : 0,
-          transition: "opacity 400ms ease-out 1100ms",
+          transition: "opacity 600ms ease-out 2700ms",
         }}
       >
+
         <span>1</span>
         <span>3</span>
         <span>9</span>

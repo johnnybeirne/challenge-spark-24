@@ -319,20 +319,16 @@ function JourneyStepRow({
               transition: "transform 500ms cubic-bezier(0.34,1.56,0.64,1) 100ms",
             }}
           >
-            {isReward ? (
-              <Icon className="h-6 w-6" />
+            {journeyNumber !== null ? (
+              <span className="text-lg tabular-nums">{String(journeyNumber).padStart(2, "0")}</span>
             ) : (
-              <Icon className="h-6 w-6 text-primary" />
+              <Icon className="h-6 w-6" />
             )}
           </div>
           {/* Punchline */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              {journeyNumber !== null && (
-                <span className={`text-[11px] font-mono font-bold tabular-nums shrink-0 ${isReward ? "text-amber-600" : "text-primary/70"}`}>
-                  {String(journeyNumber).padStart(2, "0")}
-                </span>
-              )}
+              {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
               <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
             </div>
             <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>

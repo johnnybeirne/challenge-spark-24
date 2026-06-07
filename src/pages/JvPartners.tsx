@@ -337,7 +337,7 @@ function JourneyStepRow({
             </span>
           </>
         )}
-        <CardContent className="p-4 flex items-center gap-4">
+        <CardContent className="p-4 flex items-center justify-center gap-4">
           {/* Big number / icon */}
           <div
             className={`h-14 w-14 rounded-full border-2 flex items-center justify-center shrink-0 font-bold ${numberCircle}`}
@@ -353,15 +353,16 @@ function JourneyStepRow({
             )}
           </div>
           {/* Punchline */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
+          <div className="min-w-0 flex flex-col items-center text-center">
+            <div className="flex items-center justify-center gap-2 mb-0.5">
               {!isReward && <Icon className="h-3.5 w-3.5 text-primary/70 shrink-0" />}
               <p className="text-base font-bold text-foreground leading-tight">{step.title}</p>
             </div>
             <p className="text-xs text-muted-foreground leading-snug">{step.sub}</p>
-            {step.visual}
+            {step.visual && <div className="flex justify-center w-full">{step.visual}</div>}
           </div>
         </CardContent>
+
 
       </Card>
       {!isLast && (

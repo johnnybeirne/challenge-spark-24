@@ -154,6 +154,8 @@ const App = () => (
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/jv" element={<JvPartners />} />
                 <Route path="/jv-partners" element={<JvPartners />} />
+                <Route path="/partners-more-details" element={<JvPartners />} />
+
                 <Route path="/jv-apply" element={<JvApply />} />
                 <Route path="/waitlist" element={<Waitlist />} />
                 <Route path="/waitlist/thanks" element={<WaitlistThanks />} />

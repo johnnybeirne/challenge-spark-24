@@ -315,12 +315,13 @@ function JourneyStepRow({
     ? "bg-amber-500 text-white border-amber-500 shadow-[0_0_0_4px_rgba(245,158,11,0.15)]"
     : "bg-primary text-primary-foreground border-primary shadow-[0_0_0_4px_hsl(var(--primary)/0.12)]";
 
-  const lineColor =
+  const arrowStroke =
     nextKind === "reward"
-      ? "from-primary/60 to-amber-500/70"
+      ? "#f59e0b"
       : nextKind === "outcome"
-        ? "from-amber-500/70 to-emerald-500/70"
-        : "from-primary/50 to-primary/60";
+        ? "#10b981"
+        : "hsl(var(--primary))";
+
 
   return (
     <div className="w-full flex flex-col items-center">

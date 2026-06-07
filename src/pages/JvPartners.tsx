@@ -281,7 +281,7 @@ const JvPartners = () => {
               <CardContent className="p-6 sm:p-8">
                 <h2 className="text-lg font-semibold text-foreground mb-3">The JV partner benefit</h2>
                 <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
-                  You promote <span className="font-semibold text-primary">once</span> to your audience.
+                  You promote to your audience.
                   Every person you send in earns you visibility on the
                   {" "}<span className="font-semibold">Top Referrers leaderboard</span> — seen by every single challenge participant.
                   The people you invite then invite others, and your name stays at the top as the

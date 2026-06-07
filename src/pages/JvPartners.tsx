@@ -566,7 +566,7 @@ const JvPartners = () => {
                 <div className="h-2.5 w-2.5 rounded-full bg-destructive/50" />
                 <div className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
                 <div className="h-2.5 w-2.5 rounded-full bg-emerald-400/60" />
-                <span className="text-[10px] font-mono text-muted-foreground ml-3">leadio.app / leaderboard</span>
+                <span className="text-[10px] font-mono text-muted-foreground ml-3">JV Partner Leaderboard</span>
               </div>
               <CardContent className="p-5 sm:p-6 bg-card">
                 <div className="flex items-center justify-between mb-4">

@@ -211,7 +211,7 @@ const JvPartners = () => {
               Promote once. Stay visible forever.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
-              Leadio is a 3-day challenge platform that grows itself through referrals.
+              Leadio is an evergreen 3-day challenge that grows itself through referrals.
               Every participant is rewarded for inviting others — compounding your reach with every new signup.
             </p>
           </header>

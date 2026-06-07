@@ -77,6 +77,9 @@ const ROUTES: RouteRow[] = [
   { route: "/premium", purpose: "Premium / VIP course landing (canonical)", access: "Public", status: "Detected", notes: "Legacy /vip and /upgrade redirect here" },
   { route: "/reset-password", purpose: "Password reset", access: "Public", status: "Detected" },
   { route: "/partners", purpose: "Partner acquisition page", access: "Public", status: "Detected" },
+  { route: "/jv-partners", purpose: "JV partner landing — animated scroll journey, leaderboard mockup, benefit cards, learn-more tooltips, live activity feed", access: "Public", status: "Detected" },
+  { route: "/jv-apply", purpose: "JV partner application form — notifies johnny@johnnybeirne.com and emails the applicant a confirmation", access: "Public", status: "Detected" },
+
   { route: "/waitlist", purpose: "Waitlist signup", access: "Public", status: "Detected" },
   { route: "/waitlist/thanks", purpose: "Waitlist thank-you + referral share", access: "Public", status: "Detected" },
   { route: "/app/features", purpose: "Public feature overview", access: "Public", status: "Detected" },

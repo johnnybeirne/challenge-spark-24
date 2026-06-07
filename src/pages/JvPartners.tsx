@@ -6,7 +6,34 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Crown, Trophy, Gift, Network, Megaphone, Rocket, Sparkles as SparklesIcon,
   TrendingUp, Users, Eye, Sparkles, ChevronRight, Medal, Infinity as InfinityIcon,
+  Mail, Linkedin, Facebook, MessageCircle,
 } from "lucide-react";
+
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+    <path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.844l-5.36-6.99L4.5 22H1.244l8.02-9.17L1 2h7l4.84 6.39L18.244 2zm-1.2 18h1.86L7.06 4H5.1l11.944 16z" />
+  </svg>
+);
+
+const ShareIconsRow = () => (
+  <div className="flex items-center gap-1.5 mt-2">
+    {[
+      { Icon: Mail, color: "bg-slate-500" },
+      { Icon: XIcon, color: "bg-black" },
+      { Icon: Facebook, color: "bg-[#1877F2]" },
+      { Icon: Linkedin, color: "bg-[#0A66C2]" },
+      { Icon: MessageCircle, color: "bg-[#25D366]" },
+    ].map(({ Icon, color }, i) => (
+      <span
+        key={i}
+        className={`h-6 w-6 rounded-full flex items-center justify-center text-white ${color}`}
+      >
+        <Icon className="h-3 w-3" />
+      </span>
+    ))}
+  </div>
+);
+
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/analytics";
 
@@ -176,7 +203,7 @@ const SparkleRow = () => (
 );
 
 const JOURNEY: JourneyItem[] = [
-  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "Share by email and on social." },
+  { kind: "journey", icon: Megaphone, title: "You promote",               sub: "Share by email and on social.", visual: <ShareIconsRow /> },
   { kind: "journey", icon: Rocket,    title: "They join the challenge", sub: "3 days. Real build." },
   { kind: "reward",  icon: Trophy,    title: "You hit the leaderboard",  sub: "Seen by every participant.", visual: <LeaderboardGlyph /> },
   { kind: "journey", icon: Network,   title: "They invite. Then they invite.", sub: "Your name stays at the origin.", visual: <BranchingGlyph /> },

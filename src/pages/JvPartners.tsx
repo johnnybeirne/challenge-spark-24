@@ -433,7 +433,7 @@ function JourneyStepRow({
 
         </Card>
         {hasTooltip && (
-          <div className="absolute -top-3 left-full ml-2 hidden sm:block">
+          <div className="absolute -top-6 right-0 hidden sm:block">
             <StepLearnMoreLink
               expanded={expanded}
               onToggle={() => setExpanded((v) => !v)}

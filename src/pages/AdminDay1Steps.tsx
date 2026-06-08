@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, Check } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import {
@@ -19,8 +20,130 @@ import {
   saveDay1StepsRemote,
 } from "@/lib/day1StepMessages";
 
+// -------------------------------------------------------------
+// Extra-field schema for each step (options / placeholders / etc.)
+// Persisted locally; messages still sync to Supabase via existing API.
+// -------------------------------------------------------------
+
+type StepKind =
+  | "options"
+  | "text-input"
+  | "multi-select"
+  | "options-with-banner"
+  | "text-with-banner"
+  | "promise";
+
+interface StepSchema {
+  id: string;
+  kind: StepKind;
+  showContextBanner: boolean;
+  contextBanner?: string; // template, supports [audience], [expert_type]
+  options?: string[];
+  placeholder?: string;
+  promiseTemplate?: string;
+}
+
+const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
+  "step-1": {
+    id: "step-1",
+    kind: "options",
+    showContextBanner: false,
+    options: ["B2B — I serve other businesses", "B2C — I serve individual consumers"],
+  },
+  "step-2": {
+    id: "step-2",
+    kind: "text-input",
+    showContextBanner: false,
+    placeholder:
+      "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer.",
+  },
+  "step-2b": {
+    id: "step-2b",
+    kind: "multi-select",
+    showContextBanner: true,
+    contextBanner: "You work with: [audience]",
+    options: ["Coach", "Consultant", "Course creator", "Trainer", "Speaker", "Author"],
+  },
+  "step-3": {
+    id: "step-3",
+    kind: "text-with-banner",
+    showContextBanner: true,
+    contextBanner: "You work with: [audience] · As a [expert_type]",
+    placeholder:
+      "e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding.",
+  },
+  "step-4": {
+    id: "step-4",
+    kind: "options-with-banner",
+    showContextBanner: true,
+    contextBanner: "Audience: [audience]",
+    options: [
+      "Remove a specific blocker",
+      "Deliver a meaningful result fast",
+      "Build something they keep using",
+      "Progress toward an important goal",
+    ],
+  },
+  "step-5": {
+    id: "step-5",
+    kind: "text-with-banner",
+    showContextBanner: true,
+    contextBanner: "Audience: [audience]",
+    placeholder: "e.g. They can't explain what they do in one clear sentence.",
+  },
+  "step-6": {
+    id: "step-6",
+    kind: "text-with-banner",
+    showContextBanner: true,
+    contextBanner: "Problem: [problem]",
+    placeholder:
+      "e.g. I start with a quick audit, then walk them through a simple 3-step framework.",
+  },
+  "step-7": {
+    id: "step-7",
+    kind: "text-with-banner",
+    showContextBanner: true,
+    contextBanner: "Process: [process]",
+    placeholder: "e.g. A one-line pitch they're confident saying out loud to any prospect.",
+  },
+  "step-8": {
+    id: "step-8",
+    kind: "promise",
+    showContextBanner: true,
+    contextBanner: "Audience: [audience] · Outcome: [outcome]",
+    promiseTemplate:
+      "I help [audience] [outcome] in 3 days using [process].",
+  },
+};
+
+const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v1";
+
+const loadSchemas = (): Record<string, StepSchema> => {
+  if (typeof window === "undefined") return DEFAULT_SCHEMAS;
+  try {
+    const raw = window.localStorage.getItem(SCHEMA_STORAGE_KEY);
+    if (!raw) return DEFAULT_SCHEMAS;
+    const parsed = JSON.parse(raw) as Record<string, Partial<StepSchema>>;
+    const merged: Record<string, StepSchema> = { ...DEFAULT_SCHEMAS };
+    Object.keys(merged).forEach((id) => {
+      if (parsed[id]) merged[id] = { ...merged[id], ...parsed[id] };
+    });
+    return merged;
+  } catch {
+    return DEFAULT_SCHEMAS;
+  }
+};
+
+const saveSchemas = (schemas: Record<string, StepSchema>) => {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SCHEMA_STORAGE_KEY, JSON.stringify(schemas));
+};
+
+// -------------------------------------------------------------
+
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
+  const [schemas, setSchemas] = useState<Record<string, StepSchema>>(() => loadSchemas());
   const [saving, setSaving] = useState(false);
   const [hydrating, setHydrating] = useState(true);
 
@@ -41,13 +164,27 @@ const AdminDay1Steps = () => {
     };
   }, []);
 
-
-  // Local cache updates immediately on every keystroke so the editor stays
-  // snappy; remote sync happens on explicit Save (and on Reset).
   const updateStep = (id: string, message: string) =>
     setSteps((prev) => {
       const next = prev.map((s) => (s.id === id ? { ...s, message } : s));
       saveDay1Steps(next);
+      return next;
+    });
+
+  const updateSchema = (id: string, patch: Partial<StepSchema>) =>
+    setSchemas((prev) => {
+      const next = { ...prev, [id]: { ...prev[id], ...patch } };
+      saveSchemas(next);
+      return next;
+    });
+
+  const updateOption = (id: string, idx: number, value: string) =>
+    setSchemas((prev) => {
+      const current = prev[id];
+      const opts = [...(current.options ?? [])];
+      opts[idx] = value;
+      const next = { ...prev, [id]: { ...current, options: opts } };
+      saveSchemas(next);
       return next;
     });
 
@@ -63,22 +200,24 @@ const AdminDay1Steps = () => {
   };
 
   const handleSave = async () => {
+    saveSchemas(schemas);
     await persistRemote(steps, "Day 1 step messages synced to the cloud");
     trackEvent("admin_training_updated", { surface: "day1_step_editor" });
   };
 
   const handleResetAll = async () => {
     setSteps(defaultDay1Steps);
+    setSchemas(DEFAULT_SCHEMAS);
+    saveSchemas(DEFAULT_SCHEMAS);
     await persistRemote(defaultDay1Steps, "Reverted to defaults and synced.");
   };
 
   const handleResetOne = (id: string) => {
     const def = defaultDay1Steps.find((s) => s.id === id);
-    if (!def) return;
-    updateStep(id, def.message);
+    if (def) updateStep(id, def.message);
+    const defSchema = DEFAULT_SCHEMAS[id];
+    if (defSchema) updateSchema(id, defSchema);
   };
-
-
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
@@ -86,8 +225,8 @@ const AdminDay1Steps = () => {
         <div>
           <h1 className="text-2xl font-bold">Day 1 Step Editor</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Edit each step's message. The live preview substitutes example values for every bracket tag,
-            so you can see exactly how the message will appear to a real user.
+            Each step shows a live preview of what the user actually sees, plus editable fields for every
+            element on the screen (message, options, placeholder, context banner).
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -97,7 +236,6 @@ const AdminDay1Steps = () => {
           <Button onClick={handleSave} disabled={saving || hydrating} className="gap-2">
             <Save className="h-4 w-4" /> {hydrating ? "Loading…" : saving ? "Syncing…" : "Save"}
           </Button>
-
         </div>
       </header>
 
@@ -121,7 +259,10 @@ const AdminDay1Steps = () => {
           <StepEditorCard
             key={step.id}
             step={step}
-            onChange={(msg) => updateStep(step.id, msg)}
+            schema={schemas[step.id] ?? { id: step.id, kind: "text-input", showContextBanner: false }}
+            onChangeMessage={(msg) => updateStep(step.id, msg)}
+            onChangeSchema={(patch) => updateSchema(step.id, patch)}
+            onChangeOption={(idx, val) => updateOption(step.id, idx, val)}
             onReset={() => handleResetOne(step.id)}
           />
         ))}
@@ -136,20 +277,135 @@ const AdminDay1Steps = () => {
   );
 };
 
+// -------------------------------------------------------------
+// Preview renderer — mirrors what each step looks like in Day1Setup
+// -------------------------------------------------------------
+
+const ContextBanner = ({ template }: { template: string }) => (
+  <div className="rounded-md border border-border bg-background/60 px-3 py-2 text-xs text-muted-foreground">
+    {renderDay1Preview(template)}
+  </div>
+);
+
+const StepPreview = ({
+  schema,
+  message,
+}: {
+  schema: StepSchema;
+  message: string;
+}) => {
+  const messageRendered = renderDay1Preview(message);
+  const promiseRendered = schema.promiseTemplate
+    ? renderDay1Preview(schema.promiseTemplate)
+    : "";
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+      {schema.showContextBanner && schema.contextBanner && (
+        <ContextBanner template={schema.contextBanner} />
+      )}
+
+      <div className="whitespace-pre-line text-sm md:text-base leading-relaxed text-foreground/90">
+        {messageRendered.trim() || (
+          <span className="text-muted-foreground italic">Message preview appears here.</span>
+        )}
+      </div>
+
+      {(schema.kind === "options" || schema.kind === "options-with-banner") && (
+        <div className="flex flex-col gap-2">
+          {(schema.options ?? []).map((opt, i) => (
+            <button
+              key={i}
+              type="button"
+              disabled
+              className="rounded-md border border-border bg-background px-3 py-2 text-left text-sm hover:bg-accent disabled:opacity-100"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {schema.kind === "multi-select" && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {(schema.options ?? []).map((opt, i) => (
+            <button
+              key={i}
+              type="button"
+              disabled
+              className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-accent disabled:opacity-100"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {(schema.kind === "text-input" || schema.kind === "text-with-banner") && (
+        <Textarea
+          rows={3}
+          disabled
+          placeholder={schema.placeholder ?? ""}
+          className="text-sm bg-background"
+        />
+      )}
+
+      {schema.kind === "promise" && (
+        <div className="rounded-lg border border-primary/30 bg-background p-4 space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Your promise
+          </p>
+          <p className="text-base leading-relaxed text-foreground">
+            {promiseRendered || <span className="italic text-muted-foreground">Promise preview.</span>}
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" disabled className="gap-2">
+              <Check className="h-3.5 w-3.5" /> Confirm promise
+            </Button>
+            <Button size="sm" variant="outline" disabled>
+              Edit
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// -------------------------------------------------------------
+
 const StepEditorCard = ({
   step,
-  onChange,
+  schema,
+  onChangeMessage,
+  onChangeSchema,
+  onChangeOption,
   onReset,
 }: {
   step: Day1StepMessage;
-  onChange: (msg: string) => void;
+  schema: StepSchema;
+  onChangeMessage: (msg: string) => void;
+  onChangeSchema: (patch: Partial<StepSchema>) => void;
+  onChangeOption: (idx: number, value: string) => void;
   onReset: () => void;
 }) => {
-  const preview = useMemo(() => renderDay1Preview(step.message), [step.message]);
   const id = `day1-step-${step.id}`;
+  const preview = useMemo(
+    () => <StepPreview schema={schema} message={step.message} />,
+    [schema, step.message],
+  );
+
+  const hasOptions =
+    schema.kind === "options" ||
+    schema.kind === "options-with-banner" ||
+    schema.kind === "multi-select";
+
+  const hasPlaceholder =
+    schema.kind === "text-input" || schema.kind === "text-with-banner";
+
   return (
     <Card>
-      <CardContent className="p-5 sm:p-6 space-y-4">
+      <CardContent className="p-5 sm:p-6 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor={id} className="text-sm font-semibold">
             {step.label}
@@ -159,29 +415,90 @@ const StepEditorCard = ({
           </Button>
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Message
-          </Label>
-          <Textarea
-            id={id}
-            rows={3}
-            value={step.message}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="e.g. So [first_name], you work with [audience]. What's your superpower?"
-            className="font-mono text-sm"
-          />
-        </div>
-
+        {/* Live preview FIRST */}
         <div className="space-y-1.5">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Live preview
           </p>
-          <div className="whitespace-pre-line rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm md:text-base leading-relaxed text-foreground/90">
-            {preview.trim().length > 0 ? preview : (
-              <span className="text-muted-foreground italic">Preview appears here as you type.</span>
-            )}
+          {preview}
+        </div>
+
+        {/* Editable fields */}
+        <div className="space-y-4 pt-2 border-t border-border">
+          <div className="space-y-1.5">
+            <Label htmlFor={id} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Message
+            </Label>
+            <Textarea
+              id={id}
+              rows={3}
+              value={step.message}
+              onChange={(e) => onChangeMessage(e.target.value)}
+              placeholder="e.g. So [first_name], you work with [audience]…"
+              className="font-mono text-sm"
+            />
           </div>
+
+          {schema.showContextBanner && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Context banner
+              </Label>
+              <Input
+                value={schema.contextBanner ?? ""}
+                onChange={(e) => onChangeSchema({ contextBanner: e.target.value })}
+                placeholder="e.g. You work with: [audience]"
+                className="font-mono text-sm"
+              />
+            </div>
+          )}
+
+          {hasPlaceholder && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Input placeholder
+              </Label>
+              <Input
+                value={schema.placeholder ?? ""}
+                onChange={(e) => onChangeSchema({ placeholder: e.target.value })}
+                placeholder="Placeholder text shown in the input"
+                className="text-sm"
+              />
+            </div>
+          )}
+
+          {hasOptions && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Option labels
+              </Label>
+              <div className="space-y-2">
+                {(schema.options ?? []).map((opt, i) => (
+                  <Input
+                    key={i}
+                    value={opt}
+                    onChange={(e) => onChangeOption(i, e.target.value)}
+                    className="text-sm"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {schema.kind === "promise" && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Promise template
+              </Label>
+              <Textarea
+                rows={2}
+                value={schema.promiseTemplate ?? ""}
+                onChange={(e) => onChangeSchema({ promiseTemplate: e.target.value })}
+                placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
+                className="font-mono text-sm"
+              />
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

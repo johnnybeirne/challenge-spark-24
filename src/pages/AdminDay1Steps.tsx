@@ -43,17 +43,24 @@ interface StepSchema {
   promiseTemplate?: string;
 }
 
+// Defaults mirror the live Day 1 flow in src/components/Day1Setup.tsx:
+// - Step 1 buttons match the `audienceOptions` labels.
+// - Step 2 banner matches the "You serve: …" recap shown after Step 1.
+// - Step 2b options match `EXPERT_TYPE_OPTIONS`.
+// - Step 4 options match the `challengeOptions[].description` strings.
+// - Step 5/6/7 placeholders match the fallback `*Placeholder` strings.
 const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
   "step-1": {
     id: "step-1",
     kind: "options",
     showContextBanner: false,
-    options: ["B2B — I serve other businesses", "B2C — I serve individual consumers"],
+    options: ["Businesses / Professionals", "Individuals / Consumers"],
   },
   "step-2": {
     id: "step-2",
     kind: "text-input",
-    showContextBanner: false,
+    showContextBanner: true,
+    contextBanner: "You serve: Businesses / professionals",
     placeholder:
       "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer.",
   },
@@ -61,14 +68,15 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     id: "step-2b",
     kind: "multi-select",
     showContextBanner: true,
-    contextBanner: "You work with: [audience]",
+    contextBanner: "You serve: [audience]",
     options: ["Coach", "Consultant", "Course creator", "Trainer", "Speaker", "Author"],
   },
+
   "step-3": {
     id: "step-3",
     kind: "text-with-banner",
     showContextBanner: true,
-    contextBanner: "You work with: [audience] · As a [expert_type]",
+    contextBanner: "You serve: [audience] · As a [expert_type]",
     placeholder:
       "e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding.",
   },
@@ -89,7 +97,8 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     kind: "text-with-banner",
     showContextBanner: true,
     contextBanner: "Audience: [audience]",
-    placeholder: "e.g. They can't explain what they do in one clear sentence.",
+    placeholder:
+      "e.g. The specific frustration or obstacle holding [audience] back right now.",
   },
   "step-6": {
     id: "step-6",
@@ -97,14 +106,15 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     showContextBanner: true,
     contextBanner: "Problem: [problem]",
     placeholder:
-      "e.g. I start with a quick audit, then walk them through a simple 3-step framework.",
+      "e.g. Describe the steps or framework you take [audience] through to create the result.",
   },
   "step-7": {
     id: "step-7",
     kind: "text-with-banner",
     showContextBanner: true,
     contextBanner: "Process: [process]",
-    placeholder: "e.g. A one-line pitch they're confident saying out loud to any prospect.",
+    placeholder:
+      "e.g. The transformation [audience] will experience by the end of the 3 days.",
   },
   "step-8": {
     id: "step-8",
@@ -116,7 +126,8 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
   },
 };
 
-const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v1";
+
+const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v2";
 
 const loadSchemas = (): Record<string, StepSchema> => {
   if (typeof window === "undefined") return DEFAULT_SCHEMAS;

@@ -76,7 +76,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     id: "step-3",
     kind: "text-with-banner",
     showContextBanner: true,
-    contextBanner: "You work with: [audience] · As a [expert_type]",
+    contextBanner: "You serve: [audience] · As a [expert_type]",
     placeholder:
       "e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding.",
   },
@@ -97,7 +97,8 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     kind: "text-with-banner",
     showContextBanner: true,
     contextBanner: "Audience: [audience]",
-    placeholder: "e.g. They can't explain what they do in one clear sentence.",
+    placeholder:
+      "e.g. The specific frustration or obstacle holding [audience] back right now.",
   },
   "step-6": {
     id: "step-6",
@@ -105,14 +106,15 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     showContextBanner: true,
     contextBanner: "Problem: [problem]",
     placeholder:
-      "e.g. I start with a quick audit, then walk them through a simple 3-step framework.",
+      "e.g. Describe the steps or framework you take [audience] through to create the result.",
   },
   "step-7": {
     id: "step-7",
     kind: "text-with-banner",
     showContextBanner: true,
     contextBanner: "Process: [process]",
-    placeholder: "e.g. A one-line pitch they're confident saying out loud to any prospect.",
+    placeholder:
+      "e.g. The transformation [audience] will experience by the end of the 3 days.",
   },
   "step-8": {
     id: "step-8",
@@ -123,6 +125,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
       "I help [audience] [outcome] in 3 days using [process].",
   },
 };
+
 
 const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v1";
 

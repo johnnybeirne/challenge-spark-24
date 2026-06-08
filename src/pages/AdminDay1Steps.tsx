@@ -60,7 +60,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     id: "step-2",
     kind: "text-input",
     showContextBanner: true,
-    contextBanner: "You serve: Businesses / professionals",
+    contextBanner: "You serve: [audience]",
     placeholder:
       "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer.",
   },

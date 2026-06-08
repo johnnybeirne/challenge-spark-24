@@ -127,7 +127,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
 };
 
 
-const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v1";
+const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v2";
 
 const loadSchemas = (): Record<string, StepSchema> => {
   if (typeof window === "undefined") return DEFAULT_SCHEMAS;

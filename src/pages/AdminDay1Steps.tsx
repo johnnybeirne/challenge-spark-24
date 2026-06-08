@@ -60,7 +60,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     id: "step-2",
     kind: "text-input",
     showContextBanner: true,
-    contextBanner: "You serve: Businesses / professionals",
+    contextBanner: "You serve: [audience]",
     placeholder:
       "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer.",
   },
@@ -127,7 +127,7 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
 };
 
 
-const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v2";
+const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v3";
 
 const loadSchemas = (): Record<string, StepSchema> => {
   if (typeof window === "undefined") return DEFAULT_SCHEMAS;

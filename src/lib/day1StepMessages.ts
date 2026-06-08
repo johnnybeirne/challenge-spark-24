@@ -71,31 +71,31 @@ export const defaultDay1Steps: Day1StepMessage[] = [
   },
   {
     id: "step-4",
-    label: "Step 4 of 9 — Challenge type",
+    label: "Step 5 of 9 — Challenge type",
     message:
       "Love it. What kind of result do you want this challenge to deliver for [audience]?",
   },
   {
     id: "step-5",
-    label: "Step 5 of 9 — Specific problem",
+    label: "Step 6 of 9 — Specific problem",
     message:
       "What result will your challenge deliver for [audience]?",
   },
   {
     id: "step-6",
-    label: "Step 6 of 9 — Your process",
+    label: "Step 7 of 9 — Your process",
     message:
       "So the problem is [problem]. Walk me through how you usually help them solve it.",
   },
   {
     id: "step-7",
-    label: "Step 7 of 9 — Outcome",
+    label: "Step 8 of 9 — Outcome",
     message:
       "Got it. You take them through [process]. What's the tangible result they walk away with?",
   },
   {
     id: "step-8",
-    label: "Step 8 of 9 — Promise review",
+    label: "Step 9 of 9 — Promise review",
     message:
       "Here's your promise, [first_name]: [promise]. Does that feel right to you?",
   },

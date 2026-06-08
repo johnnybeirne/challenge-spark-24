@@ -47,7 +47,7 @@ export const DAY1_TAG_KEYS: Day1TagKey[] = Object.keys(
 export const defaultDay1Steps: Day1StepMessage[] = [
   {
     id: "step-1",
-    label: "Step 1 of 8 — Audience type",
+    label: "Step 1 of 9 — Audience type",
     message:
       "Welcome [first_name]. Before we shape your challenge, who do you mainly serve — other businesses or individual consumers?",
   },
@@ -65,37 +65,37 @@ export const defaultDay1Steps: Day1StepMessage[] = [
   },
   {
     id: "step-3",
-    label: "Step 3 of 8 — Superpower",
+    label: "Step 3 of 9 — Superpower",
     message:
       "So [first_name], you work with [audience]. What's your superpower when it comes to helping them?",
   },
   {
     id: "step-4",
-    label: "Step 4 of 8 — Challenge type",
+    label: "Step 4 of 9 — Challenge type",
     message:
       "Love it. What kind of result do you want this challenge to deliver for [audience]?",
   },
   {
     id: "step-5",
-    label: "Step 5 of 8 — Specific problem",
+    label: "Step 5 of 9 — Specific problem",
     message:
       "What result will your challenge deliver for [audience]?",
   },
   {
     id: "step-6",
-    label: "Step 6 of 8 — Your process",
+    label: "Step 6 of 9 — Your process",
     message:
       "So the problem is [problem]. Walk me through how you usually help them solve it.",
   },
   {
     id: "step-7",
-    label: "Step 7 of 8 — Outcome",
+    label: "Step 7 of 9 — Outcome",
     message:
       "Got it. You take them through [process]. What's the tangible result they walk away with?",
   },
   {
     id: "step-8",
-    label: "Step 8 of 8 — Promise review",
+    label: "Step 8 of 9 — Promise review",
     message:
       "Here's your promise, [first_name]: [promise]. Does that feel right to you?",
   },

@@ -65,7 +65,7 @@ export const defaultDay1Steps: Day1StepMessage[] = [
   },
   {
     id: "step-3",
-    label: "Step 3 of 9 — Superpower",
+    label: "Step 4 of 9 — Superpower",
     message:
       "So [first_name], you work with [audience]. What's your superpower when it comes to helping them?",
   },

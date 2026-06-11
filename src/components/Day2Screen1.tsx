@@ -423,7 +423,7 @@ const Day2Screen1 = () => {
                       href="/assessment"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block text-sm font-medium text-primary underline underline-offset-4 hover:opacity-80"
+                      className="block w-full rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
                     >
                       {assessmentCompleted
                         ? "Take the quiz for this challenge again"

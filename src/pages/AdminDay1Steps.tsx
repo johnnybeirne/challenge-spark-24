@@ -327,10 +327,10 @@ const AdminDay1Steps = () => {
 
   // Track which editable field has focus so chip clicks insert at the cursor.
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
-  const bannerRef = useRef<HTMLInputElement | null>(null);
-  const placeholderRef = useRef<HTMLInputElement | null>(null);
+  const bannerRef = useRef<HTMLTextAreaElement | null>(null);
+  const placeholderRef = useRef<HTMLTextAreaElement | null>(null);
   const promiseRef = useRef<HTMLTextAreaElement | null>(null);
-  const optionRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const optionRefs = useRef<Record<number, HTMLTextAreaElement | null>>({});
   const [focusedField, setFocusedField] = useState<
     | { kind: "message" }
     | { kind: "banner" }
@@ -664,13 +664,14 @@ const AdminDay1Steps = () => {
                   <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Context banner
                   </Label>
-                  <Input
+                  <Textarea
                     ref={bannerRef}
+                    rows={2}
                     value={activeSchema.contextBanner ?? ""}
                     onFocus={() => setFocusedField({ kind: "banner" })}
                     onChange={(e) => updateSchema(activeStep.id, { contextBanner: e.target.value })}
                     placeholder="e.g. You work with: [audience]"
-                    className="text-sm"
+                    className="text-sm resize-y"
                   />
                 </div>
               )}
@@ -680,13 +681,14 @@ const AdminDay1Steps = () => {
                   <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Input placeholder
                   </Label>
-                  <Input
+                  <Textarea
                     ref={placeholderRef}
+                    rows={2}
                     value={activeSchema.placeholder ?? ""}
                     onFocus={() => setFocusedField({ kind: "placeholder" })}
                     onChange={(e) => updateSchema(activeStep.id, { placeholder: e.target.value })}
                     placeholder="Placeholder text shown in the input"
-                    className="text-sm"
+                    className="text-sm resize-y"
                   />
                 </div>
               )}
@@ -698,15 +700,16 @@ const AdminDay1Steps = () => {
                   </Label>
                   <div className="space-y-2">
                     {(activeSchema.options ?? []).map((opt, i) => (
-                      <Input
+                      <Textarea
                         key={i}
                         ref={(el) => {
                           optionRefs.current[i] = el;
                         }}
+                        rows={2}
                         value={opt}
                         onFocus={() => setFocusedField({ kind: "option", index: i })}
                         onChange={(e) => updateOption(activeStep.id, i, e.target.value)}
-                        className="text-sm"
+                        className="text-sm resize-y"
                       />
                     ))}
                   </div>

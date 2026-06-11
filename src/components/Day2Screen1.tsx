@@ -138,7 +138,7 @@ const Day2Screen1 = () => {
   const cardCopy = [
     {
       title: "The quiz earns the right to ask for 3 days.",
-      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand with ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
+      body: `Before ${clientAvatar} commits to ${challengePromise}, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand against ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
     },
     {
       title: "Most quizzes stop at the result. Yours does not.",

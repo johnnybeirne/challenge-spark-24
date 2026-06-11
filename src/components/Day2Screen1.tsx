@@ -353,7 +353,7 @@ const Day2Screen1 = () => {
 
             // Section 1
             return (
-              <section key={s.id} className="space-y-4">
+              <section key={s.id} id={`day2-section-${s.id}`} className="space-y-4">
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>

@@ -414,6 +414,46 @@ const Day2Screen1 = () => {
 
   const allOpened = readCards.size === cardCopy.length;
 
+  const [quizGenerating, setQuizGenerating] = useState(false);
+
+  const handleGenerateQuiz = async () => {
+    if (quizGenerating || !allOpened) return;
+    setQuizGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("day2-thread", {
+        body: {
+          moment: "sample_quiz",
+          inputs: {
+            firstName,
+            archetype,
+            audience: clientAvatar,
+            superpower,
+            problem,
+            outcome: challengeOutcome,
+            promise: challengePromise,
+          },
+        },
+      });
+      if (error) throw error;
+      // Persist into the same key Day 2 Step 2 reads, then advance to step 2.
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day2_s2_quiz: JSON.stringify(data ?? {}),
+            day2_step: "2",
+          },
+        },
+      }));
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't generate your quiz right now.");
+    } finally {
+      setQuizGenerating(false);
+    }
+  };
+
   const handleContinue = () => {
     setState((prev) => ({
       ...prev,

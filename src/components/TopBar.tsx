@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { CalendarDays, GraduationCap, MessageCircle, Search, Trophy, Users } from "lucide-react";
+import { CalendarDays, GraduationCap, Maximize2, MessageCircle, Minimize2, Search, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
+import { useFocusMode } from "@/context/FocusModeContext";
 import NotificationsBell from "@/components/NotificationsBell";
 import GlobalSearch from "@/components/GlobalSearch";
 

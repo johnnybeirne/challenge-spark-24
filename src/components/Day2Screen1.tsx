@@ -7,7 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
-  { id: 1, label: "Quiz marketing", title: "Why a 2-minute quiz beats a 3-day pitch" },
+  { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want your challenge" },
   { id: 2, label: "Quiz generation", title: "Generate your quiz" },
   { id: 3, label: "Export", title: "Export your plan" },
 ];

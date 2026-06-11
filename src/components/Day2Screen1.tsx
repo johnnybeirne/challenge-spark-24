@@ -119,6 +119,10 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
 
 const Day2Screen1 = () => {
   const { state, setState } = useAppState();
+  const firstName = state.user?.name?.split(" ")[0] || "";
+  const nameSuffix = firstName ? `, ${firstName}` : "";
+
+
 
 
   const day2 = state.challenge.day2 ?? {
@@ -237,8 +241,9 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            In Day 1 you defined your challenge. Now we build the quiz that makes {clientAvatar} want to do it.
+            In Day 1 you defined your challenge{nameSuffix}. Now we build the quiz that makes {clientAvatar} want to do it.
           </p>
+
 
           {/* Day 1 recap */}
           <dl className="mt-5 rounded-lg border bg-card p-4 space-y-2 text-sm">
@@ -333,6 +338,10 @@ const Day2Screen1 = () => {
                     <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
+                    <p className="text-sm sm:text-base text-foreground">
+                      {firstName ? `${firstName}, here` : "Here"} is why your quiz is the smartest way to launch your challenge.
+                    </p>
+
                     {cardCopy.map((c, idx) => {
                       const lockedCard = idx > 0 && !openedCards.has(idx - 1);
                       return (
@@ -369,8 +378,9 @@ const Day2Screen1 = () => {
                     {allOpened && (
                       <div className="space-y-4 pt-2 animate-fade-in">
                         <p className="text-sm sm:text-base font-semibold text-foreground">
-                          Your quiz starts the conversation. Your challenge builds the trust that converts.
+                          Your quiz starts the conversation{nameSuffix}. Your challenge builds the trust that converts.
                         </p>
+
 
                         <Card className="bg-muted/50 border-dashed">
                           <CardHeader>
@@ -395,7 +405,10 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
-                    <div className="pt-2">
+                    <div className="pt-2 space-y-2">
+                      <p className="text-sm sm:text-base font-semibold text-foreground">
+                        Ready to build it{nameSuffix}?
+                      </p>
                       <Button
                         size="lg"
                         className="w-full sm:w-auto"
@@ -405,6 +418,7 @@ const Day2Screen1 = () => {
                         {isComplete ? "Section 1 complete" : "Continue to Section 2"}
                       </Button>
                     </div>
+
                   </CardContent>
                 </Card>
               </section>

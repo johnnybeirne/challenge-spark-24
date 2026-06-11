@@ -286,7 +286,7 @@ const Day2Screen1 = () => {
                     {allOpened && (
                       <div className="space-y-4 pt-2 animate-fade-in">
                         <p className="text-sm sm:text-base font-semibold text-foreground">
-                          Your quiz has one job: show {clientAvatar} the gap that your challenge closes.
+                          Your quiz starts the conversation. Your challenge builds the trust that converts.
                         </p>
 
                         <Card className="bg-muted/50 border-dashed">
@@ -297,7 +297,7 @@ const Day2Screen1 = () => {
                           </CardHeader>
                           <CardContent className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                              The premium course covers the full quiz-to-challenge funnel in detail.
+                              The premium course covers question design, result framing, and how to turn your challenge into a repeatable sales system.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-2">
                               <Button asChild variant="outline" className="flex-1">

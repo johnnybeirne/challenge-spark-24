@@ -518,9 +518,7 @@ const Day2Screen1 = () => {
                   </CardHeader>
                   {isActive && s.id === 2 && (
                     <CardContent>
-                      <Button size="lg" className="w-full sm:w-auto">
-                        Generate your quiz now
-                      </Button>
+                      <p className="text-sm text-muted-foreground">Generate your quiz above.</p>
                     </CardContent>
                   )}
                   {isActive && s.id !== 2 && (

@@ -216,7 +216,9 @@ const Day2Screen1 = () => {
   // Section 1 reveal cards: progressive unlock + toggle + mark-as-read gating.
   const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
   const [readCards, setReadCards] = useState<Set<number>>(new Set());
+  const [typedCards, setTypedCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(null);
+
 
   const handleMarkRead = (idx: number) => {
     setReadCards((prev) => {

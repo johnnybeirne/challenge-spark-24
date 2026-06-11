@@ -511,6 +511,13 @@ const Day2Screen1 = () => {
                           isLocked={lockedCard}
                           isLoading={cardsLoading && !aiBodies}
                           isRead={readCards.has(idx)}
+                          alreadyTyped={typedCards.has(idx)}
+                          onTypingComplete={() => setTypedCards((prev) => {
+                            if (prev.has(idx)) return prev;
+                            const next = new Set(prev);
+                            next.add(idx);
+                            return next;
+                          })}
                           onToggle={() => handleToggleCard(idx)}
                           onMarkRead={() => handleMarkRead(idx)}
                         />

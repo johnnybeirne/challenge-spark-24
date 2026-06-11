@@ -620,15 +620,21 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   );
 };
 
-const ChallengeSidebar = ({ onCollapsedChange }: { onCollapsedChange?: (collapsed: boolean) => void }) => {
+const ChallengeSidebar = ({
+  onCollapsedChange,
+  collapsed: collapsedProp,
+}: {
+  onCollapsedChange?: (collapsed: boolean) => void;
+  collapsed?: boolean;
+}) => {
   const [open, setOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsedState, setCollapsed] = useState(false);
+  const collapsed = collapsedProp ?? collapsedState;
   const pulse = usePulseOnLogin();
   const toggleCollapsed = () => {
-    setCollapsed((value) => {
-      onCollapsedChange?.(!value);
-      return !value;
-    });
+    const next = !collapsed;
+    setCollapsed(next);
+    onCollapsedChange?.(next);
   };
   return (
     <>

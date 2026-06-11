@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, Sparkles } from "lucide-react";
+import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 
@@ -413,6 +414,46 @@ const Day2Screen1 = () => {
 
   const allOpened = readCards.size === cardCopy.length;
 
+  const [quizGenerating, setQuizGenerating] = useState(false);
+
+  const handleGenerateQuiz = async () => {
+    if (quizGenerating || !allOpened) return;
+    setQuizGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("day2-thread", {
+        body: {
+          moment: "sample_quiz",
+          inputs: {
+            firstName,
+            archetype,
+            audience: clientAvatar,
+            superpower,
+            problem,
+            outcome: challengeOutcome,
+            promise: challengePromise,
+          },
+        },
+      });
+      if (error) throw error;
+      // Persist into the same key Day 2 Step 2 reads, then advance to step 2.
+      setState((prev) => ({
+        ...prev,
+        challenge: {
+          ...prev.challenge,
+          aiOutputs: {
+            ...prev.challenge.aiOutputs,
+            day2_s2_quiz: JSON.stringify(data ?? {}),
+            day2_step: "2",
+          },
+        },
+      }));
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't generate your quiz right now.");
+    } finally {
+      setQuizGenerating(false);
+    }
+  };
+
   const handleContinue = () => {
     setState((prev) => ({
       ...prev,
@@ -606,10 +647,22 @@ const Day2Screen1 = () => {
                     {allOpened ? (
                       <button
                         type="button"
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                        onClick={handleGenerateQuiz}
+                        disabled={quizGenerating}
+                        aria-busy={quizGenerating}
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
                       >
-                        <Sparkles className="h-4 w-4" />
-                        Generate your quiz now
+                        {quizGenerating ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generating your quiz...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            Generate your quiz now
+                          </>
+                        )}
                       </button>
                     ) : (
                       <button

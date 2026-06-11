@@ -633,23 +633,27 @@ async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
   const how = p.how || "your approach";
   const out = p.outcome || "the outcome they want";
 
+  const mkQ = (id: number, text: string, low: string, mid: string, high: string) => ({
+    id, text, scoring: { low, mid, high },
+  });
+
   const fallbackQuiz = {
-    quizTitle: `The ${aud} ${prob} Scorecard`.slice(0, 80),
+    quizTitle: `The ${aud} ${prob} Scorecard`.slice(0, 120),
     questions: [
-      `Which best describes where you are right now with ${prob}?`,
-      `What have you already tried to solve ${prob}?`,
-      `How long has ${prob} been holding you back?`,
-      `What does success look like in the next 30 days for you and ${prob}?`,
-      `What is the single biggest obstacle standing between you and ${out}?`,
-      `How do you currently measure progress on ${prob}?`,
-      `Which of these patterns sounds most like your situation around ${prob}?`,
-      `If ${prob} were solved tomorrow, what would change first for you?`,
-      `How ready are you to take the next step toward ${out}?`,
+      mkQ(1, `Which best describes where you are right now with ${prob}?`, "Just starting to look at it", "Working on it but stuck", "Close to solving it"),
+      mkQ(2, `What have you already tried to solve ${prob}?`, "Nothing structured yet", "A few things, mixed results", "Multiple proven approaches"),
+      mkQ(3, `How long has ${prob} been holding you back?`, "Less than 3 months", "3-12 months", "Over a year"),
+      mkQ(4, `What does success look like in the next 30 days for you and ${prob}?`, "I can't picture it yet", "I have a rough idea", "I have a clear specific goal"),
+      mkQ(5, `What is the single biggest obstacle between you and ${out}?`, "I don't know what it is", "I know it but can't move it", "I'm actively removing it"),
+      mkQ(6, `How do you currently measure progress on ${prob}?`, "I don't measure it", "I track it loosely", "I have clear metrics"),
+      mkQ(7, `Which pattern sounds most like your situation around ${prob}?`, "Overwhelm and avoidance", "Effort without traction", "Steady forward motion"),
+      mkQ(8, `If ${prob} were solved tomorrow, what would change first for you?`, "I'm not sure", "I have one clear thing", "I have a whole plan ready"),
+      mkQ(9, `How ready are you to take the next step toward ${out}?`, "Curious but cautious", "Ready with support", "Ready right now"),
     ],
     tiers: {
-      low:  `You are at the very start with ${prob}. The fastest win is to get clear on the one obstacle holding you back before changing anything else.`,
-      mid:  `You have made real progress on ${prob} but are stuck on a specific bottleneck. ${sup} applied to ${how} is the unlock from here.`,
-      high: `You are close to ${out}. The next step is removing the final friction so what you have already built can compound.`,
+      low:  { name: "Starter", description: `You are at the very start with ${prob}. The fastest win is to get clear on the one obstacle holding you back before changing anything else.` },
+      mid:  { name: "Builder", description: `You have made real progress on ${prob} but are stuck on a specific bottleneck. ${sup} applied to ${how} is the unlock from here.` },
+      high: { name: "Closer",  description: `You are close to ${out}. The next step is removing the final friction so what you have already built can compound.` },
     },
   };
 
@@ -662,22 +666,33 @@ ${KB}
 
 Return STRICT JSON only — no markdown, no commentary. Shape:
 {
-  "quizTitle": string,          // 4-10 words, specific to the audience + problem
-  "questions": string[9],       // exactly 9 short questions (max 22 words each), in plain English
+  "quizTitle": string,                // 4-10 words, specific to the audience + problem
+  "questions": [                      // EXACTLY 9 objects, ids 1..9 in order
+    {
+      "id": number,                   // 1..9
+      "text": string,                 // the question (max 22 words, plain English)
+      "scoring": {
+        "low":  string,               // short answer label (3-8 words) representing the LOW tier
+        "mid":  string,               // short answer label (3-8 words) representing the MID tier
+        "high": string                // short answer label (3-8 words) representing the HIGH tier
+      }
+    }
+  ],
   "tiers": {
-    "low":  string,             // 1-2 sentences, ~30-50 words
-    "mid":  string,             // 1-2 sentences, ~30-50 words
-    "high": string              // 1-2 sentences, ~30-50 words
+    "low":  { "name": string, "description": string },  // name = 1-2 word identity label; description = 1-2 sentences, ~30-50 words
+    "mid":  { "name": string, "description": string },
+    "high": { "name": string, "description": string }
   }
 }
 
 Rules:
 - Use ONLY the builder's Day 1 data below. Do not invent facts.
-- Questions diagnose Present State, Preferred Future, and Pitfalls.
-- Tiers are progress-oriented identity labels (low = starting, mid = in motion, high = nearly there).
+- Questions diagnose Present State, Preferred Future, and Pitfalls — diagnostic in style, relevant to the builder's subject matter.
+- Each question's three scoring labels must be meaningful, distinct answer options ordered low → mid → high.
+- Tier names are progress-oriented identity labels (e.g. Starter / Builder / Closer); descriptions are meaningful result segments for THIS audience.
 - No emojis. No exclamation marks. No "once".`;
 
-  const user = `Builder Day 1 setup:
+  const userPrompt = `Builder Day 1 setup:
 - audience (client avatar): ${aud}
 - their problem: ${prob}
 - builder's superpower: ${sup}
@@ -691,7 +706,7 @@ Generate the sample quiz JSON now.`;
       model: MODEL,
       messages: [
         { role: "system", content: system },
-        { role: "user", content: user },
+        { role: "user", content: userPrompt },
       ],
       response_format: { type: "json_object" },
     });
@@ -705,14 +720,33 @@ Generate the sample quiz JSON now.`;
     const raw = data?.choices?.[0]?.message?.content ?? "";
     let parsed: any;
     try { parsed = typeof raw === "string" ? JSON.parse(raw) : raw; } catch { parsed = null; }
-    const questions = Array.isArray(parsed?.questions) ? parsed.questions.map((q: unknown) => String(q || "").trim()).filter(Boolean) : [];
+
+    const rawQs = Array.isArray(parsed?.questions) ? parsed.questions : [];
+    const normQs = rawQs.slice(0, 9).map((q: any, i: number) => ({
+      id: Number(q?.id) || i + 1,
+      text: String(q?.text || "").trim().slice(0, 240),
+      scoring: {
+        low:  String(q?.scoring?.low  || "").trim().slice(0, 120),
+        mid:  String(q?.scoring?.mid  || "").trim().slice(0, 120),
+        high: String(q?.scoring?.high || "").trim().slice(0, 120),
+      },
+    }));
+    const goodQs = normQs.length === 9 && normQs.every((q: any) =>
+      q.text && q.scoring.low && q.scoring.mid && q.scoring.high
+    );
+
+    const readTier = (t: any, fb: { name: string; description: string }) => ({
+      name: String(t?.name || fb.name).trim().slice(0, 60) || fb.name,
+      description: String(t?.description || fb.description).trim().slice(0, 500) || fb.description,
+    });
+
     const quiz = {
       quizTitle: String(parsed?.quizTitle || fallbackQuiz.quizTitle).trim().slice(0, 120),
-      questions: (questions.length === 9 ? questions : fallbackQuiz.questions).map((q: string) => q.slice(0, 240)),
+      questions: goodQs ? normQs : fallbackQuiz.questions,
       tiers: {
-        low:  String(parsed?.tiers?.low  || fallbackQuiz.tiers.low ).trim().slice(0, 500),
-        mid:  String(parsed?.tiers?.mid  || fallbackQuiz.tiers.mid ).trim().slice(0, 500),
-        high: String(parsed?.tiers?.high || fallbackQuiz.tiers.high).trim().slice(0, 500),
+        low:  readTier(parsed?.tiers?.low,  fallbackQuiz.tiers.low),
+        mid:  readTier(parsed?.tiers?.mid,  fallbackQuiz.tiers.mid),
+        high: readTier(parsed?.tiers?.high, fallbackQuiz.tiers.high),
       },
     };
     return new Response(JSON.stringify(quiz), {

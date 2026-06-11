@@ -603,26 +603,24 @@ const Day2Screen1 = () => {
                       </button>
                     )}
 
-                    {allOpened && (
-                      assessmentCompleted ? (
-                        <button
-                          type="button"
-                          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
-                        >
-                          <Sparkles className="h-4 w-4" />
-                          Generate your quiz now
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          aria-disabled="true"
-                          className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
-                        >
-                          <Lock className="h-4 w-4" />
-                          Generate your quiz now
-                        </button>
-                      )
+                    {allOpened ? (
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        Generate your quiz now
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
+                      >
+                        <Lock className="h-4 w-4" />
+                        Generate your quiz now
+                      </button>
                     )}
 
 

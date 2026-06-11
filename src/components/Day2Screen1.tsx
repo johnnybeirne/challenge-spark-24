@@ -386,14 +386,28 @@ const Day2Screen1 = () => {
                       <CardContent className="space-y-4">
                         <p className="text-sm sm:text-base leading-relaxed text-foreground">
                           {assessmentCompleted
-                            ? `You have already taken the Leadio assessment. Open it again now but this time look at it as a creator, not a participant. Notice how each question surfaces a gap in ${clientAvatar}'s thinking and how the result page makes you want to take the next step. That is exactly what your quiz will do.`
-                            : `Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for ${clientAvatar}. Take two minutes to go through it as a creator. Notice how each question surfaces a gap and how the result page makes you want to take the next step.`}
+                            ? `You took the Leadio assessment to get here. Open it again now as a creator, not a participant. Then build one just like it for ${clientAvatar}.`
+                            : `The Leadio assessment is a live example of exactly what you are building for ${clientAvatar}. Take two minutes to see how it works.`}
                         </p>
-                        <Button asChild variant="secondary">
-                          <a href="/assessment" target="_blank" rel="noopener noreferrer">
-                            See a live example
-                          </a>
-                        </Button>
+                        <div className="flex flex-col gap-2">
+                          <Button asChild variant="secondary">
+                            <a href="/assessment" target="_blank" rel="noopener noreferrer">
+                              {assessmentCompleted ? "See the quiz that brought you here" : "See a live example"}
+                            </a>
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              handleContinue();
+                              setTimeout(() => {
+                                document
+                                  .getElementById("day2-section-2")
+                                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }, 50);
+                            }}
+                          >
+                            Create your quiz now
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
 

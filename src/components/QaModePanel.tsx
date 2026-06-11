@@ -100,6 +100,51 @@ const Toggle = ({
   </label>
 );
 
+const QA_ASSESSMENT_COMPLETED_KEY = "leadio_qa_assessment_completed_at";
+
+const AssessmentStateSection = () => {
+  const [value, setValue] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = window.localStorage.getItem(QA_ASSESSMENT_COMPLETED_KEY);
+      return raw && raw !== "null" ? raw : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const apply = (next: string | null) => {
+    setValue(next);
+    try {
+      if (next === null) {
+        window.localStorage.removeItem(QA_ASSESSMENT_COMPLETED_KEY);
+      } else {
+        window.localStorage.setItem(QA_ASSESSMENT_COMPLETED_KEY, next);
+      }
+      window.dispatchEvent(new Event("leadio-qa-assessment-completed-changed"));
+    } catch {}
+  };
+
+  const taken = value !== null;
+
+  return (
+    <div className="space-y-1.5">
+      <SectionLabel>Assessment State</SectionLabel>
+      <div className="flex gap-1.5">
+        <Pill active={taken} onClick={() => apply(new Date().toISOString())}>
+          Quiz taken
+        </Pill>
+        <Pill active={!taken} onClick={() => apply(null)}>
+          Quiz not taken
+        </Pill>
+      </div>
+      <p className="text-[10px] leading-snug text-muted-foreground">
+        Local preview override for assessment_completed_at. Does not write to Supabase.
+      </p>
+    </div>
+  );
+};
+
 const QaModePanel = () => {
   const { user } = useAuth();
   const qa = useQaPreview();
@@ -482,6 +527,8 @@ const QaModePanel = () => {
                 </button>
               </div>
             </div>
+
+            <AssessmentStateSection />
 
             <div className="space-y-1.5">
               <SectionLabel>Quick Routes</SectionLabel>

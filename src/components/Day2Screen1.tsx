@@ -190,7 +190,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
               </p>
             ) : (
               <Button type="button" size="sm" variant="outline" onClick={onMarkRead}>
-                Mark as read
+                Mark as read to continue
               </Button>
             )
           )}

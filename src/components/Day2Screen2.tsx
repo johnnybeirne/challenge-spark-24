@@ -347,6 +347,125 @@ const Day2Screen2 = () => {
           </div>
         )}
 
+        {/* Editable sample quiz */}
+        {allOpened && (
+          <section className="mt-10 space-y-4 animate-fade-in">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black leading-tight text-foreground">
+                Your AI-generated quiz
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Pulled from your Day 1 answers. Edit any question before publishing.
+              </p>
+            </div>
+
+            {!quiz && (
+              <Button
+                type="button"
+                onClick={generateQuiz}
+                disabled={quizLoading || !day1Ready}
+                size="lg"
+              >
+                {quizLoading ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Generating your quiz…</>
+                ) : (
+                  <><Sparkles className="h-4 w-4" /> Generate my sample quiz</>
+                )}
+              </Button>
+            )}
+
+            {quiz && (
+              <div className="rounded-2xl border-2 border-border bg-card p-4 sm:p-6 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="quiz-title" className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+                    Quiz title
+                  </Label>
+                  <Input
+                    id="quiz-title"
+                    value={quiz.quizTitle}
+                    onChange={(e) => updateQuiz({ quizTitle: e.target.value })}
+                    placeholder="Your quiz title"
+                    className="text-base font-semibold"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+                    Questions
+                  </p>
+                  {quiz.questions.map((q, i) => (
+                    <div key={i} className="space-y-1.5">
+                      <Label htmlFor={`q-${i + 1}`} className="text-xs text-muted-foreground">
+                        Question {i + 1}
+                      </Label>
+                      <Input
+                        id={`q-${i + 1}`}
+                        value={q}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          updateQuiz((prev) => {
+                            const next = [...prev.questions];
+                            next[i] = value;
+                            return { ...prev, questions: next };
+                          });
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+                    Result tiers
+                  </p>
+                  {(["low", "mid", "high"] as const).map((tier) => (
+                    <div key={tier} className="space-y-1.5">
+                      <Label htmlFor={`tier-${tier}`} className="text-xs text-muted-foreground capitalize">
+                        {tier}
+                      </Label>
+                      <Textarea
+                        id={`tier-${tier}`}
+                        value={quiz.tiers[tier]}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          updateQuiz((prev) => ({
+                            ...prev,
+                            tiers: { ...prev.tiers, [tier]: value },
+                          }));
+                        }}
+                        rows={3}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={generateQuiz}
+                    disabled={quizLoading}
+                  >
+                    {quizLoading ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Regenerating…</>
+                    ) : (
+                      <><Sparkles className="h-4 w-4" /> Regenerate</>
+                    )}
+                  </Button>
+                  <Button type="button" size="lg" disabled title="Publishing coming soon">
+                    Publish my quiz
+                  </Button>
+                </div>
+
+                {publishedUrl && (
+                  <p className="text-xs text-muted-foreground">Published URL: {publishedUrl}</p>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+
         {allOpened && (
           <div className="mt-8 flex justify-end animate-fade-in">
             <Button size="lg" onClick={handleContinue}>

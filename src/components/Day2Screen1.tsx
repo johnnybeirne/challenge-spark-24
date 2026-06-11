@@ -385,7 +385,9 @@ const Day2Screen1 = () => {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <p className="text-sm sm:text-base leading-relaxed text-foreground">
-                          Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for {clientAvatar}. Take two minutes to go through it as a creator, not a participant. Notice how each question surfaces a gap and how the result page makes you want to take the next step.
+                          {assessmentCompleted
+                            ? `You have already taken the Leadio assessment. Open it again now but this time look at it as a creator, not a participant. Notice how each question surfaces a gap in ${clientAvatar}'s thinking and how the result page makes you want to take the next step. That is exactly what your quiz will do.`
+                            : `Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for ${clientAvatar}. Take two minutes to go through it as a creator. Notice how each question surfaces a gap and how the result page makes you want to take the next step.`}
                         </p>
                         <Button asChild variant="secondary">
                           <a href="/assessment" target="_blank" rel="noopener noreferrer">

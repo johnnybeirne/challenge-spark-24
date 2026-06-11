@@ -193,6 +193,24 @@ const Day2Screen1 = () => {
 
   useEffect(() => {
     let cancelled = false;
+
+    const readQaOverride = (): boolean | null => {
+      try {
+        if (typeof window === "undefined") return null;
+        const raw = window.localStorage.getItem("leadio_qa_assessment_completed_at");
+        if (raw === null) return null;
+        return raw && raw !== "null" ? true : false;
+      } catch {
+        return null;
+      }
+    };
+
+    const applyState = (supabaseValue: boolean) => {
+      const override = readQaOverride();
+      setAssessmentCompleted(override !== null ? override : supabaseValue);
+    };
+
+    let lastSupabaseValue = false;
     (async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -201,14 +219,23 @@ const Day2Screen1 = () => {
           .select("assessment_completed_at")
           .eq("user_id", user.id)
           .maybeSingle();
-        if (!cancelled && data?.assessment_completed_at) {
-          setAssessmentCompleted(true);
-        }
+        lastSupabaseValue = !!data?.assessment_completed_at;
+        if (!cancelled) applyState(lastSupabaseValue);
       } catch {
-        // ignore — default to not completed
+        if (!cancelled) applyState(false);
       }
     })();
-    return () => { cancelled = true; };
+
+    // Apply override immediately (before Supabase resolves) and on changes.
+    applyState(false);
+    const onQaChange = () => applyState(lastSupabaseValue);
+    window.addEventListener("leadio-qa-assessment-completed-changed", onQaChange);
+    window.addEventListener("storage", onQaChange);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("leadio-qa-assessment-completed-changed", onQaChange);
+      window.removeEventListener("storage", onQaChange);
+    };
   }, []);
 
   useEffect(() => {

@@ -335,6 +335,7 @@ const Day2Screen1 = () => {
           body: {
             moment: "cards",
             inputs: {
+              firstName,
               audience: clientAvatar,
               superpower,
               problem,

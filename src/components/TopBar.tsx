@@ -18,6 +18,7 @@ const TopBar = () => {
   const { pathname } = useLocation();
   const { state } = useAppState();
   const isChallengerShell = useIsChallengerShell();
+  const { focusMode, toggleFocusMode } = useFocusMode();
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {

@@ -405,7 +405,10 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
-                    <div className="pt-2">
+                    <div className="pt-2 space-y-2">
+                      <p className="text-sm sm:text-base font-semibold text-foreground">
+                        Ready to build it{nameSuffix}?
+                      </p>
                       <Button
                         size="lg"
                         className="w-full sm:w-auto"
@@ -415,6 +418,7 @@ const Day2Screen1 = () => {
                         {isComplete ? "Section 1 complete" : "Continue to Section 2"}
                       </Button>
                     </div>
+
                   </CardContent>
                 </Card>
               </section>

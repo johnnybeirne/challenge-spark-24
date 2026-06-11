@@ -579,19 +579,27 @@ const audienceOptions = [
 const challengeOptions = [
   {
     value: "solve-problem",
-    description: "Remove a specific blocker",
+    title: "Break Through a Blocker",
+    description: "Remove an obstacle preventing progress.",
+    examples: ["Fix a sales bottleneck", "Overcome procrastination", "Solve a technical issue"],
   },
   {
     value: "quick-win",
-    description: "Deliver a meaningful result fast",
+    title: "Achieve a Quick Win",
+    description: "Create a meaningful result quickly.",
+    examples: ["Get first leads", "Book meetings", "Launch a landing page"],
   },
   {
     value: "create-asset",
-    description: "Build something they keep using",
+    title: "Build a Valuable Asset",
+    description: "Create something that continues producing value.",
+    examples: ["Website", "AI assistant", "Content system", "Referral engine"],
   },
   {
     value: "reach-milestone",
-    description: "Progress toward an important goal",
+    title: "Advance a Major Goal",
+    description: "Make measurable progress toward something important.",
+    examples: ["Lose weight", "Grow revenue", "Publish a book", "Change careers"],
   },
 ];
 

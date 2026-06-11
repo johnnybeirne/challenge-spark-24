@@ -187,7 +187,7 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            In Day 1 you defined your challenge. Now we build the quiz that gets {clientAvatar} to take the first step, using your superpower of {superpower} to help them move from {problem} to {challengeOutcome}.
+            In Day 1 you defined your challenge. Now we build the quiz that makes {clientAvatar} want to do it.
           </p>
 
           {/* Day 1 recap */}

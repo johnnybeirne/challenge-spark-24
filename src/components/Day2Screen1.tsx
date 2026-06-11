@@ -647,10 +647,22 @@ const Day2Screen1 = () => {
                     {allOpened ? (
                       <button
                         type="button"
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                        onClick={handleGenerateQuiz}
+                        disabled={quizGenerating}
+                        aria-busy={quizGenerating}
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
                       >
-                        <Sparkles className="h-4 w-4" />
-                        Generate your quiz now
+                        {quizGenerating ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generating your quiz...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            Generate your quiz now
+                          </>
+                        )}
                       </button>
                     ) : (
                       <button

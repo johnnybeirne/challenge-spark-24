@@ -897,7 +897,7 @@ const AdminDay1Steps = () => {
                     ref={promiseRef}
                     rows={2}
                     value={activeSchema.promiseTemplate ?? ""}
-                    onFocus={() => setFocusedField({ kind: "promise" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "promise" }); }}
                     onChange={(e) =>
                       updateSchema(activeStep.id, { promiseTemplate: e.target.value })
                     }

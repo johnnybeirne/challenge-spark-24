@@ -599,6 +599,7 @@ Deno.serve(async (req) => {
     if (moment === "insight") return await handleInsight({ key: payload.key, label: payload.label, inputs });
     if (moment === "opener_s2") return await handleOpenerS2(inputs);
     if (moment === "insight_s2") return await handleInsightS2({ key: payload.key, label: payload.label, inputs });
+    if (moment === "cards") return await handleCards(inputs);
     return new Response(
       JSON.stringify({ error: `Unknown moment: ${moment}` }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },

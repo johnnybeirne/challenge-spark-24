@@ -53,7 +53,7 @@ interface RevealCardProps {
   onToggle: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle }: RevealCardProps) => {
   return (
     <Card
       className={cn(

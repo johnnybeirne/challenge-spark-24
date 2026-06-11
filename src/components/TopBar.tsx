@@ -61,8 +61,8 @@ const TopBar = () => {
                 className={cn(
                   "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-colors",
                   focusMode
-                    ? "bg-primary/25 text-primary hover:bg-primary/30"
-                    : "bg-muted text-foreground hover:bg-muted-foreground/20"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-foreground/10 text-foreground hover:bg-foreground/20"
                 )}
                 aria-pressed={focusMode}
                 aria-label={focusMode ? "Exit focus mode" : "Enter focus mode"}
@@ -71,7 +71,7 @@ const TopBar = () => {
                 <span className="whitespace-nowrap">{focusMode ? "Exit Focus Mode" : "Focus Mode"}</span>
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-[240px] text-xs">
+            <TooltipContent side="bottom" sideOffset={8} className="z-[100] max-w-[240px] text-xs">
               Hide the side menus so you can focus on just the training content.
             </TooltipContent>
           </Tooltip>

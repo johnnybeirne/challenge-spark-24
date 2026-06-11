@@ -349,6 +349,23 @@ const Day2Screen1 = () => {
                       );
                     })}
 
+                    <Card className="border-primary/30 bg-primary/5">
+                      <CardHeader>
+                        <CardTitle className="text-base sm:text-lg">See a live example</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-sm sm:text-base leading-relaxed text-foreground">
+                          Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for {clientAvatar}. Take two minutes to go through it as a creator, not a participant. Notice how each question surfaces a gap and how the result page makes you want to take the next step.
+                        </p>
+                        <Button asChild variant="secondary">
+                          <a href="/assessment" target="_blank" rel="noopener noreferrer">
+                            See a live example
+                          </a>
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+
                     {allOpened && (
                       <div className="space-y-4 pt-2 animate-fade-in">
                         <p className="text-sm sm:text-base font-semibold text-foreground">

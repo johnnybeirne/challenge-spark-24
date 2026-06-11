@@ -110,8 +110,58 @@ const Day2Screen2 = () => {
   );
   const [insights, setInsights] = useState<Record<ButtonKey, InsightState>>(initialInsights);
 
-  const updateInsight = (key: ButtonKey, patch: Partial<InsightState>) =>
-    setInsights((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+  // ── Sample quiz draft ──────────────────────────────────────
+  interface QuizDraft {
+    quizTitle: string;
+    questions: string[]; // length 9
+    tiers: { low: string; mid: string; high: string };
+  }
+  const emptyQuiz: QuizDraft = {
+    quizTitle: "",
+    questions: Array(9).fill(""),
+    tiers: { low: "", mid: "", high: "" },
+  };
+  const savedQuiz = parseJson<QuizDraft | null>(state.challenge.aiOutputs.day2_s2_quiz, null);
+  const [quiz, setQuiz] = useState<QuizDraft | null>(savedQuiz);
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [publishedUrl] = useState<string>("");
+
+  const updateQuiz = (patch: Partial<QuizDraft> | ((q: QuizDraft) => QuizDraft)) => {
+    setQuiz((prev) => {
+      const base = prev ?? emptyQuiz;
+      const next = typeof patch === "function" ? patch(base) : { ...base, ...patch };
+      persist("day2_s2_quiz", next);
+      return next;
+    });
+  };
+
+  const generateQuiz = async () => {
+    setQuizLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("day2-thread", {
+        body: { moment: "sample_quiz", inputs: day1Inputs },
+      });
+      if (error) throw error;
+      const draft: QuizDraft = {
+        quizTitle: String(data?.quizTitle || "").trim(),
+        questions: Array.isArray(data?.questions) && data.questions.length === 9
+          ? data.questions.map((q: unknown) => String(q || ""))
+          : Array(9).fill(""),
+        tiers: {
+          low: String(data?.tiers?.low || ""),
+          mid: String(data?.tiers?.mid || ""),
+          high: String(data?.tiers?.high || ""),
+        },
+      };
+      setQuiz(draft);
+      persist("day2_s2_quiz", draft);
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s2", mode: "sample_quiz" });
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't generate your quiz right now.");
+    } finally {
+      setQuizLoading(false);
+    }
+  };
 
   const persist = (key: string, value: unknown) => {
     const stringified = typeof value === "string" ? value : JSON.stringify(value);

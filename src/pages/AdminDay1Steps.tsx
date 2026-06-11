@@ -840,7 +840,7 @@ const AdminDay1Steps = () => {
                     ref={bannerRef}
                     rows={2}
                     value={activeSchema.contextBanner ?? ""}
-                    onFocus={() => setFocusedField({ kind: "banner" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "banner" }); }}
                     onChange={(e) => updateSchema(activeStep.id, { contextBanner: e.target.value })}
                     placeholder="e.g. You work with: [audience]"
                     className="text-sm resize-y"

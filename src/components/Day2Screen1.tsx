@@ -241,8 +241,9 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            In Day 1 you defined your challenge. Now we build the quiz that makes {clientAvatar} want to do it.
+            In Day 1 you defined your challenge{nameSuffix}. Now we build the quiz that makes {clientAvatar} want to do it.
           </p>
+
 
           {/* Day 1 recap */}
           <dl className="mt-5 rounded-lg border bg-card p-4 space-y-2 text-sm">

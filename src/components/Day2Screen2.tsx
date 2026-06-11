@@ -163,6 +163,11 @@ const Day2Screen2 = () => {
     }
   };
 
+  const updateInsight = (key: ButtonKey, patch: Partial<InsightState>) =>
+    setInsights((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+
+
+
   const persist = (key: string, value: unknown) => {
     const stringified = typeof value === "string" ? value : JSON.stringify(value);
     setState((prev) => ({

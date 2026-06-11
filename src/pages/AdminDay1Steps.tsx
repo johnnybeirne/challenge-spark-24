@@ -918,6 +918,7 @@ const AdminDay1Steps = () => {
                         key={i}
                         rows={2}
                         value={activeExamples[i]}
+                        onFocus={trackFocus}
                         onChange={(e) => updateExample(i as 0 | 1 | 2, e.target.value)}
                         placeholder={`Example ${i + 1} (e.g. …)`}
                         className="text-sm resize-y"

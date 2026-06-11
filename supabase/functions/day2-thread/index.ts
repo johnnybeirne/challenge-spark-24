@@ -553,7 +553,7 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
       ? `IMPORTANT: Address the builder directly by first name. Each card MUST include the first name "${p.firstName}" at least once and at most twice, woven in naturally (e.g. as a direct address at the start, or mid-sentence like "Here is the thing, ${p.firstName} —"). Never start two cards with the same opening phrase. Do not overuse the name.`
       : "Write in second person ('you'). Do not invent a name.",
     p.archetype
-      ? `IMPORTANT: Reference their quiz archetype "${p.archetype}" naturally in AT LEAST ONE of the three cards (ideally two), e.g. "as an ${p.archetype}, you already know…" or "this is exactly where an ${p.archetype} wins". Treat it as a flattering identity mirror, not a label being explained. Never define the archetype in-line.`
+      ? `IMPORTANT: Reference their quiz archetype "${p.archetype}" naturally in AT LEAST ONE of the three cards (ideally two), e.g. "as you are a ${p.archetype}, you already know…" or "this is exactly where you, as a ${p.archetype}, win". Always use the phrasing "as you are a ${p.archetype}" or "you, as a ${p.archetype}" — never "as an ${p.archetype}" or "as a ${p.archetype}" without "you are". Treat it as a flattering identity mirror, not a label being explained. Never define the archetype in-line.`
       : "Do not invent an archetype if none is provided.",
     "",
     "Card 1 must convey: the challenge asks a lot of someone who has never met you, the quiz earns that commitment by showing them where they stand in two minutes, making the problem feel real and the challenge the obvious next step.",

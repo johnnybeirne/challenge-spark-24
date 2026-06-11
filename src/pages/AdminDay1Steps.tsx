@@ -612,47 +612,49 @@ const AdminDay1Steps = () => {
         </p>
       </header>
 
+      {/* Steps navigation — horizontal across the top */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+            Steps
+          </p>
+          <ol className="flex flex-wrap gap-1.5">
+            {steps.map((s, i) => {
+              const active = s.id === activeId;
+              return (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectStep(s.id)}
+                    className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-foreground/70 hover:bg-accent"
+                    }`}
+                    title={s.label}
+                  >
+                    <span
+                      className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
+                        active ? "bg-primary-foreground/20" : "bg-background"
+                      }`}
+                    >
+                      {i + 1}
+                    </span>
+                    <span className="truncate max-w-[160px]">
+                      {s.label.replace(/^Step \d+ of \d+ — /, "")}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* LEFT — editor */}
         <div className="space-y-5">
-          {/* Step selector */}
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                Steps
-              </p>
-              <ol className="flex flex-wrap gap-1.5">
-                {steps.map((s, i) => {
-                  const active = s.id === activeId;
-                  return (
-                    <li key={s.id}>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectStep(s.id)}
-                        className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                          active
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-foreground/70 hover:bg-accent"
-                        }`}
-                        title={s.label}
-                      >
-                        <span
-                          className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
-                            active ? "bg-primary-foreground/20" : "bg-background"
-                          }`}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className="truncate max-w-[140px]">
-                          {s.label.replace(/^Step \d+ of \d+ — /, "")}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </CardContent>
-          </Card>
+
 
           {/* Tag chips */}
           <Card>

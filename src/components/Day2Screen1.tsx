@@ -164,7 +164,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
             <div className="flex flex-col leading-tight">
               <span className="text-xs font-semibold text-foreground">Johnny B AI</span>
               <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                {typingDone ? "Message" : "Typing…"}
+                {typingDone ? "Message" : "Thinking…"}
               </span>
             </div>
           </div>

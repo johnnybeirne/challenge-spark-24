@@ -72,6 +72,8 @@ const TopBar = () => {
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={8} className="z-[100] max-w-[240px] text-xs">
+              Hide the side menus so you can focus on just the content below.
+              <br />
               Hide the side menus so you can focus on just the training content.
             </TooltipContent>
           </Tooltip>

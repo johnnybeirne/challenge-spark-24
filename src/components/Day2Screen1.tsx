@@ -338,6 +338,10 @@ const Day2Screen1 = () => {
                     <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
+                    <p className="text-sm sm:text-base text-foreground">
+                      {firstName ? `${firstName}, here` : "Here"} is why your quiz is the smartest way to launch your challenge.
+                    </p>
+
                     {cardCopy.map((c, idx) => {
                       const lockedCard = idx > 0 && !openedCards.has(idx - 1);
                       return (

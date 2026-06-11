@@ -28,6 +28,7 @@ import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
 import Day2Screen1 from "@/components/Day2Screen1";
+import Day2Screen2 from "@/components/Day2Screen2";
 
 import DayVideoModal from "@/components/DayVideoModal";
 import UpgradeCards from "@/components/UpgradeCards";
@@ -180,8 +181,10 @@ const DayChallenge = () => {
     );
   }
 
-  // Day 2 — Screen 1 of 6 (rebuild in progress).
+  // Day 2 — multi-screen flow driven by aiOutputs.day2_step.
   if (dayNum === 2) {
+    const step = String(state.challenge.aiOutputs?.day2_step ?? "1");
+    if (step === "2") return <Day2Screen2 />;
     return <Day2Screen1 />;
   }
 

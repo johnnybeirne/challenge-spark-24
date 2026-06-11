@@ -602,7 +602,7 @@ const Day2Screen1 = () => {
                       </button>
                     )}
 
-                    {activeId === 2 && (
+                    {allOpened && (
                       <Button size="lg" className="w-full sm:w-auto">
                         Generate your quiz now
                       </Button>

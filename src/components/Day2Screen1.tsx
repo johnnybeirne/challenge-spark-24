@@ -178,7 +178,7 @@ const Day2Screen1 = () => {
       setOpenCard((current) => {
         if (current !== idx) return current;
         const nextIdx = idx + 1;
-        if (nextIdx < SECTIONS_CARD_COUNT) {
+        if (nextIdx < 3) {
           setOpenedCards((prev) => {
             if (prev.has(nextIdx)) return prev;
             const next = new Set(prev);

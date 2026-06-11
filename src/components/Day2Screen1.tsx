@@ -339,6 +339,7 @@ const Day2Screen1 = () => {
                           body={c.body}
                           isOpen={openCard === idx}
                           isLocked={lockedCard}
+                          isLoading={cardsLoading && !aiBodies}
                           onToggle={() => handleToggleCard(idx)}
                         />
                       );

@@ -791,6 +791,26 @@ const AdminDay1Steps = () => {
                   />
                 </div>
               )}
+
+              {hasExamples && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Example hints (shown beneath the input)
+                  </Label>
+                  <div className="space-y-2">
+                    {[0, 1, 2].map((i) => (
+                      <Textarea
+                        key={i}
+                        rows={2}
+                        value={activeExamples[i]}
+                        onChange={(e) => updateExample(i as 0 | 1 | 2, e.target.value)}
+                        placeholder={`Example ${i + 1} (e.g. …)`}
+                        className="text-sm resize-y"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

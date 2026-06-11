@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, RotateCcw, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Save, RotateCcw, Check, Bold, Italic, Palette } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useAppState } from "@/context/AppContext";
@@ -382,6 +383,113 @@ const AdminDay1Steps = () => {
     | { kind: "option"; index: number }
   >({ kind: "message" });
 
+  // Tracks the most recently focused textarea so the formatting toolbar
+  // knows which field to apply Bold / Italic / Colour to.
+  const lastTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const trackFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    lastTextareaRef.current = e.currentTarget;
+  };
+
+  const FORMAT_COLORS: { label: string; value: string }[] = [
+    { label: "Black", value: "#000000" },
+    { label: "White", value: "#FFFFFF" },
+    { label: "Grey", value: "#6B7280" },
+    { label: "Primary", value: "#4F46C8" },
+    { label: "Accent", value: "#DC6432" },
+    { label: "Success", value: "#10B981" },
+  ];
+
+  const applyWrap = (before: string, after: string) => {
+    const ta = lastTextareaRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart ?? 0;
+    const end = ta.selectionEnd ?? 0;
+    if (start === end) return; // selection-only per spec
+    const value = ta.value;
+    const selected = value.slice(start, end);
+    const next = value.slice(0, start) + before + selected + after + value.slice(end);
+    // Dispatch a native input event so React picks up the change.
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      "value",
+    )?.set;
+    setter?.call(ta, next);
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+    // Restore selection around the newly wrapped text.
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(start + before.length, end + before.length);
+    });
+  };
+
+  const applyBold = () => applyWrap("<b>", "</b>");
+  const applyItalic = () => applyWrap("<i>", "</i>");
+  const applyColor = (hex: string) =>
+    applyWrap(`<span style="color:${hex}">`, "</span>");
+
+  const FormatToolbar = () => (
+    <div className="flex items-center gap-1 rounded-md border bg-muted/40 p-1">
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={applyBold}
+        title="Bold"
+        aria-label="Bold"
+      >
+        <Bold className="h-3.5 w-3.5" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={applyItalic}
+        title="Italic"
+        aria-label="Italic"
+      >
+        <Italic className="h-3.5 w-3.5" />
+      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0"
+            onMouseDown={(e) => e.preventDefault()}
+            title="Text colour"
+            aria-label="Text colour"
+          >
+            <Palette className="h-3.5 w-3.5" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-2" align="start">
+          <div className="grid grid-cols-6 gap-1.5">
+            {FORMAT_COLORS.map((c) => (
+              <button
+                key={c.value}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => applyColor(c.value)}
+                title={`${c.label} (${c.value})`}
+                aria-label={c.label}
+                className="h-6 w-6 rounded border border-border shadow-sm transition hover:scale-110"
+                style={{ backgroundColor: c.value }}
+              />
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      <span className="ml-1 text-[10px] text-muted-foreground">
+        Select text, then choose formatting
+      </span>
+    </div>
+  );
+
   const liveValues = useLiveTagValues();
 
   useEffect(() => {
@@ -703,6 +811,8 @@ const AdminDay1Steps = () => {
                 </div>
               </div>
 
+              <FormatToolbar />
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Message
@@ -711,7 +821,10 @@ const AdminDay1Steps = () => {
                   ref={messageRef}
                   rows={4}
                   value={activeStep.message}
-                  onFocus={() => setFocusedField({ kind: "message" })}
+                  onFocus={(e) => {
+                    trackFocus(e);
+                    setFocusedField({ kind: "message" });
+                  }}
                   onChange={(e) => updateStep(activeStep.id, e.target.value)}
                   placeholder="e.g. So [first_name], you work with [audience]…"
                   className="text-sm"
@@ -727,7 +840,7 @@ const AdminDay1Steps = () => {
                     ref={bannerRef}
                     rows={2}
                     value={activeSchema.contextBanner ?? ""}
-                    onFocus={() => setFocusedField({ kind: "banner" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "banner" }); }}
                     onChange={(e) => updateSchema(activeStep.id, { contextBanner: e.target.value })}
                     placeholder="e.g. You work with: [audience]"
                     className="text-sm resize-y"
@@ -744,7 +857,7 @@ const AdminDay1Steps = () => {
                     ref={placeholderRef}
                     rows={2}
                     value={activeSchema.placeholder ?? ""}
-                    onFocus={() => setFocusedField({ kind: "placeholder" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "placeholder" }); }}
                     onChange={(e) => updateSchema(activeStep.id, { placeholder: e.target.value })}
                     placeholder="Placeholder text shown in the input"
                     className="text-sm resize-y"
@@ -766,7 +879,7 @@ const AdminDay1Steps = () => {
                         }}
                         rows={2}
                         value={opt}
-                        onFocus={() => setFocusedField({ kind: "option", index: i })}
+                        onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "option", index: i }); }}
                         onChange={(e) => updateOption(activeStep.id, i, e.target.value)}
                         className="text-sm resize-y"
                       />
@@ -784,7 +897,7 @@ const AdminDay1Steps = () => {
                     ref={promiseRef}
                     rows={2}
                     value={activeSchema.promiseTemplate ?? ""}
-                    onFocus={() => setFocusedField({ kind: "promise" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "promise" }); }}
                     onChange={(e) =>
                       updateSchema(activeStep.id, { promiseTemplate: e.target.value })
                     }
@@ -805,6 +918,7 @@ const AdminDay1Steps = () => {
                         key={i}
                         rows={2}
                         value={activeExamples[i]}
+                        onFocus={trackFocus}
                         onChange={(e) => updateExample(i as 0 | 1 | 2, e.target.value)}
                         placeholder={`Example ${i + 1} (e.g. …)`}
                         className="text-sm resize-y"

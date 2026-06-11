@@ -584,6 +584,20 @@ const AdminDay1Steps = () => {
     activeSchema.kind === "multi-select";
   const hasPlaceholder =
     activeSchema.kind === "text-input" || activeSchema.kind === "text-with-banner";
+  const hasExamples =
+    activeSchema.kind === "text-input" ||
+    activeSchema.kind === "text-with-banner" ||
+    activeSchema.kind === "promise";
+  const activeExamples: [string, string, string] = [
+    activeSchema.examples?.[0] ?? "",
+    activeSchema.examples?.[1] ?? "",
+    activeSchema.examples?.[2] ?? "",
+  ];
+  const updateExample = (idx: 0 | 1 | 2, value: string) => {
+    const next: [string, string, string] = [...activeExamples] as [string, string, string];
+    next[idx] = value;
+    updateSchema(activeStep!.id, { examples: next });
+  };
 
   if (!activeStep) {
     return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;

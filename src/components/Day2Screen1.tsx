@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, ChevronDown, Lock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import johnnyAvatar from "@/assets/johnny-beirne.png";
+
 
 const SECTIONS = [
   { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want your challenge" },
@@ -51,11 +53,42 @@ interface RevealCardProps {
   isLocked: boolean;
   isLoading?: boolean;
   isRead: boolean;
+  alreadyTyped: boolean;
+  onTypingComplete: () => void;
   onToggle: () => void;
   onMarkRead: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, onToggle, onMarkRead }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, alreadyTyped, onTypingComplete, onToggle, onMarkRead }: RevealCardProps) => {
+  const [typed, setTyped] = useState<string>(alreadyTyped ? body : "");
+  const [typingDone, setTypingDone] = useState<boolean>(alreadyTyped);
+  const completeRef = useRef(onTypingComplete);
+  completeRef.current = onTypingComplete;
+
+  useEffect(() => {
+    if (!isOpen || isLoading || isLocked) return;
+    if (alreadyTyped) {
+      setTyped(body);
+      setTypingDone(true);
+      return;
+    }
+    // Word-by-word typewriter effect.
+    const words = body.split(/(\s+)/); // keep whitespace tokens
+    let i = 0;
+    setTyped("");
+    setTypingDone(false);
+    const interval = window.setInterval(() => {
+      i += 1;
+      setTyped(words.slice(0, i).join(""));
+      if (i >= words.length) {
+        window.clearInterval(interval);
+        setTypingDone(true);
+        completeRef.current();
+      }
+    }, 60);
+    return () => window.clearInterval(interval);
+  }, [isOpen, isLoading, isLocked, body, alreadyTyped]);
+
   return (
     <Card
       className={cn(
@@ -105,6 +138,21 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, o
       </button>
       {isOpen && !isLocked && (
         <CardContent className="space-y-4">
+          {/* AI sender header */}
+          <div className="flex items-center gap-2">
+            <img
+              src={johnnyAvatar}
+              alt="Johnny B AI"
+              className="h-8 w-8 rounded-full object-cover border border-border"
+            />
+            <div className="flex flex-col leading-tight">
+              <span className="text-xs font-semibold text-foreground">Johnny B AI</span>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                {typingDone ? "Message" : "Typing…"}
+              </span>
+            </div>
+          </div>
+
           {isLoading ? (
             <div className="space-y-2 animate-pulse" aria-live="polite" aria-busy="true">
               <div className="h-3 rounded bg-muted" />
@@ -112,11 +160,14 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, o
               <div className="h-3 rounded bg-muted w-9/12" />
             </div>
           ) : (
-            <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
-              {body}
+            <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line" aria-live="polite">
+              {typed}
+              {!typingDone && (
+                <span className="inline-block w-1.5 h-4 align-[-2px] ml-0.5 bg-primary animate-pulse" aria-hidden="true" />
+              )}
             </p>
           )}
-          {!isLoading && (
+          {!isLoading && typingDone && (
             isRead ? (
               <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
                 <Check className="h-3.5 w-3.5" /> Marked as read
@@ -132,6 +183,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, o
     </Card>
   );
 };
+
 
 const Day2Screen1 = () => {
   const { state, setState } = useAppState();
@@ -164,7 +216,9 @@ const Day2Screen1 = () => {
   // Section 1 reveal cards: progressive unlock + toggle + mark-as-read gating.
   const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
   const [readCards, setReadCards] = useState<Set<number>>(new Set());
+  const [typedCards, setTypedCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(null);
+
 
   const handleMarkRead = (idx: number) => {
     setReadCards((prev) => {
@@ -457,6 +511,13 @@ const Day2Screen1 = () => {
                           isLocked={lockedCard}
                           isLoading={cardsLoading && !aiBodies}
                           isRead={readCards.has(idx)}
+                          alreadyTyped={typedCards.has(idx)}
+                          onTypingComplete={() => setTypedCards((prev) => {
+                            if (prev.has(idx)) return prev;
+                            const next = new Set(prev);
+                            next.add(idx);
+                            return next;
+                          })}
                           onToggle={() => handleToggleCard(idx)}
                           onMarkRead={() => handleMarkRead(idx)}
                         />

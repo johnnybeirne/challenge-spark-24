@@ -163,6 +163,27 @@ const Day2Screen1 = () => {
 
   const [aiBodies, setAiBodies] = useState<{ card1: string; card2: string; card3: string } | null>(null);
   const [cardsLoading, setCardsLoading] = useState(true);
+  const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user || cancelled) return;
+        const { data } = await (supabase.from("ai_user_context") as any)
+          .select("assessment_completed_at")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (!cancelled && data?.assessment_completed_at) {
+          setAssessmentCompleted(true);
+        }
+      } catch {
+        // ignore — default to not completed
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

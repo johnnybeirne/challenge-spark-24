@@ -620,8 +620,111 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
   });
 }
 
+// ─────────────────────────────────────────────────────────────
+// Moment: sample_quiz — generate an editable sample quiz draft
+// from the builder's Day 1 setup. Returns a strict JSON shape:
+//   { quizTitle, questions: string[9], tiers: { low, mid, high } }
+// ─────────────────────────────────────────────────────────────
+async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
+  const p = builderProfile(inputs);
+  const aud = p.audience || "your audience";
+  const prob = p.problem || "the problem they want to solve";
+  const sup = p.superpower || "your edge";
+  const how = p.how || "your approach";
+  const out = p.outcome || "the outcome they want";
 
+  const fallbackQuiz = {
+    quizTitle: `The ${aud} ${prob} Scorecard`.slice(0, 80),
+    questions: [
+      `Which best describes where you are right now with ${prob}?`,
+      `What have you already tried to solve ${prob}?`,
+      `How long has ${prob} been holding you back?`,
+      `What does success look like in the next 30 days for you and ${prob}?`,
+      `What is the single biggest obstacle standing between you and ${out}?`,
+      `How do you currently measure progress on ${prob}?`,
+      `Which of these patterns sounds most like your situation around ${prob}?`,
+      `If ${prob} were solved tomorrow, what would change first for you?`,
+      `How ready are you to take the next step toward ${out}?`,
+    ],
+    tiers: {
+      low:  `You are at the very start with ${prob}. The fastest win is to get clear on the one obstacle holding you back before changing anything else.`,
+      mid:  `You have made real progress on ${prob} but are stuck on a specific bottleneck. ${sup} applied to ${how} is the unlock from here.`,
+      high: `You are close to ${out}. The next step is removing the final friction so what you have already built can compound.`,
+    },
+  };
 
+  const system = `${JOHNNY_VOICE}
+
+You are drafting an EDITABLE SAMPLE QUIZ for the builder, grounded entirely in their Day 1 setup.
+
+KB:
+${KB}
+
+Return STRICT JSON only — no markdown, no commentary. Shape:
+{
+  "quizTitle": string,          // 4-10 words, specific to the audience + problem
+  "questions": string[9],       // exactly 9 short questions (max 22 words each), in plain English
+  "tiers": {
+    "low":  string,             // 1-2 sentences, ~30-50 words
+    "mid":  string,             // 1-2 sentences, ~30-50 words
+    "high": string              // 1-2 sentences, ~30-50 words
+  }
+}
+
+Rules:
+- Use ONLY the builder's Day 1 data below. Do not invent facts.
+- Questions diagnose Present State, Preferred Future, and Pitfalls.
+- Tiers are progress-oriented identity labels (low = starting, mid = in motion, high = nearly there).
+- No emojis. No exclamation marks. No "once".`;
+
+  const user = `Builder Day 1 setup:
+- audience (client avatar): ${aud}
+- their problem: ${prob}
+- builder's superpower: ${sup}
+- builder's approach (obstacle/how): ${how}
+- challenge outcome: ${out}
+
+Generate the sample quiz JSON now.`;
+
+  try {
+    const res = await callGateway({
+      model: MODEL,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+      response_format: { type: "json_object" },
+    });
+    if (res.status === 429 || res.status === 402) {
+      return new Response(JSON.stringify(fallbackQuiz), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!res.ok) throw new Error(`Gateway ${res.status}`);
+    const data = await res.json();
+    const raw = data?.choices?.[0]?.message?.content ?? "";
+    let parsed: any;
+    try { parsed = typeof raw === "string" ? JSON.parse(raw) : raw; } catch { parsed = null; }
+    const questions = Array.isArray(parsed?.questions) ? parsed.questions.map((q: unknown) => String(q || "").trim()).filter(Boolean) : [];
+    const quiz = {
+      quizTitle: String(parsed?.quizTitle || fallbackQuiz.quizTitle).trim().slice(0, 120),
+      questions: (questions.length === 9 ? questions : fallbackQuiz.questions).map((q: string) => q.slice(0, 240)),
+      tiers: {
+        low:  String(parsed?.tiers?.low  || fallbackQuiz.tiers.low ).trim().slice(0, 500),
+        mid:  String(parsed?.tiers?.mid  || fallbackQuiz.tiers.mid ).trim().slice(0, 500),
+        high: String(parsed?.tiers?.high || fallbackQuiz.tiers.high).trim().slice(0, 500),
+      },
+    };
+    return new Response(JSON.stringify(quiz), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("sample_quiz error", err);
+    return new Response(JSON.stringify(fallbackQuiz), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -646,6 +749,7 @@ Deno.serve(async (req) => {
     if (moment === "opener_s2") return await handleOpenerS2(inputs);
     if (moment === "insight_s2") return await handleInsightS2({ key: payload.key, label: payload.label, inputs });
     if (moment === "cards") return await handleCards(inputs);
+    if (moment === "sample_quiz") return await handleSampleQuiz(inputs);
     return new Response(
       JSON.stringify({ error: `Unknown moment: ${moment}` }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },

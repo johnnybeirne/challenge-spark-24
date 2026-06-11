@@ -393,18 +393,6 @@ const Day2Screen1 = () => {
                               {assessmentCompleted ? "See the quiz that brought you here" : "See a live example"}
                             </a>
                           </Button>
-                          <Button
-                            onClick={() => {
-                              handleContinue();
-                              setTimeout(() => {
-                                document
-                                  .getElementById("day2-section-2")
-                                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                              }, 50);
-                            }}
-                          >
-                            Create your quiz now
-                          </Button>
                         </div>
                       </CardContent>
                     </Card>

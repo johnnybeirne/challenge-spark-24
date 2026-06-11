@@ -163,6 +163,27 @@ const Day2Screen1 = () => {
 
   const [aiBodies, setAiBodies] = useState<{ card1: string; card2: string; card3: string } | null>(null);
   const [cardsLoading, setCardsLoading] = useState(true);
+  const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user || cancelled) return;
+        const { data } = await (supabase.from("ai_user_context") as any)
+          .select("assessment_completed_at")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (!cancelled && data?.assessment_completed_at) {
+          setAssessmentCompleted(true);
+        }
+      } catch {
+        // ignore — default to not completed
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -364,7 +385,9 @@ const Day2Screen1 = () => {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <p className="text-sm sm:text-base leading-relaxed text-foreground">
-                          Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for {clientAvatar}. Take two minutes to go through it as a creator, not a participant. Notice how each question surfaces a gap and how the result page makes you want to take the next step.
+                          {assessmentCompleted
+                            ? `You have already taken the Leadio assessment. Open it again now but this time look at it as a creator, not a participant. Notice how each question surfaces a gap in ${clientAvatar}'s thinking and how the result page makes you want to take the next step. That is exactly what your quiz will do.`
+                            : `Want to see what your quiz could look like? The Leadio assessment is a live example of exactly the kind of quiz you are building for ${clientAvatar}. Take two minutes to go through it as a creator. Notice how each question surfaces a gap and how the result page makes you want to take the next step.`}
                         </p>
                         <Button asChild variant="secondary">
                           <a href="/assessment" target="_blank" rel="noopener noreferrer">

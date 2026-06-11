@@ -37,7 +37,8 @@ function readDay1Values(aiOutputs: Record<string, string> | undefined) {
     clientAvatar: clean(setup.audience) || "your audience",
     problem: clean(setup.problem) || "where they are stuck",
     challengeOutcome: clean(setup.outcome) || "the result they want",
-    challengePromise: promise || "",
+    challengePromise: promise || "your challenge promise",
+    superpower: clean(setup.superpower) || "your unique approach",
   };
 }
 

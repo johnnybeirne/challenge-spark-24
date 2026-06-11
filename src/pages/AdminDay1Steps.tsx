@@ -345,6 +345,14 @@ const LivePreview = ({
               </div>
             </div>
           )}
+
+          {isTextInput && examples.length > 0 && (
+            <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+              {examples.map((ex, i) => (
+                <li key={i}>{ex}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

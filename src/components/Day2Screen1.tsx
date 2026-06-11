@@ -201,9 +201,9 @@ const Day2Screen1 = () => {
             ].map((row) => {
               const v = row.value ? row.value.charAt(0).toUpperCase() + row.value.slice(1) : row.value;
               return (
-                <div key={row.label} className="flex gap-2 whitespace-nowrap overflow-hidden">
+                <div key={row.label} className="flex flex-wrap gap-x-2">
                   <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
-                  <dd className="text-muted-foreground truncate">{v}</dd>
+                  <dd className="text-muted-foreground">{v}</dd>
                 </div>
               );
             })}

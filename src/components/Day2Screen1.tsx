@@ -1,5 +1,8 @@
-import { Lock } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronDown, Lock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 
@@ -9,8 +12,102 @@ const SECTIONS = [
   { id: 3, label: "Export", title: "Export your plan" },
 ];
 
+// Pull Day 1 values: audience (clientAvatar), problem, outcome (challengeOutcome),
+// and the AI-generated challenge promise. Each falls back to a natural phrase.
+function readDay1Values(aiOutputs: Record<string, string> | undefined) {
+  let setup: Record<string, unknown> = {};
+  try {
+    const raw = aiOutputs?.day1Setup;
+    if (typeof raw === "string" && raw) setup = JSON.parse(raw);
+    else if (raw && typeof raw === "object") setup = raw as Record<string, unknown>;
+  } catch {}
+
+  let promise = "";
+  try {
+    const raw = aiOutputs?.day1_promise;
+    if (typeof raw === "string" && raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.promise === "string") promise = parsed.promise.trim();
+    }
+  } catch {}
+
+  const clean = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
+  return {
+    clientAvatar: clean(setup.audience) || "your audience",
+    problem: clean(setup.problem) || "where they are stuck",
+    challengeOutcome: clean(setup.outcome) || "the result they want",
+    challengePromise: promise || "",
+  };
+}
+
+interface RevealCardProps {
+  index: number;
+  title: string;
+  body: string;
+  isOpen: boolean;
+  isLocked: boolean;
+  onToggle: () => void;
+}
+
+const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCardProps) => {
+  return (
+    <Card
+      className={cn(
+        "transition-colors",
+        isLocked && "border-dashed bg-muted/40 opacity-70",
+      )}
+    >
+      <button
+        type="button"
+        onClick={isLocked ? undefined : onToggle}
+        disabled={isLocked}
+        aria-expanded={isOpen}
+        className={cn(
+          "w-full text-left",
+          isLocked ? "cursor-not-allowed" : "cursor-pointer",
+        )}
+      >
+        <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <span
+              className={cn(
+                "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black",
+                isLocked
+                  ? "bg-background text-muted-foreground border border-border"
+                  : "bg-primary text-primary-foreground",
+              )}
+            >
+              {index}
+            </span>
+            <CardTitle className="text-base sm:text-lg leading-snug">{title}</CardTitle>
+          </div>
+          {isLocked ? (
+            <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          ) : (
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                isOpen && "rotate-180",
+              )}
+              aria-hidden="true"
+            />
+          )}
+        </CardHeader>
+      </button>
+      {isOpen && !isLocked && (
+        <CardContent>
+          <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
+            {body}
+          </p>
+        </CardContent>
+      )}
+    </Card>
+  );
+};
+
 const Day2Screen1 = () => {
-  const { state, authUser } = useAppState();
+  const { state, setState, authUser } = useAppState();
 
   const rawName =
     (state.user?.name as string | undefined) ||
@@ -34,6 +131,58 @@ const Day2Screen1 = () => {
 
   // Active = first incomplete section. Later sections are locked.
   const activeId = SECTIONS.find((s) => !completeMap[s.id])?.id ?? SECTIONS.length;
+
+  const { clientAvatar, problem, challengeOutcome } = useMemo(
+    () => readDay1Values(state.challenge.aiOutputs),
+    [state.challenge.aiOutputs],
+  );
+
+  // Section 1 reveal cards: progressive unlock + toggle.
+  const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
+  const [openCard, setOpenCard] = useState<number | null>(null);
+
+  const cardCopy = [
+    {
+      title: "The quiz earns the right to ask for 3 days.",
+      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand. That result creates the motivation to go further. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
+    },
+    {
+      title: "Your quiz shows them the gap. Your challenge closes it.",
+      body: `Your challenge helps ${clientAvatar} move from ${problem} to ${challengeOutcome}. Most of them do not fully see that gap yet. Your quiz surfaces it. When they finish and see their result, they should think: now I understand why I need to do this. Your challenge is the answer sitting right there.`,
+    },
+    {
+      title: "The quiz is how your challenge spreads.",
+      body: `Every person who takes your quiz gets a personalised result they want to share. When they share it, they send other people into the same funnel. Those people take the quiz, see the gap, and enter your challenge. No ads. No content. The quiz does the work.`,
+    },
+  ];
+
+  const handleToggleCard = (idx: number) => {
+    // Lock rule: card N requires card N-1 already opened.
+    if (idx > 0 && !openedCards.has(idx - 1)) return;
+    setOpenedCards((prev) => {
+      if (prev.has(idx)) return prev;
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+    setOpenCard((prev) => (prev === idx ? null : idx));
+  };
+
+  const allOpened = openedCards.size === cardCopy.length;
+
+  const handleContinue = () => {
+    setState((prev) => ({
+      ...prev,
+      challenge: {
+        ...prev.challenge,
+        day2: {
+          section1Complete: true,
+          section2Complete: prev.challenge.day2?.section2Complete ?? false,
+          section3Complete: prev.challenge.day2?.section3Complete ?? false,
+        },
+      },
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,24 +236,95 @@ const Day2Screen1 = () => {
             const isComplete = completeMap[s.id];
             const isLocked = !isActive && !isComplete;
 
+            if (s.id !== 1) {
+              return (
+                <Card
+                  key={s.id}
+                  className={cn(
+                    "transition-colors",
+                    isLocked && "border-dashed bg-muted/40 opacity-70",
+                  )}
+                >
+                  <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
+                    <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
+                    {isLocked && (
+                      <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                    )}
+                  </CardHeader>
+                  {isActive && (
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">Content coming in next step.</p>
+                    </CardContent>
+                  )}
+                </Card>
+              );
+            }
+
+            // Section 1
             return (
-              <Card
-                key={s.id}
-                className={cn(
-                  "transition-colors",
-                  isLocked && "border-dashed bg-muted/40 opacity-70",
-                )}
-              >
-                <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-                  <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
-                  {isLocked && <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
-                </CardHeader>
-                {isActive && (
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">Content coming in next step.</p>
+              <section key={s.id} className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {cardCopy.map((c, idx) => {
+                      const lockedCard = idx > 0 && !openedCards.has(idx - 1);
+                      return (
+                        <RevealCard
+                          key={idx}
+                          index={idx + 1}
+                          title={c.title}
+                          body={c.body}
+                          isOpen={openCard === idx}
+                          isLocked={lockedCard}
+                          onToggle={() => handleToggleCard(idx)}
+                        />
+                      );
+                    })}
+
+                    {allOpened && (
+                      <div className="space-y-4 pt-2 animate-fade-in">
+                        <p className="text-sm sm:text-base font-semibold text-foreground">
+                          Your quiz has one job: show {clientAvatar} the gap that your challenge closes.
+                        </p>
+
+                        <Card className="bg-muted/50 border-dashed">
+                          <CardHeader>
+                            <CardTitle className="text-base sm:text-lg">
+                              Want to go deeper on quiz funnel strategy?
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                              The premium course covers the full quiz-to-challenge funnel in detail.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <Button asChild variant="outline" className="flex-1">
+                                <Link to="/referrals">Invite a friend to unlock</Link>
+                              </Button>
+                              <Button asChild className="flex-1">
+                                <Link to="/upgrade">Upgrade to full course</Link>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+
+                    <div className="pt-2">
+                      <Button
+                        size="lg"
+                        className="w-full sm:w-auto"
+                        disabled={!allOpened || isComplete}
+                        onClick={handleContinue}
+                      >
+                        {isComplete ? "Section 1 complete" : "Continue to Section 2"}
+                      </Button>
+                    </div>
                   </CardContent>
-                )}
-              </Card>
+                </Card>
+              </section>
             );
           })}
         </div>

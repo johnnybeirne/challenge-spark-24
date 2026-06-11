@@ -1,17 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, RotateCcw, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { Save, RotateCcw, Check } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { useAppState } from "@/context/AppContext";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
+import { challengeTypeLabel } from "@/lib/personalisation";
+import { formatExpertTypes } from "@/components/Day1Setup";
 import {
   DAY1_EXAMPLE_VALUES,
   DAY1_TAG_KEYS,
   Day1StepMessage,
+  Day1TagKey,
   defaultDay1Steps,
   fetchDay1StepsRemote,
   loadDay1Steps,
@@ -21,8 +26,8 @@ import {
 } from "@/lib/day1StepMessages";
 
 // -------------------------------------------------------------
-// Extra-field schema for each step (options / placeholders / etc.)
-// Persisted locally; messages still sync to Supabase via existing API.
+// Step schema (banner / options / placeholder / promise)
+// Mirrors src/components/Day1Setup.tsx exactly.
 // -------------------------------------------------------------
 
 type StepKind =
@@ -37,18 +42,12 @@ interface StepSchema {
   id: string;
   kind: StepKind;
   showContextBanner: boolean;
-  contextBanner?: string; // template, supports [audience], [expert_type]
+  contextBanner?: string;
   options?: string[];
   placeholder?: string;
   promiseTemplate?: string;
 }
 
-// Defaults mirror the live Day 1 flow in src/components/Day1Setup.tsx:
-// - Step 1 buttons match the `audienceOptions` labels.
-// - Step 2 banner matches the "You serve: …" recap shown after Step 1.
-// - Step 2b options match `EXPERT_TYPE_OPTIONS`.
-// - Step 4 options match the `challengeOptions[].description` strings.
-// - Step 5/6/7 placeholders match the fallback `*Placeholder` strings.
 const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
   "step-1": {
     id: "step-1",
@@ -71,7 +70,6 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "You serve: [audience]",
     options: ["Coach", "Consultant", "Course creator", "Trainer", "Speaker", "Author"],
   },
-
   "step-3": {
     id: "step-3",
     kind: "text-with-banner",
@@ -126,7 +124,6 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
   },
 };
 
-
 const SCHEMA_STORAGE_KEY = "admin.day1StepSchemas.v3";
 
 const loadSchemas = (): Record<string, StepSchema> => {
@@ -151,12 +148,186 @@ const saveSchemas = (schemas: Record<string, StepSchema>) => {
 };
 
 // -------------------------------------------------------------
+// Hydrate bracket-tag values from real signed-in user state.
+// Falls back to example values only when the field is empty.
+// -------------------------------------------------------------
+
+const useLiveTagValues = (): Record<Day1TagKey, string> => {
+  const { state } = useAppState();
+  const identity = useChallengeIdentity();
+
+  return useMemo(() => {
+    const firstName = (state.user?.name || "").trim().split(/\s+/)[0] || "";
+    const setup: any = (state.challenge?.aiOutputs as any)?.day1Setup ?? {};
+    const audience = String(setup.audience || identity.audience || "").trim();
+    const expertType = formatExpertTypes(setup.expertType);
+    const superpower = String(setup.superpower || "").trim();
+    const challengeTypeRaw = String(setup.challengeType || "").trim();
+    const challengeType = challengeTypeRaw ? challengeTypeLabel(challengeTypeRaw) : "";
+    const problem = String(setup.problem || identity.problem || "").trim();
+    const processV = String(setup.how || identity.method || "").trim();
+    const outcome = String(setup.outcome || "").trim();
+
+    let promise = "";
+    try {
+      const raw = (state.challenge?.aiOutputs as any)?.day1_promise;
+      if (raw) {
+        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+        promise = String(parsed?.promise || "").trim();
+      }
+    } catch {
+      /* noop */
+    }
+
+    const live: Record<Day1TagKey, string> = {
+      first_name: firstName,
+      audience,
+      expert_type: expertType,
+      superpower,
+      challenge_type: challengeType,
+      problem,
+      process: processV,
+      outcome,
+      promise,
+    };
+
+    // Use example only when live value is empty, so the preview always renders.
+    const merged = { ...DAY1_EXAMPLE_VALUES };
+    (Object.keys(live) as Day1TagKey[]).forEach((k) => {
+      if (live[k]) merged[k] = live[k];
+    });
+    return merged;
+  }, [state.user, state.challenge?.aiOutputs, identity]);
+};
+
+// -------------------------------------------------------------
+// Live preview — styled to mirror the Day 1 chat experience.
+// -------------------------------------------------------------
+
+const LivePreview = ({
+  step,
+  schema,
+  values,
+}: {
+  step: Day1StepMessage;
+  schema: StepSchema;
+  values: Record<Day1TagKey, string>;
+}) => {
+  const message = renderDay1Preview(step.message, values);
+  const banner = schema.contextBanner ? renderDay1Preview(schema.contextBanner, values) : "";
+  const placeholder = schema.placeholder ? renderDay1Preview(schema.placeholder, values) : "";
+  const promise = schema.promiseTemplate ? renderDay1Preview(schema.promiseTemplate, values) : "";
+
+  return (
+    <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden">
+      <div className="border-b border-border bg-muted/30 px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center justify-between">
+        <span>Live preview</span>
+        <span className="text-[10px] font-normal normal-case tracking-normal">
+          {step.label}
+        </span>
+      </div>
+
+      <div className="p-5 space-y-4 min-h-[420px]">
+        {schema.showContextBanner && banner && (
+          <div className="inline-flex rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+            {banner}
+          </div>
+        )}
+
+        {/* Coach bubble */}
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">
+            J
+          </div>
+          <div className="flex-1 rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm leading-relaxed text-foreground whitespace-pre-line">
+            {message.trim() || (
+              <span className="italic text-muted-foreground">Message preview appears here.</span>
+            )}
+          </div>
+        </div>
+
+        {/* Response area */}
+        <div className="pl-11 space-y-3">
+          {(schema.kind === "options" || schema.kind === "options-with-banner") && (
+            <div className="flex flex-col gap-2">
+              {(schema.options ?? []).map((opt, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground/80 hover:bg-accent transition-colors"
+                >
+                  {opt}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {schema.kind === "multi-select" && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {(schema.options ?? []).map((opt, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-center text-foreground/80"
+                >
+                  {opt}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {(schema.kind === "text-input" || schema.kind === "text-with-banner") && (
+            <div className="rounded-lg border border-border bg-background px-4 py-3 text-sm italic text-muted-foreground min-h-[64px]">
+              {placeholder || "Type your answer…"}
+            </div>
+          )}
+
+          {schema.kind === "promise" && (
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-primary/80">
+                Your promise
+              </p>
+              <p className="text-base leading-relaxed text-foreground">
+                {promise || <span className="italic text-muted-foreground">Promise preview.</span>}
+              </p>
+              <div className="flex gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
+                  <Check className="h-3 w-3" /> Confirm promise
+                </span>
+                <span className="rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground">
+                  Edit
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// -------------------------------------------------------------
 
 const AdminDay1Steps = () => {
   const [steps, setSteps] = useState<Day1StepMessage[]>(() => loadDay1Steps());
   const [schemas, setSchemas] = useState<Record<string, StepSchema>>(() => loadSchemas());
-  const [saving, setSaving] = useState(false);
+  const [activeId, setActiveId] = useState<string>(() => loadDay1Steps()[0]?.id ?? "step-1");
+  const [saving, setSaving] = useState<string | null>(null);
   const [hydrating, setHydrating] = useState(true);
+
+  // Track which editable field has focus so chip clicks insert at the cursor.
+  const messageRef = useRef<HTMLTextAreaElement | null>(null);
+  const bannerRef = useRef<HTMLInputElement | null>(null);
+  const placeholderRef = useRef<HTMLInputElement | null>(null);
+  const promiseRef = useRef<HTMLTextAreaElement | null>(null);
+  const optionRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const [focusedField, setFocusedField] = useState<
+    | { kind: "message" }
+    | { kind: "banner" }
+    | { kind: "placeholder" }
+    | { kind: "promise" }
+    | { kind: "option"; index: number }
+  >({ kind: "message" });
+
+  const liveValues = useLiveTagValues();
 
   useEffect(() => {
     trackEvent("admin_training_viewed", { surface: "day1_step_editor" });
@@ -174,6 +345,10 @@ const AdminDay1Steps = () => {
       cancelled = true;
     };
   }, []);
+
+  const activeStep = steps.find((s) => s.id === activeId) ?? steps[0];
+  const activeSchema =
+    schemas[activeStep?.id] ?? { id: activeStep?.id ?? "", kind: "text-input", showContextBanner: false };
 
   const updateStep = (id: string, message: string) =>
     setSteps((prev) => {
@@ -199,338 +374,312 @@ const AdminDay1Steps = () => {
       return next;
     });
 
-  const persistRemote = async (next: Day1StepMessage[], successMsg: string) => {
-    setSaving(true);
-    const { error } = await saveDay1StepsRemote(next);
-    setSaving(false);
+  const handleSaveStep = async () => {
+    if (!activeStep) return;
+    setSaving(activeStep.id);
+    saveSchemas(schemas);
+    const { error } = await saveDay1StepsRemote(steps);
+    setSaving(null);
     if (error) {
-      toast.error("Could not sync to the cloud. Local edits still saved.");
+      toast.error("Could not sync. Local edits still saved.");
       return;
     }
-    toast.success(successMsg);
-  };
-
-  const handleSave = async () => {
-    saveSchemas(schemas);
-    await persistRemote(steps, "Day 1 step messages synced to the cloud");
+    toast.success(`${activeStep.label} saved`);
     trackEvent("admin_training_updated", { surface: "day1_step_editor" });
   };
 
-  const handleResetAll = async () => {
-    setSteps(defaultDay1Steps);
-    setSchemas(DEFAULT_SCHEMAS);
-    saveSchemas(DEFAULT_SCHEMAS);
-    await persistRemote(defaultDay1Steps, "Reverted to defaults and synced.");
+  const handleResetStep = () => {
+    if (!activeStep) return;
+    const def = defaultDay1Steps.find((s) => s.id === activeStep.id);
+    if (def) updateStep(activeStep.id, def.message);
+    const defSchema = DEFAULT_SCHEMAS[activeStep.id];
+    if (defSchema) updateSchema(activeStep.id, defSchema);
   };
 
-  const handleResetOne = (id: string) => {
-    const def = defaultDay1Steps.find((s) => s.id === id);
-    if (def) updateStep(id, def.message);
-    const defSchema = DEFAULT_SCHEMAS[id];
-    if (defSchema) updateSchema(id, defSchema);
+  // -- Tag insertion at cursor ------------------------------------------------
+  const insertAtCursor = <T extends HTMLInputElement | HTMLTextAreaElement>(
+    el: T | null,
+    current: string,
+    insert: string,
+    commit: (next: string) => void,
+  ) => {
+    if (!el) {
+      commit(current + insert);
+      return;
+    }
+    const start = el.selectionStart ?? current.length;
+    const end = el.selectionEnd ?? current.length;
+    const next = current.slice(0, start) + insert + current.slice(end);
+    commit(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      const pos = start + insert.length;
+      try {
+        el.setSelectionRange(pos, pos);
+      } catch {
+        /* noop */
+      }
+    });
   };
+
+  const insertTag = (tag: Day1TagKey) => {
+    if (!activeStep) return;
+    const token = `[${tag}]`;
+    switch (focusedField.kind) {
+      case "message":
+        insertAtCursor(messageRef.current, activeStep.message, token, (next) =>
+          updateStep(activeStep.id, next),
+        );
+        break;
+      case "banner":
+        insertAtCursor(bannerRef.current, activeSchema.contextBanner ?? "", token, (next) =>
+          updateSchema(activeStep.id, { contextBanner: next }),
+        );
+        break;
+      case "placeholder":
+        insertAtCursor(placeholderRef.current, activeSchema.placeholder ?? "", token, (next) =>
+          updateSchema(activeStep.id, { placeholder: next }),
+        );
+        break;
+      case "promise":
+        insertAtCursor(promiseRef.current, activeSchema.promiseTemplate ?? "", token, (next) =>
+          updateSchema(activeStep.id, { promiseTemplate: next }),
+        );
+        break;
+      case "option": {
+        const idx = focusedField.index;
+        const opts = activeSchema.options ?? [];
+        const current = opts[idx] ?? "";
+        insertAtCursor(optionRefs.current[idx] ?? null, current, token, (next) =>
+          updateOption(activeStep.id, idx, next),
+        );
+        break;
+      }
+    }
+  };
+
+  const hasOptions =
+    activeSchema.kind === "options" ||
+    activeSchema.kind === "options-with-banner" ||
+    activeSchema.kind === "multi-select";
+  const hasPlaceholder =
+    activeSchema.kind === "text-input" || activeSchema.kind === "text-with-banner";
+
+  if (!activeStep) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
+  }
 
   return (
-    <div className="mx-auto max-w-5xl p-4 sm:p-6">
-      <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Day 1 Step Editor</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Each step shows a live preview of what the user actually sees, plus editable fields for every
-            element on the screen (message, options, placeholder, context banner).
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={handleResetAll} className="gap-2">
-            <RotateCcw className="h-4 w-4" /> Reset all
-          </Button>
-          <Button onClick={handleSave} disabled={saving || hydrating} className="gap-2">
-            <Save className="h-4 w-4" /> {hydrating ? "Loading…" : saving ? "Syncing…" : "Save"}
-          </Button>
-        </div>
+    <div className="mx-auto max-w-[1400px] p-4 sm:p-6">
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold">Day 1 Step Editor</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Edit any of the 9 onboarding steps. The right column shows exactly what the user sees, hydrated with your real Day 1 answers.
+        </p>
       </header>
 
-      <Card className="mb-6">
-        <CardContent className="p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-            Available bracket tags
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {DAY1_TAG_KEYS.map((key) => (
-              <Badge key={key} variant="secondary" className="font-mono text-xs">
-                [{key}] → {DAY1_EXAMPLE_VALUES[key]}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* LEFT — editor */}
+        <div className="space-y-5">
+          {/* Step selector */}
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                Steps
+              </p>
+              <ol className="flex flex-wrap gap-1.5">
+                {steps.map((s, i) => {
+                  const active = s.id === activeId;
+                  return (
+                    <li key={s.id}>
+                      <button
+                        type="button"
+                        onClick={() => setActiveId(s.id)}
+                        className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                          active
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-foreground/70 hover:bg-accent"
+                        }`}
+                        title={s.label}
+                      >
+                        <span
+                          className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
+                            active ? "bg-primary-foreground/20" : "bg-background"
+                          }`}
+                        >
+                          {i + 1}
+                        </span>
+                        <span className="truncate max-w-[140px]">
+                          {s.label.replace(/^Step \d+ of \d+ — /, "")}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </CardContent>
+          </Card>
+
+          {/* Tag chips */}
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                Insert tag at cursor
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {DAY1_TAG_KEYS.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()} // keep focus on the input
+                    onClick={() => insertTag(key)}
+                    className="rounded-md border border-border bg-background px-2 py-1 font-mono text-[11px] text-foreground/80 hover:bg-accent transition-colors"
+                    title={`Inserts [${key}] — live value: ${liveValues[key] || "(empty)"}`}
+                  >
+                    [{key}]
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[10px] text-muted-foreground">
+                Click a chip to insert it at the cursor in whichever field you last focused.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Editable fields for active step */}
+          <Card>
+            <CardContent className="p-5 space-y-5">
+              <div className="flex items-center justify-between gap-2">
+                <Label className="text-sm font-semibold">{activeStep.label}</Label>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm" onClick={handleResetStep} className="gap-2 h-8">
+                    <RotateCcw className="h-3.5 w-3.5" /> Reset
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleSaveStep}
+                    disabled={saving === activeStep.id || hydrating}
+                    className="gap-2 h-8"
+                  >
+                    <Save className="h-3.5 w-3.5" />
+                    {saving === activeStep.id ? "Saving…" : "Save step"}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Message
+                </Label>
+                <Textarea
+                  ref={messageRef}
+                  rows={4}
+                  value={activeStep.message}
+                  onFocus={() => setFocusedField({ kind: "message" })}
+                  onChange={(e) => updateStep(activeStep.id, e.target.value)}
+                  placeholder="e.g. So [first_name], you work with [audience]…"
+                  className="text-sm"
+                />
+              </div>
+
+              {activeSchema.showContextBanner && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Context banner
+                  </Label>
+                  <Input
+                    ref={bannerRef}
+                    value={activeSchema.contextBanner ?? ""}
+                    onFocus={() => setFocusedField({ kind: "banner" })}
+                    onChange={(e) => updateSchema(activeStep.id, { contextBanner: e.target.value })}
+                    placeholder="e.g. You work with: [audience]"
+                    className="text-sm"
+                  />
+                </div>
+              )}
+
+              {hasPlaceholder && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Input placeholder
+                  </Label>
+                  <Input
+                    ref={placeholderRef}
+                    value={activeSchema.placeholder ?? ""}
+                    onFocus={() => setFocusedField({ kind: "placeholder" })}
+                    onChange={(e) => updateSchema(activeStep.id, { placeholder: e.target.value })}
+                    placeholder="Placeholder text shown in the input"
+                    className="text-sm"
+                  />
+                </div>
+              )}
+
+              {hasOptions && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Option labels
+                  </Label>
+                  <div className="space-y-2">
+                    {(activeSchema.options ?? []).map((opt, i) => (
+                      <Input
+                        key={i}
+                        ref={(el) => {
+                          optionRefs.current[i] = el;
+                        }}
+                        value={opt}
+                        onFocus={() => setFocusedField({ kind: "option", index: i })}
+                        onChange={(e) => updateOption(activeStep.id, i, e.target.value)}
+                        className="text-sm"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSchema.kind === "promise" && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Promise template
+                  </Label>
+                  <Textarea
+                    ref={promiseRef}
+                    rows={2}
+                    value={activeSchema.promiseTemplate ?? ""}
+                    onFocus={() => setFocusedField({ kind: "promise" })}
+                    onChange={(e) =>
+                      updateSchema(activeStep.id, { promiseTemplate: e.target.value })
+                    }
+                    placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
+                    className="text-sm"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* RIGHT — live preview */}
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <LivePreview step={activeStep} schema={activeSchema} values={liveValues} />
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {DAY1_TAG_KEYS.map((k) => (
+              <Badge
+                key={k}
+                variant={liveValues[k] && liveValues[k] !== DAY1_EXAMPLE_VALUES[k] ? "default" : "secondary"}
+                className="font-mono text-[10px]"
+                title={liveValues[k] || "(empty — using example)"}
+              >
+                [{k}]
+                {liveValues[k] && liveValues[k] !== DAY1_EXAMPLE_VALUES[k] ? " ✓" : " · sample"}
               </Badge>
             ))}
           </div>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-5">
-        {steps.map((step) => (
-          <StepEditorCard
-            key={step.id}
-            step={step}
-            schema={schemas[step.id] ?? { id: step.id, kind: "text-input", showContextBanner: false }}
-            onChangeMessage={(msg) => updateStep(step.id, msg)}
-            onChangeSchema={(patch) => updateSchema(step.id, patch)}
-            onChangeOption={(idx, val) => updateOption(step.id, idx, val)}
-            onReset={() => handleResetOne(step.id)}
-          />
-        ))}
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <Button onClick={handleSave} disabled={saving} className="gap-2">
-          <Save className="h-4 w-4" /> {saving ? "Syncing…" : "Save all changes"}
-        </Button>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Tags marked ✓ are pulling your real Day 1 answers. Empty fields fall back to sample values so the preview always renders.
+          </p>
+        </div>
       </div>
     </div>
-  );
-};
-
-// -------------------------------------------------------------
-// Preview renderer — mirrors what each step looks like in Day1Setup
-// -------------------------------------------------------------
-
-const ContextBanner = ({ template }: { template: string }) => (
-  <div className="rounded-md border border-border bg-background/60 px-3 py-1.5 text-xs text-muted-foreground">
-    {renderDay1Preview(template)}
-  </div>
-);
-
-const StepPreview = ({
-  schema,
-  message,
-}: {
-  schema: StepSchema;
-  message: string;
-}) => {
-  const messageRendered = renderDay1Preview(message);
-  const promiseRendered = schema.promiseTemplate
-    ? renderDay1Preview(schema.promiseTemplate)
-    : "";
-
-  return (
-    <div className="rounded-md border border-dashed border-border bg-muted/30 p-3 space-y-2">
-      {schema.showContextBanner && schema.contextBanner && (
-        <ContextBanner template={schema.contextBanner} />
-      )}
-
-      <div className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-        {messageRendered.trim() || (
-          <span className="text-muted-foreground italic">Message preview appears here.</span>
-        )}
-      </div>
-
-      {(schema.kind === "options" || schema.kind === "options-with-banner") && (
-        <div className="flex flex-col gap-1.5">
-          {(schema.options ?? []).map((opt, i) => (
-            <div
-              key={i}
-              className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs text-foreground/70"
-            >
-              {opt}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {schema.kind === "multi-select" && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-          {(schema.options ?? []).map((opt, i) => (
-            <div
-              key={i}
-              className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs text-foreground/70"
-            >
-              {opt}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {(schema.kind === "text-input" || schema.kind === "text-with-banner") && (
-        <div className="rounded-md border border-border bg-background px-3 py-2 text-xs italic text-muted-foreground">
-          {schema.placeholder || "Placeholder text…"}
-        </div>
-      )}
-
-      {schema.kind === "promise" && (
-        <div className="rounded-md border border-primary/30 bg-background p-3 space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Your promise
-          </p>
-          <p className="text-sm leading-relaxed text-foreground/80">
-            {promiseRendered || <span className="italic text-muted-foreground">Promise preview.</span>}
-          </p>
-          <div className="flex gap-1.5">
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[10px] font-medium text-primary">
-              <Check className="h-3 w-3" /> Confirm
-            </span>
-            <span className="rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
-              Edit
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// -------------------------------------------------------------
-
-const StepEditorCard = ({
-  step,
-  schema,
-  onChangeMessage,
-  onChangeSchema,
-  onChangeOption,
-  onReset,
-}: {
-  step: Day1StepMessage;
-  schema: StepSchema;
-  onChangeMessage: (msg: string) => void;
-  onChangeSchema: (patch: Partial<StepSchema>) => void;
-  onChangeOption: (idx: number, value: string) => void;
-  onReset: () => void;
-}) => {
-  const id = `day1-step-${step.id}`;
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-
-  const preview = useMemo(
-    () => <StepPreview schema={schema} message={step.message} />,
-    [schema, step.message],
-  );
-
-  const hasOptions =
-    schema.kind === "options" ||
-    schema.kind === "options-with-banner" ||
-    schema.kind === "multi-select";
-
-  const hasPlaceholder =
-    schema.kind === "text-input" || schema.kind === "text-with-banner";
-
-  const hasAdvanced =
-    schema.showContextBanner || hasPlaceholder || hasOptions || schema.kind === "promise";
-
-  return (
-    <Card>
-      <CardContent className="p-5 sm:p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Label htmlFor={id} className="text-sm font-semibold">
-            {step.label}
-          </Label>
-          <Button variant="ghost" size="sm" onClick={onReset} className="gap-2 h-7">
-            <RotateCcw className="h-3.5 w-3.5" /> Reset
-          </Button>
-        </div>
-
-        {/* Message — always visible, primary field */}
-        <div className="space-y-1.5">
-          <Textarea
-            id={id}
-            rows={3}
-            value={step.message}
-            onChange={(e) => onChangeMessage(e.target.value)}
-            placeholder="e.g. So [first_name], you work with [audience]…"
-            className="text-sm"
-          />
-          <p className="text-[11px] text-muted-foreground">
-            Use bracket tags like <code className="font-mono">[first_name]</code> or <code className="font-mono">[audience]</code> — they're replaced with the user's real answers at runtime.
-          </p>
-        </div>
-
-        {/* Collapsible example preview */}
-        <button
-          type="button"
-          onClick={() => setShowPreview((v) => !v)}
-          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {showPreview ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-          Example preview {showPreview ? "" : "(with sample data)"}
-        </button>
-        {showPreview && preview}
-
-        {/* Collapsible advanced */}
-        {hasAdvanced && (
-          <>
-            <button
-              type="button"
-              onClick={() => setShowAdvanced((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {showAdvanced ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-              Advanced (banner, placeholder, options)
-            </button>
-
-            {showAdvanced && (
-              <div className="space-y-4 pt-2 border-t border-border">
-                {schema.showContextBanner && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Context banner
-                    </Label>
-                    <Input
-                      value={schema.contextBanner ?? ""}
-                      onChange={(e) => onChangeSchema({ contextBanner: e.target.value })}
-                      placeholder="e.g. You work with: [audience]"
-                      className="text-sm"
-                    />
-                  </div>
-                )}
-
-                {hasPlaceholder && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Input placeholder
-                    </Label>
-                    <Input
-                      value={schema.placeholder ?? ""}
-                      onChange={(e) => onChangeSchema({ placeholder: e.target.value })}
-                      placeholder="Placeholder text shown in the input"
-                      className="text-sm"
-                    />
-                  </div>
-                )}
-
-                {hasOptions && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Option labels
-                    </Label>
-                    <div className="space-y-2">
-                      {(schema.options ?? []).map((opt, i) => (
-                        <Input
-                          key={i}
-                          value={opt}
-                          onChange={(e) => onChangeOption(i, e.target.value)}
-                          className="text-sm"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {schema.kind === "promise" && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Promise template
-                    </Label>
-                    <Textarea
-                      rows={2}
-                      value={schema.promiseTemplate ?? ""}
-                      onChange={(e) => onChangeSchema({ promiseTemplate: e.target.value })}
-                      placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
-                      className="text-sm"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </CardContent>
-    </Card>
   );
 };
 

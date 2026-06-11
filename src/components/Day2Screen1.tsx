@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Lock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
@@ -48,10 +49,11 @@ interface RevealCardProps {
   body: string;
   isOpen: boolean;
   isLocked: boolean;
+  isLoading?: boolean;
   onToggle: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle }: RevealCardProps) => {
   return (
     <Card
       className={cn(
@@ -98,9 +100,17 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCa
       </button>
       {isOpen && !isLocked && (
         <CardContent>
-          <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
-            {body}
-          </p>
+          {isLoading ? (
+            <div className="space-y-2 animate-pulse" aria-live="polite" aria-busy="true">
+              <div className="h-3 rounded bg-muted" />
+              <div className="h-3 rounded bg-muted w-11/12" />
+              <div className="h-3 rounded bg-muted w-9/12" />
+            </div>
+          ) : (
+            <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
+              {body}
+            </p>
+          )}
         </CardContent>
       )}
     </Card>
@@ -135,19 +145,55 @@ const Day2Screen1 = () => {
   const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(null);
 
+  const fallbackBodies = useMemo(
+    () => ({
+      card1: `Before ${clientAvatar} commits to ${challengePromise}, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand against ${problem}. That result creates the motivation to take the next step.`,
+      card2: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different — the result page leads straight into the challenge, where ${clientAvatar} experiences ${superpower} first hand, not a score out of 100.`,
+      card3: `When ${clientAvatar} does your challenge, you are with them every step of the way, showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy — that is a relationship, and no email sequence comes close to it.`,
+    }),
+    [clientAvatar, challengePromise, problem, superpower, challengeOutcome],
+  );
+
+  const [aiBodies, setAiBodies] = useState<{ card1: string; card2: string; card3: string } | null>(null);
+  const [cardsLoading, setCardsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setCardsLoading(true);
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("day2-thread", {
+          body: {
+            moment: "cards",
+            inputs: {
+              audience: clientAvatar,
+              superpower,
+              problem,
+              outcome: challengeOutcome,
+            },
+          },
+        });
+        if (cancelled) return;
+        if (error) throw error;
+        const c = data?.cards;
+        if (c?.card1 && c?.card2 && c?.card3) {
+          setAiBodies({ card1: c.card1, card2: c.card2, card3: c.card3 });
+        }
+      } catch {
+        // keep aiBodies null → fall back to static copy
+      } finally {
+        if (!cancelled) setCardsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [clientAvatar, superpower, problem, challengeOutcome]);
+
+  const bodies = aiBodies ?? fallbackBodies;
+
   const cardCopy = [
-    {
-      title: "The quiz earns the right to ask for 3 days.",
-      body: `Before ${clientAvatar} commits to ${challengePromise}, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand against ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
-    },
-    {
-      title: "Most quizzes stop at the result. Yours does not.",
-      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} experiences your superpower of ${superpower} first hand, not a score out of 100.`,
-    },
-    {
-      title: "Three days builds more trust than three months of emails.",
-      body: `When ${clientAvatar} does your challenge, you are with them every step of the way. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence comes close to that.`,
-    },
+    { title: "The quiz earns the right to ask for 3 days.", body: bodies.card1 },
+    { title: "Most quizzes stop at the result. Yours does not.", body: bodies.card2 },
+    { title: "Three days builds more trust than three months of emails.", body: bodies.card3 },
   ];
 
   const handleToggleCard = (idx: number) => {
@@ -293,6 +339,7 @@ const Day2Screen1 = () => {
                           body={c.body}
                           isOpen={openCard === idx}
                           isLocked={lockedCard}
+                          isLoading={cardsLoading && !aiBodies}
                           onToggle={() => handleToggleCard(idx)}
                         />
                       );

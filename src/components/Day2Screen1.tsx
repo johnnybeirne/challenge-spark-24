@@ -342,7 +342,14 @@ const Day2Screen1 = () => {
                       <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     )}
                   </CardHeader>
-                  {isActive && (
+                  {isActive && s.id === 2 && (
+                    <CardContent>
+                      <Button size="lg" className="w-full sm:w-auto">
+                        Generate your quiz now
+                      </Button>
+                    </CardContent>
+                  )}
+                  {isActive && s.id !== 2 && (
                     <CardContent>
                       <p className="text-sm text-muted-foreground">Content coming in next step.</p>
                     </CardContent>
@@ -392,18 +399,6 @@ const Day2Screen1 = () => {
                             <a href="/assessment" target="_blank" rel="noopener noreferrer">
                               {assessmentCompleted ? "See the quiz that brought you here" : "See a live example"}
                             </a>
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleContinue();
-                              setTimeout(() => {
-                                document
-                                  .getElementById("day2-section-2")
-                                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                              }, 50);
-                            }}
-                          >
-                            Create your quiz now
                           </Button>
                         </div>
                       </CardContent>

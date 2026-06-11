@@ -603,9 +603,12 @@ const Day2Screen1 = () => {
                     )}
 
                     {allOpened && (
-                      <Button size="lg" className="w-full sm:w-auto">
+                      <button
+                        type="button"
+                        className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                      >
                         Generate your quiz now
-                      </Button>
+                      </button>
                     )}
 
 

@@ -327,10 +327,10 @@ const AdminDay1Steps = () => {
 
   // Track which editable field has focus so chip clicks insert at the cursor.
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
-  const bannerRef = useRef<HTMLInputElement | null>(null);
-  const placeholderRef = useRef<HTMLInputElement | null>(null);
+  const bannerRef = useRef<HTMLTextAreaElement | null>(null);
+  const placeholderRef = useRef<HTMLTextAreaElement | null>(null);
   const promiseRef = useRef<HTMLTextAreaElement | null>(null);
-  const optionRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const optionRefs = useRef<Record<number, HTMLTextAreaElement | null>>({});
   const [focusedField, setFocusedField] = useState<
     | { kind: "message" }
     | { kind: "banner" }

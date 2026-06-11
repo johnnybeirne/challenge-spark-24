@@ -524,7 +524,7 @@ const AdminDay1Steps = () => {
                     <li key={s.id}>
                       <button
                         type="button"
-                        onClick={() => setActiveId(s.id)}
+                        onClick={() => handleSelectStep(s.id)}
                         className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
                           active
                             ? "bg-primary text-primary-foreground"

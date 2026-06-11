@@ -811,6 +811,8 @@ const AdminDay1Steps = () => {
                 </div>
               </div>
 
+              <FormatToolbar />
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Message
@@ -819,7 +821,10 @@ const AdminDay1Steps = () => {
                   ref={messageRef}
                   rows={4}
                   value={activeStep.message}
-                  onFocus={() => setFocusedField({ kind: "message" })}
+                  onFocus={(e) => {
+                    trackFocus(e);
+                    setFocusedField({ kind: "message" });
+                  }}
                   onChange={(e) => updateStep(activeStep.id, e.target.value)}
                   placeholder="e.g. So [first_name], you work with [audience]…"
                   className="text-sm"

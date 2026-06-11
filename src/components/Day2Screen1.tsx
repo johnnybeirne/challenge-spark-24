@@ -446,6 +446,11 @@ const Day2Screen1 = () => {
                     })}
 
 
+                    {assessmentCompleted && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        Now you know how it works, take it again. This time you are the one building it.
+                      </p>
+                    )}
                     <a
                       href="/assessment"
                       target="_blank"
@@ -456,6 +461,7 @@ const Day2Screen1 = () => {
                         ? "Take the quiz for this challenge again"
                         : "See the quiz for this challenge"}
                     </a>
+
 
 
                     {allOpened && (

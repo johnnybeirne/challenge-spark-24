@@ -290,7 +290,7 @@ const Day2Screen1 = () => {
         }
         return null;
       });
-    }, 5000);
+    }, 1200);
   };
 
 

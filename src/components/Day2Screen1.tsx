@@ -161,9 +161,19 @@ const Day2Screen1 = () => {
     [state.challenge.aiOutputs],
   );
 
-  // Section 1 reveal cards: progressive unlock + toggle.
+  // Section 1 reveal cards: progressive unlock + toggle + mark-as-read gating.
   const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
+  const [readCards, setReadCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(null);
+
+  const handleMarkRead = (idx: number) => {
+    setReadCards((prev) => {
+      if (prev.has(idx)) return prev;
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+  };
 
   const fallbackBodies = useMemo(
     () => ({

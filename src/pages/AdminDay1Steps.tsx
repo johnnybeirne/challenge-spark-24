@@ -46,6 +46,8 @@ interface StepSchema {
   options?: string[];
   placeholder?: string;
   promiseTemplate?: string;
+  /** 3 short example hints shown beneath the input — text-input steps only. */
+  examples?: [string, string, string];
 }
 
 const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
@@ -62,6 +64,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "You serve: [audience]",
     placeholder:
       "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer.",
+    examples: [
+      "e.g. New parents in their 30s",
+      "e.g. Women returning to work after a career break",
+      "e.g. First-time homebuyers",
+    ],
   },
   "step-2b": {
     id: "step-2b",
@@ -77,6 +84,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "You serve: [audience] · As a [expert_type]",
     placeholder:
       "e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding.",
+    examples: [
+      "e.g. I simplify complex ideas into clear next steps.",
+      "e.g. I help people get unstuck quickly.",
+      "e.g. I turn vague goals into concrete plans.",
+    ],
   },
   "step-4": {
     id: "step-4",
@@ -97,6 +109,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "Audience: [audience]",
     placeholder:
       "e.g. The specific frustration or obstacle holding [audience] back right now.",
+    examples: [
+      "e.g. They feel overwhelmed and don't know where to start.",
+      "e.g. They've tried before and lost momentum.",
+      "e.g. They can't see a clear path forward.",
+    ],
   },
   "step-6": {
     id: "step-6",
@@ -105,6 +122,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "Problem: [problem]",
     placeholder:
       "e.g. Describe the steps or framework you take [audience] through to create the result.",
+    examples: [
+      "e.g. A simple 3-step framework anyone can follow.",
+      "e.g. Daily check-ins plus one focused action.",
+      "e.g. A guided walkthrough with clear milestones.",
+    ],
   },
   "step-7": {
     id: "step-7",
@@ -113,6 +135,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "Process: [process]",
     placeholder:
       "e.g. The transformation [audience] will experience by the end of the 3 days.",
+    examples: [
+      "e.g. They have a clear plan they can act on today.",
+      "e.g. They've made visible progress they can point to.",
+      "e.g. They feel confident moving forward on their own.",
+    ],
   },
   "step-8": {
     id: "step-8",
@@ -121,6 +148,11 @@ const DEFAULT_SCHEMAS: Record<string, StepSchema> = {
     contextBanner: "Audience: [audience] · Outcome: [outcome]",
     promiseTemplate:
       "I help [audience] [outcome] in 3 days using [process].",
+    examples: [
+      "e.g. I help new parents build a calm bedtime routine in 3 days.",
+      "e.g. I help career returners land their first interview in 3 days.",
+      "e.g. I help first-time buyers understand their mortgage options in 3 days.",
+    ],
   },
 };
 
@@ -229,6 +261,9 @@ const LivePreview = ({
   const banner = schema.contextBanner ? renderDay1Preview(schema.contextBanner, values) : "";
   const placeholder = schema.placeholder ? renderDay1Preview(schema.placeholder, values) : "";
   const promise = schema.promiseTemplate ? renderDay1Preview(schema.promiseTemplate, values) : "";
+  const examples = (schema.examples ?? []).map((ex) => renderDay1Preview(ex || "", values)).filter(Boolean);
+  const isTextInput =
+    schema.kind === "text-input" || schema.kind === "text-with-banner" || schema.kind === "promise";
 
   return (
     <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden">
@@ -309,6 +344,14 @@ const LivePreview = ({
                 </span>
               </div>
             </div>
+          )}
+
+          {isTextInput && examples.length > 0 && (
+            <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+              {examples.map((ex, i) => (
+                <li key={i}>{ex}</li>
+              ))}
+            </ul>
           )}
         </div>
       </div>
@@ -541,6 +584,20 @@ const AdminDay1Steps = () => {
     activeSchema.kind === "multi-select";
   const hasPlaceholder =
     activeSchema.kind === "text-input" || activeSchema.kind === "text-with-banner";
+  const hasExamples =
+    activeSchema.kind === "text-input" ||
+    activeSchema.kind === "text-with-banner" ||
+    activeSchema.kind === "promise";
+  const activeExamples: [string, string, string] = [
+    activeSchema.examples?.[0] ?? "",
+    activeSchema.examples?.[1] ?? "",
+    activeSchema.examples?.[2] ?? "",
+  ];
+  const updateExample = (idx: 0 | 1 | 2, value: string) => {
+    const next: [string, string, string] = [...activeExamples] as [string, string, string];
+    next[idx] = value;
+    updateSchema(activeStep!.id, { examples: next });
+  };
 
   if (!activeStep) {
     return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
@@ -732,6 +789,26 @@ const AdminDay1Steps = () => {
                     placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
                     className="text-sm"
                   />
+                </div>
+              )}
+
+              {hasExamples && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Example hints (shown beneath the input)
+                  </Label>
+                  <div className="space-y-2">
+                    {[0, 1, 2].map((i) => (
+                      <Textarea
+                        key={i}
+                        rows={2}
+                        value={activeExamples[i]}
+                        onChange={(e) => updateExample(i as 0 | 1 | 2, e.target.value)}
+                        placeholder={`Example ${i + 1} (e.g. …)`}
+                        className="text-sm resize-y"
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>

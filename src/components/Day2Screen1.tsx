@@ -385,9 +385,7 @@ const Day2Screen1 = () => {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <p className="text-sm sm:text-base leading-relaxed text-foreground">
-                          {assessmentCompleted
-                            ? `You took the Leadio assessment to get here. Open it again now as a creator, not a participant. Then build one just like it for ${clientAvatar}.`
-                            : `The Leadio assessment is a live example of exactly what you are building for ${clientAvatar}. Take two minutes to see how it works.`}
+                          The Leadio assessment is a live example of exactly what you are building for {clientAvatar}. Take two minutes to see how it works.
                         </p>
                         <div className="flex flex-col gap-2">
                           <Button asChild variant="secondary">
@@ -442,19 +440,21 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
-                    <div className="pt-2 space-y-2">
-                      <p className="text-sm sm:text-base font-semibold text-foreground">
-                        Ready to build it{nameSuffix}?
-                      </p>
-                      <Button
-                        size="lg"
-                        className="w-full sm:w-auto"
-                        disabled={!allOpened || isComplete}
-                        onClick={handleContinue}
-                      >
-                        {isComplete ? "Section 1 complete" : "Continue to Section 2"}
-                      </Button>
-                    </div>
+                    {allOpened && (
+                      <div className="pt-2 space-y-2">
+                        <p className="text-sm sm:text-base font-semibold text-foreground">
+                          Ready to build it{nameSuffix}?
+                        </p>
+                        <Button
+                          size="lg"
+                          className="w-full sm:w-auto"
+                          disabled={isComplete}
+                          onClick={handleContinue}
+                        >
+                          {isComplete ? "Section 1 complete" : "Continue to Section 2"}
+                        </Button>
+                      </div>
+                    )}
 
                   </CardContent>
                 </Card>

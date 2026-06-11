@@ -582,8 +582,9 @@ const Day2Screen1 = () => {
                         href="/assessment"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
                       >
+                        <Eye className="h-4 w-4" />
                         {assessmentCompleted
                           ? "Take the quiz for this challenge again"
                           : "See the quiz for this challenge"}
@@ -605,8 +606,9 @@ const Day2Screen1 = () => {
                     {allOpened && (
                       <button
                         type="button"
-                        className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                       >
+                        <Sparkles className="h-4 w-4" />
                         Generate your quiz now
                       </button>
                     )}

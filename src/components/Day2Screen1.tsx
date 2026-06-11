@@ -415,8 +415,6 @@ const Day2Screen1 = () => {
                           onToggle={() => handleToggleCard(idx)}
                           onMarkRead={() => handleMarkRead(idx)}
                         />
-                      );
-                    })}
 
                     <Card className="border-primary/30 bg-primary/5">
                       <CardHeader>

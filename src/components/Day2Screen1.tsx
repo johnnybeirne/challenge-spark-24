@@ -37,7 +37,8 @@ function readDay1Values(aiOutputs: Record<string, string> | undefined) {
     clientAvatar: clean(setup.audience) || "your audience",
     problem: clean(setup.problem) || "where they are stuck",
     challengeOutcome: clean(setup.outcome) || "the result they want",
-    challengePromise: promise || "",
+    challengePromise: promise || "your challenge promise",
+    superpower: clean(setup.superpower) || "your unique approach",
   };
 }
 
@@ -107,15 +108,8 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCa
 };
 
 const Day2Screen1 = () => {
-  const { state, setState, authUser } = useAppState();
+  const { state, setState } = useAppState();
 
-  const rawName =
-    (state.user?.name as string | undefined) ||
-    (authUser?.user_metadata?.full_name as string | undefined) ||
-    (authUser?.user_metadata?.name as string | undefined) ||
-    (authUser?.user_metadata?.first_name as string | undefined) ||
-    "";
-  const firstName = rawName.trim().split(/\s+/)[0] || "there";
 
   const day2 = state.challenge.day2 ?? {
     section1Complete: false,
@@ -132,7 +126,7 @@ const Day2Screen1 = () => {
   // Active = first incomplete section. Later sections are locked.
   const activeId = SECTIONS.find((s) => !completeMap[s.id])?.id ?? SECTIONS.length;
 
-  const { clientAvatar, problem, challengeOutcome } = useMemo(
+  const { clientAvatar, problem, challengeOutcome, challengePromise, superpower } = useMemo(
     () => readDay1Values(state.challenge.aiOutputs),
     [state.challenge.aiOutputs],
   );
@@ -144,15 +138,15 @@ const Day2Screen1 = () => {
   const cardCopy = [
     {
       title: "The quiz earns the right to ask for 3 days.",
-      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand. That result creates the motivation to go further. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
+      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand with ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
     },
     {
       title: "Most quizzes stop at the result. Yours does not.",
-      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} sees your real expertise, not a score out of 100.`,
+      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} experiences your superpower of ${superpower} first hand, not a score out of 100.`,
     },
     {
       title: "Three days builds more trust than three months of emails.",
-      body: `When ${clientAvatar} does the challenge, you are with them every day. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence does that.`,
+      body: `When ${clientAvatar} does your challenge, you are with them every step of the way. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence comes close to that.`,
     },
   ];
 
@@ -193,9 +187,27 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            Today you build the quiz that drives people into your challenge, {firstName}.
+            In Day 1 you defined your challenge. Now we build the quiz that gets {clientAvatar} to take the first step, using your superpower of {superpower} to help them move from {problem} to {challengeOutcome}.
           </p>
+
+          {/* Day 1 recap */}
+          <dl className="mt-5 rounded-lg border bg-card p-4 space-y-2 text-sm">
+            {[
+              { label: "Your audience", value: clientAvatar },
+              { label: "Your superpower", value: superpower },
+              { label: "The problem you solve", value: problem },
+              { label: "The result you deliver", value: challengeOutcome },
+              { label: "Your challenge promise", value: challengePromise },
+            ].map((row) => (
+              <div key={row.label} className="flex flex-col sm:flex-row sm:gap-2">
+                <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
+                <dd className="text-muted-foreground">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
         </header>
+
+
 
         {/* Section progress */}
         <ol className="mb-8 flex flex-wrap items-center gap-2">

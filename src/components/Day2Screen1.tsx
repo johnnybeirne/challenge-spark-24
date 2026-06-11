@@ -119,6 +119,10 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
 
 const Day2Screen1 = () => {
   const { state, setState } = useAppState();
+  const firstName = state.user?.name?.split(" ")[0] || "";
+  const nameSuffix = firstName ? `, ${firstName}` : "";
+
+
 
 
   const day2 = state.challenge.day2 ?? {

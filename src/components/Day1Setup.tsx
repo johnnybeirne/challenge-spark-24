@@ -579,19 +579,27 @@ const audienceOptions = [
 const challengeOptions = [
   {
     value: "solve-problem",
-    description: "Remove a specific blocker",
+    title: "Break Through a Blocker",
+    description: "Remove an obstacle preventing progress.",
+    examples: ["Fix a sales bottleneck", "Overcome procrastination", "Solve a technical issue"],
   },
   {
     value: "quick-win",
-    description: "Deliver a meaningful result fast",
+    title: "Achieve a Quick Win",
+    description: "Create a meaningful result quickly.",
+    examples: ["Get first leads", "Book meetings", "Launch a landing page"],
   },
   {
     value: "create-asset",
-    description: "Build something they keep using",
+    title: "Build a Valuable Asset",
+    description: "Create something that continues producing value.",
+    examples: ["Website", "AI assistant", "Content system", "Referral engine"],
   },
   {
     value: "reach-milestone",
-    description: "Progress toward an important goal",
+    title: "Advance a Major Goal",
+    description: "Make measurable progress toward something important.",
+    examples: ["Lose weight", "Grow revenue", "Publish a book", "Change careers"],
   },
 ];
 
@@ -2114,47 +2122,42 @@ const Day1Setup = ({ onComplete }: Props) => {
                   </p>
                 )}
 
-                <RevealControls className="space-y-5">
-                  <div className="space-y-2">
-                    <DictatedTextarea
-                      autoFocus
-                      value={step5Result}
-                      onChange={(e) => setStep5Result(e.target.value)}
-                      placeholder="Type the result your challenge will deliver…"
-                      rows={3}
-                      className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleStep5ResultNext();
-                      }}
-                    />
-                    <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                      {audienceType === "b2c" ? (
-                        <>
-                          <li>Lose their first 5kg without giving up their social life.</li>
-                          <li>Sleep through the night consistently for a full week.</li>
-                          <li>Build a morning routine they actually stick to.</li>
-                        </>
-                      ) : (
-                        <>
-                          <li>Land their first paying client.</li>
-                          <li>Launch their first online course.</li>
-                          <li>Get their first 100 email subscribers.</li>
-                        </>
-                      )}
-                    </ul>
-
-
-                  </div>
-                  <Button
-                    size="lg"
-                    onClick={handleStep5ResultNext}
-                    disabled={!step5Result.trim()}
-                    className="w-full h-12 text-base font-semibold"
-                  >
-                    Continue
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                <RevealControls role="radiogroup" aria-label="Challenge type" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {challengeOptions.map((opt) => {
+                    const selected = challengeType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => {
+                          setStep5Result(opt.description);
+                          handleChallenge(opt.value);
+                        }}
+                        className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${
+                          selected ? "border-primary bg-primary/10" : "border-border bg-card"
+                        }`}
+                      >
+                        <span
+                          className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                            selected ? "border-primary" : "border-muted-foreground/40"
+                          }`}
+                          aria-hidden
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                        </span>
+                        <span className="flex flex-col gap-1">
+                          <span className="text-base font-semibold leading-tight">{opt.title}</span>
+                          <span className="text-sm text-muted-foreground leading-snug">{opt.description}</span>
+                          <span className="text-xs text-muted-foreground leading-snug mt-0.5">
+                            Examples: {opt.examples.join(", ")}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
                 </RevealControls>
+
 
               </div>
             )}

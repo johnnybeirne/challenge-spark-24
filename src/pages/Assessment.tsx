@@ -182,6 +182,21 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           }),
         }));
 
+        // Mark assessment completion timestamp on ai_user_context (best-effort)
+        (async () => {
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              await (supabase.from("ai_user_context") as any).upsert(
+                { user_id: user.id, assessment_completed_at: new Date().toISOString() },
+                { onConflict: "user_id" },
+              );
+            }
+          } catch (e) {
+            console.warn("assessment_completed_at write failed", e);
+          }
+        })();
+
         setTimeout(() => {
           navigate("/results");
         }, 4000);

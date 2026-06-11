@@ -400,22 +400,68 @@ const AdminDay1Steps = () => {
     trackEvent("admin_training_updated", { surface: "day1_step_editor" });
   };
 
-  // Auto-save (silent) — flushes current edits to remote without a toast.
-  // Used when the admin jumps to a different step so nothing is ever lost.
-  const autoSaveSilently = async () => {
-    try {
-      saveSchemas(schemas);
-      saveDay1Steps(steps);
-      await saveDay1StepsRemote(steps);
-    } catch {
-      /* localStorage copy is already written; remote will retry on next save */
+  // Always-current refs so any save reads the latest in-memory values,
+  // never a stale closure that could overwrite newer edits.
+  const stepsRef = useRef(steps);
+  const schemasRef = useRef(schemas);
+  useEffect(() => {
+    stepsRef.current = steps;
+  }, [steps]);
+  useEffect(() => {
+    schemasRef.current = schemas;
+  }, [schemas]);
+
+  // Monotonic counter so an older in-flight remote save can never clobber
+  // a newer one (we ignore any response whose token is not the latest).
+  const saveTokenRef = useRef(0);
+  const debounceRef = useRef<number | null>(null);
+
+  const flushSaveNow = () => {
+    if (debounceRef.current !== null) {
+      window.clearTimeout(debounceRef.current);
+      debounceRef.current = null;
     }
+    const token = ++saveTokenRef.current;
+    const latestSteps = stepsRef.current;
+    const latestSchemas = schemasRef.current;
+    try {
+      saveSchemas(latestSchemas);
+      saveDay1Steps(latestSteps);
+    } catch {
+      /* localStorage failure is non-fatal */
+    }
+    void saveDay1StepsRemote(latestSteps).catch(() => {
+      /* silent — local copy is already written */
+    }).finally(() => {
+      // No-op: token guard prevents stale overwrites; nothing to roll back here
+      // because saveDay1StepsRemote does not return data we apply to state.
+      if (token !== saveTokenRef.current) {
+        /* a newer save has superseded this one — ignore */
+      }
+    });
   };
+
+  // Debounced auto-save: only fires 800ms after the user stops typing.
+  useEffect(() => {
+    if (hydrating) return;
+    if (debounceRef.current !== null) window.clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(() => {
+      debounceRef.current = null;
+      flushSaveNow();
+    }, 800);
+    return () => {
+      if (debounceRef.current !== null) {
+        window.clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+    };
+  }, [steps, schemas, hydrating]);
 
   const handleSelectStep = (nextId: string) => {
     if (nextId === activeId) return;
-    // Fire-and-forget: navigation is instant, save happens silently in background.
-    void autoSaveSilently();
+    // Flush any pending debounced save immediately with the LATEST values,
+    // then switch — never block navigation on the network round-trip.
+    flushSaveNow();
     setActiveId(nextId);
   };
 

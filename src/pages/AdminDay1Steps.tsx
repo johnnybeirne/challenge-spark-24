@@ -857,7 +857,7 @@ const AdminDay1Steps = () => {
                     ref={placeholderRef}
                     rows={2}
                     value={activeSchema.placeholder ?? ""}
-                    onFocus={() => setFocusedField({ kind: "placeholder" })}
+                    onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "placeholder" }); }}
                     onChange={(e) => updateSchema(activeStep.id, { placeholder: e.target.value })}
                     placeholder="Placeholder text shown in the input"
                     className="text-sm resize-y"

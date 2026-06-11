@@ -100,9 +100,17 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
       </button>
       {isOpen && !isLocked && (
         <CardContent>
-          <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
-            {body}
-          </p>
+          {isLoading ? (
+            <div className="space-y-2 animate-pulse" aria-live="polite" aria-busy="true">
+              <div className="h-3 rounded bg-muted" />
+              <div className="h-3 rounded bg-muted w-11/12" />
+              <div className="h-3 rounded bg-muted w-9/12" />
+            </div>
+          ) : (
+            <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
+              {body}
+            </p>
+          )}
         </CardContent>
       )}
     </Card>

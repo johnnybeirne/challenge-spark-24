@@ -576,6 +576,9 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
   return new Response(JSON.stringify({ cards: { card1: c1, card2: c2, card3: c3 } }), {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

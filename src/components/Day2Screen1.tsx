@@ -133,7 +133,7 @@ const Day2Screen1 = () => {
   // Active = first incomplete section. Later sections are locked.
   const activeId = SECTIONS.find((s) => !completeMap[s.id])?.id ?? SECTIONS.length;
 
-  const { clientAvatar, problem, challengeOutcome } = useMemo(
+  const { clientAvatar, problem, challengeOutcome, challengePromise, superpower } = useMemo(
     () => readDay1Values(state.challenge.aiOutputs),
     [state.challenge.aiOutputs],
   );
@@ -145,15 +145,15 @@ const Day2Screen1 = () => {
   const cardCopy = [
     {
       title: "The quiz earns the right to ask for 3 days.",
-      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand. That result creates the motivation to go further. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
+      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand with ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
     },
     {
       title: "Most quizzes stop at the result. Yours does not.",
-      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} sees your real expertise, not a score out of 100.`,
+      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} experiences your superpower of ${superpower} first hand, not a score out of 100.`,
     },
     {
       title: "Three days builds more trust than three months of emails.",
-      body: `When ${clientAvatar} does the challenge, you are with them every day. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence does that.`,
+      body: `When ${clientAvatar} does your challenge, you are with them every step of the way. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence comes close to that.`,
     },
   ];
 

@@ -46,6 +46,8 @@ interface StepSchema {
   options?: string[];
   placeholder?: string;
   promiseTemplate?: string;
+  /** 3 short example hints shown beneath the input — text-input steps only. */
+  examples?: [string, string, string];
 }
 
 const DEFAULT_SCHEMAS: Record<string, StepSchema> = {

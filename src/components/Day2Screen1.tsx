@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Lock } from "lucide-react";
+import { Check, ChevronDown, Lock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
@@ -50,15 +50,18 @@ interface RevealCardProps {
   isOpen: boolean;
   isLocked: boolean;
   isLoading?: boolean;
+  isRead: boolean;
   onToggle: () => void;
+  onMarkRead: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, onToggle, onMarkRead }: RevealCardProps) => {
   return (
     <Card
       className={cn(
         "transition-colors",
         isLocked && "border-dashed bg-muted/40 opacity-70",
+        isRead && "border-primary/40",
       )}
     >
       <button
@@ -78,10 +81,12 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
                 "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black",
                 isLocked
                   ? "bg-background text-muted-foreground border border-border"
-                  : "bg-primary text-primary-foreground",
+                  : isRead
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-primary text-primary-foreground",
               )}
             >
-              {index}
+              {isRead ? <Check className="h-3.5 w-3.5" /> : index}
             </span>
             <CardTitle className="text-base sm:text-lg leading-snug">{title}</CardTitle>
           </div>
@@ -99,7 +104,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
         </CardHeader>
       </button>
       {isOpen && !isLocked && (
-        <CardContent>
+        <CardContent className="space-y-4">
           {isLoading ? (
             <div className="space-y-2 animate-pulse" aria-live="polite" aria-busy="true">
               <div className="h-3 rounded bg-muted" />
@@ -110,6 +115,17 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
             <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
               {body}
             </p>
+          )}
+          {!isLoading && (
+            isRead ? (
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <Check className="h-3.5 w-3.5" /> Marked as read
+              </p>
+            ) : (
+              <Button type="button" size="sm" variant="outline" onClick={onMarkRead}>
+                Mark as read
+              </Button>
+            )
           )}
         </CardContent>
       )}
@@ -145,9 +161,19 @@ const Day2Screen1 = () => {
     [state.challenge.aiOutputs],
   );
 
-  // Section 1 reveal cards: progressive unlock + toggle.
+  // Section 1 reveal cards: progressive unlock + toggle + mark-as-read gating.
   const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
+  const [readCards, setReadCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(null);
+
+  const handleMarkRead = (idx: number) => {
+    setReadCards((prev) => {
+      if (prev.has(idx)) return prev;
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+  };
 
   const fallbackBodies = useMemo(
     () => ({
@@ -226,8 +252,8 @@ const Day2Screen1 = () => {
   ];
 
   const handleToggleCard = (idx: number) => {
-    // Lock rule: card N requires card N-1 already opened.
-    if (idx > 0 && !openedCards.has(idx - 1)) return;
+    // Lock rule: card N requires card N-1 already marked as read.
+    if (idx > 0 && !readCards.has(idx - 1)) return;
     setOpenedCards((prev) => {
       if (prev.has(idx)) return prev;
       const next = new Set(prev);
@@ -237,7 +263,7 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = openedCards.size === cardCopy.length;
+  const allOpened = readCards.size === cardCopy.length;
 
   const handleContinue = () => {
     setState((prev) => ({
@@ -375,7 +401,7 @@ const Day2Screen1 = () => {
                     </p>
 
                     {cardCopy.map((c, idx) => {
-                      const lockedCard = idx > 0 && !openedCards.has(idx - 1);
+                      const lockedCard = idx > 0 && !readCards.has(idx - 1);
                       return (
                         <RevealCard
                           key={idx}
@@ -385,10 +411,13 @@ const Day2Screen1 = () => {
                           isOpen={openCard === idx}
                           isLocked={lockedCard}
                           isLoading={cardsLoading && !aiBodies}
+                          isRead={readCards.has(idx)}
                           onToggle={() => handleToggleCard(idx)}
+                          onMarkRead={() => handleMarkRead(idx)}
                         />
                       );
                     })}
+
 
                     <Card className="border-primary/30 bg-primary/5">
                       <CardHeader>

@@ -360,6 +360,7 @@ const Day2Screen1 = () => {
             moment: "cards",
             inputs: {
               firstName,
+              archetype,
               audience: clientAvatar,
               superpower,
               problem,

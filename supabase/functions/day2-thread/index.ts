@@ -506,6 +506,77 @@ async function handleInsightS2(payload: { key?: string; label?: string; inputs?:
   });
 }
 
+// ---------- SECTION 1 CARDS ----------
+function fallbackCards(p: ReturnType<typeof builderProfile>) {
+  const aud = p.audience || "your audience";
+  const sp = p.superpower || "your unique approach";
+  const prob = p.problem || "where they are stuck";
+  const out = p.outcome || "the result they want";
+  return {
+    card1: `Before ${aud} commits three days to your challenge, they need a reason to believe it is worth their time. A two-minute quiz shows them exactly where they stand on ${prob}, and that personal reflection is what earns the right to ask for the bigger commitment.`,
+    card2: `Most quizzes end at a score and rely on emails to bring people back — and most people never come back. Yours leads straight into the challenge, where ${aud} feel ${sp} in real time instead of reading a number on a results page.`,
+    card3: `Doing the challenge puts you beside ${aud} every step of the way, moving them from ${prob} to ${out} while they watch how you think. That kind of trust is not something an email sequence can build, no matter how long it runs.`,
+  };
+}
+
+async function handleCards(inputs: Day1Inputs): Promise<Response> {
+  const p = builderProfile(inputs);
+  const fb = fallbackCards(p);
+
+  const prompt = [
+    "You are rewriting three short education cards for Day 2 Section 1 of a quiz-marketing challenge.",
+    "",
+    "Builder's Day 1 context (reference these as ideas; do NOT paste them verbatim into the middle of sentences if it breaks grammar — rephrase naturally):",
+    `- audience (clientAvatar): ${p.audience || "(not provided)"}`,
+    `- superpower: ${p.superpower || "(not provided)"}`,
+    `- problem: ${p.problem || "(not provided)"}`,
+    `- outcome (challengeOutcome): ${p.outcome || "(not provided)"}`,
+    "",
+    "Write three card bodies, each 3 to 4 sentences of natural flowing prose. The cards must convey:",
+    "Card 1: The audience needs a reason to believe the challenge is worth their time before committing, and a 2-minute quiz that shows them where they stand against their specific problem gives them that reason.",
+    "Card 2: Most quizzes end at the result and rely on emails to convert, but this quiz leads directly into the challenge where the expert demonstrates their superpower in real time rather than sending a score.",
+    "Card 3: Doing the challenge puts the expert with their audience every step of the way, moving them from their specific problem to their specific outcome, and that builds more trust than any email sequence.",
+    "",
+    "Rules:",
+    "- Reference the builder's context naturally — do not quote it word for word if it makes the sentence ungrammatical.",
+    "- Plain text. No markdown, no headings, no bullets, no emojis, no exclamation marks unless natural. Do not wrap in quotes.",
+    "- Return ONLY a JSON object in this exact shape, nothing else:",
+    `{"card1":"...","card2":"...","card3":"..."}`,
+  ].join("\n");
+
+  const resp = await callGateway({
+    model: MODEL,
+    messages: [
+      { role: "system", content: JOHNNY_VOICE },
+      { role: "user", content: prompt },
+    ],
+    temperature: 0.65,
+    response_format: { type: "json_object" },
+  });
+
+  if (resp.status === 429) return fallback("rate-limited", { cards: fb });
+  if (resp.status === 402) return fallback("payment-required", { cards: fb });
+  if (!resp.ok) {
+    console.error("cards gateway error", resp.status, await resp.text());
+    return fallback("gateway-error", { cards: fb });
+  }
+  const data = await resp.json();
+  const raw = data?.choices?.[0]?.message?.content?.trim() || "";
+  let parsed: { card1?: unknown; card2?: unknown; card3?: unknown } = {};
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch { /* ignore */ } }
+  }
+  const c1 = stripQuotes(sanitise(parsed.card1, 1200));
+  const c2 = stripQuotes(sanitise(parsed.card2, 1200));
+  const c3 = stripQuotes(sanitise(parsed.card3, 1200));
+  if (!c1 || !c2 || !c3) return fallback("bad-shape", { cards: fb });
+  return new Response(JSON.stringify({ cards: { card1: c1, card2: c2, card3: c3 } }), {
+    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {

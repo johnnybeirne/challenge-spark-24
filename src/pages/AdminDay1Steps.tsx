@@ -400,6 +400,24 @@ const AdminDay1Steps = () => {
     trackEvent("admin_training_updated", { surface: "day1_step_editor" });
   };
 
+  // Auto-save (silent) — flushes current edits to remote without a toast.
+  // Used when the admin jumps to a different step so nothing is ever lost.
+  const autoSaveSilently = async () => {
+    try {
+      saveSchemas(schemas);
+      saveDay1Steps(steps);
+      await saveDay1StepsRemote(steps);
+    } catch {
+      /* localStorage copy is already written; remote will retry on next save */
+    }
+  };
+
+  const handleSelectStep = async (nextId: string) => {
+    if (nextId === activeId) return;
+    await autoSaveSilently();
+    setActiveId(nextId);
+  };
+
   const handleResetStep = () => {
     if (!activeStep) return;
     const def = defaultDay1Steps.find((s) => s.id === activeStep.id);

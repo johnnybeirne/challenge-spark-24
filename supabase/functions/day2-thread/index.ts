@@ -85,6 +85,7 @@ interface Day1Inputs {
   problem?: string;
   how?: string;
   outcome?: string;
+  promise?: string;
   expertType?: unknown;
   expertTypePhrase?: string;
 }
@@ -109,6 +110,7 @@ function builderProfile(inputs: Day1Inputs) {
     problem: sanitise(inputs.problem),
     how: sanitise(inputs.how),
     outcome: sanitise(inputs.outcome),
+    promise: sanitise(inputs.promise),
     expertTypes: rawExpert,
     expertPhrase,
   };

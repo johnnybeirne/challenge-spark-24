@@ -84,27 +84,33 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
       data-experience={mode}
       className="experience-root min-h-screen bg-background overflow-x-hidden"
     >
-      {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
-      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
+      {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} collapsed={effectiveCollapsed} />}
+      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (effectiveCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         {showChallengeSidebar && <TopBar />}
         <div className={showChallengeSidebar ? "flex w-full" : undefined}>
           <div className="min-w-0 flex-1">
             {showNav && authenticated && <BackButton />}
             <Outlet />
           </div>
-          {showChallengeSidebar && <RightRail />}
+          {showRightRail && <RightRail />}
         </div>
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}
       </div>
       {showCopilotChat && <AiCopilotChat />}
-      {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={sidebarCollapsed} />}
+      {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={effectiveCollapsed} />}
       <QaModePanel />
 
 
     </div>
   );
 };
+
+const AppShell = (props: { showNav?: boolean; fullWidth?: boolean }) => (
+  <FocusModeProvider>
+    <AppShellInner {...props} />
+  </FocusModeProvider>
+);
 
 export default AppShell;

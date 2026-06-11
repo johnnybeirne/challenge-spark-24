@@ -156,9 +156,22 @@ const useLiveTagValues = (): Record<Day1TagKey, string> => {
   const { state } = useAppState();
   const identity = useChallengeIdentity();
 
+  const setup: any = (state.challenge?.aiOutputs as any)?.day1Setup ?? {};
+  const promiseRaw = (state.challenge?.aiOutputs as any)?.day1_promise;
+
+  // Stable signature so the memo recomputes the moment any upstream tag value
+  // changes (e.g. Step 2 sets audience → Step 3 preview reflects it instantly).
+  const sig = JSON.stringify({
+    name: state.user?.name ?? "",
+    setup,
+    promiseRaw,
+    audience: identity.audience,
+    problem: identity.problem,
+    method: identity.method,
+  });
+
   return useMemo(() => {
     const firstName = (state.user?.name || "").trim().split(/\s+/)[0] || "";
-    const setup: any = (state.challenge?.aiOutputs as any)?.day1Setup ?? {};
     const audience = String(setup.audience || identity.audience || "").trim();
     const expertType = formatExpertTypes(setup.expertType);
     const superpower = String(setup.superpower || "").trim();
@@ -170,9 +183,8 @@ const useLiveTagValues = (): Record<Day1TagKey, string> => {
 
     let promise = "";
     try {
-      const raw = (state.challenge?.aiOutputs as any)?.day1_promise;
-      if (raw) {
-        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+      if (promiseRaw) {
+        const parsed = typeof promiseRaw === "string" ? JSON.parse(promiseRaw) : promiseRaw;
         promise = String(parsed?.promise || "").trim();
       }
     } catch {
@@ -191,13 +203,13 @@ const useLiveTagValues = (): Record<Day1TagKey, string> => {
       promise,
     };
 
-    // Use example only when live value is empty, so the preview always renders.
     const merged = { ...DAY1_EXAMPLE_VALUES };
     (Object.keys(live) as Day1TagKey[]).forEach((k) => {
       if (live[k]) merged[k] = live[k];
     });
     return merged;
-  }, [state.user, state.challenge?.aiOutputs, identity]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sig]);
 };
 
 // -------------------------------------------------------------

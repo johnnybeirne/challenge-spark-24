@@ -97,6 +97,12 @@ export interface AppState {
     launchUrl: string;
     completed: boolean;
     calendarAdded: boolean;
+    day2?: {
+      section1Complete: boolean;
+      section2Complete: boolean;
+      section3Complete: boolean;
+      section4Complete: boolean;
+    };
   };
   network: {
     direct: number;
@@ -179,6 +185,12 @@ export const defaultState: AppState = {
     launchUrl: "",
     completed: false,
     calendarAdded: false,
+    day2: {
+      section1Complete: false,
+      section2Complete: false,
+      section3Complete: false,
+      section4Complete: false,
+    },
   },
   referrals: { count: 0, records: [] },
   network: { direct: 0, indirect: 0 },

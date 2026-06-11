@@ -202,8 +202,15 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 
 const Day2Screen1 = () => {
-  const { state, setState } = useAppState();
-  const firstName = state.user?.name?.split(" ")[0] || "";
+  const { state, setState, authUser } = useAppState();
+  const metaName =
+    (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name ||
+    (authUser?.user_metadata as { name?: string } | undefined)?.name ||
+    "";
+  const firstName =
+    state.user?.name?.split(" ")[0] ||
+    metaName.split(" ")[0] ||
+    "";
 
   // Archetype derived from the user's quiz result (if completed). Same mapping
   // as DashboardArchetypeStrip — Pioneer / Architect / Authority.

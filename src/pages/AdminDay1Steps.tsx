@@ -412,9 +412,10 @@ const AdminDay1Steps = () => {
     }
   };
 
-  const handleSelectStep = async (nextId: string) => {
+  const handleSelectStep = (nextId: string) => {
     if (nextId === activeId) return;
-    await autoSaveSilently();
+    // Fire-and-forget: navigation is instant, save happens silently in background.
+    void autoSaveSilently();
     setActiveId(nextId);
   };
 

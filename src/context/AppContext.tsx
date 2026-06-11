@@ -188,7 +188,6 @@ export const defaultState: AppState = {
       section1Complete: false,
       section2Complete: false,
       section3Complete: false,
-      section4Complete: false,
     },
   },
   referrals: { count: 0, records: [] },

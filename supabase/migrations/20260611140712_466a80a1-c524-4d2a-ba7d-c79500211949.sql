@@ -1,0 +1,1 @@
+ALTER TABLE public.ai_user_context ADD COLUMN assessment_completed_at timestamptz;

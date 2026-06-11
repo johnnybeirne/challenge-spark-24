@@ -261,6 +261,9 @@ const LivePreview = ({
   const banner = schema.contextBanner ? renderDay1Preview(schema.contextBanner, values) : "";
   const placeholder = schema.placeholder ? renderDay1Preview(schema.placeholder, values) : "";
   const promise = schema.promiseTemplate ? renderDay1Preview(schema.promiseTemplate, values) : "";
+  const examples = (schema.examples ?? []).map((ex) => renderDay1Preview(ex || "", values)).filter(Boolean);
+  const isTextInput =
+    schema.kind === "text-input" || schema.kind === "text-with-banner" || schema.kind === "promise";
 
   return (
     <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden">

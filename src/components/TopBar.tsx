@@ -7,6 +7,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useFocusMode } from "@/context/FocusModeContext";
 import NotificationsBell from "@/components/NotificationsBell";
 import GlobalSearch from "@/components/GlobalSearch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";

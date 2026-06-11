@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, RotateCcw, Check } from "lucide-react";
+import { Save, RotateCcw, Check, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import {
@@ -293,7 +293,7 @@ const AdminDay1Steps = () => {
 // -------------------------------------------------------------
 
 const ContextBanner = ({ template }: { template: string }) => (
-  <div className="rounded-md border border-border bg-background/60 px-3 py-2 text-xs text-muted-foreground">
+  <div className="rounded-md border border-border bg-background/60 px-3 py-1.5 text-xs text-muted-foreground">
     {renderDay1Preview(template)}
   </div>
 );
@@ -311,71 +311,64 @@ const StepPreview = ({
     : "";
 
   return (
-    <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+    <div className="rounded-md border border-dashed border-border bg-muted/30 p-3 space-y-2">
       {schema.showContextBanner && schema.contextBanner && (
         <ContextBanner template={schema.contextBanner} />
       )}
 
-      <div className="whitespace-pre-line text-sm md:text-base leading-relaxed text-foreground/90">
+      <div className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
         {messageRendered.trim() || (
           <span className="text-muted-foreground italic">Message preview appears here.</span>
         )}
       </div>
 
       {(schema.kind === "options" || schema.kind === "options-with-banner") && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {(schema.options ?? []).map((opt, i) => (
-            <button
+            <div
               key={i}
-              type="button"
-              disabled
-              className="rounded-md border border-border bg-background px-3 py-2 text-left text-sm hover:bg-accent disabled:opacity-100"
+              className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs text-foreground/70"
             >
               {opt}
-            </button>
+            </div>
           ))}
         </div>
       )}
 
       {schema.kind === "multi-select" && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
           {(schema.options ?? []).map((opt, i) => (
-            <button
+            <div
               key={i}
-              type="button"
-              disabled
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-accent disabled:opacity-100"
+              className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs text-foreground/70"
             >
               {opt}
-            </button>
+            </div>
           ))}
         </div>
       )}
 
       {(schema.kind === "text-input" || schema.kind === "text-with-banner") && (
-        <Textarea
-          rows={3}
-          disabled
-          placeholder={schema.placeholder ?? ""}
-          className="text-sm bg-background"
-        />
+        <div className="rounded-md border border-border bg-background px-3 py-2 text-xs italic text-muted-foreground">
+          {schema.placeholder || "Placeholder text…"}
+        </div>
       )}
 
       {schema.kind === "promise" && (
-        <div className="rounded-lg border border-primary/30 bg-background p-4 space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-md border border-primary/30 bg-background p-3 space-y-2">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             Your promise
           </p>
-          <p className="text-base leading-relaxed text-foreground">
+          <p className="text-sm leading-relaxed text-foreground/80">
             {promiseRendered || <span className="italic text-muted-foreground">Promise preview.</span>}
           </p>
-          <div className="flex gap-2">
-            <Button size="sm" disabled className="gap-2">
-              <Check className="h-3.5 w-3.5" /> Confirm promise
-            </Button>
-            <Button size="sm" variant="outline" disabled>
+          <div className="flex gap-1.5">
+            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[10px] font-medium text-primary">
+              <Check className="h-3 w-3" /> Confirm
+            </span>
+            <span className="rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
               Edit
-            </Button>
+            </span>
           </div>
         </div>
       )}
@@ -401,6 +394,9 @@ const StepEditorCard = ({
   onReset: () => void;
 }) => {
   const id = `day1-step-${step.id}`;
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
   const preview = useMemo(
     () => <StepPreview schema={schema} message={step.message} />,
     [schema, step.message],
@@ -414,9 +410,12 @@ const StepEditorCard = ({
   const hasPlaceholder =
     schema.kind === "text-input" || schema.kind === "text-with-banner";
 
+  const hasAdvanced =
+    schema.showContextBanner || hasPlaceholder || hasOptions || schema.kind === "promise";
+
   return (
     <Card>
-      <CardContent className="p-5 sm:p-6 space-y-5">
+      <CardContent className="p-5 sm:p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor={id} className="text-sm font-semibold">
             {step.label}
@@ -426,91 +425,110 @@ const StepEditorCard = ({
           </Button>
         </div>
 
-        {/* Live preview FIRST */}
+        {/* Message — always visible, primary field */}
         <div className="space-y-1.5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Live preview
+          <Textarea
+            id={id}
+            rows={3}
+            value={step.message}
+            onChange={(e) => onChangeMessage(e.target.value)}
+            placeholder="e.g. So [first_name], you work with [audience]…"
+            className="text-sm"
+          />
+          <p className="text-[11px] text-muted-foreground">
+            Use bracket tags like <code className="font-mono">[first_name]</code> or <code className="font-mono">[audience]</code> — they're replaced with the user's real answers at runtime.
           </p>
-          {preview}
         </div>
 
-        {/* Editable fields */}
-        <div className="space-y-4 pt-2 border-t border-border">
-          <div className="space-y-1.5">
-            <Label htmlFor={id} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Message
-            </Label>
-            <Textarea
-              id={id}
-              rows={3}
-              value={step.message}
-              onChange={(e) => onChangeMessage(e.target.value)}
-              placeholder="e.g. So [first_name], you work with [audience]…"
-              className="font-mono text-sm"
-            />
-          </div>
+        {/* Collapsible example preview */}
+        <button
+          type="button"
+          onClick={() => setShowPreview((v) => !v)}
+          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {showPreview ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+          Example preview {showPreview ? "" : "(with sample data)"}
+        </button>
+        {showPreview && preview}
 
-          {schema.showContextBanner && (
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Context banner
-              </Label>
-              <Input
-                value={schema.contextBanner ?? ""}
-                onChange={(e) => onChangeSchema({ contextBanner: e.target.value })}
-                placeholder="e.g. You work with: [audience]"
-                className="font-mono text-sm"
-              />
-            </div>
-          )}
+        {/* Collapsible advanced */}
+        {hasAdvanced && (
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showAdvanced ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+              Advanced (banner, placeholder, options)
+            </button>
 
-          {hasPlaceholder && (
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Input placeholder
-              </Label>
-              <Input
-                value={schema.placeholder ?? ""}
-                onChange={(e) => onChangeSchema({ placeholder: e.target.value })}
-                placeholder="Placeholder text shown in the input"
-                className="text-sm"
-              />
-            </div>
-          )}
+            {showAdvanced && (
+              <div className="space-y-4 pt-2 border-t border-border">
+                {schema.showContextBanner && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Context banner
+                    </Label>
+                    <Input
+                      value={schema.contextBanner ?? ""}
+                      onChange={(e) => onChangeSchema({ contextBanner: e.target.value })}
+                      placeholder="e.g. You work with: [audience]"
+                      className="text-sm"
+                    />
+                  </div>
+                )}
 
-          {hasOptions && (
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Option labels
-              </Label>
-              <div className="space-y-2">
-                {(schema.options ?? []).map((opt, i) => (
-                  <Input
-                    key={i}
-                    value={opt}
-                    onChange={(e) => onChangeOption(i, e.target.value)}
-                    className="text-sm"
-                  />
-                ))}
+                {hasPlaceholder && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Input placeholder
+                    </Label>
+                    <Input
+                      value={schema.placeholder ?? ""}
+                      onChange={(e) => onChangeSchema({ placeholder: e.target.value })}
+                      placeholder="Placeholder text shown in the input"
+                      className="text-sm"
+                    />
+                  </div>
+                )}
+
+                {hasOptions && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Option labels
+                    </Label>
+                    <div className="space-y-2">
+                      {(schema.options ?? []).map((opt, i) => (
+                        <Input
+                          key={i}
+                          value={opt}
+                          onChange={(e) => onChangeOption(i, e.target.value)}
+                          className="text-sm"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {schema.kind === "promise" && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Promise template
+                    </Label>
+                    <Textarea
+                      rows={2}
+                      value={schema.promiseTemplate ?? ""}
+                      onChange={(e) => onChangeSchema({ promiseTemplate: e.target.value })}
+                      placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
+                      className="text-sm"
+                    />
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-
-          {schema.kind === "promise" && (
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Promise template
-              </Label>
-              <Textarea
-                rows={2}
-                value={schema.promiseTemplate ?? ""}
-                onChange={(e) => onChangeSchema({ promiseTemplate: e.target.value })}
-                placeholder="e.g. I help [audience] [outcome] in 3 days using [process]."
-                className="font-mono text-sm"
-              />
-            </div>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </CardContent>
     </Card>
   );

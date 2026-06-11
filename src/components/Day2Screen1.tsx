@@ -173,7 +173,25 @@ const Day2Screen1 = () => {
       next.add(idx);
       return next;
     });
+    // After 5 seconds, collapse this card and auto-expand the next one (if any).
+    window.setTimeout(() => {
+      setOpenCard((current) => {
+        if (current !== idx) return current;
+        const nextIdx = idx + 1;
+        if (nextIdx < SECTIONS_CARD_COUNT) {
+          setOpenedCards((prev) => {
+            if (prev.has(nextIdx)) return prev;
+            const next = new Set(prev);
+            next.add(nextIdx);
+            return next;
+          });
+          return nextIdx;
+        }
+        return null;
+      });
+    }, 5000);
   };
+
 
   const fallbackBodies = useMemo(
     () => ({

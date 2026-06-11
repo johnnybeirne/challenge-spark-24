@@ -108,15 +108,8 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, onToggle }: RevealCa
 };
 
 const Day2Screen1 = () => {
-  const { state, setState, authUser } = useAppState();
+  const { state, setState } = useAppState();
 
-  const rawName =
-    (state.user?.name as string | undefined) ||
-    (authUser?.user_metadata?.full_name as string | undefined) ||
-    (authUser?.user_metadata?.name as string | undefined) ||
-    (authUser?.user_metadata?.first_name as string | undefined) ||
-    "";
-  const firstName = rawName.trim().split(/\s+/)[0] || "there";
 
   const day2 = state.challenge.day2 ?? {
     section1Complete: false,

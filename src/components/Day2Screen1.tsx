@@ -147,11 +147,14 @@ const Day2Screen1 = () => {
 
   const fallbackBodies = useMemo(
     () => ({
-      card1: `Before ${clientAvatar} commits to ${challengePromise}, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand against ${problem}. That result creates the motivation to take the next step.`,
-      card2: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different — the result page leads straight into the challenge, where ${clientAvatar} experiences ${superpower} first hand, not a score out of 100.`,
-      card3: `When ${clientAvatar} does your challenge, you are with them every step of the way, showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy — that is a relationship, and no email sequence comes close to it.`,
+      card1:
+        "Your challenge asks a lot of someone who has never met you. Your quiz earns that commitment. In two minutes it shows your audience exactly where they stand, makes the problem feel real, and makes your challenge the obvious next step. You are not pitching. You are launching a diagnostic that makes people ask to join.",
+      card2:
+        "Most quiz funnels end at the result and spend weeks in email trying to convert. Yours is different. The result page is the entrance to your challenge, not the exit from your funnel. When your audience sees their result they are not getting generic tips. They are being invited into three days where your expertise solves the exact problem the quiz just surfaced.",
+      card3:
+        "Everyone who joins your challenge through the quiz already believes they have a problem worth solving. Your job over three days is to prove you are the person to help them solve it. You guide them, show up for them, and move them toward the result in real time. By Day 3 they have experienced your expertise first hand. That is what turns a quiz taker into a buyer.",
     }),
-    [clientAvatar, challengePromise, problem, superpower, challengeOutcome],
+    [],
   );
 
   const [aiBodies, setAiBodies] = useState<{ card1: string; card2: string; card3: string } | null>(null);
@@ -170,6 +173,7 @@ const Day2Screen1 = () => {
               superpower,
               problem,
               outcome: challengeOutcome,
+              promise: challengePromise,
             },
           },
         });
@@ -186,7 +190,7 @@ const Day2Screen1 = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [clientAvatar, superpower, problem, challengeOutcome]);
+  }, [clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
 
   const bodies = aiBodies ?? fallbackBodies;
 

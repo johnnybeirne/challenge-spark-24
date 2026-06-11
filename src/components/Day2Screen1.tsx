@@ -194,9 +194,27 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            Today you build the quiz that drives people into your challenge, {firstName}.
+            In Day 1 you defined your challenge. Now we build the quiz that gets {clientAvatar} to take the first step, using your superpower of {superpower} to help them move from {problem} to {challengeOutcome}.
           </p>
+
+          {/* Day 1 recap */}
+          <dl className="mt-5 rounded-lg border bg-card p-4 space-y-2 text-sm">
+            {[
+              { label: "Your audience", value: clientAvatar },
+              { label: "Your superpower", value: superpower },
+              { label: "The problem you solve", value: problem },
+              { label: "The result you deliver", value: challengeOutcome },
+              { label: "Your challenge promise", value: challengePromise },
+            ].map((row) => (
+              <div key={row.label} className="flex flex-col sm:flex-row sm:gap-2">
+                <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
+                <dd className="text-muted-foreground">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
         </header>
+
+
 
         {/* Section progress */}
         <ol className="mb-8 flex flex-wrap items-center gap-2">

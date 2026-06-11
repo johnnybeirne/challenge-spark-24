@@ -447,8 +447,8 @@ const Day2Screen1 = () => {
 
 
                     {assessmentCompleted && (
-                      <p className="text-xs text-muted-foreground text-center">
-                        Now you know how it works, take it again. This time you are the one building it.
+                      <p className="text-xs text-muted-foreground text-center whitespace-pre-line">
+                        {"Now you know how it works, take my Challenge Quiz again. \nThis time from your perspective of the one building it. "}
                       </p>
                     )}
                     {allOpened ? (

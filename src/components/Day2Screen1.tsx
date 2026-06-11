@@ -419,23 +419,16 @@ const Day2Screen1 = () => {
                     })}
 
 
-                    <Card className="border-primary/30 bg-primary/5">
-                      <CardHeader>
-                        <CardTitle className="text-base sm:text-lg">See a live example</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <p className="text-sm sm:text-base leading-relaxed text-foreground">
-                          The Leadio assessment is a live example of exactly what you are building for {clientAvatar}. Take two minutes to see how it works.
-                        </p>
-                        <div className="flex flex-col gap-2">
-                          <Button asChild variant="secondary">
-                            <a href="/assessment" target="_blank" rel="noopener noreferrer">
-                              {assessmentCompleted ? "See the quiz that brought you here" : "See a live example"}
-                            </a>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <a
+                      href="/assessment"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-sm font-medium text-primary underline underline-offset-4 hover:opacity-80"
+                    >
+                      {assessmentCompleted
+                        ? "Take the quiz for this challenge again"
+                        : "See the quiz for this challenge"}
+                    </a>
 
 
                     {allOpened && (

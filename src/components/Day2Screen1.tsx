@@ -179,7 +179,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
             <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line" aria-live="polite">
               {typed}
               {!typingDone && (
-                <span className="inline-block w-1.5 h-4 align-[-2px] ml-0.5 bg-primary animate-pulse" aria-hidden="true" />
+                <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
               )}
             </p>
           )}

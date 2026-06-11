@@ -252,8 +252,8 @@ const Day2Screen1 = () => {
   ];
 
   const handleToggleCard = (idx: number) => {
-    // Lock rule: card N requires card N-1 already opened.
-    if (idx > 0 && !openedCards.has(idx - 1)) return;
+    // Lock rule: card N requires card N-1 already marked as read.
+    if (idx > 0 && !readCards.has(idx - 1)) return;
     setOpenedCards((prev) => {
       if (prev.has(idx)) return prev;
       const next = new Set(prev);
@@ -263,7 +263,7 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = openedCards.size === cardCopy.length;
+  const allOpened = readCards.size === cardCopy.length;
 
   const handleContinue = () => {
     setState((prev) => ({

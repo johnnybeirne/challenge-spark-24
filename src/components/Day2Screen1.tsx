@@ -378,8 +378,9 @@ const Day2Screen1 = () => {
                     {allOpened && (
                       <div className="space-y-4 pt-2 animate-fade-in">
                         <p className="text-sm sm:text-base font-semibold text-foreground">
-                          Your quiz starts the conversation. Your challenge builds the trust that converts.
+                          Your quiz starts the conversation{nameSuffix}. Your challenge builds the trust that converts.
                         </p>
+
 
                         <Card className="bg-muted/50 border-dashed">
                           <CardHeader>

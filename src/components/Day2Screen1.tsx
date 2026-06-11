@@ -49,6 +49,7 @@ interface RevealCardProps {
   body: string;
   isOpen: boolean;
   isLocked: boolean;
+  isLoading?: boolean;
   onToggle: () => void;
 }
 

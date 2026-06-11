@@ -382,7 +382,7 @@ const Day2Screen1 = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [firstName, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
+  }, [firstName, archetype, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
 
   const bodies = aiBodies ?? fallbackBodies;
 

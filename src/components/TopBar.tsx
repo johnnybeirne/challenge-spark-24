@@ -63,7 +63,7 @@ const TopBar = () => {
           title={focusMode ? "Exit focus mode" : "Focus mode"}
         >
           {focusMode ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          <span className="whitespace-nowrap">Focus</span>
+          <span className="whitespace-nowrap">{focusMode ? "Exit Focus Mode" : "Focus Mode"}</span>
         </button>
         {tools.map(({ to, label, Icon }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);

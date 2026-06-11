@@ -50,15 +50,18 @@ interface RevealCardProps {
   isOpen: boolean;
   isLocked: boolean;
   isLoading?: boolean;
+  isRead: boolean;
   onToggle: () => void;
+  onMarkRead: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, onToggle, onMarkRead }: RevealCardProps) => {
   return (
     <Card
       className={cn(
         "transition-colors",
         isLocked && "border-dashed bg-muted/40 opacity-70",
+        isRead && "border-primary/40",
       )}
     >
       <button
@@ -78,10 +81,12 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
                 "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black",
                 isLocked
                   ? "bg-background text-muted-foreground border border-border"
-                  : "bg-primary text-primary-foreground",
+                  : isRead
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-primary text-primary-foreground",
               )}
             >
-              {index}
+              {isRead ? <Check className="h-3.5 w-3.5" /> : index}
             </span>
             <CardTitle className="text-base sm:text-lg leading-snug">{title}</CardTitle>
           </div>
@@ -99,7 +104,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
         </CardHeader>
       </button>
       {isOpen && !isLocked && (
-        <CardContent>
+        <CardContent className="space-y-4">
           {isLoading ? (
             <div className="space-y-2 animate-pulse" aria-live="polite" aria-busy="true">
               <div className="h-3 rounded bg-muted" />
@@ -110,6 +115,17 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, onToggle 
             <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line">
               {body}
             </p>
+          )}
+          {!isLoading && (
+            isRead ? (
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <Check className="h-3.5 w-3.5" /> Marked as read
+              </p>
+            ) : (
+              <Button type="button" size="sm" variant="outline" onClick={onMarkRead}>
+                Mark as read
+              </Button>
+            )
           )}
         </CardContent>
       )}

@@ -598,8 +598,6 @@ const Day2Screen1 = () => {
                         <Lock className="h-4 w-4" />
                         {assessmentCompleted
                           ? "Take the quiz for this challenge again"
-                        {assessmentCompleted
-                          ? "Take the quiz for this challenge again"
                           : "See the quiz for this challenge"}
                       </button>
                     )}

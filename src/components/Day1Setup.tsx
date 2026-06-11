@@ -1497,9 +1497,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
                         {audienceType === "b2c" ? (
                           <>
-                            <li>Busy mums returning to work after maternity leave.</li>
-                            <li>Men over 40 wanting to lose 10kg without giving up their social life.</li>
-                            <li>First-time home buyers nervous about getting a mortgage.</li>
+                            <li>e.g. New parents in their 30s</li>
+                            <li>e.g. Women returning to work after a career break</li>
+                            <li>e.g. First-time homebuyers</li>
                           </>
                         ) : (
                           <>

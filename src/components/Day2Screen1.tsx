@@ -401,7 +401,7 @@ const Day2Screen1 = () => {
                     </p>
 
                     {cardCopy.map((c, idx) => {
-                      const lockedCard = idx > 0 && !openedCards.has(idx - 1);
+                      const lockedCard = idx > 0 && !readCards.has(idx - 1);
                       return (
                         <RevealCard
                           key={idx}
@@ -411,7 +411,9 @@ const Day2Screen1 = () => {
                           isOpen={openCard === idx}
                           isLocked={lockedCard}
                           isLoading={cardsLoading && !aiBodies}
+                          isRead={readCards.has(idx)}
                           onToggle={() => handleToggleCard(idx)}
+                          onMarkRead={() => handleMarkRead(idx)}
                         />
                       );
                     })}

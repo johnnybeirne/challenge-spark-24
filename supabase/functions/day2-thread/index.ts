@@ -85,6 +85,7 @@ interface Day1Inputs {
   problem?: string;
   how?: string;
   outcome?: string;
+  promise?: string;
   expertType?: unknown;
   expertTypePhrase?: string;
 }
@@ -109,6 +110,7 @@ function builderProfile(inputs: Day1Inputs) {
     problem: sanitise(inputs.problem),
     how: sanitise(inputs.how),
     outcome: sanitise(inputs.outcome),
+    promise: sanitise(inputs.promise),
     expertTypes: rawExpert,
     expertPhrase,
   };
@@ -512,10 +514,11 @@ function fallbackCards(p: ReturnType<typeof builderProfile>) {
   const sp = p.superpower || "your unique approach";
   const prob = p.problem || "where they are stuck";
   const out = p.outcome || "the result they want";
+  const promise = p.promise || "your challenge";
   return {
-    card1: `Before ${aud} commits three days to your challenge, they need a reason to believe it is worth their time. A two-minute quiz shows them exactly where they stand on ${prob}, and that personal reflection is what earns the right to ask for the bigger commitment.`,
-    card2: `Most quizzes end at a score and rely on emails to bring people back — and most people never come back. Yours leads straight into the challenge, where ${aud} feel ${sp} in real time instead of reading a number on a results page.`,
-    card3: `Doing the challenge puts you beside ${aud} every step of the way, moving them from ${prob} to ${out} while they watch how you think. That kind of trust is not something an email sequence can build, no matter how long it runs.`,
+    card1: `Three days is a lot to ask of someone who has never met you. A two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results. The moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
+    card2: `Most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened. This one is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}. They do not have to imagine what you can do; they get to feel it.`,
+    card3: `Everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers. Three days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and trust is what turns a quiz taker into a buyer.`,
   };
 }
 
@@ -524,23 +527,22 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
   const fb = fallbackCards(p);
 
   const prompt = [
-    "You are rewriting three short education cards for Day 2 Section 1 of a quiz-marketing challenge.",
+    "You are writing three short education card bodies for Day 2 Section 1 of a quiz-marketing challenge.",
     "",
-    "Builder's Day 1 context (reference these as ideas; do NOT paste them verbatim into the middle of sentences if it breaks grammar — rephrase naturally):",
-    `- audience (clientAvatar): ${p.audience || "(not provided)"}`,
+    "Builder's Day 1 context (reference these as ideas — make each paragraph specific to this person, but do NOT quote the values word for word):",
+    `- clientAvatar: ${p.audience || "(not provided)"}`,
     `- superpower: ${p.superpower || "(not provided)"}`,
     `- problem: ${p.problem || "(not provided)"}`,
-    `- outcome (challengeOutcome): ${p.outcome || "(not provided)"}`,
+    `- challengeOutcome: ${p.outcome || "(not provided)"}`,
+    `- challengePromise: ${p.promise || "(not provided)"}`,
     "",
-    "Write three card bodies, each 3 to 4 sentences of natural flowing prose. The cards must convey:",
-    "Card 1: The audience needs a reason to believe the challenge is worth their time before committing, and a 2-minute quiz that shows them where they stand against their specific problem gives them that reason.",
-    "Card 2: Most quizzes end at the result and rely on emails to convert, but this quiz leads directly into the challenge where the expert demonstrates their superpower in real time rather than sending a score.",
-    "Card 3: Doing the challenge puts the expert with their audience every step of the way, moving them from their specific problem to their specific outcome, and that builds more trust than any email sequence.",
+    "Write three short card body paragraphs in natural flowing prose. Each card must be 3 to 4 sentences maximum.",
     "",
-    "Rules:",
-    "- Reference the builder's context naturally — do not quote it word for word if it makes the sentence ungrammatical.",
-    "- Plain text. No markdown, no headings, no bullets, no emojis, no exclamation marks unless natural. Do not wrap in quotes.",
-    "- Return ONLY a JSON object in this exact shape, nothing else:",
+    "Card 1 must convey: the challenge asks a lot of someone who has never met you, the quiz earns that commitment by showing them where they stand in two minutes, making the problem feel real and the challenge the obvious next step.",
+    "Card 2 must convey: most quiz funnels end at the result and rely on email to convert, this quiz leads directly into the challenge where the expert's superpower solves the exact problem the quiz surfaced.",
+    "Card 3 must convey: everyone who joins through the quiz already believes they have a problem worth solving, and three days of showing up and guiding them toward their outcome turns a quiz taker into a buyer.",
+    "",
+    "Return only the JSON object, no preamble, no markdown. Exact shape:",
     `{"card1":"...","card2":"...","card3":"..."}`,
   ].join("\n");
 

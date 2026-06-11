@@ -111,17 +111,67 @@ const Day2Screen2 = () => {
   const [insights, setInsights] = useState<Record<ButtonKey, InsightState>>(initialInsights);
 
   // ── Sample quiz draft ──────────────────────────────────────
+  interface QuizQuestion {
+    id: number;
+    text: string;
+    scoring: { low: string; mid: string; high: string };
+  }
+  interface QuizTier { name: string; description: string }
   interface QuizDraft {
     quizTitle: string;
-    questions: string[]; // length 9
-    tiers: { low: string; mid: string; high: string };
+    questions: QuizQuestion[]; // length 9
+    tiers: { low: QuizTier; mid: QuizTier; high: QuizTier };
   }
+  const emptyTier = (): QuizTier => ({ name: "", description: "" });
+  const emptyQuestion = (id: number): QuizQuestion => ({
+    id, text: "", scoring: { low: "", mid: "", high: "" },
+  });
   const emptyQuiz: QuizDraft = {
     quizTitle: "",
-    questions: Array(9).fill(""),
-    tiers: { low: "", mid: "", high: "" },
+    questions: Array.from({ length: 9 }, (_, i) => emptyQuestion(i + 1)),
+    tiers: { low: emptyTier(), mid: emptyTier(), high: emptyTier() },
   };
-  const savedQuiz = parseJson<QuizDraft | null>(state.challenge.aiOutputs.day2_s2_quiz, null);
+
+  // Normalise any saved/legacy shape into the richer QuizDraft shape.
+  const normaliseQuiz = (raw: unknown): QuizDraft | null => {
+    if (!raw || typeof raw !== "object") return null;
+    const r = raw as any;
+    const rawQs = Array.isArray(r.questions) ? r.questions : [];
+    const questions: QuizQuestion[] = Array.from({ length: 9 }, (_, i) => {
+      const q = rawQs[i];
+      if (q && typeof q === "object") {
+        return {
+          id: Number(q.id) || i + 1,
+          text: String(q.text ?? ""),
+          scoring: {
+            low:  String(q.scoring?.low  ?? ""),
+            mid:  String(q.scoring?.mid  ?? ""),
+            high: String(q.scoring?.high ?? ""),
+          },
+        };
+      }
+      // legacy: string question
+      return { id: i + 1, text: String(q ?? ""), scoring: { low: "", mid: "", high: "" } };
+    });
+    const readTier = (t: any): QuizTier => {
+      if (t && typeof t === "object") {
+        return { name: String(t.name ?? ""), description: String(t.description ?? "") };
+      }
+      // legacy: tier was a string description
+      return { name: "", description: String(t ?? "") };
+    };
+    return {
+      quizTitle: String(r.quizTitle ?? ""),
+      questions,
+      tiers: {
+        low:  readTier(r.tiers?.low),
+        mid:  readTier(r.tiers?.mid),
+        high: readTier(r.tiers?.high),
+      },
+    };
+  };
+
+  const savedQuiz = normaliseQuiz(parseJson<unknown>(state.challenge.aiOutputs.day2_s2_quiz, null));
   const [quiz, setQuiz] = useState<QuizDraft | null>(savedQuiz);
   const [quizLoading, setQuizLoading] = useState(false);
   const [publishedUrl] = useState<string>("");
@@ -142,17 +192,7 @@ const Day2Screen2 = () => {
         body: { moment: "sample_quiz", inputs: day1Inputs },
       });
       if (error) throw error;
-      const draft: QuizDraft = {
-        quizTitle: String(data?.quizTitle || "").trim(),
-        questions: Array.isArray(data?.questions) && data.questions.length === 9
-          ? data.questions.map((q: unknown) => String(q || ""))
-          : Array(9).fill(""),
-        tiers: {
-          low: String(data?.tiers?.low || ""),
-          mid: String(data?.tiers?.mid || ""),
-          high: String(data?.tiers?.high || ""),
-        },
-      };
+      const draft = normaliseQuiz(data) ?? emptyQuiz;
       setQuiz(draft);
       persist("day2_s2_quiz", draft);
       trackEvent("day_training_viewed", { day: 2, surface: "day2_s2", mode: "sample_quiz" });

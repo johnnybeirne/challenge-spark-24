@@ -18,22 +18,26 @@ import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { trackEvent } from "@/lib/analytics";
+import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 
 const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 
-const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
+const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
   const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { focusMode } = useFocusMode();
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !isAuthEntryRoute && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
+  const effectiveCollapsed = focusMode ? true : sidebarCollapsed;
+  const showRightRail = showChallengeSidebar && !focusMode;
 
   // Subtle confirmation for the +50 "challenge started" momentum reward.
   // The award itself is granted idempotently in applyPointRules

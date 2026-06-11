@@ -259,10 +259,10 @@ const Day2Screen1 = () => {
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
-            Day 2: Build your quiz
+            Day 2{nameSuffix}: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            {firstName ? `${firstName}, let’s` : "Let’s"} build the quiz that gets {clientAvatar} into your challenge.
+            Let’s build the quiz that gets {clientAvatar} into your challenge.
           </p>
 
 

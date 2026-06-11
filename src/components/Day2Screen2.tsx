@@ -434,22 +434,46 @@ const Day2Screen2 = () => {
                     Questions
                   </p>
                   {quiz.questions.map((q, i) => (
-                    <div key={i} className="space-y-1.5">
+                    <div key={q.id} className="space-y-2 rounded-lg border border-border bg-background/40 p-3">
                       <Label htmlFor={`q-${i + 1}`} className="text-xs text-muted-foreground">
                         Question {i + 1}
                       </Label>
                       <Input
                         id={`q-${i + 1}`}
-                        value={q}
+                        value={q.text}
                         onChange={(e) => {
                           const value = e.target.value;
                           updateQuiz((prev) => {
                             const next = [...prev.questions];
-                            next[i] = value;
+                            next[i] = { ...next[i], text: value };
                             return { ...prev, questions: next };
                           });
                         }}
                       />
+                      <div className="grid gap-2 sm:grid-cols-3">
+                        {(["low", "mid", "high"] as const).map((s) => (
+                          <div key={s} className="space-y-1">
+                            <Label htmlFor={`q-${i + 1}-${s}`} className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                              {s} answer
+                            </Label>
+                            <Input
+                              id={`q-${i + 1}-${s}`}
+                              value={q.scoring[s]}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                updateQuiz((prev) => {
+                                  const next = [...prev.questions];
+                                  next[i] = {
+                                    ...next[i],
+                                    scoring: { ...next[i].scoring, [s]: value },
+                                  };
+                                  return { ...prev, questions: next };
+                                });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -459,18 +483,31 @@ const Day2Screen2 = () => {
                     Result tiers
                   </p>
                   {(["low", "mid", "high"] as const).map((tier) => (
-                    <div key={tier} className="space-y-1.5">
-                      <Label htmlFor={`tier-${tier}`} className="text-xs text-muted-foreground capitalize">
-                        {tier}
+                    <div key={tier} className="space-y-2 rounded-lg border border-border bg-background/40 p-3">
+                      <Label htmlFor={`tier-${tier}-name`} className="text-xs text-muted-foreground capitalize">
+                        {tier} tier
                       </Label>
-                      <Textarea
-                        id={`tier-${tier}`}
-                        value={quiz.tiers[tier]}
+                      <Input
+                        id={`tier-${tier}-name`}
+                        value={quiz.tiers[tier].name}
+                        placeholder="Tier name"
                         onChange={(e) => {
                           const value = e.target.value;
                           updateQuiz((prev) => ({
                             ...prev,
-                            tiers: { ...prev.tiers, [tier]: value },
+                            tiers: { ...prev.tiers, [tier]: { ...prev.tiers[tier], name: value } },
+                          }));
+                        }}
+                      />
+                      <Textarea
+                        id={`tier-${tier}-desc`}
+                        value={quiz.tiers[tier].description}
+                        placeholder="Tier description"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          updateQuiz((prev) => ({
+                            ...prev,
+                            tiers: { ...prev.tiers, [tier]: { ...prev.tiers[tier], description: value } },
                           }));
                         }}
                         rows={3}

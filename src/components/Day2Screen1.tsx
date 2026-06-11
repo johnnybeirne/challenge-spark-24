@@ -72,22 +72,38 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
       setTypingDone(true);
       return;
     }
-    // Word-by-word typewriter effect.
-    const words = body.split(/(\s+)/); // keep whitespace tokens
+    // Character-by-character streaming (Claude/ChatGPT feel).
+    // Chunk a few chars per tick with slight pauses at sentence breaks.
     let i = 0;
     setTyped("");
     setTypingDone(false);
-    const interval = window.setInterval(() => {
-      i += 1;
-      setTyped(words.slice(0, i).join(""));
-      if (i >= words.length) {
-        window.clearInterval(interval);
+    let timeoutId: number;
+
+    const tick = () => {
+      // Stream 2–4 chars per tick for smooth flow.
+      const step = 2 + Math.floor(Math.random() * 3);
+      i = Math.min(body.length, i + step);
+      const next = body.slice(0, i);
+      setTyped(next);
+      if (i >= body.length) {
         setTypingDone(true);
         completeRef.current();
+        return;
       }
-    }, 60);
-    return () => window.clearInterval(interval);
+      // Brief pause after sentence punctuation; otherwise fast cadence.
+      const lastChar = next[next.length - 1];
+      const pause = lastChar === "." || lastChar === "!" || lastChar === "?"
+        ? 220
+        : lastChar === "," || lastChar === ";" || lastChar === ":"
+          ? 90
+          : 18 + Math.floor(Math.random() * 14);
+      timeoutId = window.setTimeout(tick, pause);
+    };
+
+    timeoutId = window.setTimeout(tick, 120);
+    return () => window.clearTimeout(timeoutId);
   }, [isOpen, isLoading, isLocked, body, alreadyTyped]);
+
 
   return (
     <Card

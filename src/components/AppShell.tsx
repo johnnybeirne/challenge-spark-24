@@ -18,22 +18,26 @@ import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { trackEvent } from "@/lib/analytics";
+import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 
 const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 
-const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
+const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
   const isChallengerShell = useIsChallengerShell();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { focusMode } = useFocusMode();
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const showChallengeSidebar = showNav && authenticated && experience !== "partner";
   const hideCopilotRoutes = ["/assess", "/assessment"];
   const showCopilotChat = authenticated && !isAuthEntryRoute && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
+  const effectiveCollapsed = focusMode ? true : sidebarCollapsed;
+  const showRightRail = showChallengeSidebar && !focusMode;
 
   // Subtle confirmation for the +50 "challenge started" momentum reward.
   // The award itself is granted idempotently in applyPointRules
@@ -80,27 +84,33 @@ const AppShell = ({ showNav = false, fullWidth = false }: { showNav?: boolean; f
       data-experience={mode}
       className="experience-root min-h-screen bg-background overflow-x-hidden"
     >
-      {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} />}
-      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (sidebarCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
+      {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} collapsed={effectiveCollapsed} />}
+      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (effectiveCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         {showChallengeSidebar && <TopBar />}
         <div className={showChallengeSidebar ? "flex w-full" : undefined}>
           <div className="min-w-0 flex-1">
             {showNav && authenticated && <BackButton />}
             <Outlet />
           </div>
-          {showChallengeSidebar && <RightRail />}
+          {showRightRail && <RightRail />}
         </div>
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}
       </div>
       {showCopilotChat && <AiCopilotChat />}
-      {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={sidebarCollapsed} />}
+      {showChallengeSidebar && isChallengerShell && <CountdownBottomBar sidebarCollapsed={effectiveCollapsed} />}
       <QaModePanel />
 
 
     </div>
   );
 };
+
+const AppShell = (props: { showNav?: boolean; fullWidth?: boolean }) => (
+  <FocusModeProvider>
+    <AppShellInner {...props} />
+  </FocusModeProvider>
+);
 
 export default AppShell;

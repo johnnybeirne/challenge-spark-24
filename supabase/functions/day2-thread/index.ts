@@ -591,14 +591,35 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
     const m = raw.match(/\{[\s\S]*\}/);
     if (m) { try { parsed = JSON.parse(m[0]); } catch { /* ignore */ } }
   }
-  const c1 = stripQuotes(sanitise(parsed.card1, 1200));
-  const c2 = stripQuotes(sanitise(parsed.card2, 1200));
-  const c3 = stripQuotes(sanitise(parsed.card3, 1200));
+  let c1 = stripQuotes(sanitise(parsed.card1, 1200));
+  let c2 = stripQuotes(sanitise(parsed.card2, 1200));
+  let c3 = stripQuotes(sanitise(parsed.card3, 1200));
   if (!c1 || !c2 || !c3) return fallback("bad-shape", { cards: fb });
+
+  // Enforce: each card must include the first name at least once.
+  // If the model skipped it, inject it naturally at the start.
+  if (p.firstName) {
+    const fn = p.firstName;
+    const nameRe = new RegExp(`\\b${fn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    const inject = (text: string, idx: number): string => {
+      if (nameRe.test(text)) return text;
+      // Lowercase the first letter so "Asking..." becomes "Asking..." -> "Fn, asking..."
+      const first = text.charAt(0);
+      const rest = text.slice(1);
+      const lowered = first.toLowerCase() + rest;
+      const opener = idx === 1 ? `Here is the thing, ${fn} — ` : `${fn}, `;
+      return opener + lowered;
+    };
+    c1 = inject(c1, 0);
+    c2 = inject(c2, 1);
+    c3 = inject(c3, 2);
+  }
+
   return new Response(JSON.stringify({ cards: { card1: c1, card2: c2, card3: c3 } }), {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
 
 
 

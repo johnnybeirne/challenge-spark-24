@@ -383,6 +383,113 @@ const AdminDay1Steps = () => {
     | { kind: "option"; index: number }
   >({ kind: "message" });
 
+  // Tracks the most recently focused textarea so the formatting toolbar
+  // knows which field to apply Bold / Italic / Colour to.
+  const lastTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const trackFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    lastTextareaRef.current = e.currentTarget;
+  };
+
+  const FORMAT_COLORS: { label: string; value: string }[] = [
+    { label: "Black", value: "#000000" },
+    { label: "White", value: "#FFFFFF" },
+    { label: "Grey", value: "#6B7280" },
+    { label: "Primary", value: "#4F46C8" },
+    { label: "Accent", value: "#DC6432" },
+    { label: "Success", value: "#10B981" },
+  ];
+
+  const applyWrap = (before: string, after: string) => {
+    const ta = lastTextareaRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart ?? 0;
+    const end = ta.selectionEnd ?? 0;
+    if (start === end) return; // selection-only per spec
+    const value = ta.value;
+    const selected = value.slice(start, end);
+    const next = value.slice(0, start) + before + selected + after + value.slice(end);
+    // Dispatch a native input event so React picks up the change.
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      "value",
+    )?.set;
+    setter?.call(ta, next);
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+    // Restore selection around the newly wrapped text.
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(start + before.length, end + before.length);
+    });
+  };
+
+  const applyBold = () => applyWrap("<b>", "</b>");
+  const applyItalic = () => applyWrap("<i>", "</i>");
+  const applyColor = (hex: string) =>
+    applyWrap(`<span style="color:${hex}">`, "</span>");
+
+  const FormatToolbar = () => (
+    <div className="flex items-center gap-1 rounded-md border bg-muted/40 p-1">
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={applyBold}
+        title="Bold"
+        aria-label="Bold"
+      >
+        <Bold className="h-3.5 w-3.5" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={applyItalic}
+        title="Italic"
+        aria-label="Italic"
+      >
+        <Italic className="h-3.5 w-3.5" />
+      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0"
+            onMouseDown={(e) => e.preventDefault()}
+            title="Text colour"
+            aria-label="Text colour"
+          >
+            <Palette className="h-3.5 w-3.5" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-2" align="start">
+          <div className="grid grid-cols-6 gap-1.5">
+            {FORMAT_COLORS.map((c) => (
+              <button
+                key={c.value}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => applyColor(c.value)}
+                title={`${c.label} (${c.value})`}
+                aria-label={c.label}
+                className="h-6 w-6 rounded border border-border shadow-sm transition hover:scale-110"
+                style={{ backgroundColor: c.value }}
+              />
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      <span className="ml-1 text-[10px] text-muted-foreground">
+        Select text, then choose formatting
+      </span>
+    </div>
+  );
+
   const liveValues = useLiveTagValues();
 
   useEffect(() => {

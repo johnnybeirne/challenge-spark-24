@@ -147,12 +147,12 @@ const Day2Screen1 = () => {
       body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand. That result creates the motivation to go further. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
     },
     {
-      title: "Your quiz shows them the gap. Your challenge closes it.",
-      body: `Your challenge helps ${clientAvatar} move from ${problem} to ${challengeOutcome}. Most of them do not fully see that gap yet. Your quiz surfaces it. When they finish and see their result, they should think: now I understand why I need to do this. Your challenge is the answer sitting right there.`,
+      title: "Most quizzes stop at the result. Yours does not.",
+      body: `Traditional quiz funnels give someone a score, a few tips, and then rely on emails to bring them back. Most people never return. Your quiz is different. The result page is not the destination. It is the moment you say: now that you can see the gap, here is how we close it together. The challenge is where ${clientAvatar} sees your real expertise, not a score out of 100.`,
     },
     {
-      title: "The quiz is how your challenge spreads.",
-      body: `Every person who takes your quiz gets a personalised result they want to share. When they share it, they send other people into the same funnel. Those people take the quiz, see the gap, and enter your challenge. No ads. No content. The quiz does the work.`,
+      title: "Three days builds more trust than three months of emails.",
+      body: `When ${clientAvatar} does the challenge, you are with them every day. You are showing them how to move from ${problem} to ${challengeOutcome} in real time. That is not a content strategy. That is a relationship. By Day 3 they know what you do, how you think, and whether they want to go further with you. No email sequence does that.`,
     },
   ];
 

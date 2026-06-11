@@ -7,7 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
-  { id: 1, label: "Quiz marketing", title: "Why a 2-minute quiz beats a 3-day pitch" },
+  { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want your challenge" },
   { id: 2, label: "Quiz generation", title: "Generate your quiz" },
   { id: 3, label: "Export", title: "Export your plan" },
 ];
@@ -138,7 +138,7 @@ const Day2Screen1 = () => {
   const cardCopy = [
     {
       title: "The quiz earns the right to ask for 3 days.",
-      body: `Before ${clientAvatar} commits to a 3-day challenge, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand with ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
+      body: `Before ${clientAvatar} commits to ${challengePromise}, they need a reason to believe it is worth their time. A 2-minute quiz gives them a personalised result that shows them exactly where they stand against ${problem}. That result creates the motivation to take the next step. The quiz does not replace the challenge. It makes ${clientAvatar} want to do it.`,
     },
     {
       title: "Most quizzes stop at the result. Yours does not.",
@@ -187,7 +187,7 @@ const Day2Screen1 = () => {
             Day 2: Build your quiz
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            In Day 1 you defined your challenge. Now we build the quiz that gets {clientAvatar} to take the first step, using your superpower of {superpower} to help them move from {problem} to {challengeOutcome}.
+            In Day 1 you defined your challenge. Now we build the quiz that makes {clientAvatar} want to do it.
           </p>
 
           {/* Day 1 recap */}

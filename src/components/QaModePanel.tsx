@@ -483,6 +483,8 @@ const QaModePanel = () => {
               </div>
             </div>
 
+            <AssessmentStateSection />
+
             <div className="space-y-1.5">
               <SectionLabel>Quick Routes</SectionLabel>
               <div className="grid grid-cols-2 gap-1.5">

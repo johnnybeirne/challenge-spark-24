@@ -879,7 +879,7 @@ const AdminDay1Steps = () => {
                         }}
                         rows={2}
                         value={opt}
-                        onFocus={() => setFocusedField({ kind: "option", index: i })}
+                        onFocus={(e) => { trackFocus(e); setFocusedField({ kind: "option", index: i }); }}
                         onChange={(e) => updateOption(activeStep.id, i, e.target.value)}
                         className="text-sm resize-y"
                       />

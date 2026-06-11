@@ -101,7 +101,6 @@ export interface AppState {
       section1Complete: boolean;
       section2Complete: boolean;
       section3Complete: boolean;
-      section4Complete: boolean;
     };
   };
   network: {
@@ -189,7 +188,6 @@ export const defaultState: AppState = {
       section1Complete: false,
       section2Complete: false,
       section3Complete: false,
-      section4Complete: false,
     },
   },
   referrals: { count: 0, records: [] },

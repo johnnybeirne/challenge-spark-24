@@ -5,9 +5,8 @@ import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   { id: 1, label: "Quiz marketing", title: "Why a 2-minute quiz beats a 3-day pitch" },
-  { id: 2, label: "Referral setup", title: "Set up your referral invite" },
-  { id: 3, label: "Quiz generation", title: "Generate your quiz" },
-  { id: 4, label: "Export", title: "Export your plan" },
+  { id: 2, label: "Quiz generation", title: "Generate your quiz" },
+  { id: 3, label: "Export", title: "Export your plan" },
 ];
 
 const Day2Screen1 = () => {
@@ -25,18 +24,16 @@ const Day2Screen1 = () => {
     section1Complete: false,
     section2Complete: false,
     section3Complete: false,
-    section4Complete: false,
   };
 
   const completeMap: Record<number, boolean> = {
     1: day2.section1Complete,
     2: day2.section2Complete,
     3: day2.section3Complete,
-    4: day2.section4Complete,
   };
 
-  // Active = first incomplete section. All later sections are locked.
-  const activeId = SECTIONS.find((s) => !completeMap[s.id])?.id ?? 4;
+  // Active = first incomplete section. Later sections are locked.
+  const activeId = SECTIONS.find((s) => !completeMap[s.id])?.id ?? SECTIONS.length;
 
   return (
     <div className="min-h-screen bg-background">

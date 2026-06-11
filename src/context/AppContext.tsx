@@ -101,7 +101,6 @@ export interface AppState {
       section1Complete: boolean;
       section2Complete: boolean;
       section3Complete: boolean;
-      section4Complete: boolean;
     };
   };
   network: {

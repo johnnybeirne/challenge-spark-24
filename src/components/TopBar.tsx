@@ -51,6 +51,20 @@ const TopBar = () => {
   return (
     <header className="sticky top-0 z-30 hidden h-14 w-full items-center justify-between gap-3 border-b border-border bg-background px-3 lg:flex">
       <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
+        <button
+          type="button"
+          onClick={toggleFocusMode}
+          className={cn(
+            "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-muted",
+            focusMode ? "bg-primary/10 text-primary" : "text-muted-foreground"
+          )}
+          aria-pressed={focusMode}
+          aria-label={focusMode ? "Exit focus mode" : "Enter focus mode"}
+          title={focusMode ? "Exit focus mode" : "Focus mode"}
+        >
+          {focusMode ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+          <span className="whitespace-nowrap">Focus</span>
+        </button>
         {tools.map(({ to, label, Icon }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);
           return (

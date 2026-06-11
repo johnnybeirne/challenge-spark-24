@@ -370,6 +370,10 @@ const Day2Screen1 = () => {
                       {firstName ? `${firstName}, here` : "Here"} is why your quiz is the smartest way to launch your challenge.
                     </p>
 
+                    <p className="text-xs text-muted-foreground">
+                      Read each section below before moving on.
+                    </p>
+
                     {cardCopy.map((c, idx) => {
                       const lockedCard = idx > 0 && !openedCards.has(idx - 1);
                       return (

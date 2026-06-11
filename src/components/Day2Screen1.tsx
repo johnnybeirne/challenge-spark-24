@@ -198,12 +198,15 @@ const Day2Screen1 = () => {
               { label: "The problem you solve", value: problem },
               { label: "The result you deliver", value: challengeOutcome },
               { label: "Your challenge promise", value: challengePromise },
-            ].map((row) => (
-              <div key={row.label} className="flex flex-col sm:flex-row sm:gap-2">
-                <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
-                <dd className="text-muted-foreground">{row.value}</dd>
-              </div>
-            ))}
+            ].map((row) => {
+              const v = row.value ? row.value.charAt(0).toUpperCase() + row.value.slice(1) : row.value;
+              return (
+                <div key={row.label} className="flex gap-2 whitespace-nowrap overflow-hidden">
+                  <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
+                  <dd className="text-muted-foreground truncate">{v}</dd>
+                </div>
+              );
+            })}
           </dl>
         </header>
 

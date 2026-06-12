@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2 } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 type Tier = "low" | "mid" | "high";
 
@@ -83,12 +84,14 @@ interface Props {
 const Day2QuizPlayable = ({ onBack }: Props) => {
   const { state, setState } = useAppState();
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
+  const identity = useChallengeIdentity();
 
   const [quiz, setQuiz] = useState<QuizDraft | null>(() => {
     try { return normaliseQuiz(JSON.parse(state.challenge.aiOutputs.day2_s2_quiz || "null")); }
     catch { return null; }
   });
   const [loading, setLoading] = useState(false);
+  const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<Tier[]>([]);
   const [current, setCurrent] = useState(0);
   const [animKey, setAnimKey] = useState(0);
@@ -169,6 +172,62 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
       </Shell>
     );
   }
+
+  // ───────────── Landing screen ─────────────
+  if (!started && answers.length === 0) {
+    const outcome = d1.outcome;
+    const topic = (identity.topic || "growth business success").trim();
+    const keyword = encodeURIComponent(topic.split(/\s+/).slice(0, 2).join(","));
+    const heroUrl = `https://source.unsplash.com/1600x900/?${keyword}`;
+    const headline = identity.isPersonalised
+      ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
+      : quiz.quizTitle;
+    const sub = outcome && outcome !== "the result they want"
+      ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
+      : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-5 py-10 text-center animate-fade-in">
+          <div className="w-full overflow-hidden rounded-3xl border border-border shadow-2xl">
+            <img
+              src={heroUrl}
+              alt={topic}
+              className="aspect-[16/9] w-full object-cover"
+              loading="eager"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src =
+                  "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80";
+              }}
+            />
+          </div>
+          <p className="mt-8 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
+            {quiz.quizTitle}
+          </p>
+          <h1 className="mt-4 max-w-2xl text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight text-foreground">
+            {headline}
+          </h1>
+          <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+            {sub}
+          </p>
+          <Button
+            size="lg"
+            className="mt-10 h-14 rounded-full px-10 text-base font-bold shadow-lg"
+            onClick={() => {
+              setStarted(true);
+              trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
+            }}
+          >
+            <Play className="h-5 w-5" /> Take the Quiz
+          </Button>
+          <p className="mt-5 text-xs text-muted-foreground">
+            {quiz.questions.length} quick questions · takes under a minute
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+
 
   // ───────────── Result screen ─────────────
   if (result) {
@@ -296,25 +355,18 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
 };
 
 interface ShellProps { onBack: () => void; step: number; total: number; children: React.ReactNode }
-const Shell = ({ onBack, step, total, children }: ShellProps) => (
+const Shell = ({ onBack, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-end">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+          aria-label="Close quiz preview"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Day 2 · Step {step} of {total}
+          <ArrowLeft className="h-3.5 w-3.5" /> Close
         </button>
-        <div className="flex gap-1.5">
-          {Array.from({ length: total }, (_, i) => (
-            <span
-              key={i}
-              className={cn("h-1.5 w-6 rounded-full", i + 1 <= step ? "bg-primary" : "bg-muted")}
-            />
-          ))}
-        </div>
       </div>
       {children}
     </div>

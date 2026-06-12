@@ -58,7 +58,11 @@ const readSetupFromState = (aiOutputs: Record<string, unknown> | undefined) => {
   return null;
 };
 
-const Day2Screen2 = () => {
+interface Day2Screen2Props {
+  embedded?: boolean;
+}
+
+const Day2Screen2 = ({ embedded = false }: Day2Screen2Props = {}) => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 

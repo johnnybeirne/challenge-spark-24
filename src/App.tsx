@@ -220,6 +220,9 @@ const App = () => (
                 <Route path="/partner/performance" element={<PartnerGuard><PartnerPerformance /></PartnerGuard>} />
               </Route>
 
+              {/* Quiz preview — full-screen, no app shell / sidebar / nav */}
+              <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
+
 
               {/* Owner console — sidebar layout, password-protected */}
               <Route path="/owner-console" element={<AdminLayout />}>

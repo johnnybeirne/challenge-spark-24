@@ -126,7 +126,14 @@ const startAmbientPad = () => {
   }
 };
 
-const Day2QuizGenerating = () => {
+interface Day2QuizGeneratingProps {
+  /** When provided, called with the generated quiz instead of mutating day2_step. */
+  onComplete?: (quiz: unknown) => void;
+  /** When provided, called on API failure instead of resetting day2_step. */
+  onError?: () => void;
+}
+
+const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {}) => {
   const { state, setState, authUser } = useAppState();
   const d1 = useMemo(() => readDay1(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
 

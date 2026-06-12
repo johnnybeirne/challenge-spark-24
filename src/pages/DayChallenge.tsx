@@ -28,6 +28,7 @@ import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
 import Day2Screen1 from "@/components/Day2Screen1";
+import Day2QuizPlayable from "@/components/Day2QuizPlayable";
 // Day2Screen2 ("Why a quiz beats other lead magnets") moved to /training under "Quiz Funnel Strategy".
 
 import DayVideoModal from "@/components/DayVideoModal";
@@ -184,6 +185,20 @@ const DayChallenge = () => {
   // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")
   // lives in /training under "Quiz Funnel Strategy".
   if (dayNum === 2) {
+    const step = state.challenge.aiOutputs.day2_step;
+    if (step === "2") {
+      return (
+        <Day2QuizPlayable
+          onBack={() => setState((prev) => ({
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
+            },
+          }))}
+        />
+      );
+    }
     return <Day2Screen1 />;
   }
 

@@ -420,7 +420,9 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = qaUnlock || readCards.size === cardCopy.length;
+  // Gate removed: the Generate button is always clickable so testers and
+  // returning users can jump straight into the quiz preview.
+  const allOpened = true;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 

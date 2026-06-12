@@ -418,12 +418,13 @@ const Day2Screen1 = () => {
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
+
   const handleGenerateQuiz = () => {
     if (quizGenerating || (!allOpened && !qaUnlock)) return;
-    // Open the personalised "AI is building" → playable quiz preview in a
-    // new browser window so the creator can show their audience exactly
-    // what the quiz feels like, without leaving the builder flow.
-    window.open("/quiz-preview", "_blank", "noopener");
+    // Open the full-screen quiz modal (generation → landing → questions →
+    // result). The Day 2 dashboard stays mounted behind the overlay.
+    setQuizModalOpen(true);
   };
 
   const handleContinue = () => {

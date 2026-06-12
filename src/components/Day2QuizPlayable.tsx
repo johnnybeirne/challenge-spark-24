@@ -355,25 +355,18 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
 };
 
 interface ShellProps { onBack: () => void; step: number; total: number; children: React.ReactNode }
-const Shell = ({ onBack, step, total, children }: ShellProps) => (
+const Shell = ({ onBack, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-end">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+          aria-label="Close quiz preview"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Day 2 · Step {step} of {total}
+          <ArrowLeft className="h-3.5 w-3.5" /> Close
         </button>
-        <div className="flex gap-1.5">
-          {Array.from({ length: total }, (_, i) => (
-            <span
-              key={i}
-              className={cn("h-1.5 w-6 rounded-full", i + 1 <= step ? "bg-primary" : "bg-muted")}
-            />
-          ))}
-        </div>
       </div>
       {children}
     </div>

@@ -404,7 +404,7 @@ const Day2Screen1 = () => {
 
   const handleToggleCard = (idx: number) => {
     // Lock rule: card N requires card N-1 already marked as read.
-    if (idx > 0 && !readCards.has(idx - 1)) return;
+    if (!qaUnlock && idx > 0 && !readCards.has(idx - 1)) return;
     setOpenedCards((prev) => {
       if (prev.has(idx)) return prev;
       const next = new Set(prev);

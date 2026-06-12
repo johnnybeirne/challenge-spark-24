@@ -414,7 +414,7 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = readCards.size === cardCopy.length;
+  const allOpened = qaUnlock || readCards.size === cardCopy.length;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 

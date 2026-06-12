@@ -437,7 +437,7 @@ const Day2Screen1 = () => {
         },
       });
       if (error) throw error;
-      // Persist into the same key Day 2 Step 2 reads, then advance to step 2.
+      // Persist the generated quiz and advance to Step 2 (playable preview).
       setState((prev) => ({
         ...prev,
         challenge: {
@@ -445,6 +445,7 @@ const Day2Screen1 = () => {
           aiOutputs: {
             ...prev.challenge.aiOutputs,
             day2_s2_quiz: JSON.stringify(data ?? {}),
+            day2_step: "2",
           },
         },
       }));

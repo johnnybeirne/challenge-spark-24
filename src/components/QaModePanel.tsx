@@ -145,6 +145,94 @@ const AssessmentStateSection = () => {
   );
 };
 
+const BTN_POS_KEY = "leadio_qa_button_pos";
+
+const DraggableQaButton = ({
+  open,
+  setOpen,
+  active,
+}: {
+  open: boolean;
+  setOpen: (fn: (v: boolean) => boolean) => void;
+  active: boolean;
+}) => {
+  const BTN_W = 120;
+  const BTN_H = 36;
+  const getDefault = () => {
+    if (typeof window === "undefined") return { x: 16, y: 16 };
+    return { x: Math.max(16, window.innerWidth - BTN_W - 16), y: 16 };
+  };
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === "undefined") return { x: 16, y: 16 };
+    try {
+      const raw = localStorage.getItem(BTN_POS_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") return p;
+      }
+    } catch {}
+    return getDefault();
+  });
+  const dragRef = useRef<{ dx: number; dy: number; moved: boolean; startX: number; startY: number } | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = useCallback((x: number, y: number) => {
+    if (typeof window === "undefined") return { x, y };
+    return {
+      x: Math.min(Math.max(0, x), window.innerWidth - BTN_W),
+      y: Math.min(Math.max(0, y), window.innerHeight - BTN_H),
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const point = "touches" in e ? e.touches[0] : (e as MouseEvent);
+      if (!dragRef.current || !point) return;
+      const dx = point.clientX - dragRef.current.startX;
+      const dy = point.clientY - dragRef.current.startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragRef.current.moved = true;
+      setPos(clamp(point.clientX - dragRef.current.dx, point.clientY - dragRef.current.dy));
+    };
+    const onUp = () => {
+      const moved = dragRef.current?.moved;
+      setDragging(false);
+      dragRef.current = null;
+      try { localStorage.setItem(BTN_POS_KEY, JSON.stringify(pos)); } catch {}
+      if (!moved) setOpen((v) => !v);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [dragging, clamp, pos, setOpen]);
+
+  const start = (cx: number, cy: number) => {
+    dragRef.current = { dx: cx - pos.x, dy: cy - pos.y, moved: false, startX: cx, startY: cy };
+    setDragging(true);
+  };
+
+  return (
+    <button
+      onMouseDown={(e) => { e.preventDefault(); start(e.clientX, e.clientY); }}
+      onTouchStart={(e) => { const t = e.touches[0]; if (t) start(t.clientX, t.clientY); }}
+      style={{ left: pos.x, top: pos.y }}
+      className={`fixed z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted ${dragging ? "cursor-grabbing" : "cursor-grab"} select-none`}
+      title="QA Mode (drag to move)"
+    >
+      <Beaker className="h-4 w-4" />
+      QA Mode
+      {active && <span className="ml-1 h-2 w-2 rounded-full bg-amber-500" />}
+    </button>
+  );
+};
+
 const QaModePanel = () => {
   const { user } = useAuth();
   const qa = useQaPreview();
@@ -378,15 +466,8 @@ const QaModePanel = () => {
           </p>
         </div>
       )}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="fixed top-4 right-4 z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted"
-        title="QA Mode"
-      >
-        <Beaker className="h-4 w-4" />
-        QA Mode
-        {qa.active && <span className="ml-1 h-2 w-2 rounded-full bg-amber-500" />}
-      </button>
+      <DraggableQaButton open={open} setOpen={setOpen} active={qa.active} />
+
 
       {open && (
         <div

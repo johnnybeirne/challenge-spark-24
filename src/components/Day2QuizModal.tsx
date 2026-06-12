@@ -12,11 +12,11 @@ interface Props {
 }
 
 /**
- * Full-screen modal overlay for the quiz generation + playback experience.
+ * Big centred pop-up for the quiz generation + playback experience.
  *
- * Sits above the Day 2 dashboard (which remains mounted behind it). Owns the
- * phase transition: generating (AI orb) → playable (landing → questions →
- * result). No routing — pure overlay.
+ * Renders via portal directly to <body>. Uses a darkened backdrop and a
+ * white panel that fills ~95% of the viewport. The Generating phase renders
+ * inside the panel (not as its own fixed overlay) so it's always visible.
  */
 const Day2QuizModal = ({ open, onClose }: Props) => {
   const { setState } = useAppState();
@@ -24,13 +24,10 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
 
-  // Mount/unmount with fade. When `open` flips true, mount and fade in.
-  // When it flips false, fade out then unmount.
   useEffect(() => {
     if (open) {
       setPhase("generating");
       setMounted(true);
-      // next frame → trigger fade-in
       const id = requestAnimationFrame(() => setVisible(true));
       return () => cancelAnimationFrame(id);
     }
@@ -39,7 +36,6 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
     return () => clearTimeout(t);
   }, [open]);
 
-  // Lock background scroll while open
   useEffect(() => {
     if (!mounted) return;
     const prev = document.body.style.overflow;
@@ -49,7 +45,6 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
     };
   }, [mounted]);
 
-  // ESC to close
   useEffect(() => {
     if (!mounted) return;
     const onKey = (e: KeyboardEvent) => {
@@ -67,34 +62,40 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
       aria-modal="true"
       aria-label="Quiz preview"
       className={cn(
-        "fixed inset-0 z-[100] transition-opacity duration-300",
+        "fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 transition-opacity duration-300",
         visible ? "opacity-100" : "opacity-0",
       )}
     >
-      {/* Dark backdrop */}
-      <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" />
+      {/* Backdrop (click to close) */}
+      <button
+        type="button"
+        aria-label="Close quiz preview"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-slate-950/85 backdrop-blur-sm"
+      />
 
-      {/* Modal content */}
-      <div className="relative h-full w-full overflow-y-auto bg-background">
-        {/* Close button */}
+      {/* Big centred panel */}
+      <div
+        className={cn(
+          "relative z-10 flex h-[95vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-background shadow-2xl ring-1 ring-border transition-transform duration-300",
+          visible ? "scale-100" : "scale-95",
+        )}
+      >
+        {/* Close */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Close quiz preview"
-          className="fixed right-4 top-4 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/80 text-foreground shadow-lg ring-1 ring-border backdrop-blur transition hover:bg-background hover:scale-105 sm:right-6 sm:top-6"
+          className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md ring-1 ring-border backdrop-blur transition hover:bg-background hover:scale-105"
         >
           <X className="h-5 w-5" />
         </button>
 
-        {/* Phase content with crossfade */}
-        <div key={phase} className="animate-fade-in">
+        {/* Phase content — fills the panel */}
+        <div key={phase} className="relative flex-1 overflow-y-auto animate-fade-in">
           {phase === "generating" ? (
             <Day2QuizGenerating
               onComplete={(quiz) => {
-                // IMPORTANT: do NOT write day2_step here. The modal is rendered
-                // from inside Day2Screen1, and changing day2_step causes
-                // DayChallenge to swap out Day2Screen1 → modal unmounts mid-flow.
-                // We only cache the generated quiz so Day2QuizPlayable can read it.
                 setState((p) => ({
                   ...p,
                   challenge: {

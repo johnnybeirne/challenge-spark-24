@@ -249,17 +249,21 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     handedOffRef.current = true;
     setRevealing(true);
     window.setTimeout(() => {
-      setState((prev) => ({
-        ...prev,
-        challenge: {
-          ...prev.challenge,
-          aiOutputs: {
-            ...prev.challenge.aiOutputs,
-            day2_s2_quiz: JSON.stringify(apiResultRef.current ?? {}),
-            day2_step: "2",
+      if (onComplete) {
+        onComplete(apiResultRef.current ?? {});
+      } else {
+        setState((prev) => ({
+          ...prev,
+          challenge: {
+            ...prev.challenge,
+            aiOutputs: {
+              ...prev.challenge.aiOutputs,
+              day2_s2_quiz: JSON.stringify(apiResultRef.current ?? {}),
+              day2_step: "2",
+            },
           },
-        },
-      }));
+        }));
+      }
     }, REVEAL_FADE_MS);
   };
 

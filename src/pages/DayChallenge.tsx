@@ -187,6 +187,9 @@ const DayChallenge = () => {
   // lives in /training under "Quiz Funnel Strategy".
   if (dayNum === 2) {
     const step = state.challenge.aiOutputs.day2_step;
+    if (step === "generating") {
+      return <Day2QuizGenerating />;
+    }
     if (step === "2") {
       return (
         <Day2QuizPlayable

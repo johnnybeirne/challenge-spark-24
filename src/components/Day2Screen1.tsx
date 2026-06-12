@@ -445,7 +445,6 @@ const Day2Screen1 = () => {
           aiOutputs: {
             ...prev.challenge.aiOutputs,
             day2_s2_quiz: JSON.stringify(data ?? {}),
-            day2_step: "2",
           },
         },
       }));

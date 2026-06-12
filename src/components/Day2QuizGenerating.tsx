@@ -270,7 +270,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[120] flex items-center justify-center overflow-hidden transition-opacity duration-500",
+        "absolute inset-0 flex min-h-[60vh] items-center justify-center overflow-hidden transition-opacity duration-500",
         revealing ? "opacity-0" : "opacity-100",
       )}
       style={{

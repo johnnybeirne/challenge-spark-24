@@ -204,13 +204,17 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
       } catch (err: any) {
         if (cancelled) return;
         toast.error(err?.message || "Couldn't generate your quiz right now.");
-        setState((prev) => ({
-          ...prev,
-          challenge: {
-            ...prev.challenge,
-            aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
-          },
-        }));
+        if (onError) {
+          onError();
+        } else {
+          setState((prev) => ({
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
+            },
+          }));
+        }
       }
     })();
     return () => {

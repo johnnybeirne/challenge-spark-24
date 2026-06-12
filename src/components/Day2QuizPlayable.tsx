@@ -173,6 +173,62 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
     );
   }
 
+  // ───────────── Landing screen ─────────────
+  if (!started && answers.length === 0) {
+    const outcome = d1.outcome;
+    const topic = (identity.topic || "growth business success").trim();
+    const keyword = encodeURIComponent(topic.split(/\s+/).slice(0, 2).join(","));
+    const heroUrl = `https://source.unsplash.com/1600x900/?${keyword}`;
+    const headline = identity.isPersonalised
+      ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
+      : quiz.quizTitle;
+    const sub = outcome && outcome !== "the result they want"
+      ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
+      : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-5 py-10 text-center animate-fade-in">
+          <div className="w-full overflow-hidden rounded-3xl border border-border shadow-2xl">
+            <img
+              src={heroUrl}
+              alt={topic}
+              className="aspect-[16/9] w-full object-cover"
+              loading="eager"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src =
+                  "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80";
+              }}
+            />
+          </div>
+          <p className="mt-8 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
+            {quiz.quizTitle}
+          </p>
+          <h1 className="mt-4 max-w-2xl text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight text-foreground">
+            {headline}
+          </h1>
+          <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+            {sub}
+          </p>
+          <Button
+            size="lg"
+            className="mt-10 h-14 rounded-full px-10 text-base font-bold shadow-lg"
+            onClick={() => {
+              setStarted(true);
+              trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
+            }}
+          >
+            <Play className="h-5 w-5" /> Take the Quiz
+          </Button>
+          <p className="mt-5 text-xs text-muted-foreground">
+            {quiz.questions.length} quick questions · takes under a minute
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+
+
   // ───────────── Result screen ─────────────
   if (result) {
     const total = quiz.questions.length;

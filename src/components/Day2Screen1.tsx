@@ -510,7 +510,7 @@ const Day2Screen1 = () => {
           {SECTIONS.map((s) => {
             const isActive = s.id === activeId;
             const isComplete = completeMap[s.id];
-            const isLocked = !isActive && !isComplete;
+            const isLocked = qaUnlock ? false : (!isActive && !isComplete);
             return (
               <li
                 key={s.id}

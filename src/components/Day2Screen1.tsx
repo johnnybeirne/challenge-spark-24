@@ -472,7 +472,22 @@ const Day2Screen1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12 pb-24">
+      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
+        {/* Step indicator */}
+        <div className="mb-6 flex items-center justify-between">
+          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+            Day 2 · Step 1 of 5
+          </span>
+          <div className="flex gap-1.5">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <span
+                key={n}
+                className={cn("h-1.5 w-6 rounded-full", n <= 1 ? "bg-primary" : "bg-muted")}
+              />
+            ))}
+          </div>
+        </div>
+
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
@@ -481,6 +496,7 @@ const Day2Screen1 = () => {
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             Let’s build the quiz that gets {clientAvatar} into your challenge.
           </p>
+
 
 
           {/* Day 1 recap */}

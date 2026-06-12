@@ -91,6 +91,10 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
           {phase === "generating" ? (
             <Day2QuizGenerating
               onComplete={(quiz) => {
+                // IMPORTANT: do NOT write day2_step here. The modal is rendered
+                // from inside Day2Screen1, and changing day2_step causes
+                // DayChallenge to swap out Day2Screen1 → modal unmounts mid-flow.
+                // We only cache the generated quiz so Day2QuizPlayable can read it.
                 setState((p) => ({
                   ...p,
                   challenge: {
@@ -98,7 +102,6 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
                     aiOutputs: {
                       ...p.challenge.aiOutputs,
                       day2_s2_quiz: JSON.stringify(quiz ?? {}),
-                      day2_step: "2",
                     },
                   },
                 }));

@@ -84,12 +84,14 @@ interface Props {
 const Day2QuizPlayable = ({ onBack }: Props) => {
   const { state, setState } = useAppState();
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
+  const identity = useChallengeIdentity();
 
   const [quiz, setQuiz] = useState<QuizDraft | null>(() => {
     try { return normaliseQuiz(JSON.parse(state.challenge.aiOutputs.day2_s2_quiz || "null")); }
     catch { return null; }
   });
   const [loading, setLoading] = useState(false);
+  const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<Tier[]>([]);
   const [current, setCurrent] = useState(0);
   const [animKey, setAnimKey] = useState(0);

@@ -204,6 +204,8 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
+  const qa = useQaPreview();
+  const qaUnlock = qa.active;
   const metaName =
     (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name ||
     (authUser?.user_metadata as { name?: string } | undefined)?.name ||

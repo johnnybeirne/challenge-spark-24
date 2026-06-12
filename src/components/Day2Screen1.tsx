@@ -429,9 +429,7 @@ const Day2Screen1 = () => {
   const [quizModalOpen, setQuizModalOpen] = useState(false);
 
   const handleGenerateQuiz = () => {
-    if (quizGenerating || (!allOpened && !qaUnlock)) return;
-    // Open the full-screen quiz modal (generation → landing → questions →
-    // result). The Day 2 dashboard stays mounted behind the overlay.
+    if (quizGenerating) return;
     setQuizModalOpen(true);
   };
 

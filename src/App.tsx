@@ -26,6 +26,7 @@ import Training from "@/pages/Training";
 import Day1 from "@/pages/Day1";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
+import QuizPreview from "@/pages/QuizPreview";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
@@ -193,6 +194,7 @@ const App = () => (
                 <Route path="/challenge/day-3" element={<RedirectKeepingQuery to="/challenge/day/3" />} />
                 {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
+                <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
 
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemPoints /></AuthGuard>} />

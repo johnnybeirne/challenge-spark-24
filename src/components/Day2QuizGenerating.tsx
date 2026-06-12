@@ -126,7 +126,14 @@ const startAmbientPad = () => {
   }
 };
 
-const Day2QuizGenerating = () => {
+interface Day2QuizGeneratingProps {
+  /** When provided, called with the generated quiz instead of mutating day2_step. */
+  onComplete?: (quiz: unknown) => void;
+  /** When provided, called on API failure instead of resetting day2_step. */
+  onError?: () => void;
+}
+
+const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {}) => {
   const { state, setState, authUser } = useAppState();
   const d1 = useMemo(() => readDay1(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
 
@@ -197,13 +204,17 @@ const Day2QuizGenerating = () => {
       } catch (err: any) {
         if (cancelled) return;
         toast.error(err?.message || "Couldn't generate your quiz right now.");
-        setState((prev) => ({
-          ...prev,
-          challenge: {
-            ...prev.challenge,
-            aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
-          },
-        }));
+        if (onError) {
+          onError();
+        } else {
+          setState((prev) => ({
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
+            },
+          }));
+        }
       }
     })();
     return () => {
@@ -238,17 +249,21 @@ const Day2QuizGenerating = () => {
     handedOffRef.current = true;
     setRevealing(true);
     window.setTimeout(() => {
-      setState((prev) => ({
-        ...prev,
-        challenge: {
-          ...prev.challenge,
-          aiOutputs: {
-            ...prev.challenge.aiOutputs,
-            day2_s2_quiz: JSON.stringify(apiResultRef.current ?? {}),
-            day2_step: "2",
+      if (onComplete) {
+        onComplete(apiResultRef.current ?? {});
+      } else {
+        setState((prev) => ({
+          ...prev,
+          challenge: {
+            ...prev.challenge,
+            aiOutputs: {
+              ...prev.challenge.aiOutputs,
+              day2_s2_quiz: JSON.stringify(apiResultRef.current ?? {}),
+              day2_step: "2",
+            },
           },
-        },
-      }));
+        }));
+      }
     }, REVEAL_FADE_MS);
   };
 

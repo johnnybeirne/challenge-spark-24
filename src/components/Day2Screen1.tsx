@@ -419,15 +419,10 @@ const Day2Screen1 = () => {
 
   const handleGenerateQuiz = () => {
     if (quizGenerating || (!allOpened && !qaUnlock)) return;
-    // Hand off to the full-screen generating overlay — it owns the API call
-    // and the personalised "AI is thinking" animation, then advances to Step 2.
-    setState((prev) => ({
-      ...prev,
-      challenge: {
-        ...prev.challenge,
-        aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "generating" },
-      },
-    }));
+    // Open the personalised "AI is building" → playable quiz preview in a
+    // new browser window so the creator can show their audience exactly
+    // what the quiz feels like, without leaving the builder flow.
+    window.open("/quiz-preview", "_blank", "noopener");
   };
 
   const handleContinue = () => {

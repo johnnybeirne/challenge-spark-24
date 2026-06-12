@@ -7,6 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 

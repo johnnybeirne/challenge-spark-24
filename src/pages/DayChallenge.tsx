@@ -28,7 +28,7 @@ import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
 import Day2Screen1 from "@/components/Day2Screen1";
-import Day2Screen2 from "@/components/Day2Screen2";
+// Day2Screen2 ("Why a quiz beats other lead magnets") moved to /training under "Quiz Funnel Strategy".
 
 import DayVideoModal from "@/components/DayVideoModal";
 import UpgradeCards from "@/components/UpgradeCards";

@@ -12,7 +12,7 @@ import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 const SECTIONS = [
   { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want your challenge" },
-  { id: 3, label: "Export", title: "Export your plan" },
+  { id: 3, label: "Export your Quiz/Asse", title: "Export your Quiz Funnel Strategy" },
 ];
 
 // Pull Day 1 values: audience (clientAvatar), problem, outcome (challengeOutcome),

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Sparkles } from "lucide-react";
 import DayCopilot from "@/components/DayCopilot";
+import Day2Screen2 from "@/components/Day2Screen2";
 import { useTrainingContent } from "@/hooks/useTrainingContent";
 import { trackEvent } from "@/lib/analytics";
 

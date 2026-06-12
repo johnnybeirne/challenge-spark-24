@@ -7,6 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 
@@ -203,6 +204,8 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
+  const qa = useQaPreview();
+  const qaUnlock = qa.active;
   const metaName =
     (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name ||
     (authUser?.user_metadata as { name?: string } | undefined)?.name ||
@@ -401,7 +404,7 @@ const Day2Screen1 = () => {
 
   const handleToggleCard = (idx: number) => {
     // Lock rule: card N requires card N-1 already marked as read.
-    if (idx > 0 && !readCards.has(idx - 1)) return;
+    if (!qaUnlock && idx > 0 && !readCards.has(idx - 1)) return;
     setOpenedCards((prev) => {
       if (prev.has(idx)) return prev;
       const next = new Set(prev);
@@ -411,12 +414,12 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = readCards.size === cardCopy.length;
+  const allOpened = qaUnlock || readCards.size === cardCopy.length;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 
   const handleGenerateQuiz = async () => {
-    if (quizGenerating || !allOpened) return;
+    if (quizGenerating || (!allOpened && !qaUnlock)) return;
     setQuizGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {
@@ -507,7 +510,7 @@ const Day2Screen1 = () => {
           {SECTIONS.map((s) => {
             const isActive = s.id === activeId;
             const isComplete = completeMap[s.id];
-            const isLocked = !isActive && !isComplete;
+            const isLocked = qaUnlock ? false : (!isActive && !isComplete);
             return (
               <li
                 key={s.id}
@@ -539,7 +542,7 @@ const Day2Screen1 = () => {
           {SECTIONS.map((s) => {
             const isActive = s.id === activeId;
             const isComplete = completeMap[s.id];
-            const isLocked = !isActive && !isComplete;
+            const isLocked = qaUnlock ? false : (!isActive && !isComplete);
 
             if (s.id !== 1) {
               return (
@@ -587,7 +590,7 @@ const Day2Screen1 = () => {
                     </p>
 
                     {cardCopy.map((c, idx) => {
-                      const lockedCard = idx > 0 && !readCards.has(idx - 1);
+                      const lockedCard = !qaUnlock && idx > 0 && !readCards.has(idx - 1);
                       return (
                         <RevealCard
                           key={idx}

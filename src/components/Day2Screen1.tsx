@@ -419,7 +419,7 @@ const Day2Screen1 = () => {
   const [quizGenerating, setQuizGenerating] = useState(false);
 
   const handleGenerateQuiz = async () => {
-    if (quizGenerating || !allOpened) return;
+    if (quizGenerating || (!allOpened && !qaUnlock)) return;
     setQuizGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("day2-thread", {

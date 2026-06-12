@@ -417,42 +417,17 @@ const Day2Screen1 = () => {
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 
-  const handleGenerateQuiz = async () => {
+  const handleGenerateQuiz = () => {
     if (quizGenerating || (!allOpened && !qaUnlock)) return;
-    setQuizGenerating(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("day2-thread", {
-        body: {
-          moment: "sample_quiz",
-          inputs: {
-            firstName,
-            archetype,
-            audience: clientAvatar,
-            superpower,
-            problem,
-            outcome: challengeOutcome,
-            promise: challengePromise,
-          },
-        },
-      });
-      if (error) throw error;
-      // Persist the generated quiz and advance to Step 2 (playable preview).
-      setState((prev) => ({
-        ...prev,
-        challenge: {
-          ...prev.challenge,
-          aiOutputs: {
-            ...prev.challenge.aiOutputs,
-            day2_s2_quiz: JSON.stringify(data ?? {}),
-            day2_step: "2",
-          },
-        },
-      }));
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't generate your quiz right now.");
-    } finally {
-      setQuizGenerating(false);
-    }
+    // Hand off to the full-screen generating overlay — it owns the API call
+    // and the personalised "AI is thinking" animation, then advances to Step 2.
+    setState((prev) => ({
+      ...prev,
+      challenge: {
+        ...prev.challenge,
+        aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "generating" },
+      },
+    }));
   };
 
   const handleContinue = () => {

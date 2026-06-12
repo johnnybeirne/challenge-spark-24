@@ -194,7 +194,6 @@ const App = () => (
                 <Route path="/challenge/day-3" element={<RedirectKeepingQuery to="/challenge/day/3" />} />
                 {/* Legacy day route — kept functional for existing links/analytics */}
                 <Route path="/day/:day" element={<AuthGuard><DayChallenge /></AuthGuard>} />
-                <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
 
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemPoints /></AuthGuard>} />

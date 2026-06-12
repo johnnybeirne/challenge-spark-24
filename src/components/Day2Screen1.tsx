@@ -590,7 +590,7 @@ const Day2Screen1 = () => {
                     </p>
 
                     {cardCopy.map((c, idx) => {
-                      const lockedCard = idx > 0 && !readCards.has(idx - 1);
+                      const lockedCard = !qaUnlock && idx > 0 && !readCards.has(idx - 1);
                       return (
                         <RevealCard
                           key={idx}

@@ -181,10 +181,9 @@ const DayChallenge = () => {
     );
   }
 
-  // Day 2 — multi-screen flow driven by aiOutputs.day2_step.
+  // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")
+  // lives in /training under "Quiz Funnel Strategy".
   if (dayNum === 2) {
-    const step = String(state.challenge.aiOutputs?.day2_step ?? "1");
-    if (step === "2") return <Day2Screen2 />;
     return <Day2Screen1 />;
   }
 

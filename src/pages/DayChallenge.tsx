@@ -29,6 +29,7 @@ import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
 import Day2Screen1 from "@/components/Day2Screen1";
 import Day2QuizPlayable from "@/components/Day2QuizPlayable";
+import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 // Day2Screen2 ("Why a quiz beats other lead magnets") moved to /training under "Quiz Funnel Strategy".
 
 import DayVideoModal from "@/components/DayVideoModal";
@@ -186,6 +187,9 @@ const DayChallenge = () => {
   // lives in /training under "Quiz Funnel Strategy".
   if (dayNum === 2) {
     const step = state.challenge.aiOutputs.day2_step;
+    if (step === "generating") {
+      return <Day2QuizGenerating />;
+    }
     if (step === "2") {
       return (
         <Day2QuizPlayable

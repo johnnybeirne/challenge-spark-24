@@ -1,33 +1,58 @@
-## Problem
+## Goal
 
-In `src/lib/day1StepMessages.ts`, the step labels currently read:
+Insert a full-screen, personalised "AI is building your quiz" animation between clicking **Generate your quiz now** on Day 2 Step 1 and the playable quiz preview on Step 2.
 
-1. Step 1 of 9 — Audience type
-2. Step 2 of 9 — Who specifically
-3. Step 3 of 9 — Expert type
-4. **Step 4 of 9 — Superpower**
-5. **Step 4 of 9 — Challenge type**  ← duplicate
-6. Step 5 of 9 — Specific problem
-7. Step 6 of 9 — Your process
-8. Step 7 of 9 — Outcome
-9. Step 8 of 9 — Promise review  ← should be 9
+## Flow
 
-Two steps are labelled "Step 4" and the final step is "Step 8" instead of "Step 9".
+```
+Step 1 of 5 ──[click Generate]──▶ Generating overlay ──[fade]──▶ Step 2 of 5 (playable)
+```
 
-## Fix
+The overlay runs the API call *and* a personalised status sequence in parallel, then waits for both before revealing Step 2.
 
-Scope: `src/lib/day1StepMessages.ts` only. Update the `label` strings in `defaultDay1Steps` so each entry has a unique, sequential number from 1 to 9:
+## Files
 
-| Entry id | New label |
-|---|---|
-| step-1 | Step 1 of 9 — Audience type (unchanged) |
-| step-2 | Step 2 of 9 — Who specifically (unchanged) |
-| step-2b | Step 3 of 9 — Expert type (unchanged) |
-| step-3 | Step 4 of 9 — Superpower (unchanged) |
-| step-4 | **Step 5** of 9 — Challenge type |
-| step-5 | **Step 6** of 9 — Specific problem |
-| step-6 | **Step 7** of 9 — Your process |
-| step-7 | **Step 8** of 9 — Outcome |
-| step-8 | **Step 9** of 9 — Promise review |
+**New** — `src/components/Day2QuizGenerating.tsx`
+- Full-screen dark layout (`fixed inset-0`, `bg-slate-950`) with a centred column.
+- Pulsing AI orb: layered concentric rings with `animate-ping` + a soft `bg-primary` blurred glow halo behind it. Subtle particle shimmer = a few absolutely-positioned dots with staggered `animate-pulse` and `blur`.
+- Status messages stack: shows one message at a time, each fades in/up then fades out before the next mounts (CSS keyframe via existing `animate-fade-in` + an exit class). ~1.8s per message.
+- Messages are built from Day 1 data (audience, superpower, problem, outcome, expert type) read from `state.challenge.aiOutputs.day1Setup`. Example template:
+  - `Reviewing {audience}…`
+  - `Analysing your superpower in {superpower}…`
+  - `Pulling in your Day 1 insights…`
+  - `Mapping archetypes for {expertType || "your audience"}…`
+  - `Building your quiz around {outcome}…`
+  Each falls back to the generic line if the Day 1 field is empty.
+- Fires `supabase.functions.invoke("day2-thread", { moment: "sample_quiz", inputs: { … } })` on mount.
+- Resolves when **both** the animation cycle finishes *and* the API returns (whichever is slower).
+- On success: writes `day2_s2_quiz` + sets `day2_step: "2"` in `AppContext`, then triggers a brief fade-out class before unmounting (parent route swap handles the reveal).
+- On error: toast + sets `day2_step: "1"` so the user is returned to Step 1.
 
-No other files, no step content, no step order, no ids change.
+**Edit** — `src/components/Day2Screen1.tsx`
+- Strip the API call out of `handleGenerateQuiz`. The click now just sets `day2_step: "generating"` (no network, no spinner state on the button itself — the overlay owns that).
+- Keep the QA-unlock / `allOpened` gating.
+
+**Edit** — `src/pages/DayChallenge.tsx`
+- Extend the Day 2 step switch:
+  ```
+  step === "generating" → <Day2QuizGenerating />
+  step === "2"          → <Day2QuizPlayable onBack={…} />
+  default               → <Day2Screen1 />
+  ```
+
+## Animation details
+
+- Orb: 96px primary-coloured circle, blurred glow halo behind (`blur-3xl opacity-40`), one slow pulse ring (`animate-ping`) and a fast inner ring. Pure CSS, no extra deps.
+- Messages: absolute-positioned in a fixed-height slot to avoid layout shift; each `key`-mounted node uses `animate-fade-in` on enter; on exit we set an `opacity-0 translate-y-2 transition` for ~250ms before unmount.
+- Final reveal: when handoff happens, the overlay fades its container to `opacity-0` over ~400ms then unmounts, while `Day2QuizPlayable` mounts with its existing `animate-fade-in`.
+
+## Style
+
+- Dark deep-navy background even in light mode (overlay owns its own palette so it always pops).
+- Centred column, max-w-md, mobile-first.
+- No new dependencies, no new routes — purely a third value of the existing `day2_step` state flag.
+
+## Out of scope
+
+- No changes to the playable quiz itself or to Step 1's other content.
+- No changes to the edge function payload.

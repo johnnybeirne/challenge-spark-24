@@ -420,16 +420,16 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  const allOpened = qaUnlock || readCards.size === cardCopy.length;
+  // Gate removed: the Generate button is always clickable so testers and
+  // returning users can jump straight into the quiz preview.
+  const allOpened = true;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 
   const [quizModalOpen, setQuizModalOpen] = useState(false);
 
   const handleGenerateQuiz = () => {
-    if (quizGenerating || (!allOpened && !qaUnlock)) return;
-    // Open the full-screen quiz modal (generation → landing → questions →
-    // result). The Day 2 dashboard stays mounted behind the overlay.
+    if (quizGenerating) return;
     setQuizModalOpen(true);
   };
 

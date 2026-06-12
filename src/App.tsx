@@ -26,6 +26,7 @@ import Training from "@/pages/Training";
 import Day1 from "@/pages/Day1";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
+import QuizPreview from "@/pages/QuizPreview";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";

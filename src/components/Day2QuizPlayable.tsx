@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2 } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 type Tier = "low" | "mid" | "high";
 

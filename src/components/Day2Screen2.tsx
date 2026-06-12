@@ -551,7 +551,7 @@ const Day2Screen2 = ({ embedded = false }: Day2Screen2Props = {}) => {
         )}
 
 
-        {allOpened && (
+        {allOpened && !embedded && (
           <div className="mt-8 flex justify-end animate-fade-in">
             <Button size="lg" onClick={handleContinue}>
               Continue <ArrowRight className="h-4 w-4" />

@@ -58,7 +58,11 @@ const readSetupFromState = (aiOutputs: Record<string, unknown> | undefined) => {
   return null;
 };
 
-const Day2Screen2 = () => {
+interface Day2Screen2Props {
+  embedded?: boolean;
+}
+
+const Day2Screen2 = ({ embedded = false }: Day2Screen2Props = {}) => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
@@ -297,30 +301,34 @@ const Day2Screen2 = () => {
   const handleBack = () => persist("day2_step", "1");
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12 pb-24">
-        {/* Progress */}
-        <div className="mb-6 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="text-[11px] font-black uppercase tracking-[0.18em] text-primary hover:underline"
-          >
-            Day 2 · Step 2 of 6
-          </button>
-          <div className="flex gap-1.5">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <span
-                key={n}
-                className={`h-1.5 w-6 rounded-full ${n <= 2 ? "bg-primary" : "bg-muted"}`}
-              />
-            ))}
+    <div className={embedded ? "" : "min-h-screen bg-background"}>
+      <div className={embedded ? "" : "mx-auto max-w-2xl px-4 py-8 sm:py-12 pb-24"}>
+        {/* Progress (Day 2 flow only) */}
+        {!embedded && (
+          <div className="mb-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="text-[11px] font-black uppercase tracking-[0.18em] text-primary hover:underline"
+            >
+              Day 2 · Step 2 of 6
+            </button>
+            <div className="flex gap-1.5">
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <span
+                  key={n}
+                  className={`h-1.5 w-6 rounded-full ${n <= 2 ? "bg-primary" : "bg-muted"}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground mb-8">
-          Why a quiz beats other lead magnets{firstName ? `, ${firstName}` : ""}.
-        </h1>
+        {!embedded && (
+          <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground mb-8">
+            Why a quiz beats other lead magnets{firstName ? `, ${firstName}` : ""}.
+          </h1>
+        )}
 
         {/* Johnny opener */}
         <div className="flex items-start gap-3 mb-8">
@@ -543,7 +551,7 @@ const Day2Screen2 = () => {
         )}
 
 
-        {allOpened && (
+        {allOpened && !embedded && (
           <div className="mt-8 flex justify-end animate-fade-in">
             <Button size="lg" onClick={handleContinue}>
               Continue <ArrowRight className="h-4 w-4" />

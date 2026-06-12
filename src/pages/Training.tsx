@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Sparkles } from "lucide-react";
 import DayCopilot from "@/components/DayCopilot";
+import Day2Screen2 from "@/components/Day2Screen2";
 import { useTrainingContent } from "@/hooks/useTrainingContent";
 import { trackEvent } from "@/lib/analytics";
 
@@ -42,6 +43,24 @@ const Training = () => {
             "How do I get the first 10 people to invite a friend?",
           ]}
         />
+
+        <section className="space-y-4 pt-2">
+          <header className="space-y-2">
+            <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-primary">
+              <Sparkles className="h-4 w-4" />
+              Quiz Funnel Strategy
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight">Why a quiz beats other lead magnets</h2>
+            <p className="text-sm text-muted-foreground">
+              The deep-dive that used to live inside Day 2 — explore each angle, then generate a sample quiz from your Day 1 answers.
+            </p>
+          </header>
+          <div className="rounded-2xl border border-border bg-card/40 p-4 sm:p-6">
+            <Day2Screen2 embedded />
+          </div>
+        </section>
+
+
 
         {hasOptionalVideo && (
           <details className="rounded-lg border border-border bg-card/60">

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, UserPlus, Trash2 } from "lucide-react";
+import { Download, Search, UserPlus, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 
@@ -18,6 +18,7 @@ type Profile = {
   partner_code_used: string | null;
   is_premium: boolean;
   created_at: string;
+  deleted_at: string | null;
 };
 
 type ChallengeRow = { user_id: string; current_day: number; completed: boolean; launch_url: string | null };
@@ -58,33 +59,33 @@ const AdminSignups = () => {
   const [challenge, setChallenge] = useState<Map<string, ChallengeRow>>(new Map());
   const [training, setTraining] = useState<Map<string, TrainingRow>>(new Map());
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "partner" | "referral" | "direct" | "active">("all");
+  const [filter, setFilter] = useState<"all" | "partner" | "referral" | "direct" | "active" | "deleted">("all");
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data: profs } = await (supabase.from("profiles") as any)
-        .select("user_id,email,name,signup_product,entry_intent,referred_by,partner_code_used,is_premium,created_at")
-        .order("created_at", { ascending: false })
-        .limit(1000);
-      const list = (profs as Profile[]) || [];
-      setRows(list);
-      const ids = list.map((p) => p.user_id);
-      if (ids.length) {
-        const [chRes, trRes] = await Promise.all([
-          (supabase.from("challenge_progress") as any).select("user_id,current_day,completed,launch_url").in("user_id", ids),
-          (supabase.from("training_progress") as any).select("user_id,pre_challenge_watched,day1_watched,day2_watched,day3_watched,hub_completed").in("user_id", ids),
-        ]);
-        const cm = new Map<string, ChallengeRow>();
-        ((chRes.data as ChallengeRow[]) || []).forEach((c) => cm.set(c.user_id, c));
-        setChallenge(cm);
-        const tm = new Map<string, TrainingRow>();
-        ((trRes.data as TrainingRow[]) || []).forEach((t) => tm.set(t.user_id, t));
-        setTraining(tm);
-      }
-      setLoading(false);
-    })();
-  }, []);
+  const load = async () => {
+    setLoading(true);
+    const { data: profs } = await (supabase.from("profiles") as any)
+      .select("user_id,email,name,signup_product,entry_intent,referred_by,partner_code_used,is_premium,created_at,deleted_at")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    const list = (profs as Profile[]) || [];
+    setRows(list);
+    const ids = list.map((p) => p.user_id);
+    if (ids.length) {
+      const [chRes, trRes] = await Promise.all([
+        (supabase.from("challenge_progress") as any).select("user_id,current_day,completed,launch_url").in("user_id", ids),
+        (supabase.from("training_progress") as any).select("user_id,pre_challenge_watched,day1_watched,day2_watched,day3_watched,hub_completed").in("user_id", ids),
+      ]);
+      const cm = new Map<string, ChallengeRow>();
+      ((chRes.data as ChallengeRow[]) || []).forEach((c) => cm.set(c.user_id, c));
+      setChallenge(cm);
+      const tm = new Map<string, TrainingRow>();
+      ((trRes.data as TrainingRow[]) || []).forEach((t) => tm.set(t.user_id, t));
+      setTraining(tm);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { void load(); }, []);
 
   const enriched = useMemo(
     () => rows.map((r) => ({ r, source: sourceFor(r), status: statusFor(r, challenge.get(r.user_id), training.get(r.user_id)) })),
@@ -92,8 +93,9 @@ const AdminSignups = () => {
   );
 
   const counts = useMemo(() => {
-    const c = { total: enriched.length, partner: 0, referral: 0, direct: 0, active: 0 };
-    enriched.forEach((e) => {
+    const live = enriched.filter((e) => !e.r.deleted_at);
+    const c = { total: live.length, partner: 0, referral: 0, direct: 0, active: 0, deleted: enriched.length - live.length };
+    live.forEach((e) => {
       if (e.r.partner_code_used) c.partner++;
       else if (e.r.referred_by) c.referral++;
       else c.direct++;
@@ -104,7 +106,8 @@ const AdminSignups = () => {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return enriched.filter((e) => {
+    const base = filter === "deleted" ? enriched.filter((e) => e.r.deleted_at) : enriched.filter((e) => !e.r.deleted_at);
+    return base.filter((e) => {
       const r = e.r;
       if (filter === "partner" && !r.partner_code_used) return false;
       if (filter === "referral" && !(r.referred_by && !r.partner_code_used)) return false;
@@ -119,6 +122,40 @@ const AdminSignups = () => {
       );
     });
   }, [enriched, search, filter]);
+
+  const softDeleteRow = async (userId: string) => {
+    const ok = window.confirm("Hide this signup? You can restore it from the Deleted tab.");
+    if (!ok) return;
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("user_id", userId);
+    if (error) return toast.error(error.message);
+    setRows((prev) => prev.map((p) => (p.user_id === userId ? { ...p, deleted_at: new Date().toISOString() } : p)));
+    toast.success("Signup moved to Deleted.");
+  };
+
+  const restoreRow = async (userId: string) => {
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ deleted_at: null })
+      .eq("user_id", userId);
+    if (error) return toast.error(error.message);
+    setRows((prev) => prev.map((p) => (p.user_id === userId ? { ...p, deleted_at: null } : p)));
+    toast.success("Signup restored.");
+  };
+
+  const emptyAll = async () => {
+    const live = rows.filter((r) => !r.deleted_at);
+    if (live.length === 0) return toast.info("No signups to clear.");
+    const ok = window.confirm(`Hide all ${live.length} signups? They'll move to the Deleted tab and can be restored.`);
+    if (!ok) return;
+    const nowIso = new Date().toISOString();
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ deleted_at: nowIso })
+      .is("deleted_at", null);
+    if (error) return toast.error(`Failed: ${error.message}`);
+    setRows((prev) => prev.map((p) => (p.deleted_at ? p : { ...p, deleted_at: nowIso })));
+    toast.success("Signups moved to Deleted.");
+  };
 
   const exportCSV = () => {
     const header = ["Name", "Email", "Signed up", "Source", "Signup product", "Entry intent", "Referred by", "Partner code", "Current status"];
@@ -143,6 +180,8 @@ const AdminSignups = () => {
     URL.revokeObjectURL(url);
   };
 
+  const showingDeleted = filter === "deleted";
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -152,43 +191,20 @@ const AdminSignups = () => {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={exportCSV} variant="outline" size="sm"><Download className="h-4 w-4 mr-2" /> Export CSV</Button>
-          <Button
-            onClick={async () => {
-              if (rows.length === 0) {
-                toast.info("No signups to clear.");
-                return;
-              }
-              const ok = window.confirm(
-                `Are you sure you want to delete all ${rows.length} signups? This cannot be undone.`,
-              );
-              if (!ok) return;
-              await supabase.from("challenge_progress").delete().not("id", "is", null);
-              await supabase.from("training_progress").delete().not("id", "is", null);
-              const { error } = await supabase.from("profiles").delete().not("id", "is", null);
-              if (error) {
-                toast.error(`Failed to empty signups: ${error.message}`);
-                return;
-              }
-              setRows([]);
-              setChallenge(new Map());
-              setTraining(new Map());
-              toast.success("Signups emptied.");
-            }}
-            variant="destructive"
-            size="sm"
-          >
+          <Button onClick={emptyAll} variant="destructive" size="sm">
             <Trash2 className="h-4 w-4 mr-2" /> Empty signups
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {([
           ["all", "Total", counts.total],
           ["partner", "Via partner", counts.partner],
           ["referral", "Via referral", counts.referral],
           ["direct", "Direct", counts.direct],
           ["active", "Active", counts.active],
+          ["deleted", "Deleted", counts.deleted],
         ] as const).map(([k, label, n]) => (
           <button key={k} onClick={() => setFilter(k as any)} className={`text-left rounded-lg border p-3 transition ${filter === k ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
             <div className="text-xs text-muted-foreground">{label}</div>
@@ -217,6 +233,7 @@ const AdminSignups = () => {
                   <th className="px-4 py-2 whitespace-nowrap">Signed up</th>
                   <th className="px-4 py-2">Source</th>
                   <th className="px-4 py-2">Current status</th>
+                  <th className="px-4 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -227,6 +244,17 @@ const AdminSignups = () => {
                     <td className="px-4 py-2 text-muted-foreground whitespace-nowrap">{new Date(r.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-2"><Badge variant={source.variant}>{source.label}</Badge></td>
                     <td className="px-4 py-2"><Badge variant={status.variant}>{status.label}</Badge></td>
+                    <td className="px-4 py-2 text-right whitespace-nowrap">
+                      {showingDeleted ? (
+                        <Button size="sm" variant="outline" onClick={() => restoreRow(r.user_id)}>
+                          <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Restore
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="ghost" onClick={() => softDeleteRow(r.user_id)}>
+                          <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Hide
+                        </Button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

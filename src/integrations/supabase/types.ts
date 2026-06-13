@@ -1158,6 +1158,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          deleted_at: string | null
           direct_referral_count: number
           email: string | null
           entry_intent: string | null
@@ -1188,6 +1189,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          deleted_at?: string | null
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null
@@ -1218,6 +1220,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          deleted_at?: string | null
           direct_referral_count?: number
           email?: string | null
           entry_intent?: string | null

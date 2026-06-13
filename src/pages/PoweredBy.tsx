@@ -240,49 +240,8 @@ export default function PoweredBy() {
           </div>
 
           <Reveal delay={150}>
-            <div className="relative mx-auto aspect-square w-full max-w-md rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-6">
-              <svg viewBox="0 0 300 280" className="h-full w-full">
-                <defs>
-                  <linearGradient id="pb-line" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M 150 30 L 280 240 L 20 240 Z"
-                  fill="none"
-                  stroke="url(#pb-line)"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 6"
-                />
-                {/* Nodes */}
-                {[
-                  { x: 150, y: 30, label: "You launch", anchor: "middle", dy: -16 },
-                  { x: 280, y: 240, label: "Participants invite", anchor: "end", dy: 28 },
-                  { x: 20, y: 240, label: "Challenge grows", anchor: "start", dy: 28 },
-                ].map((n) => (
-                  <g key={n.label}>
-                    <circle cx={n.x} cy={n.y} r="10" fill="hsl(var(--primary))" />
-                    <circle cx={n.x} cy={n.y} r="18" fill="none" stroke="hsl(var(--primary) / 0.3)" />
-                    <text
-                      x={n.x}
-                      y={n.y + n.dy}
-                      textAnchor={n.anchor}
-                      fill="white"
-                      fillOpacity="0.85"
-                      fontSize="13"
-                      fontWeight="500"
-                    >
-                      {n.label}
-                    </text>
-                  </g>
-                ))}
-              </svg>
-              {/* Travelling dot along the triangle */}
-              <div
-                className="pb-dot absolute left-6 top-6 h-3 w-3 rounded-full bg-primary"
-                style={{ animation: "pb-orbit 6s linear infinite, pb-glow 2s ease-in-out infinite" }}
-              />
+            <div className="relative mx-auto w-full max-w-md rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-6 text-white">
+              <ReferralGrowthNetwork />
             </div>
           </Reveal>
         </div>

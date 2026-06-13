@@ -37,6 +37,7 @@ const ShareIconsRow = () => (
 );
 
 import { SEO } from "@/components/SEO";
+import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import jbLogo from "@/assets/johnny-beirne-logo.png.asset.json";
 import { trackEvent } from "@/lib/analytics";
 
@@ -72,135 +73,11 @@ const LeaderboardGlyph = () => (
   </div>
 );
 
-const BranchingGlyph = () => {
-  const { ref, inView } = useInView<HTMLDivElement>(0.35);
-  // Tier positions (x coords); root at center
-  const root = { x: 110, y: 14 };
-  const tier1 = [40, 110, 180].map((x) => ({ x, y: 54 }));
-  const tier2: { x: number; y: number }[] = [];
-  tier1.forEach((p) => {
-    [-22, 0, 22].forEach((dx) => tier2.push({ x: p.x + dx, y: 94 }));
-  });
-  return (
-    <div ref={ref} className="mt-3 w-full sm:-ml-[72px] sm:w-[calc(100%+72px)]">
-      <svg
-        viewBox="0 0 220 104"
-        className="w-full h-auto overflow-visible"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        {/* Tier 1 branches (root → 3) */}
-        {tier1.map((p, i) => (
-          <line
-            key={`b1-${i}`}
-            x1={root.x}
-            y1={root.y}
-            x2={p.x}
-            y2={p.y}
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeDasharray="80"
-            strokeDashoffset={inView ? 0 : 80}
-            style={{ transition: `stroke-dashoffset 1100ms ease-out ${300 + i * 180}ms`, opacity: 0.7 }}
-          />
-        ))}
-        {/* Tier 2 branches (3 → 9) */}
-        {tier1.map((p, pi) =>
-          [-22, 0, 22].map((dx, ci) => (
-            <line
-              key={`b2-${pi}-${ci}`}
-              x1={p.x}
-              y1={p.y}
-              x2={p.x + dx}
-              y2={94}
-              stroke="hsl(var(--primary))"
-              strokeWidth="1.25"
-              strokeLinecap="round"
-              strokeDasharray="50"
-              strokeDashoffset={inView ? 0 : 50}
-              style={{
-                transition: `stroke-dashoffset 950ms ease-out ${1300 + pi * 200 + ci * 100}ms`,
-                opacity: 0.45,
-              }}
-            />
-          )),
-        )}
-        {/* Root node (YOU) */}
-        <g
-          style={{
-            transform: inView ? "scale(1)" : "scale(0)",
-            transformOrigin: `${root.x}px ${root.y}px`,
-            transition: "transform 700ms cubic-bezier(0.34,1.56,0.64,1) 0ms",
-          }}
-        >
-          <circle cx={root.x} cy={root.y} r="14" fill="#10b981" />
-          <text
-            x={root.x}
-            y={root.y + 2}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="#ffffff"
-            style={{ fontSize: 7, fontWeight: 800, letterSpacing: 0.5 }}
-          >
-            YOU
-          </text>
-        </g>
-
-        {/* Tier 1 people */}
-        {tier1.map((p, i) => (
-          <g
-            key={`n1-${i}`}
-            style={{
-              transform: inView ? "scale(1)" : "scale(0)",
-              transformOrigin: `${p.x}px ${p.y}px`,
-              transition: `transform 600ms cubic-bezier(0.34,1.56,0.64,1) ${900 + i * 180}ms`,
-            }}
-          >
-            <circle cx={p.x} cy={p.y - 3} r="2.4" fill="hsl(var(--primary))" fillOpacity="0.9" />
-            <path
-              d={`M ${p.x - 4} ${p.y + 5} Q ${p.x - 4} ${p.y - 0.5} ${p.x} ${p.y - 0.5} Q ${p.x + 4} ${p.y - 0.5} ${p.x + 4} ${p.y + 5} Z`}
-              fill="hsl(var(--primary))"
-              fillOpacity="0.85"
-            />
-          </g>
-        ))}
-        {/* Tier 2 people */}
-        {tier2.map((p, i) => (
-          <g
-            key={`n2-${i}`}
-            style={{
-              transform: inView ? "scale(1)" : "scale(0)",
-              transformOrigin: `${p.x}px ${p.y}px`,
-              transition: `transform 550ms cubic-bezier(0.34,1.56,0.64,1) ${1900 + i * 90}ms`,
-            }}
-          >
-            <circle cx={p.x} cy={p.y - 2} r="1.6" fill="hsl(var(--primary))" fillOpacity="0.65" />
-            <path
-              d={`M ${p.x - 2.6} ${p.y + 3.5} Q ${p.x - 2.6} ${p.y} ${p.x} ${p.y} Q ${p.x + 2.6} ${p.y} ${p.x + 2.6} ${p.y + 3.5} Z`}
-              fill="hsl(var(--primary))"
-              fillOpacity="0.6"
-            />
-          </g>
-        ))}
-
-      </svg>
-      <div
-        className="flex items-center justify-between mt-1.5 text-[10px] font-mono font-bold text-primary/80 px-1"
-        style={{
-          opacity: inView ? 1 : 0,
-          transition: "opacity 600ms ease-out 2700ms",
-        }}
-      >
-
-        <span>1</span>
-        <span>3</span>
-        <span>9</span>
-        <span className="text-primary">→ ∞</span>
-      </div>
-    </div>
-  );
-};
+const BranchingGlyph = () => (
+  <div className="mt-3 w-full sm:-ml-[72px] sm:w-[calc(100%+72px)]">
+    <ReferralGrowthNetwork />
+  </div>
+);
 
 const SparkleRow = () => (
   <div className="flex items-center gap-1 mt-2 text-amber-500">

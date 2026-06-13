@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
+import leadbeadLogo from "@/assets/leadbead-logo.png";
 
 /** Fade-up on scroll via IntersectionObserver. */
 function Reveal({
@@ -152,6 +153,13 @@ export default function PoweredBy() {
 
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
           <Reveal>
+            <img
+              src={leadbeadLogo}
+              alt="LeadBead"
+              className="mx-auto mb-10 h-12 w-auto md:h-16"
+            />
+          </Reveal>
+          <Reveal delay={50}>
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-primary">
               Build your own lead generation system in 3 days
             </p>

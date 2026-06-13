@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
+import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
 
 /** Fade-up on scroll via IntersectionObserver. */

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
+import leadbeadLogo from "@/assets/leadbead-logo.png";
 
 /** Fade-up on scroll via IntersectionObserver. */
 function Reveal({

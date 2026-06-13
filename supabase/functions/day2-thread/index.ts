@@ -23,7 +23,7 @@ const JOHNNY_VOICE = `You are Johnny Beirne, an Irish business coach guiding a b
 Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless natural.
 Never invent facts about the user, their audience, or their challenge. Use only what they told you.`;
 
-// Source material — Leadio Interactive Quiz & Assessment Marketing Blueprint,
+// Source material — LeadBead Interactive Quiz & Assessment Marketing Blueprint,
 // Sections 1 (Purpose & Positioning) and 2 (Core Psychology). All Day 2
 // Screen 1 content must stay inside this doctrine.
 const KB = `SECTION 1 — PURPOSE & POSITIONING

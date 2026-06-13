@@ -28,12 +28,12 @@ async function sendConfirmationEmail(toEmail: string) {
         "X-Connection-Api-Key": RESEND_API_KEY,
       },
       body: JSON.stringify({
-        from: "Leadio <onboarding@resend.dev>",
+        from: "LeadBead <onboarding@resend.dev>",
         to: [toEmail],
-        subject: "Welcome to Leadio Premium 🎉",
+        subject: "Welcome to LeadBead Premium 🎉",
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
-            <h1 style="font-size:24px;margin:0 0 12px">Welcome to Leadio Premium</h1>
+            <h1 style="font-size:24px;margin:0 0 12px">Welcome to LeadBead Premium</h1>
             <p>Your payment is confirmed and lifetime access is active.</p>
             <p>You can now access the full Premium course, advanced systems, and Builder Circle.</p>
             <p style="margin-top:24px">

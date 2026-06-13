@@ -7,7 +7,7 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const BASE_TITLE = "Leadio";
+const BASE_TITLE = "LeadBead";
 const DEFAULT_DESCRIPTION =
   "Get more leads with an AI-powered challenge that diagnoses your lead flow and recommends the next step.";
 const SITE_ORIGIN = "https://leadio.johnnybeirne.com";

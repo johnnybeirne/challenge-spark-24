@@ -250,7 +250,7 @@ const ROLES = [
 ];
 
 const CONFLICTS = [
-  { flag: "Premium modules 4 & 5 (Advanced Systems, Scaling With Leadio) are stub only", severity: "warn" },
+  { flag: "Premium modules 4 & 5 (Advanced Systems, Scaling With LeadBead) are stub only", severity: "warn" },
   { flag: "Builder Circle (/community) is a placeholder — unlock works but feed is not built", severity: "warn" },
   { flag: "Stripe checkout for /premium not yet wired (CheckoutReturn route exists)", severity: "warn" },
   { flag: "Bonus Vault redemption has no asset delivery yet", severity: "info" },
@@ -272,7 +272,7 @@ const CORE_ENTRY_LINKS: CoreEntryLink[] = [
   { title: "Direct Challenge Entry", route: "/challenge", description: "3-Day Challenge landing. Primary CTA: 'Take the Challenge'.", badge: "Challenge" },
   { title: "Free Training Assessment", route: "/free-assessment", description: "Same engine, routes to Blueprint (entryIntent=free_training).", badge: "Blueprint Funnel" },
   { title: "Blueprint Free Training", route: "/blueprint", description: "Calm LMS-style free course used as a lead magnet before challenge entry.", badge: "Blueprint" },
-  { title: "Premium / VIP Course", route: "/premium", description: "Premium landing (Leadio Growth Accelerator) with coupon (FOUNDING497), pricing, modules. Primary CTA: 'Invite Others' / 'Become a Partner'.", badge: "Premium" },
+  { title: "Premium / VIP Course", route: "/premium", description: "Premium landing (LeadBead Growth Accelerator) with coupon (FOUNDING497), pricing, modules. Primary CTA: 'Invite Others' / 'Become a Partner'.", badge: "Premium" },
   { title: "Blueprint Dashboard", route: "/blueprint/dashboard", description: "LMS dashboard for users already inside the free course.", badge: "Blueprint" },
   { title: "Waitlist", route: "/waitlist", description: "Public waitlist signup with host portrait, referral capture, momentum feed.", badge: "Waitlist" },
   { title: "Waitlist Thank You", route: "/waitlist/thanks?preview=1", description: "Post-signup thank-you with referral sharing.", badge: "Waitlist" },
@@ -318,7 +318,7 @@ const CoreEntryLinksSection = () => {
           <Badge variant="outline" className="ml-auto text-[10px]">Owner hub</Badge>
         </div>
         <p className="mb-4 text-sm text-muted-foreground">
-          Primary URLs to test, promote, and manage the main Leadio funnels.
+          Primary URLs to test, promote, and manage the main LeadBead funnels.
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -465,7 +465,7 @@ const NAV_COHESION_CHECKS: NavCheck[] = [
   { label: "In-app links migrated to canonical paths", status: "Detected", note: "navigate() calls updated across 18 files; legacy paths now unused except via direct URL" },
   { label: "Differentiated onboarding by entry intent", status: "Detected", note: "Assessment→results+Johnny B; Blueprint→LMS+mentor; Challenge→Day 1 directly" },
   { label: "Stage indicator visible on Challenge dashboard", status: "Detected", note: "useUserStage().stageLabel rendered in Dashboard header" },
-  { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "Renamed to Leadio across calendar, reset-password, etc." },
+  { label: "ChallengeOS naming retired (UI + utilities)", status: "Detected", note: "Renamed to LeadBead across calendar, reset-password, etc." },
   { label: "Premium and challenge remain separate", status: "Detected", note: "/premium does not redirect to challenge; challenge does not require premium" },
   { label: "Community gated until challenge entry", status: "Detected", note: "Community unlock requires Day 3 + URL + 3 referrals (canonical rule)" },
   { label: "User stage hook available", status: "Detected", note: "src/hooks/useUserStage.ts — stage, nextLabel, nextHref" },
@@ -499,7 +499,7 @@ const NavCohesionSection = () => (
 
 const RECOMMENDATIONS = [
   "Build out Builder Circle (/community) — unlock works but feed is placeholder.",
-  "Ship Premium modules 4 & 5 (Advanced Systems, Scaling With Leadio) — currently stub only.",
+  "Ship Premium modules 4 & 5 (Advanced Systems, Scaling With LeadBead) — currently stub only.",
   "Wire live Stripe checkout for /premium (CheckoutReturn route exists).",
   "Implement asset delivery for Bonus Vault redemptions.",
   "Replace Live Session Calendar placeholder with a real schedule source.",
@@ -516,7 +516,7 @@ type NotShippedItem = {
 };
 
 const NOT_SHIPPED: NotShippedItem[] = [
-  { name: "Premium training modules 4 & 5 (Advanced Systems, Scaling With Leadio)", area: "Training", state: "Stub only", note: "Sidebar entries exist; lessons gated behind isPremiumUser with no real content." },
+  { name: "Premium training modules 4 & 5 (Advanced Systems, Scaling With LeadBead)", area: "Training", state: "Stub only", note: "Sidebar entries exist; lessons gated behind isPremiumUser with no real content." },
   { name: "Builder Circle community feed", area: "Community", state: "Planned", note: "Unlock gate works (Day 3 + URL + 3 referrals) but /community is a placeholder." },
   { name: "Bonus Vault rewards delivery", area: "Challenge", state: "In progress", note: "Vault listing renders; no actual file/asset delivery on redeem." },
   { name: "Live Session Calendar — real events", area: "Training", state: "Stub only", note: "/calendar shows static placeholder; no live schedule source." },
@@ -883,7 +883,7 @@ const UserFeaturesAudit = () => {
 
   const buildSummary = () => {
     const lines: string[] = [];
-    lines.push(`Leadio User Journey & Feature Audit — ${auditedAt.toLocaleString()}`);
+    lines.push(`LeadBead User Journey & Feature Audit — ${auditedAt.toLocaleString()}`);
     lines.push("");
     lines.push(`Routes detected: ${totals.routes}`);
     lines.push(`Features detected: ${totals.features}`);
@@ -926,7 +926,7 @@ const UserFeaturesAudit = () => {
       </div>
 
       <header className="mb-6">
-        <h1 className="text-3xl font-black sm:text-4xl">Leadio User Journey & Feature Audit</h1>
+        <h1 className="text-3xl font-black sm:text-4xl">LeadBead User Journey & Feature Audit</h1>
         <p className="mt-2 text-base text-muted-foreground">A read-only overview of the current user-facing product, routes, features, and journey gaps.</p>
       </header>
 

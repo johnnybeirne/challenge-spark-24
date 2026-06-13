@@ -1,4 +1,4 @@
-// Canonical Leadio user-role hook.
+// Canonical LeadBead user-role hook.
 //
 // Composes existing hooks (no DB changes, no replacement of useUserState /
 // useUserStage / usePremium / usePartner). Returns a single role +
@@ -16,8 +16,8 @@ import { usePromoter } from "@/hooks/usePromoter";
 import {
   ROLE_PERMISSIONS,
   ROLE_PRIMARY_CTA,
-  deriveLeadioRole,
-  type LeadioRole,
+  deriveLeadBeadRole,
+  type LeadBeadRole,
   type RoleCta,
   type RolePermissions,
 } from "@/lib/userRole";
@@ -26,7 +26,7 @@ import {
 const adminCache = new Map<string, boolean>();
 
 export type UseUserRoleResult = {
-  role: LeadioRole;
+  role: LeadBeadRole;
   permissions: RolePermissions;
   primaryCta: RoleCta;
   /** True until the admin/partner async checks have resolved. */
@@ -102,7 +102,7 @@ export function useUserRole(): UseUserRoleResult {
   }, [user, suppressBackgroundRoleQueries]);
 
   return useMemo(() => {
-    const role = deriveLeadioRole({
+    const role = deriveLeadBeadRole({
       hasUser: stage.hasUser,
       isAdmin,
       isApprovedPromoter: !!promoter?.is_approved,

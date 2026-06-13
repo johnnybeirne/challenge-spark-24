@@ -27,7 +27,7 @@ const Training = () => {
           <h1 className="text-3xl font-bold tracking-tight">Your challenge strategist</h1>
           <p className="text-muted-foreground">
             Ask anything about positioning, structure, audience, momentum, or referrals.
-            Pulls from the LEADIO challenge playbook and your own challenge context.
+            Pulls from the LEADBEAD challenge playbook and your own challenge context.
           </p>
         </header>
 

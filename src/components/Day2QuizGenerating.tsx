@@ -352,7 +352,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
           className="mt-10 text-[11px] font-black uppercase tracking-[0.28em]"
           style={{ color: `${ACCENT_PRIMARY}` }}
         >
-          Leadio · Generating
+          LeadBead · Generating
         </p>
 
         {/* Message slot — fixed height to prevent layout shift */}

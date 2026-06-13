@@ -1,4 +1,4 @@
-// Safe experience separation shell for Leadio.
+// Safe experience separation shell for LeadBead.
 // This is a read-only classifier — it does NOT change routing, guards, or UX.
 
 export type ExperienceType =

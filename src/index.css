@@ -249,7 +249,7 @@
 }
 
 /* ───── Experience mode separation ─────
-   A subtle visual signal of which "mode" of Leadio the user is in.
+   A subtle visual signal of which "mode" of LeadBead the user is in.
    - Top accent bar across the viewport
    - Mode-specific sidebar tint
    Routes, layout, and components are untouched. */

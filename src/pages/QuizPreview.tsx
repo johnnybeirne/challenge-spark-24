@@ -20,7 +20,7 @@ const QuizPreview = () => {
 
   useEffect(() => {
     const prev = document.title;
-    document.title = "Your quiz preview · Leadio";
+    document.title = "Your quiz preview · LeadBead";
     return () => {
       document.title = prev;
     };

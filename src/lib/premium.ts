@@ -1,4 +1,4 @@
-// Premium access state for Leadio LMS.
+// Premium access state for LeadBead LMS.
 // Source of truth lives in Supabase (`profiles.is_premium` and
 // `profiles.partner_code_used`). A small in-memory cache is hydrated by
 // `usePremium` so synchronous callers can still read the current value

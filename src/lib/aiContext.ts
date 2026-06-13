@@ -3,7 +3,7 @@ import type { AppState } from "@/context/AppContext";
 import type { User } from "@supabase/supabase-js";
 
 /**
- * Snapshots the user's current Leadio state into ai_user_context so every
+ * Snapshots the user's current LeadBead state into ai_user_context so every
  * AI surface (copilot, kb-search consumers, future stage-aware functions)
  * has a single source of truth for who the user is and what stage they are in.
  *

@@ -1,4 +1,4 @@
-// Canonical Leadio user role + permission system.
+// Canonical LeadBead user role + permission system.
 //
 // One source of truth for "what kind of user is this and what should they see".
 // This module is PURE — no React, no Supabase. The `useUserRole` hook composes
@@ -11,7 +11,7 @@
 // Source of truth for those remains: AppContext, scoring.ts, premium.ts, RLS.
 // This layer is for CTA hierarchy, navigation visibility, and conditional UI.
 
-export type LeadioRole =
+export type LeadBeadRole =
   | "visitor"
   | "free_student"
   | "challenger"
@@ -66,7 +66,7 @@ const BASE: RolePermissions = {
   roleLabel: "Visitor",
 };
 
-export const ROLE_PERMISSIONS: Record<LeadioRole, RolePermissions> = {
+export const ROLE_PERMISSIONS: Record<LeadBeadRole, RolePermissions> = {
   visitor: { ...BASE, roleLabel: "Visitor" },
 
   free_student: {
@@ -145,7 +145,7 @@ export const ROLE_PERMISSIONS: Record<LeadioRole, RolePermissions> = {
   },
 };
 
-export const ROLE_PRIMARY_CTA: Record<LeadioRole, RoleCta> = {
+export const ROLE_PRIMARY_CTA: Record<LeadBeadRole, RoleCta> = {
   visitor:      { label: "Join Free Training",       href: "/blueprint/join" },
   free_student: { label: "Take the Challenge",       href: "/challenge/join" },
   challenger:   { label: "Unlock VIP Training",      href: "/premium" },
@@ -160,14 +160,14 @@ export const ROLE_PRIMARY_CTA: Record<LeadioRole, RoleCta> = {
  *
  * Inputs are intentionally minimal so this stays pure & testable.
  */
-export function deriveLeadioRole(input: {
+export function deriveLeadBeadRole(input: {
   hasUser: boolean;
   isAdmin: boolean;
   isApprovedPromoter: boolean;
   isPremium: boolean;
   hasEnteredChallenge: boolean;
   hasBlueprintAccount: boolean; // any signed-in user has blueprint access
-}): LeadioRole {
+}): LeadBeadRole {
   if (!input.hasUser) return "visitor";
   if (input.isAdmin) return "admin";
   if (input.isApprovedPromoter) return "partner";

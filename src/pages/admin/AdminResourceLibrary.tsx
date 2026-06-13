@@ -547,7 +547,7 @@ const AdminResourceLibrary = () => {
                     onChange={(e) =>
                       setEditing({ ...editing, source: e.target.value })
                     }
-                    placeholder="e.g. Leadio Blueprint v2"
+                    placeholder="e.g. LeadBead Blueprint v2"
                   />
                 </div>
               </div>

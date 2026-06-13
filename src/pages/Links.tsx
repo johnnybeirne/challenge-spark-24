@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 type Card = { title: string; route: string; description: string; badge?: string };
 
 const ASSESSMENT_CARDS: Card[] = [
-  { title: "Challenge Assessment", route: "/assessment", description: "Same Leadio assessment → routes users into the 3-Day Challenge after results.", badge: "challenge" },
+  { title: "Challenge Assessment", route: "/assessment", description: "Same LeadBead assessment → routes users into the 3-Day Challenge after results.", badge: "challenge" },
   { title: "Free Training Assessment", route: "/free-assessment", description: "Same assessment → routes users into the Free Course after results.", badge: "free_training" },
   { title: "Premium Course Assessment", route: "/premium-assessment", description: "Same assessment → routes users into the Premium Growth Accelerator after results.", badge: "premium_course" },
   { title: "Premium Assessment with Coupon", route: "/premium-assessment?coupon=FOUNDING497", description: "Premium assessment with coupon preserved through results into checkout.", badge: "premium_course + coupon" },
@@ -74,7 +74,7 @@ const Links = () => {
       <SEO title="Link Directory" description="One assessment, three entry URLs, three destinations. Use these to send the right traffic to the right funnel." canonical="/links" />
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-black sm:text-4xl">Leadio link directory</h1>
+        <h1 className="text-3xl font-black sm:text-4xl">LeadBead link directory</h1>
         <p className="mt-2 text-base text-muted-foreground">
           One assessment, three entry URLs, three destinations. Use these to send the right traffic to the right funnel.
         </p>

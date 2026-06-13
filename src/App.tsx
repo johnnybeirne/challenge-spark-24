@@ -85,6 +85,7 @@ import InviteEntry from "@/pages/InviteEntry";
 
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
+import PoweredBy from "@/pages/PoweredBy";
 import DebugAttribution from "@/pages/DebugAttribution";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";

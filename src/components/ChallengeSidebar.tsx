@@ -18,6 +18,7 @@ import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
+import { LeadBeadIcon } from "@/components/LeadBeadIcon";
 
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
@@ -173,7 +174,10 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* Brand */}
         {!collapsed ? (
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
-            <p className="text-xl font-black tracking-tight text-foreground">LEADBEAD</p>
+            <div className="flex items-center gap-2">
+              <LeadBeadIcon size={22} />
+              <p className="text-xl font-black tracking-tight text-foreground">LEADBEAD</p>
+            </div>
             {identity.isPersonalised && (
               <p
                 className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"
@@ -661,7 +665,10 @@ const ChallengeSidebar = ({
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <p className="text-sm font-black tracking-tight text-foreground">LEADBEAD</p>
+          <div className="flex items-center gap-2">
+            <LeadBeadIcon size={18} />
+            <p className="text-sm font-black tracking-tight text-foreground">LEADBEAD</p>
+          </div>
           <span className="h-9 w-9" aria-hidden />
         </div>
         <SheetContent side="left" className="w-[300px] p-0">

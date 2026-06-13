@@ -5,11 +5,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are the Leadio AI Challenge Strategist.
+const SYSTEM_PROMPT = `You are the LeadBead AI Challenge Strategist.
 
-Your job is NOT to output a generic "challenge framework template." Your job is to act like a senior strategist who designs the RIGHT challenge for this specific person, using the Leadio methodology.
+Your job is NOT to output a generic "challenge framework template." Your job is to act like a senior strategist who designs the RIGHT challenge for this specific person, using the LeadBead methodology.
 
-Leadio methodology — apply throughout:
+LeadBead methodology — apply throughout:
 - Challenges beat courses for engagement, momentum, implementation, and referrals.
 - Every challenge must produce a visible quick win in the first 24 hours so participants believe.
 - Daily actions must be tiny, specific, and finishable in under 20 minutes.
@@ -54,7 +54,7 @@ One simple, specific share/invite mechanic that makes participants pull others i
 Rules:
 - Be specific to their inputs. Never write generic filler.
 - Speak like a strategist, not a template.
-- Do not mention product names, pricing, coupons, or promos. Do not reference "ChallengeOS", "Leadio", "$497", or "FOUNDING497".
+- Do not mention product names, pricing, coupons, or promos. Do not reference "ChallengeOS", "LeadBead", "$497", or "FOUNDING497".
 - Do not include any "3 quick questions" or generic "challenge structure" language.
 - Keep total length tight and skimmable.`;
 
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
 
-    const userMsg = `Problem they solve:\n${problem}\n\nWho they solve it for:\n${audience}\n\nHow they solve it (their method / tools / style):\n${method}\n\nDesign the right challenge for this person using the Leadio methodology.`;
+    const userMsg = `Problem they solve:\n${problem}\n\nWho they solve it for:\n${audience}\n\nHow they solve it (their method / tools / style):\n${method}\n\nDesign the right challenge for this person using the LeadBead methodology.`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

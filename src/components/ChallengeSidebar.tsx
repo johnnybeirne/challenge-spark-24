@@ -173,7 +173,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* Brand */}
         {!collapsed ? (
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
-            <p className="text-xl font-black tracking-tight text-foreground">LEADIO</p>
+            <p className="text-xl font-black tracking-tight text-foreground">LEADBEAD</p>
             {identity.isPersonalised && (
               <p
                 className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"
@@ -481,7 +481,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               { n: 2, path: "/blueprint/lesson/2", label: "Growth opportunity", Icon: Target, premium: false },
               { n: 3, path: "/blueprint/lesson/3", label: "Referral loops", Icon: Users, premium: false },
               { n: 4, path: "/blueprint/lesson/4", label: "Advanced systems", Icon: Workflow, premium: true },
-              { n: 5, path: "/blueprint/lesson/5", label: "Scaling with Leadio", Icon: TrendingUp, premium: true },
+              { n: 5, path: "/blueprint/lesson/5", label: "Scaling with LeadBead", Icon: TrendingUp, premium: true },
             ].map(({ n, path, label, Icon, premium }) => {
               const active = location.pathname === path;
               const locked = premium && !isPremiumUser;
@@ -661,7 +661,7 @@ const ChallengeSidebar = ({
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <p className="text-sm font-black tracking-tight text-foreground">LEADIO</p>
+          <p className="text-sm font-black tracking-tight text-foreground">LEADBEAD</p>
           <span className="h-9 w-9" aria-hidden />
         </div>
         <SheetContent side="left" className="w-[300px] p-0">

@@ -44,7 +44,7 @@ const MODULES = [
   },
   {
     eyebrow: "Module 5",
-    title: "Scaling With Leadio",
+    title: "Scaling With LeadBead",
     body: "Scale with partners, affiliates, paid acquisition, and repeatable trust-based systems. The exact playbook.",
   },
 ];
@@ -55,7 +55,7 @@ const OUTCOMES = [
   "AI workflows that produce daily content automatically",
   "Partner & affiliate playbooks used by 7-figure coaches",
   "A category-leading positioning system",
-  "Lifetime updates as Leadio evolves",
+  "Lifetime updates as LeadBead evolves",
 ];
 
 const AUDIENCE = [
@@ -70,7 +70,7 @@ const AUDIENCE = [
 const FAQS = [
   {
     q: "Is this a course or a software tool?",
-    a: "Both. You get the full Leadio Premium course (5 modules, lifetime access) plus the AI-powered Leadio platform — diagnostic, 3-day implementation challenge, referral engine, and partner system.",
+    a: "Both. You get the full LeadBead Premium course (5 modules, lifetime access) plus the AI-powered LeadBead platform — diagnostic, 3-day implementation challenge, referral engine, and partner system.",
   },
   {
     q: "How long until I see results?",
@@ -118,7 +118,7 @@ const PartnerSales = () => {
         {/* HERO */}
         <section className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/15 via-background to-background p-6 sm:p-12 shadow-sm">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-primary">
-            <Crown className="h-3.5 w-3.5" /> Leadio Premium · Lifetime
+            <Crown className="h-3.5 w-3.5" /> LeadBead Premium · Lifetime
           </div>
           <h1 className="mt-5 text-4xl font-black leading-tight text-foreground sm:text-6xl">
             The complete lead engine for coaches, experts &amp; founders.
@@ -221,7 +221,7 @@ const PartnerSales = () => {
         <section className="mt-14 rounded-3xl border border-border bg-card p-8 sm:p-10">
           <Quote className="h-7 w-7 text-primary" />
           <p className="mt-4 text-xl font-bold leading-relaxed text-foreground sm:text-2xl">
-            "Leadio finally connected the dots. Three days in, I had a working referral loop that
+            "LeadBead finally connected the dots. Three days in, I had a working referral loop that
             kept producing leads while I slept. Best $497 I've spent on my business this year."
           </p>
           <div className="mt-6 flex items-center gap-3">
@@ -269,7 +269,7 @@ const PartnerSales = () => {
                 onClick={handleBuy}
                 className="h-14 gap-2 px-8 text-base font-black uppercase tracking-wide"
               >
-                <Rocket className="h-5 w-5" /> Unlock Leadio Premium
+                <Rocket className="h-5 w-5" /> Unlock LeadBead Premium
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <p className="text-xs text-muted-foreground">
@@ -313,7 +313,7 @@ const PartnerSales = () => {
           <Lock className="h-6 w-6 text-primary" />
           <h3 className="text-3xl font-black sm:text-4xl">Stop guessing. Start compounding.</h3>
           <p className="max-w-xl text-sm text-muted-foreground">
-            Lifetime access to the full Leadio system. One payment. Refundable for 14 days.
+            Lifetime access to the full LeadBead system. One payment. Refundable for 14 days.
           </p>
           <Button
             onClick={handleBuy}
@@ -322,7 +322,7 @@ const PartnerSales = () => {
             <Rocket className="h-5 w-5" /> Get Lifetime Access
           </Button>
           <Link to="/" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
-            Learn more about Leadio
+            Learn more about LeadBead
           </Link>
         </section>
       </main>

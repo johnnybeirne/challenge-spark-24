@@ -109,7 +109,7 @@ const MODULES: Record<ModuleSlug, ModuleContent> = {
     n: 5,
     locked: true,
     eyebrow: "Premium Module",
-    title: "Scaling With Leadio",
+    title: "Scaling With LeadBead",
     teaser:
       "Learn how to scale challenges using partners, affiliates, referrals, paid acquisition, and repeatable trust-based systems.",
     previewBullets: [
@@ -120,7 +120,7 @@ const MODULES: Record<ModuleSlug, ModuleContent> = {
       "Monetisation systems",
     ],
     intro:
-      "Scaling with Leadio is about compounding — partners, referrals, and offer ascension stacked on a trust-based foundation. You'll design the systems that turn one challenge into a repeatable growth engine.",
+      "Scaling with LeadBead is about compounding — partners, referrals, and offer ascension stacked on a trust-based foundation. You'll design the systems that turn one challenge into a repeatable growth engine.",
     takeaways: [
       "Partners and affiliates compound reach without compounding ad spend.",
       "Offer ascension lets each cohort fund the next stage.",

@@ -9,7 +9,7 @@ const FREE_MODULES = new Set([1, 2, 3]);
 
 export const PREMIUM_LOCK_TITLE = "VIP Training Locked";
 export const PREMIUM_LOCK_MESSAGE =
-  "This module is part of the VIP Leadio growth system. Unlock VIP Training to access Advanced Challenge Systems, Scaling With Leadio, AI implementation systems, and advanced referral mechanics.";
+  "This module is part of the VIP LeadBead growth system. Unlock VIP Training to access Advanced Challenge Systems, Scaling With LeadBead, AI implementation systems, and advanced referral mechanics.";
 export const PREMIUM_LOCK_CTA = "Unlock VIP Training";
 
 export const isModulePremium = (moduleNumber: number) =>

@@ -35,8 +35,8 @@ const MODULES: ModuleEntry[] = [
     body: "Design referral loops into the experience so growth compounds naturally.", locked: false },
   { n: 4, slug: "4", icon: BookOpen, eyebrow: "Premium Module", title: "Advanced Challenge Systems",
     body: "Advanced systems behind high-converting challenge funnels and AI-guided implementation.", locked: true },
-  { n: 5, slug: "5", icon: Rocket, eyebrow: "Premium Module", title: "Scaling With Leadio",
-    body: "Scale with partners, referrals, paid offers, and repeatable Leadio growth loops.", locked: true },
+  { n: 5, slug: "5", icon: Rocket, eyebrow: "Premium Module", title: "Scaling With LeadBead",
+    body: "Scale with partners, referrals, paid offers, and repeatable LeadBead growth loops.", locked: true },
 ];
 
 const BlueprintDashboard = () => {
@@ -75,7 +75,7 @@ const BlueprintDashboard = () => {
 
       <div className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8 shadow-sm">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-primary">
-          <Sparkles className="h-3.5 w-3.5" /> Leadio Course
+          <Sparkles className="h-3.5 w-3.5" /> LeadBead Course
         </span>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">Challenge Growth Blueprint</h1>
         <p className="mt-2 text-base text-muted-foreground">
@@ -185,7 +185,7 @@ const BlueprintDashboard = () => {
               <MessageCircle className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-black">Leadio Growth Mentor</h3>
+              <h3 className="text-base font-black">LeadBead Growth Mentor</h3>
               <p className="mt-1 text-sm text-muted-foreground">
                 Ask questions about lead generation, trust-based growth, referrals, and challenge strategy.
               </p>
@@ -218,7 +218,7 @@ export const UpgradeCard = () => {
           <div>
             <h3 className="text-xl font-black sm:text-2xl">Premium Unlocked</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              You have full access to Modules 4 & 5 — Advanced Challenge Systems and Scaling With Leadio.
+              You have full access to Modules 4 & 5 — Advanced Challenge Systems and Scaling With LeadBead.
             </p>
           </div>
         </div>

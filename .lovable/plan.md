@@ -1,58 +1,51 @@
-## Goal
+# Plan: /powered-by marketing page
 
-Insert a full-screen, personalised "AI is building your quiz" animation between clicking **Generate your quiz now** on Day 2 Step 1 and the playable quiz preview on Step 2.
+A standalone public route that explains LeadBead to visitors arriving from a challenge footer link. Premium, dark, cinematic — outside the normal app shell.
 
-## Flow
+## Files to create
 
-```
-Step 1 of 5 ──[click Generate]──▶ Generating overlay ──[fade]──▶ Step 2 of 5 (playable)
-```
+1. **`src/pages/PoweredBy.tsx`** — the full page, all 7 sections + footer note. Self-contained component (no shared layout). Includes:
+   - A small `Reveal` helper inside the file using `IntersectionObserver` (threshold 0.15, opacity 0 → 1, translateY 24px → 0, 600ms ease-out, stagger via per-child `transition-delay`). No external animation library.
+   - Lucide icons: `GraduationCap`, `Briefcase`, `Monitor`, `Mic`.
+   - Primary CTAs use existing `<Button>` from `@/components/ui/button` (default variant = app primary).
+   - Self-referential footer link: the word "LeadBead" → `/powered-by`.
+   - `<SEO>` component for title/description.
 
-The overlay runs the API call *and* a personalised status sequence in parallel, then waits for both before revealing Step 2.
+## Files to modify
 
-## Files
+2. **`src/App.tsx`** — add one route inside the public `<AppShell fullWidth />` group **OR** as a bare route outside `AppShell` so it has zero app chrome. Spec says "does not use the app shell or sidebar" → register as a standalone route outside any `AppShell` wrapper (same pattern as `/quiz-preview`):
+   ```tsx
+   <Route path="/powered-by" element={<PoweredBy />} />
+   ```
+   Plus the import line. Nothing else in App.tsx changes.
 
-**New** — `src/components/Day2QuizGenerating.tsx`
-- Full-screen dark layout (`fixed inset-0`, `bg-slate-950`) with a centred column.
-- Pulsing AI orb: layered concentric rings with `animate-ping` + a soft `bg-primary` blurred glow halo behind it. Subtle particle shimmer = a few absolutely-positioned dots with staggered `animate-pulse` and `blur`.
-- Status messages stack: shows one message at a time, each fades in/up then fades out before the next mounts (CSS keyframe via existing `animate-fade-in` + an exit class). ~1.8s per message.
-- Messages are built from Day 1 data (audience, superpower, problem, outcome, expert type) read from `state.challenge.aiOutputs.day1Setup`. Example template:
-  - `Reviewing {audience}…`
-  - `Analysing your superpower in {superpower}…`
-  - `Pulling in your Day 1 insights…`
-  - `Mapping archetypes for {expertType || "your audience"}…`
-  - `Building your quiz around {outcome}…`
-  Each falls back to the generic line if the Day 1 field is empty.
-- Fires `supabase.functions.invoke("day2-thread", { moment: "sample_quiz", inputs: { … } })` on mount.
-- Resolves when **both** the animation cycle finishes *and* the API returns (whichever is slower).
-- On success: writes `day2_s2_quiz` + sets `day2_step: "2"` in `AppContext`, then triggers a brief fade-out class before unmounting (parent route swap handles the reveal).
-- On error: toast + sets `day2_step: "1"` so the user is returned to Step 1.
+No other files touched. No nav menu entry. No changes to existing routes, tokens, or components.
 
-**Edit** — `src/components/Day2Screen1.tsx`
-- Strip the API call out of `handleGenerateQuiz`. The click now just sets `day2_step: "generating"` (no network, no spinner state on the button itself — the overlay owns that).
-- Keep the QA-unlock / `allOpened` gating.
+## Section build order (matches brief exactly)
 
-**Edit** — `src/pages/DayChallenge.tsx`
-- Extend the Day 2 step switch:
-  ```
-  step === "generating" → <Day2QuizGenerating />
-  step === "2"          → <Day2QuizPlayable onBack={…} />
-  default               → <Day2Screen1 />
-  ```
+1. **Hero** — `min-h-screen`, headline ≥ `text-4xl md:text-6xl lg:text-7xl`, subhead, primary CTA → `/`. Background: CSS-only dark radial gradient with a slow `@keyframes` pulse/shift applied inline via a `<style>` tag scoped to the page (or Tailwind arbitrary values + `animate-[...]`). Uses near-black bg (`bg-background` is already dark in this project; fall back to `bg-[#070708]` if needed for "darkest available").
+2. **Core idea** — centered single statement + paragraph.
+3. **How it works** — 3 cards, `grid md:grid-cols-3`, staggered reveal (0/100/200ms).
+4. **Referral engine** — `grid md:grid-cols-2`. Right column = pure CSS animated triangular diagram: 3 nodes + a glowing dot that travels the path on a continuous `@keyframes` loop (`animation-duration: 6s, infinite`).
+5. **Who it is for** — 2×2 grid with Lucide icons.
+6. **Points & progression** — vertical 5-tier ladder with a connecting line; tier 3 gets a `ring`/`shadow` glow via `shadow-[0_0_40px_hsl(var(--primary)/0.5)]`.
+7. **Final CTA** — full-width centered, headline + sub + button → `/` + reassurance line.
+8. **Footer note** — small centered text, "LeadBead" links to `/powered-by`.
 
-## Animation details
+## Design tokens
 
-- Orb: 96px primary-coloured circle, blurred glow halo behind (`blur-3xl opacity-40`), one slow pulse ring (`animate-ping`) and a fast inner ring. Pure CSS, no extra deps.
-- Messages: absolute-positioned in a fixed-height slot to avoid layout shift; each `key`-mounted node uses `animate-fade-in` on enter; on exit we set an `opacity-0 translate-y-2 transition` for ~250ms before unmount.
-- Final reveal: when handoff happens, the overlay fades its container to `opacity-0` over ~400ms then unmounts, while `Day2QuizPlayable` mounts with its existing `animate-fade-in`.
+- Use existing semantic tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `bg-primary`, `text-primary-foreground`, `border-border`). No hardcoded color classes in components other than the one near-black page wrapper if `--background` isn't dark enough.
+- Typography: rely on app's existing font stack; size via Tailwind scale (`text-4xl` → `text-7xl` for hero).
+- All transitions hand-rolled with Tailwind utility classes + a tiny IntersectionObserver hook inside the file.
 
-## Style
+## Responsive
 
-- Dark deep-navy background even in light mode (overlay owns its own palette so it always pops).
-- Centred column, max-w-md, mobile-first.
-- No new dependencies, no new routes — purely a third value of the existing `day2_step` state flag.
+- Mobile-first. Hero shrinks to `text-4xl`. Grids collapse to single column under `md`. Tested mentally at 375 / 768 / 1280.
 
-## Out of scope
+## What I will NOT touch
 
-- No changes to the playable quiz itself or to Step 1's other content.
-- No changes to the edge function payload.
+- No edits to `AppShell`, `ChallengeSidebar`, `BottomNav`, design tokens, or any existing page.
+- No new dependencies.
+- No nav menu entry.
+
+Ready to switch to build mode when you approve.

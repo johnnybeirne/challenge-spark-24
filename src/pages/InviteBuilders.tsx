@@ -34,6 +34,10 @@ const InviteBuilders = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="w-full max-w-sm text-center">
+        <div className="inline-flex flex-col items-center gap-2 mb-6">
+          <LeadBeadIcon size={44} />
+          <span className="text-[11px] font-black tracking-[0.22em] text-muted-foreground">LEADBEAD</span>
+        </div>
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
           <Users className="w-8 h-8 text-primary" />
         </div>

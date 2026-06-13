@@ -80,26 +80,26 @@ const growthEngineOverlays = [
 const stepCards = [
   {
     n: "01",
-    title: "Build your challenge",
-    body: "You define your audience, your result, and your 3-day experience. LeadBead guides you through every step with AI coaching built in.",
+    title: "Lock in your audience",
+    body: "Define who you help and the problem your challenge solves.",
   },
   {
     n: "02",
-    title: "Add a quiz funnel",
-    body: "Your challenge gets a personalised quiz that attracts the right people and converts them into participants before they even start.",
+    title: "Build the experience",
+    body: "Create the quiz and challenge flow that captures leads.",
   },
   {
     n: "03",
-    title: "Activate the referral loop",
-    body: "Participants who love your challenge invite others to join. Every invite compounds your growth automatically.",
+    title: "Launch and grow",
+    body: "Share it with referral mechanics that help it spread.",
   },
 ];
 
 const audience = [
-  { Icon: GraduationCap, title: "Coaches", body: "Turn your methodology into an evergreen challenge that attracts ideal clients automatically." },
-  { Icon: Briefcase, title: "Consultants", body: "Generate qualified leads with a challenge built around a real business problem your audience faces." },
-  { Icon: Monitor, title: "Course creators", body: "Use a 3-day challenge as your top of funnel. Build trust and demonstrate value before you sell." },
-  { Icon: Mic, title: "Speakers and trainers", body: "Grow your list and demonstrate your expertise with every challenge you run." },
+  { Icon: GraduationCap, title: "A live lead-building challenge", body: "Not a theory or worksheet — a real app people can join." },
+  { Icon: Briefcase, title: "A guided path for participants", body: "Each day moves people closer to the outcome they want." },
+  { Icon: Monitor, title: "A built-in growth loop", body: "Referral prompts help your challenge keep spreading." },
+  { Icon: Mic, title: "Built for experts", body: "Coaches, consultants, course creators, speakers, and authors who want leads without the grind." },
 ];
 
 const tiers = [
@@ -165,28 +165,27 @@ export default function PoweredBy() {
           </Reveal>
           <Reveal delay={50}>
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-primary">
-              Build your own lead generation system in 3 days
+              Free 3-day builder challenge
             </p>
           </Reveal>
           <Reveal delay={100}>
             <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-              Teach what you know.{" "}
+              Turn trust into a lead engine{" "}
               <span className="text-primary">
-                Grow on autopilot.
+                that grows itself.
               </span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="mx-auto mt-8 max-w-2xl text-lg text-neutral-700 md:text-xl">
-              LeadBead teaches coaches, consultants, and experts how to build an evergreen
-              3-day challenge — with a quiz funnel that attracts leads and a referral loop
-              that keeps it growing.
+              Build a challenge in 3 days where people get a real result, and feel excited to
+              invite others along the way.
             </p>
           </Reveal>
           <Reveal delay={300}>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="h-14 px-8 text-base">
-                <Link to="/">Build your challenge free</Link>
+                <Link to="/">Join the challenge</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base">
                 <a href="#how-it-works">See how it works</a>
@@ -260,19 +259,18 @@ export default function PoweredBy() {
           <div>
             <Reveal>
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-primary">
-                Built-in growth
+                Why it works
               </p>
             </Reveal>
             <Reveal delay={100}>
               <h2 className="text-3xl font-semibold tracking-tight md:text-5xl">
-                Every participant becomes a promoter.
+                People do not just consume content. They participate.
               </h2>
             </Reveal>
             <Reveal delay={200}>
               <p className="mt-6 text-lg text-neutral-700 leading-relaxed">
-                LeadBead challenges come with a referral engine built in. Participants earn
-                points for inviting others. Points unlock rewards, content, and status. No ads
-                required. No cold outreach. Just a system that rewards sharing.
+                The challenge gives your audience a clear next step, captures intent, and
+                encourages sharing as part of the experience.
               </p>
             </Reveal>
           </div>
@@ -393,25 +391,29 @@ export default function PoweredBy() {
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <Reveal>
             <h2 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Ready to build a challenge that teaches, attracts, and grows?
+              Start building your challenge
             </h2>
           </Reveal>
           <Reveal delay={100}>
             <p className="mt-6 text-lg text-primary-foreground/85 md:text-xl">
-              LeadBead gets you live in 3 days. Quiz funnel included. Referral loop built in.
+              Join the 3-day builder challenge, or take the quiz first if you want a
+              recommended strategy.
             </p>
           </Reveal>
           <Reveal delay={200}>
-            <div className="mt-10">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-base">
-                <Link to="/">Start building free</Link>
+                <Link to="/">Join the challenge</Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-14 border-primary-foreground/40 bg-transparent px-8 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              >
+                <Link to="/assessment">Take the quiz</Link>
               </Button>
             </div>
-          </Reveal>
-          <Reveal delay={300}>
-            <p className="mt-5 text-sm text-primary-foreground/70">
-              No credit card required. Your challenge. Your audience.
-            </p>
           </Reveal>
         </div>
       </section>

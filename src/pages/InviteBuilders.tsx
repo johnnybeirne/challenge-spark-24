@@ -3,6 +3,7 @@ import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, ArrowRight } from "lucide-react";
+import { LeadBeadIcon } from "@/components/LeadBeadIcon";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
 import { useEffect } from "react";

@@ -156,7 +156,7 @@ export default function PoweredBy() {
             <img
               src={leadbeadLogo}
               alt="LeadBead"
-              className="mx-auto mb-10 h-12 w-auto md:h-16"
+              className="mx-auto mb-10 h-24 w-auto md:h-32"
             />
           </Reveal>
           <Reveal delay={50}>

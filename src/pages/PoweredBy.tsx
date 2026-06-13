@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
+import ReferralGrowthNetworkHorizontal from "@/components/ReferralGrowthNetworkHorizontal";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
 import leadbeadLogo from "@/assets/leadbead-logo.png";
 
@@ -156,8 +157,11 @@ export default function PoweredBy() {
             <img
               src={leadbeadLogo}
               alt="LeadBead"
-              className="mx-auto mb-10 h-24 w-auto md:h-32"
+              className="mx-auto mb-6 h-24 w-auto md:h-32"
             />
+          </Reveal>
+          <Reveal delay={25}>
+            <ReferralGrowthNetworkHorizontal className="mx-auto mb-10 max-w-3xl" />
           </Reveal>
           <Reveal delay={50}>
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-primary">

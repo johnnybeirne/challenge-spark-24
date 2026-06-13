@@ -23,12 +23,12 @@ const NAMES_T2 = ["Maya", "Leo", "Aisha", "Marco", "Noor", "Theo"];
 const NAMES_T3 = ["Kai", "Eli", "Ines", "Omar", "Zara", "Finn", "Luca", "Mira", "Tomi", "Anya", "Rhys", "Beau"];
 
 const initials = (name: string, root = false) => {
-  if (root) return "YO";
+  if (root) return "YOU";
   return name.slice(0, 2).toUpperCase();
 };
 
 // Canvas: 400 × 340
-const ROOT: Node = { id: "r", x: 200, y: 46, parent: null, level: 0, name: "You" };
+const ROOT: Node = { id: "r", x: 200, y: 30, parent: null, level: 0, name: "You" };
 
 const TIER1: Node[] = [80, 200, 320].map((x, i) => ({
   id: `t1-${i}`, x, y: 132, parent: "r", level: 1, name: NAMES_T1[i],

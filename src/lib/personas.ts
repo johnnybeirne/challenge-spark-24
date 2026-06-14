@@ -291,10 +291,14 @@ export function applyCharacter(state: AppState, characterId: string | null | und
   const character = getCharacter(characterId);
   if (!character) return state;
   const baseUser = state.user ?? STUB_USER;
+  const assessment = character.assessmentOverrides
+    ? ({ ...(state.assessment ?? {}), ...character.assessmentOverrides } as AppState["assessment"])
+    : state.assessment;
   return {
     ...state,
     user: { ...baseUser, ...character.userOverrides },
     memory: { ...state.memory, ...character.memoryOverrides },
+    assessment,
     challenge: {
       ...state.challenge,
       aiOutputs: { ...state.challenge.aiOutputs, ...character.aiOutputOverrides },

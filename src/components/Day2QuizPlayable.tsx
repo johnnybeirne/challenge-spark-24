@@ -220,6 +220,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const sub = quizSubtitle || quizIntro || fallbackSub;
     return (
       <div className="relative min-h-screen bg-background">
+        <SampleQuizBanner />
         <button
           type="button"
           onClick={onClose}
@@ -388,6 +389,9 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           </div>
         </div>
 
+
+
+
         <p className="mt-8 text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5">
           <Sparkles className="h-3 w-3" /> Live preview — tap an answer to continue
         </p>
@@ -395,6 +399,23 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     </Shell>
   );
 };
+
+const SampleQuizBanner = () => (
+  <div
+    className="sticky top-0 left-0 right-0 z-[100] w-full text-center"
+    style={{
+      backgroundColor: "rgba(245, 166, 35, 0.15)",
+      borderBottom: "1px solid #F5A623",
+      color: "#92510A",
+      fontSize: "13px",
+      fontWeight: 500,
+      padding: "8px 16px",
+    }}
+  >
+    This is your sample quiz. Close this browser tab to return to Day 2 of your challenge.
+  </div>
+);
+
 
 interface ShellProps {
   onBack?: () => void;
@@ -405,6 +426,7 @@ interface ShellProps {
 }
 const Shell = ({ onBack, onClose, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
+    <SampleQuizBanner />
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
       <div className="mb-6 flex items-center justify-between">
         {onBack ? (

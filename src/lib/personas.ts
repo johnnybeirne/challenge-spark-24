@@ -226,7 +226,11 @@ export const CHARACTERS: CharacterDefinition[] = [
       inviteCode: "B2CCOACH",
     },
     memoryOverrides: { ...(SOPHIE.memoryOverrides ?? {}), name: "Sophie Harte" },
-    aiOutputOverrides: { ...(SOPHIE.aiOutputOverrides ?? {}) },
+    aiOutputOverrides: {
+      ...(SOPHIE.aiOutputOverrides ?? {}),
+      day2_quiz_questions:
+        "1. Do you know what you actually want your life to look like in the next 12 months?\n2. When you imagine making a big change, does fear of getting it wrong stop you from starting?\n3. Do you have at least one person in your life who genuinely supports you taking a new direction?\n4. Have you tried to make a change before but found yourself back in the same place within a few months?\n5. Do you find it hard to prioritise yourself without feeling guilty about it?\n6. When you think about your life right now, does it feel like it belongs to you?\n7. Do you know what is actually holding you back, or does it just feel like everything is?\n8. Have you ever had a moment of total clarity about what you wanted, but then talked yourself out of it?\n9. If someone gave you permission to start over in one area of your life, do you already know which area it would be?",
+    },
   },
 ];
 

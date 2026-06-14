@@ -205,9 +205,6 @@ export default function PoweredBy() {
                 delay={i * 100}
                 className="relative overflow-hidden rounded-2xl border border-primary/10 bg-white p-8"
               >
-                <div className="mb-6 text-xs font-mono font-semibold uppercase tracking-wider text-primary/70">
-                  {o.range}
-                </div>
                 <h3 className="mb-3 text-xl font-semibold leading-snug">{o.title}</h3>
                 <p className="text-neutral-600 leading-relaxed">{o.body}</p>
               </Reveal>

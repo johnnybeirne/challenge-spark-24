@@ -11,7 +11,7 @@ const sections = [
     color: "text-cyan-500",
   },
   {
-    title: "Landing Page Editor",
+    title: "Quiz LP Editor",
     description: "Edit every headline, subhead, button, and paragraph across all pages",
     icon: FileEdit,
     to: "/owner-console/content",

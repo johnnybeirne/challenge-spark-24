@@ -22,7 +22,7 @@ const items = [
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard },
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake },
   { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true },
-  { title: "Landing page editor", url: "/owner-console/content", icon: FileEdit },
+  { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit },
   { title: "Resource library", url: "/owner-console/resources", icon: BookOpen },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail },

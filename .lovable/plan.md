@@ -1,51 +1,44 @@
-# Plan: /powered-by marketing page
+## Goal
 
-A standalone public route that explains LeadBead to visitors arriving from a challenge footer link. Premium, dark, cinematic — outside the normal app shell.
+In the Day 2 quiz preview, the left "← Close" button should act as **Back** (return to the previous question), the right **X** should close the preview, and the whole quiz preview should open in a **new browser tab** instead of a modal.
 
-## Files to create
+## Current behaviour (audit)
 
-1. **`src/pages/PoweredBy.tsx`** — the full page, all 7 sections + footer note. Self-contained component (no shared layout). Includes:
-   - A small `Reveal` helper inside the file using `IntersectionObserver` (threshold 0.15, opacity 0 → 1, translateY 24px → 0, 600ms ease-out, stagger via per-child `transition-delay`). No external animation library.
-   - Lucide icons: `GraduationCap`, `Briefcase`, `Monitor`, `Mic`.
-   - Primary CTAs use existing `<Button>` from `@/components/ui/button` (default variant = app primary).
-   - Self-referential footer link: the word "LeadBead" → `/powered-by`.
-   - `<SEO>` component for title/description.
+- `src/components/Day2Screen1.tsx` opens the preview as a modal: `Day2QuizModal` (line 715), toggled by `setQuizModalOpen(true)` in `handleGenerateQuiz` (line 431-434).
+- `src/components/Day2QuizModal.tsx` shows the generating screen, then `Day2QuizPlayable` inside a centered panel with its own X close button.
+- `src/components/Day2QuizPlayable.tsx` `Shell` (lines 358-374) renders a single right-aligned "← Close" button that calls `onBack` and closes the modal.
+- A standalone tab page already exists: `src/pages/QuizPreview.tsx` mounted at `/quiz-preview` (`src/App.tsx` line 224). It runs the same generating → playable flow and tries `window.close()` on back.
 
-## Files to modify
+## Changes
 
-2. **`src/App.tsx`** — add one route inside the public `<AppShell fullWidth />` group **OR** as a bare route outside `AppShell` so it has zero app chrome. Spec says "does not use the app shell or sidebar" → register as a standalone route outside any `AppShell` wrapper (same pattern as `/quiz-preview`):
-   ```tsx
-   <Route path="/powered-by" element={<PoweredBy />} />
-   ```
-   Plus the import line. Nothing else in App.tsx changes.
+### 1. `src/components/Day2Screen1.tsx` — open in a new tab
+- Remove `Day2QuizModal` import, `quizModalOpen` state, and the `<Day2QuizModal …/>` render.
+- In `handleGenerateQuiz`, call `window.open("/quiz-preview", "_blank", "noopener")` instead of opening the modal. Keep all surrounding logic (analytics, gating) untouched.
 
-No other files touched. No nav menu entry. No changes to existing routes, tokens, or components.
+### 2. `src/components/Day2QuizPlayable.tsx` — split header into Back + Close
+- Change `Shell` to render two header controls:
+  - **Left:** `← Back` button → calls a new `onBack` handler (rename current prop to `onClose` for the X).
+  - **Right:** circular `X` button → calls `onClose` (closes the tab).
+- Update the component's props from `{ onBack }` to `{ onClose }` and add an internal back handler with this behaviour:
+  - On **landing screen** (`!started`): Back is hidden (nothing to go back to) — only the X is shown.
+  - On **question screen**: Back decrements `current` by 1 and pops the last answer; if already on question 1, it returns to the landing screen (`setStarted(false)`).
+  - On **result screen**: Back returns to the final question (restore `current = questions.length - 1`, drop last answer).
+- Wire `onClose` to whatever closes the surface (in the new-tab page that means `window.close()` fallback to `about:blank`).
 
-## Section build order (matches brief exactly)
+### 3. `src/pages/QuizPreview.tsx` — pass `onClose`
+- Replace the existing `onBack={handleClose}` with `onClose={handleClose}` to match the new prop name. No other logic changes; the generating phase and handoff stay the same.
 
-1. **Hero** — `min-h-screen`, headline ≥ `text-4xl md:text-6xl lg:text-7xl`, subhead, primary CTA → `/`. Background: CSS-only dark radial gradient with a slow `@keyframes` pulse/shift applied inline via a `<style>` tag scoped to the page (or Tailwind arbitrary values + `animate-[...]`). Uses near-black bg (`bg-background` is already dark in this project; fall back to `bg-[#070708]` if needed for "darkest available").
-2. **Core idea** — centered single statement + paragraph.
-3. **How it works** — 3 cards, `grid md:grid-cols-3`, staggered reveal (0/100/200ms).
-4. **Referral engine** — `grid md:grid-cols-2`. Right column = pure CSS animated triangular diagram: 3 nodes + a glowing dot that travels the path on a continuous `@keyframes` loop (`animation-duration: 6s, infinite`).
-5. **Who it is for** — 2×2 grid with Lucide icons.
-6. **Points & progression** — vertical 5-tier ladder with a connecting line; tier 3 gets a `ring`/`shadow` glow via `shadow-[0_0_40px_hsl(var(--primary)/0.5)]`.
-7. **Final CTA** — full-width centered, headline + sub + button → `/` + reassurance line.
-8. **Footer note** — small centered text, "LeadBead" links to `/powered-by`.
+### 4. `src/components/Day2QuizModal.tsx` — leave file in place
+- No longer rendered anywhere after step 1. Leaving the file untouched avoids touching unrelated code; we can delete it in a follow-up if you'd like.
 
-## Design tokens
+## Out of scope
 
-- Use existing semantic tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `bg-primary`, `text-primary-foreground`, `border-border`). No hardcoded color classes in components other than the one near-black page wrapper if `--background` isn't dark enough.
-- Typography: rely on app's existing font stack; size via Tailwind scale (`text-4xl` → `text-7xl` for hero).
-- All transitions hand-rolled with Tailwind utility classes + a tiny IntersectionObserver hook inside the file.
+- No changes to the generating screen visuals, audio, timing, or any analytics.
+- No changes to routes other than how `/quiz-preview` is launched.
+- No styling changes beyond adding the second header button.
 
-## Responsive
+## Files touched
 
-- Mobile-first. Hero shrinks to `text-4xl`. Grids collapse to single column under `md`. Tested mentally at 375 / 768 / 1280.
-
-## What I will NOT touch
-
-- No edits to `AppShell`, `ChallengeSidebar`, `BottomNav`, design tokens, or any existing page.
-- No new dependencies.
-- No nav menu entry.
-
-Ready to switch to build mode when you approve.
+- `src/components/Day2Screen1.tsx`
+- `src/components/Day2QuizPlayable.tsx`
+- `src/pages/QuizPreview.tsx`

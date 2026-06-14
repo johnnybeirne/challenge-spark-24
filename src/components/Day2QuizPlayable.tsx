@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -78,10 +78,11 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
 };
 
 interface Props {
-  onBack: () => void;
+  onClose: () => void;
 }
 
-const Day2QuizPlayable = ({ onBack }: Props) => {
+const Day2QuizPlayable = ({ onClose }: Props) => {
+
   const { state, setState } = useAppState();
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
   const identity = useChallengeIdentity();
@@ -148,6 +149,32 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
 
   const reset = () => { setAnswers([]); setCurrent(0); setAnimKey((k) => k + 1); };
 
+  // Back: question N>0 → previous question; question 0 → landing; landing → none;
+  // result → re-take final question.
+  const handleBack = (): (() => void) | undefined => {
+    if (loading || !quiz) return undefined;
+    if (!started && answers.length === 0) return undefined; // landing
+    if (answers.length >= quiz.questions.length) {
+      // result → last question
+      return () => {
+        setAnswers((a) => a.slice(0, -1));
+        setCurrent(quiz.questions.length - 1);
+        setAnimKey((k) => k + 1);
+      };
+    }
+    return () => {
+      if (current > 0) {
+        setCurrent((c) => c - 1);
+        setAnswers((a) => a.slice(0, -1));
+        setAnimKey((k) => k + 1);
+      } else {
+        setStarted(false);
+        setAnswers([]);
+      }
+    };
+  };
+
+
   const result = useMemo(() => {
     if (!quiz || answers.length < quiz.questions.length) return null;
     const counts: Record<Tier, number> = { low: 0, mid: 0, high: 0 };
@@ -162,7 +189,7 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
   // ───────────── Loading ─────────────
   if (loading || !quiz) {
     return (
-      <Shell onBack={onBack} step={2} total={5}>
+      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
         <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">
@@ -186,8 +213,17 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
       ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
       : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
     return (
-      <div className="min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
+          aria-label="Close quiz preview"
+        >
+          <X className="h-4 w-4" />
+        </button>
         <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-5 py-10 text-center animate-fade-in">
+
           <div className="w-full overflow-hidden rounded-3xl border border-border shadow-2xl">
             <img
               src={heroUrl}
@@ -233,7 +269,7 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
   if (result) {
     const total = quiz.questions.length;
     return (
-      <Shell onBack={onBack} step={2} total={5}>
+      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
         <div className="mx-auto max-w-xl pt-6 pb-12 animate-fade-in">
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary text-center">
             Your result
@@ -308,7 +344,7 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
   const progress = (current / quiz.questions.length) * 100;
 
   return (
-    <Shell onBack={onBack} step={2} total={5}>
+    <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
       <div className="mx-auto max-w-xl pt-2 pb-12">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
@@ -354,23 +390,42 @@ const Day2QuizPlayable = ({ onBack }: Props) => {
   );
 };
 
-interface ShellProps { onBack: () => void; step: number; total: number; children: React.ReactNode }
-const Shell = ({ onBack, children }: ShellProps) => (
+interface ShellProps {
+  onBack?: () => void;
+  onClose: () => void;
+  step: number;
+  total: number;
+  children: React.ReactNode;
+}
+const Shell = ({ onBack, onClose, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
-      <div className="mb-6 flex items-center justify-end">
+      <div className="mb-6 flex items-center justify-between">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+            aria-label="Back to previous question"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
+          </button>
+        ) : (
+          <span />
+        )}
         <button
           type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+          onClick={onClose}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
           aria-label="Close quiz preview"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Close
+          <X className="h-4 w-4" />
         </button>
       </div>
       {children}
     </div>
   </div>
 );
+
 
 export default Day2QuizPlayable;

@@ -177,9 +177,9 @@ export default function PoweredBy() {
             </h1>
           </Reveal>
           <Reveal delay={200}>
-            <p className="mx-auto mt-8 max-w-2xl text-lg text-neutral-700 md:text-xl">
+            <p className="mx-auto mt-8 max-w-2xl text-lg text-neutral-700 md:text-xl whitespace-pre-wrap">
               Build a challenge in 3 days where people get a real result, and feel excited to
-              invite others along the way.
+              invite others along the way.{"\n\n"}
             </p>
           </Reveal>
         </div>

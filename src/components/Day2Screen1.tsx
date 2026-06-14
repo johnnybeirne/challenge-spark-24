@@ -426,10 +426,11 @@ const Day2Screen1 = () => {
   const allOpened = true;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
 
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
-    window.open("/quiz-preview", "_blank", "noopener");
+    setQuizModalOpen(true);
   };
 
 

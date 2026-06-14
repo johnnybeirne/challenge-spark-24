@@ -16,7 +16,7 @@ const BEADS = [
   { angle: -18, color: "#F5A623", r: 11 },
   { angle: 54, color: "#4CAF82", r: 13 },
   { angle: 126, color: "#534AB7", r: 11 },
-  { angle: 198, color: "#E8607A", r: 12 },
+  { angle: 198, color: "#29B6D4", r: 12 },
 ];
 const TRACK_CX = 110;
 const TRACK_CY = 110;

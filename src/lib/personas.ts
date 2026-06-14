@@ -7,7 +7,7 @@ import type { MemoryChallengeType } from "@/lib/personalisation";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";
-import { generateResult } from "@/lib/assessmentData";
+import { generateResult, type AssessmentResult } from "@/lib/assessmentData";
 
 const SAMPLE_ASSESSMENT_ANSWERS: Record<string, string> = {
   q1: "yes", q2: "yes", q3: "no", q4: "yes", q5: "no",

@@ -292,12 +292,18 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     >
       <div className="relative z-10 flex w-full max-w-md flex-col items-center px-6 text-center">
         {/* Logo */}
-        <img
-          src={leadbeadLogo}
-          alt="LeadBead"
-          width={120}
-          className="mb-10 h-auto w-[120px]"
-        />
+        <div className="mb-10 flex flex-col items-center">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            Powered by
+          </p>
+          <img
+            src={leadbeadLogo}
+            alt="LeadBead"
+            width={120}
+            className="h-auto w-[120px]"
+          />
+        </div>
+
 
         {/* Bead animation */}
         <svg

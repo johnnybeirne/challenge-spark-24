@@ -412,7 +412,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const finalMemory = { ...seeded.memory, ...(persona.memoryOverrides ?? {}) };
   const finalAiOutputs = { ...seeded.aiOutputs, ...(persona.aiOutputOverrides ?? {}) };
 
-  return {
+  const result: AppState = {
     ...state,
     user: finalUser,
     memory: finalMemory,
@@ -443,4 +443,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     community,
     training,
   };
+
+  // 8. If a character is selected in QA state, overlay its identity on top.
+  return applyCharacter(result, readQaCharacterId());
 }
+

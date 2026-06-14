@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";

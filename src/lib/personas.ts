@@ -7,7 +7,7 @@ import type { MemoryChallengeType } from "@/lib/personalisation";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";
-import { generateResult } from "@/lib/assessmentData";
+import { generateResult, type AssessmentResult } from "@/lib/assessmentData";
 
 const SAMPLE_ASSESSMENT_ANSWERS: Record<string, string> = {
   q1: "yes", q2: "yes", q3: "no", q4: "yes", q5: "no",
@@ -196,6 +196,8 @@ export interface CharacterDefinition {
   userOverrides: NonNullable<PersonaDefinition["userOverrides"]>;
   memoryOverrides: NonNullable<PersonaDefinition["memoryOverrides"]>;
   aiOutputOverrides: NonNullable<PersonaDefinition["aiOutputOverrides"]>;
+  /** Optional override merged into state.assessment when this character is active. */
+  assessmentOverrides?: Partial<AssessmentResult>;
 }
 
 const MARCUS = PERSONAS.find((p) => p.id === "marcus_b2b")!;
@@ -256,6 +258,28 @@ export const CHARACTERS: CharacterDefinition[] = [
         },
       }),
     },
+    assessmentOverrides: {
+      audienceType: "b2c",
+      challengeType: "transformation",
+      readinessLevel: "medium",
+      growthBlock: "clarity",
+      diagnosticScore: 6,
+      diagnosticLevel: "mid",
+      diagnosticTitle: "Architect",
+      diagnosticMessage:
+        "You know what you want but something keeps getting in the way. You have more clarity than you give yourself credit for — what you need now is a structure that turns that clarity into momentum.",
+      recommendedChallenge: {
+        title: "The Next Chapter Challenge",
+        description:
+          "A 3-day guided experience for women navigating a major life pivot — mapping values, energy patterns, and the next bold move.",
+        outcome: "A clear, confident next step in the area of life that matters most right now.",
+      },
+      messagingAngle:
+        "Speak to the in-between — the gap between who she was and who she's becoming — and offer structure, not more inspiration.",
+      growthInsight:
+        "You don't need more clarity in your head — you need a structure that turns what you already know into your next move.",
+      shareIntent: false,
+    },
   },
 ];
 
@@ -267,10 +291,14 @@ export function applyCharacter(state: AppState, characterId: string | null | und
   const character = getCharacter(characterId);
   if (!character) return state;
   const baseUser = state.user ?? STUB_USER;
+  const assessment = character.assessmentOverrides
+    ? ({ ...(state.assessment ?? {}), ...character.assessmentOverrides } as AppState["assessment"])
+    : state.assessment;
   return {
     ...state,
     user: { ...baseUser, ...character.userOverrides },
     memory: { ...state.memory, ...character.memoryOverrides },
+    assessment,
     challenge: {
       ...state.challenge,
       aiOutputs: { ...state.challenge.aiOutputs, ...character.aiOutputOverrides },

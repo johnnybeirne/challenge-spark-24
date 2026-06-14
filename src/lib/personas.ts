@@ -230,6 +230,31 @@ export const CHARACTERS: CharacterDefinition[] = [
       ...(SOPHIE.aiOutputOverrides ?? {}),
       day2_quiz_questions:
         "1. Do you know what you actually want your life to look like in the next 12 months?\n2. When you imagine making a big change, does fear of getting it wrong stop you from starting?\n3. Do you have at least one person in your life who genuinely supports you taking a new direction?\n4. Have you tried to make a change before but found yourself back in the same place within a few months?\n5. Do you find it hard to prioritise yourself without feeling guilty about it?\n6. When you think about your life right now, does it feel like it belongs to you?\n7. Do you know what is actually holding you back, or does it just feel like everything is?\n8. Have you ever had a moment of total clarity about what you wanted, but then talked yourself out of it?\n9. If someone gave you permission to start over in one area of your life, do you already know which area it would be?",
+      day2_quiz_subtitle: "Find out where you stand with The Next Chapter Challenge.",
+      day2_quiz_intro:
+        "A 2-minute diagnostic for women who know something needs to change but are not sure where to start. See exactly where you are today and the one move that will get you unstuck fastest.",
+      day2_s2_quiz: JSON.stringify({
+        quizTitle: "Where Are You in Your Next Chapter?",
+        subtitle: "Find out where you stand with The Next Chapter Challenge.",
+        intro:
+          "A 2-minute diagnostic for women who know something needs to change but are not sure where to start. See exactly where you are today and the one move that will get you unstuck fastest.",
+        questions: [
+          { id: 1, text: "Do you know what you actually want your life to look like in the next 12 months?", scoring: { low: "Not really", mid: "Some idea", high: "Crystal clear" } },
+          { id: 2, text: "When you imagine making a big change, does fear of getting it wrong stop you from starting?", scoring: { low: "Always", mid: "Sometimes", high: "Rarely" } },
+          { id: 3, text: "Do you have at least one person in your life who genuinely supports you taking a new direction?", scoring: { low: "No one", mid: "Maybe one", high: "Yes" } },
+          { id: 4, text: "Have you tried to make a change before but found yourself back in the same place within a few months?", scoring: { low: "Every time", mid: "Once or twice", high: "Not anymore" } },
+          { id: 5, text: "Do you find it hard to prioritise yourself without feeling guilty about it?", scoring: { low: "Always", mid: "Sometimes", high: "Rarely" } },
+          { id: 6, text: "When you think about your life right now, does it feel like it belongs to you?", scoring: { low: "Not really", mid: "Parts of it", high: "Yes" } },
+          { id: 7, text: "Do you know what is actually holding you back, or does it just feel like everything is?", scoring: { low: "Everything", mid: "Some clarity", high: "I know exactly" } },
+          { id: 8, text: "Have you ever had a moment of total clarity about what you wanted, but then talked yourself out of it?", scoring: { low: "Many times", mid: "Once or twice", high: "Not anymore" } },
+          { id: 9, text: "If someone gave you permission to start over in one area of your life, do you already know which area it would be?", scoring: { low: "No idea", mid: "Maybe", high: "Yes" } },
+        ],
+        tiers: {
+          low: { name: "Pioneer", description: "You are just beginning to hear the call for change. The clarity you need is closer than you think." },
+          mid: { name: "Architect", description: "You know what you want but something keeps getting in the way. You are ready to break through." },
+          high: { name: "Authority", description: "You have done the inner work. Now it is time to back yourself and take the leap." },
+        },
+      }),
     },
   },
 ];

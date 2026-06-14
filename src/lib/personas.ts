@@ -21,7 +21,9 @@ export type PersonaId =
   | "done_day_2"
   | "launched_no_referrals"
   | "community_unlocked"
-  | "expired";
+  | "expired"
+  | "marcus_b2b"
+  | "sophie_b2c";
 
 export interface PersonaDefinition {
   id: PersonaId;
@@ -37,6 +39,20 @@ export interface PersonaDefinition {
   communityUnlocked?: boolean;
   /** Fill challenge.launchUrl. */
   launched?: boolean;
+  /** Override stub user fields (name/email shown across the app). */
+  userOverrides?: Partial<{ name: string; email: string; inviteCode: string }>;
+  /** Override memory fields (drives challenge identity, audience type, etc). */
+  memoryOverrides?: Partial<{
+    name: string;
+    audienceType: "b2b" | "b2c";
+    challengeType: string;
+    topic: string;
+    desiredOutcome: string;
+    challengeName: string;
+    challengeTitleOverride: string;
+  }>;
+  /** Pre-fill aiOutputs keys (e.g. day1_define_app). Applied after seeding. */
+  aiOutputOverrides?: Record<string, string>;
 }
 
 export const PERSONAS: PersonaDefinition[] = [

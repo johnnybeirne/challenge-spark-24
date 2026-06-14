@@ -172,6 +172,26 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   const [idx, setIdx] = useState(0);
   const [showing, setShowing] = useState(true);
   const [revealing, setRevealing] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [typingDone, setTypingDone] = useState(false);
+
+  // Typing animation: type out the current message character-by-character at 35ms/char.
+  useEffect(() => {
+    if (!showing) return;
+    const full = messages[idx] ?? "";
+    setTypedText("");
+    setTypingDone(false);
+    let i = 0;
+    const interval = window.setInterval(() => {
+      i += 1;
+      setTypedText(full.slice(0, i));
+      if (i >= full.length) {
+        window.clearInterval(interval);
+        setTypingDone(true);
+      }
+    }, 35);
+    return () => window.clearInterval(interval);
+  }, [idx, showing, messages]);
 
   const apiDoneRef = useRef(false);
   const apiResultRef = useRef<unknown>(null);

@@ -75,7 +75,9 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
           height: "90vh",
           borderRadius: "16px",
           overflow: "hidden",
-          backgroundColor: "white",
+          backgroundColor: "rgba(255, 255, 255, 0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
           boxShadow: "0 25px 60px rgba(0,0,0,0.25)",
         }}
       >

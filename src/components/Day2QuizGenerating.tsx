@@ -304,7 +304,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   return (
     <div
       className={cn(
-        "absolute inset-0 flex min-h-screen items-center justify-center overflow-hidden bg-background transition-opacity duration-500",
+        "absolute inset-0 flex min-h-screen items-center justify-center overflow-hidden transition-opacity duration-500",
         revealing ? "opacity-0" : "opacity-100",
       )}
       aria-live="polite"

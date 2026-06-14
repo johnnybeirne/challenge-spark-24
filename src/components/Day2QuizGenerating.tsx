@@ -271,132 +271,103 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     }, REVEAL_FADE_MS);
   };
 
+  // First bead has a small additional delay vs. the rest, per spec.
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setStarted(true), FIRST_BEAD_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  const stepNumber = Math.min(idx + 1, BEADS.length);
+
   return (
     <div
       className={cn(
-        "absolute inset-0 flex min-h-[60vh] items-center justify-center overflow-hidden transition-opacity duration-500",
+        "absolute inset-0 flex min-h-screen items-center justify-center overflow-hidden bg-background transition-opacity duration-500",
         revealing ? "opacity-0" : "opacity-100",
       )}
-      style={{
-        background:
-          "radial-gradient(ellipse at center, hsl(222 47% 11%) 0%, hsl(222 47% 6%) 60%, hsl(222 47% 4%) 100%)",
-      }}
       aria-live="polite"
       aria-busy="true"
     >
-      {/* Ambient particles — alternating accent colours */}
-      <div className="pointer-events-none absolute inset-0">
-        {[
-          { top: "18%", left: "12%", size: 6, delay: "0s", dur: "4s", c: ACCENT_PRIMARY },
-          { top: "72%", left: "18%", size: 4, delay: "1.2s", dur: "5s", c: ACCENT_SECONDARY },
-          { top: "28%", left: "82%", size: 5, delay: "0.6s", dur: "4.5s", c: ACCENT_PRIMARY },
-          { top: "78%", left: "76%", size: 7, delay: "1.8s", dur: "5.5s", c: ACCENT_SECONDARY },
-          { top: "52%", left: "8%", size: 3, delay: "2.1s", dur: "4.2s", c: ACCENT_PRIMARY },
-          { top: "12%", left: "58%", size: 4, delay: "0.9s", dur: "4.8s", c: ACCENT_SECONDARY },
-          { top: "88%", left: "48%", size: 5, delay: "1.5s", dur: "5.2s", c: ACCENT_PRIMARY },
-        ].map((p, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full blur-[1px] animate-pulse"
-            style={{
-              top: p.top,
-              left: p.left,
-              width: p.size,
-              height: p.size,
-              backgroundColor: p.c,
-              opacity: 0.55,
-              animationDelay: p.delay,
-              animationDuration: p.dur,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Content column */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-center px-6 text-center">
-        {/* Orb */}
-        <div className="relative flex h-40 w-40 items-center justify-center">
-          {/* Outer halo glow */}
-          <span
-            className="absolute inset-0 rounded-full blur-3xl animate-pulse"
-            style={{ backgroundColor: ACCENT_PRIMARY, opacity: 0.55, animationDuration: "3s" }}
-          />
-          {/* Secondary halo accent */}
-          <span
-            className="absolute inset-6 rounded-full blur-2xl animate-pulse"
-            style={{ backgroundColor: ACCENT_SECONDARY, opacity: 0.25, animationDuration: "4s" }}
-          />
-          {/* Outer ping ring */}
-          <span
-            className="absolute inset-4 rounded-full border animate-ping"
-            style={{ borderColor: `${ACCENT_PRIMARY}66`, animationDuration: "2.4s" }}
-          />
-          {/* Mid ring */}
-          <span
-            className="absolute inset-8 rounded-full border"
-            style={{ borderColor: `${ACCENT_PRIMARY}4D` }}
-          />
-          {/* Core orb */}
-          <span
-            className="relative h-20 w-20 rounded-full animate-pulse"
-            style={{
-              background: `radial-gradient(circle at 30% 30%, ${ACCENT_PRIMARY} 0%, ${ACCENT_PRIMARY} 55%, ${ACCENT_SECONDARY} 130%)`,
-              boxShadow: `0 0 60px ${ACCENT_PRIMARY}B3, 0 0 30px ${ACCENT_SECONDARY}55`,
-              animationDuration: "2s",
-            }}
-          />
-          {/* Inner highlight */}
-          <span
-            className="absolute h-8 w-8 rounded-full bg-white/30 blur-md"
-            style={{ top: "32%", left: "32%" }}
-          />
-        </div>
+        {/* Logo */}
+        <img
+          src={leadbeadLogo}
+          alt="LeadBead"
+          width={120}
+          className="mb-10 h-auto w-[120px]"
+        />
 
-        <p
-          className="mt-10 text-[11px] font-black uppercase tracking-[0.28em]"
-          style={{ color: `${ACCENT_PRIMARY}` }}
+        {/* Bead animation */}
+        <svg
+          width={220}
+          height={220}
+          viewBox="0 0 220 220"
+          aria-hidden="true"
+          className="mb-8"
         >
-          LeadBead · Generating
-        </p>
+          <circle
+            cx={TRACK_CX}
+            cy={TRACK_CY}
+            r={TRACK_R}
+            fill="none"
+            stroke="#E8E6E1"
+            strokeWidth={2}
+            strokeDasharray="4 4"
+          />
+          {BEADS.map((b, i) => {
+            const rad = (b.angle * Math.PI) / 180;
+            const cx = TRACK_CX + TRACK_R * Math.cos(rad);
+            const cy = TRACK_CY + TRACK_R * Math.sin(rad);
+            const visible = started && idx >= i;
+            const shineOffset = b.r * 0.35;
+            return (
+              <g key={i}>
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={visible ? b.r : 0}
+                  fill={b.color}
+                  style={{
+                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  }}
+                />
+                <circle
+                  cx={cx - shineOffset}
+                  cy={cy - shineOffset}
+                  r={visible ? b.r * 0.32 : 0}
+                  fill="#ffffff"
+                  opacity={0.3}
+                  style={{
+                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  }}
+                />
+              </g>
+            );
+          })}
+        </svg>
 
-        {/* Message slot — fixed height to prevent layout shift */}
-        <div className="mt-3 flex h-16 items-center justify-center">
+        {/* Status message */}
+        <div className="flex h-6 items-center justify-center">
           <p
             key={idx}
             className={cn(
-              "text-lg sm:text-xl font-semibold text-white/90 transition-all duration-300",
-              showing ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+              "text-[15px] text-muted-foreground transition-all duration-300",
+              showing ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1",
             )}
           >
             {messages[idx]}
           </p>
         </div>
 
-        {/* Progress dots */}
-        <div className="mt-8 flex gap-1.5">
-          {messages.map((_, i) => {
-            const active = i === idx;
-            const done = i < idx;
-            return (
-              <span
-                key={i}
-                className="h-1.5 rounded-full transition-all duration-500"
-                style={{
-                  width: active ? 32 : 24,
-                  backgroundColor: done || active ? ACCENT_PRIMARY : "rgba(255,255,255,0.15)",
-                  boxShadow: active ? `0 0 12px ${ACCENT_SECONDARY}AA` : undefined,
-                }}
-              />
-            );
-          })}
-        </div>
-
-        <p className="mt-10 text-xs text-white/40">
-          Crafting a quiz tailored to your challenge…
+        {/* Step counter */}
+        <p className="mt-3 text-xs text-muted-foreground/70">
+          Step {stepNumber} of {BEADS.length}
         </p>
       </div>
     </div>
   );
 };
+
 
 export default Day2QuizGenerating;

@@ -3,6 +3,7 @@
 // perspective of users at different points in the 3-day journey.
 
 import type { AppState, UnlockEntry } from "@/context/AppContext";
+import type { MemoryChallengeType } from "@/lib/personalisation";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";

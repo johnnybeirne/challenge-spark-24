@@ -433,21 +433,6 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               Back
             </button>
 
-            {/* Identity header */}
-            <div className="flex flex-col items-center mb-8">
-              <div className="p-1 rounded-full border border-border">
-                <img
-                  src={aiAvatar}
-                  alt="Johnny B AI"
-                  width={80}
-                  height={80}
-                  className="h-20 w-20 rounded-full object-cover"
-                />
-              </div>
-              <span className="mt-2 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
-                Johnny B AI
-              </span>
-            </div>
 
             {/* Question */}
             <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mb-8">

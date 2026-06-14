@@ -133,6 +133,8 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   };
 
   useEffect(() => {
+    const qa = getQaState();
+    if (qa.active && (qa.persona || qa.character)) return;
     if (!quiz && !loading) void fetchQuiz();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

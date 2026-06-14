@@ -302,17 +302,6 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
             <Play className="h-5 w-5" /> Take the Quiz
           </Button>
 
-          <div className="mt-6 flex flex-col items-center gap-1">
-            <ChevronDown
-              size={24}
-              style={{
-                color: "hsl(var(--muted-foreground))",
-                opacity: 0.4,
-                animation: "quizScrollBounce 1.5s ease-in-out infinite",
-              }}
-            />
-            <p className="text-xs text-muted-foreground">Scroll to begin</p>
-          </div>
         </div>
       </div>
     );

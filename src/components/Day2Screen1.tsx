@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import Day2QuizModal from "@/components/Day2QuizModal";
 
 
 
@@ -425,10 +426,11 @@ const Day2Screen1 = () => {
   const allOpened = true;
 
   const [quizGenerating, setQuizGenerating] = useState(false);
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
 
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
-    window.open("/quiz-preview", "_blank", "noopener");
+    setQuizModalOpen(true);
   };
 
 
@@ -712,6 +714,7 @@ const Day2Screen1 = () => {
         </div>
       </div>
       
+      <Day2QuizModal open={quizModalOpen} onClose={() => setQuizModalOpen(false)} />
     </div>
   );
 };

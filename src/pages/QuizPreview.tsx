@@ -65,7 +65,7 @@ const QuizPreview = () => {
     );
   }
 
-  return <Day2QuizPlayable onBack={handleClose} />;
+  return <Day2QuizPlayable onClose={handleClose} />;
 };
 
 export default QuizPreview;

@@ -213,8 +213,17 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
       : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
     return (
-      <div className="min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
+          aria-label="Close quiz preview"
+        >
+          <X className="h-4 w-4" />
+        </button>
         <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-5 py-10 text-center animate-fade-in">
+
           <div className="w-full overflow-hidden rounded-3xl border border-border shadow-2xl">
             <img
               src={heroUrl}

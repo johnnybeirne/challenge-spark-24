@@ -111,7 +111,7 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
               onError={onClose}
             />
           ) : (
-            <Day2QuizPlayable onBack={onClose} />
+            <Day2QuizPlayable onClose={onClose} />
           )}
         </div>
       </div>

@@ -219,7 +219,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
     const sub = quizSubtitle || quizIntro || fallbackSub;
     return (
-      <div className="relative min-h-screen bg-background">
+      <div className="relative h-full bg-background">
         <SampleQuizBanner />
         <button
           type="button"
@@ -229,32 +229,71 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         >
           <X className="h-4 w-4" />
         </button>
-        <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-5 py-10 text-center animate-fade-in">
-
-          <div className="w-full overflow-hidden rounded-3xl border border-border shadow-2xl">
-            <img
-              src={heroUrl}
-              alt={topic}
-              className="aspect-[16/9] w-full object-cover"
-              loading="eager"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80";
+        <style>{`@keyframes quizScrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}`}</style>
+        <div
+          className="mx-auto flex h-full w-full max-w-2xl flex-col items-center text-center animate-fade-in"
+          style={{ padding: "48px 24px" }}
+        >
+          <div
+            className="relative w-full overflow-hidden flex items-center justify-center"
+            style={{
+              height: 220,
+              borderRadius: 16,
+              background:
+                "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
+            }}
+          >
+            <svg
+              className="absolute inset-0 h-full w-full"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <pattern id="quizDots" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.06)" />
+                  <circle cx="50" cy="50" r="14" fill="rgba(255,255,255,0.06)" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#quizDots)" />
+            </svg>
+            <p
+              className="relative text-white"
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                lineHeight: 1.2,
+                maxWidth: "80%",
+                textShadow: "0 2px 8px rgba(0,0,0,0.25)",
               }}
-            />
+            >
+              {quiz.quizTitle}
+            </p>
           </div>
-          <p className="mt-8 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
+
+          <p className="mt-6 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
             {quiz.quizTitle}
           </p>
-          <h1 className="mt-4 max-w-2xl text-3xl sm:text-5xl font-black leading-[1.05] tracking-tight text-foreground">
+          <h1 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight text-foreground" style={{ lineHeight: 1.1 }}>
             {headline}
           </h1>
-          <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-prose text-sm sm:text-base leading-relaxed text-muted-foreground">
             {sub}
           </p>
+
+          <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
+            {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
+              <span
+                key={label}
+                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+
           <Button
             size="lg"
-            className="mt-10 h-14 rounded-full px-10 text-base font-bold shadow-lg"
+            className="mt-8 h-14 rounded-full px-10 font-bold shadow-lg"
             onClick={() => {
               setStarted(true);
               trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
@@ -262,9 +301,18 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           >
             <Play className="h-5 w-5" /> Take the Quiz
           </Button>
-          <p className="mt-5 text-xs text-muted-foreground">
-            {quiz.questions.length} quick questions · takes under a minute
-          </p>
+
+          <div className="mt-6 flex flex-col items-center gap-1">
+            <ChevronDown
+              size={24}
+              style={{
+                color: "hsl(var(--muted-foreground))",
+                opacity: 0.4,
+                animation: "quizScrollBounce 1.5s ease-in-out infinite",
+              }}
+            />
+            <p className="text-xs text-muted-foreground">Scroll to begin</p>
+          </div>
         </div>
       </div>
     );

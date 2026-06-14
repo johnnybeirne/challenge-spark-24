@@ -426,7 +426,7 @@ interface ShellProps {
 }
 const Shell = ({ onBack, onClose, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
-    <SampleQuizBanner>
+    <SampleQuizBanner />
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
       <div className="mb-6 flex items-center justify-between">
         {onBack ? (

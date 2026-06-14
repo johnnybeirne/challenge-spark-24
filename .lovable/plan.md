@@ -1,44 +1,78 @@
 ## Goal
 
-In the Day 2 quiz preview, the left "← Close" button should act as **Back** (return to the previous question), the right **X** should close the preview, and the whole quiz preview should open in a **new browser tab** instead of a modal.
+Make the quiz preview modal (used by both Marcus and Sophie) look and feel like the `/assessment` page across every screen — landing, question, and result.
 
-## Current behaviour (audit)
+## Scope
 
-- `src/components/Day2Screen1.tsx` opens the preview as a modal: `Day2QuizModal` (line 715), toggled by `setQuizModalOpen(true)` in `handleGenerateQuiz` (line 431-434).
-- `src/components/Day2QuizModal.tsx` shows the generating screen, then `Day2QuizPlayable` inside a centered panel with its own X close button.
-- `src/components/Day2QuizPlayable.tsx` `Shell` (lines 358-374) renders a single right-aligned "← Close" button that calls `onBack` and closes the modal.
-- A standalone tab page already exists: `src/pages/QuizPreview.tsx` mounted at `/quiz-preview` (`src/App.tsx` line 224). It runs the same generating → playable flow and tries `window.close()` on back.
+Only one file: `src/components/Day2QuizPlayable.tsx`. The SampleQuizBanner, all logic, state, scoring, audio (none), `onClose`, and tracking events stay exactly as-is.
 
-## Changes
+## What changes
 
-### 1. `src/components/Day2Screen1.tsx` — open in a new tab
-- Remove `Day2QuizModal` import, `quizModalOpen` state, and the `<Day2QuizModal …/>` render.
-- In `handleGenerateQuiz`, call `window.open("/quiz-preview", "_blank", "noopener")` instead of opening the modal. Keep all surrounding logic (analytics, gating) untouched.
+### 1. Shared frame (all screens)
 
-### 2. `src/components/Day2QuizPlayable.tsx` — split header into Back + Close
-- Change `Shell` to render two header controls:
-  - **Left:** `← Back` button → calls a new `onBack` handler (rename current prop to `onClose` for the X).
-  - **Right:** circular `X` button → calls `onClose` (closes the tab).
-- Update the component's props from `{ onBack }` to `{ onClose }` and add an internal back handler with this behaviour:
-  - On **landing screen** (`!started`): Back is hidden (nothing to go back to) — only the X is shown.
-  - On **question screen**: Back decrements `current` by 1 and pops the last answer; if already on question 1, it returns to the landing screen (`setStarted(false)`).
-  - On **result screen**: Back returns to the final question (restore `current = questions.length - 1`, drop last answer).
-- Wire `onClose` to whatever closes the surface (in the new-tab page that means `window.close()` fallback to `about:blank`).
+Wrap landing, loading, question, and result in a single Assessment-style frame:
 
-### 3. `src/pages/QuizPreview.tsx` — pass `onClose`
-- Replace the existing `onBack={handleClose}` with `onClose={handleClose}` to match the new prop name. No other logic changes; the generating phase and handoff stay the same.
+- Outer: `relative min-h-full w-full flex items-center justify-center p-4 overflow-hidden`
+- Blurred background image layer: `absolute inset-0 bg-cover bg-center scale-105` with `backgroundImage: url(assessmentBg.url)` and `filter: blur(4px)` — imported from `@/assets/assessment-bg.png.asset.json`
+- Dark overlay layer: `absolute inset-0 bg-foreground/20`
+- SampleQuizBanner stays sticky at the very top above the frame
+- Card container: `relative w-full max-w-[420px] flex flex-col items-center`
 
-### 4. `src/components/Day2QuizModal.tsx` — leave file in place
-- No longer rendered anywhere after step 1. Leaving the file untouched avoids touching unrelated code; we can delete it in a follow-up if you'd like.
+This gives every screen the same blurred-app backdrop + vertically centered card that Assessment uses.
+
+### 2. Landing screen
+
+Replace the current purple gradient hero + standalone card with the Assessment-style intro card:
+
+- Single rounded card: `relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in`
+- Eyebrow (uppercase tracked): `quiz.quizTitle`
+- Headline (font-montserrat font-semibold text-xl md:text-2xl, centered): the `headline` variable
+- Subhead (text-sm text-muted-foreground, centered): the `sub` variable
+- Feature pills row (questions count / Under 2 minutes / Instant result) — kept
+- CTA button (`w-full h-14 rounded-full font-bold shadow-lg`): Take the Quiz
+- Footnote: Personalised result in seconds
+
+The purple gradient hero card and the second small "JOHNNY B AI" header are removed — Assessment doesn't have either.
+
+### 3. Question screen
+
+Already close to Assessment. Adjustments:
+
+- Drop the outer `bg-background` wrapper; render inside the shared blurred frame instead so the card floats over the backdrop like Assessment does
+- Card classes unchanged (`rounded-[40px] p-8 md:p-14 …`)
+- Back button, typewriter question, single-column answer buttons with `CheckCircle2`, progress dots — all unchanged
+
+### 4. Result screen
+
+Currently a trophy + 3-tier breakdown laid out on plain `bg-background`. Restyle to Assessment's card pattern:
+
+- Same shared blurred frame and centered `max-w-[420px]` column
+- Single rounded card (`rounded-[40px] p-8 md:p-14 …`) replacing the current `rounded-3xl` gradient card
+- Inside the card, top → bottom:
+  - Eyebrow: "Your result"
+  - Trophy chip
+  - Tier name as `font-montserrat font-semibold text-2xl md:text-3xl` headline
+  - Tier description as muted body copy
+  - 3-tier count grid (kept — useful info)
+  - Try again / Share result buttons inside the card, stacked on mobile / row on sm+
+  - Footnote: "This is exactly what {audience} will see after taking your quiz."
+
+All existing handlers (`reset`, `navigator.share`, `toast.success`) preserved.
+
+### 5. Loading screen
+
+Already uses Assessment's avatar + sonar rings + typewriter. Move it inside the shared blurred frame so it matches the same surface.
+
+## Technical notes
+
+- New import: `import assessmentBg from "@/assets/assessment-bg.png.asset.json"`
+- `aiAvatar` import stays (loading screen)
+- No changes to `applyCharacter`, persona overrides, `readDay1Values`, scoring, or quiz fetch logic
+- No changes to `Day2QuizModal.tsx` — the modal already provides the rounded panel + close button; the blurred backdrop renders inside `Day2QuizPlayable`'s own frame
+- Pure visual/layout change; no new dependencies
 
 ## Out of scope
 
-- No changes to the generating screen visuals, audio, timing, or any analytics.
-- No changes to routes other than how `/quiz-preview` is launched.
-- No styling changes beyond adding the second header button.
-
-## Files touched
-
-- `src/components/Day2Screen1.tsx`
-- `src/components/Day2QuizPlayable.tsx`
-- `src/pages/QuizPreview.tsx`
+- Quiz logic, scoring, persona data
+- Modal chrome, close button, sticky SampleQuizBanner styling
+- Any other file

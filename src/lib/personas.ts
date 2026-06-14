@@ -215,7 +215,16 @@ export const CHARACTERS: CharacterDefinition[] = [
       inviteCode: "B2BCOACH",
     },
     memoryOverrides: { ...(MARCUS.memoryOverrides ?? {}), name: "Marcus Reid" },
-    aiOutputOverrides: { ...(MARCUS.aiOutputOverrides ?? {}) },
+    aiOutputOverrides: {
+      ...(MARCUS.aiOutputOverrides ?? {}),
+      day1Setup: JSON.stringify({
+        audience: "HR directors and People Ops leads at companies with 50 to 500 employees who want to build stronger leadership culture",
+        problem: "Their managers were promoted for technical skill but were never taught how to lead people — and it shows",
+        outcome: "Managers who lead with clarity and confidence and teams that stop losing good people",
+        superpower: "I help HR leaders fix the leadership layer without expensive external programmes or months of off-site training",
+        expertType: ["Coach"],
+      }),
+    },
   },
   {
     id: "sophie",

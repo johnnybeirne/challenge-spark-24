@@ -157,23 +157,16 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   }, [state.user?.name, authUser]);
 
   const messages = useMemo(() => {
-    const audienceLine = d1.audience
-      ? `Reviewing your audience: ${d1.audience}…`
-      : "Reviewing your audience…";
-    const superpowerLine = d1.superpower
-      ? `Analysing your superpower: ${d1.superpower}…`
-      : "Analysing your superpower…";
-    const insightsLine = firstName
-      ? `Pulling in your Day 1 insights, ${firstName}…`
-      : "Pulling in your Day 1 insights…";
-    const archetypeLine = d1.expertType
-      ? `Mapping your quiz archetypes for ${d1.expertType}…`
-      : "Mapping your quiz archetypes…";
-    const buildLine = firstName
-      ? `Building your quiz, ${firstName}…`
-      : "Building your quiz…";
-    return [audienceLine, superpowerLine, insightsLine, archetypeLine, buildLine];
-  }, [d1, firstName]);
+    const name = firstName || "Hey";
+    return [
+      `${name}, we're crafting your quiz...`,
+      `${name}, your questions are taking shape...`,
+      `${name}, almost there...`,
+      `${name}, adding the finishing touches...`,
+      `${name}, your quiz is nearly ready...`,
+    ];
+  }, [firstName]);
+
 
   const [idx, setIdx] = useState(0);
   const [showing, setShowing] = useState(true);

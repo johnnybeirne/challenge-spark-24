@@ -291,21 +291,6 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
           {/* Card */}
           <div className="relative w-full bg-card border border-border rounded-[40px] p-8 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in mt-6">
-            {/* Identity header */}
-            <div className="flex flex-col items-center mb-6">
-              <div className="p-1 rounded-full border border-border">
-                <img
-                  src={aiAvatar}
-                  alt="Johnny B AI"
-                  width={80}
-                  height={80}
-                  className="h-20 w-20 rounded-full object-cover"
-                />
-              </div>
-              <span className="mt-2 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
-                Johnny B AI
-              </span>
-            </div>
 
             <p className="mt-2 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
               {quiz.quizTitle}

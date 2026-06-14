@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
+import { useEffect, useMemo, useState, ReactNode } from "react";
+import { ArrowLeft, CheckCircle2, Trophy, RefreshCw, Share2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
+import assessmentBg from "@/assets/assessment-bg.png.asset.json";
 
 type Tier = "low" | "mid" | "high";
 
@@ -102,6 +103,24 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
     },
   };
 };
+
+// Shared Assessment-style frame: sticky sample banner + blurred bg + centered card column
+const Frame = ({ children }: { children: ReactNode }) => (
+  <div className="relative w-full min-h-full">
+    <SampleQuizBanner />
+    <div className="relative min-h-[calc(100vh-40px)] w-full flex items-center justify-center p-4 md:p-6 overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center scale-105"
+        style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(4px)" }}
+      />
+      <div aria-hidden className="absolute inset-0 bg-foreground/20" />
+      <div className="relative w-full max-w-[420px] flex flex-col items-center">
+        {children}
+      </div>
+    </div>
+  </div>
+);
 
 interface Props {
   onClose: () => void;
@@ -207,9 +226,8 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Loading ─────────────
   if (loading || !quiz) {
     return (
-      <div className="relative w-full min-h-full bg-background">
-        <SampleQuizBanner />
-        <div className="flex flex-col min-h-[80vh] items-center justify-center gap-4 p-6">
+      <Frame>
+        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in flex flex-col items-center text-center">
           <div className="relative h-[72px] w-[72px]">
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/40 animate-sonar-pulse" />
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/20 animate-sonar-pulse" style={{ animationDelay: "0.9s" }} />
@@ -221,20 +239,19 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               className="relative z-10 h-[72px] w-[72px] rounded-full ring-2 ring-foreground/10"
             />
           </div>
-          <div className="text-[11px] tracking-[0.25em] font-bold text-primary uppercase mb-2">
+          <div className="mt-4 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
             Johnny B AI
           </div>
-          <p className="max-w-md text-center text-lg font-semibold text-foreground">
+          <p className="mt-3 max-w-md text-center text-lg font-semibold text-foreground">
             <TypewriterText text={`Analysing your results, ${firstName}...`} />
           </p>
         </div>
-      </div>
+      </Frame>
     );
   }
 
   // ───────────── Landing screen ─────────────
   if (!started && answers.length === 0) {
-    const outcome = d1.outcome;
     const headline = identity.isPersonalised
       ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
       : quiz.quizTitle;
@@ -244,139 +261,92 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const sub = quizSubtitle || quizIntro || fallbackSub;
 
     return (
-      <div className="relative w-full bg-background overflow-auto">
-        <SampleQuizBanner />
-        <div
-          className="mx-auto flex w-full max-w-[420px] flex-col items-center text-center animate-fade-in"
-          style={{ padding: 24 }}
-        >
-          {/* Hero card — unchanged except shorter height */}
-          <div
-            className="relative w-full overflow-hidden flex items-center justify-center"
-            style={{
-              height: 180,
-              borderRadius: 16,
-              background:
-                "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
+      <Frame>
+        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
+            {quiz.quizTitle}
+          </p>
+          <h1 className="mt-3 font-montserrat font-semibold text-xl md:text-2xl leading-[1.2] text-foreground">
+            {headline}
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {sub}
+          </p>
+
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
+              <span
+                key={label}
+                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+
+          <Button
+            size="lg"
+            className="mt-6 w-full h-14 rounded-full font-bold shadow-lg"
+            onClick={() => {
+              setStarted(true);
+              trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
             }}
           >
-            <svg
-              className="absolute inset-0 h-full w-full"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <pattern id="quizDots" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-                  <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.06)" />
-                  <circle cx="50" cy="50" r="14" fill="rgba(255,255,255,0.06)" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#quizDots)" />
-            </svg>
-            <p
-              className="relative text-white"
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                lineHeight: 1.2,
-                maxWidth: "80%",
-                textShadow: "0 2px 8px rgba(0,0,0,0.25)",
-              }}
-            >
-              {quiz.quizTitle}
-            </p>
-          </div>
+            <Play className="h-5 w-5" /> Take the Quiz
+          </Button>
 
-          {/* Card */}
-          <div className="relative w-full bg-card border border-border rounded-[40px] p-8 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in mt-6">
-
-            <p className="mt-2 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-              {quiz.quizTitle}
-            </p>
-            <h1 className="mt-3 text-xl sm:text-2xl font-black tracking-tight text-foreground leading-[1.1]">
-              {headline}
-            </h1>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {sub}
-            </p>
-
-            <div className="mt-5 flex flex-wrap justify-center gap-2">
-              {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            <Button
-              size="lg"
-              className="mt-6 w-full h-14 rounded-full font-bold shadow-lg"
-              onClick={() => {
-                setStarted(true);
-                trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
-              }}
-            >
-              <Play className="h-5 w-5" /> Take the Quiz
-            </Button>
-
-            <p className="mt-3 text-xs text-muted-foreground">
-              Personalised result in seconds
-            </p>
-          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Personalised result in seconds
+          </p>
         </div>
-      </div>
+      </Frame>
     );
   }
 
-  // ───────────── Result screen (unchanged) ─────────────
+  // ───────────── Result screen ─────────────
   if (result) {
     const total = quiz.questions.length;
     return (
-      <div className="relative w-full min-h-full bg-background">
-        <SampleQuizBanner />
-        <div className="mx-auto max-w-xl px-4 pt-6 pb-12 animate-fade-in">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary text-center">
+      <Frame>
+        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
             Your result
           </p>
 
-          <div className="mt-4 rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 sm:p-8 shadow-xl">
-            <div className="flex items-center justify-center">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                <Trophy className="h-7 w-7" />
-              </div>
+          <div className="mt-5 flex items-center justify-center">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+              <Trophy className="h-7 w-7" />
             </div>
-            <h2 className="mt-5 text-center text-3xl sm:text-4xl font-black leading-tight text-foreground">
-              {result.tier.name}
-            </h2>
-            <p className="mt-3 text-center text-sm sm:text-base text-muted-foreground leading-relaxed">
-              {result.tier.description}
-            </p>
+          </div>
 
-            <div className="mt-6 grid grid-cols-3 gap-2">
-              {TIER_ORDER.map((t) => {
-                const isWin = t === result.winning;
-                return (
-                  <div
-                    key={t}
-                    className={cn(
-                      "rounded-xl border p-3 text-center transition",
-                      isWin ? "border-primary bg-primary/10" : "border-border bg-card",
-                    )}
-                  >
-                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
-                      {quiz.tiers[t].name}
-                    </p>
-                    <p className={cn("mt-1 text-2xl font-black", isWin ? "text-primary" : "text-foreground")}>
-                      {result.counts[t]}
-                      <span className="text-xs font-semibold text-muted-foreground">/{total}</span>
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+          <h2 className="mt-5 font-montserrat font-semibold text-2xl md:text-3xl leading-tight text-foreground">
+            {result.tier.name}
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+            {result.tier.description}
+          </p>
+
+          <div className="mt-6 grid grid-cols-3 gap-2">
+            {TIER_ORDER.map((t) => {
+              const isWin = t === result.winning;
+              return (
+                <div
+                  key={t}
+                  className={cn(
+                    "rounded-xl border p-3 text-center transition",
+                    isWin ? "border-primary bg-primary/10" : "border-border bg-card",
+                  )}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
+                    {quiz.tiers[t].name}
+                  </p>
+                  <p className={cn("mt-1 text-2xl font-black", isWin ? "text-primary" : "text-foreground")}>
+                    {result.counts[t]}
+                    <span className="text-xs font-semibold text-muted-foreground">/{total}</span>
+                  </p>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -397,11 +367,11 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
+          <p className="mt-6 text-xs text-muted-foreground">
             This is exactly what {d1.audience} will see after taking your quiz.
           </p>
         </div>
-      </div>
+      </Frame>
     );
   }
 
@@ -414,73 +384,67 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   ];
 
   return (
-    <div className="relative w-full bg-background">
-      <SampleQuizBanner />
-      <div className="relative min-h-full w-full flex items-start justify-center p-4 overflow-hidden">
-        <div className="relative w-full max-w-[420px] mx-auto mt-4">
-          <div
-            key={animKey}
-            className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
-          >
-            <button
-              onClick={handleBackQuestion}
-              className="absolute top-5 left-5 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
-              aria-label="Back"
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back
-            </button>
+    <Frame>
+      <div
+        key={animKey}
+        className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
+      >
+        <button
+          onClick={handleBackQuestion}
+          className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
+          aria-label="Back"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back
+        </button>
 
+        {/* Question */}
+        <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mt-6 mb-8 md:mb-10">
+          <TypewriterText text={q.text} speed={22} />
+        </h2>
 
-            {/* Question */}
-            <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mb-8">
-              <TypewriterText text={q.text} speed={22} />
-            </h2>
+        {/* Answers */}
+        <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
+          {answers_options.map(({ tier, label }) => {
+            const isSelected = selected === tier;
+            return (
+              <button
+                key={tier}
+                type="button"
+                onClick={() => handleAnswer(tier)}
+                disabled={selected !== null}
+                className={cn(
+                  "w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3",
+                  isSelected
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-border bg-card text-foreground hover:border-primary hover:bg-background",
+                )}
+              >
+                <span className="text-left leading-snug">{label}</span>
+                {isSelected && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
 
-            {/* Answers */}
-            <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
-              {answers_options.map(({ tier, label }) => {
-                const isSelected = selected === tier;
-                return (
-                  <button
-                    key={tier}
-                    type="button"
-                    onClick={() => handleAnswer(tier)}
-                    disabled={selected !== null}
-                    className={cn(
-                      "w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3",
-                      isSelected
-                        ? "border-primary bg-primary/10 text-foreground"
-                        : "border-border bg-card text-foreground hover:border-primary hover:bg-background",
-                    )}
-                  >
-                    <span className="text-left leading-snug">{label}</span>
-                    {isSelected && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Progress dots */}
-            <div className="mt-8 flex items-center justify-center gap-2">
-              {quiz.questions.map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "rounded-full transition-all duration-300",
-                    i === current
-                      ? "h-1.5 w-8 bg-primary"
-                      : i < current
-                        ? "h-1.5 w-1.5 bg-primary/50"
-                        : "h-1.5 w-1.5 bg-border",
-                  )}
-                />
-              ))}
-            </div>
-          </div>
+        {/* Progress dots */}
+        <div className="mt-8 md:mt-10 flex items-center justify-center gap-2">
+          {quiz.questions.map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "rounded-full transition-all duration-300",
+                i === current
+                  ? "h-1.5 w-8 bg-primary"
+                  : i < current
+                    ? "h-1.5 w-1.5 bg-primary/50"
+                    : "h-1.5 w-1.5 bg-border",
+              )}
+            />
+          ))}
         </div>
       </div>
-    </div>
+    </Frame>
   );
 };
 

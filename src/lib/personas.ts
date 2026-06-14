@@ -196,6 +196,8 @@ export interface CharacterDefinition {
   userOverrides: NonNullable<PersonaDefinition["userOverrides"]>;
   memoryOverrides: NonNullable<PersonaDefinition["memoryOverrides"]>;
   aiOutputOverrides: NonNullable<PersonaDefinition["aiOutputOverrides"]>;
+  /** Optional override merged into state.assessment when this character is active. */
+  assessmentOverrides?: Partial<AssessmentResult>;
 }
 
 const MARCUS = PERSONAS.find((p) => p.id === "marcus_b2b")!;

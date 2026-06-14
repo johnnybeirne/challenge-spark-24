@@ -149,6 +149,32 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
   const reset = () => { setAnswers([]); setCurrent(0); setAnimKey((k) => k + 1); };
 
+  // Back: question N>0 → previous question; question 0 → landing; landing → none;
+  // result → re-take final question.
+  const handleBack = (): (() => void) | undefined => {
+    if (loading || !quiz) return undefined;
+    if (!started && answers.length === 0) return undefined; // landing
+    if (answers.length >= quiz.questions.length) {
+      // result → last question
+      return () => {
+        setAnswers((a) => a.slice(0, -1));
+        setCurrent(quiz.questions.length - 1);
+        setAnimKey((k) => k + 1);
+      };
+    }
+    return () => {
+      if (current > 0) {
+        setCurrent((c) => c - 1);
+        setAnswers((a) => a.slice(0, -1));
+        setAnimKey((k) => k + 1);
+      } else {
+        setStarted(false);
+        setAnswers([]);
+      }
+    };
+  };
+
+
   const result = useMemo(() => {
     if (!quiz || answers.length < quiz.questions.length) return null;
     const counts: Record<Tier, number> = { low: 0, mid: 0, high: 0 };

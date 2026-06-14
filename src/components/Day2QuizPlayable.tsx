@@ -220,6 +220,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const sub = quizSubtitle || quizIntro || fallbackSub;
     return (
       <div className="relative min-h-screen bg-background">
+        <SampleQuizBanner />
         <button
           type="button"
           onClick={onClose}

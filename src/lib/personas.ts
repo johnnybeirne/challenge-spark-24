@@ -215,7 +215,16 @@ export const CHARACTERS: CharacterDefinition[] = [
       inviteCode: "B2BCOACH",
     },
     memoryOverrides: { ...(MARCUS.memoryOverrides ?? {}), name: "Marcus Reid" },
-    aiOutputOverrides: { ...(MARCUS.aiOutputOverrides ?? {}) },
+    aiOutputOverrides: {
+      ...(MARCUS.aiOutputOverrides ?? {}),
+      day1Setup: JSON.stringify({
+        audience: "HR directors and People Ops leads at companies with 50 to 500 employees who want to build stronger leadership culture",
+        problem: "Their managers were promoted for technical skill but were never taught how to lead people — and it shows",
+        outcome: "Managers who lead with clarity and confidence and teams that stop losing good people",
+        superpower: "I help HR leaders fix the leadership layer without expensive external programmes or months of off-site training",
+        expertType: ["Coach"],
+      }),
+    },
   },
   {
     id: "sophie",
@@ -230,6 +239,13 @@ export const CHARACTERS: CharacterDefinition[] = [
     memoryOverrides: { ...(SOPHIE.memoryOverrides ?? {}), name: "Sophie Harte" },
     aiOutputOverrides: {
       ...(SOPHIE.aiOutputOverrides ?? {}),
+      day1Setup: JSON.stringify({
+        audience: "Women in their 40s and 50s navigating a major life change — empty nest, career shift, or identity reset — who want clarity on what comes next",
+        problem: "They feel stuck between who they were and who they are becoming. Generic advice does not speak to this specific transition.",
+        outcome: "A clear sense of direction and one concrete next step they can take with confidence",
+        superpower: "I help women cut through the noise of a life transition and find their own answer — not a template, their actual next chapter",
+        expertType: ["Coach"],
+      }),
       day2_quiz_questions:
         "1. Do you know what you actually want your life to look like in the next 12 months?\n2. When you imagine making a big change, does fear of getting it wrong stop you from starting?\n3. Do you have at least one person in your life who genuinely supports you taking a new direction?\n4. Have you tried to make a change before but found yourself back in the same place within a few months?\n5. Do you find it hard to prioritise yourself without feeling guilty about it?\n6. When you think about your life right now, does it feel like it belongs to you?\n7. Do you know what is actually holding you back, or does it just feel like everything is?\n8. Have you ever had a moment of total clarity about what you wanted, but then talked yourself out of it?\n9. If someone gave you permission to start over in one area of your life, do you already know which area it would be?",
       day2_quiz_subtitle: "Find out where you stand with The Next Chapter Challenge.",

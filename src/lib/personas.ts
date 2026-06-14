@@ -46,7 +46,7 @@ export interface PersonaDefinition {
   memoryOverrides?: Partial<{
     name: string;
     audienceType: "b2b" | "b2c";
-    challengeType: string;
+    challengeType: MemoryChallengeType;
     topic: string;
     desiredOutcome: string;
     challengeName: string;

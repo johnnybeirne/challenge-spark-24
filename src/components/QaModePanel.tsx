@@ -156,8 +156,8 @@ const DraggableQaButton = ({
   setOpen: (fn: (v: boolean) => boolean) => void;
   active: boolean;
 }) => {
-  const BTN_W = 120;
-  const BTN_H = 36;
+  const BTN_W = 150;
+  const BTN_H = 48;
   const getDefault = () => {
     if (typeof window === "undefined") return { x: 16, y: 16 };
     return { x: Math.max(16, window.innerWidth - BTN_W - 16), y: 16 };
@@ -223,10 +223,10 @@ const DraggableQaButton = ({
       onMouseDown={(e) => { e.preventDefault(); start(e.clientX, e.clientY); }}
       onTouchStart={(e) => { const t = e.touches[0]; if (t) start(t.clientX, t.clientY); }}
       style={{ left: pos.x, top: pos.y }}
-      className={`fixed z-[95] inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-wider shadow-lg hover:bg-muted ${dragging ? "cursor-grabbing" : "cursor-grab"} select-none`}
+      className={`fixed z-[95] inline-flex items-center gap-2 rounded-full border-2 border-black bg-background px-4 py-2.5 text-sm font-black uppercase tracking-wider shadow-lg hover:bg-muted ${dragging ? "cursor-grabbing" : "cursor-grab"} select-none`}
       title="QA Mode (drag to move)"
     >
-      <Beaker className="h-4 w-4" />
+      <Beaker className="h-5 w-5" />
       QA Mode
       {active && <span className="ml-1 h-2 w-2 rounded-full bg-amber-500" />}
     </button>

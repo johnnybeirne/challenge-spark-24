@@ -41,7 +41,7 @@ export interface PersonaDefinition {
   /** Fill challenge.launchUrl. */
   launched?: boolean;
   /** Override stub user fields (name/email shown across the app). */
-  userOverrides?: Partial<{ name: string; email: string; inviteCode: string }>;
+  userOverrides?: Partial<{ name: string; firstName: string; lastName: string; email: string; inviteCode: string }>;
   /** Override memory fields (drives challenge identity, audience type, etc). */
   memoryOverrides?: Partial<{
     name: string;
@@ -184,6 +184,84 @@ export const PERSONAS: PersonaDefinition[] = [
 
 export const getPersona = (id: PersonaId | null | undefined): PersonaDefinition | null =>
   PERSONAS.find((p) => p.id === id) ?? null;
+
+// ───────────────────────────────────────────────────────────────────────────
+// Characters — identity-only overlays (no progress/timing/journey stage).
+// Combined with a persona on top via applyCharacter.
+// ───────────────────────────────────────────────────────────────────────────
+
+export interface CharacterDefinition {
+  id: string;
+  label: string;
+  userOverrides: NonNullable<PersonaDefinition["userOverrides"]>;
+  memoryOverrides: NonNullable<PersonaDefinition["memoryOverrides"]>;
+  aiOutputOverrides: NonNullable<PersonaDefinition["aiOutputOverrides"]>;
+}
+
+const MARCUS = PERSONAS.find((p) => p.id === "marcus_b2b")!;
+const SOPHIE = PERSONAS.find((p) => p.id === "sophie_b2c")!;
+
+export const CHARACTERS: CharacterDefinition[] = [
+  {
+    id: "marcus",
+    label: "B2B Coach — Marcus",
+    userOverrides: {
+      name: "Marcus Reid",
+      firstName: "Marcus",
+      lastName: "Reid",
+      email: "marcus@preview.local",
+      inviteCode: "B2BCOACH",
+    },
+    memoryOverrides: { ...(MARCUS.memoryOverrides ?? {}), name: "Marcus Reid" },
+    aiOutputOverrides: { ...(MARCUS.aiOutputOverrides ?? {}) },
+  },
+  {
+    id: "sophie",
+    label: "B2C Coach — Sophie",
+    userOverrides: {
+      name: "Sophie Harte",
+      firstName: "Sophie",
+      lastName: "Harte",
+      email: "sophie@preview.local",
+      inviteCode: "B2CCOACH",
+    },
+    memoryOverrides: { ...(SOPHIE.memoryOverrides ?? {}), name: "Sophie Harte" },
+    aiOutputOverrides: { ...(SOPHIE.aiOutputOverrides ?? {}) },
+  },
+];
+
+export const getCharacter = (id: string | null | undefined): CharacterDefinition | null =>
+  CHARACTERS.find((c) => c.id === id) ?? null;
+
+/** Pure overlay: apply character identity + AI outputs on top of state. */
+export function applyCharacter(state: AppState, characterId: string | null | undefined): AppState {
+  const character = getCharacter(characterId);
+  if (!character) return state;
+  const baseUser = state.user ?? STUB_USER;
+  return {
+    ...state,
+    user: { ...baseUser, ...character.userOverrides },
+    memory: { ...state.memory, ...character.memoryOverrides },
+    challenge: {
+      ...state.challenge,
+      aiOutputs: { ...state.challenge.aiOutputs, ...character.aiOutputOverrides },
+    },
+  };
+}
+
+/** Read character id from QA localStorage without importing qaPreview (avoids cycle). */
+function readQaCharacterId(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem("leadioPreviewState");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return typeof parsed?.character === "string" ? parsed.character : null;
+  } catch {
+    return null;
+  }
+}
+
 
 // Task keys are the source of truth from src/pages/DayChallenge.tsx dayConfig.
 // Kept in sync manually — if you add/remove a task there, update here too.
@@ -334,7 +412,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const finalMemory = { ...seeded.memory, ...(persona.memoryOverrides ?? {}) };
   const finalAiOutputs = { ...seeded.aiOutputs, ...(persona.aiOutputOverrides ?? {}) };
 
-  return {
+  const result: AppState = {
     ...state,
     user: finalUser,
     memory: finalMemory,
@@ -365,4 +443,8 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     community,
     training,
   };
+
+  // 8. If a character is selected in QA state, overlay its identity on top.
+  return applyCharacter(result, readQaCharacterId());
 }
+

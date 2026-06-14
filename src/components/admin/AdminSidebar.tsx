@@ -23,6 +23,7 @@ const items = [
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake },
   { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true },
   { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit },
+  { title: "Powered By Page", url: "/owner-console/powered-by-editor", icon: Globe },
   { title: "Resource library", url: "/owner-console/resources", icon: BookOpen },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail },

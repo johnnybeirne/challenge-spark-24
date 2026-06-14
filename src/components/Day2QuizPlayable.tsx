@@ -381,23 +381,42 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   );
 };
 
-interface ShellProps { onBack: () => void; step: number; total: number; children: React.ReactNode }
-const Shell = ({ onBack, children }: ShellProps) => (
+interface ShellProps {
+  onBack?: () => void;
+  onClose: () => void;
+  step: number;
+  total: number;
+  children: React.ReactNode;
+}
+const Shell = ({ onBack, onClose, children }: ShellProps) => (
   <div className="min-h-screen bg-background">
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
-      <div className="mb-6 flex items-center justify-end">
+      <div className="mb-6 flex items-center justify-between">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+            aria-label="Back to previous question"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
+          </button>
+        ) : (
+          <span />
+        )}
         <button
           type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
+          onClick={onClose}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
           aria-label="Close quiz preview"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Close
+          <X className="h-4 w-4" />
         </button>
       </div>
       {children}
     </div>
   </div>
 );
+
 
 export default Day2QuizPlayable;

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 import Day2QuizPlayable from "@/components/Day2QuizPlayable";
+import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import { useAppState } from "@/context/AppContext";
-import { cn } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -13,110 +13,69 @@ interface Props {
 
 /**
  * Big centred pop-up for the quiz generation + playback experience.
- *
- * Renders via portal directly to <body>. Uses a darkened backdrop and a
- * white panel that fills ~95% of the viewport. The Generating phase renders
- * inside the panel (not as its own fixed overlay) so it's always visible.
+ * Uses the app's shadcn Dialog primitives so it integrates with the rest
+ * of the modal stack. The generating phase renders inside the panel; on
+ * completion it swaps in the playable quiz. Escape and the X button close.
  */
 const Day2QuizModal = ({ open, onClose }: Props) => {
   const { setState } = useAppState();
   const [phase, setPhase] = useState<"generating" | "playable">("generating");
-  const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      setPhase("generating");
-      setMounted(true);
-      const id = requestAnimationFrame(() => setVisible(true));
-      return () => cancelAnimationFrame(id);
-    }
-    setVisible(false);
-    const t = setTimeout(() => setMounted(false), 250);
-    return () => clearTimeout(t);
+    if (open) setPhase("generating");
   }, [open]);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [mounted, onClose]);
-
-  if (!mounted) return null;
-
-  return createPortal(
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Quiz preview"
-      className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 transition-opacity duration-300",
-        visible ? "opacity-100" : "opacity-0",
-      )}
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
     >
-      {/* Backdrop (click to close) */}
-      <button
-        type="button"
-        aria-label="Close quiz preview"
-        onClick={onClose}
-        className="absolute inset-0 cursor-default bg-slate-950/85 backdrop-blur-sm"
-      />
-
-      {/* Big centred panel */}
-      <div
-        className={cn(
-          "relative z-10 flex h-[95vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-background shadow-2xl ring-1 ring-border transition-transform duration-300",
-          visible ? "scale-100" : "scale-95",
-        )}
-      >
-        {/* Close */}
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close quiz preview"
-          className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md ring-1 ring-border backdrop-blur transition hover:bg-background hover:scale-105"
+      <DialogPortal>
+        <DialogOverlay className="bg-black/40 backdrop-blur-md" />
+        <DialogPrimitive.Content
+          aria-label="Quiz preview"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="fixed left-1/2 top-1/2 z-50 flex h-[95vh] w-[95vw] max-w-none -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden border bg-background p-0 shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+          style={{ borderRadius: 12 }}
         >
-          <X className="h-5 w-5" />
-        </button>
+          {/* Close */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close quiz preview"
+            className="absolute right-4 top-4 z-50 inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/80 transition hover:bg-muted hover:text-foreground"
+          >
+            <X className="h-5 w-5" />
+          </button>
 
-        {/* Phase content — fills the panel */}
-        <div key={phase} className="relative flex-1 overflow-y-auto animate-fade-in">
-          {phase === "generating" ? (
-            <Day2QuizGenerating
-              onComplete={(quiz) => {
-                setState((p) => ({
-                  ...p,
-                  challenge: {
-                    ...p.challenge,
-                    aiOutputs: {
-                      ...p.challenge.aiOutputs,
-                      day2_s2_quiz: JSON.stringify(quiz ?? {}),
+          {/* Phase content — fills the panel */}
+          <div key={phase} className="relative flex-1 overflow-y-auto animate-fade-in">
+            {phase === "generating" ? (
+              <Day2QuizGenerating
+                onComplete={(quiz) => {
+                  setState((p) => ({
+                    ...p,
+                    challenge: {
+                      ...p.challenge,
+                      aiOutputs: {
+                        ...p.challenge.aiOutputs,
+                        day2_s2_quiz: JSON.stringify(quiz ?? {}),
+                      },
                     },
-                  },
-                }));
-                setPhase("playable");
-              }}
-              onError={onClose}
-            />
-          ) : (
-            <Day2QuizPlayable onClose={onClose} />
-          )}
-        </div>
-      </div>
-    </div>,
-    document.body,
+                  }));
+                  setPhase("playable");
+                }}
+                onError={onClose}
+              />
+            ) : (
+              <Day2QuizPlayable onClose={onClose} />
+            )}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPortal>
+    </Dialog>
   );
 };
 

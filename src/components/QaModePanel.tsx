@@ -156,8 +156,8 @@ const DraggableQaButton = ({
   setOpen: (fn: (v: boolean) => boolean) => void;
   active: boolean;
 }) => {
-  const BTN_W = 120;
-  const BTN_H = 36;
+  const BTN_W = 150;
+  const BTN_H = 48;
   const getDefault = () => {
     if (typeof window === "undefined") return { x: 16, y: 16 };
     return { x: Math.max(16, window.innerWidth - BTN_W - 16), y: 16 };

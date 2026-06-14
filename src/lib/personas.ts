@@ -41,7 +41,7 @@ export interface PersonaDefinition {
   /** Fill challenge.launchUrl. */
   launched?: boolean;
   /** Override stub user fields (name/email shown across the app). */
-  userOverrides?: Partial<{ name: string; email: string; inviteCode: string }>;
+  userOverrides?: Partial<{ name: string; firstName: string; lastName: string; email: string; inviteCode: string }>;
   /** Override memory fields (drives challenge identity, audience type, etc). */
   memoryOverrides?: Partial<{
     name: string;

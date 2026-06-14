@@ -193,7 +193,7 @@ const DayChallenge = () => {
     if (step === "2") {
       return (
         <Day2QuizPlayable
-          onBack={() => setState((prev) => ({
+          onClose={() => setState((prev) => ({
             ...prev,
             challenge: {
               ...prev.challenge,

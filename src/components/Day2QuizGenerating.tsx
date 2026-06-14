@@ -3,14 +3,25 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import leadbeadLogo from "@/assets/leadbead-logo.png";
 
 const MESSAGE_MS = 1800;
 const FADE_MS = 350;
 const REVEAL_FADE_MS = 450;
+const FIRST_BEAD_DELAY_MS = 400;
 
-// Accent palette for this screen only (per design spec).
-const ACCENT_PRIMARY = "#5B4DB1";   // deep violet
-const ACCENT_SECONDARY = "#CC5500"; // burnt orange
+// Bead palette + geometry (per design spec).
+const BEADS = [
+  { angle: -90, color: "#E85D4A", r: 13 },
+  { angle: -18, color: "#F5A623", r: 11 },
+  { angle: 54, color: "#4CAF82", r: 13 },
+  { angle: 126, color: "#534AB7", r: 11 },
+  { angle: 198, color: "#E8607A", r: 12 },
+];
+const TRACK_CX = 110;
+const TRACK_CY = 110;
+const TRACK_R = 80;
+
 
 const readDay1 = (aiOutputs: Record<string, string> | undefined) => {
   let setup: Record<string, unknown> = {};

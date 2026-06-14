@@ -328,10 +328,15 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     mode: "challenge",
   } as AppState["assessment"]);
 
+  // 7. Apply explicit overrides (user/memory/aiOutputs) last so they win.
+  const finalUser = { ...baseUser, ...(persona.userOverrides ?? {}), joinedAt: timing.joinedAtIso };
+  const finalMemory = { ...seeded.memory, ...(persona.memoryOverrides ?? {}) };
+  const finalAiOutputs = { ...seeded.aiOutputs, ...(persona.aiOutputOverrides ?? {}) };
+
   return {
     ...state,
-    user: { ...baseUser, joinedAt: timing.joinedAtIso },
-    memory: seeded.memory,
+    user: finalUser,
+    memory: finalMemory,
     assessment,
 
     challenge: {
@@ -341,7 +346,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       currentDay,
       completed,
       tasks: seeded.tasks,
-      aiOutputs: seeded.aiOutputs,
+      aiOutputs: finalAiOutputs,
       launchUrl,
     },
     points: {

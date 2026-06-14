@@ -212,9 +212,12 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const headline = identity.isPersonalised
       ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
       : quiz.quizTitle;
-    const sub = outcome && outcome !== "the result they want"
+    const quizSubtitle = typeof (quiz as any).subtitle === "string" ? (quiz as any).subtitle.trim() : "";
+    const quizIntro = typeof (quiz as any).intro === "string" ? (quiz as any).intro.trim() : "";
+    const fallbackSub = outcome && outcome !== "the result they want"
       ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
       : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
+    const sub = quizSubtitle || quizIntro || fallbackSub;
     return (
       <div className="relative min-h-screen bg-background">
         <button

@@ -157,15 +157,16 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   }, [state.user?.name, authUser]);
 
   const messages = useMemo(() => {
-    const name = firstName || "Hey";
+    const name = firstName || "there";
     return [
-      `${name}, we're crafting your quiz...`,
-      `${name}, your questions are taking shape...`,
-      `${name}, almost there...`,
-      `${name}, adding the finishing touches...`,
-      `${name}, your quiz is nearly ready...`,
+      `Crafting your quiz, ${name}...`,
+      `Building your questions...`,
+      `Almost there, ${name}...`,
+      `Adding the finishing touches...`,
+      `Your quiz is nearly ready, ${name}...`,
     ];
   }, [firstName]);
+
 
 
   const [idx, setIdx] = useState(0);

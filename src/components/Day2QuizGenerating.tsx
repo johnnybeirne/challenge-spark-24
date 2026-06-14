@@ -16,7 +16,7 @@ const BEADS = [
   { angle: -18, color: "#F5A623", r: 11 },
   { angle: 54, color: "#4CAF82", r: 13 },
   { angle: 126, color: "#534AB7", r: 11 },
-  { angle: 198, color: "#E8607A", r: 12 },
+  { angle: 198, color: "#29B6D4", r: 12 },
 ];
 const TRACK_CX = 110;
 const TRACK_CY = 110;
@@ -172,6 +172,26 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   const [idx, setIdx] = useState(0);
   const [showing, setShowing] = useState(true);
   const [revealing, setRevealing] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [typingDone, setTypingDone] = useState(false);
+
+  // Typing animation: type out the current message character-by-character at 35ms/char.
+  useEffect(() => {
+    if (!showing) return;
+    const full = messages[idx] ?? "";
+    setTypedText("");
+    setTypingDone(false);
+    let i = 0;
+    const interval = window.setInterval(() => {
+      i += 1;
+      setTypedText(full.slice(0, i));
+      if (i >= full.length) {
+        window.clearInterval(interval);
+        setTypingDone(true);
+      }
+    }, 35);
+    return () => window.clearInterval(interval);
+  }, [idx, showing, messages]);
 
   const apiDoneRef = useRef(false);
   const apiResultRef = useRef<unknown>(null);
@@ -359,11 +379,12 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
           <p
             key={idx}
             className={cn(
-              "text-[15px] text-muted-foreground transition-all duration-300",
+              "text-[20px] text-muted-foreground transition-all duration-300",
               showing ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1",
             )}
           >
-            {messages[idx]}
+            {typedText}
+            {!typingDone && <span className="ml-0.5 animate-pulse">|</span>}
           </p>
         </div>
 

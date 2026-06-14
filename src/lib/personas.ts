@@ -3,6 +3,7 @@
 // perspective of users at different points in the 3-day journey.
 
 import type { AppState, UnlockEntry } from "@/context/AppContext";
+import type { MemoryChallengeType } from "@/lib/personalisation";
 import { computeSimulatedTiming } from "@/lib/simulatedDate";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
 import { seedCompletedDayData } from "@/lib/qaSeedData";
@@ -21,7 +22,9 @@ export type PersonaId =
   | "done_day_2"
   | "launched_no_referrals"
   | "community_unlocked"
-  | "expired";
+  | "expired"
+  | "marcus_b2b"
+  | "sophie_b2c";
 
 export interface PersonaDefinition {
   id: PersonaId;
@@ -37,6 +40,20 @@ export interface PersonaDefinition {
   communityUnlocked?: boolean;
   /** Fill challenge.launchUrl. */
   launched?: boolean;
+  /** Override stub user fields (name/email shown across the app). */
+  userOverrides?: Partial<{ name: string; email: string; inviteCode: string }>;
+  /** Override memory fields (drives challenge identity, audience type, etc). */
+  memoryOverrides?: Partial<{
+    name: string;
+    audienceType: "b2b" | "b2c";
+    challengeType: MemoryChallengeType;
+    topic: string;
+    desiredOutcome: string;
+    challengeName: string;
+    challengeTitleOverride: string;
+  }>;
+  /** Pre-fill aiOutputs keys (e.g. day1_define_app). Applied after seeding. */
+  aiOutputOverrides?: Record<string, string>;
 }
 
 export const PERSONAS: PersonaDefinition[] = [
@@ -106,6 +123,62 @@ export const PERSONAS: PersonaDefinition[] = [
     elapsedHours: 80,
     dayProgress: { 1: 1, 2: 0, 3: 0 },
     directReferrals: 0,
+  },
+  {
+    id: "marcus_b2b",
+    label: "Marcus — B2B consultant (fresh)",
+    description: "B2B fundraising consultant. Day 1 fresh start with pre-filled content.",
+    elapsedHours: 0,
+    dayProgress: { 1: 0, 2: 0, 3: 0 },
+    directReferrals: 0,
+    userOverrides: {
+      name: "Marcus Chen",
+      email: "marcus@nextlevelfundraising.com",
+      inviteCode: "MARCUS",
+    },
+    memoryOverrides: {
+      name: "Marcus Chen",
+      audienceType: "b2b",
+      challengeType: "transformation",
+      topic: "Next Level",
+      desiredOutcome: "A predictable pipeline of qualified donor meetings without cold outreach burnout.",
+      challengeName: "The Next Level Challenge",
+      challengeTitleOverride: "The Next Level Challenge",
+    },
+    aiOutputOverrides: {
+      day1_define_app: "Nonprofit development directors at $5M–$25M orgs who need to grow major gifts but are stuck doing everything themselves.",
+      day1_problem: "They rely on one-off events and personal hustle. There's no repeatable system to identify, qualify, and move donors up the giving ladder.",
+      day1_result: "A 90-day pipeline framework that consistently surfaces 10+ qualified major donor conversations a month — without cold outreach.",
+      day1_share_reason: "Most development directors I talk to know they need this but can't see what's broken. This challenge shows them in 3 days.",
+    },
+  },
+  {
+    id: "sophie_b2c",
+    label: "Sophie — B2C coach (fresh)",
+    description: "B2C midlife reinvention coach. Day 1 fresh start with pre-filled content.",
+    elapsedHours: 0,
+    dayProgress: { 1: 0, 2: 0, 3: 0 },
+    directReferrals: 0,
+    userOverrides: {
+      name: "Sophie Laurent",
+      email: "sophie@nextchaptercoaching.com",
+      inviteCode: "SOPHIE",
+    },
+    memoryOverrides: {
+      name: "Sophie Laurent",
+      audienceType: "b2c",
+      challengeType: "transformation",
+      topic: "Next Chapter",
+      desiredOutcome: "A clear, confident plan for the next chapter of life — career, identity, and purpose.",
+      challengeName: "The Next Chapter Challenge",
+      challengeTitleOverride: "The Next Chapter Challenge",
+    },
+    aiOutputOverrides: {
+      day1_define_app: "Women 45–60 navigating a midlife pivot — empty nest, career shift, or identity reset — who want clarity on what's next.",
+      day1_problem: "They feel stuck between who they were and who they're becoming. Generic life-coaching advice doesn't speak to this specific transition.",
+      day1_result: "A personal Next Chapter map: their values, energy patterns, and a 12-week experiment to test their next direction.",
+      day1_share_reason: "Every woman I know in this phase is quietly searching. This gives them language and a first step in 3 days.",
+    },
   },
 ];
 
@@ -256,10 +329,15 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     mode: "challenge",
   } as AppState["assessment"]);
 
+  // 7. Apply explicit overrides (user/memory/aiOutputs) last so they win.
+  const finalUser = { ...baseUser, ...(persona.userOverrides ?? {}), joinedAt: timing.joinedAtIso };
+  const finalMemory = { ...seeded.memory, ...(persona.memoryOverrides ?? {}) };
+  const finalAiOutputs = { ...seeded.aiOutputs, ...(persona.aiOutputOverrides ?? {}) };
+
   return {
     ...state,
-    user: { ...baseUser, joinedAt: timing.joinedAtIso },
-    memory: seeded.memory,
+    user: finalUser,
+    memory: finalMemory,
     assessment,
 
     challenge: {
@@ -269,7 +347,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       currentDay,
       completed,
       tasks: seeded.tasks,
-      aiOutputs: seeded.aiOutputs,
+      aiOutputs: finalAiOutputs,
       launchUrl,
     },
     points: {

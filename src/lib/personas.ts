@@ -258,6 +258,28 @@ export const CHARACTERS: CharacterDefinition[] = [
         },
       }),
     },
+    assessmentOverrides: {
+      audienceType: "b2c",
+      challengeType: "transformation",
+      readinessLevel: "medium",
+      growthBlock: "clarity",
+      diagnosticScore: 6,
+      diagnosticLevel: "mid",
+      diagnosticTitle: "Architect",
+      diagnosticMessage:
+        "You know what you want but something keeps getting in the way. You have more clarity than you give yourself credit for — what you need now is a structure that turns that clarity into momentum.",
+      recommendedChallenge: {
+        title: "The Next Chapter Challenge",
+        description:
+          "A 3-day guided experience for women navigating a major life pivot — mapping values, energy patterns, and the next bold move.",
+        outcome: "A clear, confident next step in the area of life that matters most right now.",
+      },
+      messagingAngle:
+        "Speak to the in-between — the gap between who she was and who she's becoming — and offer structure, not more inspiration.",
+      growthInsight:
+        "You don't need more clarity in your head — you need a structure that turns what you already know into your next move.",
+      shareIntent: false,
+    },
   },
 ];
 

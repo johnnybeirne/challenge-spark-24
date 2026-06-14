@@ -189,7 +189,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Loading ─────────────
   if (loading || !quiz) {
     return (
-      <Shell onBack={onBack} step={2} total={5}>
+      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
         <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">
@@ -260,7 +260,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   if (result) {
     const total = quiz.questions.length;
     return (
-      <Shell onBack={onBack} step={2} total={5}>
+      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
         <div className="mx-auto max-w-xl pt-6 pb-12 animate-fade-in">
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary text-center">
             Your result
@@ -335,7 +335,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   const progress = (current / quiz.questions.length) * 100;
 
   return (
-    <Shell onBack={onBack} step={2} total={5}>
+    <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
       <div className="mx-auto max-w-xl pt-2 pb-12">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">

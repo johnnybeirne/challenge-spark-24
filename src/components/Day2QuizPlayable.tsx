@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -78,10 +78,11 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
 };
 
 interface Props {
-  onBack: () => void;
+  onClose: () => void;
 }
 
-const Day2QuizPlayable = ({ onBack }: Props) => {
+const Day2QuizPlayable = ({ onClose }: Props) => {
+
   const { state, setState } = useAppState();
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
   const identity = useChallengeIdentity();

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
-import Day2QuizModal from "@/components/Day2QuizModal";
+
 
 
 const SECTIONS = [
@@ -426,12 +426,11 @@ const Day2Screen1 = () => {
 
   const [quizGenerating, setQuizGenerating] = useState(false);
 
-  const [quizModalOpen, setQuizModalOpen] = useState(false);
-
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
-    setQuizModalOpen(true);
+    window.open("/quiz-preview", "_blank", "noopener");
   };
+
 
   const handleContinue = () => {
     setState((prev) => ({
@@ -712,7 +711,7 @@ const Day2Screen1 = () => {
           })}
         </div>
       </div>
-      <Day2QuizModal open={quizModalOpen} onClose={() => setQuizModalOpen(false)} />
+      
     </div>
   );
 };

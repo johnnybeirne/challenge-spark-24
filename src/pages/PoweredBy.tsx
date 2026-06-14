@@ -182,16 +182,6 @@ export default function PoweredBy() {
               invite others along the way.
             </p>
           </Reveal>
-          <Reveal delay={300}>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg" className="h-14 px-8 text-base">
-                <Link to="/">Join the challenge</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base">
-                <a href="#how-it-works">See how it works</a>
-              </Button>
-            </div>
-          </Reveal>
         </div>
       </section>
 

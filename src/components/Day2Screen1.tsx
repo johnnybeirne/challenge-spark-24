@@ -714,6 +714,7 @@ const Day2Screen1 = () => {
         </div>
       </div>
       
+      <Day2QuizModal open={quizModalOpen} onClose={() => setQuizModalOpen(false)} />
     </div>
   );
 };

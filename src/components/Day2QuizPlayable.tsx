@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChevronDown, Loader2, Sparkles, Trophy, RefreshCw, Share2, Play, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Sparkles, Trophy, RefreshCw, Share2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +8,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
+import aiAvatar from "@/assets/ai-avatar.png";
 
 type Tier = "low" | "mid" | "high";
 
@@ -25,6 +25,31 @@ interface QuizDraft {
 }
 
 const TIER_ORDER: Tier[] = ["low", "mid", "high"];
+
+// Typewriter — reveals text character by character. Respects prefers-reduced-motion.
+function TypewriterText({ text, speed = 22 }: { text: string; speed?: number }) {
+  const [shown, setShown] = useState(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return text;
+    }
+    return "";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setShown(text);
+      return;
+    }
+    setShown("");
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) window.clearInterval(id);
+    }, speed);
+    return () => window.clearInterval(id);
+  }, [text, speed]);
+  return <>{shown}</>;
+}
 
 const readDay1Values = (aiOutputs: Record<string, string> | undefined) => {
   let setup: Record<string, unknown> = {};
@@ -83,10 +108,10 @@ interface Props {
 }
 
 const Day2QuizPlayable = ({ onClose }: Props) => {
-
   const { state, setState } = useAppState();
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
   const identity = useChallengeIdentity();
+  const firstName = (state.user?.name || "").trim().split(/\s+/)[0] || "Builder";
 
   const [quiz, setQuiz] = useState<QuizDraft | null>(() => {
     try { return normaliseQuiz(JSON.parse(state.challenge.aiOutputs.day2_s2_quiz || "null")); }
@@ -97,6 +122,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   const [answers, setAnswers] = useState<Tier[]>([]);
   const [current, setCurrent] = useState(0);
   const [animKey, setAnimKey] = useState(0);
+  const [selected, setSelected] = useState<Tier | null>(null);
 
   const fetchQuiz = async () => {
     setLoading(true);
@@ -140,43 +166,32 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   }, []);
 
   const handleAnswer = (tier: Tier) => {
-    if (!quiz) return;
-    const next = [...answers, tier];
-    setAnswers(next);
-    if (next.length >= quiz.questions.length) return; // result screen
+    if (!quiz || selected) return;
+    setSelected(tier);
     setTimeout(() => {
-      setCurrent((c) => c + 1);
-      setAnimKey((k) => k + 1);
-    }, 180);
-  };
-
-  const reset = () => { setAnswers([]); setCurrent(0); setAnimKey((k) => k + 1); };
-
-  // Back: question N>0 → previous question; question 0 → landing; landing → none;
-  // result → re-take final question.
-  const handleBack = (): (() => void) | undefined => {
-    if (loading || !quiz) return undefined;
-    if (!started && answers.length === 0) return undefined; // landing
-    if (answers.length >= quiz.questions.length) {
-      // result → last question
-      return () => {
-        setAnswers((a) => a.slice(0, -1));
-        setCurrent(quiz.questions.length - 1);
+      const next = [...answers, tier];
+      setAnswers(next);
+      setSelected(null);
+      if (next.length < quiz.questions.length) {
+        setCurrent((c) => c + 1);
         setAnimKey((k) => k + 1);
-      };
-    }
-    return () => {
-      if (current > 0) {
-        setCurrent((c) => c - 1);
-        setAnswers((a) => a.slice(0, -1));
-        setAnimKey((k) => k + 1);
-      } else {
-        setStarted(false);
-        setAnswers([]);
       }
-    };
+    }, 380);
   };
 
+  const reset = () => { setAnswers([]); setCurrent(0); setSelected(null); setAnimKey((k) => k + 1); };
+
+  const handleBackQuestion = () => {
+    if (!quiz) return;
+    if (current > 0) {
+      setCurrent((c) => c - 1);
+      setAnswers((a) => a.slice(0, -1));
+      setAnimKey((k) => k + 1);
+    } else {
+      setStarted(false);
+      setAnswers([]);
+    }
+  };
 
   const result = useMemo(() => {
     if (!quiz || answers.length < quiz.questions.length) return null;
@@ -192,23 +207,34 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Loading ─────────────
   if (loading || !quiz) {
     return (
-      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
-        <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">
-            Building a live preview of your quiz from your Day 1 answers…
+      <div className="relative w-full min-h-full bg-background">
+        <SampleQuizBanner />
+        <div className="flex flex-col min-h-[80vh] items-center justify-center gap-4 p-6">
+          <div className="relative h-[72px] w-[72px]">
+            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/40 animate-sonar-pulse" />
+            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/20 animate-sonar-pulse" style={{ animationDelay: "0.9s" }} />
+            <img
+              src={aiAvatar}
+              alt="Johnny B AI"
+              width={72}
+              height={72}
+              className="relative z-10 h-[72px] w-[72px] rounded-full ring-2 ring-foreground/10"
+            />
+          </div>
+          <div className="text-[11px] tracking-[0.25em] font-bold text-primary uppercase mb-2">
+            Johnny B AI
+          </div>
+          <p className="max-w-md text-center text-lg font-semibold text-foreground">
+            <TypewriterText text={`Analysing your results, ${firstName}...`} />
           </p>
         </div>
-      </Shell>
+      </div>
     );
   }
 
   // ───────────── Landing screen ─────────────
   if (!started && answers.length === 0) {
     const outcome = d1.outcome;
-    const topic = (identity.topic || "growth business success").trim();
-    const keyword = encodeURIComponent(topic.split(/\s+/).slice(0, 2).join(","));
-    const heroUrl = `https://source.unsplash.com/1600x900/?${keyword}`;
     const headline = identity.isPersonalised
       ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
       : quiz.quizTitle;
@@ -218,26 +244,19 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       ? `A 60-second diagnostic for ${d1.audience} who want to ${outcome.replace(/\.$/, "")}. See exactly where you are today — and the single move that gets you there faster.`
       : `A 60-second diagnostic for ${d1.audience}. See exactly where you are today — and the single move that gets you there faster.`;
     const sub = quizSubtitle || quizIntro || fallbackSub;
+
     return (
-      <div className="relative h-full bg-background">
+      <div className="relative w-full bg-background overflow-auto">
         <SampleQuizBanner />
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
-          aria-label="Close quiz preview"
-        >
-          <X className="h-4 w-4" />
-        </button>
-        <style>{`@keyframes quizScrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}`}</style>
         <div
-          className="mx-auto flex h-full w-full max-w-2xl flex-col items-center text-center animate-fade-in"
-          style={{ padding: "48px 24px" }}
+          className="mx-auto flex w-full max-w-[420px] flex-col items-center text-center animate-fade-in"
+          style={{ padding: 24 }}
         >
+          {/* Hero card — unchanged except shorter height */}
           <div
             className="relative w-full overflow-hidden flex items-center justify-center"
             style={{
-              height: 220,
+              height: 180,
               borderRadius: 16,
               background:
                 "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
@@ -270,56 +289,76 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
             </p>
           </div>
 
-          <p className="mt-6 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-            {quiz.quizTitle}
-          </p>
-          <h1 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight text-foreground" style={{ lineHeight: 1.1 }}>
-            {headline}
-          </h1>
-          <p className="mt-4 max-w-prose text-sm sm:text-base leading-relaxed text-muted-foreground">
-            {sub}
-          </p>
-
-          <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
-            {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-              >
-                {label}
+          {/* Card */}
+          <div className="relative w-full bg-card border border-border rounded-[40px] p-8 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in mt-6">
+            {/* Identity header */}
+            <div className="flex flex-col items-center mb-6">
+              <div className="p-1 rounded-full border border-border">
+                <img
+                  src={aiAvatar}
+                  alt="Johnny B AI"
+                  width={80}
+                  height={80}
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+              </div>
+              <span className="mt-2 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
+                Johnny B AI
               </span>
-            ))}
+            </div>
+
+            <p className="mt-2 text-[11px] font-black uppercase tracking-[0.24em] text-primary">
+              {quiz.quizTitle}
+            </p>
+            <h1 className="mt-3 text-xl sm:text-2xl font-black tracking-tight text-foreground leading-[1.1]">
+              {headline}
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {sub}
+            </p>
+
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+
+            <Button
+              size="lg"
+              className="mt-6 w-full h-14 rounded-full font-bold shadow-lg"
+              onClick={() => {
+                setStarted(true);
+                trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
+              }}
+            >
+              <Play className="h-5 w-5" /> Take the Quiz
+            </Button>
+
+            <p className="mt-3 text-xs text-muted-foreground">
+              Personalised result in seconds
+            </p>
           </div>
-
-          <Button
-            size="lg"
-            className="mt-8 h-14 rounded-full px-10 font-bold shadow-lg"
-            onClick={() => {
-              setStarted(true);
-              trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
-            }}
-          >
-            <Play className="h-5 w-5" /> Take the Quiz
-          </Button>
-
         </div>
       </div>
     );
   }
 
-
-
-  // ───────────── Result screen ─────────────
+  // ───────────── Result screen (unchanged) ─────────────
   if (result) {
     const total = quiz.questions.length;
     return (
-      <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
-        <div className="mx-auto max-w-xl pt-6 pb-12 animate-fade-in">
+      <div className="relative w-full min-h-full bg-background">
+        <SampleQuizBanner />
+        <div className="mx-auto max-w-xl px-4 pt-6 pb-12 animate-fade-in">
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary text-center">
             Your result
           </p>
 
-          {/* Shareable card */}
           <div className="mt-4 rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 sm:p-8 shadow-xl">
             <div className="flex items-center justify-center">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
@@ -379,61 +418,101 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
             This is exactly what {d1.audience} will see after taking your quiz.
           </p>
         </div>
-      </Shell>
+      </div>
     );
   }
 
   // ───────────── Question screen ─────────────
   const q = quiz.questions[current];
-  const progress = (current / quiz.questions.length) * 100;
+  const answers_options: { tier: Tier; label: string }[] = [
+    { tier: "low", label: q.scoring.low },
+    { tier: "mid", label: q.scoring.mid },
+    { tier: "high", label: q.scoring.high },
+  ];
 
   return (
-    <Shell onBack={handleBack()} onClose={onClose} step={2} total={5}>
-      <div className="mx-auto max-w-xl pt-2 pb-12">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary">
-              Question {current + 1} of {quiz.questions.length}
-            </p>
-            <p className="text-xs text-muted-foreground truncate ml-3">{quiz.quizTitle}</p>
+    <div className="relative w-full bg-background">
+      <SampleQuizBanner />
+      <div className="relative min-h-full w-full flex items-start justify-center p-4 overflow-hidden">
+        <div className="relative w-full max-w-[420px] mx-auto mt-4">
+          <div
+            key={animKey}
+            className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
+          >
+            <button
+              onClick={handleBackQuestion}
+              className="absolute top-5 left-5 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Back
+            </button>
+
+            {/* Identity header */}
+            <div className="flex flex-col items-center mb-8">
+              <div className="p-1 rounded-full border border-border">
+                <img
+                  src={aiAvatar}
+                  alt="Johnny B AI"
+                  width={80}
+                  height={80}
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+              </div>
+              <span className="mt-2 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
+                Johnny B AI
+              </span>
+            </div>
+
+            {/* Question */}
+            <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mb-8">
+              <TypewriterText text={q.text} speed={22} />
+            </h2>
+
+            {/* Answers */}
+            <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
+              {answers_options.map(({ tier, label }) => {
+                const isSelected = selected === tier;
+                return (
+                  <button
+                    key={tier}
+                    type="button"
+                    onClick={() => handleAnswer(tier)}
+                    disabled={selected !== null}
+                    className={cn(
+                      "w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3",
+                      isSelected
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-card text-foreground hover:border-primary hover:bg-background",
+                    )}
+                  >
+                    <span className="text-left leading-snug">{label}</span>
+                    {isSelected && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Progress dots */}
+            <div className="mt-8 flex items-center justify-center gap-2">
+              {quiz.questions.map((_, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    i === current
+                      ? "h-1.5 w-8 bg-primary"
+                      : i < current
+                        ? "h-1.5 w-1.5 bg-primary/50"
+                        : "h-1.5 w-1.5 bg-border",
+                  )}
+                />
+              ))}
+            </div>
           </div>
-          <Progress value={progress} className="h-1.5" />
         </div>
-
-        <div key={animKey} className="animate-fade-in">
-          <h2 className="text-2xl sm:text-3xl font-black leading-tight text-foreground mb-6">
-            {q.text}
-          </h2>
-
-          <div className="space-y-3">
-            {TIER_ORDER.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => handleAnswer(t)}
-                className="group w-full text-left rounded-2xl border-2 border-border bg-card px-5 py-4 transition-all hover:border-primary hover:bg-primary/5 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-border text-xs font-black text-muted-foreground group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground transition">
-                    {t === "low" ? "A" : t === "mid" ? "B" : "C"}
-                  </span>
-                  <span className="text-sm sm:text-base font-medium text-foreground leading-snug">
-                    {q.scoring[t]}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-
-
-
-        <p className="mt-8 text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5">
-          <Sparkles className="h-3 w-3" /> Live preview — tap an answer to continue
-        </p>
       </div>
-    </Shell>
+    </div>
   );
 };
 
@@ -452,45 +531,5 @@ const SampleQuizBanner = () => (
     This is your sample quiz. Close this browser tab to return to Day 2 of your challenge.
   </div>
 );
-
-
-interface ShellProps {
-  onBack?: () => void;
-  onClose: () => void;
-  step: number;
-  total: number;
-  children: React.ReactNode;
-}
-const Shell = ({ onBack, onClose, children }: ShellProps) => (
-  <div className="min-h-screen bg-background">
-    <SampleQuizBanner />
-    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
-      <div className="mb-6 flex items-center justify-between">
-        {onBack ? (
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground hover:text-primary"
-            aria-label="Back to previous question"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
-          </button>
-        ) : (
-          <span />
-        )}
-        <button
-          type="button"
-          onClick={onClose}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm hover:bg-muted transition"
-          aria-label="Close quiz preview"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-      {children}
-    </div>
-  </div>
-);
-
 
 export default Day2QuizPlayable;

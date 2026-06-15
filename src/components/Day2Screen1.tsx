@@ -206,13 +206,10 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
   const qa = useQaPreview();
-  // QA bypass: active QA mode, an applied persona, or any preview-tier
-  // override all unlock the gate so testers can jump straight to "Generate".
-  const qaUnlock =
-    qa.active ||
-    !!qa.persona ||
-    (typeof window !== "undefined" &&
-      !!sessionStorage.getItem("leadio_preview_tier"));
+  // QA bypass: only when explicitly enabled via the QA panel's
+  // "Day 2: bypass mark-as-read gate" toggle. Active QA mode alone
+  // does NOT unlock the gate so testers can verify the locked state.
+  const qaUnlock = qa.active && qa.flags.day2BypassReadGate;
   const metaName =
     (authUser?.user_metadata as { full_name?: string; name?: string } | undefined)?.full_name ||
     (authUser?.user_metadata as { name?: string } | undefined)?.name ||

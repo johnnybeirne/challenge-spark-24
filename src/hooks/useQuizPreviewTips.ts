@@ -10,6 +10,7 @@ export const QUIZ_TIP_KEYS = [
   "pain_guessing",
   "pain_generic",
   "pain_wasted",
+  "reveals_section",
 ] as const;
 
 export type QuizTipKey = (typeof QUIZ_TIP_KEYS)[number];

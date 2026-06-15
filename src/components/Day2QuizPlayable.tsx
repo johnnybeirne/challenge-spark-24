@@ -270,7 +270,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const topicShort = identity.isPersonalised ? identity.shortTitle.toLowerCase() : "your results";
     const problemShort = problem.replace(/^[A-Z]/, (c) => c.toLowerCase()).replace(/[.?!]+$/, "");
     const headline = `Frustrated with ${problemShort}?`;
-    const subhead = `A short diagnostic for ${audience}. Find out where you stand with ${topicShort}, and the one move that will make the biggest difference.`;
+    const subhead = "Take the two-minute quiz and get a personalized strategy based on your answers.";
 
 
     const startQuiz = () => {

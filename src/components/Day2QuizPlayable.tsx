@@ -259,6 +259,12 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Landing screen ─────────────
   if (!started && answers.length === 0) {
     const audience = d1.audience;
+    // Short label for the eyebrow: stop at the first em-dash, " - ", " who ", or " navigating ".
+    const audienceShort = (() => {
+      const a = audience.split(/\s*[—–-]\s|\s+who\s|\s+navigating\s/i)[0]?.trim() || audience;
+      return a.replace(/[.,;:]+$/, "");
+    })();
+
     const problem = d1.problem;
     const outcome = d1.outcome;
     const topicShort = identity.isPersonalised ? identity.shortTitle.toLowerCase() : "your results";

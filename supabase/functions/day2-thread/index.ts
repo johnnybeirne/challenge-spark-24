@@ -637,8 +637,14 @@ async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
     id, text, scoring: { low, mid, high },
   });
 
+  const shortenProblem = (s: string) => {
+    const words = s.replace(/\s+/g, " ").trim().split(" ");
+    return (words.slice(0, 6).join(" ") || "this").replace(/[.,;:?!]+$/, "");
+  };
+
   const fallbackQuiz = {
     quizTitle: `The ${aud} ${prob} Scorecard`.slice(0, 120),
+    heroProblemShort: shortenProblem(prob),
     questions: [
       mkQ(1, `Which best describes where you are right now with ${prob}?`, "Just starting to look at it", "Working on it but stuck", "Close to solving it"),
       mkQ(2, `What have you already tried to solve ${prob}?`, "Nothing structured yet", "A few things, mixed results", "Multiple proven approaches"),
@@ -656,6 +662,7 @@ async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
       high: { name: "Closer",  description: `You are close to ${out}. The next step is removing the final friction so what you have already built can compound.` },
     },
   };
+
 
   const system = `${JOHNNY_VOICE}
 

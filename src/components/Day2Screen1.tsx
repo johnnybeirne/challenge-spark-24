@@ -700,15 +700,23 @@ const Day2Screen1 = () => {
                           </CardHeader>
                           <CardContent className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                              The premium course covers question design, result framing, and how to turn your challenge into a repeatable sales system.
+                              The full course is <span className="font-bold text-foreground">$497</span>. Invite three friends and it's yours free — or upgrade now and skip the invites.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                              <Button asChild variant="outline" className="flex-1">
-                                <Link to="/referrals">Invite three friends to unlock</Link>
+                            <div className="space-y-2">
+                              <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5">
+                                <Link to="/referrals">
+                                  <span className="text-base font-bold">Invite 3 friends — unlock free</span>
+                                  <span className="text-xs font-medium opacity-90">Worth $497</span>
+                                </Link>
                               </Button>
-                              <Button asChild className="flex-1">
-                                <Link to="/upgrade">Upgrade to full course</Link>
-                              </Button>
+                              <div className="text-center">
+                                <Link
+                                  to="/upgrade"
+                                  className="text-xs text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                                >
+                                  or upgrade now for $497 →
+                                </Link>
+                              </div>
                             </div>
                           </CardContent>
                         </Card>

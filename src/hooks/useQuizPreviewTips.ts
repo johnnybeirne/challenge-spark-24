@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type QuizPreviewTips = {
-  hero_headline: string;
-  subheading: string;
-};
+export const QUIZ_TIP_KEYS = [
+  "hero_headline",
+  "subheading",
+  "problem_section",
+  "pain_guessing",
+  "pain_generic",
+  "pain_wasted",
+] as const;
 
-const EMPTY: QuizPreviewTips = { hero_headline: "", subheading: "" };
+export type QuizTipKey = (typeof QUIZ_TIP_KEYS)[number];
+export type QuizPreviewTips = Record<QuizTipKey, string>;
+
+const EMPTY: QuizPreviewTips = QUIZ_TIP_KEYS.reduce(
+  (acc, k) => ({ ...acc, [k]: "" }),
+  {} as QuizPreviewTips,
+);
 
 /**
- * Loads the editable advice tooltips shown next to the quiz preview
- * hero headline and subheading. Admins edit these strings in the
- * "Quiz preview tips" page of the owner console.
+ * Loads the editable advice tooltips shown on the quiz preview.
+ * Admins edit these strings in the "Quiz preview tips" page.
  */
 export function useQuizPreviewTips() {
   const [tips, setTips] = useState<QuizPreviewTips>(EMPTY);
@@ -27,8 +36,8 @@ export function useQuizPreviewTips() {
       if (!error && data) {
         const next: QuizPreviewTips = { ...EMPTY };
         for (const row of data as Array<{ key: string; tip: string }>) {
-          if (row.key === "hero_headline" || row.key === "subheading") {
-            next[row.key] = row.tip ?? "";
+          if ((QUIZ_TIP_KEYS as readonly string[]).includes(row.key)) {
+            next[row.key as QuizTipKey] = row.tip ?? "";
           }
         }
         setTips(next);

@@ -299,9 +299,9 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     };
 
     const pains = [
-      { icon: AlertTriangle, title: "Guessing what to fix", body: `You can feel ${problem}, but can't name the real cause.` },
-      { icon: Search, title: "Too much generic advice", body: "Every guru says something different. None of it is built for your situation." },
-      { icon: Clock, title: "Wasted effort", body: `Hours spent on tactics that don't move you closer to ${outcome}.` },
+      { icon: AlertTriangle, title: "Guessing what to fix", body: `You can feel ${problem}, but can't name the real cause.`, tipKey: "pain_guessing" as const },
+      { icon: Search, title: "Too much generic advice", body: "Every guru says something different. None of it is built for your situation.", tipKey: "pain_generic" as const },
+      { icon: Clock, title: "Wasted effort", body: `Hours spent on tactics that don't move you closer to ${outcome}.`, tipKey: "pain_wasted" as const },
     ];
 
     const tierNames = [quiz.tiers.low.name, quiz.tiers.mid.name, quiz.tiers.high.name];

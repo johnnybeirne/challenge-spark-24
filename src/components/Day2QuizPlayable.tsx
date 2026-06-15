@@ -145,6 +145,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   const d1 = useMemo(() => readDay1Values(state.challenge.aiOutputs), [state.challenge.aiOutputs]);
   const identity = useChallengeIdentity();
   const firstName = (state.user?.name || "").trim().split(/\s+/)[0] || "Builder";
+  const { tips: previewTips } = useQuizPreviewTips();
 
   const [quiz, setQuiz] = useState<QuizDraft | null>(() => {
     try { return normaliseQuiz(JSON.parse(state.challenge.aiOutputs.day2_s2_quiz || "null")); }
@@ -363,9 +364,11 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               <Eyebrow>Built for {audienceShort}</Eyebrow>
               <h1 className="mt-4 font-montserrat font-bold text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
                 {headline}
+                <HelpTip text={previewTips.hero_headline} className="ml-2 align-middle" label="About this headline" />
               </h1>
               <p className="mt-5 text-lg text-slate-600 leading-relaxed max-w-xl">
                 {subhead}
+                <HelpTip text={previewTips.subheading} className="ml-1.5 align-middle" label="About this subheading" />
               </p>
               <div className="mt-8">
                 <CtaButton onClick={startQuiz}>

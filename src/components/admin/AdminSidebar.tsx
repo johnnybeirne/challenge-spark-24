@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -19,6 +19,7 @@ import {
 const items = [
   { title: "View as user", url: "/owner-console/view-as-user", icon: Eye },
   { title: "User quiz preview", url: "/quiz-preview", icon: ListChecks },
+  { title: "Quiz preview tips", url: "/owner-console/quiz-preview-tips", icon: HelpCircle },
   { title: "Product overview", url: "/owner-console/overview", icon: FileText },
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard },
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake },

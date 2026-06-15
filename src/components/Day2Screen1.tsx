@@ -616,7 +616,10 @@ const Day2Screen1 = () => {
                         {assessmentCompleted
                           ? "Take the quiz for this challenge again"
                           : "See the quiz for this challenge"}
+                        <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
+                        <span className="sr-only">(opens in a new tab)</span>
                       </a>
+
                     ) : (
                       <button
                         type="button"

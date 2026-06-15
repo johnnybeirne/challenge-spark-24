@@ -551,11 +551,12 @@ const Day2Screen1 = () => {
             // Section 1
             return (
               <section key={s.id} id={`day2-section-${s.id}`} className="space-y-4">
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                  {s.title}
+                </h2>
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg sm:text-xl">{s.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-3 pt-6">
+
                     <p className="text-sm sm:text-base text-foreground">
                       {firstName ? `${firstName}, here` : "Here"} is why your quiz is the smartest way to launch your challenge.
                     </p>

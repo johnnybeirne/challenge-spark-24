@@ -437,8 +437,9 @@ const Day2Screen1 = () => {
 
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
-    setQuizModalOpen(true);
+    window.open("/quiz-preview", "_blank", "noopener,noreferrer");
   };
+
 
 
   const handleContinue = () => {
@@ -638,25 +639,32 @@ const Day2Screen1 = () => {
                     )}
 
                     {allRead ? (
-                      <button
-                        type="button"
-                        onClick={handleGenerateQuiz}
-                        disabled={quizGenerating}
-                        aria-busy={quizGenerating}
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
-                      >
-                        {quizGenerating ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Generating your quiz...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="h-4 w-4" />
-                            Generate your quiz now
-                          </>
-                        )}
-                      </button>
+                      <div className="space-y-1.5">
+                        <button
+                          type="button"
+                          onClick={handleGenerateQuiz}
+                          disabled={quizGenerating}
+                          aria-busy={quizGenerating}
+                          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+                        >
+                          {quizGenerating ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Generating your quiz...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="h-4 w-4" />
+                              Generate your quiz now
+                              <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
+                            </>
+                          )}
+                        </button>
+                        <p className="text-center text-xs text-muted-foreground">
+                          Opens in a new tab so you can keep this page open.
+                        </p>
+                      </div>
+
                     ) : (
                       <div className="relative">
                         {showLockHint && (

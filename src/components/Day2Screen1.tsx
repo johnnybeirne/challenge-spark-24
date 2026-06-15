@@ -560,7 +560,9 @@ const Day2Screen1 = () => {
                   <CardContent className="space-y-3 pt-6">
 
                     <p className="text-sm sm:text-base text-foreground">
-                      {firstName ? `${firstName}, here` : "Here"} is why your quiz is the smartest way to launch your challenge.
+                      {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
+                      <br />
+                      Your challenge builds the trust that converts.
                     </p>
 
                     <p className="text-xs text-muted-foreground">
@@ -664,7 +666,7 @@ const Day2Screen1 = () => {
                     {allOpened && (
                       <div className="space-y-4 pt-2 animate-fade-in">
                         <p className="text-sm sm:text-base font-semibold text-foreground">
-                          Your quiz starts the conversation{nameSuffix}. Your challenge builds the trust that converts.
+                          <br />
                         </p>
 
 

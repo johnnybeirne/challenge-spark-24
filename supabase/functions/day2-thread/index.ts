@@ -750,8 +750,17 @@ Generate the sample quiz JSON now.`;
       description: String(t?.description || fb.description).trim().slice(0, 500) || fb.description,
     });
 
+    const cleanShort = String(parsed?.heroProblemShort || "")
+      .trim()
+      .replace(/^["'`]+|["'`]+$/g, "")
+      .replace(/^with\s+/i, "")
+      .replace(/[.,;:?!]+$/, "")
+      .slice(0, 80);
+    const heroProblemShort = cleanShort || fallbackQuiz.heroProblemShort;
+
     const quiz = {
       quizTitle: String(parsed?.quizTitle || fallbackQuiz.quizTitle).trim().slice(0, 120),
+      heroProblemShort,
       questions: goodQs ? normQs : fallbackQuiz.questions,
       tiers: {
         low:  readTier(parsed?.tiers?.low,  fallbackQuiz.tiers.low),
@@ -759,6 +768,7 @@ Generate the sample quiz JSON now.`;
         high: readTier(parsed?.tiers?.high, fallbackQuiz.tiers.high),
       },
     };
+
     return new Response(JSON.stringify(quiz), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

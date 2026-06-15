@@ -18,6 +18,7 @@ import {
 
 const items = [
   { title: "View as user", url: "/owner-console/view-as-user", icon: Eye },
+  { title: "User quiz preview", url: "/quiz-preview", icon: ListChecks },
   { title: "Product overview", url: "/owner-console/overview", icon: FileText },
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard },
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake },

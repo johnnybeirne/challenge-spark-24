@@ -674,6 +674,7 @@ ${KB}
 Return STRICT JSON only — no markdown, no commentary. Shape:
 {
   "quizTitle": string,                // 4-10 words, specific to the audience + problem
+  "heroProblemShort": string,         // 3-7 words, second-person ("you" form) where natural. Used in a headline like "Frustrated with {heroProblemShort}?". No leading "with", no trailing punctuation. Plain noun phrase or short clause that names the pain. Examples: "feeling stuck between chapters", "scattered marketing that does not convert", "leads that go cold after the call".
   "questions": [                      // EXACTLY 9 objects, ids 1..9 in order
     {
       "id": number,                   // 1..9
@@ -694,10 +695,12 @@ Return STRICT JSON only — no markdown, no commentary. Shape:
 
 Rules:
 - Use ONLY the builder's Day 1 data below. Do not invent facts.
+- heroProblemShort MUST be a tight 3-7 word phrase that compresses the full problem to its core pain — never just copy or truncate the long problem text.
 - Questions diagnose Present State, Preferred Future, and Pitfalls — diagnostic in style, relevant to the builder's subject matter.
 - Each question's three scoring labels must be meaningful, distinct answer options ordered low → mid → high.
 - Tier names are progress-oriented identity labels (e.g. Starter / Builder / Closer); descriptions are meaningful result segments for THIS audience.
 - No emojis. No exclamation marks. No "once".`;
+
 
   const userPrompt = `Builder Day 1 setup:
 - audience (client avatar): ${aud}

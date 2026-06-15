@@ -274,8 +274,19 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const problem = d1.problem;
     const outcome = d1.outcome;
     const topicShort = identity.isPersonalised ? identity.shortTitle.toLowerCase() : "your results";
-    const problemShort = problem.replace(/^[A-Z]/, (c) => c.toLowerCase()).replace(/[.?!]+$/, "");
+    // Prefer the AI-generated short version. Fallback: first 6 words of the saved problem.
+    const fallbackShort = problem
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .slice(0, 6)
+      .join(" ")
+      .replace(/[.,;:?!]+$/, "");
+    const problemShort = (quiz.heroProblemShort || fallbackShort)
+      .replace(/^[A-Z]/, (c) => c.toLowerCase())
+      .replace(/[.?!]+$/, "");
     const headline = `Frustrated with ${problemShort}?`;
+
     const subhead = "Take the two-minute quiz and get a personalized strategy based on your answers.";
 
 

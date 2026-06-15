@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
@@ -478,24 +478,33 @@ const Day2Screen1 = () => {
 
 
           {/* Day 1 recap */}
-          <dl className="mt-5 rounded-lg border bg-card p-4 space-y-2 text-sm">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {[
-              { label: "Your audience", value: clientAvatar },
-              { label: "Your superpower", value: superpower },
-              { label: "The problem you solve", value: problem },
-              { label: "The result you deliver", value: challengeOutcome },
-              { label: "Your challenge promise", value: challengePromise },
-            ].map((row) => {
-              const v = row.value ? row.value.charAt(0).toUpperCase() + row.value.slice(1) : row.value;
+              { label: "Your audience", value: clientAvatar, Icon: Users },
+              { label: "Your superpower", value: superpower, Icon: Zap },
+              { label: "The problem you solve", value: problem, Icon: AlertCircle },
+              { label: "The result you deliver", value: challengeOutcome, Icon: Target },
+              { label: "Your challenge promise", value: challengePromise, Icon: Flag },
+            ].map(({ label, value, Icon }) => {
+              const v = value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
               return (
-                <div key={row.label} className="flex flex-wrap gap-x-2">
-                  <dt className="font-semibold text-foreground shrink-0">{row.label}:</dt>
-                  <dd className="text-muted-foreground">{v}</dd>
+                <div
+                  key={label}
+                  className="flex gap-3 rounded-xl border bg-card p-4 shadow-sm"
+                >
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="h-4.5 w-4.5" strokeWidth={2.25} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-foreground/80">{label}</p>
+                    <p className="mt-1 text-sm leading-snug text-muted-foreground">{v}</p>
+                  </div>
                 </div>
               );
             })}
-          </dl>
+          </div>
         </header>
+
 
 
 

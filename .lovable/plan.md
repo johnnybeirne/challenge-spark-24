@@ -1,43 +1,43 @@
-## Recommendation
+## Goal
+Add small `?` icons next to the quiz hero **headline** and **subheading** on the playable quiz screen. Hovering (or tapping) shows a tooltip with advice. The advice text is editable from a new admin page.
 
-Yes — anchor the whole offer on the $497 number and make the invite path the hero. People only feel a discount when they see the price they're skipping. Right now both buttons look equal, so the free path doesn't feel like a win.
+## What to build
 
-Two things to change in the "Want to go deeper on quiz funnel strategy?" card:
+### 1. New DB table: `quiz_preview_tips`
+Single-row-per-key key/value store, scoped to two keys: `hero_headline`, `subheading`.
 
-### 1. Stack the buttons (primary on top)
-
-Put **Invite three friends to unlock** on top as the primary CTA, full-width, and demote **Upgrade to full course** to a smaller secondary link underneath. Side-by-side equals "pick either"; stacked with hierarchy equals "do this, or fall back to that."
-
-```text
-┌────────────────────────────────────────────┐
-│   🎁  Invite 3 friends — unlock free       │  ← primary, full width, accent
-│        (worth $497)                         │
-└────────────────────────────────────────────┘
-        or upgrade now for $497  →             ← small secondary link, centered
+```sql
+create table public.quiz_preview_tips (
+  key text primary key,           -- 'hero_headline' | 'subheading'
+  tip text not null default '',
+  updated_at timestamptz not null default now()
+);
+grant select on public.quiz_preview_tips to anon, authenticated;
+grant all on public.quiz_preview_tips to service_role;
+alter table public.quiz_preview_tips enable row level security;
+create policy "public read" on public.quiz_preview_tips for select using (true);
+create policy "admin write" on public.quiz_preview_tips for all
+  to authenticated using (public.has_role(auth.uid(),'admin'))
+  with check (public.has_role(auth.uid(),'admin'));
 ```
+Seed both rows with sensible default copy.
 
-### 2. Anchor the $497 in three places
+### 2. New hook: `src/hooks/useQuizPreviewTips.ts`
+Fetches both rows once, returns `{ heroHeadline: string, subheading: string, loading }`. Falls back to empty strings (icon hidden when empty).
 
-- **Card body copy** — name the price up front so the free path has something to be free *of*:
-  > "The full course is **$497**. Invite three friends and it's yours free — or upgrade now and skip the invites."
-- **Primary button** — small "worth $497" subline under the main label so the value lands at the moment of decision.
-- **Secondary link** — show the actual price ("upgrade now for $497") instead of hiding it behind "Upgrade to full course". A visible price feels honest; a hidden one feels like a trap.
+### 3. UI change: `src/components/Day2QuizPlayable.tsx`
+Next to the hero headline (line ~277) and subheading (line ~273), render an inline `<HelpTip text={...} />` — a small `HelpCircle` icon from lucide-react inside a shadcn `Tooltip` (with `TooltipProvider`). Visible to all users. If the tip string is empty, render nothing.
 
-### Why this works
+Create a tiny shared component `src/components/HelpTip.tsx` so we can reuse it.
 
-- One primary action removes the 50/50 paralysis. The invite button wins by visual weight, not by the user having to decide.
-- "Worth $497" reframes the invite from "do work for free" to "earn $497." Same action, completely different feeling.
-- Showing the price on the upgrade link makes the free path feel like the obvious move for most people, while still letting the small minority who'd rather just pay click through without friction.
+### 4. New admin page: `src/pages/AdminQuizPreviewTips.tsx`
+- Two `EditableField` (multiline) inputs from `cms-ui.tsx`: "Hero headline tip" and "Subheading tip", each with a helper sentence describing where it appears.
+- `StickyActionBar` to save (upserts both rows).
 
-### Scope of the change
+Route: add `/owner-console/quiz-preview-tips` in `src/App.tsx`.
 
-- File: `src/components/Day2Screen1.tsx`, the "Want to go deeper on quiz funnel strategy?" card (around lines 695–710).
-- Replace the side-by-side `flex-col sm:flex-row` button row with: primary `<Button>` (full width, accent) wrapping the invite link with a "Worth $497" subline, then a small centered text-link below it for the paid upgrade.
-- Update the card body copy to name the $497 once.
-- No new components, no logic changes, no routes added.
+Sidebar entry in `src/components/admin/AdminSidebar.tsx`: **"Quiz preview tips"** (icon: `HelpCircle`), placed near "User quiz preview".
 
-## Questions for you
-
-1. Confirm the primary button copy: **"Invite 3 friends — unlock free (worth $497)"** — or do you want a different phrasing?
-2. Confirm the secondary link copy: **"or upgrade now for $497 →"** — or do you want it framed as "skip the invites — $497"?
-3. Should the $497 ever be shown crossed-out (e.g. ~~$497~~ FREE) on the primary button, or is "worth $497" enough?
+## Out of scope
+- No changes to the headline/subheading copy itself or to the AI generation pipeline.
+- No tooltips on the CTA, sticky bar, or question cards (per your selection).

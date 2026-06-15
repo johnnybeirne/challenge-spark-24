@@ -1386,6 +1386,24 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_preview_tips: {
+        Row: {
+          key: string
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          tip?: string
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          tip?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quiz_questions: {
         Row: {
           created_at: string

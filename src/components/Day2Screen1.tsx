@@ -570,7 +570,7 @@ const Day2Screen1 = () => {
                 <Card>
                   <CardContent className="space-y-3 pt-6">
 
-                    <p className="text-center text-lg sm:text-xl font-semibold text-foreground">
+
 
 
                     <p className="text-center text-sm sm:text-base font-semibold text-primary">

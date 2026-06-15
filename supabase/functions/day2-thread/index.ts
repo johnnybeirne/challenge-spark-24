@@ -637,8 +637,14 @@ async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
     id, text, scoring: { low, mid, high },
   });
 
+  const shortenProblem = (s: string) => {
+    const words = s.replace(/\s+/g, " ").trim().split(" ");
+    return (words.slice(0, 6).join(" ") || "this").replace(/[.,;:?!]+$/, "");
+  };
+
   const fallbackQuiz = {
     quizTitle: `The ${aud} ${prob} Scorecard`.slice(0, 120),
+    heroProblemShort: shortenProblem(prob),
     questions: [
       mkQ(1, `Which best describes where you are right now with ${prob}?`, "Just starting to look at it", "Working on it but stuck", "Close to solving it"),
       mkQ(2, `What have you already tried to solve ${prob}?`, "Nothing structured yet", "A few things, mixed results", "Multiple proven approaches"),
@@ -657,6 +663,7 @@ async function handleSampleQuiz(inputs: Day1Inputs): Promise<Response> {
     },
   };
 
+
   const system = `${JOHNNY_VOICE}
 
 You are drafting an EDITABLE SAMPLE QUIZ for the builder, grounded entirely in their Day 1 setup.
@@ -667,6 +674,7 @@ ${KB}
 Return STRICT JSON only — no markdown, no commentary. Shape:
 {
   "quizTitle": string,                // 4-10 words, specific to the audience + problem
+  "heroProblemShort": string,         // 3-7 words, second-person ("you" form) where natural. Used in a headline like "Frustrated with {heroProblemShort}?". No leading "with", no trailing punctuation. Plain noun phrase or short clause that names the pain. Examples: "feeling stuck between chapters", "scattered marketing that does not convert", "leads that go cold after the call".
   "questions": [                      // EXACTLY 9 objects, ids 1..9 in order
     {
       "id": number,                   // 1..9
@@ -687,10 +695,12 @@ Return STRICT JSON only — no markdown, no commentary. Shape:
 
 Rules:
 - Use ONLY the builder's Day 1 data below. Do not invent facts.
+- heroProblemShort MUST be a tight 3-7 word phrase that compresses the full problem to its core pain — never just copy or truncate the long problem text.
 - Questions diagnose Present State, Preferred Future, and Pitfalls — diagnostic in style, relevant to the builder's subject matter.
 - Each question's three scoring labels must be meaningful, distinct answer options ordered low → mid → high.
 - Tier names are progress-oriented identity labels (e.g. Starter / Builder / Closer); descriptions are meaningful result segments for THIS audience.
 - No emojis. No exclamation marks. No "once".`;
+
 
   const userPrompt = `Builder Day 1 setup:
 - audience (client avatar): ${aud}
@@ -740,8 +750,17 @@ Generate the sample quiz JSON now.`;
       description: String(t?.description || fb.description).trim().slice(0, 500) || fb.description,
     });
 
+    const cleanShort = String(parsed?.heroProblemShort || "")
+      .trim()
+      .replace(/^["'`]+|["'`]+$/g, "")
+      .replace(/^with\s+/i, "")
+      .replace(/[.,;:?!]+$/, "")
+      .slice(0, 80);
+    const heroProblemShort = cleanShort || fallbackQuiz.heroProblemShort;
+
     const quiz = {
       quizTitle: String(parsed?.quizTitle || fallbackQuiz.quizTitle).trim().slice(0, 120),
+      heroProblemShort,
       questions: goodQs ? normQs : fallbackQuiz.questions,
       tiers: {
         low:  readTier(parsed?.tiers?.low,  fallbackQuiz.tiers.low),
@@ -749,6 +768,7 @@ Generate the sample quiz JSON now.`;
         high: readTier(parsed?.tiers?.high, fallbackQuiz.tiers.high),
       },
     };
+
     return new Response(JSON.stringify(quiz), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

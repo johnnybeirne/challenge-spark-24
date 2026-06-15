@@ -27,9 +27,11 @@ interface QuizQuestion {
 interface QuizTier { name: string; description: string }
 interface QuizDraft {
   quizTitle: string;
+  heroProblemShort?: string;
   questions: QuizQuestion[];
   tiers: { low: QuizTier; mid: QuizTier; high: QuizTier };
 }
+
 
 const TIER_ORDER: Tier[] = ["low", "mid", "high"];
 
@@ -101,6 +103,9 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
   });
   return {
     quizTitle: String(r.quizTitle ?? "Your diagnostic quiz"),
+    heroProblemShort: typeof r.heroProblemShort === "string" && r.heroProblemShort.trim()
+      ? r.heroProblemShort.trim()
+      : undefined,
     questions,
     tiers: {
       low: readTier(r.tiers?.low, "Starter"),
@@ -109,6 +114,7 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
     },
   };
 };
+
 
 // Shared Assessment-style frame: sticky sample banner + blurred bg + centered card column
 const Frame = ({ children }: { children: ReactNode }) => (
@@ -268,8 +274,19 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
     const problem = d1.problem;
     const outcome = d1.outcome;
     const topicShort = identity.isPersonalised ? identity.shortTitle.toLowerCase() : "your results";
-    const problemShort = problem.replace(/^[A-Z]/, (c) => c.toLowerCase()).replace(/[.?!]+$/, "");
+    // Prefer the AI-generated short version. Fallback: first 6 words of the saved problem.
+    const fallbackShort = problem
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .slice(0, 6)
+      .join(" ")
+      .replace(/[.,;:?!]+$/, "");
+    const problemShort = (quiz.heroProblemShort || fallbackShort)
+      .replace(/^[A-Z]/, (c) => c.toLowerCase())
+      .replace(/[.?!]+$/, "");
     const headline = `Frustrated with ${problemShort}?`;
+
     const subhead = "Take the two-minute quiz and get a personalized strategy based on your answers.";
 
 

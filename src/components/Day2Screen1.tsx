@@ -421,9 +421,11 @@ const Day2Screen1 = () => {
     setOpenCard((prev) => (prev === idx ? null : idx));
   };
 
-  // Gate removed: the Generate button is always clickable so testers and
-  // returning users can jump straight into the quiz preview.
+  // Generate button unlocks only after all 3 reveal cards have been marked as read.
+  // QA mode bypasses the gate so testers can jump straight in.
+  const allRead = qaUnlock || (readCards.has(0) && readCards.has(1) && readCards.has(2));
   const allOpened = true;
+
 
   const [quizGenerating, setQuizGenerating] = useState(false);
   const [quizModalOpen, setQuizModalOpen] = useState(false);
@@ -622,7 +624,7 @@ const Day2Screen1 = () => {
                       </button>
                     )}
 
-                    {allOpened ? (
+                    {allRead ? (
                       <button
                         type="button"
                         onClick={handleGenerateQuiz}
@@ -647,12 +649,14 @@ const Day2Screen1 = () => {
                         type="button"
                         disabled
                         aria-disabled="true"
+                        title="Mark all three sections as read to unlock"
                         className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
                       >
                         <Lock className="h-4 w-4" />
-                        Generate your quiz now
+                        Mark 1, 2 & 3 as read to generate your quiz
                       </button>
                     )}
+
 
 
 

@@ -495,22 +495,6 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           </div>
         </section>
 
-        {/* Spacer for sticky bar */}
-        <div className="h-24" />
-
-        {/* Sticky bottom bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-[90] border-t border-slate-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto max-w-6xl px-5 md:px-8 py-3 flex items-center justify-between gap-4">
-            <p className="text-sm md:text-base font-semibold text-slate-900">Ready?</p>
-            <button
-              type="button"
-              onClick={startQuiz}
-              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700"
-            >
-              Start the quiz <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
       </div>
     );
   }

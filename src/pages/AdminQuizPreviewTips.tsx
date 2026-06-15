@@ -34,6 +34,12 @@ const FIELDS: Array<{
     label: "Advice shown on hover",
   },
   {
+    key: "problem_paragraph",
+    title: "Problem supporting paragraph",
+    description: 'Next to the "Most [audience] stay stuck here…" line under the problem heading.',
+    label: "Advice shown on hover",
+  },
+  {
     key: "pain_guessing",
     title: "Pain card 1 — Guessing what to fix",
     description: "First of the three pain cards under the problem section.",

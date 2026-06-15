@@ -667,7 +667,29 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   );
 };
 
+const ReadinessRing = ({ pct }: { pct: number }) => {
+  const r = 56;
+  const c = 2 * Math.PI * r;
+  const offset = c - (pct / 100) * c;
+  return (
+    <div className="relative h-36 w-36">
+      <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
+        <circle cx="70" cy="70" r={r} stroke="#E2E8F0" strokeWidth="12" fill="none" />
+        <circle
+          cx="70" cy="70" r={r}
+          stroke="#4F46E5" strokeWidth="12" fill="none"
+          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-3xl font-bold text-slate-900">{pct}%</span>
+      </div>
+    </div>
+  );
+};
+
 const SampleQuizBanner = () => (
+
   <div
     className="sticky top-0 left-0 right-0 z-[100] w-full text-center"
     style={{

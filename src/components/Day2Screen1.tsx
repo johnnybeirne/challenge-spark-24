@@ -490,17 +490,16 @@ const Day2Screen1 = () => {
               return (
                 <div
                   key={label}
-                  className="flex gap-3 rounded-xl border bg-card p-4 shadow-sm"
+                  className="rounded-xl border bg-card p-4 shadow-sm"
                 >
-                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Icon className="h-4.5 w-4.5" strokeWidth={2.25} />
                   </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-foreground/80">{label}</p>
-                    <p className="mt-1 text-sm leading-snug text-muted-foreground">{v}</p>
-                  </div>
+                  <p className="mt-3 text-sm font-bold text-foreground">{label}</p>
+                  <p className="mt-1 text-sm leading-snug text-muted-foreground">{v}</p>
                 </div>
               );
+
             })}
           </div>
         </header>

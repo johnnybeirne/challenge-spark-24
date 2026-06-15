@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const QUIZ_TIP_KEYS = [
+  "audience_eyebrow",
   "hero_headline",
   "subheading",
   "problem_section",

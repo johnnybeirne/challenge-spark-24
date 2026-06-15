@@ -360,7 +360,10 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         <section className="mx-auto max-w-6xl px-5 md:px-8 pt-12 pb-16 md:pt-20 md:pb-24">
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
             <div>
-              <Eyebrow>Built for {audienceShort}</Eyebrow>
+              <Eyebrow>
+                Built for {audienceShort}
+                <HelpTip text={previewTips.audience_eyebrow} className="ml-2 align-middle" label="About this eyebrow" />
+              </Eyebrow>
               <h1 className="mt-4 font-montserrat font-bold text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
                 {headline}
                 <HelpTip text={previewTips.hero_headline} className="ml-2 align-middle" label="About this headline" />

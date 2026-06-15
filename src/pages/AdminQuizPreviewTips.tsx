@@ -16,6 +16,12 @@ const FIELDS: Array<{
   label: string;
 }> = [
   {
+    key: "audience_eyebrow",
+    title: "Audience eyebrow",
+    description: 'The "Built for [audience]" line above the hero headline.',
+    label: "Advice shown on hover",
+  },
+  {
     key: "hero_headline",
     title: "Hero headline",
     description: 'Next to the "Frustrated with…" headline at the top of the quiz.',

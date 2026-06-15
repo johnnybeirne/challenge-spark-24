@@ -63,6 +63,12 @@ const FIELDS: Array<{
     description: "Third of the three pain cards.",
     label: "Advice shown on hover",
   },
+  {
+    key: "reveals_section",
+    title: "What the quiz reveals",
+    description: 'Next to the "What the quiz reveals" eyebrow above the four bullets.',
+    label: "Advice shown on hover",
+  },
 ];
 
 const DEFAULTS: QuizPreviewTips = QUIZ_TIP_KEYS.reduce(

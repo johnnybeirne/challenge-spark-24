@@ -478,9 +478,15 @@ const Day2Screen1 = () => {
           <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
             Day 2{nameSuffix}: Build your quiz
           </h1>
+          <p className="mt-3 text-base sm:text-lg font-semibold text-foreground">
+            {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
+            <br />
+            Your challenge builds the trust that converts.
+          </p>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             Let’s build the quiz that gets {clientAvatar} into your challenge.
           </p>
+
 
 
 
@@ -564,11 +570,8 @@ const Day2Screen1 = () => {
                 <Card>
                   <CardContent className="space-y-3 pt-6">
 
-                    <p className="text-center text-lg sm:text-xl font-semibold text-foreground">
-                      {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
-                      <br />
-                      Your challenge builds the trust that converts.
-                    </p>
+
+
 
                     <p className="text-center text-sm sm:text-base font-semibold text-primary">
                       Read each section below before moving on.

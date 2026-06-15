@@ -27,9 +27,11 @@ interface QuizQuestion {
 interface QuizTier { name: string; description: string }
 interface QuizDraft {
   quizTitle: string;
+  heroProblemShort?: string;
   questions: QuizQuestion[];
   tiers: { low: QuizTier; mid: QuizTier; high: QuizTier };
 }
+
 
 const TIER_ORDER: Tier[] = ["low", "mid", "high"];
 

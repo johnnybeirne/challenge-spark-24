@@ -571,10 +571,7 @@ const Day2Screen1 = () => {
                   <CardContent className="space-y-3 pt-6">
 
                     <p className="text-center text-lg sm:text-xl font-semibold text-foreground">
-                      {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
-                      <br />
-                      Your challenge builds the trust that converts.
-                    </p>
+
 
                     <p className="text-center text-sm sm:text-base font-semibold text-primary">
                       Read each section below before moving on.

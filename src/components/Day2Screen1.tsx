@@ -429,6 +429,14 @@ const Day2Screen1 = () => {
 
   const [quizGenerating, setQuizGenerating] = useState(false);
   const [quizModalOpen, setQuizModalOpen] = useState(false);
+  const [showLockHint, setShowLockHint] = useState(false);
+  const lockHintTimerRef = useRef<number | null>(null);
+
+  const triggerLockHint = () => {
+    setShowLockHint(true);
+    if (lockHintTimerRef.current) window.clearTimeout(lockHintTimerRef.current);
+    lockHintTimerRef.current = window.setTimeout(() => setShowLockHint(false), 3500);
+  };
 
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
@@ -647,20 +655,30 @@ const Day2Screen1 = () => {
                         )}
                       </button>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          toast("Read each section above and mark it as read to unlock.", {
-                            description: "Tap 1, 2 and 3 in turn, then mark each as read.",
-                          })
-                        }
-                        aria-disabled="true"
-                        title="Mark all three sections as read to unlock"
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
-                      >
-                        <Lock className="h-4 w-4" />
-                        Mark 1, 2 & 3 as read to generate your quiz
-                      </button>
+                      <div className="relative">
+                        {showLockHint && (
+                          <div
+                            role="status"
+                            className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 text-sm font-semibold shadow-xl animate-fade-in"
+                          >
+                            Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.
+                            <span
+                              aria-hidden="true"
+                              className="absolute left-1/2 -translate-x-1/2 top-full -mt-px h-3 w-3 rotate-45 bg-foreground"
+                            />
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={triggerLockHint}
+                          aria-disabled="true"
+                          title="Mark all three sections as read to unlock"
+                          className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
+                        >
+                          <Lock className="h-4 w-4" />
+                          Mark 1, 2 & 3 as read to generate your quiz
+                        </button>
+                      </div>
                     )}
 
 

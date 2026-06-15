@@ -437,8 +437,9 @@ const Day2Screen1 = () => {
 
   const handleGenerateQuiz = () => {
     if (quizGenerating) return;
-    setQuizModalOpen(true);
+    window.open("/quiz-preview", "_blank", "noopener,noreferrer");
   };
+
 
 
   const handleContinue = () => {

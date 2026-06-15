@@ -304,12 +304,11 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       { icon: Clock, title: "Wasted effort", body: `Hours spent on tactics that don't move you closer to ${outcome}.`, tipKey: "pain_wasted" as const },
     ];
 
-    const tierNames = [quiz.tiers.low.name, quiz.tiers.mid.name, quiz.tiers.high.name];
     const causes = [
-      `You're at the "${tierNames[0]}" stage and missing the foundations.`,
-      `You're a "${tierNames[1]}", strong in places but inconsistent.`,
-      `You're already at "${tierNames[2]}" level and need a sharper edge.`,
-      "A hidden blind spot is quietly costing you results.",
+      "Which stage you're at right now on a clear, named scale.",
+      "The specific root cause behind what's keeping you stuck.",
+      "The one move that will make the biggest difference next.",
+      "A hidden blind spot that's quietly costing you results.",
     ];
 
     const resultBullets = [

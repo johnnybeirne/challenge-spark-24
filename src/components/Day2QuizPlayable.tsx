@@ -422,7 +422,10 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         {/* SECTION 3 — WHAT THE QUIZ REVEALS */}
         <section className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
           <div className="max-w-2xl">
-            <Eyebrow>What the quiz reveals</Eyebrow>
+            <Eyebrow>
+              What the quiz reveals
+              <HelpTip text={previewTips.reveals_section} className="ml-2 align-middle" label="About this section" />
+            </Eyebrow>
             <SectionHeading>Your {topicShort} usually has one primary cause.</SectionHeading>
           </div>
           <ul className="mt-10 grid md:grid-cols-2 gap-4 max-w-4xl">

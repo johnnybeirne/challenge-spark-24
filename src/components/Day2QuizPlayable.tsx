@@ -258,56 +258,269 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
   // ───────────── Landing screen ─────────────
   if (!started && answers.length === 0) {
-    const headline = identity.isPersonalised
-      ? `Find out where you stand with ${identity.shortTitle.toLowerCase()}.`
-      : quiz.quizTitle;
-    const quizSubtitle = typeof (quiz as any).subtitle === "string" ? (quiz as any).subtitle.trim() : "";
-    const quizIntro = typeof (quiz as any).intro === "string" ? (quiz as any).intro.trim() : "";
-    const fallbackSub = `A short diagnostic for ${d1.audience}. Find out exactly where you stand — and the one move that will make the biggest difference.`;
-    const sub = quizSubtitle || quizIntro || fallbackSub;
+    const audience = d1.audience;
+    const problem = d1.problem;
+    const outcome = d1.outcome;
+    const topicShort = identity.isPersonalised ? identity.shortTitle.toLowerCase() : "your results";
+    const headline = quiz.quizTitle;
+    const subhead = `A short diagnostic for ${audience}. Find out where you stand with ${topicShort}, and the one move that will make the biggest difference.`;
+
+    const startQuiz = () => {
+      setStarted(true);
+      trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
+    };
+
+    const pains = [
+      { icon: AlertTriangle, title: "Guessing what to fix", body: `You can feel ${problem}, but can't name the real cause.` },
+      { icon: Search, title: "Too much generic advice", body: "Every guru says something different. None of it is built for your situation." },
+      { icon: Clock, title: "Wasted effort", body: `Hours spent on tactics that don't move you closer to ${outcome}.` },
+    ];
+
+    const tierNames = [quiz.tiers.low.name, quiz.tiers.mid.name, quiz.tiers.high.name];
+    const causes = [
+      `You're at the "${tierNames[0]}" stage and missing the foundations.`,
+      `You're a "${tierNames[1]}", strong in places but inconsistent.`,
+      `You're already at "${tierNames[2]}" level and need a sharper edge.`,
+      "A hidden blind spot is quietly costing you results.",
+    ];
+
+    const resultBullets = [
+      "Your exact stage on a clear, named scale.",
+      "The biggest lever you can pull this week.",
+      "A short, specific next step, not a 40-page PDF.",
+    ];
+
+    const benefits = [
+      { icon: Target, label: "Clarity on the real problem" },
+      { icon: Compass, label: "A direction, not more theory" },
+      { icon: TrendingUp, label: "Faster, smarter decisions" },
+      { icon: Sparkles, label: "Confidence in your next move" },
+    ];
+
+    const faqs = [
+      { q: "How long does it take?", a: `${quiz.questions.length} questions, under 2 minutes.` },
+      { q: "Who is this for?", a: `Built for ${audience}.` },
+      { q: "What do I get at the end?", a: "An instant, personalised result with a clear next step." },
+      { q: "Do I have to pay?", a: "No. It's free." },
+    ];
+
+    const Eyebrow = ({ children }: { children: ReactNode }) => (
+      <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-indigo-600">{children}</p>
+    );
+    const SectionHeading = ({ children }: { children: ReactNode }) => (
+      <h2 className="mt-3 font-montserrat font-bold text-3xl md:text-4xl leading-tight tracking-tight text-slate-900">
+        {children}
+      </h2>
+    );
+    const CtaButton = ({ children, onClick, className }: { children: ReactNode; onClick: () => void; className?: string }) => (
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-7 py-4 text-base font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 active:scale-[0.99]",
+          className,
+        )}
+      >
+        {children}
+      </button>
+    );
 
     return (
-      <Frame>
-        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-            {quiz.quizTitle}
-          </p>
-          <h1 className="mt-3 font-montserrat font-semibold text-xl md:text-2xl leading-[1.2] text-foreground">
-            {headline}
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            {sub}
-          </p>
+      <div className="relative w-full min-h-full bg-white text-slate-900">
+        <SampleQuizBanner />
 
-          <div className="mt-5 flex flex-wrap justify-center gap-2">
-            {[`${quiz.questions.length} questions`, "Under 2 minutes", "Instant result"].map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-              >
-                {label}
-              </span>
+        {/* SECTION 1 — HERO */}
+        <section className="mx-auto max-w-6xl px-5 md:px-8 pt-12 pb-16 md:pt-20 md:pb-24">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+            <div>
+              <Eyebrow>Built for {audience}</Eyebrow>
+              <h1 className="mt-4 font-montserrat font-bold text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
+                {headline}
+              </h1>
+              <p className="mt-5 text-lg text-slate-600 leading-relaxed max-w-xl">
+                {subhead}
+              </p>
+              <div className="mt-8">
+                <CtaButton onClick={startQuiz}>
+                  <Play className="h-5 w-5" /> Start the quiz
+                </CtaButton>
+                <p className="mt-3 text-sm text-slate-500">
+                  {quiz.questions.length} questions. Under 2 minutes. Instant result.
+                </p>
+              </div>
+            </div>
+            <div className="aspect-[4/5] md:aspect-[5/6] w-full rounded-3xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-400">
+              <Camera className="h-12 w-12" />
+              <p className="mt-3 text-sm font-medium">Your photo goes here</p>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 2 — THE PROBLEM */}
+        <section className="bg-slate-50 border-y border-slate-100">
+          <div className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+            <div className="max-w-2xl">
+              <Eyebrow>The problem</Eyebrow>
+              <SectionHeading>{problem.charAt(0).toUpperCase() + problem.slice(1)}.</SectionHeading>
+              <p className="mt-4 text-lg text-slate-600 leading-relaxed">
+                Most {audience} stay stuck here because they're treating symptoms, not the actual cause.
+              </p>
+            </div>
+            <div className="mt-12 grid md:grid-cols-3 gap-5">
+              {pains.map(({ icon: Icon, title, body }) => (
+                <div key={title} className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
+                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 font-semibold text-lg text-slate-900">{title}</h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3 — WHAT THE QUIZ REVEALS */}
+        <section className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+          <div className="max-w-2xl">
+            <Eyebrow>What the quiz reveals</Eyebrow>
+            <SectionHeading>Your {topicShort} usually has one primary cause.</SectionHeading>
+          </div>
+          <ul className="mt-10 grid md:grid-cols-2 gap-4 max-w-4xl">
+            {causes.map((c) => (
+              <li key={c} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+                <CheckCircle2 className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
+                <span className="text-slate-700 leading-relaxed">{c}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* SECTION 4 — SAMPLE RESULT */}
+        <section className="bg-slate-50 border-y border-slate-100">
+          <div className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <Eyebrow>Your result</Eyebrow>
+                <SectionHeading>Get a clear diagnosis, then a recommended strategy.</SectionHeading>
+                <ul className="mt-8 space-y-3">
+                  {resultBullets.map((b) => (
+                    <li key={b} className="flex gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
+                      <span className="text-slate-700 leading-relaxed">{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex flex-col items-center justify-center rounded-3xl bg-white border border-slate-200 p-10">
+                <ReadinessRing pct={72} />
+                <p className="mt-5 text-sm font-semibold uppercase tracking-wider text-slate-500">
+                  Readiness score
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 5 — WHY TAKE IT */}
+        <section className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+          <div className="max-w-2xl">
+            <Eyebrow>Why take it</Eyebrow>
+            <SectionHeading>Know what to fix before you spend more effort.</SectionHeading>
+          </div>
+          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {benefits.map(({ icon: Icon, label }) => (
+              <div key={label} className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
+                <div className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <p className="mt-4 text-sm font-semibold text-slate-900 leading-snug">{label}</p>
+              </div>
             ))}
           </div>
+        </section>
 
-          <Button
-            size="lg"
-            className="mt-6 w-full h-14 rounded-full font-bold shadow-lg"
-            onClick={() => {
-              setStarted(true);
-              trackEvent("day_training_viewed", { day: 2, surface: "day2_s2_landing", mode: "start" });
-            }}
-          >
-            <Play className="h-5 w-5" /> Take the Quiz
-          </Button>
+        {/* SECTION 6 — WHO IT'S FOR */}
+        <section className="bg-slate-50 border-y border-slate-100">
+          <div className="mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-24">
+            <div className="rounded-3xl bg-white border border-slate-200 p-10 md:p-14 text-center shadow-sm">
+              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white">
+                <Users className="h-7 w-7" />
+              </div>
+              <h2 className="mt-6 font-montserrat font-bold text-2xl md:text-3xl leading-tight text-slate-900">
+                Built for {audience}, not another theory.
+              </h2>
+              <p className="mt-4 text-slate-600 leading-relaxed">
+                If you're tired of generic frameworks and want a quick, honest read on where you actually stand,
+                this quiz is for you. Two minutes, a real answer, a clear next step.
+              </p>
+            </div>
+          </div>
+        </section>
 
-          <p className="mt-3 text-xs text-muted-foreground">
-            Personalised result in seconds
-          </p>
+        {/* SECTION 7 — FAQ */}
+        <section className="mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-24">
+          <div className="text-center">
+            <Eyebrow>FAQ</Eyebrow>
+            <SectionHeading>Frequently asked questions</SectionHeading>
+          </div>
+          <Accordion type="single" collapsible className="mt-10">
+            {faqs.map((item, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="border-slate-200">
+                <AccordionTrigger className="text-left text-base font-semibold text-slate-900 hover:no-underline">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-600 leading-relaxed">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+
+        {/* SECTION 8 — BOTTOM CTA */}
+        <section className="bg-slate-50 border-t border-slate-100">
+          <div className="mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-24 text-center">
+            <h2 className="font-montserrat font-bold text-3xl md:text-4xl leading-tight text-slate-900">
+              Find out where you stand with {topicShort}.
+            </h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Two minutes. One honest answer. A clear next step.
+            </p>
+            <div className="mt-8">
+              <CtaButton onClick={startQuiz}>
+                <Play className="h-5 w-5" /> Start the quiz
+              </CtaButton>
+            </div>
+          </div>
+        </section>
+
+        {/* Spacer for sticky bar */}
+        <div className="h-24" />
+
+        {/* Sticky bottom bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-[90] border-t border-slate-200 bg-white/95 backdrop-blur">
+          <div className="mx-auto max-w-6xl px-5 md:px-8 py-3 flex items-center justify-between gap-4">
+            <p className="text-sm md:text-base font-semibold text-slate-900">Ready?</p>
+            <button
+              type="button"
+              onClick={startQuiz}
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700"
+            >
+              Start the quiz <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-      </Frame>
+      </div>
     );
   }
+
+  // (legacy block retained below for reference, intentionally unreachable)
+  // eslint-disable-next-line no-constant-condition
+  if (false) {
+    return null;
+  }
+
 
   // ───────────── Result screen ─────────────
   if (result) {

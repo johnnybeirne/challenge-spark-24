@@ -544,8 +544,30 @@ const QaModePanel = () => {
               </p>
             </div>
 
+            <div className="space-y-1.5 rounded-md border border-primary/40 bg-primary/5 p-2">
+              <SectionLabel>Live Quiz (challenge taker view)</SectionLabel>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  onClick={() => window.open("/quiz-preview", "_blank", "noopener,noreferrer")}
+                  className="rounded border border-primary bg-primary px-2 py-1.5 text-[11px] font-black uppercase tracking-wider text-primary-foreground hover:opacity-90"
+                >
+                  Open in new tab
+                </button>
+                <button
+                  onClick={() => navigate("/quiz-preview")}
+                  className="rounded border border-border bg-background px-2 py-1.5 text-[11px] font-black uppercase tracking-wider hover:bg-muted"
+                >
+                  Open here
+                </button>
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Renders the exact generating → playable quiz an end user sees, using your saved Day 1 / Day 2 data.
+              </p>
+            </div>
+
             <QaPersonas />
             <QaSimulatedDate />
+
 
 
 

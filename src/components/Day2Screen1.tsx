@@ -624,7 +624,7 @@ const Day2Screen1 = () => {
                       </button>
                     )}
 
-                    {allOpened ? (
+                    {allRead ? (
                       <button
                         type="button"
                         onClick={handleGenerateQuiz}
@@ -649,12 +649,14 @@ const Day2Screen1 = () => {
                         type="button"
                         disabled
                         aria-disabled="true"
+                        title="Mark all three sections as read to unlock"
                         className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
                       >
                         <Lock className="h-4 w-4" />
-                        Generate your quiz now
+                        Mark 1, 2 & 3 as read to generate your quiz
                       </button>
                     )}
+
 
 
 

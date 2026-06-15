@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, Trophy, RefreshCw, Share2, Play } from "lucide-react";
+import {
+  ArrowLeft, CheckCircle2, Trophy, RefreshCw, Share2, Play,
+  Camera, Target, Compass, Lightbulb, AlertTriangle, Search,
+  TrendingUp, Users, Clock, Sparkles, ChevronDown, ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +15,7 @@ import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
 import assessmentBg from "@/assets/assessment-bg.png.asset.json";
+
 
 type Tier = "low" | "mid" | "high";
 

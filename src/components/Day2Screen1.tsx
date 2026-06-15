@@ -450,7 +450,7 @@ const Day2Screen1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 pb-24">
+      <div className="mx-auto w-[90%] max-w-[1400px] px-4 py-6 sm:py-8 pb-24">
         {/* Step indicator */}
         <div className="mb-6 flex items-center justify-between">
           <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">

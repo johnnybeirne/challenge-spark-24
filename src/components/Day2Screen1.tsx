@@ -649,7 +649,11 @@ const Day2Screen1 = () => {
                     ) : (
                       <button
                         type="button"
-                        disabled
+                        onClick={() =>
+                          toast("Read each section above and mark it as read to unlock.", {
+                            description: "Tap 1, 2 and 3 in turn, then mark each as read.",
+                          })
+                        }
                         aria-disabled="true"
                         title="Mark all three sections as read to unlock"
                         className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"

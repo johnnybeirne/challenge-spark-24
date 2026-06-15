@@ -5,6 +5,7 @@ export const QUIZ_TIP_KEYS = [
   "hero_headline",
   "subheading",
   "problem_section",
+  "problem_paragraph",
   "pain_guessing",
   "pain_generic",
   "pain_wasted",

@@ -397,6 +397,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               <SectionHeading>{problem.charAt(0).toUpperCase() + problem.slice(1)}.</SectionHeading>
               <p className="mt-4 text-lg text-slate-600 leading-relaxed">
                 Most {audience} stay stuck here because they're treating symptoms, not the actual cause.
+                <HelpTip text={previewTips.problem_paragraph} className="ml-1.5 align-middle" label="About this paragraph" />
               </p>
             </div>
             <div className="mt-12 grid md:grid-cols-3 gap-5">

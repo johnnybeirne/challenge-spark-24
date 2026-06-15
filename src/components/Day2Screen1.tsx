@@ -480,17 +480,20 @@ const Day2Screen1 = () => {
           {/* Day 1 recap */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {[
-              { label: "Your audience", value: clientAvatar, Icon: Users },
-              { label: "Your superpower", value: superpower, Icon: Zap },
-              { label: "The problem you solve", value: problem, Icon: AlertCircle },
-              { label: "The result you deliver", value: challengeOutcome, Icon: Target },
-              { label: "Your challenge promise", value: challengePromise, Icon: Flag },
-            ].map(({ label, value, Icon }) => {
+              { label: "Your audience", value: clientAvatar, Icon: Users, wide: false },
+              { label: "Your superpower", value: superpower, Icon: Zap, wide: false },
+              { label: "The problem you solve", value: problem, Icon: AlertCircle, wide: false },
+              { label: "The result you deliver", value: challengeOutcome, Icon: Target, wide: false },
+              { label: "Your challenge promise", value: challengePromise, Icon: Flag, wide: true },
+            ].map(({ label, value, Icon, wide }) => {
               const v = value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
               return (
                 <div
                   key={label}
-                  className="rounded-xl border bg-card p-4 shadow-sm"
+                  className={cn(
+                    "rounded-xl border bg-card p-4 shadow-sm",
+                    wide && "sm:col-span-2",
+                  )}
                 >
                   <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Icon className="h-4.5 w-4.5" strokeWidth={2.25} />
@@ -501,6 +504,7 @@ const Day2Screen1 = () => {
               );
 
             })}
+
           </div>
         </header>
 

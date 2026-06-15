@@ -423,7 +423,7 @@ const Day2Screen1 = () => {
 
   // Generate button unlocks only after all 3 reveal cards have been marked as read.
   // QA mode bypasses the gate so testers can jump straight in.
-  const allRead = readCards.has(0) && readCards.has(1) && readCards.has(2);
+  const allRead = qaUnlock || (readCards.has(0) && readCards.has(1) && readCards.has(2));
   const allOpened = true;
 
 

@@ -25,6 +25,7 @@ export interface QaFlags {
   builderCircleUnlocked: boolean;
   module4Unlocked: boolean;
   module5Unlocked: boolean;
+  day2BypassReadGate: boolean;
 }
 
 export interface QaPreviewState {
@@ -59,6 +60,7 @@ export const defaultQaState: QaPreviewState = {
     builderCircleUnlocked: false,
     module4Unlocked: false,
     module5Unlocked: false,
+    day2BypassReadGate: true,
   },
 };
 

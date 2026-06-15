@@ -609,6 +609,18 @@ const QaModePanel = () => {
               </div>
             </div>
 
+            <div className="space-y-1.5">
+              <SectionLabel>Day 2 Gates</SectionLabel>
+              <Toggle
+                label="Bypass mark-as-read gate"
+                checked={qa.flags.day2BypassReadGate}
+                onChange={(v) => updateQaFlags({ day2BypassReadGate: v })}
+              />
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                When off, "Generate your quiz now" stays locked until cards 1, 2 & 3 are marked as read.
+              </p>
+            </div>
+
             <AssessmentStateSection />
 
             <div className="space-y-1.5">

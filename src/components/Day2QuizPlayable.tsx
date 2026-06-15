@@ -390,17 +390,23 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         <section className="bg-slate-50 border-y border-slate-100">
           <div className="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
             <div className="max-w-2xl">
-              <Eyebrow>The problem</Eyebrow>
+              <Eyebrow>
+                The problem
+                <HelpTip text={previewTips.problem_section} className="ml-2 align-middle" label="About the problem section" />
+              </Eyebrow>
               <SectionHeading>{problem.charAt(0).toUpperCase() + problem.slice(1)}.</SectionHeading>
               <p className="mt-4 text-lg text-slate-600 leading-relaxed">
                 Most {audience} stay stuck here because they're treating symptoms, not the actual cause.
               </p>
             </div>
             <div className="mt-12 grid md:grid-cols-3 gap-5">
-              {pains.map(({ icon: Icon, title, body }) => (
-                <div key={title} className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
+              {pains.map(({ icon: Icon, title, body, tipKey }) => (
+                <div key={title} className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm relative">
                   <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                     <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="absolute top-4 right-4">
+                    <HelpTip text={previewTips[tipKey]} label={`About: ${title}`} />
                   </div>
                   <h3 className="mt-4 font-semibold text-lg text-slate-900">{title}</h3>
                   <p className="mt-2 text-sm text-slate-600 leading-relaxed">{body}</p>

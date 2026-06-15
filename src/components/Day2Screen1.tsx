@@ -704,7 +704,7 @@ const Day2Screen1 = () => {
                             </p>
                             <div className="flex flex-col sm:flex-row gap-2">
                               <Button asChild variant="outline" className="flex-1">
-                                <Link to="/referrals">Invite a friend to unlock</Link>
+                                <Link to="/referrals">Invite three friends to unlock</Link>
                               </Button>
                               <Button asChild className="flex-1">
                                 <Link to="/upgrade">Upgrade to full course</Link>

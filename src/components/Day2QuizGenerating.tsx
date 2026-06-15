@@ -53,8 +53,8 @@ const readDay1 = (aiOutputs: Record<string, string> | undefined) => {
 };
 
 // ── Programmatic ambient pad ──────────────────────────────────────
-// Two slowly-detuned sines through a low-pass filter, with a slow
-// gain LFO so it breathes like something is being built. Web Audio
+// Two soft, slowly-detuned sines through a low-pass filter, with a subtle
+// gain LFO so it feels calm without drawing attention. Web Audio
 // API only — no files, no libraries. Respects autoplay policy: if
 // the AudioContext can't start (e.g. system muted or autoplay
 // blocked) we silently skip.
@@ -71,31 +71,31 @@ const startAmbientPad = () => {
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 900;
-    filter.Q.value = 0.6;
+    filter.frequency.value = 520;
+    filter.Q.value = 0.45;
     filter.connect(master);
 
-    // Two oscillators, slightly detuned, low register.
+    // Two oscillators, slightly detuned, warm low register.
     const o1 = ctx.createOscillator();
     o1.type = "sine";
-    o1.frequency.value = 110; // A2
+    o1.frequency.value = 82.41; // E2
     const o2 = ctx.createOscillator();
     o2.type = "sine";
-    o2.frequency.value = 164.81; // E3 — perfect fifth
-    o2.detune.value = -6;
+    o2.frequency.value = 123.47; // B2
+    o2.detune.value = -3;
 
     const voiceGain = ctx.createGain();
-    voiceGain.gain.value = 0.18;
+    voiceGain.gain.value = 0.08;
     o1.connect(voiceGain);
     o2.connect(voiceGain);
     voiceGain.connect(filter);
 
-    // Slow gain LFO — pulsing "breathing" feel.
+    // Very slow gain LFO, a barely-there breathing feel.
     const lfo = ctx.createOscillator();
     lfo.type = "sine";
-    lfo.frequency.value = 0.25; // ~4s cycle
+    lfo.frequency.value = 0.12;
     const lfoGain = ctx.createGain();
-    lfoGain.gain.value = 0.08;
+    lfoGain.gain.value = 0.02;
     lfo.connect(lfoGain);
     lfoGain.connect(voiceGain.gain);
 
@@ -107,7 +107,7 @@ const startAmbientPad = () => {
     // Gentle fade-in.
     master.gain.cancelScheduledValues(now);
     master.gain.setValueAtTime(0, now);
-    master.gain.linearRampToValueAtTime(0.5, now + 1.2);
+    master.gain.linearRampToValueAtTime(0.22, now + 1.8);
 
     // Try to resume if the policy left it suspended (best-effort).
     if (ctx.state === "suspended") {

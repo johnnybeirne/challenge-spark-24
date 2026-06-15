@@ -103,6 +103,9 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
   });
   return {
     quizTitle: String(r.quizTitle ?? "Your diagnostic quiz"),
+    heroProblemShort: typeof r.heroProblemShort === "string" && r.heroProblemShort.trim()
+      ? r.heroProblemShort.trim()
+      : undefined,
     questions,
     tiers: {
       low: readTier(r.tiers?.low, "Starter"),
@@ -111,6 +114,7 @@ const normaliseQuiz = (raw: unknown): QuizDraft | null => {
     },
   };
 };
+
 
 // Shared Assessment-style frame: sticky sample banner + blurred bg + centered card column
 const Frame = ({ children }: { children: ReactNode }) => (

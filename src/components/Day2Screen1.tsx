@@ -511,37 +511,6 @@ const Day2Screen1 = () => {
 
 
 
-        {/* Section progress */}
-        <ol className="mb-8 flex flex-wrap items-center gap-2">
-          {SECTIONS.map((s) => {
-            const isActive = s.id === activeId;
-            const isComplete = completeMap[s.id];
-            const isLocked = qaUnlock ? false : (!isActive && !isComplete);
-            return (
-              <li
-                key={s.id}
-                className={cn(
-                  "flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold",
-                  isActive && "border-primary bg-primary text-primary-foreground",
-                  isComplete && !isActive && "border-primary/40 bg-primary/10 text-foreground",
-                  isLocked && "border-border bg-muted text-muted-foreground",
-                )}
-              >
-                <span
-                  className={cn(
-                    "inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black",
-                    isActive && "bg-primary-foreground text-primary",
-                    isComplete && !isActive && "bg-primary text-primary-foreground",
-                    isLocked && "bg-background text-muted-foreground",
-                  )}
-                >
-                  {isLocked ? <Lock className="h-3 w-3" /> : s.id}
-                </span>
-                <span>{s.label}</span>
-              </li>
-            );
-          })}
-        </ol>
 
         {/* Sections */}
         <div className="space-y-4">

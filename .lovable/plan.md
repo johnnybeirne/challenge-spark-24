@@ -1,30 +1,43 @@
-## Problem
+## Recommendation
 
-The "Generate your quiz now" button is already wired to an `allRead` gate that requires cards 1, 2, and 3 to be marked as read. But it's currently unlocking too easily because of this line:
+Yes — anchor the whole offer on the $497 number and make the invite path the hero. People only feel a discount when they see the price they're skipping. Right now both buttons look equal, so the free path doesn't feel like a win.
 
-```ts
-const allRead = qaUnlock || (readCards.has(0) && readCards.has(1) && readCards.has(2));
+Two things to change in the "Want to go deeper on quiz funnel strategy?" card:
+
+### 1. Stack the buttons (primary on top)
+
+Put **Invite three friends to unlock** on top as the primary CTA, full-width, and demote **Upgrade to full course** to a smaller secondary link underneath. Side-by-side equals "pick either"; stacked with hierarchy equals "do this, or fall back to that."
+
+```text
+┌────────────────────────────────────────────┐
+│   🎁  Invite 3 friends — unlock free       │  ← primary, full width, accent
+│        (worth $497)                         │
+└────────────────────────────────────────────┘
+        or upgrade now for $497  →             ← small secondary link, centered
 ```
 
-`qaUnlock` is true whenever:
-- QA preview mode is active, OR
-- A QA persona is applied, OR
-- Any `leadio_preview_tier` value exists in sessionStorage
+### 2. Anchor the $497 in three places
 
-Any one of these bypasses the read-gate, so the button appears unlocked even when nothing has been marked as read.
+- **Card body copy** — name the price up front so the free path has something to be free *of*:
+  > "The full course is **$497**. Invite three friends and it's yours free — or upgrade now and skip the invites."
+- **Primary button** — small "worth $497" subline under the main label so the value lands at the moment of decision.
+- **Secondary link** — show the actual price ("upgrade now for $497") instead of hiding it behind "Upgrade to full course". A visible price feels honest; a hidden one feels like a trap.
 
-## Fix
+### Why this works
 
-In `src/components/Day2Screen1.tsx`, remove the `qaUnlock` bypass from the `allRead` calculation so the Generate button is **strictly** gated on the three "Mark as read" actions:
+- One primary action removes the 50/50 paralysis. The invite button wins by visual weight, not by the user having to decide.
+- "Worth $497" reframes the invite from "do work for free" to "earn $497." Same action, completely different feeling.
+- Showing the price on the upgrade link makes the free path feel like the obvious move for most people, while still letting the small minority who'd rather just pay click through without friction.
 
-```ts
-const allRead = readCards.has(0) && readCards.has(1) && readCards.has(2);
-```
+### Scope of the change
 
-Everything else stays the same:
-- The locked-state button (with the Lock icon and "Mark 1, 2 & 3 as read to generate your quiz" copy) is already in place and will now show until all three cards are marked as read.
-- The reveal-card unlock chain (card 2 needs card 1 read, card 3 needs card 2 read) keeps its `qaUnlock` bypass so QA can still step through the flow — only the final Generate button becomes strict.
+- File: `src/components/Day2Screen1.tsx`, the "Want to go deeper on quiz funnel strategy?" card (around lines 695–710).
+- Replace the side-by-side `flex-col sm:flex-row` button row with: primary `<Button>` (full width, accent) wrapping the invite link with a "Worth $497" subline, then a small centered text-link below it for the paid upgrade.
+- Update the card body copy to name the $497 once.
+- No new components, no logic changes, no routes added.
 
-## Question
+## Questions for you
 
-Should QA mode also be forced to mark all three as read (strict for everyone), or is it fine to keep QA's per-card progressive unlock bypass and only make the final Generate button strict? My plan above does the latter — confirm if you want both tightened.
+1. Confirm the primary button copy: **"Invite 3 friends — unlock free (worth $497)"** — or do you want a different phrasing?
+2. Confirm the secondary link copy: **"or upgrade now for $497 →"** — or do you want it framed as "skip the invites — $497"?
+3. Should the $497 ever be shown crossed-out (e.g. ~~$497~~ FREE) on the primary button, or is "worth $497" enough?

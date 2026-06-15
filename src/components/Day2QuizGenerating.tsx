@@ -8,6 +8,7 @@ import leadbeadLogo from "@/assets/leadbead-logo.png";
 const MESSAGE_MS = 1800;
 const FADE_MS = 350;
 const REVEAL_FADE_MS = 450;
+const AUDIO_FADE_OUT_SECONDS = 1.4;
 const FIRST_BEAD_DELAY_MS = 400;
 
 // Bead palette + geometry (per design spec).
@@ -114,20 +115,21 @@ const startAmbientPad = () => {
     }
 
     let stopped = false;
-    return () => {
+    return (fadeOutSeconds = AUDIO_FADE_OUT_SECONDS) => {
       if (stopped) return;
       stopped = true;
       try {
         const t = ctx.currentTime;
+        const currentGain = master.gain.value;
         master.gain.cancelScheduledValues(t);
-        master.gain.setValueAtTime(master.gain.value, t);
-        master.gain.linearRampToValueAtTime(0, t + 0.4);
+        master.gain.setValueAtTime(currentGain, t);
+        master.gain.linearRampToValueAtTime(0, t + fadeOutSeconds);
         window.setTimeout(() => {
           try { o1.stop(); } catch {}
           try { o2.stop(); } catch {}
           try { lfo.stop(); } catch {}
           ctx.close().catch(() => {});
-        }, 500);
+        }, Math.ceil((fadeOutSeconds + 0.1) * 1000));
       } catch {
         try { ctx.close(); } catch {}
       }
@@ -197,11 +199,15 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
   const apiResultRef = useRef<unknown>(null);
   const minTimeDoneRef = useRef(false);
   const handedOffRef = useRef(false);
+  const stopAudioRef = useRef<(() => void) | null>(null);
 
   // Ambient pad — fire and forget, clean up on unmount.
   useEffect(() => {
-    const stop = startAmbientPad();
-    return () => stop();
+    stopAudioRef.current = startAmbientPad();
+    return () => {
+      stopAudioRef.current?.();
+      stopAudioRef.current = null;
+    };
   }, []);
 
   // Kick off the API call once on mount.
@@ -272,6 +278,8 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     if (handedOffRef.current) return;
     if (!apiDoneRef.current || !minTimeDoneRef.current) return;
     handedOffRef.current = true;
+    stopAudioRef.current?.();
+    stopAudioRef.current = null;
     setRevealing(true);
     window.setTimeout(() => {
       if (onComplete) {

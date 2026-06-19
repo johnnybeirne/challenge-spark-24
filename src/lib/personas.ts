@@ -398,6 +398,17 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   // a stub so the overlay always renders. Never persisted.
   const baseUser = state.user ?? STUB_USER;
 
+  // Empty persona: no memory/AI overrides and zero progress across all days.
+  // Must render as a brand-new signup — wipe memory, aiOutputs, and tasks
+  // regardless of what's in the underlying state.
+  const isEmptyPersona =
+    !persona.memoryOverrides &&
+    !persona.aiOutputOverrides &&
+    persona.dayProgress[1] === 0 &&
+    persona.dayProgress[2] === 0 &&
+    persona.dayProgress[3] === 0;
+
+
   // 1. Timing — backdate joined / startedAt / currentDay / completed / endsAt.
   const startedIso = new Date(Date.now() - persona.elapsedHours * 60 * 60 * 1000).toISOString();
   const timing = computeSimulatedTiming(startedIso);

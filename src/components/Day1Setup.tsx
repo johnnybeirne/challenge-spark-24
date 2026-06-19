@@ -2291,7 +2291,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const templateSummary: string[] = [
             intro,
-            who ? `You're building this for ${who}.` : null,
+            who ? `You're building this challenge for ${who}.` : null,
             pain ? `Right now, they're stuck because ${pain}.` : null,
             result ? `By the end of Day 3, they'll have ${result}.` : null,
             guideLine,
@@ -2311,7 +2311,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             ? step7Promise.summary.map((s, i) => <span key={i}>{s}</span>)
             : ([
                 <>{intro}</>,
-                who ? <>You're building this for {hl(who)}.</> : null,
+                who ? <>You're building this challenge for {hl(who)}.</> : null,
                 pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
                 result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
                 guideNode,

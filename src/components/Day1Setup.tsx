@@ -1963,7 +1963,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
 
           const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
-          const step9Ack = `Last one${fn}.`;
+          const step9Ack = `Got it${fn ? `${fn}` : ""}.`;
           const step9Question = renderTemplate(
             "step-7",
             subjectField9 || painLower9

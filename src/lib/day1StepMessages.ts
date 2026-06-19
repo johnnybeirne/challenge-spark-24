@@ -91,7 +91,7 @@ export const defaultDay1Steps: Day1StepMessage[] = [
     id: "step-7",
     label: "Step 8 of 9 — Outcome",
     message:
-      "Got it. You take them through [process]. What's the tangible result they walk away with?",
+      "Got it — your process is: [process]. What's the tangible result they walk away with?",
   },
   {
     id: "step-8",

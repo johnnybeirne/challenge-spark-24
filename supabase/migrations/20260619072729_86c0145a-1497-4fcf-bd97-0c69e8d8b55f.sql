@@ -1,0 +1,1 @@
+UPDATE public.day1_step_messages SET message = 'Got it — your process is: [process]. What''s the tangible result they walk away with?', updated_at = now() WHERE id = 'step-7';

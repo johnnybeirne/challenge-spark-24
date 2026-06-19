@@ -1493,7 +1493,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setAudience(e.target.value)}
                         placeholder={
                           audienceType === "b2b"
-                            ? "e.g. Independent coaches in their first 12 months."
+                            ? "e.g. Independent coaches."
                             : "e.g. New parents in their 30s."
                         }
                         rows={3}

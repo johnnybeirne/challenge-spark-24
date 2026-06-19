@@ -1747,11 +1747,35 @@ const Day1Setup = ({ onComplete }: Props) => {
               "Struggle to close at the right price",
               "Marketing isn't bringing in clients",
             ];
+          } else if (isB2C && matchAud("parent", "mum", "mom", "dad")) {
+            contextualExamples = [
+              "Constantly exhausted and short on time",
+              "Feel guilty they're not doing enough",
+              "Can't find a routine that actually sticks",
+            ];
+          } else if (isB2C && matchAud("fitness", "weight", "health", "wellness")) {
+            contextualExamples = [
+              "Keep starting over and losing momentum",
+              "Don't know what actually works for them",
+              "No energy left at the end of the day",
+            ];
+          } else if (isB2C && matchAud("student", "career", "professional")) {
+            contextualExamples = [
+              "Feel stuck and unsure what's next",
+              "Overwhelmed by too many options",
+              "Lack the confidence to make a move",
+            ];
+          } else if (isB2C && matchAud("couple", "relationship", "dating")) {
+            contextualExamples = [
+              "Keep having the same argument",
+              "Feel disconnected from their partner",
+              "Don't know how to bring the spark back",
+            ];
           } else if (isB2C) {
             contextualExamples = [
-              "Not reaching their target customers",
-              "Can't scale without burning out",
-              "Can't charge premium prices",
+              "Feel stuck and don't know where to start",
+              "Have tried before and nothing sticks",
+              "Overwhelmed and short on time",
             ];
           } else {
             contextualExamples = [

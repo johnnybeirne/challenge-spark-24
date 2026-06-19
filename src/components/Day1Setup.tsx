@@ -1889,13 +1889,6 @@ const Day1Setup = ({ onComplete }: Props) => {
                           {step3Ack}
                         </div>
                       </div>
-                      {step3Reaction && (
-                        <div className="flex">
-                          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
-                            {step3Reaction}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
 

@@ -1339,8 +1339,8 @@ const Day1Setup = ({ onComplete }: Props) => {
   const echoMap: EchoMap = {
     audience: { value: audience, onSave: saveAudience },
     problem: { value: problem, onSave: saveProblem, format: (v) => v },
-    how: { value: how, onSave: saveHow, format: (v) => v },
-    outcome: { value: outcome, onSave: saveOutcome, format: (v) => v },
+    how: { value: how, onSave: saveHow, format: (v) => v, skipTidy: true },
+    outcome: { value: outcome, onSave: saveOutcome, format: (v) => v, skipTidy: true },
     topic: { value: topicHint, onSave: saveTopic, format: (v) => v },
     superpower: { value: superpower, onSave: saveSuperpower, format: (v) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v) },
     audienceType: { value: audienceTypeLabel, format: (v) => v, skipTidy: true },

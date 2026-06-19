@@ -1393,6 +1393,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Bracket tags like [first_name] / [audience] are substituted with the
   // current user's real answers so the live flow uses the admin's wording.
   const day1Templates = useDay1Templates();
+  const step5ExampleRows = useStepExamples("step-5");
   const defaultsById = defaultDay1Steps.reduce<Record<string, string>>((acc, s) => {
     acc[s.id] = s.message;
     return acc;

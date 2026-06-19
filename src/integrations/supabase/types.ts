@@ -484,6 +484,39 @@ export type Database = {
           },
         ]
       }
+      day1_step_examples: {
+        Row: {
+          audience_role: string
+          audience_type: string
+          examples: string[]
+          label: string
+          match_keywords: string[]
+          sort_order: number
+          step_id: string
+          updated_at: string
+        }
+        Insert: {
+          audience_role: string
+          audience_type: string
+          examples?: string[]
+          label: string
+          match_keywords?: string[]
+          sort_order?: number
+          step_id: string
+          updated_at?: string
+        }
+        Update: {
+          audience_role?: string
+          audience_type?: string
+          examples?: string[]
+          label?: string
+          match_keywords?: string[]
+          sort_order?: number
+          step_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       day1_step_messages: {
         Row: {
           id: string

@@ -101,19 +101,19 @@ export const useChallengeIdentity = (): ChallengeIdentity => {
     let topic = "";
     let source: "override" | "name" | "topic" | "ai" | "heuristic" | "none" = "none";
     if (override) {
-      topic = override;
+      topic = stripLeadingArticle(stripWrapper(override));
       source = "override";
     } else if (memory.challengeName) {
-      topic = deriveChallengeName(memory.challengeName);
+      topic = stripLeadingArticle(deriveChallengeName(memory.challengeName));
       source = "name";
     } else if (memory.topic) {
-      topic = TITLE_CASE(memory.topic);
+      topic = stripLeadingArticle(TITLE_CASE(memory.topic));
       source = "topic";
     } else if (cachedPolished) {
-      topic = cachedPolished;
+      topic = stripLeadingArticle(cachedPolished);
       source = "ai";
     } else if (problem) {
-      topic = buildTitleFromProblem(problem);
+      topic = stripLeadingArticle(buildTitleFromProblem(problem));
       source = "heuristic";
     }
 

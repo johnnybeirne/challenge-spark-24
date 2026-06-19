@@ -1511,10 +1511,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           </>
                         ) : (
                           <>
-                            <li>Independent coaches in their first 12 months</li>
-                            <li>Service-based agency owners under £10k/month</li>
+                            <li>Independent coaches</li>
+                            <li>Service-based agency owners</li>
                             <li>Early-stage SaaS founders</li>
                           </>
+
                         )}
                       </ul>
                     </div>

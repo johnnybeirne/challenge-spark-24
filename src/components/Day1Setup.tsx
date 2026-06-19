@@ -1863,9 +1863,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           // Typed intro: lead with Johnny's AI reaction (if it landed in time)
           // followed by the short acknowledgement. The recap + question render
           // as structured rows once the typing completes.
-          const step3IntroMessages: Msg[] = step3Reaction
-            ? [step3Ack, step3Reaction]
-            : [step3Ack];
+          const step3IntroMessages: Msg[] = [step3Ack];
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -1891,13 +1889,6 @@ const Day1Setup = ({ onComplete }: Props) => {
                           {step3Ack}
                         </div>
                       </div>
-                      {step3Reaction && (
-                        <div className="flex">
-                          <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
-                            {step3Reaction}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
 

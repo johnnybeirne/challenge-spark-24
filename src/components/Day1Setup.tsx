@@ -1091,9 +1091,15 @@ const Day1Setup = ({ onComplete }: Props) => {
     const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
     setSuperpower(capitalized);
     persistFoundation({ superpower: capitalized } as Partial<SetupData>);
+    // Step 5 (challenge-type chooser) is no longer part of the visible flow.
+    // Default challengeType so downstream handlers (handleSaveAssessment) still pass.
+    if (!challengeType) {
+      setChallengeType("custom");
+      persistFoundation({ challengeType: "custom" } as Partial<SetupData>);
+    }
     profileSaved("Your superpower");
-    setStep5Phase(saved?.challengeType ? "choose" : "intro");
-    setStep(5);
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   };
 
   const toggleExpertType = (label: string) => {
@@ -1358,7 +1364,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });
     }
-    if (onSteps(2, 3, 9, 7) && challengeType && !skipSet.has("challengeType")) {
+    if (onSteps(3, 9, 7) && challengeType && challengeType !== "custom" && !skipSet.has("challengeType")) {
       rows.push({ label: "Your goal:", echo: "challengeType" });
     }
     if (onSteps(3, 9, 7) && problem.trim() && !skipSet.has("problem")) {
@@ -1375,7 +1381,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
   // Day 1 visible step order for "Step X of N" progress header.
   // Step 8 (AI builder) is excluded — it's the post-setup builder, not a setup step.
-  const STEP_ORDER: number[] = [4, 1, 11, 10, 5, 2, 3, 9, 7];
+  const STEP_ORDER: number[] = [4, 1, 11, 10, 2, 3, 9, 7];
   const TOTAL_STEPS = STEP_ORDER.length;
   const stepIndex = STEP_ORDER.indexOf(step);
   const stepNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
@@ -1682,48 +1688,94 @@ const Day1Setup = ({ onComplete }: Props) => {
             problemHintByChallenge[challengeType] ??
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
-          // Step 6 opening AI message — hardcoded per product copy.
-          // "Got it [First name]. So [audience from Step 2] are struggling with —
-          // what specifically is holding them back right now?"
+          // Step 5 (this step) — single freeform painful-problem question.
           const step2Messages: Msg[] = [[
-            `Got it${fn}. So for `,
-            { echo: "audience" } as EchoSegment,
-            ` — what specifically is holding them back right now?`,
+            `What's the single most painful problem they have${fn}?`,
           ]];
 
+          // Contextual example problems derived from prior answers
+          // (B2B/B2C, audience text, expert role). Non-clickable hints only.
+          const audienceLc = audienceTrim.toLowerCase();
+          const expertLc = expertType.map((e) => e.toLowerCase());
+          const isB2B = audienceType === "b2b";
+          const isB2C = audienceType === "b2c";
+          const matchAud = (...needles: string[]) =>
+            needles.some((n) => audienceLc.includes(n));
+          const matchExpert = (...needles: string[]) =>
+            needles.some((n) => expertLc.some((e) => e.includes(n)));
 
-          // Step 6 (this step) shows the user's exact Step 5 typed answer
-          // ("desiredOutcome") wherever the goal/challengeType is echoed —
-          // both in the recap row and in Johnny's AI message — instead of
-          // the generic "Custom" label.
-          const step6GoalText = (step5Result || "").trim();
-          const step6EchoMap: EchoMap = {
-            ...echoMap,
-            challengeType: {
-              value: step6GoalText,
-              format: (v) => v,
-              skipTidy: true,
-            },
-          };
-
+          let contextualExamples: string[];
+          if (isB2B && matchAud("coach") && matchExpert("coach")) {
+            contextualExamples = [
+              "Can't get first paying clients",
+              "Struggling with pricing",
+              "Don't know how to sell their offer",
+            ];
+          } else if (isB2B && matchAud("saas", "founder", "startup")) {
+            contextualExamples = [
+              "Can't convert free trials to paid",
+              "Churn is killing growth",
+              "Acquisition cost is too high",
+            ];
+          } else if (isB2B && matchAud("agency", "agencies")) {
+            contextualExamples = [
+              "Stuck under a revenue ceiling",
+              "Drowning in client delivery",
+              "Inconsistent lead flow",
+            ];
+          } else if (isB2B && matchAud("consultant")) {
+            contextualExamples = [
+              "Pipeline dries up between projects",
+              "Hard to charge what they're worth",
+              "Stuck trading hours for fees",
+            ];
+          } else if (isB2B && matchExpert("course creator")) {
+            contextualExamples = [
+              "Course launches fall flat",
+              "Low completion rates",
+              "Can't grow an email list",
+            ];
+          } else if (isB2B && matchExpert("speaker", "trainer", "author")) {
+            contextualExamples = [
+              "Not getting booked enough",
+              "Hard to stand out in their niche",
+              "Audience growth has stalled",
+            ];
+          } else if (isB2B) {
+            contextualExamples = [
+              "Can't generate consistent leads",
+              "Struggle to close at the right price",
+              "Marketing isn't bringing in clients",
+            ];
+          } else if (isB2C) {
+            contextualExamples = [
+              "Not reaching their target customers",
+              "Can't scale without burning out",
+              "Can't charge premium prices",
+            ];
+          } else {
+            contextualExamples = [
+              "They feel stuck and don't know the next step",
+              "They've tried before and nothing sticks",
+              "They need a clear plan they'll actually follow",
+            ];
+          }
 
           return (
             <div className="space-y-6 animate-fade-in">
-              <RecapCard rows={recapRowsBefore(2)} echoMap={step6EchoMap} />
+              <RecapCard rows={recapRowsBefore(2)} echoMap={echoMap} />
               {step2Phase === "intro" && (
                 <TypedSequence
                   resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
                   messages={step2Messages}
-                  echoMap={step6EchoMap}
+                  echoMap={echoMap}
                   onComplete={() => setStep2Phase("input")}
                 />
               )}
 
-
               {step2Phase === "input" && (
                 <div className="space-y-5">
-                  <StaticAi messages={step2Messages} echoMap={step6EchoMap} />
-
+                  <StaticAi messages={step2Messages} echoMap={echoMap} />
 
                   <RevealControls className="space-y-5">
                     <div className="space-y-2">
@@ -1731,18 +1783,21 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={problem}
                         onChange={(e) => setProblem(e.target.value)}
-                        placeholder={problemPlaceholder}
+                        placeholder="Describe the single most painful problem they have right now…"
                         rows={3}
                         className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
                       />
-                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>They can't explain what they do in one clear sentence.</li>
-                        <li>They keep getting "let me think about it" instead of yeses.</li>
-                        <li>They're stuck creating content that doesn't bring in leads.</li>
-                      </ul>
+                      <p className="text-xs text-muted-foreground leading-snug">
+                        For example: {contextualExamples.map((ex, i) => (
+                          <span key={ex}>
+                            {i > 0 && " · "}
+                            <span className="italic">"{ex}"</span>
+                          </span>
+                        ))}
+                      </p>
                     </div>
                     <Button
                       size="lg"

@@ -97,7 +97,7 @@ export const defaultDay1Steps: Day1StepMessage[] = [
     id: "step-8",
     label: "Step 9 of 9 — Promise review",
     message:
-      "Here's your promise, [first_name]: [promise]. Does that feel right to you?",
+      "Here's your challenge promise. Does that feel right to you?",
   },
 ];
 

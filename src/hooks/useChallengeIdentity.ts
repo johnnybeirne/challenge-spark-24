@@ -172,6 +172,58 @@ export const useChallengeIdentity = (): ChallengeIdentity => {
     return () => { cancelled = true; };
   }, [identity._source, identity.problem, identity.audience, identity.method, setState]);
 
+  // Day-1-Setup-driven AI title. When the user has completed Day 1's setup
+  // step (audience + outcome at minimum) and there's no sticky override yet,
+  // ask the AI for a real challenge name (4–7 words, no "Your"/"Challenge")
+  // and persist it as challengeTitleOverride so it wins the fallback chain
+  // on the next render and is cached for future sessions.
+  const lastSetupPolishKeyRef = useRef<string>("");
+  useEffect(() => {
+    if ((memory.challengeTitleOverride || "").trim()) return;
+    const raw = outputs["day1Setup"];
+    if (!raw) return;
+    let setup: any = null;
+    try {
+      setup = typeof raw === "string" ? JSON.parse(raw) : raw;
+    } catch {
+      return;
+    }
+    const setupAudience = (setup?.audience || "").toString().trim();
+    const setupOutcome = (setup?.outcome || "").toString().trim();
+    const setupProblem = (setup?.problem || "").toString().trim();
+    if (!setupAudience || !setupOutcome) return;
+
+    const key = `setup::${setupAudience}::${setupProblem}::${setupOutcome}`;
+    if (lastSetupPolishKeyRef.current === key) return;
+    lastSetupPolishKeyRef.current = key;
+
+    let cancelled = false;
+    // polishTopic's existing edge function takes {problem, audience, method}.
+    // Map outcome → method so the AI has the full picture from Day 1 setup.
+    polishTopic({
+      problem: setupProblem || setupOutcome,
+      audience: setupAudience,
+      method: setupOutcome,
+    }).then((polished) => {
+      if (cancelled) return;
+      // Defensive cleanup: strip "Your" prefix, trailing "Challenge", and
+      // any leading article so the result drops cleanly into the template.
+      const clean = stripLeadingArticle(stripWrapper(polished));
+      if (!clean) return;
+      // Cap at 7 words just in case the model goes long.
+      const capped = clean.split(/\s+/).slice(0, 7).join(" ");
+      setState((prev) => {
+        if ((prev.memory.challengeTitleOverride || "").trim()) return prev;
+        return {
+          ...prev,
+          memory: { ...prev.memory, challengeTitleOverride: capped },
+        };
+      });
+    });
+
+    return () => { cancelled = true; };
+  }, [memory.challengeTitleOverride, outputs, setState]);
+
   return {
     topic: identity.topic,
     title: identity.title,

@@ -1,0 +1,1 @@
+UPDATE public.day1_step_messages SET message = 'Here''s your challenge promise. Does that feel right to you?' WHERE id = 'step-8';

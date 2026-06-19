@@ -41,6 +41,7 @@ import {
   useDay1Templates,
   type Day1TagKey,
 } from "@/lib/day1StepMessages";
+import { pickExamplesForUser, useStepExamples } from "@/lib/day1StepExamples";
 
 const JohnnyAvatar = () => (
   <img
@@ -1392,6 +1393,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Bracket tags like [first_name] / [audience] are substituted with the
   // current user's real answers so the live flow uses the admin's wording.
   const day1Templates = useDay1Templates();
+  const step5ExampleRows = useStepExamples("step-5");
   const defaultsById = defaultDay1Steps.reduce<Record<string, string>>((acc, s) => {
     acc[s.id] = s.message;
     return acc;
@@ -1689,101 +1691,26 @@ const Day1Setup = ({ onComplete }: Props) => {
             `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
 
           // Step 5 (this step) — single freeform painful-problem question.
+          // Question text + contextual example hints are admin-editable.
           const step2Messages: Msg[] = [[
-            `What's the single most painful problem they have${fn}?`,
+            renderTemplate(
+              "step-5",
+              `What's the single most painful problem they have${fn}?`,
+            ),
           ]];
 
           // Contextual example problems derived from prior answers
-          // (B2B/B2C, audience text, expert role). Non-clickable hints only.
-          const audienceLc = audienceTrim.toLowerCase();
-          const expertLc = expertType.map((e) => e.toLowerCase());
-          const isB2B = audienceType === "b2b";
-          const isB2C = audienceType === "b2c";
-          const matchAud = (...needles: string[]) =>
-            needles.some((n) => audienceLc.includes(n));
-          const matchExpert = (...needles: string[]) =>
-            needles.some((n) => expertLc.some((e) => e.includes(n)));
+          // (B2B/B2C, audience text, expert role). Sourced from the admin
+          // Day 1 Step Editor matrix — see src/lib/day1StepExamples.ts.
+          const audienceTypeForLookup: "b2b" | "b2c" | null =
+            audienceType === "b2b" ? "b2b" : audienceType === "b2c" ? "b2c" : null;
+          const contextualExamples: string[] = pickExamplesForUser(
+            step5ExampleRows,
+            audienceTypeForLookup,
+            audienceTrim,
+            expertType,
+          );
 
-          let contextualExamples: string[];
-          if (isB2B && matchAud("coach") && matchExpert("coach")) {
-            contextualExamples = [
-              "Can't get first paying clients",
-              "Struggling with pricing",
-              "Don't know how to sell their offer",
-            ];
-          } else if (isB2B && matchAud("saas", "founder", "startup")) {
-            contextualExamples = [
-              "Can't convert free trials to paid",
-              "Churn is killing growth",
-              "Acquisition cost is too high",
-            ];
-          } else if (isB2B && matchAud("agency", "agencies")) {
-            contextualExamples = [
-              "Stuck under a revenue ceiling",
-              "Drowning in client delivery",
-              "Inconsistent lead flow",
-            ];
-          } else if (isB2B && matchAud("consultant")) {
-            contextualExamples = [
-              "Pipeline dries up between projects",
-              "Hard to charge what they're worth",
-              "Stuck trading hours for fees",
-            ];
-          } else if (isB2B && matchExpert("course creator")) {
-            contextualExamples = [
-              "Course launches fall flat",
-              "Low completion rates",
-              "Can't grow an email list",
-            ];
-          } else if (isB2B && matchExpert("speaker", "trainer", "author")) {
-            contextualExamples = [
-              "Not getting booked enough",
-              "Hard to stand out in their niche",
-              "Audience growth has stalled",
-            ];
-          } else if (isB2B) {
-            contextualExamples = [
-              "Can't generate consistent leads",
-              "Struggle to close at the right price",
-              "Marketing isn't bringing in clients",
-            ];
-          } else if (isB2C && matchAud("parent", "mum", "mom", "dad")) {
-            contextualExamples = [
-              "Constantly exhausted and short on time",
-              "Feel guilty they're not doing enough",
-              "Can't find a routine that actually sticks",
-            ];
-          } else if (isB2C && matchAud("fitness", "weight", "health", "wellness")) {
-            contextualExamples = [
-              "Keep starting over and losing momentum",
-              "Don't know what actually works for them",
-              "No energy left at the end of the day",
-            ];
-          } else if (isB2C && matchAud("student", "career", "professional")) {
-            contextualExamples = [
-              "Feel stuck and unsure what's next",
-              "Overwhelmed by too many options",
-              "Lack the confidence to make a move",
-            ];
-          } else if (isB2C && matchAud("couple", "relationship", "dating")) {
-            contextualExamples = [
-              "Keep having the same argument",
-              "Feel disconnected from their partner",
-              "Don't know how to bring the spark back",
-            ];
-          } else if (isB2C) {
-            contextualExamples = [
-              "Feel stuck and don't know where to start",
-              "Have tried before and nothing sticks",
-              "Overwhelmed and short on time",
-            ];
-          } else {
-            contextualExamples = [
-              "They feel stuck and don't know the next step",
-              "They've tried before and nothing sticks",
-              "They need a clear plan they'll actually follow",
-            ];
-          }
 
           return (
             <div className="space-y-6 animate-fade-in">

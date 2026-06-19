@@ -25,6 +25,7 @@ import {
   saveDay1Steps,
   saveDay1StepsRemote,
 } from "@/lib/day1StepMessages";
+import Step5ExamplesMatrix from "@/components/admin/Step5ExamplesMatrix";
 
 // -------------------------------------------------------------
 // Step schema (banner / options / placeholder / promise)

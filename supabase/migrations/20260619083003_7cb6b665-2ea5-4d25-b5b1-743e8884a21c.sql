@@ -1,0 +1,1 @@
+UPDATE public.day1_step_messages SET message = 'What''s the tangible result they walk away with?' WHERE id = 'step-7';

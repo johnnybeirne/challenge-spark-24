@@ -55,7 +55,7 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
     const foundation = parseJson(aiOutputs.day1_foundation) ?? {};
     const assessment = parseJson(aiOutputs.day1_assessment) ?? {};
 
-    const whoRaw = pick(memory.topic, assessment.transformation, foundation.audience, saved?.topicHint, saved?.audience);
+    const whoRaw = pick(saved?.audience, foundation.audience, assessment.transformation, saved?.topicHint, memory.topic);
     const painRaw = pick(assessment.problem, foundation.problem, saved?.problem);
     const resultRaw = pick(memory.desiredOutcome, saved?.outcome, saved?.how, foundation.how);
     const challengeKey = pick(saved?.challengeType, assessment.challengeType, memory.challengeType);

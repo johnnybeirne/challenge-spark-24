@@ -1493,8 +1493,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setAudience(e.target.value)}
                         placeholder={
                           audienceType === "b2b"
-                            ? "e.g. Independent coaches and consultants, 0–12 months in, who have expertise but no offer."
-                            : "e.g. New parents in their 30s who want to build healthier daily habits."
+                            ? "e.g. Independent coaches in their first 12 months."
+                            : "e.g. New parents in their 30s."
                         }
                         rows={3}
                         className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
@@ -1505,15 +1505,15 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
                         {audienceType === "b2c" ? (
                           <>
-                            <li>e.g. New parents in their 30s</li>
-                            <li>e.g. Women returning to work after a career break</li>
-                            <li>e.g. First-time homebuyers</li>
+                            <li>New parents in their 30s</li>
+                            <li>Women returning to work after a career break</li>
+                            <li>First-time homebuyers</li>
                           </>
                         ) : (
                           <>
-                            <li>Independent coaches in their first 12 months wanting their first paying clients.</li>
-                            <li>Service-based agency owners stuck under £10k/month.</li>
-                            <li>SaaS founders struggling to convert free trials into paid users.</li>
+                            <li>Independent coaches in their first 12 months</li>
+                            <li>Service-based agency owners under £10k/month</li>
+                            <li>Early-stage SaaS founders</li>
                           </>
                         )}
                       </ul>

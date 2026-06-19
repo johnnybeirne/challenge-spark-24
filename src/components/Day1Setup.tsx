@@ -1864,7 +1864,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           // followed by the short acknowledgement. The recap + question render
           // as structured rows once the typing completes.
           const step3IntroMessages: Msg[] = step3Reaction
-            ? [step3Reaction, step3Ack]
+            ? [step3Ack, step3Reaction]
             : [step3Ack];
 
           return (

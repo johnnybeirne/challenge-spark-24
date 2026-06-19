@@ -507,7 +507,9 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const result: AppState = {
     ...state,
     user: finalUser,
-    memory: finalMemory,
+    memory: isEmptyPersona
+      ? { name: "", audienceType: "", challengeType: "", topic: "", desiredOutcome: "", challengeName: "", challengeTitleOverride: "" }
+      : finalMemory,
     assessment,
 
     challenge: {
@@ -516,10 +518,11 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
       endsAt: timing.endsAtIso,
       currentDay,
       completed,
-      tasks: seeded.tasks,
-      aiOutputs: finalAiOutputs,
+      tasks: isEmptyPersona ? {} : seeded.tasks,
+      aiOutputs: isEmptyPersona ? {} : finalAiOutputs,
       launchUrl,
     },
+
     points: {
       ...state.points,
       total,

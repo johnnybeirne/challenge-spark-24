@@ -540,6 +540,9 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   };
 
   // 8. If a character is selected in QA state, overlay its identity on top.
+  // Skip for empty personas — "Fresh signup" must render as a brand-new user
+  // regardless of which character is selected in QA.
+  if (isEmptyPersona) return result;
   return applyCharacter(result, readQaCharacterId());
 }
 

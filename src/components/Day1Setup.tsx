@@ -1364,7 +1364,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
       rows.push({ label: "Your superpower:", echo: "superpower" });
     }
-    if (onSteps(2, 3, 9, 7) && challengeType && !skipSet.has("challengeType")) {
+    if (onSteps(3, 9, 7) && challengeType && challengeType !== "custom" && !skipSet.has("challengeType")) {
       rows.push({ label: "Your goal:", echo: "challengeType" });
     }
     if (onSteps(3, 9, 7) && problem.trim() && !skipSet.has("problem")) {

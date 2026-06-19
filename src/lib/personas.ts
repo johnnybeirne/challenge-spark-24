@@ -126,7 +126,7 @@ export const PERSONAS: PersonaDefinition[] = [
   },
   {
     id: "marcus_b2b",
-    label: "Marcus — B2B consultant (fresh)",
+    label: "Marcus — B2B (Day 1 pre-filled)",
     description: "B2B fundraising consultant. Day 1 fresh start with pre-filled content.",
     elapsedHours: 0,
     dayProgress: { 1: 0, 2: 0, 3: 0 },
@@ -154,7 +154,7 @@ export const PERSONAS: PersonaDefinition[] = [
   },
   {
     id: "sophie_b2c",
-    label: "Sophie — B2C coach (fresh)",
+    label: "Sophie — B2C (Day 1 pre-filled)",
     description: "B2C midlife reinvention coach. Day 1 fresh start with pre-filled content.",
     elapsedHours: 0,
     dayProgress: { 1: 0, 2: 0, 3: 0 },

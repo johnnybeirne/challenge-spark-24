@@ -21,6 +21,19 @@ const TITLE_CASE = (s: string) =>
     .map((w) => (w.length <= 2 ? w : w[0].toUpperCase() + w.slice(1)))
     .join(" ");
 
+// Strip a leading article ("the", "a", "an") so the "Your ___ Challenge"
+// template doesn't read as "Your The Next Level Challenge".
+const stripLeadingArticle = (s: string) =>
+  (s || "").replace(/^\s*(the|a|an)\s+/i, "").trim();
+
+// Strip "Your " prefix and trailing "Challenge" — the template adds both back.
+const stripWrapper = (s: string) =>
+  (s || "")
+    .trim()
+    .replace(/^your\s+/i, "")
+    .replace(/\s+challenge\.?$/i, "")
+    .trim();
+
 const buildTitleFromProblem = (problem: string): string => {
   // Take first clause, strip filler, keep 2-4 strong words.
   const first = problem.split(/[.!?\n,;]/)[0] ?? "";
@@ -88,19 +101,19 @@ export const useChallengeIdentity = (): ChallengeIdentity => {
     let topic = "";
     let source: "override" | "name" | "topic" | "ai" | "heuristic" | "none" = "none";
     if (override) {
-      topic = override;
+      topic = stripLeadingArticle(stripWrapper(override));
       source = "override";
     } else if (memory.challengeName) {
-      topic = deriveChallengeName(memory.challengeName);
+      topic = stripLeadingArticle(deriveChallengeName(memory.challengeName));
       source = "name";
     } else if (memory.topic) {
-      topic = TITLE_CASE(memory.topic);
+      topic = stripLeadingArticle(TITLE_CASE(memory.topic));
       source = "topic";
     } else if (cachedPolished) {
-      topic = cachedPolished;
+      topic = stripLeadingArticle(cachedPolished);
       source = "ai";
     } else if (problem) {
-      topic = buildTitleFromProblem(problem);
+      topic = stripLeadingArticle(buildTitleFromProblem(problem));
       source = "heuristic";
     }
 
@@ -158,6 +171,58 @@ export const useChallengeIdentity = (): ChallengeIdentity => {
 
     return () => { cancelled = true; };
   }, [identity._source, identity.problem, identity.audience, identity.method, setState]);
+
+  // Day-1-Setup-driven AI title. When the user has completed Day 1's setup
+  // step (audience + outcome at minimum) and there's no sticky override yet,
+  // ask the AI for a real challenge name (4–7 words, no "Your"/"Challenge")
+  // and persist it as challengeTitleOverride so it wins the fallback chain
+  // on the next render and is cached for future sessions.
+  const lastSetupPolishKeyRef = useRef<string>("");
+  useEffect(() => {
+    if ((memory.challengeTitleOverride || "").trim()) return;
+    const raw = outputs["day1Setup"];
+    if (!raw) return;
+    let setup: any = null;
+    try {
+      setup = typeof raw === "string" ? JSON.parse(raw) : raw;
+    } catch {
+      return;
+    }
+    const setupAudience = (setup?.audience || "").toString().trim();
+    const setupOutcome = (setup?.outcome || "").toString().trim();
+    const setupProblem = (setup?.problem || "").toString().trim();
+    if (!setupAudience || !setupOutcome) return;
+
+    const key = `setup::${setupAudience}::${setupProblem}::${setupOutcome}`;
+    if (lastSetupPolishKeyRef.current === key) return;
+    lastSetupPolishKeyRef.current = key;
+
+    let cancelled = false;
+    // polishTopic's existing edge function takes {problem, audience, method}.
+    // Map outcome → method so the AI has the full picture from Day 1 setup.
+    polishTopic({
+      problem: setupProblem || setupOutcome,
+      audience: setupAudience,
+      method: setupOutcome,
+    }).then((polished) => {
+      if (cancelled) return;
+      // Defensive cleanup: strip "Your" prefix, trailing "Challenge", and
+      // any leading article so the result drops cleanly into the template.
+      const clean = stripLeadingArticle(stripWrapper(polished));
+      if (!clean) return;
+      // Cap at 7 words just in case the model goes long.
+      const capped = clean.split(/\s+/).slice(0, 7).join(" ");
+      setState((prev) => {
+        if ((prev.memory.challengeTitleOverride || "").trim()) return prev;
+        return {
+          ...prev,
+          memory: { ...prev.memory, challengeTitleOverride: capped },
+        };
+      });
+    });
+
+    return () => { cancelled = true; };
+  }, [memory.challengeTitleOverride, outputs, setState]);
 
   return {
     topic: identity.topic,

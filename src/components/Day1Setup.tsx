@@ -1790,14 +1790,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
                       />
-                      <p className="text-xs text-muted-foreground leading-snug">
-                        For example: {contextualExamples.map((ex, i) => (
-                          <span key={ex}>
-                            {i > 0 && " · "}
-                            <span className="italic">"{ex}"</span>
-                          </span>
+                      <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
+                        {contextualExamples.map((ex) => (
+                          <li key={ex}>{ex}</li>
                         ))}
-                      </p>
+                      </ul>
                     </div>
                     <Button
                       size="lg"

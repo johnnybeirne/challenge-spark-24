@@ -907,7 +907,7 @@ const AdminDay1Steps = () => {
                 </div>
               )}
 
-              {hasExamples && (
+              {hasExamples && activeStep.id !== "step-5" && (
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Example hints (shown beneath the input)
@@ -929,7 +929,16 @@ const AdminDay1Steps = () => {
               )}
             </CardContent>
           </Card>
+
+          {activeStep.id === "step-5" && (
+            <Card>
+              <CardContent className="p-5">
+                <Step5ExamplesMatrix />
+              </CardContent>
+            </Card>
+          )}
         </div>
+
 
         {/* RIGHT — live preview */}
         <div className="lg:sticky lg:top-6 lg:self-start">

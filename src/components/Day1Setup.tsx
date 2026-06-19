@@ -1864,7 +1864,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           // followed by the short acknowledgement. The recap + question render
           // as structured rows once the typing completes.
           const step3IntroMessages: Msg[] = step3Reaction
-            ? [step3Reaction, step3Ack]
+            ? [step3Ack, step3Reaction]
             : [step3Ack];
 
           return (
@@ -1886,6 +1886,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
                     <div className="flex-1 space-y-3 min-w-0">
+                      <div className="flex">
+                        <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
+                          {step3Ack}
+                        </div>
+                      </div>
                       {step3Reaction && (
                         <div className="flex">
                           <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
@@ -1893,11 +1898,6 @@ const Day1Setup = ({ onComplete }: Props) => {
                           </div>
                         </div>
                       )}
-                      <div className="flex">
-                        <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
-                          {step3Ack}
-                        </div>
-                      </div>
                     </div>
                   </div>
 

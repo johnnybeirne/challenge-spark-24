@@ -1761,6 +1761,44 @@ const Day1Setup = ({ onComplete }: Props) => {
             ];
           }
 
+          return (
+            <div className="space-y-6 animate-fade-in">
+              <RecapCard rows={recapRowsBefore(2)} echoMap={echoMap} />
+              {step2Phase === "intro" && (
+                <TypedSequence
+                  resetKey={`step2-intro-${whoTrim.length}-${audienceTrim.length}`}
+                  messages={step2Messages}
+                  echoMap={echoMap}
+                  onComplete={() => setStep2Phase("input")}
+                />
+              )}
+
+              {step2Phase === "input" && (
+                <div className="space-y-5">
+                  <StaticAi messages={step2Messages} echoMap={echoMap} />
+
+                  <RevealControls className="space-y-5">
+                    <div className="space-y-2">
+                      <DictatedTextarea
+                        autoFocus
+                        value={problem}
+                        onChange={(e) => setProblem(e.target.value)}
+                        placeholder="Describe the single most painful problem they have right now…"
+                        rows={3}
+                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
+                        }}
+                      />
+                      <p className="text-xs text-muted-foreground leading-snug">
+                        For example: {contextualExamples.map((ex, i) => (
+                          <span key={ex}>
+                            {i > 0 && " · "}
+                            <span className="italic">"{ex}"</span>
+                          </span>
+                        ))}
+                      </p>
+                    </div>
                     <Button
                       size="lg"
                       onClick={() => handleFoundationNext(2)}

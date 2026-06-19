@@ -21,6 +21,19 @@ const TITLE_CASE = (s: string) =>
     .map((w) => (w.length <= 2 ? w : w[0].toUpperCase() + w.slice(1)))
     .join(" ");
 
+// Strip a leading article ("the", "a", "an") so the "Your ___ Challenge"
+// template doesn't read as "Your The Next Level Challenge".
+const stripLeadingArticle = (s: string) =>
+  (s || "").replace(/^\s*(the|a|an)\s+/i, "").trim();
+
+// Strip "Your " prefix and trailing "Challenge" — the template adds both back.
+const stripWrapper = (s: string) =>
+  (s || "")
+    .trim()
+    .replace(/^your\s+/i, "")
+    .replace(/\s+challenge\.?$/i, "")
+    .trim();
+
 const buildTitleFromProblem = (problem: string): string => {
   // Take first clause, strip filler, keep 2-4 strong words.
   const first = problem.split(/[.!?\n,;]/)[0] ?? "";

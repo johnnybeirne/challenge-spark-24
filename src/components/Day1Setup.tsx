@@ -1686,9 +1686,9 @@ const Day1Setup = ({ onComplete }: Props) => {
           // "Got it [First name]. So [audience from Step 2] are struggling with —
           // what specifically is holding them back right now?"
           const step2Messages: Msg[] = [[
-            `Got it${fn}. So `,
+            `Got it${fn}. So for `,
             { echo: "audience" } as EchoSegment,
-            ` are struggling with — what specifically is holding them back right now?`,
+            ` — what specifically is holding them back right now?`,
           ]];
 
 

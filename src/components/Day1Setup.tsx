@@ -1091,9 +1091,15 @@ const Day1Setup = ({ onComplete }: Props) => {
     const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
     setSuperpower(capitalized);
     persistFoundation({ superpower: capitalized } as Partial<SetupData>);
+    // Step 5 (challenge-type chooser) is no longer part of the visible flow.
+    // Default challengeType so downstream handlers (handleSaveAssessment) still pass.
+    if (!challengeType) {
+      setChallengeType("custom");
+      persistFoundation({ challengeType: "custom" } as Partial<SetupData>);
+    }
     profileSaved("Your superpower");
-    setStep5Phase(saved?.challengeType ? "choose" : "intro");
-    setStep(5);
+    setStep2Phase(saved?.problem ? "input" : "intro");
+    setStep(2);
   };
 
   const toggleExpertType = (label: string) => {

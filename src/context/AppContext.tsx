@@ -392,9 +392,14 @@ function applyPointRules(state: AppState): AppState {
     updated = awardPoints(updated, "profile_bio_added", "You earned 50 points for sharing who you help and how", 50);
   }
 
-  for (let i = 1; i <= updated.network.direct; i += 1) {
-    updated = awardPoints(updated, `referral_join_${i}`, "You earned 50 points from a new referral", 50);
+  // Award 50 pts per referred friend who has completed the quiz (not just signed up).
+  // Legacy `referral_join_*` actions remain in awardedActions so any historical
+  // points already granted are preserved by the idempotency guard in awardPoints.
+  const quizCompleted = updated.network.directQuizCompleted ?? 0;
+  for (let i = 1; i <= quizCompleted; i += 1) {
+    updated = awardPoints(updated, `referral_quiz_${i}`, "You earned 50 points — a friend you invited completed the quiz", 50);
   }
+
 
   return {
     ...updated,

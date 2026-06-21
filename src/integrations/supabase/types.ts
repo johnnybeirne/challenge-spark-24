@@ -1210,9 +1210,12 @@ export type Database = {
           referral_quiz_complete_count: number
           referred_by: string | null
           referred_by_parent: string | null
+          signup_ip_hash: string | null
+          signup_ip_hashed_at: string | null
           signup_product: string | null
           stripe_customer_id: string | null
           surname: string | null
+          suspected_signup_dup_ip: boolean
           updated_at: string
           user_id: string
           video_modal_dismissed: Json
@@ -1242,9 +1245,12 @@ export type Database = {
           referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
+          signup_ip_hash?: string | null
+          signup_ip_hashed_at?: string | null
           signup_product?: string | null
           stripe_customer_id?: string | null
           surname?: string | null
+          suspected_signup_dup_ip?: boolean
           updated_at?: string
           user_id: string
           video_modal_dismissed?: Json
@@ -1274,9 +1280,12 @@ export type Database = {
           referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
+          signup_ip_hash?: string | null
+          signup_ip_hashed_at?: string | null
           signup_product?: string | null
           stripe_customer_id?: string | null
           surname?: string | null
+          suspected_signup_dup_ip?: boolean
           updated_at?: string
           user_id?: string
           video_modal_dismissed?: Json

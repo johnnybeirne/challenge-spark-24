@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
 import { getNextReward, pointRewards } from "@/lib/points";
+import ReferralMilestoneCard from "@/components/ReferralMilestoneCard";
 
 interface PartnerAsset {
   id: string;
@@ -209,6 +210,8 @@ const EarnRewards = () => {
             The fastest way to unlock rewards is by sharing your invite link.
           </p>
         </section>
+
+        <ReferralMilestoneCard />
 
         {/* 2. YOUR PROGRESS — simple clarity */}
         {(() => {

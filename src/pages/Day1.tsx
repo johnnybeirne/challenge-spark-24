@@ -6,6 +6,7 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import AIAdvisorPanel from "@/components/AIAdvisorPanel";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;
@@ -150,9 +151,13 @@ const Day1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="app-page-container pt-6">
+        <AIAdvisorPanel context="day1" />
+      </div>
       <Day1Setup onComplete={handleComplete} />
     </div>
   );
 };
+
 
 export default Day1;

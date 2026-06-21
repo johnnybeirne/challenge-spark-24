@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
+import AIAdvisorPanel from "@/components/AIAdvisorPanel";
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
@@ -410,8 +411,14 @@ const Results = () => {
           </div>
         </section>
 
+        {/* AI Advisor Panel — 3 personalised insights based on the quiz answers */}
+        <section className="mb-8">
+          <AIAdvisorPanel context="results" />
+        </section>
+
         {/* SINGLE DOMINANT CTA — pinned to bottom */}
         <section className="mt-auto space-y-4 pt-4">
+
           <Button
             size="lg"
             onClick={cta.onClick}

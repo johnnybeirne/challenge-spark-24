@@ -183,6 +183,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
         }));
 
         // Mark assessment completion timestamp on ai_user_context (best-effort)
+        // and award the inviter 50 pts for their referred friend completing the quiz.
         (async () => {
           try {
             const { data: { user } } = await supabase.auth.getUser();
@@ -191,11 +192,18 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                 { user_id: user.id, assessment_completed_at: new Date().toISOString() },
                 { onConflict: "user_id" },
               );
+              // Idempotent on the server (one credit per referred user).
+              try {
+                await (supabase.rpc as any)("award_referral_quiz_credit");
+              } catch (e) {
+                console.warn("award_referral_quiz_credit failed", e);
+              }
             }
           } catch (e) {
             console.warn("assessment_completed_at write failed", e);
           }
         })();
+
 
         setTimeout(() => {
           navigate("/results");

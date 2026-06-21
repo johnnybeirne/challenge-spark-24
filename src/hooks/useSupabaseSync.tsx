@@ -104,6 +104,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
       network: {
         direct: profile.direct_referral_count,
         indirect: profile.indirect_referral_count,
+        directQuizCompleted: (profile as { referral_quiz_complete_count?: number }).referral_quiz_complete_count ?? 0,
       },
       training: training
         ? {

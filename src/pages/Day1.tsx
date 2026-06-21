@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import AIAdvisorPanel from "@/components/AIAdvisorPanel";
 import QuizScoreCard from "@/components/QuizScoreCard";
+import { supabase } from "@/integrations/supabase/client";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;
@@ -96,6 +97,13 @@ const Day1 = () => {
       },
     }));
     trackEvent("training_hub_completed");
+    // Credit the inviter (idempotent server-side). Fire-and-forget — never blocks UI.
+    (async () => {
+      try {
+        const { data } = await supabase.rpc("award_referral_day_credit" as any, { p_day: 1 });
+        if ((data as any)?.credited) trackEvent("referral_day1_credited", { day: 1 });
+      } catch { /* non-blocking */ }
+    })();
     navigate("/challenger-dashboard");
   };
 

@@ -337,6 +337,17 @@ const DayChallenge = () => {
       trackEvent("challenge_completed");
       setShowCelebration(true);
     }
+    // Credit the inviter for this milestone (idempotent server-side, fire-and-forget).
+    (async () => {
+      try {
+        const { data } = await supabase.rpc("award_referral_day_credit" as any, { p_day: dayNum });
+        if ((data as any)?.credited) {
+          const evt = `referral_day${dayNum}_credited` as
+            | "referral_day1_credited" | "referral_day2_credited" | "referral_day3_credited";
+          trackEvent(evt, { day: dayNum });
+        }
+      } catch { /* non-blocking */ }
+    })();
   };
 
   // Day 1 & Day 2 completion interstitial — quiet celebration + tomorrow preview

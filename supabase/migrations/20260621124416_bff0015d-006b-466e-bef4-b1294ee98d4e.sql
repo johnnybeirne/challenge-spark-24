@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.award_referral_quiz_credit() FROM PUBLIC;

@@ -209,6 +209,22 @@ const SignupChat = ({
       }
       return toast.error(error.message || "Signup failed");
     }
+    // IP fingerprint check — runs immediately after the auth user is created.
+    // If the same network has signed up under a different email in the last
+    // 24h, the edge function deletes this fresh auth user and we surface a
+    // friendly error.
+    try {
+      const { data: fp } = await supabase.functions.invoke("signup-fingerprint");
+      if (fp && (fp as any).blocked) {
+        await supabase.auth.signOut();
+        return toast.error(
+          (fp as any).message ||
+            "Another account from this network was created in the last 24 hours. Please try again later.",
+        );
+      }
+    } catch (e) {
+      console.warn("signup-fingerprint check failed", e);
+    }
     if (partnerRef) {
       (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
     }
@@ -216,6 +232,7 @@ const SignupChat = ({
     toast.success("You're in.");
     setSignupComplete(true);
   };
+
 
   const signupInputProps = (() => {
     if (step === "email")

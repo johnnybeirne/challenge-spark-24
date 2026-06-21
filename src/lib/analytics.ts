@@ -77,7 +77,9 @@ export type AnalyticsEvent =
   | "profile_updated"
   | "your_dashboard_viewed"
   | "promise_polished"
-  | "promise_edited";
+  | "promise_edited"
+  | "lock_screen_buy_click"
+  | "lock_screen_referral_share";
 
 
 export async function trackEvent(

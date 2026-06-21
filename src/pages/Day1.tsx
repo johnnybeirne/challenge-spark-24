@@ -7,6 +7,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import AIAdvisorPanel from "@/components/AIAdvisorPanel";
+import QuizScoreCard from "@/components/QuizScoreCard";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;
@@ -151,7 +152,8 @@ const Day1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="app-page-container pt-6">
+      <div className="app-page-container pt-6 space-y-4">
+        <QuizScoreCard />
         <AIAdvisorPanel context="day1" />
       </div>
       <Day1Setup onComplete={handleComplete} />

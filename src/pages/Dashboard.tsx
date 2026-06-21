@@ -30,6 +30,7 @@ import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
+import StreakIndicator from "@/components/StreakIndicator";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
@@ -500,6 +501,7 @@ const Dashboard = () => {
           );
         })()}
         <AssessmentResultCard />
+        <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">

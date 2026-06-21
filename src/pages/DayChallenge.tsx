@@ -34,6 +34,7 @@ import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 
 import DayVideoModal from "@/components/DayVideoModal";
 import UpgradeCards from "@/components/UpgradeCards";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";

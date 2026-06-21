@@ -106,6 +106,7 @@ export interface AppState {
   network: {
     direct: number;
     indirect: number;
+    directQuizCompleted?: number;
   };
   referrals: {
     count: number;

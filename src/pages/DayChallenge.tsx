@@ -173,15 +173,22 @@ const DayChallenge = () => {
   // Locked screen for Day 2 / Day 3 before they unlock
   if (dayLocked && (dayNum === 2 || dayNum === 3)) {
     const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
+    const inviteCode = state.user?.inviteCode ?? "";
+    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
     return (
       <LockedDayScreen
         dayNum={dayNum}
         unlockAt={unlock.unlockAt}
         unlockLabel={unlock.label}
         onBack={() => navigate("/challenger-dashboard")}
+        directReferrals={state.network.direct}
+        referralLink={referralLink}
+        customerEmail={authUser?.email ?? undefined}
+        userId={authUser?.id ?? undefined}
       />
     );
   }
+
 
   // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")
   // lives in /training under "Quiz Funnel Strategy".

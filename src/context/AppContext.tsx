@@ -192,7 +192,7 @@ export const defaultState: AppState = {
     },
   },
   referrals: { count: 0, records: [] },
-  network: { direct: 0, indirect: 0 },
+  network: { direct: 0, indirect: 0, directQuizCompleted: 0 },
   community: defaultCommunity,
   unlocks: [],
   points: defaultPoints,

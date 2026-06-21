@@ -1207,6 +1207,7 @@ export type Database = {
           name: string | null
           partner_code_used: string | null
           premium_since: string | null
+          referral_quiz_complete_count: number
           referred_by: string | null
           referred_by_parent: string | null
           signup_product: string | null
@@ -1238,6 +1239,7 @@ export type Database = {
           name?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
+          referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
           signup_product?: string | null
@@ -1269,6 +1271,7 @@ export type Database = {
           name?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
+          referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
           signup_product?: string | null
@@ -1537,6 +1540,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_quiz_credits: {
+        Row: {
+          awarded_at: string
+          inviter_invite_code: string
+          inviter_user_id: string
+          referred_user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          inviter_invite_code: string
+          inviter_user_id: string
+          referred_user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          inviter_invite_code?: string
+          inviter_user_id?: string
+          referred_user_id?: string
+        }
+        Relationships: []
       }
       site_content: {
         Row: {
@@ -2040,6 +2064,7 @@ export type Database = {
         Args: { p_signup_id: string }
         Returns: undefined
       }
+      award_referral_quiz_credit: { Args: never; Returns: Json }
       calculate_waitlist_tier: {
         Args: { invite_count: number }
         Returns: string

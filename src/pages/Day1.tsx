@@ -6,6 +6,7 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
+import AIAdvisorPanel from "@/components/AIAdvisorPanel";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;

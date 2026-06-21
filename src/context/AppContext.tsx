@@ -107,6 +107,9 @@ export interface AppState {
     direct: number;
     indirect: number;
     directQuizCompleted?: number;
+    directDay1Completed?: number;
+    directDay2Completed?: number;
+    directDay3Completed?: number;
   };
   referrals: {
     count: number;
@@ -192,7 +195,7 @@ export const defaultState: AppState = {
     },
   },
   referrals: { count: 0, records: [] },
-  network: { direct: 0, indirect: 0, directQuizCompleted: 0 },
+  network: { direct: 0, indirect: 0, directQuizCompleted: 0, directDay1Completed: 0, directDay2Completed: 0, directDay3Completed: 0 },
   community: defaultCommunity,
   unlocks: [],
   points: defaultPoints,
@@ -398,6 +401,20 @@ function applyPointRules(state: AppState): AppState {
   const quizCompleted = updated.network.directQuizCompleted ?? 0;
   for (let i = 1; i <= quizCompleted; i += 1) {
     updated = awardPoints(updated, `referral_quiz_${i}`, "You earned 50 points — a friend you invited completed the quiz", 50);
+  }
+
+  // Per-day milestone rewards: 50 pts every time a referred friend completes Day 1/2/3.
+  const day1Completed = updated.network.directDay1Completed ?? 0;
+  for (let i = 1; i <= day1Completed; i += 1) {
+    updated = awardPoints(updated, `referral_day1_${i}`, "You earned 50 points — a friend you invited completed Day 1", 50);
+  }
+  const day2Completed = updated.network.directDay2Completed ?? 0;
+  for (let i = 1; i <= day2Completed; i += 1) {
+    updated = awardPoints(updated, `referral_day2_${i}`, "You earned 50 points — a friend you invited completed Day 2", 50);
+  }
+  const day3Completed = updated.network.directDay3Completed ?? 0;
+  for (let i = 1; i <= day3Completed; i += 1) {
+    updated = awardPoints(updated, `referral_day3_${i}`, "You earned 50 points — a friend you invited completed Day 3", 50);
   }
 
 

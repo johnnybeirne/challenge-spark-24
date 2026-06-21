@@ -79,7 +79,10 @@ export type AnalyticsEvent =
   | "promise_polished"
   | "promise_edited"
   | "lock_screen_buy_click"
-  | "lock_screen_referral_share";
+  | "lock_screen_referral_share"
+  | "referral_day1_credited"
+  | "referral_day2_credited"
+  | "referral_day3_credited";
 
 
 export async function trackEvent(

@@ -3,9 +3,9 @@ import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 
 const TIER: Record<string, { label: string; tone: string; stroke: string }> = {
-  low: { label: "Starter Stage", tone: "text-amber-500", stroke: "stroke-amber-500" },
-  mid: { label: "Builder Stage", tone: "text-primary", stroke: "stroke-primary" },
-  high: { label: "Operator Stage", tone: "text-emerald-500", stroke: "stroke-emerald-500" },
+  low: { label: "Pioneer", tone: "text-amber-500", stroke: "stroke-amber-500" },
+  mid: { label: "Architect", tone: "text-primary", stroke: "stroke-primary" },
+  high: { label: "Authority", tone: "text-emerald-500", stroke: "stroke-emerald-500" },
 };
 
 const SIZE = 140;
@@ -23,7 +23,7 @@ const QuizScoreDoughnut = () => {
   const percent = Math.max(0, Math.min(100, Math.round((score / total) * 100)));
   const tier =
     TIER[assessment.diagnosticLevel as string] ?? {
-      label: "Diagnosis",
+      label: "Your Archetype",
       tone: "text-primary",
       stroke: "stroke-primary",
     };
@@ -75,9 +75,6 @@ const QuizScoreDoughnut = () => {
           <h2 className="mt-2 text-xl font-black text-foreground sm:text-2xl">
             <span className={tier.tone}>{tier.label}</span>
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            You answered {score} of {total} growth signals in the strong direction.
-          </p>
         </div>
       </div>
     </section>

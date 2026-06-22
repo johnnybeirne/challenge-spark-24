@@ -161,7 +161,6 @@ const Day1 = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container pt-6 space-y-4">
-        <QuizScoreCard />
         <AIAdvisorPanel context="day1" />
       </div>
       <Day1Setup onComplete={handleComplete} />

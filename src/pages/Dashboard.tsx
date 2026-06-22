@@ -31,6 +31,7 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
+import QuizScoreDoughnut from "@/components/QuizScoreDoughnut";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
@@ -374,6 +375,9 @@ const Dashboard = () => {
 
 
 
+          {/* QUIZ SCORE — doughnut */}
+          <QuizScoreDoughnut />
+
           {/* YOUR CHALLENGE — recap from Day 1 answers */}
           <YourChallengeRecap />
 
@@ -501,6 +505,7 @@ const Dashboard = () => {
           );
         })()}
         <AssessmentResultCard />
+        <QuizScoreDoughnut />
         <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

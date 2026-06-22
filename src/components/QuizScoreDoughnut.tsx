@@ -2,10 +2,28 @@ import { Trophy } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 
-const TIER: Record<string, { label: string; tone: string; stroke: string }> = {
-  low: { label: "Pioneer", tone: "text-amber-500", stroke: "stroke-amber-500" },
-  mid: { label: "Architect", tone: "text-primary", stroke: "stroke-primary" },
-  high: { label: "Authority", tone: "text-emerald-500", stroke: "stroke-emerald-500" },
+const TIER: Record<string, { label: string; tone: string; stroke: string; description: string }> = {
+  low: {
+    label: "Pioneer",
+    tone: "text-amber-500",
+    stroke: "stroke-amber-500",
+    description:
+      "You are just beginning to hear the call for change. The clarity you need is closer than you think.",
+  },
+  mid: {
+    label: "Architect",
+    tone: "text-primary",
+    stroke: "stroke-primary",
+    description:
+      "You know what you want but something keeps getting in the way. You are ready to break through.",
+  },
+  high: {
+    label: "Authority",
+    tone: "text-emerald-500",
+    stroke: "stroke-emerald-500",
+    description:
+      "You have done the inner work. Now it is time to back yourself and take the leap.",
+  },
 };
 
 const SIZE = 140;
@@ -26,6 +44,7 @@ const QuizScoreDoughnut = () => {
       label: "Your Archetype",
       tone: "text-primary",
       stroke: "stroke-primary",
+      description: "",
     };
   const dash = (percent / 100) * CIRC;
 

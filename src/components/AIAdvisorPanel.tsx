@@ -109,7 +109,10 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
 
     promise
       .then((out) => { if (!cancelled) setInsights(out); })
-      .catch((e: any) => { if (!cancelled) setError(e?.message || "Could not load AI insights right now."); })
+      .catch((e: any) => {
+        cooldown.set(key, Date.now() + COOLDOWN_MS);
+        if (!cancelled) setError(e?.message || "Could not load AI insights right now.");
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };

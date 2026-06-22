@@ -375,8 +375,9 @@ const Dashboard = () => {
 
 
 
-          {/* QUIZ SCORE — doughnut */}
+          {/* QUIZ SCORE — doughnut + answer breakdown */}
           <QuizScoreDoughnut />
+          <QuizScoreCard />
 
           {/* YOUR CHALLENGE — recap from Day 1 answers */}
           <YourChallengeRecap />

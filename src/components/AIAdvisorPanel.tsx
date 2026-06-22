@@ -94,7 +94,8 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
         return out;
       })();
       inflight.set(key, promise);
-      promise.finally(() => inflight.delete(key));
+      // Attach a catch on the cleanup chain so rejections never surface as unhandled.
+      promise.catch(() => {}).finally(() => inflight.delete(key));
     }
 
     promise

@@ -7,7 +7,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import AIAdvisorPanel from "@/components/AIAdvisorPanel";
-import QuizScoreCard from "@/components/QuizScoreCard";
+
 import { supabase } from "@/integrations/supabase/client";
 
 const parseJson = (raw: unknown): any => {

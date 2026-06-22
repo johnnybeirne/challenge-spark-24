@@ -94,6 +94,11 @@ const QuizScoreDoughnut = () => {
           <h2 className="mt-2 text-xl font-black text-foreground sm:text-2xl">
             <span className={tier.tone}>{tier.label}</span>
           </h2>
+          {tier.description && (
+            <p className="mt-1 text-sm leading-snug text-muted-foreground">
+              {tier.description}
+            </p>
+          )}
         </div>
       </div>
     </section>

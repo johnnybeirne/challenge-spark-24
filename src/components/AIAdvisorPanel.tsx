@@ -75,6 +75,12 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
       return;
     }
 
+    const cooldownUntil = cooldown.get(key) ?? 0;
+    if (Date.now() < cooldownUntil) {
+      setError("AI advisor is busy. Please try again in a moment.");
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setError(null);

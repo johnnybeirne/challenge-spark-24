@@ -32,6 +32,7 @@ import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
 import QuizScoreDoughnut from "@/components/QuizScoreDoughnut";
+import QuizScoreCard from "@/components/QuizScoreCard";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";

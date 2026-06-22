@@ -32,6 +32,7 @@ import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
 import QuizScoreDoughnut from "@/components/QuizScoreDoughnut";
+import QuizScoreCard from "@/components/QuizScoreCard";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
@@ -375,8 +376,9 @@ const Dashboard = () => {
 
 
 
-          {/* QUIZ SCORE — doughnut */}
+          {/* QUIZ SCORE — doughnut + answer breakdown */}
           <QuizScoreDoughnut />
+          <QuizScoreCard />
 
           {/* YOUR CHALLENGE — recap from Day 1 answers */}
           <YourChallengeRecap />

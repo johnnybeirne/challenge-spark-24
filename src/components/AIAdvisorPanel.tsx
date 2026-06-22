@@ -30,6 +30,26 @@ function cacheKey(userId: string | undefined, score: number): string {
   return `leadio_advisor_${userId ?? "anon"}_${score}`;
 }
 
+// Module-level dedupe so concurrent mounts share one network call.
+const inflight = new Map<string, Promise<Insight[]>>();
+
+function readCached(key: string): Insight[] | null {
+  for (const store of [sessionStorage, localStorage]) {
+    try {
+      const raw = store.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw) as Insight[];
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+    } catch {}
+  }
+  return null;
+}
+
+function writeCached(key: string, value: Insight[]) {
+  try { sessionStorage.setItem(key, JSON.stringify(value)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
 export default function AIAdvisorPanel({ context = "results" }: { context?: "results" | "day1" }) {
   const { state, authUser } = useAppState();
   const assessment = state.assessment as any;
@@ -45,22 +65,20 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
   useEffect(() => {
     if (!assessment || !assessment.answers) return;
     const key = cacheKey(authUser?.id, score);
-    try {
-      const cached = sessionStorage.getItem(key);
-      if (cached) {
-        const parsed = JSON.parse(cached) as Insight[];
-        if (Array.isArray(parsed) && parsed.length) {
-          setInsights(parsed);
-          return;
-        }
-      }
-    } catch {}
+
+    const cached = readCached(key);
+    if (cached) {
+      setInsights(cached);
+      return;
+    }
 
     let cancelled = false;
     setLoading(true);
     setError(null);
-    (async () => {
-      try {
+
+    let promise = inflight.get(key);
+    if (!promise) {
+      promise = (async () => {
         const { data, error: fnErr } = await supabase.functions.invoke("advisor-insight", {
           body: {
             firstName: firstName || "there",
@@ -69,21 +87,21 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
             weakAnswers: buildWeakAnswers(assessment.answers as Record<string, string>),
           },
         });
-        if (cancelled) return;
         if (fnErr) throw new Error(fnErr.message);
         const out = (data?.insights ?? []) as Insight[];
-        if (out.length) {
-          setInsights(out);
-          try { sessionStorage.setItem(key, JSON.stringify(out)); } catch {}
-        } else {
-          setError("Advisor returned no insights.");
-        }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || "Could not load AI insights right now.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+        if (!out.length) throw new Error("Advisor returned no insights.");
+        writeCached(key, out);
+        return out;
+      })();
+      inflight.set(key, promise);
+      promise.finally(() => inflight.delete(key));
+    }
+
+    promise
+      .then((out) => { if (!cancelled) setInsights(out); })
+      .catch((e: any) => { if (!cancelled) setError(e?.message || "Could not load AI insights right now."); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser?.id, score, assessment?.completedAt]);

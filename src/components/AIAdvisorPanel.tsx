@@ -32,6 +32,9 @@ function cacheKey(userId: string | undefined, score: number): string {
 
 // Module-level dedupe so concurrent mounts share one network call.
 const inflight = new Map<string, Promise<Insight[]>>();
+// Negative cache: skip refiring for 60s after a failure (e.g. 429).
+const cooldown = new Map<string, number>();
+const COOLDOWN_MS = 60_000;
 
 function readCached(key: string): Insight[] | null {
   for (const store of [sessionStorage, localStorage]) {
@@ -72,6 +75,12 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
       return;
     }
 
+    const cooldownUntil = cooldown.get(key) ?? 0;
+    if (Date.now() < cooldownUntil) {
+      setError("AI advisor is busy. Please try again in a moment.");
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -94,12 +103,16 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
         return out;
       })();
       inflight.set(key, promise);
-      promise.finally(() => inflight.delete(key));
+      // Attach a catch on the cleanup chain so rejections never surface as unhandled.
+      promise.catch(() => {}).finally(() => inflight.delete(key));
     }
 
     promise
       .then((out) => { if (!cancelled) setInsights(out); })
-      .catch((e: any) => { if (!cancelled) setError(e?.message || "Could not load AI insights right now."); })
+      .catch((e: any) => {
+        cooldown.set(key, Date.now() + COOLDOWN_MS);
+        if (!cancelled) setError(e?.message || "Could not load AI insights right now.");
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };

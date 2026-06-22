@@ -32,6 +32,9 @@ function cacheKey(userId: string | undefined, score: number): string {
 
 // Module-level dedupe so concurrent mounts share one network call.
 const inflight = new Map<string, Promise<Insight[]>>();
+// Negative cache: skip refiring for 60s after a failure (e.g. 429).
+const cooldown = new Map<string, number>();
+const COOLDOWN_MS = 60_000;
 
 function readCached(key: string): Insight[] | null {
   for (const store of [sessionStorage, localStorage]) {

@@ -98,7 +98,7 @@ const FeatureExtractor = () => {
     setFeatures(null);
     try {
       const manifest = buildManifest();
-      const { data, error: fnError } = await supabase.functions.invoke("feature-extractor", {
+      const { data, error: fnError } = await supabase.functions.invoke("extract-features", {
         body: { manifest },
       });
       if (fnError) throw fnError;

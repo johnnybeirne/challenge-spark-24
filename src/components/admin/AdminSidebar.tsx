@@ -38,6 +38,7 @@ const items = [
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
+  { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
 ];
 
 export function AdminSidebar() {

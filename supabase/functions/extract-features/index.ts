@@ -1,6 +1,7 @@
-// Feature Extractor — admin-only endpoint that takes a codebase manifest
-// (file path + truncated source) and returns features categorized as
-// Essential (core user flow) or Advanced (admin / CMS / mechanics).
+// extract-features — admin tool. Accepts a codebase manifest from the client
+// (file path + truncated source), forwards it to Claude (Anthropic), and
+// returns features categorized as Essential (core user flow) or Advanced
+// (admin / CMS / mechanics).
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -17,11 +18,11 @@ You will receive a manifest of source files (path + truncated content) covering:
 - Supabase edge functions (supabase/functions)
 
 Your job: extract every distinct component-level feature you can identify, then categorize each one:
-- "essential" = part of the core user flow (signup → assessment → day 1/2/3 completion → referral / community unlock → rewards). Anything an end-user touches to complete the 3-day challenge.
+- "essential" = part of the core user flow (signup -> assessment -> day 1/2/3 completion -> referral / community unlock -> rewards). Anything an end-user touches to complete the 3-day challenge.
 - "advanced" = admin, CMS, owner console, analytics, partner/JV ops, payouts, QA tools, internal mechanics that enable but are not part of the end-user flow.
 
 For each feature provide:
-- "name": short bold title (3-7 words), e.g. "72-Hour Challenge Countdown"
+- "name": short title (3-7 words), e.g. "72-Hour Challenge Countdown"
 - "description": one sentence, plain English, what it does for the user/admin
 - "category": "essential" | "advanced"
 - "connects": array of 2-4 OTHER feature names from your own list that share state, data models, or user flow
@@ -30,7 +31,7 @@ Rules:
 - Derive features ONLY from the manifest. Do not invent.
 - 18-30 features total is ideal. Merge near-duplicates.
 - "connects" must reference exact names you also output.
-- Output STRICT JSON ONLY, this exact shape:
+- Output STRICT JSON ONLY (no prose, no markdown fences), exactly this shape:
 {
   "features": [
     { "name": "...", "description": "...", "category": "essential", "connects": ["...", "..."] }
@@ -49,37 +50,45 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    // Hard cap manifest size to keep gateway happy
     const trimmed = manifest.length > 180_000 ? manifest.slice(0, 180_000) + "\n...[truncated]" : manifest;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "claude-sonnet-4-5-20250929",
+        max_tokens: 8000,
+        system: SYSTEM_PROMPT,
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Codebase manifest follows. Extract features now.\n\n${trimmed}` },
+          {
+            role: "user",
+            content: `Codebase manifest follows. Extract features now and return ONLY the JSON object described.\n\n${trimmed}`,
+          },
         ],
-        response_format: { type: "json_object" },
       }),
     });
 
     if (!res.ok) {
       const txt = await res.text();
-      console.error("feature-extractor gateway error", res.status, txt);
+      console.error("extract-features anthropic error", res.status, txt);
       const msg =
         res.status === 429
           ? "Rate limit reached. Try again shortly."
-          : res.status === 402
-          ? "AI credits exhausted. Add credits in Settings."
-          : `Gateway error ${res.status}`;
+          : res.status === 401
+          ? "Invalid Anthropic API key."
+          : `Anthropic error ${res.status}`;
       return new Response(JSON.stringify({ error: msg }), {
         status: res.status,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -87,19 +96,25 @@ Deno.serve(async (req) => {
     }
 
     const data = await res.json();
-    const content = data?.choices?.[0]?.message?.content ?? "{}";
-    let parsed: any = {};
-    try {
-      parsed = JSON.parse(content);
-    } catch {
-      parsed = { features: [] };
+    const text: string =
+      (Array.isArray(data?.content) && data.content.map((b: any) => b?.text || "").join("")) || "";
+
+    // Extract JSON object even if model wrapped it
+    let parsed: any = { features: [] };
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        parsed = JSON.parse(match[0]);
+      } catch (e) {
+        console.error("extract-features parse error", e, text.slice(0, 500));
+      }
     }
 
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("feature-extractor error", err);
+    console.error("extract-features error", err);
     return new Response(JSON.stringify({ error: (err as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

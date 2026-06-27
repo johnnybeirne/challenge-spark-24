@@ -78,6 +78,7 @@ import AdminOverview from "@/pages/AdminOverview";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import Waitlist from "@/pages/Waitlist";
+import FeatureExtractor from "@/pages/FeatureExtractor";
 import WaitlistThanks from "@/pages/WaitlistThanks";
 
 import PartnerSales from "@/pages/PartnerSales";

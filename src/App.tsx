@@ -258,6 +258,11 @@ const App = () => (
                 <Route path="resources" element={<AdminResourceLibrary />} />
               </Route>
 
+              {/* Feature extractor — admin only, full-bleed page */}
+              <Route path="/feature-extractor" element={<AdminLayout />}>
+                <Route index element={<FeatureExtractor />} />
+              </Route>
+
               {/* Internal audit — admin protected via AdminLayout */}
               <Route path="/user-features" element={<Navigate to="/owner-console/overview?tab=audit" replace />} />
 

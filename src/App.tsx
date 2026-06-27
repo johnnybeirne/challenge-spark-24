@@ -79,6 +79,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
+import RequirementsChecklist from "@/pages/RequirementsChecklist";
 import WaitlistThanks from "@/pages/WaitlistThanks";
 
 import PartnerSales from "@/pages/PartnerSales";
@@ -261,6 +262,11 @@ const App = () => (
               {/* Feature extractor — admin only, full-bleed page */}
               <Route path="/feature-extractor" element={<AdminLayout />}>
                 <Route index element={<FeatureExtractor />} />
+              </Route>
+
+              {/* Requirements checklist — admin only */}
+              <Route path="/requirements-checklist" element={<AdminLayout />}>
+                <Route index element={<RequirementsChecklist />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

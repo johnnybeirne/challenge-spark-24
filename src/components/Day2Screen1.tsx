@@ -719,10 +719,10 @@ const Day2Screen1 = () => {
                             );
                           }
                         }}
-                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
                       >
                         <FileDown className="h-3.5 w-3.5" />
-                        Prefer offline? Download the quiz as a Word doc
+                        Download the quiz as a Word doc
                       </button>
                     </div>
 

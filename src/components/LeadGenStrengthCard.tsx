@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
@@ -11,10 +11,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Skeleton } from "@/components/ui/skeleton";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
+import { supabase } from "@/integrations/supabase/client";
+
+type AiAsset = { title: string; description: string };
+const ASSETS_CACHE = new Map<string, AiAsset[]>();
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {

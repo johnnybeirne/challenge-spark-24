@@ -286,6 +286,9 @@ const LeadGenStrengthCard = () => {
   const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
+  const [assets, setAssets] = useState<AiAsset[] | null>(null);
+  const [assetsLoading, setAssetsLoading] = useState(false);
+  const [assetsError, setAssetsError] = useState<string | null>(null);
   const assessment = state.assessment as
     | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;

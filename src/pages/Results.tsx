@@ -86,7 +86,9 @@ const Results = () => {
   const { t: tGlobal } = useSiteContent("global");
   const deadline = useDeadline();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
+  const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {
+    if (qaTier) return qaTier;
     const p = location.pathname.toLowerCase();
     if (p.endsWith("/low")) return "low";
     if (p.endsWith("/med") || p.endsWith("/mid")) return "mid";

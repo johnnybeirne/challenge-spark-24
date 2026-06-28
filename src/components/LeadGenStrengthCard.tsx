@@ -331,7 +331,9 @@ const LeadGenStrengthCard = () => {
   }, [assessment]);
 
   if (!data) return null;
-  const { percent, archetype, active, priorities } = data;
+  const archetypeOverride = qa.active && qa.archetypeOverride ? ARCHETYPES[qa.archetypeOverride] : null;
+  const archetype = archetypeOverride ?? data.archetype;
+  const { percent, active, priorities } = data;
   const narrativeShort = firstSentences(archetype.narrative, 2);
   const narrativeRest = archetype.narrative.slice(narrativeShort.length).trim();
   const heroTeaser = teaser(archetype.narrative, 20);

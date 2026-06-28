@@ -375,7 +375,7 @@ const LeadGenStrengthCard = () => {
   if (!data) return null;
   const archetypeOverride = qaArchetype ? ARCHETYPES[qaArchetype] : null;
   const archetype = archetypeOverride ?? data.archetype;
-  const { active, priorities, quiz } = data;
+  const { priorities } = data;
   const percent = qaArchetype
     ? (qaArchetype === "pioneer" ? 22 : qaArchetype === "architect" ? 55 : 88)
     : data.percent;

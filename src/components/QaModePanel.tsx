@@ -12,6 +12,7 @@ import {
   updateQaState,
   type QaEntry,
   type QaTier,
+  type QaArchetype,
 } from "@/lib/qaPreview";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import QaSimulatedDate from "@/components/qa/QaSimulatedDate";
@@ -34,6 +35,12 @@ const ENTRIES: { id: QaEntry; label: string }[] = [
   { id: "referral_partner", label: "Referral" },
   { id: "promoter", label: "Partner" },
   { id: "direct_signup", label: "Direct Signup" },
+];
+
+const ARCHETYPES: { id: QaArchetype; label: string }[] = [
+  { id: "pioneer", label: "Pioneer" },
+  { id: "architect", label: "Architect" },
+  { id: "authority", label: "Authority" },
 ];
 
 const ROUTES: { label: string; path: string }[] = [
@@ -588,6 +595,31 @@ const QaModePanel = () => {
                 Switches the unified Assessment's post-result destination. Active mode wins over the route.
               </p>
             </div>
+
+            <div className="space-y-1.5">
+              <SectionLabel>Archetype (Dashboard Preview)</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                <Pill
+                  active={!qa.active || !qa.archetypeOverride}
+                  onClick={() => updateQaState({ archetypeOverride: null })}
+                >
+                  Auto
+                </Pill>
+                {ARCHETYPES.map((a) => (
+                  <Pill
+                    key={a.id}
+                    active={qa.active && qa.archetypeOverride === a.id}
+                    onClick={() => updateQaState({ active: true, archetypeOverride: a.id })}
+                  >
+                    {a.label}
+                  </Pill>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Overrides which archetype renders on the dashboard. Does not change assessment answers.
+              </p>
+            </div>
+
 
             <div className="space-y-1.5">
               <SectionLabel>User Type</SectionLabel>

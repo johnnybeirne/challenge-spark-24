@@ -14,6 +14,7 @@ import {
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {
@@ -277,6 +278,7 @@ function pickArchetype(strong: number): Archetype {
 
 const LeadGenStrengthCard = () => {
   const { state } = useAppState();
+  const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
   const assessment = state.assessment as
@@ -329,7 +331,9 @@ const LeadGenStrengthCard = () => {
   }, [assessment]);
 
   if (!data) return null;
-  const { percent, archetype, active, priorities } = data;
+  const archetypeOverride = qa.active && qa.archetypeOverride ? ARCHETYPES[qa.archetypeOverride] : null;
+  const archetype = archetypeOverride ?? data.archetype;
+  const { percent, active, priorities } = data;
   const narrativeShort = firstSentences(archetype.narrative, 2);
   const narrativeRest = archetype.narrative.slice(narrativeShort.length).trim();
   const heroTeaser = teaser(archetype.narrative, 20);

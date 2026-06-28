@@ -43,6 +43,7 @@ import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
 import pioneerAsset from "@/assets/pioneer.png.asset.json";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 
 const challengeSteps = [
@@ -53,6 +54,7 @@ const challengeSteps = [
 
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
+  const qa = useQaPreview();
   const navigate = useNavigate();
   const stage = useUserStage();
   const trainingContent = useTrainingContent();
@@ -259,6 +261,9 @@ const Dashboard = () => {
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
     const archetypeLabel = (() => {
+      if (qa.active && qa.archetypeOverride) {
+        return { pioneer: "Pioneer", architect: "Architect", authority: "Authority" }[qa.archetypeOverride];
+      }
       const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
       if (!a) return "";
       const tier =

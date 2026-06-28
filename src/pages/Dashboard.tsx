@@ -54,6 +54,7 @@ const challengeSteps = [
 
 const Dashboard = () => {
   const { state, setState, authUser, signOut } = useAppState();
+  const qa = useQaPreview();
   const navigate = useNavigate();
   const stage = useUserStage();
   const trainingContent = useTrainingContent();

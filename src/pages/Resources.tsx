@@ -114,6 +114,26 @@ const Resources = () => {
     }
   };
 
+  const quizPlainText = useMemo(() => {
+    let parsed: any = null;
+    if (rawQuiz) {
+      try { parsed = typeof rawQuiz === "string" ? JSON.parse(rawQuiz) : rawQuiz; } catch {}
+    }
+    return buildQuizPlainText(parsed && Array.isArray(parsed.questions) && parsed.questions.length ? parsed : quizFallback);
+  }, [rawQuiz]);
+
+  const [quizCopied, setQuizCopied] = useState(false);
+  const copyQuizText = async () => {
+    try {
+      await navigator.clipboard.writeText(quizPlainText);
+      setQuizCopied(true);
+      toast.success("Quiz copied to clipboard");
+      setTimeout(() => setQuizCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy — select the text and copy manually.");
+    }
+  };
+
   const download = (r: Resource) => {
     const blob = new Blob([r.body], { type: "text/plain" });
     const url = URL.createObjectURL(blob);

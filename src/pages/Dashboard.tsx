@@ -278,12 +278,12 @@ const Dashboard = () => {
           {/* INTRO VIDEO — welcome briefing */}
 
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-            <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Play className="h-4 w-4" fill="currentColor" />
-              </span>
-              <div className="min-w-0 flex-1 flex items-center gap-3">
-                <p className="truncate text-[20pt] font-bold text-foreground leading-tight">
+            <div className="grid grid-cols-1 gap-4 border-b border-border bg-muted/40 px-4 py-3 sm:grid-cols-2 sm:items-center">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Play className="h-4 w-4" fill="currentColor" />
+                </span>
+                <p className="text-[20pt] font-bold text-foreground leading-tight">
                   {(() => {
                     const rawName =
                       state.user?.name ||
@@ -297,21 +297,23 @@ const Dashboard = () => {
                     return archetypeLabel ? `${greeting} You're ${article} ${archetypeLabel}.` : greeting;
                   })()}
                 </p>
-                {archetypeLabel === "Pioneer" && (
+                {state.training.dashboardVideoWatched && cfg.videoUrl && (
+                  <span className="ml-auto rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
+                    Watched
+                  </span>
+                )}
+              </div>
+              {archetypeLabel === "Pioneer" && (
+                <div className="flex justify-center sm:justify-end">
                   <img
                     src={pioneerAsset.url}
                     alt="Pioneer character"
-                    className="h-12 w-auto shrink-0 sm:h-14"
+                    className="h-48 w-auto sm:h-56 lg:h-64"
                   />
-                )}
-              </div>
-
-              {state.training.dashboardVideoWatched && cfg.videoUrl && (
-                <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
-                  Watched
-                </span>
+                </div>
               )}
             </div>
+
             {!videoCollapsed && (
               <>
                 <div className="aspect-video w-full bg-black">

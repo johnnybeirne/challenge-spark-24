@@ -664,6 +664,27 @@ const Day2Screen1 = () => {
                         <p className="text-center text-xs text-muted-foreground">
                           Opens in a new tab so you can keep this page open.
                         </p>
+                        {state.challenge.aiOutputs?.day2_s2_quiz && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                await downloadQuizAsDocx(
+                                  state.challenge.aiOutputs?.day2_s2_quiz,
+                                );
+                              } catch (err: any) {
+                                toast.error(
+                                  err?.message ||
+                                    "Couldn't download your quiz right now.",
+                                );
+                              }
+                            }}
+                            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-center text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
+                          >
+                            <FileDown className="h-4 w-4" />
+                            Download quiz as Word document
+                          </button>
+                        )}
                       </div>
 
                     ) : (

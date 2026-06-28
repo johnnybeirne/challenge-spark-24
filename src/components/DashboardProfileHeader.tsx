@@ -71,7 +71,8 @@ const DashboardProfileHeader = () => {
   }, [hasResult]);
 
   const score = assessment?.diagnosticScore ?? 0;
-  const percent = Math.round((score / 9) * 100);
+  const rawPercent = Math.round((score / 9) * 100);
+  const percent = qaTier === "low" ? 22 : qaTier === "mid" ? 55 : qaTier === "high" ? 88 : rawPercent;
 
   const summary = useMemo(() => {
     if (!hasResult) return "";

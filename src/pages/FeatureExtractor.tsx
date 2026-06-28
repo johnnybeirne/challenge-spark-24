@@ -85,17 +85,62 @@ const FeatureCard = ({ feature }: { feature: Feature }) => (
   </div>
 );
 
+const CACHE_KEY = "leadio.featureExtractor.cache.v1";
+
+type CachedExtraction = {
+  features: Feature[];
+  extractedAt: string; // ISO
+};
+
+const readCache = (): CachedExtraction | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as CachedExtraction;
+    if (!parsed?.features?.length) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (features: Feature[]) => {
+  if (typeof window === "undefined") return;
+  try {
+    const payload: CachedExtraction = { features, extractedAt: new Date().toISOString() };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+  } catch {}
+};
+
+const clearCache = () => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {}
+};
+
 const FeatureExtractor = () => {
   const [loading, setLoading] = useState(false);
   const [features, setFeatures] = useState<Feature[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [extractedAt, setExtractedAt] = useState<string | null>(null);
 
   const fileCount = useMemo(() => Object.keys(sources).length, []);
+
+  // Rehydrate the last extraction from localStorage on mount so the user
+  // doesn't have to re-run the extractor every visit.
+  useEffect(() => {
+    const cached = readCache();
+    if (cached) {
+      setFeatures(cached.features);
+      setExtractedAt(cached.extractedAt);
+    }
+  }, []);
 
   const run = async () => {
     setLoading(true);
     setError(null);
-    setFeatures(null);
     try {
       const manifest = buildManifest();
       const { data, error: fnError } = await supabase.functions.invoke("extract-features", {
@@ -106,11 +151,21 @@ const FeatureExtractor = () => {
       const list: Feature[] = Array.isArray(data?.features) ? data.features : [];
       if (!list.length) throw new Error("No features returned by the model.");
       setFeatures(list);
+      const stamp = new Date().toISOString();
+      setExtractedAt(stamp);
+      writeCache(list);
     } catch (e: any) {
       setError(e?.message || "Extraction failed");
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearSaved = () => {
+    clearCache();
+    setFeatures(null);
+    setExtractedAt(null);
+    setError(null);
   };
 
   const essential = (features || []).filter((f) => f.category === "essential");

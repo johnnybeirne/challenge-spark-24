@@ -418,7 +418,10 @@ const LeadGenStrengthCard = () => {
       {/* TABS */}
       <div className="border-t border-border bg-background px-5 sm:px-7 pt-4">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="h-auto w-full justify-start gap-6 sm:gap-8 rounded-none border-0 border-b border-border bg-transparent p-0 overflow-x-auto flex-nowrap whitespace-nowrap scrollbar-none">
+          <TabsList
+            className="h-auto w-full justify-start gap-8 rounded-none border-0 border-b bg-transparent p-0 overflow-x-auto flex-nowrap whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            style={{ borderBottomColor: "#e5e7eb", borderBottomWidth: "1px" }}
+          >
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
@@ -433,12 +436,13 @@ const LeadGenStrengthCard = () => {
                     el.scrollIntoView({ block: "nearest", inline: "center" });
                   }
                 }}
-                className="relative shrink-0 rounded-none border-0 bg-transparent px-0 pt-1 pb-3 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground/80 data-[state=active]:text-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[2.5px] after:rounded-full after:bg-primary after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"
+                className="relative shrink-0 rounded-none border-0 bg-transparent px-0 pt-1 pb-3 text-[15px] font-medium text-slate-700 shadow-none hover:text-slate-900 data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[3px] after:rounded-full after:bg-primary after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"
               >
                 {t.label}
               </TabsTrigger>
             ))}
           </TabsList>
+
 
 
 

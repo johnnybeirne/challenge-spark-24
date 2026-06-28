@@ -43,6 +43,7 @@ import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
 import pioneerAsset from "@/assets/pioneer.png.asset.json";
+import architectAsset from "@/assets/architect.png.asset.json";
 import { useQaPreview } from "@/hooks/useQaPreview";
 
 
@@ -308,11 +309,11 @@ const Dashboard = () => {
                   </span>
                 )}
               </div>
-              {archetypeLabel === "Pioneer" && (
+              {(archetypeLabel === "Pioneer" || archetypeLabel === "Architect") && (
                 <div className="flex justify-center sm:justify-end">
                   <img
-                    src={pioneerAsset.url}
-                    alt="Pioneer character"
+                    src={archetypeLabel === "Architect" ? architectAsset.url : pioneerAsset.url}
+                    alt={`${archetypeLabel} character`}
                     className="h-48 w-auto sm:h-56 lg:h-64"
                   />
                 </div>

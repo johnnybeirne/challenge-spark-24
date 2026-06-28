@@ -375,15 +375,9 @@ const Dashboard = () => {
 
 
 
-          {/* LEAD GEN STRENGTH — diagnostic results card (archetype + signals + roadmap) */}
+          {/* LEAD GEN STRENGTH — hero + tabbed dashboard (Profile / Assets / Roadmap) */}
           <LeadGenStrengthCard />
 
-
-          {/* YOUR CHALLENGE — recap from Day 1 answers */}
-          <YourChallengeRecap />
-
-          {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
-          <ChallengeRecord />
 
           {/* Reset Day 1 — available for 24h from Day 1 start, then permanently locked */}
           {isDay1ResetOpen(state.challenge?.startedAt) ? (

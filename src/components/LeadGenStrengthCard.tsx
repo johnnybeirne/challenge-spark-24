@@ -1,0 +1,493 @@
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { CheckCircle2, AlertTriangle, Gauge, ArrowRight, Sparkles } from "lucide-react";
+import { useAppState } from "@/context/AppContext";
+import { questions } from "@/lib/assessmentData";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+/* Strong-answer rule mirrors QuizScoreCard: q2, q6, q9 are reverse-scored. */
+const REVERSE = new Set(["q2", "q6", "q9"]);
+
+type SignalCopy = {
+  strongTitle: string;
+  strongCopy: string;
+  weakTitle: string;
+  weakReality: string;
+  weakFix: string;
+};
+
+const SIGNALS: Record<string, SignalCopy> = {
+  q1: {
+    strongTitle: "Reliable Demand Source",
+    strongCopy:
+      "You have identified a channel that consistently brings prospects to your door. You aren't guessing where your next lead is coming from; you just need to automate and scale the delivery mechanism.",
+    weakTitle: "Unpredictable Pipeline",
+    weakReality:
+      "You are operating in a \u201Cfeast or famine\u201D lead cycle, relying on sporadic referrals or unpredictable networking.",
+    weakFix:
+      "In Day 1, you will define a high-ticket, high-relevance challenge promise that turns cold traffic into enthusiastic participants.",
+  },
+  q2: {
+    strongTitle: "Content Autonomy",
+    strongCopy:
+      "Your content operates as a true asset, generating interest even when you step away. Your business isn't held hostage by daily content schedules.",
+    weakTitle: "The Content Treadmill",
+    weakReality:
+      "If you stop posting, writing, or promoting for even a few days, your lead flow immediately dries up.",
+    weakFix:
+      "Day 3 focuses on creating an evergreen experience that captures, nurtures, and converts leads 24/7/365, giving you your time back.",
+  },
+  q3: {
+    strongTitle: "Attribution Clarity",
+    strongCopy:
+      "You know exactly which channels, campaigns, or partnerships are driving your revenue. You can safely allocate budget and time because you have data.",
+    weakTitle: "Attribution Blind Spot",
+    weakReality:
+      "You are getting leads, but you have no clear idea which specific efforts are producing them, leading to wasted time on dead-end channels.",
+    weakFix:
+      "Our backend integration binds tracking tokens on signup, allowing you to instantly see which referral links and partnerships are converting.",
+  },
+  q4: {
+    strongTitle: "Pre-Sold Authority",
+    strongCopy:
+      "Your audience respects your expertise before they ever jump on a call. This slashes your sales cycle and eliminates the need for aggressive, high-pressure selling.",
+    weakTitle: "Skeptical Audience",
+    weakReality:
+      "You have to spend the first half of every sales conversation proving your basic credibility, fighting against cold-traffic skepticism.",
+    weakFix:
+      "By structuring your quiz and challenge using our pre-built templates, you educate and build authority before you make an offer.",
+  },
+  q5: {
+    strongTitle: "Self-Propelling Virality",
+    strongCopy:
+      "Your existing audience does your marketing for you. Every new signup has a high probability of bringing in peers, driving down your customer acquisition cost to near zero.",
+    weakTitle: "Isolated Signups",
+    weakReality:
+      "Your lead generation is entirely linear \u2014 each lead must be manually found and acquired by you.",
+    weakFix:
+      "LeadBead's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
+  },
+  q6: {
+    strongTitle: "Tailored Diagnostics",
+    strongCopy:
+      "You treat different audience segments with tailored solutions. This personalized approach maximizes opt-in rates and makes prospects feel uniquely understood.",
+    weakTitle: "One-Size-Fits-All Magnet",
+    weakReality:
+      "You serve a single static PDF or ebook to everyone, ignoring the fact that different buyers have completely different pain points.",
+    weakFix:
+      "In Day 2, you'll construct an interactive quiz that automatically segments leads into custom archetypes and serves dynamic advice.",
+  },
+  q7: {
+    strongTitle: "Seamless Lead Onboarding",
+    strongCopy:
+      "Your signups have zero friction. They are immediately directed to an actionable next step, keeping their momentum high and driving them deeper into your ecosystem.",
+    weakTitle: "Onboarding Leak",
+    weakReality:
+      "Leads sign up and then sit in limbo, wondering what to do next, which causes their excitement and buying intent to plummet.",
+    weakFix:
+      "Our Challenger Progress Hub visually updates in real-time, showing new signups exactly what daily tasks they need to perform.",
+  },
+  q8: {
+    strongTitle: "Evergreen Asset Leverage",
+    strongCopy:
+      "You have built assets that generate compound returns. They act as automated 24/7 business developers, freeing you up to focus on product and high-level strategy.",
+    weakTitle: "Temporary Campaigns",
+    weakReality:
+      "You are constantly building temporary campaigns, webinars, or launches that generate a brief spike of leads and then go completely dead.",
+    weakFix:
+      "Build your challenge once and flip it into \u201CEvergreen Mode,\u201D where the 72-hour countdown runs automatically for every new visitor.",
+  },
+  q9: {
+    strongTitle: "Passive Generation",
+    strongCopy:
+      "Your pipeline is completely decoupled from your physical presence. You wake up to new pre-sold leads in your database without having worked overnight.",
+    weakTitle: "Manual Pipeline Maintenance",
+    weakReality:
+      "If you take a vacation, get sick, or focus on fulfillment, your lead generation grinds to a halt.",
+    weakFix:
+      "The unified 3-day challenge framework automates the entire relationship-building process, turning traffic into warmed-up leads passively.",
+  },
+};
+
+type ArchetypeKey = "pioneer" | "architect" | "authority";
+
+type Archetype = {
+  key: ArchetypeKey;
+  name: string;
+  zoneLabel: string;
+  hook: string;
+  narrative: string;
+  roadmapHeader: string;
+  roadmapIntro: string;
+  roadmap: { day: string; title: string; copy: string }[];
+  ctaLabel: string;
+  tone: {
+    chip: string;
+    bar: string;
+    gaugeRing: string;
+    gaugeText: string;
+    badgeWeak: string;
+  };
+};
+
+const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
+  pioneer: {
+    key: "pioneer",
+    name: "The Active Pioneer",
+    zoneLabel: "Red Zone \u00b7 0\u201333% Strength",
+    hook:
+      "You have built a trusted brand, but you are currently trapped in an active-labor loop.",
+    narrative:
+      "As a Pioneer, your greatest asset is your raw skill and the high trust of your current audience. When you get in front of people, you convert them easily because your pre-sold trust is high. However, you are currently trading your direct, physical energy for every single lead. If you stop writing posts, launching temporary campaigns, or doing manual outreach, your pipeline dries up. You do not have a lead generation problem \u2014 you have a system design problem. You are acting as the engine of your marketing when you should be the architect. To step into the next phase of growth, you must package your authority into a self-running asset.",
+    roadmapHeader: "Your Step-by-Step Pioneer Breakthrough Plan",
+    roadmapIntro:
+      "You don't need to spend months coding complex marketing pipelines. Over the next 72 hours, we are going to build your high-converting, evergreen lead system:",
+    roadmap: [
+      {
+        day: "Day 1",
+        title: "System Definition",
+        copy: "Shift from manual outreach to a highly engaging challenge promise. We'll outline your perfect audience and desired outcome.",
+      },
+      {
+        day: "Day 2",
+        title: "Quiz Personalization",
+        copy: "Stop using a one-size-fits-all lead magnet. We'll build a dynamic, diagnostic-driven quiz to automatically segment your visitors.",
+      },
+      {
+        day: "Day 3",
+        title: "Organic Virality",
+        copy: "Implement a milestone-based referral system (e.g. \u201CInvite 3 peers to unlock the community\u201D) so your leads generate more leads for you.",
+      },
+    ],
+    ctaLabel: "Start Day 1 Challenge Definition",
+    tone: {
+      chip: "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400",
+      bar: "bg-gradient-to-r from-rose-500 to-orange-500",
+      gaugeRing: "ring-rose-500/30 bg-rose-500/10",
+      gaugeText: "text-rose-600 dark:text-rose-400",
+      badgeWeak: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30",
+    },
+  },
+  architect: {
+    key: "architect",
+    name: "The Systems Architect",
+    zoneLabel: "Gold Zone \u00b7 44\u201366% Strength",
+    hook:
+      "You have functional automation, but your systems are fragmented and leaking revenue.",
+    narrative:
+      "As an Architect, you have successfully moved past the manual grind. You have set up reliable lead generation methods, and you probably have an automated tool or two running in the background. You know where your leads are coming from, but you are missing key optimization levers. Your primary leaks are segmentation and virality. Because you serve a static lead magnet to everyone, you are treating different buyer personas as identical. Furthermore, your leads enter your ecosystem in isolation; they aren't incentivized to bring their peers. You have a great engine, but we need to tune the components and tie them into a unified, viral challenge to maximize your ROI.",
+    roadmapHeader: "Your Step-by-Step Architect Optimization Plan",
+    roadmapIntro:
+      "Let's plug the leaks in your current funnel and transform your static lead capture into a high-octane growth loop:",
+    roadmap: [
+      {
+        day: "Day 1",
+        title: "Challenge Positioning",
+        copy: "Upgrade your existing lead magnet into an interactive 3-day challenge designed to warm up your most profitable buyers.",
+      },
+      {
+        day: "Day 2",
+        title: "Dynamic Segmenting",
+        copy: "Build a premium diagnostic quiz to automatically route different leads to different result tiers based on their specific friction points.",
+      },
+      {
+        day: "Day 3",
+        title: "Multiplayer Virality",
+        copy: "Activate the LeadBead referral engine, transforming isolated signups into a self-propelling community that invites their peers on autopilot.",
+      },
+    ],
+    ctaLabel: "Begin Your System Calibration",
+    tone: {
+      chip: "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+      bar: "bg-gradient-to-r from-amber-400 to-yellow-500",
+      gaugeRing: "ring-amber-500/30 bg-amber-500/10",
+      gaugeText: "text-amber-600 dark:text-amber-400",
+      badgeWeak: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30",
+    },
+  },
+  authority: {
+    key: "authority",
+    name: "The Scaled Authority",
+    zoneLabel: "Green Zone \u00b7 77\u2013100% Strength",
+    hook:
+      "You have built a high-performing lead engine. Now it's time to build a self-scaling ecosystem.",
+    narrative:
+      "As an Authority, you represent the top tier of lead generation maturity. Your pipeline is largely automated, your leads trust you before they speak to you, and you can track your attribution cleanly. You have built a highly reliable machine. Your next frontier isn't just generating more leads \u2014 it's hyper-scale, brand network effects, and premium monetization. To fully capitalize on your market position, you need to transition your challenge from a simple lead capture tool into a highly engaging \u201Cmultiplayer\u201D community and partner-driven ecosystem. We will focus on unlocking the viral loops and affiliate features that turn your brand into an industry institution.",
+    roadmapHeader: "Your Step-by-Step Authority Scaling Plan",
+    roadmapIntro:
+      "Let's scale your high-performing machine into a self-propagating market institution over the next 3 days:",
+    roadmap: [
+      {
+        day: "Day 1",
+        title: "High-Ticket Alignment",
+        copy: "Align your challenge design with high-ticket backend offers, optimizing your positioning for maximum high-value buyer conversion.",
+      },
+      {
+        day: "Day 2",
+        title: "Advanced Diagnostic Routing",
+        copy: "Deploy deep, AI-driven diagnostic results and custom archetype pages that match your elite market authority.",
+      },
+      {
+        day: "Day 3",
+        title: "Network Effect Launch",
+        copy: "Unlock advanced viral features: set up the Builder Circle community and JV Partner portals to have affiliates and clients drive your traffic for you.",
+      },
+    ],
+    ctaLabel: "Unlock Hyper-Scale Engine",
+    tone: {
+      chip: "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+      bar: "bg-gradient-to-r from-emerald-500 to-teal-500",
+      gaugeRing: "ring-emerald-500/30 bg-emerald-500/10",
+      gaugeText: "text-emerald-600 dark:text-emerald-400",
+      badgeWeak: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30",
+    },
+  },
+};
+
+function pickArchetype(strong: number): Archetype {
+  if (strong <= 3) return ARCHETYPES.pioneer;
+  if (strong <= 6) return ARCHETYPES.architect;
+  return ARCHETYPES.authority;
+}
+
+const LeadGenStrengthCard = () => {
+  const { state } = useAppState();
+  const navigate = useNavigate();
+  const assessment = state.assessment as
+    | { answers?: Record<string, string> }
+    | undefined;
+
+  const data = useMemo(() => {
+    if (!assessment?.answers) return null;
+    const answers = assessment.answers;
+    const total = questions.length;
+    let strong = 0;
+
+    const active: { id: string; question: string; title: string; copy: string }[] = [];
+    const priorities: {
+      id: string;
+      question: string;
+      title: string;
+      reality: string;
+      fix: string;
+    }[] = [];
+
+    questions.forEach((q) => {
+      const ans = answers[q.id];
+      if (ans !== "yes" && ans !== "no") return;
+      const isStrong = REVERSE.has(q.id) ? ans === "no" : ans === "yes";
+      const sig = SIGNALS[q.id];
+      if (!sig) return;
+      if (isStrong) {
+        strong += 1;
+        active.push({
+          id: q.id,
+          question: q.text,
+          title: sig.strongTitle,
+          copy: sig.strongCopy,
+        });
+      } else {
+        priorities.push({
+          id: q.id,
+          question: q.text,
+          title: sig.weakTitle,
+          reality: sig.weakReality,
+          fix: sig.weakFix,
+        });
+      }
+    });
+
+    const percent = Math.round((strong / total) * 100);
+    const archetype = pickArchetype(strong);
+    return { strong, total, percent, archetype, active, priorities };
+  }, [assessment]);
+
+  if (!data) return null;
+  const { strong, total, percent, archetype, active, priorities } = data;
+
+  return (
+    <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+      {/* Hero */}
+      <div className="p-5 sm:p-6 border-b border-border">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="min-w-0 flex-1">
+            <div
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider",
+                archetype.tone.chip,
+              )}
+            >
+              <Gauge className="h-3 w-3" /> {archetype.zoneLabel}
+            </div>
+            <p className="mt-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Lead Gen Strength
+            </p>
+            <h2 className="mt-1 text-3xl sm:text-4xl font-black text-foreground leading-none">
+              {percent}%
+            </h2>
+            <p className="mt-2 text-sm font-bold text-foreground">
+              Archetype:{" "}
+              <span className={archetype.tone.gaugeText}>{archetype.name}</span>
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground italic">
+              &ldquo;{archetype.hook}&rdquo;
+            </p>
+          </div>
+          <div
+            className={cn(
+              "shrink-0 rounded-2xl ring-2 px-4 py-3 text-center min-w-[120px]",
+              archetype.tone.gaugeRing,
+            )}
+          >
+            <div className={cn("text-3xl font-black", archetype.tone.gaugeText)}>
+              {strong}<span className="text-base text-muted-foreground">/{total}</span>
+            </div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
+              Systems Optimized
+            </div>
+          </div>
+        </div>
+
+        {/* Strength bar */}
+        <div className="mt-5 h-2 w-full rounded-full bg-muted overflow-hidden">
+          <div
+            className={cn("h-full rounded-full transition-all", archetype.tone.bar)}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Narrative */}
+      <div className="p-5 sm:p-6 border-b border-border bg-muted/30">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+          Strategic Profile
+        </p>
+        <p className="text-sm leading-relaxed text-foreground">
+          {archetype.narrative}
+        </p>
+      </div>
+
+      {/* Active Assets */}
+      {active.length > 0 && (
+        <div className="p-5 sm:p-6 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+              Active Assets
+              <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
+                ({active.length})
+              </span>
+            </h3>
+          </div>
+          <ul className="grid gap-2.5 sm:grid-cols-2">
+            {active.map((a) => (
+              <li
+                key={a.id}
+                className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3"
+              >
+                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                  {a.title}
+                </p>
+                <p className="mt-1 text-xs leading-snug text-muted-foreground">
+                  {a.copy}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Optimization Priorities */}
+      {priorities.length > 0 && (
+        <div className="p-5 sm:p-6 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="h-4 w-4 text-rose-500" />
+            <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+              Optimization Priorities
+              <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
+                ({priorities.length})
+              </span>
+            </h3>
+          </div>
+          <ul className="space-y-3">
+            {priorities.map((p) => (
+              <li
+                key={p.id}
+                className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-4"
+              >
+                <p className="text-sm font-bold text-rose-700 dark:text-rose-300">
+                  {p.title}
+                </p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                      Current Reality
+                    </p>
+                    <p className="mt-0.5 text-xs leading-snug text-foreground">
+                      {p.reality}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-primary">
+                      The LeadBead Fix
+                    </p>
+                    <p className="mt-0.5 text-xs leading-snug text-foreground">
+                      {p.fix}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* 72-Hour Roadmap CTA */}
+      <div className="p-5 sm:p-6 bg-gradient-to-br from-primary/5 to-transparent">
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <p className="text-xs font-black uppercase tracking-wider text-primary">
+            72-Hour Roadmap
+          </p>
+        </div>
+        <h3 className="text-lg font-black text-foreground">
+          {archetype.roadmapHeader}
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {archetype.roadmapIntro}
+        </p>
+        <ol className="mt-4 space-y-2.5">
+          {archetype.roadmap.map((step, i) => (
+            <li
+              key={i}
+              className="flex gap-3 rounded-lg border border-border bg-card p-3"
+            >
+              <div className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-black">
+                {i + 1}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-foreground">
+                  <span className="text-primary">{step.day}:</span> {step.title}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground leading-snug">
+                  {step.copy}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <Button
+          size="lg"
+          className="mt-5 w-full h-12 text-sm font-black"
+          onClick={() => navigate("/day/1")}
+        >
+          {archetype.ctaLabel}
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </section>
+  );
+};
+
+export default LeadGenStrengthCard;

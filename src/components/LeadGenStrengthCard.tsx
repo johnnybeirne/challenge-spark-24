@@ -64,7 +64,7 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your existing audience does your marketing for you. Every new signup has a high probability of bringing in peers, driving down your customer acquisition cost to near zero.",
     weakTitle: "Isolated Signups",
     weakReality:
-      "Your lead generation is entirely linear \u2014 each lead must be manually found and acquired by you.",
+      "Your lead generation is entirely linear, each lead must be manually found and acquired by you.",
     weakFix:
       "LeadBead's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
   },
@@ -139,7 +139,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
     hook:
       "You have built a trusted brand, but you are currently trapped in an active-labor loop.",
     narrative:
-      "As a Pioneer, your greatest asset is your raw skill and the high trust of your current audience. When you get in front of people, you convert them easily because your pre-sold trust is high. However, you are currently trading your direct, physical energy for every single lead. If you stop writing posts, launching temporary campaigns, or doing manual outreach, your pipeline dries up. You do not have a lead generation problem \u2014 you have a system design problem. You are acting as the engine of your marketing when you should be the architect. To step into the next phase of growth, you must package your authority into a self-running asset.",
+      "As a Pioneer, your greatest asset is your raw skill and the high trust of your current audience. When you get in front of people, you convert them easily because your pre-sold trust is high. However, you are currently trading your direct, physical energy for every single lead. If you stop writing posts, launching temporary campaigns, or doing manual outreach, your pipeline dries up. You do not have a lead generation problem, you have a system design problem. You are acting as the engine of your marketing when you should be the architect. To step into the next phase of growth, you must package your authority into a self-running asset.",
     roadmapHeader: "Your Step-by-Step Pioneer Breakthrough Plan",
     roadmapIntro:
       "You don't need to spend months coding complex marketing pipelines. Over the next 72 hours, we are going to build your high-converting, evergreen lead system:",
@@ -213,7 +213,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
     hook:
       "You have built a high-performing lead engine. Now it's time to build a self-scaling ecosystem.",
     narrative:
-      "As an Authority, you represent the top tier of lead generation maturity. Your pipeline is largely automated, your leads trust you before they speak to you, and you can track your attribution cleanly. You have built a highly reliable machine. Your next frontier isn't just generating more leads \u2014 it's hyper-scale, brand network effects, and premium monetization. To fully capitalize on your market position, you need to transition your challenge from a simple lead capture tool into a highly engaging \u201Cmultiplayer\u201D community and partner-driven ecosystem. We will focus on unlocking the viral loops and affiliate features that turn your brand into an industry institution.",
+      "As an Authority, you represent the top tier of lead generation maturity. Your pipeline is largely automated, your leads trust you before they speak to you, and you can track your attribution cleanly. You have built a highly reliable machine. Your next frontier isn't just generating more leads, it's hyper-scale, brand network effects, and premium monetization. To fully capitalize on your market position, you need to transition your challenge from a simple lead capture tool into a highly engaging \u201Cmultiplayer\u201D community and partner-driven ecosystem. We will focus on unlocking the viral loops and affiliate features that turn your brand into an industry institution.",
     roadmapHeader: "Your Step-by-Step Authority Scaling Plan",
     roadmapIntro:
       "Let's scale your high-performing machine into a self-propagating market institution over the next 3 days:",

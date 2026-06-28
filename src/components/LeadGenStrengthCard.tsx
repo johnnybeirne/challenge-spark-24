@@ -465,7 +465,7 @@ const LeadGenStrengthCard = () => {
               {/* Optimization Priorities accordion */}
               {priorities.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="h-4 w-4 text-rose-500" />
                     <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
                       Optimization Priorities
@@ -474,16 +474,23 @@ const LeadGenStrengthCard = () => {
                       </span>
                     </h3>
                   </div>
+                  <p className="mb-3 text-xs font-semibold text-rose-600">
+                    👇 Tap each item to read the fix
+                  </p>
                   <Accordion type="single" collapsible className="space-y-2">
                     {priorities.map((p) => (
                       <AccordionItem
                         key={p.id}
                         value={p.id}
-                        className="rounded-lg border border-border bg-card px-4 data-[state=open]:border-rose-500/40 data-[state=open]:bg-rose-500/5"
+                        className="rounded-lg border-2 border-rose-200 bg-rose-50/60 px-4 shadow-sm hover:border-rose-400 hover:bg-rose-50 transition-colors data-[state=open]:border-rose-500 data-[state=open]:bg-rose-500/10 data-[state=open]:shadow-md"
                       >
-                        <AccordionTrigger className="py-3 text-left text-sm font-bold text-foreground hover:no-underline">
-                          {p.title}
+                        <AccordionTrigger className="py-3 text-left text-sm font-bold text-foreground hover:no-underline [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-rose-600 [&>svg]:shrink-0">
+                          <span className="flex items-center gap-2">
+                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white">!</span>
+                            {p.title}
+                          </span>
                         </AccordionTrigger>
+
                         <AccordionContent className="pb-4">
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>

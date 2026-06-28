@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
-import { downloadQuizAsGoogleDoc } from "@/lib/downloadQuizGdoc";
+import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
 import { questions as leadGenQuestions } from "@/lib/assessmentData";
 
 interface Resource {

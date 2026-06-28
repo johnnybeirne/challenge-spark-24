@@ -42,6 +42,7 @@ import { SETUP_KEY } from "@/components/Day1Setup";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
+import pioneerAsset from "@/assets/pioneer.png.asset.json";
 
 
 const challengeSteps = [
@@ -281,7 +282,7 @@ const Dashboard = () => {
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Play className="h-4 w-4" fill="currentColor" />
               </span>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 flex items-center gap-3">
                 <p className="truncate text-[20pt] font-bold text-foreground leading-tight">
                   {(() => {
                     const rawName =
@@ -296,9 +297,15 @@ const Dashboard = () => {
                     return archetypeLabel ? `${greeting} You're ${article} ${archetypeLabel}.` : greeting;
                   })()}
                 </p>
-
-                
+                {archetypeLabel === "Pioneer" && (
+                  <img
+                    src={pioneerAsset.url}
+                    alt="Pioneer character"
+                    className="h-12 w-auto shrink-0 sm:h-14"
+                  />
+                )}
               </div>
+
               {state.training.dashboardVideoWatched && cfg.videoUrl && (
                 <span className="rounded-full bg-success/10 px-2.5 py-1 text-sm font-bold text-success">
                   Watched

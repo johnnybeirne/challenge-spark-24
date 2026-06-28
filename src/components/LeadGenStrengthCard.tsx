@@ -291,14 +291,22 @@ const LeadGenStrengthCard = () => {
     const realAnswers = assessment?.answers;
     const total = questions.length;
 
-    // When QA preview archetype is active, synthesize a representative answer
-    // set so the Assets/Roadmap/Quiz tabs have content to display for previewing.
+    // Determine a synthetic strong-count target when real answers are absent.
+    // Priority: QA archetype override → persona diagnosticScore → none.
+    let synthStrongCount: number | null = null;
+    if (!realAnswers) {
+      if (qaArchetype) {
+        synthStrongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
+      } else if (typeof assessment?.diagnosticScore === "number") {
+        synthStrongCount = Math.max(0, Math.min(total, Math.round(assessment.diagnosticScore)));
+      }
+    }
+
     let answers: Record<string, string> | undefined = realAnswers;
-    if (!realAnswers && qaArchetype) {
-      const strongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
+    if (!realAnswers && synthStrongCount !== null) {
       const synth: Record<string, string> = {};
       questions.forEach((q, i) => {
-        const makeStrong = i < strongCount;
+        const makeStrong = i < (synthStrongCount as number);
         const strongVal = REVERSE.has(q.id) ? "no" : "yes";
         const weakVal = REVERSE.has(q.id) ? "yes" : "no";
         synth[q.id] = makeStrong ? strongVal : weakVal;
@@ -347,10 +355,7 @@ const LeadGenStrengthCard = () => {
       });
     }
 
-    // Fallback when persona/character sets diagnosticScore but no answers.
-    if (!hasAnswers && typeof assessment?.diagnosticScore === "number") {
-      strong = Math.max(0, Math.min(total, assessment.diagnosticScore));
-    } else if (!hasAnswers && !assessment && !qaArchetype) {
+    if (!hasAnswers && !assessment && !qaArchetype) {
       return null;
     }
 

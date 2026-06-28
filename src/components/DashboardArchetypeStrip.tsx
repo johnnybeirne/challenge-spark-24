@@ -83,15 +83,17 @@ const DashboardArchetypeStrip = () => {
   }
 
 
-  const score = assessment!.diagnosticScore ?? 0;
+  const score = assessment?.diagnosticScore ?? 0;
 
-  const percent = Math.round((score / 9) * 100);
-  const tier =
-    assessment.diagnosticLevel === "low" ||
-    assessment.diagnosticLevel === "mid" ||
-    assessment.diagnosticLevel === "high"
+  const rawPercent = Math.round((score / 9) * 100);
+  const tier: "low" | "mid" | "high" =
+    qaTier ??
+    (assessment?.diagnosticLevel === "low" ||
+    assessment?.diagnosticLevel === "mid" ||
+    assessment?.diagnosticLevel === "high"
       ? assessment.diagnosticLevel
-      : getTier(percent);
+      : getTier(rawPercent));
+  const percent = qaTier === "low" ? 22 : qaTier === "mid" ? 55 : qaTier === "high" ? 88 : rawPercent;
 
   const cfg = DEFAULTS[tier];
   const rawName = tContent(`archetypes.${tier}_name`, `You're an ${cfg.name}`);

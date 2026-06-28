@@ -132,7 +132,7 @@ export default {
         "bounce-in": "bounce-in 0.5s ease-out",
         "subtle-bounce": "subtle-bounce 2s ease-in-out 3",
         "pulse-glow": "pulse-glow 2.5s ease-in-out infinite",
-        "pulse-glow-orange": "pulse-glow-orange 2.6s ease-in-out infinite",
+        "pulse-glow-orange": "pulse-glow-orange 5s ease-in-out infinite",
         "attention-pulse": "attention-pulse 1s ease-in-out 3",
         "rise-in": "rise-in 500ms ease-out both",
         "fade-in": "fade-in 400ms ease-out both",

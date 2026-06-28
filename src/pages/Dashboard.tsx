@@ -31,8 +31,7 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
-import QuizScoreDoughnut from "@/components/QuizScoreDoughnut";
-import QuizScoreCard from "@/components/QuizScoreCard";
+import LeadGenStrengthCard from "@/components/LeadGenStrengthCard";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
@@ -376,9 +375,9 @@ const Dashboard = () => {
 
 
 
-          {/* QUIZ SCORE — doughnut + answer breakdown */}
-          <QuizScoreDoughnut />
-          <QuizScoreCard />
+          {/* LEAD GEN STRENGTH — diagnostic results card (archetype + signals + roadmap) */}
+          <LeadGenStrengthCard />
+
 
           {/* YOUR CHALLENGE — recap from Day 1 answers */}
           <YourChallengeRecap />
@@ -507,7 +506,7 @@ const Dashboard = () => {
           );
         })()}
         <AssessmentResultCard />
-        <QuizScoreDoughnut />
+        <LeadGenStrengthCard />
         <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

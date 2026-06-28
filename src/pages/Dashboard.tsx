@@ -376,6 +376,20 @@ const Dashboard = () => {
           {/* LEAD GEN STRENGTH — hero + tabbed dashboard (Profile / Assets / Roadmap) */}
           <LeadGenStrengthCard />
 
+          {/* Primary CTA — big orange Day 1 button */}
+          <div className="flex justify-center pt-2">
+            <Button
+              size="lg"
+              onClick={() => navigate(`/challenge/day-${ctaDay}`)}
+              className="h-14 w-full max-w-md gap-2 px-6 text-base font-black shadow-md shadow-primary/20 animate-pulse-glow-orange transition-all duration-300 hover:-translate-y-0.5 hover:[&_svg]:translate-x-1"
+            >
+              {ctaLabel}
+              <ArrowRight className="h-5 w-5 transition-transform" />
+            </Button>
+          </div>
+
+
+
 
           {/* Reset Day 1 — available for 24h from Day 1 start, then permanently locked */}
           {isDay1ResetOpen(state.challenge?.startedAt) ? (

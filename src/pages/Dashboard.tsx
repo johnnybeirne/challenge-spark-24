@@ -42,6 +42,7 @@ import { SETUP_KEY } from "@/components/Day1Setup";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
+import pioneerAsset from "@/assets/pioneer.png.asset.json";
 
 
 const challengeSteps = [

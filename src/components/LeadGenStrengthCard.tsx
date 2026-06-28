@@ -308,55 +308,30 @@ const LeadGenStrengthCard = () => {
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-      {/* Hero */}
+      {/* Hero — compact: %, archetype, strength bar */}
       <div className="p-5 sm:p-6 border-b border-border">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="min-w-0 flex-1">
-            <div
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider",
-                archetype.tone.chip,
-              )}
-            >
-              <Gauge className="h-3 w-3" /> {archetype.zoneLabel}
-            </div>
-            <p className="mt-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <div className="flex items-baseline justify-between gap-4 flex-wrap">
+          <h2 className={cn("text-4xl sm:text-5xl font-black leading-none", archetype.tone.gaugeText)}>
+            {percent}%
+            <span className="ml-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
               Lead Gen Strength
-            </p>
-            <h2 className="mt-1 text-3xl sm:text-4xl font-black text-foreground leading-none">
-              {percent}%
-            </h2>
-            <p className="mt-2 text-sm font-bold text-foreground">
-              Archetype:{" "}
-              <span className={archetype.tone.gaugeText}>{archetype.name}</span>
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground italic">
-              &ldquo;{archetype.hook}&rdquo;
-            </p>
-          </div>
-          <div
-            className={cn(
-              "shrink-0 rounded-2xl ring-2 px-4 py-3 text-center min-w-[120px]",
-              archetype.tone.gaugeRing,
-            )}
-          >
-            <div className={cn("text-3xl font-black", archetype.tone.gaugeText)}>
-              {strong}<span className="text-base text-muted-foreground">/{total}</span>
-            </div>
-            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
-              Systems Optimized
-            </div>
-          </div>
+            </span>
+          </h2>
+          <p className="text-sm font-bold text-foreground">
+            <span className="text-muted-foreground font-medium">Archetype: </span>
+            <span className={archetype.tone.gaugeText}>{archetype.name}</span>
+          </p>
         </div>
 
         {/* Strength bar */}
-        <div className="mt-5 h-2 w-full rounded-full bg-muted overflow-hidden">
+        <div className="mt-4 h-2 w-full rounded-full bg-muted overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all", archetype.tone.bar)}
             style={{ width: `${percent}%` }}
           />
         </div>
       </div>
+
 
       {/* Narrative */}
       <div className="p-5 sm:p-6 border-b border-border bg-muted/30">

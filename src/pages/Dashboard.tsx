@@ -375,9 +375,9 @@ const Dashboard = () => {
 
 
 
-          {/* QUIZ SCORE — doughnut + answer breakdown */}
-          <QuizScoreDoughnut />
-          <QuizScoreCard />
+          {/* LEAD GEN STRENGTH — diagnostic results card (archetype + signals + roadmap) */}
+          <LeadGenStrengthCard />
+
 
           {/* YOUR CHALLENGE — recap from Day 1 answers */}
           <YourChallengeRecap />

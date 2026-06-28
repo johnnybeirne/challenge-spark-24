@@ -309,11 +309,11 @@ const Dashboard = () => {
                   </span>
                 )}
               </div>
-              {archetypeLabel === "Pioneer" && (
+              {(archetypeLabel === "Pioneer" || archetypeLabel === "Architect") && (
                 <div className="flex justify-center sm:justify-end">
                   <img
-                    src={pioneerAsset.url}
-                    alt="Pioneer character"
+                    src={archetypeLabel === "Architect" ? architectAsset.url : pioneerAsset.url}
+                    alt={`${archetypeLabel} character`}
                     className="h-48 w-auto sm:h-56 lg:h-64"
                   />
                 </div>

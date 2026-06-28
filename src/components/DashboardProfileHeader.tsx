@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import type { AssessmentResult } from "@/lib/assessmentData";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { qaArchetypeTier } from "@/lib/qaPreview";
 
 // Display-only archetype mapping based on score (0-100). Does NOT change scoring.
 const getTierLabel = (percent: number): string => {

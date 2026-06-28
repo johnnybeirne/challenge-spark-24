@@ -367,9 +367,9 @@ const LeadGenStrengthCard = () => {
       </div>
 
       {/* TABS */}
-      <div className="border-t border-border bg-muted/30 px-5 sm:px-7 pt-4">
+      <div className="border-t border-border bg-muted/40 px-5 sm:px-7 pt-5">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="bg-transparent p-0 h-auto gap-1 w-full justify-start border-b border-border rounded-none">
+          <TabsList className="bg-background p-1.5 h-auto gap-1.5 w-full sm:w-auto inline-flex justify-start rounded-xl border border-border shadow-sm">
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
@@ -378,12 +378,13 @@ const LeadGenStrengthCard = () => {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="rounded-none border-b-2 border-transparent bg-transparent px-4 py-2.5 text-sm font-semibold text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all"
               >
                 {t.label}
               </TabsTrigger>
             ))}
           </TabsList>
+
 
           {/* TAB 1: PROFILE */}
           <TabsContent value="profile" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">

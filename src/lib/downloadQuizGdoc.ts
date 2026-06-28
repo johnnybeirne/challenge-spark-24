@@ -27,33 +27,87 @@ function parseQuiz(raw: string | undefined | null): QuizDraft | null {
   }
 }
 
-function slugify(s: string): string {
-  return (
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "quiz"
-  );
-}
-
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+    .replace(/>/g, "&gt;");
+}
+
+function buildQuizContent(quiz: QuizDraft): { html: string; text: string } {
+  const title = (quiz.quizTitle || "Your diagnostic quiz").trim();
+  const htmlParts: string[] = [];
+  const textParts: string[] = [];
+
+  htmlParts.push(`<h1>${escapeHtml(title)}</h1>`);
+  textParts.push(title);
+  textParts.push("");
+
+  if (quiz.heroProblemShort) {
+    htmlParts.push(`<p><i>${escapeHtml(quiz.heroProblemShort)}</i></p>`);
+    textParts.push(quiz.heroProblemShort);
+    textParts.push("");
+  }
+
+  htmlParts.push(`<h2>Questions</h2>`);
+  textParts.push("Questions");
+  textParts.push("");
+
+  (quiz.questions || []).forEach((q, idx) => {
+    htmlParts.push(
+      `<p><b>${idx + 1}.</b> ${escapeHtml(q.text || "")}</p>`,
+    );
+    textParts.push(`${idx + 1}. ${q.text || ""}`);
+    const opts: Array<["low" | "mid" | "high", string]> = [
+      ["low", "A"],
+      ["mid", "B"],
+      ["high", "C"],
+    ];
+    const liItems: string[] = [];
+    opts.forEach(([t, label]) => {
+      const txt = q.scoring?.[t];
+      if (!txt) return;
+      liItems.push(`<li><b>${label}.</b> ${escapeHtml(txt)}</li>`);
+      textParts.push(`   ${label}. ${txt}`);
+    });
+    if (liItems.length) htmlParts.push(`<ul>${liItems.join("")}</ul>`);
+    textParts.push("");
+  });
+
+  if (quiz.tiers) {
+    htmlParts.push(`<h2>Result tiers</h2>`);
+    textParts.push("Result tiers");
+    textParts.push("");
+    (["low", "mid", "high"] as const).forEach((t) => {
+      const tier = quiz.tiers?.[t];
+      if (!tier) return;
+      htmlParts.push(
+        `<p><b>${t.toUpperCase()} — ${escapeHtml(tier.name || "")}</b></p>`,
+      );
+      textParts.push(`${t.toUpperCase()} — ${tier.name || ""}`);
+      if (tier.description) {
+        htmlParts.push(`<p>${escapeHtml(tier.description)}</p>`);
+        textParts.push(tier.description);
+      }
+      textParts.push("");
+    });
+  }
+
+  htmlParts.push(`<p>© 2026 LeadTree</p>`);
+  textParts.push("© 2026 LeadTree");
+
+  return { html: htmlParts.join(""), text: textParts.join("\n") };
 }
 
 /**
- * Downloads quiz as an HTML file that Google Docs imports cleanly
- * when uploaded to Google Drive (auto-converts to Google Doc).
+ * Copies the quiz to the clipboard as rich text and opens a blank Google Doc
+ * in a new tab so the user can paste it. True .gdoc creation requires
+ * per-user OAuth, which we don't have here.
  */
-export async function downloadQuizAsGoogleDoc(
+export async function openQuizInGoogleDocs(
   rawQuiz: string | undefined | null,
   fallback?: QuizDraft | null,
-) {
+): Promise<void> {
   const quiz =
     parseQuiz(rawQuiz) ??
     (fallback &&
@@ -62,74 +116,39 @@ export async function downloadQuizAsGoogleDoc(
       ? fallback
       : null);
   if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
-    throw new Error("No quiz available to download yet.");
+    throw new Error("No quiz available yet.");
   }
 
-  const title = (quiz.quizTitle || "Your diagnostic quiz").trim();
-  const parts: string[] = [];
+  const { html, text } = buildQuizContent(quiz);
 
-  parts.push(`<h1>${escapeHtml(title)}</h1>`);
-  if (quiz.heroProblemShort) {
-    parts.push(`<p><em>${escapeHtml(quiz.heroProblemShort)}</em></p>`);
-  }
+  // Open immediately so the popup isn't blocked (must happen in the user gesture).
+  const win = window.open("https://docs.google.com/document/create", "_blank");
 
-  parts.push(`<h2>Questions</h2>`);
-  quiz.questions.forEach((q, idx) => {
-    parts.push(
-      `<p><strong>${idx + 1}.</strong> ${escapeHtml(q.text || "")}</p>`,
-    );
-    const opts: Array<["low" | "mid" | "high", string]> = [
-      ["low", "A"],
-      ["mid", "B"],
-      ["high", "C"],
-    ];
-    const items = opts
-      .map(([t, label]) => {
-        const txt = q.scoring?.[t];
-        if (!txt) return "";
-        return `<li><strong>${label}.</strong> ${escapeHtml(txt)}</li>`;
-      })
-      .filter(Boolean)
-      .join("");
-    if (items) parts.push(`<ul>${items}</ul>`);
-  });
-
-  if (quiz.tiers) {
-    parts.push(`<h2>Result tiers</h2>`);
-    (["low", "mid", "high"] as const).forEach((t) => {
-      const tier = quiz.tiers?.[t];
-      if (!tier) return;
-      parts.push(
-        `<p><strong>${t.toUpperCase()} — ${escapeHtml(tier.name || "")}</strong></p>`,
+  try {
+    if (
+      typeof ClipboardItem !== "undefined" &&
+      navigator.clipboard &&
+      "write" in navigator.clipboard
+    ) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" }),
+        }),
+      ]);
+    } else if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      throw new Error("Clipboard not available");
+    }
+  } catch {
+    if (!win) {
+      throw new Error(
+        "Allow popups and clipboard access to send the quiz to Google Docs.",
       );
-      if (tier.description) {
-        parts.push(`<p>${escapeHtml(tier.description)}</p>`);
-      }
-    });
+    }
+    throw new Error(
+      "Couldn't copy automatically — paste manually into the new Google Doc.",
+    );
   }
-
-  parts.push(
-    `<hr/><p style="text-align:center;color:#888;font-size:10pt;">© 2026 LeadTree</p>`,
-  );
-
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<title>${escapeHtml(title)}</title>
-</head>
-<body>
-${parts.join("\n")}
-</body>
-</html>`;
-
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${slugify(title)}.html`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

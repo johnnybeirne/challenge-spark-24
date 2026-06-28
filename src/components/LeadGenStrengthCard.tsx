@@ -416,9 +416,9 @@ const LeadGenStrengthCard = () => {
       </div>
 
       {/* TABS */}
-      <div className="border-t border-border bg-muted/40 px-5 sm:px-7 pt-5">
+      <div className="border-t border-border bg-background px-5 sm:px-7 pt-4">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="bg-muted/60 p-1.5 h-auto gap-2 w-full sm:w-auto inline-flex justify-start rounded-full border-2 border-border shadow-inner">
+          <TabsList className="h-auto w-full justify-start gap-6 sm:gap-8 rounded-none border-0 border-b border-border bg-transparent p-0 overflow-x-auto flex-nowrap whitespace-nowrap scrollbar-none">
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
@@ -428,13 +428,18 @@ const LeadGenStrengthCard = () => {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="rounded-full px-5 py-2 text-sm font-semibold bg-background text-muted-foreground border border-border hover:text-foreground hover:bg-accent hover:border-primary/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary data-[state=active]:shadow-md transition-all"
+                ref={(el) => {
+                  if (el && el.getAttribute("data-state") === "active") {
+                    el.scrollIntoView({ block: "nearest", inline: "center" });
+                  }
+                }}
+                className="relative shrink-0 rounded-none border-0 bg-transparent px-0 pt-1 pb-3 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground/80 data-[state=active]:text-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[2.5px] after:rounded-full after:bg-primary after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"
               >
                 {t.label}
               </TabsTrigger>
             ))}
-
           </TabsList>
+
 
 
           {/* TAB 1: PROFILE */}

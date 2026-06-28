@@ -104,16 +104,34 @@ const Field = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const EmptyDay = ({ day, href }: { day: number; href: string }) => (
-  <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 text-center">
-    <Button asChild size="sm" variant="outline" className="gap-2">
-      <Link to={href}>
-        Open Day {day}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
-    </Button>
-  </div>
-);
+const EmptyDay = ({ day, href }: { day: number; href: string }) => {
+  if (day === 1) {
+    return (
+      <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
+        <Button
+          asChild
+          size="lg"
+          className="w-full h-14 gap-2 text-base font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20"
+        >
+          <Link to={href}>
+            Start Day 1
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 text-center">
+      <Button asChild size="sm" variant="outline" className="gap-2">
+        <Link to={href}>
+          Open Day {day}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </Button>
+    </div>
+  );
+};
 
 
 const EditableTitle = ({ identity }: { identity: ReturnType<typeof useChallengeIdentity> }) => {

@@ -66,11 +66,11 @@ const Resources = () => {
         await downloadQuizAsDocx(rawQuiz, quizFallback);
         toast.success("Downloaded");
       } else {
-        await downloadQuizAsGoogleDoc(rawQuiz, quizFallback);
-        toast.success("Downloaded. Upload to Google Drive to open as a Google Doc.");
+        await openQuizInGoogleDocs(rawQuiz, quizFallback);
+        toast.success("Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.");
       }
     } catch (err: any) {
-      toast.error(err?.message || "Couldn't download right now.");
+      toast.error(err?.message || "Couldn't open Google Docs right now.");
     }
   };
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown, FileText } from "lucide-react";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
-import { downloadQuizAsGoogleDoc } from "@/lib/downloadQuizGdoc";
+import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
 import { questions as leadGenQuestions } from "@/lib/assessmentData";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -729,7 +729,7 @@ const Day2Screen1 = () => {
                         type="button"
                         onClick={async () => {
                           try {
-                            await downloadQuizAsGoogleDoc(
+                            await openQuizInGoogleDocs(
                               state.challenge.aiOutputs?.day2_s2_quiz,
                               {
                                 quizTitle: "Lead Gen Quiz",
@@ -743,12 +743,12 @@ const Day2Screen1 = () => {
                               },
                             );
                             toast.success(
-                              "Downloaded. Upload to Google Drive to open as a Google Doc.",
+                              "Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.",
                             );
                           } catch (err: any) {
                             toast.error(
                               err?.message ||
-                                "Couldn't download your quiz right now.",
+                                "Couldn't open Google Docs right now.",
                             );
                           }
                         }}

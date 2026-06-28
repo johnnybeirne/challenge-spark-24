@@ -132,3 +132,11 @@ export const qaResolvedPremium = (): boolean | null => {
 };
 
 export const qaIsActive = (): boolean => getQaState().active;
+
+/** Map archetype override → diagnostic tier ("low"|"mid"|"high"). */
+export const archetypeToTier = (a: QaArchetype): "low" | "mid" | "high" =>
+  a === "pioneer" ? "low" : a === "architect" ? "mid" : "high";
+
+/** Tier override from QA panel, or null when no override. */
+export const qaArchetypeTier = (s: QaPreviewState = getQaState()): "low" | "mid" | "high" | null =>
+  s.active && s.archetypeOverride ? archetypeToTier(s.archetypeOverride) : null;

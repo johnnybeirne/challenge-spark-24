@@ -330,7 +330,6 @@ const LeadGenStrengthCard = () => {
 
   if (!data) return null;
   const { percent, archetype, active, priorities } = data;
-  const [showFullNarrative, setShowFullNarrative] = useState(false);
   const narrativeShort = firstSentences(archetype.narrative, 2);
   const narrativeRest = archetype.narrative.slice(narrativeShort.length).trim();
   const heroTeaser = teaser(archetype.narrative, 20);

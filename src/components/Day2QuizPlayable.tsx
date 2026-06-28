@@ -11,6 +11,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import quizHeroPortrait from "@/assets/quiz-hero-portrait.jpg";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
@@ -381,9 +382,14 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 </p>
               </div>
             </div>
-            <div className="aspect-[4/5] md:aspect-[5/6] w-full rounded-3xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-400">
-              <Camera className="h-12 w-12" />
-              <p className="mt-3 text-sm font-medium">Your photo goes here</p>
+            <div className="aspect-[4/5] md:aspect-[5/6] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100">
+              <img
+                src={quizHeroPortrait}
+                alt={`Portrait of a confident ${audienceShort}`}
+                width={832}
+                height={1024}
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
         </section>

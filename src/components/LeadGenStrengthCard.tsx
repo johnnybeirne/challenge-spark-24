@@ -309,11 +309,6 @@ const LeadGenStrengthCard = () => {
         synthStrongCount = 5;
       }
     }
-        synthStrongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
-      } else if (typeof assessment?.diagnosticScore === "number") {
-        synthStrongCount = Math.max(0, Math.min(total, Math.round(assessment.diagnosticScore)));
-      }
-    }
 
     let answers: Record<string, string> | undefined = realAnswers;
     if (!realAnswers && synthStrongCount !== null) {

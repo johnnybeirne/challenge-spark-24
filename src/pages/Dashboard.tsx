@@ -39,8 +39,6 @@ import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { Play } from "lucide-react";
 import RestartDay1Button from "@/components/RestartDay1Button";
 import { SETUP_KEY } from "@/components/Day1Setup";
-import ChallengeRecord from "@/components/ChallengeRecord";
-import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
@@ -65,7 +63,7 @@ const Dashboard = () => {
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
   const [signupPointCount, setSignupPointCount] = useState(0);
-  const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
+  const [videoCollapsed, setVideoCollapsed] = useState(true);
   const { t: tGlobal } = useSiteContent("global");
   const deadline = useDeadline();
   const dashboardUrgency = deadline.render(
@@ -364,7 +362,7 @@ const Dashboard = () => {
                   onClick={() => setVideoCollapsed(false)}
                 >
                   <Play className="h-4 w-4" fill="currentColor" />
-                  Watch Welcome Video Again
+                  Watch intro video
                 </Button>
               </div>
             )}
@@ -375,15 +373,9 @@ const Dashboard = () => {
 
 
 
-          {/* LEAD GEN STRENGTH — diagnostic results card (archetype + signals + roadmap) */}
+          {/* LEAD GEN STRENGTH — hero + tabbed dashboard (Profile / Assets / Roadmap) */}
           <LeadGenStrengthCard />
 
-
-          {/* YOUR CHALLENGE — recap from Day 1 answers */}
-          <YourChallengeRecap />
-
-          {/* YOUR CHALLENGE RECORD — Day 1/2/3 outputs */}
-          <ChallengeRecord />
 
           {/* Reset Day 1 — available for 24h from Day 1 start, then permanently locked */}
           {isDay1ResetOpen(state.challenge?.startedAt) ? (

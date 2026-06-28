@@ -1,10 +1,34 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, Gauge, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import ChallengeRecord from "@/components/ChallengeRecord";
+import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
+
+/** Trim narrative to first N sentences. */
+function firstSentences(text: string, n: number) {
+  const parts = text.match(/[^.!?]+[.!?]+/g) ?? [text];
+  return parts.slice(0, n).join(" ").trim();
+}
+
+/** Build a one-sentence teaser, capped at ~20 words. */
+function teaser(text: string, maxWords = 20) {
+  const first = (text.match(/[^.!?]+[.!?]+/) ?? [text])[0].trim();
+  const words = first.split(/\s+/);
+  if (words.length <= maxWords) return first;
+  return words.slice(0, maxWords).join(" ").replace(/[,;:]$/, "") + "...";
+}
+
 
 /* Strong-answer rule mirrors QuizScoreCard: q2, q6, q9 are reverse-scored. */
 const REVERSE = new Set(["q2", "q6", "q9"]);
@@ -64,7 +88,7 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your existing audience does your marketing for you. Every new signup has a high probability of bringing in peers, driving down your customer acquisition cost to near zero.",
     weakTitle: "Isolated Signups",
     weakReality:
-      "Your lead generation is entirely linear \u2014 each lead must be manually found and acquired by you.",
+      "Your lead generation is entirely linear, each lead must be manually found and acquired by you.",
     weakFix:
       "LeadBead's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
   },
@@ -139,7 +163,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
     hook:
       "You have built a trusted brand, but you are currently trapped in an active-labor loop.",
     narrative:
-      "As a Pioneer, your greatest asset is your raw skill and the high trust of your current audience. When you get in front of people, you convert them easily because your pre-sold trust is high. However, you are currently trading your direct, physical energy for every single lead. If you stop writing posts, launching temporary campaigns, or doing manual outreach, your pipeline dries up. You do not have a lead generation problem \u2014 you have a system design problem. You are acting as the engine of your marketing when you should be the architect. To step into the next phase of growth, you must package your authority into a self-running asset.",
+      "As a Pioneer, your greatest asset is your raw skill and the high trust of your current audience. When you get in front of people, you convert them easily because your pre-sold trust is high. However, you are currently trading your direct, physical energy for every single lead. If you stop writing posts, launching temporary campaigns, or doing manual outreach, your pipeline dries up. You do not have a lead generation problem, you have a system design problem. You are acting as the engine of your marketing when you should be the architect. To step into the next phase of growth, you must package your authority into a self-running asset.",
     roadmapHeader: "Your Step-by-Step Pioneer Breakthrough Plan",
     roadmapIntro:
       "You don't need to spend months coding complex marketing pipelines. Over the next 72 hours, we are going to build your high-converting, evergreen lead system:",
@@ -213,7 +237,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
     hook:
       "You have built a high-performing lead engine. Now it's time to build a self-scaling ecosystem.",
     narrative:
-      "As an Authority, you represent the top tier of lead generation maturity. Your pipeline is largely automated, your leads trust you before they speak to you, and you can track your attribution cleanly. You have built a highly reliable machine. Your next frontier isn't just generating more leads \u2014 it's hyper-scale, brand network effects, and premium monetization. To fully capitalize on your market position, you need to transition your challenge from a simple lead capture tool into a highly engaging \u201Cmultiplayer\u201D community and partner-driven ecosystem. We will focus on unlocking the viral loops and affiliate features that turn your brand into an industry institution.",
+      "As an Authority, you represent the top tier of lead generation maturity. Your pipeline is largely automated, your leads trust you before they speak to you, and you can track your attribution cleanly. You have built a highly reliable machine. Your next frontier isn't just generating more leads, it's hyper-scale, brand network effects, and premium monetization. To fully capitalize on your market position, you need to transition your challenge from a simple lead capture tool into a highly engaging \u201Cmultiplayer\u201D community and partner-driven ecosystem. We will focus on unlocking the viral loops and affiliate features that turn your brand into an industry institution.",
     roadmapHeader: "Your Step-by-Step Authority Scaling Plan",
     roadmapIntro:
       "Let's scale your high-performing machine into a self-propagating market institution over the next 3 days:",
@@ -254,6 +278,7 @@ function pickArchetype(strong: number): Archetype {
 const LeadGenStrengthCard = () => {
   const { state } = useAppState();
   const navigate = useNavigate();
+  const [showFullNarrative, setShowFullNarrative] = useState(false);
   const assessment = state.assessment as
     | { answers?: Record<string, string> }
     | undefined;
@@ -304,157 +329,224 @@ const LeadGenStrengthCard = () => {
   }, [assessment]);
 
   if (!data) return null;
-  const { strong, total, percent, archetype, active, priorities } = data;
+  const { percent, archetype, active, priorities } = data;
+  const narrativeShort = firstSentences(archetype.narrative, 2);
+  const narrativeRest = archetype.narrative.slice(narrativeShort.length).trim();
+  const heroTeaser = teaser(archetype.narrative, 20);
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-      {/* Hero — compact: %, archetype, strength bar */}
-      <div className="p-5 sm:p-6 border-b border-border">
-        <div className="flex items-baseline justify-between gap-4 flex-wrap">
-          <h2 className={cn("text-4xl sm:text-5xl font-black leading-none", archetype.tone.gaugeText)}>
-            {percent}%
-            <span className="ml-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+      {/* HERO ROW */}
+      <div className="p-5 sm:p-7">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          {/* Left: Score + archetype */}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Lead Gen Strength
-            </span>
-          </h2>
-          <p className="text-sm font-bold text-foreground">
-            <span className="text-muted-foreground font-medium">Archetype: </span>
-            <span className={archetype.tone.gaugeText}>{archetype.name}</span>
-          </p>
-        </div>
-
-        {/* Strength bar */}
-        <div className="mt-4 h-2 w-full rounded-full bg-muted overflow-hidden">
-          <div
-            className={cn("h-full rounded-full transition-all", archetype.tone.bar)}
-            style={{ width: `${percent}%` }}
-          />
-        </div>
-      </div>
-
-
-      {/* Narrative */}
-      <div className="p-5 sm:p-6 border-b border-border bg-muted/30">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-          Strategic Profile
-        </p>
-        <p className="text-sm leading-relaxed text-foreground">
-          {archetype.narrative}
-        </p>
-      </div>
-
-      {/* Active Assets */}
-      {active.length > 0 && (
-        <div className="p-5 sm:p-6 border-b border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-            <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
-              Active Assets
-              <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
-                ({active.length})
+            </p>
+            <div className="mt-1 flex items-baseline gap-3 flex-wrap">
+              <span className={cn("text-5xl sm:text-6xl font-black leading-none", archetype.tone.gaugeText)}>
+                {percent}%
               </span>
-            </h3>
-          </div>
-          <ul className="grid gap-2.5 sm:grid-cols-2">
-            {active.map((a) => (
-              <li
-                key={a.id}
-                className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3"
-              >
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
-                  {a.title}
-                </p>
-                <p className="mt-1 text-xs leading-snug text-muted-foreground">
-                  {a.copy}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Optimization Priorities */}
-      {priorities.length > 0 && (
-        <div className="p-5 sm:p-6 border-b border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="h-4 w-4 text-rose-500" />
-            <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
-              Optimization Priorities
-              <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
-                ({priorities.length})
+              <span className={cn("text-base font-bold", archetype.tone.gaugeText)}>
+                {archetype.name}
               </span>
-            </h3>
+            </div>
+            <div className="mt-4 h-1.5 w-full max-w-md rounded-full bg-muted overflow-hidden">
+              <div
+                className={cn("h-full rounded-full transition-all", archetype.tone.bar)}
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground italic max-w-md leading-snug">
+              {heroTeaser}
+            </p>
           </div>
-          <ul className="space-y-3">
-            {priorities.map((p) => (
-              <li
-                key={p.id}
-                className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-4"
-              >
-                <p className="text-sm font-bold text-rose-700 dark:text-rose-300">
-                  {p.title}
-                </p>
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                      Current Reality
-                    </p>
-                    <p className="mt-0.5 text-xs leading-snug text-foreground">
-                      {p.reality}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-wider text-primary">
-                      The LeadBead Fix
-                    </p>
-                    <p className="mt-0.5 text-xs leading-snug text-foreground">
-                      {p.fix}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
-      {/* 72-Hour Roadmap CTA */}
-      <div className="p-5 sm:p-6 bg-gradient-to-br from-primary/5 to-transparent">
-        <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <p className="text-xs font-black uppercase tracking-wider text-primary">
-            72-Hour Roadmap
-          </p>
-        </div>
-        <h3 className="text-lg font-black text-foreground">
-          {archetype.roadmapHeader}
-        </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {archetype.roadmapIntro}
-        </p>
-        <ol className="mt-4 space-y-2.5">
-          {archetype.roadmap.map((step, i) => (
-            <li
-              key={i}
-              className="flex gap-3 rounded-lg border border-border bg-card p-3"
+          {/* Right: Primary CTA */}
+          <div className="sm:shrink-0 sm:pt-1">
+            <Button
+              size="lg"
+              onClick={() => navigate("/challenge/day-1")}
+              className="w-full sm:w-auto h-14 px-6 text-base font-black gap-2 shadow-md shadow-primary/20"
             >
-              <div className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-black">
-                {i + 1}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-foreground">
-                  <span className="text-primary">{step.day}:</span> {step.title}
+              Start Day 1 Challenge Definition
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* TABS */}
+      <div className="border-t border-border bg-muted/30 px-5 sm:px-7 pt-4">
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="bg-transparent p-0 h-auto gap-1 w-full justify-start border-b border-border rounded-none">
+            {[
+              { value: "profile", label: "Your Profile" },
+              { value: "assets", label: "Your Assets" },
+              { value: "roadmap", label: "Your Roadmap" },
+            ].map((t) => (
+              <TabsTrigger
+                key={t.value}
+                value={t.value}
+                className="rounded-none border-b-2 border-transparent bg-transparent px-4 py-2.5 text-sm font-semibold text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                {t.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* TAB 1: PROFILE */}
+          <TabsContent value="profile" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
+            <div className="space-y-6">
+              {/* Strategic profile */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  Strategic Profile
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground leading-snug">
-                  {step.copy}
+                <p className="text-sm leading-relaxed text-foreground">
+                  {narrativeShort}
+                  {showFullNarrative && narrativeRest && (
+                    <span className="block mt-2">{narrativeRest}</span>
+                  )}
                 </p>
+                {narrativeRest && (
+                  <button
+                    type="button"
+                    onClick={() => setShowFullNarrative((v) => !v)}
+                    className="mt-2 text-xs font-bold text-primary hover:underline"
+                  >
+                    {showFullNarrative ? "Show less" : "Read more"}
+                  </button>
+                )}
               </div>
-            </li>
-          ))}
-        </ol>
+
+              {/* Optimization Priorities accordion */}
+              {priorities.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="h-4 w-4 text-rose-500" />
+                    <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                      Optimization Priorities
+                      <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
+                        ({priorities.length})
+                      </span>
+                    </h3>
+                  </div>
+                  <Accordion type="single" collapsible className="space-y-2">
+                    {priorities.map((p) => (
+                      <AccordionItem
+                        key={p.id}
+                        value={p.id}
+                        className="rounded-lg border border-border bg-card px-4 data-[state=open]:border-rose-500/40 data-[state=open]:bg-rose-500/5"
+                      >
+                        <AccordionTrigger className="py-3 text-left text-sm font-bold text-foreground hover:no-underline">
+                          {p.title}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-4">
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                                Current Reality
+                              </p>
+                              <p className="mt-1 text-xs leading-snug text-foreground">
+                                {p.reality}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-wider text-primary">
+                                The LeadBead Fix
+                              </p>
+                              <p className="mt-1 text-xs leading-snug text-foreground">
+                                {p.fix}
+                              </p>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              )}
+
+              {/* Your Challenge recap (kept here so Day 1 answers stay visible) */}
+              <YourChallengeRecap />
+            </div>
+          </TabsContent>
+
+          {/* TAB 2: ASSETS */}
+          <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
+            {active.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                No active assets yet. Complete your diagnostic to surface what's working.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {active.map((a) => (
+                  <div
+                    key={a.id}
+                    className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <p className="text-sm font-bold text-foreground">{a.title}</p>
+                    </div>
+                    <p className="mt-2 text-xs leading-snug text-muted-foreground">
+                      {a.copy}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* TAB 3: ROADMAP */}
+          <TabsContent value="roadmap" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <p className="text-xs font-black uppercase tracking-wider text-primary">
+                    72-Hour Roadmap
+                  </p>
+                </div>
+                <h3 className="text-lg font-black text-foreground">
+                  {archetype.roadmapHeader}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {archetype.roadmapIntro}
+                </p>
+                <ol className="mt-4 space-y-2.5">
+                  {archetype.roadmap.map((step, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-3 rounded-lg border border-border bg-card p-3"
+                    >
+                      <div className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-black">
+                        {i + 1}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-foreground">
+                          <span className="text-primary">{step.day}:</span> {step.title}
+                        </p>
+                        <p className="mt-0.5 text-xs text-muted-foreground leading-snug">
+                          {step.copy}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* Day 1/2/3 status block */}
+              <ChallengeRecord />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );
 };
 
 export default LeadGenStrengthCard;
+

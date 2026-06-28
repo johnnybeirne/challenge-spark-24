@@ -363,17 +363,6 @@ const LeadGenStrengthCard = () => {
             </p>
           </div>
 
-          {/* Right: Primary CTA */}
-          <div className="sm:shrink-0 sm:pt-1">
-            <Button
-              size="lg"
-              onClick={() => navigate("/challenge/day-1")}
-              className="w-full sm:w-auto h-14 px-6 text-base font-black gap-2 shadow-md shadow-primary/20"
-            >
-              Start Day 1 Challenge Definition
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </div>
         </div>
       </div>
 

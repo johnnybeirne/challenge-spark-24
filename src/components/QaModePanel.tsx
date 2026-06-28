@@ -597,6 +597,31 @@ const QaModePanel = () => {
             </div>
 
             <div className="space-y-1.5">
+              <SectionLabel>Archetype (Dashboard Preview)</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                <Pill
+                  active={!qa.active || !qa.archetypeOverride}
+                  onClick={() => updateQaState({ archetypeOverride: null })}
+                >
+                  Auto
+                </Pill>
+                {ARCHETYPES.map((a) => (
+                  <Pill
+                    key={a.id}
+                    active={qa.active && qa.archetypeOverride === a.id}
+                    onClick={() => updateQaState({ active: true, archetypeOverride: a.id })}
+                  >
+                    {a.label}
+                  </Pill>
+                ))}
+              </div>
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Overrides which archetype renders on the dashboard. Does not change assessment answers.
+              </p>
+            </div>
+
+
+            <div className="space-y-1.5">
               <SectionLabel>User Type</SectionLabel>
               <div className="flex flex-wrap gap-1.5">
                 {TIERS.map((t) => (

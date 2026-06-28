@@ -666,38 +666,7 @@ const Day2Screen1 = () => {
                         <p className="text-center text-xs text-muted-foreground">
                           Opens in a new tab so you can keep this page open.
                         </p>
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            try {
-                              await downloadQuizAsDocx(
-                                state.challenge.aiOutputs?.day2_s2_quiz,
-                                {
-                                  quizTitle: "Lead Gen Quiz",
-                                  questions: leadGenQuestions.map((q) => ({
-                                    text: q.text,
-                                    scoring: {
-                                      low: q.options[0]?.label,
-                                      mid: q.options[1]?.label,
-                                    },
-                                  })),
-                                },
-                              );
-                            } catch (err: any) {
-                              toast.error(
-                                err?.message ||
-                                  "Couldn't download your quiz right now.",
-                              );
-                            }
-                          }}
-                          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-center text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
-                        >
-                          <FileDown className="h-4 w-4" />
-                          Download quiz as Word document
-                        </button>
-
                       </div>
-
                     ) : (
                       <div className="relative">
                         {showLockHint && (
@@ -724,6 +693,39 @@ const Day2Screen1 = () => {
                         </button>
                       </div>
                     )}
+
+                    <div className="pt-2 text-center">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await downloadQuizAsDocx(
+                              state.challenge.aiOutputs?.day2_s2_quiz,
+                              {
+                                quizTitle: "Lead Gen Quiz",
+                                questions: leadGenQuestions.map((q) => ({
+                                  text: q.text,
+                                  scoring: {
+                                    low: q.options[0]?.label,
+                                    mid: q.options[1]?.label,
+                                  },
+                                })),
+                              },
+                            );
+                          } catch (err: any) {
+                            toast.error(
+                              err?.message ||
+                                "Couldn't download your quiz right now.",
+                            );
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                      >
+                        <FileDown className="h-3.5 w-3.5" />
+                        Prefer offline? Download the quiz as a Word doc
+                      </button>
+                    </div>
+
 
 
 

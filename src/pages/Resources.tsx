@@ -133,22 +133,29 @@ const Resources = () => {
       </header>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <article className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <article className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm sm:col-span-2">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <HelpCircle className="h-5 w-5" />
           </div>
           <h3 className="mt-4 text-lg font-black text-foreground">Your Lead Gen Quiz</h3>
-          <p className="mt-1 flex-1 text-sm text-muted-foreground">
-            Download your diagnostic quiz to edit, share, or run offline.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Download your diagnostic quiz, or copy the plain text below to paste anywhere.
           </p>
-          <div className="mt-4 flex flex-col gap-2">
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
             <Button onClick={() => downloadQuiz("docx")} variant="outline" className="w-full gap-2">
-              <FileDown className="h-4 w-4" /> Download as Word doc
+              <FileDown className="h-4 w-4" /> Word doc
             </Button>
             <Button onClick={() => downloadQuiz("gdoc")} variant="outline" className="w-full gap-2">
-              <FileText className="h-4 w-4" /> Download as Google Doc
+              <FileText className="h-4 w-4" /> Google Doc
+            </Button>
+            <Button onClick={copyQuizText} variant="outline" className="w-full gap-2">
+              {quizCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {quizCopied ? "Copied" : "Copy plain text"}
             </Button>
           </div>
+          <pre className="mt-4 max-h-72 overflow-auto rounded-xl border border-border bg-muted/50 p-4 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-mono">
+{quizPlainText}
+          </pre>
         </article>
 
         {RESOURCES.map((r) => {

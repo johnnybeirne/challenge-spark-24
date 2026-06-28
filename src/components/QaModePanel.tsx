@@ -37,6 +37,12 @@ const ENTRIES: { id: QaEntry; label: string }[] = [
   { id: "direct_signup", label: "Direct Signup" },
 ];
 
+const ARCHETYPES: { id: QaArchetype; label: string }[] = [
+  { id: "pioneer", label: "Pioneer" },
+  { id: "architect", label: "Architect" },
+  { id: "authority", label: "Authority" },
+];
+
 const ROUTES: { label: string; path: string }[] = [
   { label: "Homepage", path: "/" },
   { label: "Free Assessment", path: "/free-assessment" },

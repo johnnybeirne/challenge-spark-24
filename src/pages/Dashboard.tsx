@@ -364,7 +364,7 @@ const Dashboard = () => {
                   onClick={() => setVideoCollapsed(false)}
                 >
                   <Play className="h-4 w-4" fill="currentColor" />
-                  Watch Welcome Video Again
+                  Watch intro video
                 </Button>
               </div>
             )}

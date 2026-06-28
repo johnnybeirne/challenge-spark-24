@@ -111,7 +111,7 @@ const EmptyDay = ({ day, href }: { day: number; href: string }) => {
         <Button
           asChild
           size="lg"
-          className="w-full h-14 gap-2 text-base font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20"
+          className="w-full h-14 gap-2 text-base font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 animate-pulse-glow-orange transition-all duration-300 hover:-translate-y-0.5 hover:[&_svg]:translate-x-1 [&_svg]:transition-transform"
         >
           <Link to={href}>
             Start Day 1

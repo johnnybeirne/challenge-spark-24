@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown } from "lucide-react";
+import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown, FileText } from "lucide-react";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
+import { downloadQuizAsGoogleDoc } from "@/lib/downloadQuizGdoc";
 import { questions as leadGenQuestions } from "@/lib/assessmentData";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

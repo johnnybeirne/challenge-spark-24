@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import type { AssessmentResult } from "@/lib/assessmentData";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { qaArchetypeTier } from "@/lib/qaPreview";
 
 // Display-only archetype mapping based on score (0-100). Does NOT change scoring.
 const getTierLabel = (percent: number): string => {
@@ -36,8 +38,10 @@ type DiagnosticRow = {
 
 const DashboardProfileHeader = () => {
   const { state, authUser } = useAppState();
+  const qa = useQaPreview();
+  const qaTier = qaArchetypeTier(qa);
   const assessment = state.assessment as unknown as AssessmentResult | null;
-  const hasResult = !!assessment && "challengeType" in (assessment as object);
+  const hasResult = qaTier !== null || (!!assessment && "challengeType" in (assessment as object));
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
@@ -67,7 +71,8 @@ const DashboardProfileHeader = () => {
   }, [hasResult]);
 
   const score = assessment?.diagnosticScore ?? 0;
-  const percent = Math.round((score / 9) * 100);
+  const rawPercent = Math.round((score / 9) * 100);
+  const percent = qaTier === "low" ? 22 : qaTier === "mid" ? 55 : qaTier === "high" ? 88 : rawPercent;
 
   const summary = useMemo(() => {
     if (!hasResult) return "";

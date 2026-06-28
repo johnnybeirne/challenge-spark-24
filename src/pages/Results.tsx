@@ -9,6 +9,7 @@ import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
+import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
 import AIAdvisorPanel from "@/components/AIAdvisorPanel";
@@ -85,7 +86,9 @@ const Results = () => {
   const { t: tGlobal } = useSiteContent("global");
   const deadline = useDeadline();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
+  const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {
+    if (qaTier) return qaTier;
     const p = location.pathname.toLowerCase();
     if (p.endsWith("/low")) return "low";
     if (p.endsWith("/med") || p.endsWith("/mid")) return "mid";

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { qaArchetypeTier } from "@/lib/qaPreview";
 import type { AssessmentResult } from "@/lib/assessmentData";
 import { ArrowRight } from "lucide-react";
 
@@ -37,13 +39,16 @@ const DEFAULTS = {
 
 const DashboardArchetypeStrip = () => {
   const { state, authUser, hydrated } = useAppState();
+  const qa = useQaPreview();
+  const qaTier = qaArchetypeTier(qa);
   const { t: tContent } = useSiteContent("results");
 
   const assessment = state.assessment as AssessmentResult | null;
   const hasResult =
-    !!assessment &&
-    (typeof (assessment as { diagnosticScore?: number }).diagnosticScore === "number" ||
-      "challengeType" in (assessment as object));
+    qaTier !== null ||
+    (!!assessment &&
+      (typeof (assessment as { diagnosticScore?: number }).diagnosticScore === "number" ||
+        "challengeType" in (assessment as object)));
 
   const firstName =
     state.user?.name?.split(" ")[0] ||
@@ -78,15 +83,17 @@ const DashboardArchetypeStrip = () => {
   }
 
 
-  const score = assessment!.diagnosticScore ?? 0;
+  const score = assessment?.diagnosticScore ?? 0;
 
-  const percent = Math.round((score / 9) * 100);
-  const tier =
-    assessment.diagnosticLevel === "low" ||
-    assessment.diagnosticLevel === "mid" ||
-    assessment.diagnosticLevel === "high"
+  const rawPercent = Math.round((score / 9) * 100);
+  const tier: "low" | "mid" | "high" =
+    qaTier ??
+    (assessment?.diagnosticLevel === "low" ||
+    assessment?.diagnosticLevel === "mid" ||
+    assessment?.diagnosticLevel === "high"
       ? assessment.diagnosticLevel
-      : getTier(percent);
+      : getTier(rawPercent));
+  const percent = qaTier === "low" ? 22 : qaTier === "mid" ? 55 : qaTier === "high" ? 88 : rawPercent;
 
   const cfg = DEFAULTS[tier];
   const rawName = tContent(`archetypes.${tier}_name`, `You're an ${cfg.name}`);

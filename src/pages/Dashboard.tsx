@@ -65,7 +65,7 @@ const Dashboard = () => {
   const [bioDraft, setBioDraft] = useState(state.user?.bio ?? "");
   const [bioSaving, setBioSaving] = useState(false);
   const [signupPointCount, setSignupPointCount] = useState(0);
-  const [videoCollapsed, setVideoCollapsed] = useState(!!state.training.dashboardVideoWatched);
+  const [videoCollapsed, setVideoCollapsed] = useState(true);
   const { t: tGlobal } = useSiteContent("global");
   const deadline = useDeadline();
   const dashboardUrgency = deadline.render(

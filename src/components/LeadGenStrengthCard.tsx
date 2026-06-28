@@ -285,12 +285,30 @@ const LeadGenStrengthCard = () => {
     | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;
 
+  const qaArchetype = qa.active ? qa.archetypeOverride ?? null : null;
+
   const data = useMemo(() => {
-    const answers = assessment?.answers;
+    const realAnswers = assessment?.answers;
     const total = questions.length;
+
+    // When QA preview archetype is active, synthesize a representative answer
+    // set so the Assets/Roadmap tabs have content to display for previewing.
+    // Pioneer = 2 strong / 7 weak, Architect = 5/4, Authority = 8/1.
+    let answers: Record<string, string> | undefined = realAnswers;
+    if (!realAnswers && qaArchetype) {
+      const strongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
+      const synth: Record<string, string> = {};
+      questions.forEach((q, i) => {
+        const makeStrong = i < strongCount;
+        const strongVal = REVERSE.has(q.id) ? "no" : "yes";
+        const weakVal = REVERSE.has(q.id) ? "yes" : "no";
+        synth[q.id] = makeStrong ? strongVal : weakVal;
+      });
+      answers = synth;
+    }
+
     let strong = 0;
     let hasAnswers = false;
-
     const active: { id: string; question: string; title: string; copy: string }[] = [];
     const priorities: {
       id: string;
@@ -302,7 +320,7 @@ const LeadGenStrengthCard = () => {
 
     if (answers) {
       questions.forEach((q) => {
-        const ans = answers[q.id];
+        const ans = answers![q.id];
         if (ans !== "yes" && ans !== "no") return;
         hasAnswers = true;
         const isStrong = REVERSE.has(q.id) ? ans === "no" : ans === "yes";
@@ -331,21 +349,21 @@ const LeadGenStrengthCard = () => {
     // Fallback when persona/character sets diagnosticScore but no answers.
     if (!hasAnswers && typeof assessment?.diagnosticScore === "number") {
       strong = Math.max(0, Math.min(total, assessment.diagnosticScore));
-    } else if (!hasAnswers && !assessment) {
+    } else if (!hasAnswers && !assessment && !qaArchetype) {
       return null;
     }
 
     const percent = Math.round((strong / total) * 100);
     const archetype = pickArchetype(strong);
     return { strong, total, percent, archetype, active, priorities };
-  }, [assessment]);
+  }, [assessment, qaArchetype]);
 
   if (!data) return null;
-  const archetypeOverride = qa.active && qa.archetypeOverride ? ARCHETYPES[qa.archetypeOverride] : null;
+  const archetypeOverride = qaArchetype ? ARCHETYPES[qaArchetype] : null;
   const archetype = archetypeOverride ?? data.archetype;
   const { active, priorities } = data;
-  const percent = qa.active && qa.archetypeOverride
-    ? (qa.archetypeOverride === "pioneer" ? 22 : qa.archetypeOverride === "architect" ? 55 : 88)
+  const percent = qaArchetype
+    ? (qaArchetype === "pioneer" ? 22 : qaArchetype === "architect" ? 55 : 88)
     : data.percent;
   const narrativeShort = firstSentences(archetype.narrative, 2);
   const narrativeRest = archetype.narrative.slice(narrativeShort.length).trim();

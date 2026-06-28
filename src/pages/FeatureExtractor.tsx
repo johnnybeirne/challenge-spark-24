@@ -207,10 +207,24 @@ const FeatureExtractor = () => {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Extract Features & Generate MD Files
+                  {features ? "Re-extract Features" : "Extract Features & Generate MD Files"}
                 </>
               )}
             </Button>
+
+            {extractedAt && !loading && (
+              <p className="text-xs text-muted-foreground">
+                Loaded from cache · last extracted{" "}
+                {new Date(extractedAt).toLocaleString()}
+                <button
+                  type="button"
+                  onClick={clearSaved}
+                  className="ml-2 underline hover:text-foreground"
+                >
+                  Clear saved
+                </button>
+              </p>
+            )}
 
             {loading && (
               <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground animate-pulse">

@@ -516,29 +516,28 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 2: ASSETS */}
           <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            {active.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                No active assets yet. Complete your diagnostic to surface what's working.
-              </p>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {active.map((a) => (
-                  <div
-                    key={a.id}
-                    className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                      <p className="text-sm font-bold text-foreground">{a.title}</p>
-                    </div>
-                    <p className="mt-2 text-xs leading-snug text-muted-foreground">
-                      {a.copy}
-                    </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { title: "Lead Source", copy: "Your primary channel for attracting new leads consistently." },
+                { title: "Audience Trust", copy: "The level of authority you have built with your target audience." },
+                { title: "Conversion Path", copy: "The route your leads take from first contact to becoming a client." },
+              ].map((a) => (
+                <div
+                  key={a.title}
+                  className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <p className="text-sm font-bold text-foreground">{a.title}</p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="mt-2 text-xs leading-snug text-muted-foreground">
+                    {a.copy}
+                  </p>
+                </div>
+              ))}
+            </div>
           </TabsContent>
+
 
           {/* TAB 3: ROADMAP */}
           <TabsContent value="roadmap" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">

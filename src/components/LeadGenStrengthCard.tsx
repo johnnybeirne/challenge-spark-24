@@ -591,27 +591,50 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 2: ASSETS */}
           <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                { title: "Lead Source", copy: "Your primary channel for attracting new leads consistently." },
-                { title: "Audience Trust", copy: "The level of authority you have built with your target audience." },
-                { title: "Conversion Path", copy: "The route your leads take from first contact to becoming a client." },
-              ].map((a) => (
-                <div
-                  key={a.title}
-                  className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                    <p className="text-sm font-bold text-foreground">{a.title}</p>
+            {!hasQuizResult ? (
+              <p className="text-sm text-muted-foreground">
+                Complete the quiz to see your personal strengths here.
+              </p>
+            ) : assetsLoading || (!assets && !assetsError) ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-border bg-card p-4 shadow-sm"
+                  >
+                    <div className="flex items-start gap-2">
+                      <Skeleton className="h-4 w-4 rounded-full mt-0.5" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                    <Skeleton className="mt-3 h-3 w-full" />
+                    <Skeleton className="mt-1.5 h-3 w-4/5" />
                   </div>
-                  <p className="mt-2 text-xs leading-snug text-muted-foreground">
-                    {a.copy}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : assetsError || !assets ? (
+              <p className="text-sm text-muted-foreground">
+                We could not load your assets right now. Try refreshing.
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {assets.map((a) => (
+                  <div
+                    key={a.title}
+                    className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <p className="text-[14px] font-bold text-foreground">{a.title}</p>
+                    </div>
+                    <p className="mt-2 text-[13px] leading-snug text-muted-foreground">
+                      {a.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
+
 
 
           {/* TAB 3: ROADMAP */}

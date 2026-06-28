@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { qaArchetypeTier } from "@/lib/qaPreview";
 import type { AssessmentResult } from "@/lib/assessmentData";
 import { ArrowRight } from "lucide-react";
 

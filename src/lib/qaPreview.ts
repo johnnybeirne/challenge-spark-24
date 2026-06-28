@@ -41,7 +41,10 @@ export interface QaPreviewState {
   /** Persona preset id. When set, the app overlays a full simulated journey. */
   persona?: PersonaId | null;
   /** Character id. When set, character identity is overlaid on top of any persona. */
+  /** Character id. When set, character identity is overlaid on top of any persona. */
   character?: string | null;
+  /** Archetype override for dashboard preview. */
+  archetypeOverride?: QaArchetype | null;
 }
 
 const KEY = "leadioPreviewState";

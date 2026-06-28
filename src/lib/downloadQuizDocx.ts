@@ -155,9 +155,29 @@ export async function downloadQuizAsDocx(
   }
 
   const doc = new Document({
-    creator: "Leadio",
+    creator: "LeadTree",
     title,
-    sections: [{ children }],
+    sections: [
+      {
+        children,
+        footers: {
+          default: new Footer({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({
+                    text: "© 2026 LeadTree",
+                    size: 18,
+                    color: "888888",
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
+      },
+    ],
   });
 
   const blob = await Packer.toBlob(doc);

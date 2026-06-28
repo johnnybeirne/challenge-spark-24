@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink } from "lucide-react";
+import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown } from "lucide-react";
+import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
@@ -663,6 +664,27 @@ const Day2Screen1 = () => {
                         <p className="text-center text-xs text-muted-foreground">
                           Opens in a new tab so you can keep this page open.
                         </p>
+                        {state.challenge.aiOutputs?.day2_s2_quiz && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                await downloadQuizAsDocx(
+                                  state.challenge.aiOutputs?.day2_s2_quiz,
+                                );
+                              } catch (err: any) {
+                                toast.error(
+                                  err?.message ||
+                                    "Couldn't download your quiz right now.",
+                                );
+                              }
+                            }}
+                            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-center text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
+                          >
+                            <FileDown className="h-4 w-4" />
+                            Download quiz as Word document
+                          </button>
+                        )}
                       </div>
 
                     ) : (

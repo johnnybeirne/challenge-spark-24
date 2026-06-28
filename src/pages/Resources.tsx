@@ -1,6 +1,10 @@
-import { BookOpen, CheckSquare, ClipboardList, Download, Rocket } from "lucide-react";
+import { BookOpen, CheckSquare, ClipboardList, Download, FileDown, FileText, HelpCircle, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAppState } from "@/context/AppContext";
+import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
+import { downloadQuizAsGoogleDoc } from "@/lib/downloadQuizGdoc";
+import { questions as leadGenQuestions } from "@/lib/assessmentData";
 
 interface Resource {
   icon: typeof BookOpen;
@@ -42,6 +46,34 @@ const RESOURCES: Resource[] = [
 ];
 
 const Resources = () => {
+  const { state } = useAppState();
+  const rawQuiz = state.challenge.aiOutputs?.day2_s2_quiz;
+
+  const quizFallback = {
+    quizTitle: "Lead Gen Quiz",
+    questions: leadGenQuestions.map((q) => ({
+      text: q.text,
+      scoring: {
+        low: q.options[0]?.label,
+        mid: q.options[1]?.label,
+      },
+    })),
+  };
+
+  const downloadQuiz = async (format: "docx" | "gdoc") => {
+    try {
+      if (format === "docx") {
+        await downloadQuizAsDocx(rawQuiz, quizFallback);
+        toast.success("Downloaded");
+      } else {
+        await downloadQuizAsGoogleDoc(rawQuiz, quizFallback);
+        toast.success("Downloaded. Upload to Google Drive to open as a Google Doc.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't download right now.");
+    }
+  };
+
   const download = (r: Resource) => {
     const blob = new Blob([r.body], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -61,6 +93,24 @@ const Resources = () => {
       </header>
 
       <div className="grid gap-3 sm:grid-cols-2">
+        <article className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <HelpCircle className="h-5 w-5" />
+          </div>
+          <h3 className="mt-4 text-lg font-black text-foreground">Your Lead Gen Quiz</h3>
+          <p className="mt-1 flex-1 text-sm text-muted-foreground">
+            Download your diagnostic quiz to edit, share, or run offline.
+          </p>
+          <div className="mt-4 flex flex-col gap-2">
+            <Button onClick={() => downloadQuiz("docx")} variant="outline" className="w-full gap-2">
+              <FileDown className="h-4 w-4" /> Download as Word doc
+            </Button>
+            <Button onClick={() => downloadQuiz("gdoc")} variant="outline" className="w-full gap-2">
+              <FileText className="h-4 w-4" /> Download as Google Doc
+            </Button>
+          </div>
+        </article>
+
         {RESOURCES.map((r) => {
           const Icon = r.icon;
           return (

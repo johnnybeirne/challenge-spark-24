@@ -121,6 +121,10 @@ export default {
           "0%": { transform: "scale(1)", opacity: "0.55" },
           "100%": { transform: "scale(1.9)", opacity: "0" },
         },
+        "pulse-glow-orange": {
+          "0%, 100%": { boxShadow: "0 8px 20px -8px hsl(21 90% 48% / 0.35)" },
+          "50%": { boxShadow: "0 14px 32px -6px hsl(21 90% 48% / 0.65)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -128,6 +132,7 @@ export default {
         "bounce-in": "bounce-in 0.5s ease-out",
         "subtle-bounce": "subtle-bounce 2s ease-in-out 3",
         "pulse-glow": "pulse-glow 2.5s ease-in-out infinite",
+        "pulse-glow-orange": "pulse-glow-orange 2.6s ease-in-out infinite",
         "attention-pulse": "attention-pulse 1s ease-in-out 3",
         "rise-in": "rise-in 500ms ease-out both",
         "fade-in": "fade-in 400ms ease-out both",

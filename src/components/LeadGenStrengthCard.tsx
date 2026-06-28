@@ -452,14 +452,6 @@ const LeadGenStrengthCard = () => {
             </li>
           ))}
         </ol>
-        <Button
-          size="lg"
-          className="mt-5 w-full h-12 text-sm font-black"
-          onClick={() => navigate("/day/1")}
-        >
-          {archetype.ctaLabel}
-          <ArrowRight className="h-4 w-4" />
-        </Button>
       </div>
     </section>
   );

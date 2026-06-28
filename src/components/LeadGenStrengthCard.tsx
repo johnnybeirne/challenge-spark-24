@@ -1,10 +1,34 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, Gauge, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import ChallengeRecord from "@/components/ChallengeRecord";
+import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
+
+/** Trim narrative to first N sentences. */
+function firstSentences(text: string, n: number) {
+  const parts = text.match(/[^.!?]+[.!?]+/g) ?? [text];
+  return parts.slice(0, n).join(" ").trim();
+}
+
+/** Build a one-sentence teaser, capped at ~20 words. */
+function teaser(text: string, maxWords = 20) {
+  const first = (text.match(/[^.!?]+[.!?]+/) ?? [text])[0].trim();
+  const words = first.split(/\s+/);
+  if (words.length <= maxWords) return first;
+  return words.slice(0, maxWords).join(" ").replace(/[,;:]$/, "") + "...";
+}
+
 
 /* Strong-answer rule mirrors QuizScoreCard: q2, q6, q9 are reverse-scored. */
 const REVERSE = new Set(["q2", "q6", "q9"]);

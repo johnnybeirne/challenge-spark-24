@@ -48,11 +48,19 @@ function slugify(s: string): string {
   );
 }
 
-export async function downloadQuizAsDocx(rawQuiz: string | undefined | null) {
-  const quiz = parseQuiz(rawQuiz);
+export async function downloadQuizAsDocx(
+  rawQuiz: string | undefined | null,
+  fallback?: QuizDraft | null,
+) {
+  const quiz =
+    parseQuiz(rawQuiz) ??
+    (fallback && Array.isArray(fallback.questions) && fallback.questions.length > 0
+      ? fallback
+      : null);
   if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
     throw new Error("No quiz available to download yet.");
   }
+
 
   const title = (quiz.quizTitle || "Your diagnostic quiz").trim();
   const children: Paragraph[] = [];

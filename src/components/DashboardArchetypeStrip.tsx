@@ -39,13 +39,16 @@ const DEFAULTS = {
 
 const DashboardArchetypeStrip = () => {
   const { state, authUser, hydrated } = useAppState();
+  const qa = useQaPreview();
+  const qaTier = qaArchetypeTier(qa);
   const { t: tContent } = useSiteContent("results");
 
   const assessment = state.assessment as AssessmentResult | null;
   const hasResult =
-    !!assessment &&
-    (typeof (assessment as { diagnosticScore?: number }).diagnosticScore === "number" ||
-      "challengeType" in (assessment as object));
+    qaTier !== null ||
+    (!!assessment &&
+      (typeof (assessment as { diagnosticScore?: number }).diagnosticScore === "number" ||
+        "challengeType" in (assessment as object)));
 
   const firstName =
     state.user?.name?.split(" ")[0] ||

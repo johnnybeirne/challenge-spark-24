@@ -292,8 +292,7 @@ const LeadGenStrengthCard = () => {
     const total = questions.length;
 
     // When QA preview archetype is active, synthesize a representative answer
-    // set so the Assets/Roadmap tabs have content to display for previewing.
-    // Pioneer = 2 strong / 7 weak, Architect = 5/4, Authority = 8/1.
+    // set so the Assets/Roadmap/Quiz tabs have content to display for previewing.
     let answers: Record<string, string> | undefined = realAnswers;
     if (!realAnswers && qaArchetype) {
       const strongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
@@ -317,6 +316,7 @@ const LeadGenStrengthCard = () => {
       reality: string;
       fix: string;
     }[] = [];
+    const quiz: { id: string; question: string; answer: "yes" | "no"; isStrong: boolean }[] = [];
 
     if (answers) {
       questions.forEach((q) => {
@@ -324,6 +324,7 @@ const LeadGenStrengthCard = () => {
         if (ans !== "yes" && ans !== "no") return;
         hasAnswers = true;
         const isStrong = REVERSE.has(q.id) ? ans === "no" : ans === "yes";
+        quiz.push({ id: q.id, question: q.text, answer: ans, isStrong });
         const sig = SIGNALS[q.id];
         if (!sig) return;
         if (isStrong) {
@@ -355,13 +356,13 @@ const LeadGenStrengthCard = () => {
 
     const percent = Math.round((strong / total) * 100);
     const archetype = pickArchetype(strong);
-    return { strong, total, percent, archetype, active, priorities };
+    return { strong, total, percent, archetype, active, priorities, quiz };
   }, [assessment, qaArchetype]);
 
   if (!data) return null;
   const archetypeOverride = qaArchetype ? ARCHETYPES[qaArchetype] : null;
   const archetype = archetypeOverride ?? data.archetype;
-  const { active, priorities } = data;
+  const { active, priorities, quiz } = data;
   const percent = qaArchetype
     ? (qaArchetype === "pioneer" ? 22 : qaArchetype === "architect" ? 55 : 88)
     : data.percent;

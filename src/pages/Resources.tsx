@@ -1,10 +1,50 @@
-import { BookOpen, CheckSquare, ClipboardList, Download, FileDown, FileText, HelpCircle, Rocket } from "lucide-react";
+import { useMemo, useState } from "react";
+import { BookOpen, Check, CheckSquare, ClipboardList, Copy, Download, FileDown, FileText, HelpCircle, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
 import { questions as leadGenQuestions } from "@/lib/assessmentData";
+
+function buildQuizPlainText(quiz: {
+  quizTitle?: string;
+  heroProblemShort?: string;
+  questions?: Array<{ text: string; scoring?: { low?: string; mid?: string; high?: string } }>;
+  tiers?: { low?: { name: string; description: string }; mid?: { name: string; description: string }; high?: { name: string; description: string } };
+}): string {
+  const lines: string[] = [];
+  lines.push((quiz.quizTitle || "Your diagnostic quiz").trim());
+  lines.push("");
+  if (quiz.heroProblemShort) {
+    lines.push(quiz.heroProblemShort);
+    lines.push("");
+  }
+  lines.push("Questions");
+  lines.push("");
+  (quiz.questions || []).forEach((q, i) => {
+    lines.push(`${i + 1}. ${q.text || ""}`);
+    const opts: Array<["low" | "mid" | "high", string]> = [["low", "A"], ["mid", "B"], ["high", "C"]];
+    opts.forEach(([t, label]) => {
+      const txt = q.scoring?.[t];
+      if (txt) lines.push(`   ${label}. ${txt}`);
+    });
+    lines.push("");
+  });
+  if (quiz.tiers) {
+    lines.push("Result tiers");
+    lines.push("");
+    (["low", "mid", "high"] as const).forEach((t) => {
+      const tier = quiz.tiers?.[t];
+      if (!tier) return;
+      lines.push(`${t.toUpperCase()} — ${tier.name || ""}`);
+      if (tier.description) lines.push(tier.description);
+      lines.push("");
+    });
+  }
+  lines.push("© 2026 LeadTree");
+  return lines.join("\n");
+}
 
 interface Resource {
   icon: typeof BookOpen;

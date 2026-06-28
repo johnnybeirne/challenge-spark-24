@@ -261,6 +261,9 @@ const Dashboard = () => {
     const nextUnlock = isComplete ? "Community Access" : unlockMap[ctaDay];
 
     const archetypeLabel = (() => {
+      if (qa.active && qa.archetypeOverride) {
+        return { pioneer: "Pioneer", architect: "Architect", authority: "Authority" }[qa.archetypeOverride];
+      }
       const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
       if (!a) return "";
       const tier =

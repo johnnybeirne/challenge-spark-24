@@ -442,8 +442,9 @@ const LeadGenStrengthCard = () => {
                   <span>{t.label}</span>
                   <span
                     aria-hidden="true"
-                    className="mt-1 h-0 w-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-border group-hover:border-t-[#534AB7] group-data-[state=active]:border-t-transparent transition-colors duration-150"
+                    className="mt-1 h-0 w-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-foreground group-hover:border-t-[#534AB7] group-data-[state=active]:border-t-transparent transition-colors duration-150"
                   />
+
                 </span>
               </TabsTrigger>
             ))}

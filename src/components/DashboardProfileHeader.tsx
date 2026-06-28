@@ -38,8 +38,10 @@ type DiagnosticRow = {
 
 const DashboardProfileHeader = () => {
   const { state, authUser } = useAppState();
+  const qa = useQaPreview();
+  const qaTier = qaArchetypeTier(qa);
   const assessment = state.assessment as unknown as AssessmentResult | null;
-  const hasResult = !!assessment && "challengeType" in (assessment as object);
+  const hasResult = qaTier !== null || (!!assessment && "challengeType" in (assessment as object));
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 

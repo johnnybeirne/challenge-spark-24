@@ -278,6 +278,7 @@ function pickArchetype(strong: number): Archetype {
 
 const LeadGenStrengthCard = () => {
   const { state } = useAppState();
+  const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
   const assessment = state.assessment as

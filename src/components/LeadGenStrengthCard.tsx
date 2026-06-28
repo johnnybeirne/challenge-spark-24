@@ -288,7 +288,12 @@ const LeadGenStrengthCard = () => {
   const qaArchetype = qa.active ? qa.archetypeOverride ?? null : null;
 
   const data = useMemo(() => {
-    const realAnswers = assessment?.answers;
+    const rawAnswers = assessment?.answers;
+    // Treat answers as "present" only if at least one yes/no value exists.
+    const hasRealAnswers =
+      !!rawAnswers &&
+      Object.values(rawAnswers).some((v) => v === "yes" || v === "no");
+    const realAnswers = hasRealAnswers ? rawAnswers : undefined;
     const total = questions.length;
 
     // Determine a synthetic strong-count target when real answers are absent.
@@ -299,6 +304,9 @@ const LeadGenStrengthCard = () => {
         synthStrongCount = qaArchetype === "pioneer" ? 2 : qaArchetype === "architect" ? 5 : 8;
       } else if (typeof assessment?.diagnosticScore === "number") {
         synthStrongCount = Math.max(0, Math.min(total, Math.round(assessment.diagnosticScore)));
+      } else {
+        // No signal at all → default to a mid-tier preview so the tab is never empty.
+        synthStrongCount = 5;
       }
     }
 

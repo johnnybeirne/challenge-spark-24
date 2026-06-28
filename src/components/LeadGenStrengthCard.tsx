@@ -369,7 +369,7 @@ const LeadGenStrengthCard = () => {
       {/* TABS */}
       <div className="border-t border-border bg-muted/40 px-5 sm:px-7 pt-5">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="bg-background p-1.5 h-auto gap-1.5 w-full sm:w-auto inline-flex justify-start rounded-xl border border-border shadow-sm">
+          <TabsList className="bg-background p-1.5 h-auto gap-1 w-full sm:w-auto inline-flex justify-start rounded-full border border-border shadow-sm">
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
@@ -378,7 +378,7 @@ const LeadGenStrengthCard = () => {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all"
+                className="rounded-full px-5 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all"
               >
                 {t.label}
               </TabsTrigger>

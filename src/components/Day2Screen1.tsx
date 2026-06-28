@@ -695,7 +695,7 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
-                    <div className="pt-2 text-center">
+                    <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
                       <button
                         type="button"
                         onClick={async () => {
@@ -723,7 +723,39 @@ const Day2Screen1 = () => {
                         className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
                       >
                         <FileDown className="h-3.5 w-3.5" />
-                        Download the quiz as a Word doc
+                        Download as Word doc
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await downloadQuizAsGoogleDoc(
+                              state.challenge.aiOutputs?.day2_s2_quiz,
+                              {
+                                quizTitle: "Lead Gen Quiz",
+                                questions: leadGenQuestions.map((q) => ({
+                                  text: q.text,
+                                  scoring: {
+                                    low: q.options[0]?.label,
+                                    mid: q.options[1]?.label,
+                                  },
+                                })),
+                              },
+                            );
+                            toast.success(
+                              "Downloaded. Upload to Google Drive to open as a Google Doc.",
+                            );
+                          } catch (err: any) {
+                            toast.error(
+                              err?.message ||
+                                "Couldn't download your quiz right now.",
+                            );
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                        Download as Google Doc
                       </button>
                     </div>
 

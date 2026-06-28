@@ -5,6 +5,8 @@ import {
   HeadingLevel,
   TextRun,
   AlignmentType,
+  Footer,
+  Header,
 } from "docx";
 
 type Tier = "low" | "mid" | "high";

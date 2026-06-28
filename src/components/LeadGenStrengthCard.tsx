@@ -419,8 +419,8 @@ const LeadGenStrengthCard = () => {
       <div className="border-t border-border bg-background px-5 sm:px-7 pt-4">
         <Tabs defaultValue="profile" className="w-full">
           <TabsList
-            className="h-auto w-full justify-start gap-8 rounded-none border-0 border-b bg-transparent p-0 overflow-x-auto flex-nowrap whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            style={{ borderBottomColor: "#e5e7eb", borderBottomWidth: "1px" }}
+            className="h-auto w-full justify-start items-end gap-0 rounded-none border-0 border-b bg-transparent p-0 overflow-x-auto flex-nowrap whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            style={{ borderBottomColor: "hsl(var(--border))", borderBottomWidth: "1.5px" }}
           >
             {[
               { value: "profile", label: "Your Profile" },
@@ -436,12 +436,19 @@ const LeadGenStrengthCard = () => {
                     el.scrollIntoView({ block: "nearest", inline: "center" });
                   }
                 }}
-                className="relative shrink-0 rounded-none border-0 bg-transparent px-0 pt-1 pb-3 text-[15px] font-medium text-slate-700 shadow-none hover:text-slate-900 data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[3px] after:rounded-full after:bg-primary after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"
+                className="group relative shrink-0 rounded-none border-0 bg-transparent px-5 pt-1 pb-3 text-[15px] font-normal text-muted-foreground shadow-none hover:text-foreground data-[state=active]:text-[#534AB7] data-[state=active]:font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-[1.5px] after:h-[2.5px] after:bg-[#534AB7] after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"
               >
-                {t.label}
+                <span className="relative inline-flex flex-col items-center">
+                  <span>{t.label}</span>
+                  <span
+                    aria-hidden="true"
+                    className="mt-1 h-0 w-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-border group-hover:border-t-[#534AB7] group-data-[state=active]:border-t-transparent transition-colors duration-150"
+                  />
+                </span>
               </TabsTrigger>
             ))}
           </TabsList>
+
 
 
 

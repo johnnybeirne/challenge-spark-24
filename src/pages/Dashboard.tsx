@@ -506,7 +506,7 @@ const Dashboard = () => {
           );
         })()}
         <AssessmentResultCard />
-        <QuizScoreDoughnut />
+        <LeadGenStrengthCard />
         <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

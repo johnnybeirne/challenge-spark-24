@@ -375,7 +375,7 @@ const LeadGenStrengthCard = () => {
   if (!data) return null;
   const archetypeOverride = qaArchetype ? ARCHETYPES[qaArchetype] : null;
   const archetype = archetypeOverride ?? data.archetype;
-  const { active, priorities, quiz } = data;
+  const { priorities } = data;
   const percent = qaArchetype
     ? (qaArchetype === "pioneer" ? 22 : qaArchetype === "architect" ? 55 : 88)
     : data.percent;
@@ -516,29 +516,28 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 2: ASSETS */}
           <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            {active.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                No active assets yet. Complete your diagnostic to surface what's working.
-              </p>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {active.map((a) => (
-                  <div
-                    key={a.id}
-                    className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                      <p className="text-sm font-bold text-foreground">{a.title}</p>
-                    </div>
-                    <p className="mt-2 text-xs leading-snug text-muted-foreground">
-                      {a.copy}
-                    </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { title: "Lead Source", copy: "Your primary channel for attracting new leads consistently." },
+                { title: "Audience Trust", copy: "The level of authority you have built with your target audience." },
+                { title: "Conversion Path", copy: "The route your leads take from first contact to becoming a client." },
+              ].map((a) => (
+                <div
+                  key={a.title}
+                  className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <p className="text-sm font-bold text-foreground">{a.title}</p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="mt-2 text-xs leading-snug text-muted-foreground">
+                    {a.copy}
+                  </p>
+                </div>
+              ))}
+            </div>
           </TabsContent>
+
 
           {/* TAB 3: ROADMAP */}
           <TabsContent value="roadmap" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
@@ -585,58 +584,43 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 4: QUIZ RESULTS */}
           <TabsContent value="quiz" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                  Your Quiz Answers
+            <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+              <div className="flex flex-col items-center text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Your Score
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {quiz.length > 0
-                    ? `You answered ${quiz.filter((q) => q.isStrong).length} of ${quiz.length} as strengths.`
-                    : "No quiz answers on file yet."}
+                <p className="mt-2 text-5xl sm:text-6xl font-black leading-none text-primary">
+                  68%
+                </p>
+                <p className="mt-2 text-sm font-bold text-foreground">
+                  Growth Archetype
                 </p>
               </div>
-              {quiz.length > 0 && (
-                <ul className="space-y-2">
-                  {quiz.map((item, i) => (
-                    <li
-                      key={item.id}
-                      className="flex gap-3 rounded-lg border border-border bg-card p-3"
-                    >
-                      <div className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-black text-muted-foreground">
-                        {i + 1}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-foreground leading-snug">
-                          {item.question}
-                        </p>
-                        <div className="mt-1.5 flex items-center gap-2">
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide",
-                              item.isStrong
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-                            )}
-                          >
-                            {item.isStrong ? (
-                              <CheckCircle2 className="h-3 w-3" />
-                            ) : (
-                              <AlertTriangle className="h-3 w-3" />
-                            )}
-                            {item.isStrong ? "Strength" : "Priority"}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            You answered <span className="font-semibold text-foreground">{item.answer === "yes" ? "Yes" : "No"}</span>
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+
+              <ul className="mt-6 space-y-2">
+                {[
+                  "Your lead flow has room to become more consistent",
+                  "Your follow-up process would benefit from more structure",
+                  "One focused change could significantly improve your results",
+                ].map((line) => (
+                  <li
+                    key={line}
+                    className="flex items-start gap-2 rounded-lg border border-border bg-background/40 p-3"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <p className="text-sm leading-snug text-foreground">{line}</p>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-6 flex justify-center">
+                <Button type="button" size="lg">
+                  Retake Quiz
+                </Button>
+              </div>
             </div>
           </TabsContent>
+
         </Tabs>
       </div>
     </section>

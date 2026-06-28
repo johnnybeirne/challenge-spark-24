@@ -282,14 +282,14 @@ const LeadGenStrengthCard = () => {
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
   const assessment = state.assessment as
-    | { answers?: Record<string, string> }
+    | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;
 
   const data = useMemo(() => {
-    if (!assessment?.answers) return null;
-    const answers = assessment.answers;
+    const answers = assessment?.answers;
     const total = questions.length;
     let strong = 0;
+    let hasAnswers = false;
 
     const active: { id: string; question: string; title: string; copy: string }[] = [];
     const priorities: {
@@ -300,30 +300,40 @@ const LeadGenStrengthCard = () => {
       fix: string;
     }[] = [];
 
-    questions.forEach((q) => {
-      const ans = answers[q.id];
-      if (ans !== "yes" && ans !== "no") return;
-      const isStrong = REVERSE.has(q.id) ? ans === "no" : ans === "yes";
-      const sig = SIGNALS[q.id];
-      if (!sig) return;
-      if (isStrong) {
-        strong += 1;
-        active.push({
-          id: q.id,
-          question: q.text,
-          title: sig.strongTitle,
-          copy: sig.strongCopy,
-        });
-      } else {
-        priorities.push({
-          id: q.id,
-          question: q.text,
-          title: sig.weakTitle,
-          reality: sig.weakReality,
-          fix: sig.weakFix,
-        });
-      }
-    });
+    if (answers) {
+      questions.forEach((q) => {
+        const ans = answers[q.id];
+        if (ans !== "yes" && ans !== "no") return;
+        hasAnswers = true;
+        const isStrong = REVERSE.has(q.id) ? ans === "no" : ans === "yes";
+        const sig = SIGNALS[q.id];
+        if (!sig) return;
+        if (isStrong) {
+          strong += 1;
+          active.push({
+            id: q.id,
+            question: q.text,
+            title: sig.strongTitle,
+            copy: sig.strongCopy,
+          });
+        } else {
+          priorities.push({
+            id: q.id,
+            question: q.text,
+            title: sig.weakTitle,
+            reality: sig.weakReality,
+            fix: sig.weakFix,
+          });
+        }
+      });
+    }
+
+    // Fallback when persona/character sets diagnosticScore but no answers.
+    if (!hasAnswers && typeof assessment?.diagnosticScore === "number") {
+      strong = Math.max(0, Math.min(total, assessment.diagnosticScore));
+    } else if (!hasAnswers && !assessment) {
+      return null;
+    }
 
     const percent = Math.round((strong / total) * 100);
     const archetype = pickArchetype(strong);

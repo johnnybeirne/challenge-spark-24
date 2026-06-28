@@ -14,6 +14,7 @@ import {
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {

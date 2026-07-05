@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown, FileText } from "lucide-react";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
-import { questions as leadGenQuestions } from "@/lib/assessmentData";
+
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -702,21 +702,10 @@ const Day2Screen1 = () => {
                           try {
                             await downloadQuizAsDocx(
                               state.challenge.aiOutputs?.day2_s2_quiz,
-                              {
-                                quizTitle: "Lead Gen Quiz",
-                                questions: leadGenQuestions.map((q) => ({
-                                  text: q.text,
-                                  scoring: {
-                                    low: q.options[0]?.label,
-                                    mid: q.options[1]?.label,
-                                  },
-                                })),
-                              },
                             );
-                          } catch (err: any) {
+                          } catch {
                             toast.error(
-                              err?.message ||
-                                "Couldn't download your quiz right now.",
+                              "Generate your quiz first, then download it.",
                             );
                           }
                         }}
@@ -731,24 +720,13 @@ const Day2Screen1 = () => {
                           try {
                             await openQuizInGoogleDocs(
                               state.challenge.aiOutputs?.day2_s2_quiz,
-                              {
-                                quizTitle: "Lead Gen Quiz",
-                                questions: leadGenQuestions.map((q) => ({
-                                  text: q.text,
-                                  scoring: {
-                                    low: q.options[0]?.label,
-                                    mid: q.options[1]?.label,
-                                  },
-                                })),
-                              },
                             );
                             toast.success(
                               "Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.",
                             );
-                          } catch (err: any) {
+                          } catch {
                             toast.error(
-                              err?.message ||
-                                "Couldn't open Google Docs right now.",
+                              "Generate your quiz first, then download it.",
                             );
                           }
                         }}

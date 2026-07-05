@@ -125,7 +125,7 @@ const Frame = ({ children }: { children: ReactNode }) => (
   <div className="relative w-full min-h-full bg-background">
     <SampleQuizBanner />
     <div className="relative min-h-[calc(100vh-40px)] w-full flex items-center justify-center p-4 md:p-6">
-      <div className="relative w-full max-w-[420px] flex flex-col items-center">
+      <div className="relative w-[80vw] max-w-[80vw] flex flex-col items-center">
         {children}
       </div>
     </div>
@@ -664,7 +664,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
         {/* Question */}
         <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mt-6 mb-8 md:mb-10">
-          <TypewriterText text={q.text} speed={22} />
+          {q.text}
         </h2>
 
         {/* Answers */}

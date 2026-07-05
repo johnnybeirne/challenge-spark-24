@@ -3,6 +3,7 @@ import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { normaliseQuiz } from "@/components/Day2QuizPlayable";
 import leadbeadLogo from "@/assets/leadbead-logo.png";
 
 const MESSAGE_MS = 1800;

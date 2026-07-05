@@ -89,16 +89,6 @@ const Resources = () => {
   const { state } = useAppState();
   const rawQuiz = state.challenge.aiOutputs?.day2_s2_quiz;
 
-  const quizFallback = {
-    quizTitle: "Lead Gen Quiz",
-    questions: leadGenQuestions.map((q) => ({
-      text: q.text,
-      scoring: {
-        low: q.options[0]?.label,
-        mid: q.options[1]?.label,
-      },
-    })),
-  };
 
   const downloadQuiz = async (format: "docx" | "gdoc") => {
     try {

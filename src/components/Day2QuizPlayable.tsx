@@ -79,6 +79,7 @@ const readDay1Values = (aiOutputs: Record<string, string> | undefined) => {
     expertType: Array.isArray(setup.expertType)
       ? (setup.expertType as unknown[]).map((v) => String(v || "")).filter(Boolean)
       : [],
+    promise: clean(aiOutputs?.day1_promise),
   };
 };
 
@@ -171,6 +172,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
             problem: d1.problem,
             outcome: d1.outcome,
             expertType: d1.expertType,
+            promise: d1.promise,
           },
         },
       });

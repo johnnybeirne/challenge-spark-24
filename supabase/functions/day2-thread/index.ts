@@ -707,7 +707,7 @@ Rules:
 - their problem: ${prob}
 - builder's superpower: ${sup}
 - builder's approach (obstacle/how): ${how}
-- challenge outcome: ${out}
+- challenge outcome: ${out}${p.promise ? `\n- builder's challenge promise: ${p.promise}` : ""}
 
 Generate the sample quiz JSON now.`;
 

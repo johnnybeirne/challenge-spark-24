@@ -121,7 +121,7 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
 
         {/* Phase content — fills the panel */}
         <div
-          key={phase}
+          key={`${phase}-${attempt}`}
           className="animate-fade-in"
           style={{
             position: "absolute",
@@ -132,20 +132,56 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
           {phase === "generating" ? (
             <Day2QuizGenerating
               onComplete={(quiz) => {
+                const validated = normaliseQuiz(quiz);
+                if (!validated) {
+                  setPhase("error");
+                  return;
+                }
                 setState((p) => ({
                   ...p,
                   challenge: {
                     ...p.challenge,
                     aiOutputs: {
                       ...p.challenge.aiOutputs,
-                      day2_s2_quiz: JSON.stringify(quiz ?? {}),
+                      day2_s2_quiz: JSON.stringify(validated),
                     },
                   },
                 }));
                 setPhase("playable");
               }}
-              onError={onClose}
+              onError={() => setPhase("error")}
             />
+          ) : phase === "error" ? (
+            <div className="flex h-full w-full items-center justify-center p-8">
+              <div className="max-w-sm rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+                <h3 className="text-lg font-black text-foreground">
+                  We couldn't generate your quiz
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Something went wrong on our side. Your previous quiz (if any) is still saved.
+                </p>
+                <div className="mt-6 flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAttempt((a) => a + 1);
+                      setPhase("generating");
+                    }}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Try again
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="text-sm font-semibold text-muted-foreground hover:text-foreground"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : (
             <Day2QuizPlayable onClose={onClose} />
           )}

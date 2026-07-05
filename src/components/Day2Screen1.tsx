@@ -663,7 +663,7 @@ const Day2Screen1 = () => {
                           )}
                         </button>
                         <p className="text-center text-xs text-muted-foreground">
-                          Opens in a new tab so you can keep this page open.
+                          Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting in Your Assets on your dashboard.
                         </p>
                       </div>
                     ) : (

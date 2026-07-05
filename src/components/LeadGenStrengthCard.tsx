@@ -285,7 +285,7 @@ function pickArchetype(strong: number): Archetype {
 }
 
 const LeadGenStrengthCard = () => {
-  const { state } = useAppState();
+  const { state, setState, authUser } = useAppState();
   const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
@@ -295,6 +295,49 @@ const LeadGenStrengthCard = () => {
   const assessment = state.assessment as
     | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;
+
+  // Refetch just the quiz slice from Supabase on mount and whenever the tab
+  // regains focus, so a quiz generated in another tab appears here without
+  // requiring a manual page refresh. Scoped to day2_s2_quiz — does not
+  // invalidate cached AI strength statements.
+  useEffect(() => {
+    if (!authUser) return;
+    let cancelled = false;
+    const refetchQuiz = async () => {
+      try {
+        const { data: row } = await (supabase.from("challenge_progress") as any)
+          .select("ai_outputs")
+          .eq("user_id", authUser.id)
+          .maybeSingle();
+        if (cancelled || !row) return;
+        const latestQuiz = row.ai_outputs?.day2_s2_quiz;
+        if (!latestQuiz) return;
+        setState((prev) => {
+          if (prev.challenge.aiOutputs?.day2_s2_quiz === latestQuiz) return prev;
+          return {
+            ...prev,
+            challenge: {
+              ...prev.challenge,
+              aiOutputs: { ...prev.challenge.aiOutputs, day2_s2_quiz: latestQuiz },
+            },
+          };
+        });
+      } catch {
+        /* no-op */
+      }
+    };
+    refetchQuiz();
+    const onFocus = () => refetchQuiz();
+    const onVis = () => { if (document.visibilityState === "visible") refetchQuiz(); };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [authUser, setState]);
+
 
   const qaArchetype = qa.active ? qa.archetypeOverride ?? null : null;
 

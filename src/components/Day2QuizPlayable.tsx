@@ -92,7 +92,7 @@ export const normaliseQuiz = (raw: unknown): QuizDraft | null => {
     .slice(0, 9)
     .map((q: any, i: number) => ({
       id: Number(q?.id) || i + 1,
-      text: String(q?.text ?? ""),
+      text: ensureQuestionMark(String(q?.text ?? "")),
       scoring: {
         low: String(q?.scoring?.low ?? ""),
         mid: String(q?.scoring?.mid ?? ""),

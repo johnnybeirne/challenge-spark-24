@@ -594,6 +594,7 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 2: ASSETS */}
           <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
+            <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs?.day2_s2_quiz} />
             {!hasQuizResult ? (
               <p className="text-sm text-muted-foreground">
                 Complete the quiz to see your personal strengths here.

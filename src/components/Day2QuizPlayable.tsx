@@ -38,6 +38,14 @@ interface QuizDraft {
 
 const TIER_ORDER: Tier[] = ["low", "mid", "high"];
 
+/** Append "?" to question text when it doesn't already end in sentence punctuation. */
+function ensureQuestionMark(s: string): string {
+  const trimmed = s.trim();
+  if (!trimmed) return trimmed;
+  return /[?!.]$/.test(trimmed) ? trimmed : `${trimmed}?`;
+}
+
+
 // Typewriter — reveals text character by character. Respects prefers-reduced-motion.
 function TypewriterText({ text, speed = 22 }: { text: string; speed?: number }) {
   const [shown, setShown] = useState(() => {
@@ -92,7 +100,7 @@ export const normaliseQuiz = (raw: unknown): QuizDraft | null => {
     .slice(0, 9)
     .map((q: any, i: number) => ({
       id: Number(q?.id) || i + 1,
-      text: String(q?.text ?? ""),
+      text: ensureQuestionMark(String(q?.text ?? "")),
       scoring: {
         low: String(q?.scoring?.low ?? ""),
         mid: String(q?.scoring?.mid ?? ""),

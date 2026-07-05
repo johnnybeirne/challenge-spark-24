@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
-import { questions as leadGenQuestions } from "@/lib/assessmentData";
+
 
 function buildQuizPlainText(quiz: {
   quizTitle?: string;
@@ -89,41 +89,43 @@ const Resources = () => {
   const { state } = useAppState();
   const rawQuiz = state.challenge.aiOutputs?.day2_s2_quiz;
 
-  const quizFallback = {
-    quizTitle: "Lead Gen Quiz",
-    questions: leadGenQuestions.map((q) => ({
-      text: q.text,
-      scoring: {
-        low: q.options[0]?.label,
-        mid: q.options[1]?.label,
-      },
-    })),
-  };
 
   const downloadQuiz = async (format: "docx" | "gdoc") => {
     try {
       if (format === "docx") {
-        await downloadQuizAsDocx(rawQuiz, quizFallback);
+        await downloadQuizAsDocx(rawQuiz);
         toast.success("Downloaded");
       } else {
-        await openQuizInGoogleDocs(rawQuiz, quizFallback);
+        await openQuizInGoogleDocs(rawQuiz);
         toast.success("Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.");
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't open Google Docs right now.");
+    } catch {
+      toast.error("Generate your quiz first, then download it.");
     }
   };
 
-  const quizPlainText = useMemo(() => {
-    let parsed: any = null;
-    if (rawQuiz) {
-      try { parsed = typeof rawQuiz === "string" ? JSON.parse(rawQuiz) : rawQuiz; } catch {}
-    }
-    return buildQuizPlainText(parsed && Array.isArray(parsed.questions) && parsed.questions.length ? parsed : quizFallback);
+  const parsedQuiz = useMemo(() => {
+    if (!rawQuiz) return null;
+    try {
+      const parsed = typeof rawQuiz === "string" ? JSON.parse(rawQuiz) : rawQuiz;
+      if (parsed && Array.isArray(parsed.questions) && parsed.questions.length) {
+        return parsed;
+      }
+    } catch {}
+    return null;
   }, [rawQuiz]);
+
+  const quizPlainText = useMemo(
+    () => (parsedQuiz ? buildQuizPlainText(parsedQuiz) : ""),
+    [parsedQuiz],
+  );
 
   const [quizCopied, setQuizCopied] = useState(false);
   const copyQuizText = async () => {
+    if (!quizPlainText) {
+      toast.error("Generate your quiz first, then download it.");
+      return;
+    }
     try {
       await navigator.clipboard.writeText(quizPlainText);
       setQuizCopied(true);
@@ -174,7 +176,7 @@ const Resources = () => {
             </Button>
           </div>
           <pre className="mt-4 max-h-72 overflow-auto rounded-xl border border-border bg-muted/50 p-4 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-mono">
-{quizPlainText}
+{quizPlainText || "Generate your quiz first, then download it."}
           </pre>
         </article>
 

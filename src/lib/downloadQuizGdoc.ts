@@ -106,17 +106,10 @@ function buildQuizContent(quiz: QuizDraft): { html: string; text: string } {
  */
 export async function openQuizInGoogleDocs(
   rawQuiz: string | undefined | null,
-  fallback?: QuizDraft | null,
 ): Promise<void> {
-  const quiz =
-    parseQuiz(rawQuiz) ??
-    (fallback &&
-    Array.isArray(fallback.questions) &&
-    fallback.questions.length > 0
-      ? fallback
-      : null);
+  const quiz = parseQuiz(rawQuiz);
   if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
-    throw new Error("No quiz available yet.");
+    throw new Error("Generate your quiz first, then download it.");
   }
 
   const { html, text } = buildQuizContent(quiz);

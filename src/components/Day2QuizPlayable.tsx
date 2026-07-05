@@ -82,7 +82,7 @@ const readDay1Values = (aiOutputs: Record<string, string> | undefined) => {
   };
 };
 
-const normaliseQuiz = (raw: unknown): QuizDraft | null => {
+export const normaliseQuiz = (raw: unknown): QuizDraft | null => {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as any;
   const rawQs = Array.isArray(r.questions) ? r.questions : [];

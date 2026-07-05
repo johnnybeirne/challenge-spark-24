@@ -230,7 +230,9 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         });
         if (cancelled) return;
         if (error) throw error;
-        apiResultRef.current = data ?? {};
+        const validated = normaliseQuiz(data);
+        if (!validated) throw new Error("Quiz unavailable");
+        apiResultRef.current = validated;
         apiDoneRef.current = true;
         tryHandoff();
       } catch (err: any) {
@@ -283,8 +285,13 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     stopAudioRef.current = null;
     setRevealing(true);
     window.setTimeout(() => {
+      const validated = normaliseQuiz(apiResultRef.current);
+      if (!validated) {
+        onError?.();
+        return;
+      }
       if (onComplete) {
-        onComplete(apiResultRef.current ?? {});
+        onComplete(validated);
       } else {
         setState((prev) => ({
           ...prev,
@@ -292,7 +299,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
             ...prev.challenge,
             aiOutputs: {
               ...prev.challenge.aiOutputs,
-              day2_s2_quiz: JSON.stringify(apiResultRef.current ?? {}),
+              day2_s2_quiz: JSON.stringify(validated),
               day2_step: "2",
             },
           },

@@ -664,7 +664,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
         {/* Question */}
         <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mt-6 mb-8 md:mb-10">
-          <TypewriterText text={q.text} speed={22} />
+          {q.text}
         </h2>
 
         {/* Answers */}

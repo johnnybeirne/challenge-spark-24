@@ -426,7 +426,16 @@ const LeadGenStrengthCard = () => {
     return { strong, total, percent, archetype, active, priorities, quiz };
   }, [assessment, qaArchetype]);
 
-  if (!data) return null;
+  if (!data) {
+    const rawQuiz = state.challenge.aiOutputs?.day2_s2_quiz;
+    if (!parseQuizForDownload(rawQuiz)) return null;
+    return (
+      <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden p-5 sm:p-7">
+        <QuizDownloadAssets rawQuiz={rawQuiz} />
+      </section>
+    );
+  }
+
   const archetypeOverride = qaArchetype ? ARCHETYPES[qaArchetype] : null;
   const archetype = archetypeOverride ?? data.archetype;
   const { priorities } = data;

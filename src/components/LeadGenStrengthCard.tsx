@@ -457,7 +457,7 @@ const LeadGenStrengthCard = () => {
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <p className="mt-3 text-sm text-muted-foreground italic max-w-md leading-snug">
+            <p className="mt-3 text-sm text-muted-foreground italic leading-snug">
               {heroTeaser}
             </p>
           </div>

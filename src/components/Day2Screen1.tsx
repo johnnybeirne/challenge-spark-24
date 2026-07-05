@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink, FileDown, FileText } from "lucide-react";
-import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
-import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
+import { Check, ChevronDown, Lock, Eye, Sparkles, Loader2, Users, Zap, AlertCircle, Target, Flag, ExternalLink } from "lucide-react";
 
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -665,7 +663,7 @@ const Day2Screen1 = () => {
                           )}
                         </button>
                         <p className="text-center text-xs text-muted-foreground">
-                          Opens in a new tab so you can keep this page open.
+                          Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting in Your Assets on your dashboard.
                         </p>
                       </div>
                     ) : (
@@ -695,47 +693,8 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
-                    <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await downloadQuizAsDocx(
-                              state.challenge.aiOutputs?.day2_s2_quiz,
-                            );
-                          } catch {
-                            toast.error(
-                              "Generate your quiz first, then download it.",
-                            );
-                          }
-                        }}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
-                      >
-                        <FileDown className="h-3.5 w-3.5" />
-                        Download as Word doc
-                      </button>
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await openQuizInGoogleDocs(
-                              state.challenge.aiOutputs?.day2_s2_quiz,
-                            );
-                            toast.success(
-                              "Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.",
-                            );
-                          } catch {
-                            toast.error(
-                              "Generate your quiz first, then download it.",
-                            );
-                          }
-                        }}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
-                      >
-                        <FileText className="h-3.5 w-3.5" />
-                        Download as Google Doc
-                      </button>
-                    </div>
+
+
 
 
 

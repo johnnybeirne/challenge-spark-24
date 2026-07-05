@@ -15,7 +15,7 @@ import quizHeroPortrait from "@/assets/quiz-hero-portrait.jpg";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
-import assessmentBg from "@/assets/assessment-bg.png.asset.json";
+
 import { HelpTip } from "@/components/HelpTip";
 import { useQuizPreviewTips } from "@/hooks/useQuizPreviewTips";
 
@@ -120,17 +120,11 @@ export const normaliseQuiz = (raw: unknown): QuizDraft | null => {
 };
 
 
-// Shared Assessment-style frame: sticky sample banner + blurred bg + centered card column
+// Standard app-style frame: sticky sample banner + plain app background + centered card column
 const Frame = ({ children }: { children: ReactNode }) => (
-  <div className="relative w-full min-h-full">
+  <div className="relative w-full min-h-full bg-background">
     <SampleQuizBanner />
-    <div className="relative min-h-[calc(100vh-40px)] w-full flex items-center justify-center p-4 md:p-6 overflow-hidden">
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(4px)" }}
-      />
-      <div aria-hidden className="absolute inset-0 bg-foreground/20" />
+    <div className="relative min-h-[calc(100vh-40px)] w-full flex items-center justify-center p-4 md:p-6">
       <div className="relative w-full max-w-[420px] flex flex-col items-center">
         {children}
       </div>

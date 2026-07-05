@@ -733,18 +733,23 @@ const ReadinessRing = ({ pct }: { pct: number }) => {
   );
 };
 
-const SampleQuizBanner = () => (
-  <div className="w-full border-b border-amber-300 bg-amber-50 px-4 py-5 sm:py-6">
-    <div className="mx-auto max-w-3xl rounded-xl border border-amber-300 bg-white/70 p-5 sm:p-6 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-amber-700">
-        Sample quiz preview
-      </p>
-      <p className="mt-2 text-base sm:text-lg font-semibold leading-snug text-amber-900">
-        This is your sample quiz. Your Word doc and Google Doc versions are ready to download in Your Assets on your dashboard. Close this tab to return to Day 2 of your challenge.
-      </p>
+const SampleQuizBanner = () => {
+  const { state } = useAppState();
+  const firstName = (state.user?.name || "").trim().split(/\s+/)[0] || "there";
+  return (
+    <div className="w-full border-b border-amber-300 bg-amber-50 px-4 py-5 sm:py-6">
+      <div className="mx-auto max-w-3xl rounded-xl border border-amber-300 bg-white/70 p-5 sm:p-6 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-wider text-amber-700">
+          Sample quiz preview
+        </p>
+        <p className="mt-2 text-base sm:text-lg font-semibold leading-snug text-amber-900">
+          {firstName}, your sample quiz is below for review. Your Word doc and Google Doc versions are ready to download in Your Assets on your dashboard. Scroll down to see your quiz in action, then click Start Quiz to try it yourself. Close this tab to return to Day 2 of your challenge.
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 
 export default Day2QuizPlayable;

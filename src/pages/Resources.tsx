@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
-import { questions as leadGenQuestions } from "@/lib/assessmentData";
+
 
 function buildQuizPlainText(quiz: {
   quizTitle?: string;
@@ -103,24 +103,32 @@ const Resources = () => {
   const downloadQuiz = async (format: "docx" | "gdoc") => {
     try {
       if (format === "docx") {
-        await downloadQuizAsDocx(rawQuiz, quizFallback);
+        await downloadQuizAsDocx(rawQuiz);
         toast.success("Downloaded");
       } else {
-        await openQuizInGoogleDocs(rawQuiz, quizFallback);
+        await openQuizInGoogleDocs(rawQuiz);
         toast.success("Quiz copied. Paste (Ctrl/Cmd+V) into the new Google Doc.");
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Couldn't open Google Docs right now.");
+    } catch {
+      toast.error("Generate your quiz first, then download it.");
     }
   };
 
-  const quizPlainText = useMemo(() => {
-    let parsed: any = null;
-    if (rawQuiz) {
-      try { parsed = typeof rawQuiz === "string" ? JSON.parse(rawQuiz) : rawQuiz; } catch {}
-    }
-    return buildQuizPlainText(parsed && Array.isArray(parsed.questions) && parsed.questions.length ? parsed : quizFallback);
+  const parsedQuiz = useMemo(() => {
+    if (!rawQuiz) return null;
+    try {
+      const parsed = typeof rawQuiz === "string" ? JSON.parse(rawQuiz) : rawQuiz;
+      if (parsed && Array.isArray(parsed.questions) && parsed.questions.length) {
+        return parsed;
+      }
+    } catch {}
+    return null;
   }, [rawQuiz]);
+
+  const quizPlainText = useMemo(
+    () => (parsedQuiz ? buildQuizPlainText(parsedQuiz) : ""),
+    [parsedQuiz],
+  );
 
   const [quizCopied, setQuizCopied] = useState(false);
   const copyQuizText = async () => {

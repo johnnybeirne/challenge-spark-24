@@ -734,20 +734,17 @@ const ReadinessRing = ({ pct }: { pct: number }) => {
 };
 
 const SampleQuizBanner = () => (
-
-  <div
-    className="sticky top-0 left-0 right-0 z-[100] w-full text-center"
-    style={{
-      backgroundColor: "rgba(245, 166, 35, 0.15)",
-      borderBottom: "1px solid #F5A623",
-      color: "#92510A",
-      fontSize: "13px",
-      fontWeight: 500,
-      padding: "8px 16px",
-    }}
-  >
-    This is your sample quiz. Close this browser tab to return to Day 2 of your challenge.
+  <div className="w-full border-b border-amber-300 bg-amber-50 px-4 py-5 sm:py-6">
+    <div className="mx-auto max-w-3xl rounded-xl border border-amber-300 bg-white/70 p-5 sm:p-6 shadow-sm">
+      <p className="text-xs font-black uppercase tracking-wider text-amber-700">
+        Sample quiz preview
+      </p>
+      <p className="mt-2 text-base sm:text-lg font-semibold leading-snug text-amber-900">
+        This is your sample quiz. Your Word doc and Google Doc versions are ready to download in Your Assets on your dashboard. Close this tab to return to Day 2 of your challenge.
+      </p>
+    </div>
   </div>
 );
+
 
 export default Day2QuizPlayable;

@@ -569,51 +569,30 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
 
   // ───────────── Result screen ─────────────
   if (result) {
-    const total = quiz.questions.length;
     return (
       <Frame>
         <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
           <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-            Your result
+            Your archetype
           </p>
 
           <div className="mt-5 flex items-center justify-center">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-              <Trophy className="h-7 w-7" />
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
+              <Trophy className="h-8 w-8" />
             </div>
           </div>
 
-          <h2 className="mt-5 font-montserrat font-semibold text-2xl md:text-3xl leading-tight text-foreground">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            You are
+          </p>
+          <h2 className="mt-1 font-montserrat font-bold text-3xl md:text-4xl leading-tight text-foreground">
             {result.tier.name}
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
             {result.tier.description}
           </p>
 
-          <div className="mt-6 grid grid-cols-3 gap-2">
-            {TIER_ORDER.map((t) => {
-              const isWin = t === result.winning;
-              return (
-                <div
-                  key={t}
-                  className={cn(
-                    "rounded-xl border p-3 text-center transition",
-                    isWin ? "border-primary bg-primary/10" : "border-border bg-card",
-                  )}
-                >
-                  <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
-                    {quiz.tiers[t].name}
-                  </p>
-                  <p className={cn("mt-1 text-2xl font-black", isWin ? "text-primary" : "text-foreground")}>
-                    {result.counts[t]}
-                    <span className="text-xs font-semibold text-muted-foreground">/{total}</span>
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Button variant="outline" className="flex-1" onClick={reset}>
               <RefreshCw className="h-4 w-4" /> Try again
             </Button>
@@ -638,6 +617,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       </Frame>
     );
   }
+
 
   // ───────────── Question screen ─────────────
   const q = quiz.questions[current];

@@ -122,6 +122,10 @@ const Resources = () => {
 
   const [quizCopied, setQuizCopied] = useState(false);
   const copyQuizText = async () => {
+    if (!quizPlainText) {
+      toast.error("Generate your quiz first, then download it.");
+      return;
+    }
     try {
       await navigator.clipboard.writeText(quizPlainText);
       setQuizCopied(true);
@@ -172,7 +176,7 @@ const Resources = () => {
             </Button>
           </div>
           <pre className="mt-4 max-h-72 overflow-auto rounded-xl border border-border bg-muted/50 p-4 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-mono">
-{quizPlainText}
+{quizPlainText || "Generate your quiz first, then download it."}
           </pre>
         </article>
 

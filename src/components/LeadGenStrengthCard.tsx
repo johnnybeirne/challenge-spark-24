@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles, FileDown, FileText } from "lucide-react";
+import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { supabase } from "@/integrations/supabase/client";
+import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
+import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
 
 type AiAsset = { title: string; description: string };
 const ASSETS_CACHE = new Map<string, AiAsset[]>();

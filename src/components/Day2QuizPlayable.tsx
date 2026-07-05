@@ -15,7 +15,7 @@ import quizHeroPortrait from "@/assets/quiz-hero-portrait.jpg";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
-import assessmentBg from "@/assets/assessment-bg.png.asset.json";
+
 import { HelpTip } from "@/components/HelpTip";
 import { useQuizPreviewTips } from "@/hooks/useQuizPreviewTips";
 

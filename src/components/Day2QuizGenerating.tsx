@@ -50,6 +50,7 @@ const readDay1 = (aiOutputs: Record<string, string> | undefined) => {
     problem: clean(setup.problem),
     outcome: clean(setup.outcome),
     expertType,
+    promise: clean(aiOutputs?.day1_promise),
   };
 };
 
@@ -225,6 +226,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
               problem: d1.problem,
               outcome: d1.outcome,
               expertType: d1.expertType,
+              promise: d1.promise,
             },
           },
         });

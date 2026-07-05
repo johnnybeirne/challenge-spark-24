@@ -50,6 +50,7 @@ const readDay1 = (aiOutputs: Record<string, string> | undefined) => {
     problem: clean(setup.problem),
     outcome: clean(setup.outcome),
     expertType,
+    promise: clean(aiOutputs?.day1_promise),
   };
 };
 

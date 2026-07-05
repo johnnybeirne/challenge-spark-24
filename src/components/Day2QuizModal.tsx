@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { X, RefreshCw } from "lucide-react";
 import Day2QuizGenerating from "@/components/Day2QuizGenerating";
-import Day2QuizPlayable from "@/components/Day2QuizPlayable";
+import Day2QuizPlayable, { normaliseQuiz } from "@/components/Day2QuizPlayable";
 import { useAppState } from "@/context/AppContext";
 
 interface Props {
@@ -16,10 +16,14 @@ interface Props {
  */
 const Day2QuizModal = ({ open, onClose }: Props) => {
   const { setState } = useAppState();
-  const [phase, setPhase] = useState<"generating" | "playable">("generating");
+  const [phase, setPhase] = useState<"generating" | "playable" | "error">("generating");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (open) setPhase("generating");
+    if (open) {
+      setPhase("generating");
+      setAttempt(0);
+    }
   }, [open]);
 
   // Lock body scroll while open.

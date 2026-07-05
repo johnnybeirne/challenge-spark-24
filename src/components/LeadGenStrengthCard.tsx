@@ -164,7 +164,7 @@ type Archetype = {
 const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
   pioneer: {
     key: "pioneer",
-    name: "The Active Pioneer",
+    name: "The Pioneer",
     zoneLabel: "Red Zone \u00b7 0\u201333% Strength",
     hook:
       "You have built a trusted brand, but you are currently trapped in an active-labor loop.",
@@ -201,7 +201,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
   },
   architect: {
     key: "architect",
-    name: "The Systems Architect",
+    name: "The Architect",
     zoneLabel: "Gold Zone \u00b7 44\u201366% Strength",
     hook:
       "You have functional automation, but your systems are fragmented and leaking revenue.",
@@ -238,7 +238,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
   },
   authority: {
     key: "authority",
-    name: "The Scaled Authority",
+    name: "The Authority",
     zoneLabel: "Green Zone \u00b7 77\u2013100% Strength",
     hook:
       "You have built a high-performing lead engine. Now it's time to build a self-scaling ecosystem.",

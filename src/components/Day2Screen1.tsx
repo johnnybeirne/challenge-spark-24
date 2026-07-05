@@ -18,7 +18,7 @@ import Day2QuizModal from "@/components/Day2QuizModal";
 
 
 const SECTIONS = [
-  { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want your challenge" },
+  { id: 1, label: "Quiz marketing", title: "Create the quiz that makes people want to complete your challenge" },
 ];
 
 // Pull Day 1 values: audience (clientAvatar), problem, outcome (challengeOutcome),

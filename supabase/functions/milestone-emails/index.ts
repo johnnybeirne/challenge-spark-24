@@ -60,7 +60,7 @@ function fallbackTemplate(milestone: Milestone): { subject: string; html_body: s
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Day 1 is complete, and your challenge now has a clear promise behind it.</p>
     <blockquote style="margin:20px 0;padding:16px 20px;border-left:4px solid #4f46e5;background:#f5f3ff;border-radius:6px;font-size:16px;line-height:1.6;color:#1e1b4b;font-style:italic;">{{promise}}</blockquote>
     <p style="font-size:15px;line-height:1.7;margin:16px 0 0;color:#334155;">In Day 2, we build the asset that turns curious visitors into leads: your quiz. It is where your promise starts doing real work for you.</p>
-    <p style="margin:24px 0;"><a href="{{day2_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Continue to Day 2</a></p>
+    <p style="margin:24px 0;font-size:15px;line-height:1.7;color:#334155;"><a href="{{day2_url}}" style="color:#1d4ed8;text-decoration:underline;font-weight:600;">Continue to Day 2</a></p>
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
   </div>
 </body></html>`,
@@ -74,7 +74,7 @@ function fallbackTemplate(milestone: Milestone): { subject: string; html_body: s
     <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">Your quiz is built, {{name}}.</h1>
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Your lead generation quiz has been generated, and both the Word doc and Google Doc versions are ready to grab in Your Assets on your dashboard.</p>
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Open it up, take a look, and download the versions you want to keep.</p>
-    <p style="margin:24px 0;"><a href="{{dashboard_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Open Your Assets</a></p>
+    <p style="margin:24px 0;font-size:15px;line-height:1.7;color:#334155;"><a href="{{dashboard_url}}" style="color:#1d4ed8;text-decoration:underline;font-weight:600;">Open Your Assets</a></p>
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
   </div>
 </body></html>`,
@@ -92,7 +92,7 @@ function fallbackTemplate(milestone: Milestone): { subject: string; html_body: s
       <li>Downloadable Word and Google Doc versions of your assets</li>
     </ul>
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Everything stays available in your dashboard, ready whenever you want to use it, refine it, or share it.</p>
-    <p style="margin:24px 0;"><a href="{{dashboard_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Open your dashboard</a></p>
+    <p style="margin:24px 0;font-size:15px;line-height:1.7;color:#334155;"><a href="{{dashboard_url}}" style="color:#1d4ed8;text-decoration:underline;font-weight:600;">Open your dashboard</a></p>
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
   </div>
 </body></html>`,

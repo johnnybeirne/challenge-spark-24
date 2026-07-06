@@ -790,6 +790,36 @@ export type Database = {
         }
         Relationships: []
       }
+      milestone_email_templates: {
+        Row: {
+          created_at: string
+          html_body: string
+          id: string
+          milestone: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          html_body: string
+          id?: string
+          milestone: string
+          subject: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          html_body?: string
+          id?: string
+          milestone?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           audience: Json

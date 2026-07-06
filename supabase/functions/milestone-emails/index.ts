@@ -162,14 +162,16 @@ Deno.serve(async (req) => {
         dashboard_url: `${appBaseUrl}/challenger-dashboard`,
       };
 
+      const wrap = (body: string) => `<div style="font-size:14pt;line-height:1.6;">${body}</div>`;
       const subject = `[TEST] ${substitute(tpl.subject, vars)}`;
-      const html = substitute(tpl.html_body, vars);
+      const html = wrap(substitute(tpl.html_body, vars));
 
       const r = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
         body: JSON.stringify({ from: FROM, to: [testEmail], subject, html }),
       });
+
       const data = await r.json();
       if (!r.ok) {
         return new Response(
@@ -253,7 +255,7 @@ Deno.serve(async (req) => {
     if (!promise) htmlBody = stripEmptyPromiseBlock(htmlBody);
 
     const subject = substitute(tpl.subject, vars);
-    const html = substitute(htmlBody, vars);
+    const html = `<div style="font-size:14pt;line-height:1.6;">${substitute(htmlBody, vars)}</div>`;
 
     // 6. Send
     const r = await fetch("https://api.resend.com/emails", {

@@ -786,7 +786,7 @@ function parseQuizForDownload(raw: string | undefined | null): boolean {
   }
 }
 
-function QuizDownloadAssets({ rawQuiz }: { rawQuiz: string | undefined | null }) {
+export function QuizDownloadAssets({ rawQuiz }: { rawQuiz: string | undefined | null }) {
   const isValid = useMemo(() => parseQuizForDownload(rawQuiz), [rawQuiz]);
   if (!isValid) return null;
 

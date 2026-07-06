@@ -412,7 +412,7 @@ const AdminNewsletter = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="bg-background border rounded-md">
+              <div className="bg-background border rounded-md [&_.ql-editor]:text-[14pt]">
                 <ReactQuill ref={quillRef} theme="snow" value={html} onChange={setHtml} modules={quillModules} />
               </div>
             </div>

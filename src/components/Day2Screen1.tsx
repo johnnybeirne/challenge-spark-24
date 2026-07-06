@@ -694,6 +694,25 @@ const Day2Screen1 = () => {
                       </div>
                     )}
 
+                    {state.challenge.aiOutputs?.day2_s2_quiz && (
+                      <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5 animate-fade-in">
+                        <div className="mb-3 flex items-center gap-2">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                            <Check className="h-3.5 w-3.5" />
+                          </span>
+                          <p className="text-sm sm:text-base font-black text-foreground">
+                            Your quiz assets are ready
+                          </p>
+                        </div>
+                        <p className="mb-3 text-xs sm:text-sm text-muted-foreground">
+                          Download your quiz right here, or grab it any time from Your Assets on your dashboard.
+                        </p>
+                        <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs.day2_s2_quiz} />
+                      </div>
+                    )}
+
+
+
 
 
 

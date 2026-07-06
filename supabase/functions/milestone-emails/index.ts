@@ -114,11 +114,77 @@ Deno.serve(async (req) => {
   try {
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-    const { user_id, milestone } = await req.json();
-    if (!user_id || typeof user_id !== "string") throw new Error("user_id required");
+    const body = await req.json();
+    const { user_id, milestone, test, testEmail } = body ?? {};
     if (!milestone || !VALID.includes(milestone)) throw new Error("invalid milestone");
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+
+    // -----------------------------------------------------------------
+    // TEST MODE: render with sample values, send to testEmail, skip log.
+    // Restricted to admins via has_role check on caller's JWT.
+    // -----------------------------------------------------------------
+    if (test === true) {
+      if (!testEmail || typeof testEmail !== "string" || !testEmail.includes("@")) {
+        throw new Error("testEmail required");
+      }
+
+      // Verify caller is an admin using their JWT.
+      const authHeader = req.headers.get("Authorization") ?? "";
+      const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+      if (!token) throw new Error("unauthorized");
+      const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+        global: { headers: { Authorization: `Bearer ${token}` } },
+      });
+      const { data: userData, error: uErr } = await userClient.auth.getUser();
+      if (uErr || !userData?.user) throw new Error("unauthorized");
+      const { data: isAdmin, error: rErr } = await admin.rpc("has_role", {
+        _user_id: userData.user.id,
+        _role: "admin",
+      });
+      if (rErr || !isAdmin) throw new Error("admin_required");
+
+      const { data: tplRow } = await admin
+        .from("milestone_email_templates")
+        .select("subject,html_body")
+        .eq("milestone", milestone)
+        .maybeSingle();
+      const tpl = tplRow ?? fallbackTemplate(milestone as Milestone);
+
+      const appBaseUrl = await getAppBaseUrl(admin);
+      const samplePromise =
+        "I help new coaches turn their expertise into their first paying clients within 30 days.";
+      const vars: Record<string, string> = {
+        name: esc("Sophie"),
+        promise: esc(samplePromise),
+        app_url: appBaseUrl,
+        day2_url: `${appBaseUrl}/challenge/day/2`,
+        dashboard_url: `${appBaseUrl}/challenger-dashboard`,
+      };
+
+      const subject = `[TEST] ${substitute(tpl.subject, vars)}`;
+      const html = substitute(tpl.html_body, vars);
+
+      const r = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+        body: JSON.stringify({ from: FROM, to: [testEmail], subject, html }),
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        return new Response(
+          JSON.stringify({ ok: false, error: "resend_failed", details: data }),
+          { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      return new Response(
+        JSON.stringify({ ok: true, test: true, id: data.id }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ---------- Normal send ----------
+    if (!user_id || typeof user_id !== "string") throw new Error("user_id required");
 
     // 1. Dedupe
     const { data: existing } = await admin
@@ -133,6 +199,7 @@ Deno.serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+
 
     // 2. Profile
     const { data: profile, error: pErr } = await admin

@@ -163,6 +163,8 @@ Deno.serve(async (req) => {
       };
 
       const subject = `[TEST] ${substitute(tpl.subject, vars)}`;
+      const wrap = (body: string) => `<div style="font-size:14pt;line-height:1.6;">${body}</div>`;
+
       const html = substitute(tpl.html_body, vars);
 
       const r = await fetch("https://api.resend.com/emails", {

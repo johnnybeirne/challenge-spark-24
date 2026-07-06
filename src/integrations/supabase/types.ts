@@ -757,6 +757,39 @@ export type Database = {
         }
         Relationships: []
       }
+      milestone_email_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          milestone: string
+          resend_id: string | null
+          sent_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          milestone: string
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          milestone?: string
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           audience: Json

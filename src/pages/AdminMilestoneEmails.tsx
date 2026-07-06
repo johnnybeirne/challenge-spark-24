@@ -16,10 +16,10 @@ SizeStyle.whitelist = FONT_SIZES;
 
 type Milestone = "day1_complete" | "quiz_assets_ready" | "challenge_complete";
 
-const MILESTONES: { id: Milestone; label: string; supportsPromise: boolean }[] = [
-  { id: "day1_complete", label: "Day 1 Complete", supportsPromise: true },
-  { id: "quiz_assets_ready", label: "Quiz Assets Ready", supportsPromise: false },
-  { id: "challenge_complete", label: "Challenge Complete", supportsPromise: false },
+const MILESTONES: { id: Milestone; label: string; supportsPromise: boolean; sentWhen: string }[] = [
+  { id: "day1_complete", label: "Day 1: Complete", supportsPromise: true, sentWhen: "Sent when this user marks Day 1 as complete." },
+  { id: "quiz_assets_ready", label: "Day 2: Quiz Assets Ready", supportsPromise: false, sentWhen: "Sent when this user's quiz assets are generated in Day 2." },
+  { id: "challenge_complete", label: "Day 3: Challenge Complete", supportsPromise: false, sentWhen: "Sent when this user marks Day 3 as complete and finishes the challenge." },
 ];
 
 type TemplateRow = { subject: string; html_body: string };

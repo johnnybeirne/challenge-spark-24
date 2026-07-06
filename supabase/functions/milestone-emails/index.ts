@@ -10,7 +10,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const FROM = "Johnny Beirne <johnny@johnnybeirne.com>";
-const APP_BASE_URL = "https://leadio.johnnybeirne.com";
+const DEFAULT_APP_BASE_URL = "https://leadio.johnnybeirne.com";
 
 type Milestone = "day1_complete" | "quiz_assets_ready" | "challenge_complete";
 const VALID: Milestone[] = ["day1_complete", "quiz_assets_ready", "challenge_complete"];
@@ -18,52 +18,73 @@ const VALID: Milestone[] = ["day1_complete", "quiz_assets_ready", "challenge_com
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-function shell(inner: string): string {
-  return `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f8fafc;padding:32px 16px;color:#0f172a;margin:0;">
+// Mirrors send-newsletter: unicode brace look-alikes -> ASCII, collapse spaces in {{ name }}.
+function normalizeBraces(input: string): string {
+  let out = (input ?? "")
+    .replace(/[｛❴⦃⟮⦗]/g, "{")
+    .replace(/[｝❵⦄⟯⦘]/g, "}");
+  out = out.replace(/\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}/g, "{{$1}}");
+  return out;
+}
+
+function substitute(html: string, vars: Record<string, string>): string {
+  let out = normalizeBraces(html ?? "");
+  for (const [k, v] of Object.entries(vars)) {
+    out = out.split(`{{${k}}}`).join(v);
+  }
+  return out;
+}
+
+async function getAppBaseUrl(admin: ReturnType<typeof createClient>): Promise<string> {
+  try {
+    const { data } = await admin
+      .from("newsletter_settings")
+      .select("app_base_url")
+      .eq("id", 1)
+      .maybeSingle();
+    const v = (data?.app_base_url ?? "").toString().trim().replace(/\/+$/, "");
+    return v || DEFAULT_APP_BASE_URL;
+  } catch {
+    return DEFAULT_APP_BASE_URL;
+  }
+}
+
+// Fallback hardcoded templates (with tokens) if no row exists for a milestone.
+function fallbackTemplate(milestone: Milestone): { subject: string; html_body: string } {
+  if (milestone === "day1_complete") {
+    return {
+      subject: "Day 1 is done. Your challenge has a promise now.",
+      html_body: `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f8fafc;padding:32px 16px;color:#0f172a;margin:0;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px;border:1px solid #e5e7eb;">
-    ${inner}
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">Nice work, {{name}}.</h1>
+    <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Day 1 is complete, and your challenge now has a clear promise behind it.</p>
+    <blockquote style="margin:20px 0;padding:16px 20px;border-left:4px solid #4f46e5;background:#f5f3ff;border-radius:6px;font-size:16px;line-height:1.6;color:#1e1b4b;font-style:italic;">{{promise}}</blockquote>
+    <p style="font-size:15px;line-height:1.7;margin:16px 0 0;color:#334155;">In Day 2, we build the asset that turns curious visitors into leads: your quiz. It is where your promise starts doing real work for you.</p>
+    <p style="margin:24px 0;"><a href="{{day2_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Continue to Day 2</a></p>
     <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
   </div>
-</body></html>`;
-}
-
-function button(label: string, href: string): string {
-  return `<p style="margin:24px 0;"><a href="${href}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">${esc(label)}</a></p>`;
-}
-
-function buildEmail(milestone: Milestone, firstName: string, promise: string | null): { subject: string; html: string } {
-  const name = firstName || "there";
-
-  if (milestone === "day1_complete") {
-    const subject = "Day 1 is done. Your challenge has a promise now.";
-    const promiseBlock = promise
-      ? `<blockquote style="margin:20px 0;padding:16px 20px;border-left:4px solid #4f46e5;background:#f5f3ff;border-radius:6px;font-size:16px;line-height:1.6;color:#1e1b4b;font-style:italic;">${esc(promise)}</blockquote>`
-      : "";
-    const inner = `
-      <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">Nice work, ${esc(name)}.</h1>
-      <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Day 1 is complete, and your challenge now has a clear promise behind it.</p>
-      ${promiseBlock}
-      <p style="font-size:15px;line-height:1.7;margin:16px 0 0;color:#334155;">In Day 2, we build the asset that turns curious visitors into leads: your quiz. It is where your promise starts doing real work for you.</p>
-      ${button("Continue to Day 2", `${APP_BASE_URL}/challenge/day/2`)}
-    `;
-    return { subject, html: shell(inner) };
+</body></html>`,
+    };
   }
-
   if (milestone === "quiz_assets_ready") {
-    const subject = "Your quiz is ready. Your downloads are waiting.";
-    const inner = `
-      <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">Your quiz is built, ${esc(name)}.</h1>
-      <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Your lead generation quiz has been generated, and both the Word doc and Google Doc versions are ready to grab in Your Assets on your dashboard.</p>
-      <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Open it up, take a look, and download the versions you want to keep.</p>
-      ${button("Open Your Assets", `${APP_BASE_URL}/challenger-dashboard`)}
-    `;
-    return { subject, html: shell(inner) };
+    return {
+      subject: "Your quiz is ready. Your downloads are waiting.",
+      html_body: `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f8fafc;padding:32px 16px;color:#0f172a;margin:0;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px;border:1px solid #e5e7eb;">
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">Your quiz is built, {{name}}.</h1>
+    <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Your lead generation quiz has been generated, and both the Word doc and Google Doc versions are ready to grab in Your Assets on your dashboard.</p>
+    <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Open it up, take a look, and download the versions you want to keep.</p>
+    <p style="margin:24px 0;"><a href="{{dashboard_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Open Your Assets</a></p>
+    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
+  </div>
+</body></html>`,
+    };
   }
-
-  // challenge_complete
-  const subject = "You built it. Here is everything you created.";
-  const inner = `
-    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">You finished the challenge, ${esc(name)}.</h1>
+  return {
+    subject: "You built it. Here is everything you created.",
+    html_body: `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f8fafc;padding:32px 16px;color:#0f172a;margin:0;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px;border:1px solid #e5e7eb;">
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 16px;">You finished the challenge, {{name}}.</h1>
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">That is a serious piece of work. Here is what you now have to show for it:</p>
     <ul style="font-size:15px;line-height:1.8;margin:0 0 16px 20px;padding:0;color:#334155;">
       <li>A clear challenge promise</li>
@@ -71,9 +92,20 @@ function buildEmail(milestone: Milestone, firstName: string, promise: string | n
       <li>Downloadable Word and Google Doc versions of your assets</li>
     </ul>
     <p style="font-size:15px;line-height:1.7;margin:0 0 12px;color:#334155;">Everything stays available in your dashboard, ready whenever you want to use it, refine it, or share it.</p>
-    ${button("Open your dashboard", `${APP_BASE_URL}/challenger-dashboard`)}
-  `;
-  return { subject, html: shell(inner) };
+    <p style="margin:24px 0;"><a href="{{dashboard_url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;font-size:15px;">Open your dashboard</a></p>
+    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">Johnny Beirne</p>
+  </div>
+</body></html>`,
+  };
+}
+
+// For the day1_complete template, if there is no promise, strip the promise
+// blockquote entirely so we do not render an empty highlighted box.
+function stripEmptyPromiseBlock(html: string): string {
+  return html.replace(
+    /<blockquote\b[^>]*>\s*\{\{promise\}\}\s*<\/blockquote>/gi,
+    "",
+  );
 }
 
 Deno.serve(async (req) => {
@@ -110,10 +142,10 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (pErr || !profile?.email) throw new Error("profile_not_found");
 
-    const firstName = (profile.name ?? "").trim().split(/\s+/)[0] ?? "";
+    const firstName = ((profile.name ?? "").trim().split(/\s+/)[0] ?? "") || "there";
 
-    // 3. Promise for day1_complete
-    let promise: string | null = null;
+    // 3. Promise (day1_complete only)
+    let promise = "";
     if (milestone === "day1_complete") {
       const { data: prog } = await admin
         .from("challenge_progress")
@@ -125,12 +157,38 @@ Deno.serve(async (req) => {
         const v = ai[k];
         return typeof v === "string" && v.trim() ? v.trim() : null;
       };
-      promise = pick("day1_promise_user_edit") ?? pick("day1_promise_polished") ?? pick("day1_promise");
+      promise =
+        pick("day1_promise_user_edit") ??
+        pick("day1_promise_polished") ??
+        pick("day1_promise") ??
+        "";
     }
 
-    const { subject, html } = buildEmail(milestone as Milestone, firstName, promise);
+    // 4. Load template (fall back to hardcoded if missing)
+    const { data: tplRow } = await admin
+      .from("milestone_email_templates")
+      .select("subject,html_body")
+      .eq("milestone", milestone)
+      .maybeSingle();
+    const tpl = tplRow ?? fallbackTemplate(milestone as Milestone);
 
-    // 4. Send
+    // 5. Render
+    const appBaseUrl = await getAppBaseUrl(admin);
+    const vars: Record<string, string> = {
+      name: esc(firstName),
+      promise: promise ? esc(promise) : "",
+      app_url: appBaseUrl,
+      day2_url: `${appBaseUrl}/challenge/day/2`,
+      dashboard_url: `${appBaseUrl}/challenger-dashboard`,
+    };
+
+    let htmlBody = tpl.html_body;
+    if (!promise) htmlBody = stripEmptyPromiseBlock(htmlBody);
+
+    const subject = substitute(tpl.subject, vars);
+    const html = substitute(htmlBody, vars);
+
+    // 6. Send
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },

@@ -72,6 +72,7 @@ import AdminJvPartners from "@/pages/AdminJvPartners";
 import AdminSignups from "@/pages/AdminSignups";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import AdminNewsletter from "@/pages/AdminNewsletter";
+import AdminMilestoneEmails from "@/pages/AdminMilestoneEmails";
 import Unsubscribe from "@/pages/Unsubscribe";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
@@ -240,6 +241,7 @@ const App = () => (
                 
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
                 <Route path="newsletter" element={<AdminNewsletter />} />
+                <Route path="milestone-emails" element={<AdminMilestoneEmails />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="day1-steps" element={<AdminDay1Steps />} />

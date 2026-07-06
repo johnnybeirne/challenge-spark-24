@@ -30,6 +30,7 @@ const items = [
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3 },
   { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail },
   { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail },
+  { title: "Milestone emails", url: "/owner-console/milestone-emails", icon: Mail },
   { title: "Promoters", url: "/owner-console/promoters", icon: Users },
   { title: "Activity feed", url: "/owner-console/activity", icon: Activity },
   { title: "Training system", url: "/owner-console/training", icon: GraduationCap },

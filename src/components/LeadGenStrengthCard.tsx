@@ -694,47 +694,6 @@ const LeadGenStrengthCard = () => {
 
 
           {/* TAB 3: ROADMAP */}
-          <TabsContent value="roadmap" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            <div className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <p className="text-xs font-black uppercase tracking-wider text-primary">
-                    72-Hour Roadmap
-                  </p>
-                </div>
-                <h3 className="text-lg font-black text-foreground">
-                  {archetype.roadmapHeader}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {archetype.roadmapIntro}
-                </p>
-                <ol className="mt-4 space-y-2.5">
-                  {archetype.roadmap.map((step, i) => (
-                    <li
-                      key={i}
-                      className="flex gap-3 rounded-lg border border-border bg-card p-3"
-                    >
-                      <div className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-black">
-                        {i + 1}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-foreground">
-                          <span className="text-primary">{step.day}:</span> {step.title}
-                        </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground leading-snug">
-                          {step.copy}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-
-              {/* Day 1/2/3 status block */}
-              <ChallengeRecord />
-            </div>
-          </TabsContent>
 
           {/* TAB 4: QUIZ RESULTS */}
           <TabsContent value="quiz" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">

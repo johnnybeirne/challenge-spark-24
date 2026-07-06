@@ -255,7 +255,7 @@ Deno.serve(async (req) => {
     if (!promise) htmlBody = stripEmptyPromiseBlock(htmlBody);
 
     const subject = substitute(tpl.subject, vars);
-    const html = substitute(htmlBody, vars);
+    const html = `<div style="font-size:14pt;line-height:1.6;">${substitute(htmlBody, vars)}</div>`;
 
     // 6. Send
     const r = await fetch("https://api.resend.com/emails", {

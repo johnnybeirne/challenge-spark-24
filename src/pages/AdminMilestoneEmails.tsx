@@ -165,7 +165,6 @@ const AdminMilestoneEmails = () => {
                   modules={{
                     toolbar: [
                       [{ header: [1, 2, 3, false] }],
-                      [{ size: FONT_SIZES }],
                       ["bold", "italic", "underline", "strike"],
                       [{ color: [] }, { background: [] }],
                       [{ list: "ordered" }, { list: "bullet" }],

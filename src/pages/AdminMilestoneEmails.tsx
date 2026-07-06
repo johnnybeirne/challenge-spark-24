@@ -128,6 +128,7 @@ const AdminMilestoneEmails = () => {
 
         {MILESTONES.map((m) => (
           <TabsContent key={m.id} value={m.id} className="mt-4 space-y-6">
+            <p className="text-sm text-muted-foreground">{m.sentWhen}</p>
             <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
               <p className="font-semibold text-foreground">Available tokens</p>
               <ul className="mt-2 space-y-1">

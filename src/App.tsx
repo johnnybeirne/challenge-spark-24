@@ -78,6 +78,7 @@ import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
+import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";

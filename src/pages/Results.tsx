@@ -414,8 +414,19 @@ const Results = () => {
           </div>
         </section>
 
+        {/* ARCHETYPE ADVISOR — starter prompts + freeform Q&A tailored to tier */}
+        <section className="mb-10">
+          <ResultsAdvisor
+            archetypeTier={urgencyTier}
+            archetypeLabel={
+              urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
+            }
+          />
+        </section>
+
         {/* SINGLE DOMINANT CTA — pinned to bottom */}
         <section className="mt-auto space-y-4 pt-4">
+
 
           <Button
             size="lg"

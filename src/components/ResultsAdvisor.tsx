@@ -82,6 +82,7 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoi
         autoOpen={false}
         typewriter={true}
         onJoinCtaClick={onJoinCtaClick}
+        limitToOneQuestion={true}
       />
     </div>
   );

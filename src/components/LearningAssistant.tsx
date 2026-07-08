@@ -12,10 +12,12 @@ type Props = {
   topic?: string;
   prompts: string[];
   ask: (prompt: string) => Promise<string>;
+  autoOpen?: boolean;
+  typewriter?: boolean;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) => {
-  const [openPill, setOpenPill] = useState<string | null>(prompts[0] ?? null);
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false }: Props) => {
+  const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [followUp, setFollowUp] = useState<Record<string, string>>({});
@@ -34,12 +36,14 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
 
   useEffect(() => {
     const el = openPill ? scrollRefs.current[openPill] : null;
-    el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [threads, loadingKey, openPill]);
+    if (!el) return;
+    el.scrollTo({ top: typewriter ? 0 : el.scrollHeight, behavior: "smooth" });
+  }, [threads, loadingKey, openPill, typewriter]);
 
   useEffect(() => {
-    freeRef.current?.scrollTo({ top: freeRef.current.scrollHeight, behavior: "smooth" });
-  }, [freeThread, loadingKey]);
+    if (!freeRef.current) return;
+    freeRef.current.scrollTo({ top: typewriter ? 0 : freeRef.current.scrollHeight, behavior: "smooth" });
+  }, [freeThread, loadingKey, typewriter]);
 
   const run = async (key: string, prompt: string) => {
     setThreads((prev) => ({ ...prev, [key]: [...(prev[key] ?? []), { role: "user", text: prompt }] }));
@@ -121,7 +125,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
               className="px-4 py-4 max-h-[360px] overflow-y-auto space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
-                <Bubble key={i} turn={t} />
+                <Bubble key={i} turn={t} typewriter={typewriter} />
               ))}
               {loadingKey === openPill && <Typing />}
             </div>
@@ -167,7 +171,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
               className="mb-3 rounded-xl border border-border bg-background p-4 max-h-[320px] overflow-y-auto space-y-3"
             >
               {freeThread.map((t, i) => (
-                <Bubble key={i} turn={t} />
+                <Bubble key={i} turn={t} typewriter={typewriter} />
               ))}
               {loadingKey === "__free__" && <Typing />}
             </div>
@@ -203,7 +207,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) =>
   );
 };
 
-const Bubble = ({ turn }: { turn: Turn }) => {
+const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
   if (turn.role === "user") {
     return (
       <div className="flex justify-end gap-2">
@@ -223,10 +227,69 @@ const Bubble = ({ turn }: { turn: Turn }) => {
         alt="Johnny AI"
         className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
       />
-      <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground prose prose-sm max-w-none dark:prose-invert">
-        <ReactMarkdown>{turn.text}</ReactMarkdown>
+      <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground">
+        {typewriter ? (
+          <TypewriterText text={turn.text} />
+        ) : (
+          <div className="prose prose-sm max-w-none dark:prose-invert">
+            <ReactMarkdown>{turn.text}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
+  );
+};
+
+const TYPING_SPEED_MS = 18;
+
+const TypewriterText = ({ text, onDone }: { text: string; onDone?: () => void }) => {
+  const [shown, setShown] = useState("");
+  const [done, setDone] = useState(false);
+  const onDoneRef = useRef(onDone);
+  const doneRef = useRef(false);
+  onDoneRef.current = onDone;
+
+  useEffect(() => {
+    if (doneRef.current) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setShown(text);
+      doneRef.current = true;
+      setDone(true);
+      onDoneRef.current?.();
+      return;
+    }
+    setShown("");
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) {
+        window.clearInterval(id);
+        doneRef.current = true;
+        setDone(true);
+        onDoneRef.current?.();
+      }
+    }, TYPING_SPEED_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text]);
+
+  const handleSkip = () => {
+    if (doneRef.current) return;
+    setShown(text);
+    doneRef.current = true;
+    setDone(true);
+    onDoneRef.current?.();
+  };
+
+  return (
+    <span onClick={handleSkip} className={done ? "" : "cursor-pointer"}>
+      {shown}
+      {!done && (
+        <span className="ml-0.5 inline-block h-[0.9em] w-[2px] animate-pulse bg-foreground/40 align-[-0.12em]" />
+      )}
+    </span>
   );
 };
 

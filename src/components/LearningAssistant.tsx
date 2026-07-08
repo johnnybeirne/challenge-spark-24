@@ -12,10 +12,12 @@ type Props = {
   topic?: string;
   prompts: string[];
   ask: (prompt: string) => Promise<string>;
+  autoOpen?: boolean;
+  typewriter?: boolean;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask }: Props) => {
-  const [openPill, setOpenPill] = useState<string | null>(prompts[0] ?? null);
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false }: Props) => {
+  const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [followUp, setFollowUp] = useState<Record<string, string>>({});

@@ -478,46 +478,6 @@ const LeadGenStrengthCard = () => {
   const heroTeaser = teaser(archetype.narrative, 20);
 
   const hasQuizResult = !!assessment && (data.strong > 0 || data.priorities.length > 0 || !!qaArchetype);
-  const assetsKey = hasQuizResult ? `${archetype.name}::${percent}` : null;
-
-  useEffect(() => {
-    if (!assetsKey) {
-      setAssets(null);
-      setAssetsError(null);
-      return;
-    }
-    const cached = ASSETS_CACHE.get(assetsKey);
-    if (cached) {
-      setAssets(cached);
-      setAssetsError(null);
-      return;
-    }
-    let cancelled = false;
-    setAssetsLoading(true);
-    setAssetsError(null);
-    (async () => {
-      try {
-        const { data: res, error } = await supabase.functions.invoke("your-assets", {
-          body: { archetype: archetype.name, score: percent },
-        });
-        if (cancelled) return;
-        if (error) throw new Error(error.message);
-        const out = (res?.assets ?? []) as AiAsset[];
-        if (!out.length) throw new Error("No assets returned");
-        ASSETS_CACHE.set(assetsKey, out);
-        setAssets(out);
-      } catch (e) {
-        if (cancelled) return;
-        setAssetsError(e instanceof Error ? e.message : "Failed");
-        setAssets(null);
-      } finally {
-        if (!cancelled) setAssetsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [assetsKey, archetype.name, percent]);
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">

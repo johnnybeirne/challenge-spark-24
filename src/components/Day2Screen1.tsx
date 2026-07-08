@@ -13,6 +13,11 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
+import StepHeader from "@/components/StepHeader";
+
+const DAY2_STEP_NUMBER = 1;
+const DAY2_TOTAL_STEPS = 5;
+
 
 
 
@@ -462,68 +467,62 @@ const Day2Screen1 = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-[90%] max-w-[1400px] px-4 py-6 sm:py-8 pb-24">
-        {/* Step indicator */}
-        <div className="mb-6 flex items-center justify-between">
-          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
-            Day 2 · Step 1 of 5
-          </span>
-          <div className="flex gap-1.5">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <span
-                key={n}
-                className={cn("h-1.5 w-6 rounded-full", n <= 1 ? "bg-primary" : "bg-muted")}
-              />
-            ))}
-          </div>
+        <StepHeader
+          dayNum={2}
+          stepNumber={DAY2_STEP_NUMBER}
+          totalSteps={DAY2_TOTAL_STEPS}
+          heading={<>Day 2{nameSuffix}: Build your quiz</>}
+          subheading={
+            <>
+              {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
+              <br />
+              Your challenge builds the trust that converts.
+            </>
+          }
+          secondary={<>Let’s build the quiz that gets {clientAvatar} into your challenge.</>}
+          eyebrowAside={
+            <div className="flex gap-1.5">
+              {Array.from({ length: DAY2_TOTAL_STEPS }, (_, i) => i + 1).map((n) => (
+                <span
+                  key={n}
+                  className={cn(
+                    "h-1.5 w-6 rounded-full",
+                    n <= DAY2_STEP_NUMBER ? "bg-primary" : "bg-muted",
+                  )}
+                />
+              ))}
+            </div>
+          }
+        />
+
+        {/* Day 1 recap */}
+        <div className="mb-8 grid gap-3 sm:grid-cols-2">
+          {[
+            { label: "Your audience", value: clientAvatar, Icon: Users, wide: false },
+            { label: "Your superpower", value: superpower, Icon: Zap, wide: false },
+            { label: "The problem you solve", value: problem, Icon: AlertCircle, wide: false },
+            { label: "The result you deliver", value: challengeOutcome, Icon: Target, wide: false },
+            { label: "Your challenge promise", value: challengePromise, Icon: Flag, wide: true },
+          ].map(({ label, value, Icon, wide }) => {
+            const v = value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+            return (
+              <div
+                key={label}
+                className={cn(
+                  "rounded-xl border bg-card p-4 shadow-sm",
+                  wide && "sm:col-span-2",
+                )}
+              >
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Icon className="h-4.5 w-4.5" strokeWidth={2.25} />
+                </span>
+                <p className="mt-3 text-sm font-bold text-foreground">{label}</p>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">{v}</p>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
-            Day 2{nameSuffix}: Build your quiz
-          </h1>
-          <p className="mt-3 text-base sm:text-lg font-semibold text-foreground">
-            {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
-            <br />
-            Your challenge builds the trust that converts.
-          </p>
-          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            Let’s build the quiz that gets {clientAvatar} into your challenge.
-          </p>
-
-
-
-
-          {/* Day 1 recap */}
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {[
-              { label: "Your audience", value: clientAvatar, Icon: Users, wide: false },
-              { label: "Your superpower", value: superpower, Icon: Zap, wide: false },
-              { label: "The problem you solve", value: problem, Icon: AlertCircle, wide: false },
-              { label: "The result you deliver", value: challengeOutcome, Icon: Target, wide: false },
-              { label: "Your challenge promise", value: challengePromise, Icon: Flag, wide: true },
-            ].map(({ label, value, Icon, wide }) => {
-              const v = value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-              return (
-                <div
-                  key={label}
-                  className={cn(
-                    "rounded-xl border bg-card p-4 shadow-sm",
-                    wide && "sm:col-span-2",
-                  )}
-                >
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="h-4.5 w-4.5" strokeWidth={2.25} />
-                  </span>
-                  <p className="mt-3 text-sm font-bold text-foreground">{label}</p>
-                  <p className="mt-1 text-sm leading-snug text-muted-foreground">{v}</p>
-                </div>
-              );
-
-            })}
-
-          </div>
-        </header>
 
 
 

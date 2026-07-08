@@ -35,6 +35,8 @@ import { pushNotification } from "@/lib/notifications";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { isDay1ResetOpen } from "@/lib/day1Reset";
+import StepHeader from "@/components/StepHeader";
+
 import {
   defaultDay1Steps,
   renderDay1Preview,
@@ -1446,13 +1448,12 @@ const Day1Setup = ({ onComplete }: Props) => {
         )}
 
         {showProgress && (
-          <div className="mb-6 space-y-2">
-            <div className="text-sm font-medium text-muted-foreground">
-              Step {stepNumber} of {TOTAL_STEPS}
-            </div>
+          <div className="mb-6 space-y-3">
+            <StepHeader dayNum={1} stepNumber={stepNumber} totalSteps={TOTAL_STEPS} className="mb-0" />
             <Progress value={(stepNumber / TOTAL_STEPS) * 100} className="h-2" />
           </div>
         )}
+
 
 
         {step === 1 && (() => {

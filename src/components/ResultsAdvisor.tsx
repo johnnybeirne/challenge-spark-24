@@ -10,6 +10,7 @@ type Props = {
   archetypeLabel: Label;
   heading?: string;
   subline?: string;
+  onJoinCtaClick?: () => void;
 };
 
 const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Props) => {

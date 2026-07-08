@@ -15,6 +15,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
+import leadbeadLogo from "@/assets/leadbead-logo.png.asset.json";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";

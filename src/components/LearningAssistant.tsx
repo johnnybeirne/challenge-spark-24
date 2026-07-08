@@ -15,6 +15,7 @@ type Props = {
   autoOpen?: boolean;
   typewriter?: boolean;
   onJoinCtaClick?: () => void;
+  limitToOneQuestion?: boolean;
 };
 
 const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick }: Props) => {

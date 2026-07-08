@@ -23,17 +23,30 @@ const BETWEEN_MESSAGES_MS = 500;
 const TypewriterText = ({
   text,
   onDone,
+  skip = false,
 }: {
   text: string;
   onDone?: () => void;
+  skip?: boolean;
 }) => {
   const [shown, setShown] = useState("");
+  const onDoneRef = useRef(onDone);
+  const doneRef = useRef(false);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
+    if (doneRef.current) return;
+    if (skip) {
+      setShown(text);
+      doneRef.current = true;
+      onDoneRef.current?.();
+      return;
+    }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       setShown(text);
-      onDone?.();
+      doneRef.current = true;
+      onDoneRef.current?.();
       return;
     }
     setShown("");
@@ -43,17 +56,18 @@ const TypewriterText = ({
       setShown(text.slice(0, i));
       if (i >= text.length) {
         window.clearInterval(id);
-        onDone?.();
+        doneRef.current = true;
+        onDoneRef.current?.();
       }
     }, TYPING_SPEED_MS);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text]);
+  }, [text, skip]);
 
   return (
     <span>
       {shown}
-      {shown.length < text.length && (
+      {shown.length < text.length && !skip && (
         <span className="ml-0.5 inline-block h-[0.9em] w-[2px] animate-pulse bg-foreground/40 align-[-0.12em]" />
       )}
     </span>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Loader2, Send, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Loader2, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import ReactMarkdown from "react-markdown";
@@ -14,9 +14,10 @@ type Props = {
   ask: (prompt: string) => Promise<string>;
   autoOpen?: boolean;
   typewriter?: boolean;
+  onJoinCtaClick?: () => void;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false }: Props) => {
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick }: Props) => {
   const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
@@ -125,7 +126,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               className="px-4 py-4 max-h-[360px] overflow-y-auto space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
-                <Bubble key={i} turn={t} typewriter={typewriter} />
+                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
               ))}
               {loadingKey === openPill && <Typing />}
             </div>
@@ -171,7 +172,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               className="mb-3 rounded-xl border border-border bg-background p-4 max-h-[320px] overflow-y-auto space-y-3"
             >
               {freeThread.map((t, i) => (
-                <Bubble key={i} turn={t} typewriter={typewriter} />
+                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
               ))}
               {loadingKey === "__free__" && <Typing />}
             </div>
@@ -207,7 +208,9 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   );
 };
 
-const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
+const Bubble = ({ turn, typewriter, onJoinCtaClick }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void }) => {
+  const [typingDone, setTypingDone] = useState(!typewriter);
+
   if (turn.role === "user") {
     return (
       <div className="flex justify-end gap-2">
@@ -220,6 +223,9 @@ const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
       </div>
     );
   }
+
+  const showCta = onJoinCtaClick && typingDone;
+
   return (
     <div className="flex justify-start gap-2">
       <img
@@ -229,11 +235,21 @@ const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
       />
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground">
         {typewriter ? (
-          <TypewriterText text={turn.text} />
+          <TypewriterText text={turn.text} onDone={() => setTypingDone(true)} />
         ) : (
           <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown>{turn.text}</ReactMarkdown>
           </div>
+        )}
+        {showCta && (
+          <Button
+            size="sm"
+            onClick={onJoinCtaClick}
+            className="mt-3 w-full gap-2 rounded-xl font-semibold tracking-tight shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 animate-fade-in"
+          >
+            Join the 3-Day Challenge today
+            <ArrowRight className="w-4 h-4" />
+          </Button>
         )}
       </div>
     </div>

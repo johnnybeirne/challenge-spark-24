@@ -471,13 +471,14 @@ const Results = () => {
         {sequenceComplete && (
           <section className="mb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
             {/* ARCHETYPE ADVISOR — preview of challenge guidance for takers still deciding */}
-            <ResultsAdvisor
-              archetypeTier={urgencyTier}
-              archetypeLabel={
-                urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
-              }
-              heading="See what the 3-Day Challenge can do for you"
-            />
+          <ResultsAdvisor
+            archetypeTier={urgencyTier}
+            archetypeLabel={
+              urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
+            }
+            heading="See what the 3-Day Challenge can do for you"
+            onJoinCtaClick={cta.onClick}
+          />
           </section>
         )}
       </div>

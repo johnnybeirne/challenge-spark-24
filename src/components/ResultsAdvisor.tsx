@@ -10,9 +10,10 @@ type Props = {
   archetypeLabel: Label;
   heading?: string;
   subline?: string;
+  onJoinCtaClick?: () => void;
 };
 
-const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Props) => {
+const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoinCtaClick }: Props) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Pro
         ask={ask}
         autoOpen={false}
         typewriter={true}
+        onJoinCtaClick={onJoinCtaClick}
       />
     </div>
   );

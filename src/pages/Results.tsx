@@ -183,8 +183,13 @@ const Results = () => {
     };
   }, [paragraphs.length]);
 
+  skipTypingRef.current = skipTyping;
+
   const handleParagraphDone = (index: number) => {
-    if (index + 1 >= paragraphs.length) return;
+    if (skipTypingRef.current || index + 1 >= paragraphs.length) {
+      setSequenceComplete(true);
+      return;
+    }
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     setThinking(true);
     revealTimerRef.current = window.setTimeout(() => {
@@ -192,6 +197,18 @@ const Results = () => {
       setThinking(false);
       revealTimerRef.current = null;
     }, BETWEEN_MESSAGES_MS);
+  };
+
+  const handleSkip = () => {
+    if (sequenceComplete) return;
+    setSkipTyping(true);
+    setSequenceComplete(true);
+    setVisibleCount(paragraphs.length);
+    setThinking(false);
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
   };
 
   useEffect(() => {

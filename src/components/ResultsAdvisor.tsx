@@ -78,6 +78,8 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Pro
         topic={`${archetypeLabel} advisor`}
         prompts={prompts}
         ask={ask}
+        autoOpen={false}
+        typewriter={true}
       />
     </div>
   );

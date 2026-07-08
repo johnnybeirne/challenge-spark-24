@@ -51,7 +51,7 @@ const MODULES = [
   { eyebrow: "Module 2", title: "Trust-Based Lead Generation", body: "Position expertise so the right buyers self-identify and ask to work with you." },
   { eyebrow: "Module 3", title: "Building Referral Loops", body: "Engineer compounding word-of-mouth using built-in mechanics, not luck." },
   { eyebrow: "Module 4", title: "Advanced Challenge Systems", body: "Design AI-guided challenges that drive completion, conversion, and case studies." },
-  { eyebrow: "Module 5", title: "Scaling With LeadBead", body: "Partners, JV, affiliates, and paid acquisition layered on a referral-first base." },
+  { eyebrow: "Module 5", title: "Scaling With LeadTree", body: "Partners, JV, affiliates, and paid acquisition layered on a referral-first base." },
 ];
 
 const AUDIENCE = ["Coaches", "Consultants", "Course creators", "Experts", "Community builders", "SaaS founders", "Agencies", "JV partners"];
@@ -163,7 +163,7 @@ const Premium = () => {
 
   return (
     <>
-      <SEO title="Growth Accelerator Course" description="The full LeadBead system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation." canonical="/premium" />
+      <SEO title="Growth Accelerator Course" description="The full LeadTree system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation." canonical="/premium" />
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <PaymentTestModeBanner />
 
@@ -186,7 +186,7 @@ const Premium = () => {
                 transition={{ delay: 0.1, duration: 0.6 }}
                 className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-primary backdrop-blur"
               >
-                <Crown className="h-3.5 w-3.5" /> LeadBead Growth Accelerator
+                <Crown className="h-3.5 w-3.5" /> LeadTree Growth Accelerator
               </motion.div>
               <h1 className="mt-5 text-balance text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
                 Turn your expertise into a{" "}
@@ -195,7 +195,7 @@ const Premium = () => {
                 </span>
               </h1>
               <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-                The full LeadBead system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation. Built to compound.
+                The full LeadTree system — assessment-first funnels, AI-guided challenges, referral loops, and trust-based lead generation. Built to compound.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -254,7 +254,7 @@ const Premium = () => {
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="text-[11px] font-black uppercase tracking-widest text-primary">Course preview</div>
-                    <div className="mt-2 text-lg font-black">LeadBead Growth Accelerator</div>
+                    <div className="mt-2 text-lg font-black">LeadTree Growth Accelerator</div>
                     <div className="mt-1 text-xs text-muted-foreground">5 modules · Lifetime updates</div>
                   </div>
                   <Badge className="border-primary/30 bg-primary/10 text-primary">Premium</Badge>
@@ -405,16 +405,16 @@ const Premium = () => {
             <div className="relative mx-auto w-full max-w-sm">
               <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/30 via-primary/10 to-transparent blur-2xl" />
               <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-card shadow-2xl shadow-primary/10">
-                <img src={johnnyPortrait} alt="Johnny Beirne — creator of LeadBead" className="aspect-square w-full object-cover" loading="lazy" />
+                <img src={johnnyPortrait} alt="Johnny Beirne — creator of LeadTree" className="aspect-square w-full object-cover" loading="lazy" />
               </div>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="text-xs font-black uppercase tracking-widest text-primary">Your trainer</div>
             <h2 className="mt-3 text-3xl font-black sm:text-4xl">Meet Johnny Beirne</h2>
-            <p className="mt-2 text-sm font-bold text-muted-foreground">Creator of LeadBead · Challenge-based growth strategist</p>
+            <p className="mt-2 text-sm font-bold text-muted-foreground">Creator of LeadTree · Challenge-based growth strategist</p>
             <div className="mt-5 space-y-4 text-base leading-7 text-muted-foreground">
-              <p>Johnny has spent the last decade helping coaches, consultants, and expert-led businesses turn knowledge into repeatable lead-generation systems. LeadBead is the distillation of everything that consistently worked, assessment-first funnels, AI-guided challenges, and trust-based referral loops.</p>
+              <p>Johnny has spent the last decade helping coaches, consultants, and expert-led businesses turn knowledge into repeatable lead-generation systems. LeadTree is the distillation of everything that consistently worked, assessment-first funnels, AI-guided challenges, and trust-based referral loops.</p>
               <p>Inside the Growth Accelerator, you get the same playbook used to launch challenges, build referral engines, and ascend offers across niches, without paid ads as the primary growth lever.</p>
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -450,7 +450,7 @@ const Premium = () => {
         <Reveal>
           <div className="rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background p-8 text-center shadow-xl shadow-primary/10 sm:p-12">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-primary">
-              <Crown className="h-3.5 w-3.5" /> LeadBead Growth Accelerator
+              <Crown className="h-3.5 w-3.5" /> LeadTree Growth Accelerator
             </div>
             <div className="mt-6 flex items-baseline justify-center gap-3">
               {effectiveApplied ? (
@@ -483,7 +483,7 @@ const Premium = () => {
               instead of chasing leads.
             </h2>
             <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Lifetime access to the full LeadBead system. Assessment funnel, AI-guided challenge, referral engine, partner playbook — connected.
+              Lifetime access to the full LeadTree system. Assessment funnel, AI-guided challenge, referral engine, partner playbook — connected.
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">

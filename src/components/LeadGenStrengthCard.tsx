@@ -96,7 +96,7 @@ const SIGNALS: Record<string, SignalCopy> = {
     weakReality:
       "Your lead generation is entirely linear, each lead must be manually found and acquired by you.",
     weakFix:
-      "LeadBead's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
+      "LeadTree's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
   },
   q6: {
     strongTitle: "Tailored Diagnostics",
@@ -224,7 +224,7 @@ const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
       {
         day: "Day 3",
         title: "Multiplayer Virality",
-        copy: "Activate the LeadBead referral engine, transforming isolated signups into a self-propelling community that invites their peers on autopilot.",
+        copy: "Activate the LeadTree referral engine, transforming isolated signups into a self-propelling community that invites their peers on autopilot.",
       },
     ],
     ctaLabel: "Begin Your System Calibration",
@@ -617,7 +617,7 @@ const LeadGenStrengthCard = () => {
                             </div>
                             <div>
                               <p className="text-[10px] font-black uppercase tracking-wider text-primary">
-                                The LeadBead Fix
+                                The LeadTree Fix
                               </p>
                               <p className="mt-1 text-xs leading-snug text-foreground">
                                 {p.fix}

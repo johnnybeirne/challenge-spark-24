@@ -151,14 +151,14 @@ const RequirementsChecklist = () => {
 
       const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
       downloadFile(
-        `LeadBead-Proposal-${stamp}.docx`,
+        `LeadTree-Proposal-${stamp}.docx`,
         base64ToBlob(
           data.docxBase64,
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ),
       );
       downloadFile(
-        `LeadBead-Requirements-${stamp}.md`,
+        `LeadTree-Requirements-${stamp}.md`,
         new Blob([data.markdown], { type: "text/markdown;charset=utf-8" }),
       );
     } catch (e) {
@@ -274,7 +274,7 @@ const RequirementsChecklist = () => {
             <ClipboardCheck className="h-3.5 w-3.5" /> Admin · Requirements Checklist
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
-            Build a Custom LeadBead
+            Build a Custom LeadTree
           </h1>
           <p className="text-muted-foreground">
             Select features, choose variants, generate a proposal and technical spec.

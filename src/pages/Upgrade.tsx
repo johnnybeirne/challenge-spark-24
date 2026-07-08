@@ -25,7 +25,7 @@ const PREMIUM_MODULES = [
     body: "How high-converting challenge funnels combine AI implementation, trust loops, referrals, and behavioral momentum.",
   },
   {
-    title: "Scaling With LeadBead",
+    title: "Scaling With LeadTree",
     eyebrow: "Module 5",
     body: "Scaling challenges with partners, affiliates, referrals, paid acquisition, and repeatable trust-based systems.",
   },
@@ -76,7 +76,7 @@ const Upgrade = () => {
         {/* SECTION 1 — Hero */}
         <section className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-10 shadow-sm">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-primary">
-            <Crown className="h-3.5 w-3.5" /> LeadBead Premium
+            <Crown className="h-3.5 w-3.5" /> LeadTree Premium
           </div>
           <h1 className="mt-4 text-3xl font-black text-foreground sm:text-5xl">
             Go beyond the free blueprint.

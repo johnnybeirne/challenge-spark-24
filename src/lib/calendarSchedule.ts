@@ -74,8 +74,8 @@ export function buildChallengeEvents(firstName: string, memory: UserMemory, star
       title,
       startsAt,
       endsAt,
-      location: "Online – LeadBead",
-      description: `${safeName}, this is your scheduled time to complete your LeadBead Day ${index + 1}.\n\nShow up, follow the steps, and build something real.\n\nYou can access your challenge here:\n${APP_URL}\n\nInvite others to join you and unlock more as you go.`,
+      location: "Online – LeadTree",
+      description: `${safeName}, this is your scheduled time to complete your LeadTree Day ${index + 1}.\n\nShow up, follow the steps, and build something real.\n\nYou can access your challenge here:\n${APP_URL}\n\nInvite others to join you and unlock more as you go.`,
     };
   });
 }
@@ -96,7 +96,7 @@ export function downloadChallengeIcs(events: CalendarEvent[]) {
   const body = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//LeadBead//3-Day Challenge//EN",
+    "PRODID:-//LeadTree//3-Day Challenge//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     ...events.flatMap((event) => [

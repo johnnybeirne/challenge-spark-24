@@ -78,6 +78,7 @@ import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
+import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -259,6 +260,7 @@ const App = () => (
                 <Route path="partner-ops" element={<AdminPartnerOps />} />
                 <Route path="jv-partners" element={<AdminJvPartners />} />
                 <Route path="resources" element={<AdminResourceLibrary />} />
+                <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

@@ -38,6 +38,7 @@ const items = [
   { title: "Day 2 button labels", url: "/owner-console/day2-buttons", icon: MessagesSquare },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
+  { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck },

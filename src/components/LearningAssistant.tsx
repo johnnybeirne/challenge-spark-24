@@ -123,7 +123,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
 
             <div
               ref={(el) => (scrollRefs.current[openPill] = el)}
-              className="px-4 py-4 max-h-[360px] overflow-y-auto space-y-3 bg-background"
+              className="px-4 py-4 space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
                 <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
@@ -169,7 +169,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
           {freeThread.length > 0 && (
             <div
               ref={freeRef}
-              className="mb-3 rounded-xl border border-border bg-background p-4 max-h-[320px] overflow-y-auto space-y-3"
+              className="mb-3 rounded-xl border border-border bg-background p-4 space-y-3"
             >
               {freeThread.map((t, i) => (
                 <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />

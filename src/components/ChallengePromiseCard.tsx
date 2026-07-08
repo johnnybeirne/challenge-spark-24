@@ -57,13 +57,17 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
 
     const whoRaw = pick(saved?.audience, foundation.audience, assessment.transformation, saved?.topicHint, memory.topic);
     const painRaw = pick(assessment.problem, foundation.problem, saved?.problem);
-    const resultRaw = pick(memory.desiredOutcome, saved?.outcome, saved?.how, foundation.how);
+    const outcomeRaw = pick(memory.desiredOutcome, saved?.outcome);
+    const processRaw = pick(saved?.how, foundation.how);
     const challengeKey = pick(saved?.challengeType, assessment.challengeType, memory.challengeType);
-    const method = METHOD_MAP[challengeKey] ?? "a clear, day-by-day structure";
 
     const who = whoRaw ? strip(whoRaw) : "";
     const pain = painRaw ? strip(painRaw).toLowerCase() : "";
-    const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
+    const result = outcomeRaw ? strip(outcomeRaw).toLowerCase() : "";
+    // METHOD_MAP is a LAST-RESORT fallback only. Prefer the builder's own process words.
+    const method = processRaw
+      ? strip(processRaw).toLowerCase()
+      : (METHOD_MAP[challengeKey] ?? "a clear, day-by-day structure");
 
     if (!who || !pain || !result) return null;
     return { who, pain, result, method };

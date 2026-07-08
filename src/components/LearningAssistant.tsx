@@ -86,43 +86,54 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
 
       <div className="p-5 space-y-5">
         {/* Pills */}
-        <div>
-          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-3">SUGGESTED PROMPTS</p>
-          <div className="flex flex-wrap gap-2">
-            {prompts.map((p) => {
-              const active = openPill === p;
-              return (
-                <button
-                  key={p}
-                  onClick={() => setOpenPill(active ? null : p)}
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition",
-                    active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-background text-foreground hover:border-primary/50"
-                  )}
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  {p}
-                </button>
-              );
-            })}
+        {(!limitToOneQuestion || !hasAnswered) && (
+          <div>
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-3">SUGGESTED PROMPTS</p>
+            <div className="flex flex-wrap gap-2">
+              {prompts.map((p) => {
+                const active = openPill === p;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setOpenPill(active ? null : p)}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition",
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-background text-foreground hover:border-primary/50"
+                    )}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Accordion */}
         {openPill && (
           <div className="rounded-xl border border-border bg-muted/30 overflow-hidden animate-fade-in">
-            <button
-              onClick={() => setOpenPill(null)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-muted/50 hover:bg-muted/70 transition"
-            >
-              <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Sparkles className="h-4 w-4 text-primary" />
-                {openPill}
-              </span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </button>
+            {(!limitToOneQuestion || !hasAnswered) ? (
+              <button
+                onClick={() => setOpenPill(null)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-muted/50 hover:bg-muted/70 transition"
+              >
+                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  {openPill}
+                </span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            ) : (
+              <div className="w-full flex items-center px-4 py-3 bg-muted/50">
+                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  {openPill}
+                </span>
+              </div>
+            )}
 
             <div
               ref={(el) => (scrollRefs.current[openPill] = el)}
@@ -133,50 +144,66 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               ))}
               {loadingKey === openPill && <Typing />}
             </div>
-
           </div>
         )}
 
-        {/* Freeform — independent ask-a-question field */}
-        <div className="pt-3 border-t border-border">
-          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-2">ASK A QUESTION</p>
-          {freeThread.length > 0 && (
-            <div
-              ref={freeRef}
-              className="mb-3 rounded-xl border border-border bg-background p-4 space-y-3"
+        {/* Freeform thread display */}
+        {freeThread.length > 0 && (
+          <div
+            ref={freeRef}
+            className="rounded-xl border border-border bg-background p-4 space-y-3"
+          >
+            {freeThread.map((t, i) => (
+              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
+            ))}
+            {loadingKey === "__free__" && <Typing />}
+          </div>
+        )}
+
+        {/* Freeform input or warm handoff */}
+        {limitToOneQuestion && hasAnswered ? (
+          <div className="pt-3 border-t border-border space-y-3">
+            <p className="text-sm text-foreground">
+              That is one piece of what the challenge helps you work through. Join to get the full guidance built around your situation.
+            </p>
+            <Button
+              onClick={onJoinCtaClick}
+              className="w-full gap-2 rounded-xl font-semibold tracking-tight shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40"
             >
-              {freeThread.map((t, i) => (
-                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
-              ))}
-              {loadingKey === "__free__" && <Typing />}
-            </div>
-          )}
-          <div className="rounded-xl border border-border bg-card p-3">
-            <DictatedTextarea
-              value={freeform}
-              onChange={(e) => setFreeform(e.target.value)}
-              placeholder="Ask one more question"
-              className="min-h-[64px] border-0 focus-visible:ring-0 resize-none bg-transparent"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  void runFree();
-                }
-              }}
-            />
-            <div className="mt-2 flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Press Enter to send</span>
-              <Button
-                onClick={runFree}
-                disabled={loadingKey !== null || !freeform.trim()}
-                className="h-8 rounded-full px-3 text-xs font-semibold gap-1.5"
-              >
-                <Send className="h-3.5 w-3.5" />
-                Send
-              </Button>
+              Join the 3-Day Challenge today
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="pt-3 border-t border-border">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-2">ASK A QUESTION</p>
+            <div className="rounded-xl border border-border bg-card p-3">
+              <DictatedTextarea
+                value={freeform}
+                onChange={(e) => setFreeform(e.target.value)}
+                placeholder="Ask one more question"
+                className="min-h-[64px] border-0 focus-visible:ring-0 resize-none bg-transparent"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    void runFree();
+                  }
+                }}
+              />
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Press Enter to send</span>
+                <Button
+                  onClick={runFree}
+                  disabled={loadingKey !== null || !freeform.trim()}
+                  className="h-8 rounded-full px-3 text-xs font-semibold gap-1.5"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  Send
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

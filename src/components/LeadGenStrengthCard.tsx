@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
+import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { supabase } from "@/integrations/supabase/client";

@@ -292,6 +292,44 @@ const LeadGenStrengthCard = () => {
   const [assets, setAssets] = useState<AiAsset[] | null>(null);
   const [assetsLoading, setAssetsLoading] = useState(false);
   const [assetsError, setAssetsError] = useState<string | null>(null);
+  const [quizTiers, setQuizTiers] = useState<Array<{
+    tier: string;
+    min_percent: number;
+    max_percent: number;
+    title: string;
+    messages: string[];
+  }> | null>(null);
+  const [archetypeCfg, setArchetypeCfg] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [{ data: tiers }, { data: content }] = await Promise.all([
+        supabase.from("diagnostic_responses").select("tier,min_percent,max_percent,title,messages"),
+        supabase.from("site_content").select("key,value").eq("page", "results").eq("section", "archetypes"),
+      ]);
+      if (cancelled) return;
+      if (tiers) {
+        setQuizTiers(
+          tiers.map((r: any) => ({
+            tier: r.tier,
+            min_percent: r.min_percent,
+            max_percent: r.max_percent,
+            title: r.title ?? "",
+            messages: Array.isArray(r.messages) ? r.messages.filter((m: any) => typeof m === "string") : [],
+          })),
+        );
+      }
+      if (content) {
+        const map: Record<string, string> = {};
+        for (const r of content as any[]) map[r.key] = r.value;
+        setArchetypeCfg(map);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const assessment = state.assessment as
     | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;
@@ -693,36 +731,57 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 4: QUIZ RESULTS */}
           <TabsContent value="quiz" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex flex-col items-center text-center">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Your Score
-                </p>
-                <p className="mt-2 text-5xl sm:text-6xl font-black leading-none text-primary">
-                  68%
-                </p>
-                <p className="mt-2 text-sm font-bold text-foreground">
-                  Growth Archetype
-                </p>
-              </div>
+            {(() => {
+              const roundedPct = Math.max(0, Math.min(100, Math.round(percent)));
+              const matched =
+                quizTiers?.find((t) => roundedPct >= t.min_percent && roundedPct <= t.max_percent) ??
+                (quizTiers && quizTiers.length
+                  ? [...quizTiers].sort((a, b) => {
+                      const da = roundedPct < a.min_percent ? a.min_percent - roundedPct : roundedPct - a.max_percent;
+                      const db = roundedPct < b.min_percent ? b.min_percent - roundedPct : roundedPct - b.max_percent;
+                      return da - db;
+                    })[0]
+                  : null);
+              const archName = matched ? archetypeCfg[`${matched.tier}_name`] : "";
+              const archTagline = matched ? archetypeCfg[`${matched.tier}_tagline`] : "";
+              const intro = archetypeCfg.intro || "Based on your answers...";
+              const lines = matched
+                ? [matched.title, ...matched.messages].map((s) => (s ?? "").trim()).filter(Boolean)
+                : [];
 
-              <ul className="mt-6 space-y-2">
-                {[
-                  "Your lead flow has room to become more consistent",
-                  "Your follow-up process would benefit from more structure",
-                  "One focused change could significantly improve your results",
-                ].map((line) => (
-                  <li
-                    key={line}
-                    className="flex items-start gap-2 rounded-lg border border-border bg-background/40 p-3"
-                  >
-                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <p className="text-sm leading-snug text-foreground">{line}</p>
-                  </li>
-                ))}
-              </ul>
+              return (
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                  <div className="flex flex-col items-center text-center">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      {intro}
+                    </p>
+                    <p className="mt-2 text-5xl sm:text-6xl font-black leading-none text-primary">
+                      {roundedPct}%
+                    </p>
+                    {archName && (
+                      <p className="mt-2 text-sm font-bold text-foreground">{archName}</p>
+                    )}
+                    {archTagline && (
+                      <p className="mt-1 text-sm text-muted-foreground">{archTagline}</p>
+                    )}
+                  </div>
 
-            </div>
+                  {lines.length > 0 && (
+                    <ul className="mt-6 space-y-2">
+                      {lines.map((line, i) => (
+                        <li
+                          key={`${i}-${line}`}
+                          className="flex items-start gap-2 rounded-lg border border-border bg-background/40 p-3"
+                        >
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                          <p className="text-sm leading-snug text-foreground">{line}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })()}
           </TabsContent>
 
         </Tabs>

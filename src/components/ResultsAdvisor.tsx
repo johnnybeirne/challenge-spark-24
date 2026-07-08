@@ -8,9 +8,11 @@ type Label = "Pioneer" | "Architect" | "Authority";
 type Props = {
   archetypeTier: Tier;
   archetypeLabel: Label;
+  heading?: string;
+  subline?: string;
 };
 
-const ResultsAdvisor = ({ archetypeTier, archetypeLabel }: Props) => {
+const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Props) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
   useEffect(() => {

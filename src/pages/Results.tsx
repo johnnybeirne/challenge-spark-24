@@ -414,20 +414,8 @@ const Results = () => {
           </div>
         </section>
 
-        {/* ARCHETYPE ADVISOR — starter prompts + freeform Q&A tailored to tier */}
-        <section className="mb-10">
-          <ResultsAdvisor
-            archetypeTier={urgencyTier}
-            archetypeLabel={
-              urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
-            }
-          />
-        </section>
-
-        {/* SINGLE DOMINANT CTA — pinned to bottom */}
-        <section className="mt-auto space-y-4 pt-4">
-
-
+        {/* SINGLE DOMINANT CTA */}
+        <section className="mb-10 space-y-4 pt-4">
           <Button
             size="lg"
             onClick={cta.onClick}
@@ -441,6 +429,18 @@ const Results = () => {
               ? `Coupon ${pendingCoupon} will be applied at checkout.`
               : urgencyLine}
           </p>
+        </section>
+
+        {/* ARCHETYPE ADVISOR — preview of challenge guidance for takers still deciding */}
+        <section className="mb-10">
+          <ResultsAdvisor
+            archetypeTier={urgencyTier}
+            archetypeLabel={
+              urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
+            }
+            heading="Get a feel for how the challenge guides you"
+            subline="Ask a question and see the kind of guidance you get inside the 3-Day Challenge."
+          />
         </section>
       </div>
 

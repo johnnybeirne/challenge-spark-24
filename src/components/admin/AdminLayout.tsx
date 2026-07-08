@@ -134,6 +134,9 @@ const AdminLayout = () => {
           <main className="flex-1 overflow-auto">
             <Outlet />
           </main>
+          <footer className="py-6 text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} LeadTree. All rights reserved.
+          </footer>
         </div>
       </div>
     </SidebarProvider>

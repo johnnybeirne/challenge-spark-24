@@ -51,8 +51,9 @@ Rules:
   - Architect: has some traction, needs structure and repeatable flow. Speak to systems, sequencing, tightening the machine.
   - Authority: established, needs leverage and compounding. Speak to positioning, referrals, scaling what already works.
 - Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless truly natural. Do not use em dashes.
-- Keep the whole answer concise. A few short paragraphs at most.
-- End every answer by gently steering them toward taking the 3-Day Challenge as their clear next step. One or two sentences, natural, low-pressure, never pushy.`;
+- Keep answers short and punchy: at most two short paragraphs, ideally three to five sentences total. No long multi-paragraph responses.
+- Give one clear, useful insight that answers the question, then close with a single natural sentence steering them toward the 3-Day Challenge.
+- Diagnose the issue and point the way forward rather than fully solving the problem. Be genuinely useful, but leave the depth for the challenge.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

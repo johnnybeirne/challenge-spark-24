@@ -12,7 +12,7 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
-import AIAdvisorPanel from "@/components/AIAdvisorPanel";
+
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 

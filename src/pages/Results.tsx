@@ -23,17 +23,30 @@ const BETWEEN_MESSAGES_MS = 500;
 const TypewriterText = ({
   text,
   onDone,
+  skip = false,
 }: {
   text: string;
   onDone?: () => void;
+  skip?: boolean;
 }) => {
   const [shown, setShown] = useState("");
+  const onDoneRef = useRef(onDone);
+  const doneRef = useRef(false);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
+    if (doneRef.current) return;
+    if (skip) {
+      setShown(text);
+      doneRef.current = true;
+      onDoneRef.current?.();
+      return;
+    }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       setShown(text);
-      onDone?.();
+      doneRef.current = true;
+      onDoneRef.current?.();
       return;
     }
     setShown("");
@@ -43,17 +56,18 @@ const TypewriterText = ({
       setShown(text.slice(0, i));
       if (i >= text.length) {
         window.clearInterval(id);
-        onDone?.();
+        doneRef.current = true;
+        onDoneRef.current?.();
       }
     }, TYPING_SPEED_MS);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text]);
+  }, [text, skip]);
 
   return (
     <span>
       {shown}
-      {shown.length < text.length && (
+      {shown.length < text.length && !skip && (
         <span className="ml-0.5 inline-block h-[0.9em] w-[2px] animate-pulse bg-foreground/40 align-[-0.12em]" />
       )}
     </span>
@@ -161,12 +175,17 @@ const Results = () => {
 
   const [visibleCount, setVisibleCount] = useState(0);
   const [thinking, setThinking] = useState(true);
+  const [skipTyping, setSkipTyping] = useState(false);
+  const [sequenceComplete, setSequenceComplete] = useState(false);
   const revealTimerRef = useRef<number | null>(null);
+  const skipTypingRef = useRef(skipTyping);
 
   useEffect(() => {
     if (paragraphs.length === 0) return;
     setVisibleCount(0);
     setThinking(true);
+    setSkipTyping(false);
+    setSequenceComplete(false);
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     revealTimerRef.current = window.setTimeout(() => {
       setVisibleCount(1);
@@ -178,8 +197,13 @@ const Results = () => {
     };
   }, [paragraphs.length]);
 
+  skipTypingRef.current = skipTyping;
+
   const handleParagraphDone = (index: number) => {
-    if (index + 1 >= paragraphs.length) return;
+    if (skipTypingRef.current || index + 1 >= paragraphs.length) {
+      setSequenceComplete(true);
+      return;
+    }
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     setThinking(true);
     revealTimerRef.current = window.setTimeout(() => {
@@ -187,6 +211,18 @@ const Results = () => {
       setThinking(false);
       revealTimerRef.current = null;
     }, BETWEEN_MESSAGES_MS);
+  };
+
+  const handleSkip = () => {
+    if (sequenceComplete) return;
+    setSkipTyping(true);
+    setSequenceComplete(true);
+    setVisibleCount(paragraphs.length);
+    setThinking(false);
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
   };
 
   useEffect(() => {
@@ -367,7 +403,7 @@ const Results = () => {
                 Johnny B
               </div>
               {/* Reserve the full final height so the layout never shifts as text types in. */}
-              <div className="relative">
+              <div className={`relative ${!sequenceComplete ? "cursor-pointer" : ""}`} onClick={handleSkip}>
                 <div className="invisible space-y-6" aria-hidden="true">
                   {paragraphs.map((text, i) => (
                     <p
@@ -396,7 +432,7 @@ const Results = () => {
                         }`}
                       >
                         {isLast ? (
-                          <TypewriterText text={text} onDone={() => handleParagraphDone(i)} />
+                          <TypewriterText text={text} onDone={() => handleParagraphDone(i)} skip={skipTyping} />
                         ) : (
                           <span>{text}</span>
                         )}
@@ -414,22 +450,23 @@ const Results = () => {
           </div>
         </section>
 
-        {/* SINGLE DOMINANT CTA */}
-        <section className="mb-10 space-y-4 pt-4">
-          <Button
-            size="lg"
-            onClick={cta.onClick}
-            className="h-[72px] w-full gap-3 rounded-2xl text-lg sm:text-xl font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
-          >
-            {cta.label}
-            <ArrowRight className="w-6 h-6" />
-          </Button>
-          <p className="text-center text-base sm:text-lg font-medium text-muted-foreground">
-            {pendingCoupon && entryIntent === "premium_course"
-              ? `Coupon ${pendingCoupon} will be applied at checkout.`
-              : urgencyLine}
-          </p>
-        </section>
+        {sequenceComplete && (
+          <section className="mb-10 space-y-4 pt-4 animate-fade-in">
+            <Button
+              size="lg"
+              onClick={cta.onClick}
+              className="h-[72px] w-full gap-3 rounded-2xl text-lg sm:text-xl font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
+            >
+              {cta.label}
+              <ArrowRight className="w-6 h-6" />
+            </Button>
+            <p className="text-center text-base sm:text-lg font-medium text-muted-foreground">
+              {pendingCoupon && entryIntent === "premium_course"
+                ? `Coupon ${pendingCoupon} will be applied at checkout.`
+                : urgencyLine}
+            </p>
+          </section>
+        )}
 
         {/* ARCHETYPE ADVISOR — preview of challenge guidance for takers still deciding */}
         <section className="mb-10">

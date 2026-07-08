@@ -12,14 +12,18 @@ const SYSTEM_PROMPT = `You polish a Challenge Promise into one clean, natural En
 You will be given four fragments: WHO (audience), PAIN (current struggle), RESULT (desired outcome), METHOD (how).
 
 Rules:
-- Return ONE sentence in the shape: Help <who> move from "<pain>" to <result> through <method>.
+- Return ONE sentence in this EXACT shape: Help <who> move from "<pain>" to <result> through <method>.
+- Exactly four content slots: who, pain, result, method. No fifth slot.
+- Use only the connectors "move from", "to", "through" — one of each. Do NOT append any secondary clause after <result> or after <method> (no "without ...", no "that ...", no extra "through ..." tail).
+- The <result> slot must be a single phrase. Do not stack modifiers onto it.
 - The PAIN fragment MUST be wrapped in straight double quotes ("...") exactly as the user phrased it (you may fix only obvious typos/casing inside the quotes, but keep their wording).
 - Fix grammar, capitalisation, articles, pronouns and obvious typos in the rest of the sentence so it reads naturally.
 - Preserve the user's meaning and voice. Do NOT invent new ideas, examples or details.
-- Keep it concise — roughly the same length as the raw input combined.
+- Hard ceiling of 35 words. If the sentence would exceed 35 words, tighten the slot wording to fit — never truncate mid-sentence.
 - Lowercase the RESULT and METHOD fragments unless they contain a proper noun.
 - Use "their" / "them" naturally if pronouns are inconsistent.
-- Output the sentence ONLY. No markdown, no commentary, no prefix. Do NOT wrap the whole sentence in quotes — only the pain phrase.`;
+- No em dashes anywhere in the output.
+- Output the sentence ONLY, ending with a single full stop. No markdown, no commentary, no prefix. Do NOT wrap the whole sentence in quotes — only the pain phrase.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

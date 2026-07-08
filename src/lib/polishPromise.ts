@@ -18,7 +18,7 @@ const keyFor = (f: PromiseFragments) =>
   `${f.who}::${f.pain}::${f.result}::${f.method}`;
 
 const fallback = (f: PromiseFragments) =>
-  `Help ${f.who} move from ${f.pain} to ${f.result} through ${f.method}.`;
+  `Help ${f.who} move from "${f.pain}" to ${f.result} through ${f.method}.`;
 
 const readStored = (k: string): string | null => {
   try { return sessionStorage.getItem(STORAGE_PREFIX + k); } catch { return null; }

@@ -33,6 +33,8 @@ import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 // Day2Screen2 ("Why a quiz beats other lead magnets") moved to /training under "Quiz Funnel Strategy".
 
 import DayVideoModal from "@/components/DayVideoModal";
+import StepHeader from "@/components/StepHeader";
+
 import UpgradeCards from "@/components/UpgradeCards";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";

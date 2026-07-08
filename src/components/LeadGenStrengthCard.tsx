@@ -292,6 +292,44 @@ const LeadGenStrengthCard = () => {
   const [assets, setAssets] = useState<AiAsset[] | null>(null);
   const [assetsLoading, setAssetsLoading] = useState(false);
   const [assetsError, setAssetsError] = useState<string | null>(null);
+  const [quizTiers, setQuizTiers] = useState<Array<{
+    tier: string;
+    min_percent: number;
+    max_percent: number;
+    title: string;
+    messages: string[];
+  }> | null>(null);
+  const [archetypeCfg, setArchetypeCfg] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [{ data: tiers }, { data: content }] = await Promise.all([
+        supabase.from("diagnostic_responses").select("tier,min_percent,max_percent,title,messages"),
+        supabase.from("site_content").select("key,value").eq("page", "results").eq("section", "archetypes"),
+      ]);
+      if (cancelled) return;
+      if (tiers) {
+        setQuizTiers(
+          tiers.map((r: any) => ({
+            tier: r.tier,
+            min_percent: r.min_percent,
+            max_percent: r.max_percent,
+            title: r.title ?? "",
+            messages: Array.isArray(r.messages) ? r.messages.filter((m: any) => typeof m === "string") : [],
+          })),
+        );
+      }
+      if (content) {
+        const map: Record<string, string> = {};
+        for (const r of content as any[]) map[r.key] = r.value;
+        setArchetypeCfg(map);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const assessment = state.assessment as
     | { answers?: Record<string, string>; diagnosticScore?: number }
     | undefined;

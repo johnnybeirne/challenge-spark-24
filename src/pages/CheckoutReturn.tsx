@@ -24,7 +24,7 @@ const CheckoutReturn = () => {
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/15 text-success">
           <Check className="h-7 w-7" />
         </div>
-        <h1 className="mt-6 text-3xl font-black sm:text-4xl">Welcome to LeadBead Premium</h1>
+        <h1 className="mt-6 text-3xl font-black sm:text-4xl">Welcome to LeadTree Premium</h1>
         <p className="mt-3 text-base text-muted-foreground">
           {sessionId
             ? "Your payment is complete. Premium access is now active on this account."

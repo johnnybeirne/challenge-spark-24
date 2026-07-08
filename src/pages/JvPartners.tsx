@@ -101,7 +101,7 @@ const BENEFITS = [
   { icon: Network, title: "Network-driven reach", desc: "You tap into a system that grows itself, not just a one-off promo." },
   { icon: Trophy, title: "Stay visible by staying active.", desc: "The more you promote, the more visible you stay. Every new wave of referrals keeps your name in front of a growing audience." },
   { icon: Gift, title: "Featured reward placement", desc: "Your bonus sits on the rewards ladder, earned by motivated participants." },
-  { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and LeadBead does the rest." },
+  { icon: Sparkles, title: "No complex tracking", desc: "No pixels, no spreadsheets, no funnels to build. Share the link and LeadTree does the rest." },
 ];
 
 const LEADERBOARD = [
@@ -388,8 +388,8 @@ const JvPartners = () => {
   return (
     <>
       <SEO
-        title="JV Partner Program | LeadBead"
-        description="Promote to your audience. Land on the Top Partners leaderboard. Get featured on the rewards ladder. Compounding visibility through the LeadBead partner network."
+        title="JV Partner Program | LeadTree"
+        description="Promote to your audience. Land on the Top Partners leaderboard. Get featured on the rewards ladder. Compounding visibility through the LeadTree partner network."
         canonical="/jv"
       />
       <div className="min-h-screen bg-background">
@@ -421,7 +421,7 @@ const JvPartners = () => {
               We turn your audience into your biggest promoters.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
-              LeadBead is an evergreen 3-day challenge that shows people how to run their own evergreen 3-day challenge.
+              LeadTree is an evergreen 3-day challenge that shows people how to run their own evergreen 3-day challenge.
               <br />
 
               Every participant is rewarded for inviting others, giving you a constant stream of new leads.

@@ -112,7 +112,7 @@ const BlueprintInsight = () => {
           </span>
           <h1 className="mt-3 text-3xl font-black sm:text-4xl">Design the right challenge for your audience</h1>
           <p className="mt-2 text-base text-muted-foreground">
-            Tell the AI what you do and who you serve. It will recommend the best type of challenge to run — built on the LeadBead methodology for engagement, momentum, implementation, and referrals.
+            Tell the AI what you do and who you serve. It will recommend the best type of challenge to run — built on the LeadTree methodology for engagement, momentum, implementation, and referrals.
           </p>
         </header>
         <InsightForm onDone={() => setEditing(false)} />

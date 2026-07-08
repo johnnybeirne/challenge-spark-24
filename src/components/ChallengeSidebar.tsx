@@ -15,11 +15,11 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
-import leadbeadLogo from "@/assets/leadbead-logo.png.asset.json";
+import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
-import { LeadBeadIcon } from "@/components/LeadBeadIcon";
+import { LeadTreeIcon } from "@/components/LeadTreeIcon";
 
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
@@ -176,8 +176,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {!collapsed ? (
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
             <img
-              src={leadbeadLogo.url}
-              alt="LeadBead"
+              src={leadtreeLogo.url}
+              alt="LeadTree"
               className="h-8 w-auto"
             />
             {identity.isPersonalised && (
@@ -487,7 +487,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               { n: 2, path: "/blueprint/lesson/2", label: "Growth opportunity", Icon: Target, premium: false },
               { n: 3, path: "/blueprint/lesson/3", label: "Referral loops", Icon: Users, premium: false },
               { n: 4, path: "/blueprint/lesson/4", label: "Advanced systems", Icon: Workflow, premium: true },
-              { n: 5, path: "/blueprint/lesson/5", label: "Scaling with LeadBead", Icon: TrendingUp, premium: true },
+              { n: 5, path: "/blueprint/lesson/5", label: "Scaling with LeadTree", Icon: TrendingUp, premium: true },
             ].map(({ n, path, label, Icon, premium }) => {
               const active = location.pathname === path;
               const locked = premium && !isPremiumUser;
@@ -668,8 +668,8 @@ const ChallengeSidebar = ({
             </Button>
           </SheetTrigger>
           <div className="flex items-center gap-2">
-            <LeadBeadIcon size={18} />
-            <p className="text-sm font-black tracking-tight text-foreground">LEADBEAD</p>
+            <LeadTreeIcon size={18} />
+            <p className="text-sm font-black tracking-tight text-foreground">LEADTREE</p>
           </div>
           <span className="h-9 w-9" aria-hidden />
         </div>

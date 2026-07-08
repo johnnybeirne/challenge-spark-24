@@ -89,8 +89,8 @@ const JvApply = () => {
   return (
     <>
       <SEO
-        title="Apply to become a JV partner | LeadBead"
-        description="Apply to become a LeadBead JV partner. Share your bonus, get featured on the rewards ladder, and tap into the referral network."
+        title="Apply to become a JV partner | LeadTree"
+        description="Apply to become a LeadTree JV partner. Share your bonus, get featured on the rewards ladder, and tap into the referral network."
         canonical="/jv-apply"
       />
       <main className="min-h-screen bg-background">
@@ -99,7 +99,7 @@ const JvApply = () => {
             <img src={jbLogo.url} alt="Johnny Beirne" className="h-16 w-auto" loading="eager" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-6 text-center">
-            LeadBead JV Partner Application
+            LeadTree JV Partner Application
           </h1>
 
 

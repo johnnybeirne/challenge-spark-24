@@ -329,8 +329,8 @@ const Workflow = () => {
   return (
     <>
       <SEO
-        title="Product Workflow — LeadBead User Journey"
-        description="A live, scroll-driven walkthrough of the end-to-end LeadBead user journey: assessment → 3-day challenge → launch → referrals → Builder Circle."
+        title="Product Workflow — LeadTree User Journey"
+        description="A live, scroll-driven walkthrough of the end-to-end LeadTree user journey: assessment → 3-day challenge → launch → referrals → Builder Circle."
         canonical="/workflow"
       />
 

@@ -3,7 +3,7 @@ import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, ArrowRight } from "lucide-react";
-import { LeadBeadIcon } from "@/components/LeadBeadIcon";
+import { LeadTreeIcon } from "@/components/LeadTreeIcon";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
 import { useEffect } from "react";
@@ -36,8 +36,8 @@ const InviteBuilders = () => {
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="w-full max-w-sm text-center">
         <div className="inline-flex flex-col items-center gap-2 mb-6">
-          <LeadBeadIcon size={44} />
-          <span className="text-[11px] font-black tracking-[0.22em] text-muted-foreground">LEADBEAD</span>
+          <LeadTreeIcon size={44} />
+          <span className="text-[11px] font-black tracking-[0.22em] text-muted-foreground">LEADTREE</span>
         </div>
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
           <Users className="w-8 h-8 text-primary" />

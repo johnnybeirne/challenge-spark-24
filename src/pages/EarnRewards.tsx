@@ -47,10 +47,10 @@ const ladder: Rung[] = [
   { points: 200, title: "Advanced Challenge Training" },
   { points: 300, title: "VIP Implementation Workshop" },
   { points: 400, title: "Private Community Access" },
-  { points: 500, title: "Challenge Promotion Spotlight", desc: "We'll help showcase and promote your challenge to the LEADBEAD audience and ecosystem.", major: true },
+  { points: 500, title: "Challenge Promotion Spotlight", desc: "We'll help showcase and promote your challenge to the LEADTREE audience and ecosystem.", major: true },
   { points: 600, title: "Partner Bonus Training" },
   { points: 750, title: "Founder Inner Circle Session" },
-  { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADBEAD network.", major: true },
+  { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADTREE network.", major: true },
 ];
 
 // Partner bonuses — placeholder data (safe defaults until real partners are wired).
@@ -65,7 +65,7 @@ const partnerBonuses: PartnerBonus[] = [
   { partner: "Lead Magnet Lab", title: "Audience Growth Playbook", description: "A short playbook on turning a 3-day challenge into a long-term audience asset.", threshold: 200 },
   { partner: "Funnel Studio", title: "Post-Challenge Funnel Map", description: "A visual map of what to offer participants after the challenge ends.", threshold: 300 },
   { partner: "Creator Coaching Collective", title: "Group Coaching Drop-In", description: "An invite to a live drop-in session with experienced challenge creators.", threshold: 500 },
-  { partner: "LEADBEAD Studio", title: "Brand & Positioning Teardown", description: "A recorded teardown reviewing your positioning, hook, and challenge promise.", threshold: 750 },
+  { partner: "LEADTREE Studio", title: "Brand & Positioning Teardown", description: "A recorded teardown reviewing your positioning, hook, and challenge promise.", threshold: 750 },
 ];
 
 const partnerInitials = (name: string) =>
@@ -348,7 +348,7 @@ const EarnRewards = () => {
             <section className="mb-14">
               <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Partner bonuses</h2>
               <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                Exclusive rewards, tools, training, and opportunities contributed by LEADBEAD partners and experts.
+                Exclusive rewards, tools, training, and opportunities contributed by LEADTREE partners and experts.
               </p>
               <ul className="overflow-hidden rounded-xl border border-border">
                 {partnerBonuses.map((bonus, i) => {

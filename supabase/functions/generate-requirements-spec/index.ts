@@ -1,5 +1,5 @@
 // Generate a client-facing DOCX proposal and a technical Requirements.md
-// from a list of selected LeadBead features + variant toggles.
+// from a list of selected LeadTree features + variant toggles.
 import {
   Document,
   Packer,
@@ -108,7 +108,7 @@ async function buildDocx(
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 120 },
-      children: [new TextRun({ text: "LeadBead Custom Build Proposal", bold: true, size: 44, font: "Arial" })],
+      children: [new TextRun({ text: "LeadTree Custom Build Proposal", bold: true, size: 44, font: "Arial" })],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -120,7 +120,7 @@ async function buildDocx(
       children: [
         new TextRun({
           text:
-            "This proposal outlines the feature set selected for your custom LeadBead build. Each feature is grouped by the phase of the user journey in which it activates, and reflects the variants chosen below.",
+            "This proposal outlines the feature set selected for your custom LeadTree build. Each feature is grouped by the phase of the user journey in which it activates, and reflects the variants chosen below.",
           size: 22,
           font: "Arial",
         }),
@@ -193,7 +193,7 @@ async function buildDocx(
       alignment: AlignmentType.CENTER,
       children: [
         new TextRun({
-          text: "Prepared by Johnny Beirne · LeadBead",
+          text: "Prepared by Johnny Beirne · LeadTree",
           italics: true,
           color: "888888",
           size: 20,
@@ -233,7 +233,7 @@ function buildMarkdown(
   const grouped = groupByPhase(features);
   const stamp = new Date().toISOString();
   const lines: string[] = [];
-  lines.push("# LeadBead Custom Build — Technical Requirements");
+  lines.push("# LeadTree Custom Build — Technical Requirements");
   lines.push("");
   lines.push(`_Generated ${stamp}_`);
   lines.push("");

@@ -50,7 +50,7 @@ function toMarkdown(features: Feature[], category: "essential" | "advanced"): st
         }`,
     )
     .join("\n\n---\n\n");
-  return `# LeadBead ${title}\n\n_Generated ${stamp}_\n\n${body}\n`;
+  return `# LeadTree ${title}\n\n_Generated ${stamp}_\n\n${body}\n`;
 }
 
 function downloadFile(filename: string, content: string) {
@@ -179,10 +179,10 @@ const FeatureExtractor = () => {
             <Sparkles className="h-3.5 w-3.5" /> Admin · Feature Extractor
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            LeadBead Feature Documentation Generator
+            LeadTree Feature Documentation Generator
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Extract all component-level features from LeadBead, auto-categorized as{" "}
+            Extract all component-level features from LeadTree, auto-categorized as{" "}
             <strong>Essential</strong> (core user flow: signup → day completion → referral) or{" "}
             <strong>Advanced</strong> (admin / CMS mechanics that enable the core flow).
           </p>

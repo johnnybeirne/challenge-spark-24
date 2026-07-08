@@ -151,7 +151,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
             <DictatedTextarea
               value={freeform}
               onChange={(e) => setFreeform(e.target.value)}
-              placeholder="Ask a question"
+              placeholder="Type your question..."
               className="min-h-[64px] border-0 focus-visible:ring-0 resize-none bg-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {

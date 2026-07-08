@@ -335,7 +335,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
             Powered by
           </p>
           <img
-            src={leadbeadLogo}
+            src={leadbeadLogo.url}
             alt="LeadBead"
             width={120}
             className="h-auto w-[120px]"

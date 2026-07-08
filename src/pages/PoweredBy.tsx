@@ -155,7 +155,7 @@ export default function PoweredBy() {
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
           <Reveal>
             <img
-              src={leadbeadLogo}
+              src={leadbeadLogo.url}
               alt="LeadBead"
               className="mx-auto mb-6 h-24 w-auto md:h-32"
             />

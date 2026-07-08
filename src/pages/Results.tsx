@@ -413,7 +413,6 @@ const Results = () => {
           </div>
         </section>
 
-
         {/* SINGLE DOMINANT CTA — pinned to bottom */}
         <section className="mt-auto space-y-4 pt-4">
 

@@ -403,7 +403,7 @@ const Results = () => {
                 Johnny B
               </div>
               {/* Reserve the full final height so the layout never shifts as text types in. */}
-              <div className="relative">
+              <div className={`relative ${!sequenceComplete ? "cursor-pointer" : ""}`} onClick={handleSkip}>
                 <div className="invisible space-y-6" aria-hidden="true">
                   {paragraphs.map((text, i) => (
                     <p

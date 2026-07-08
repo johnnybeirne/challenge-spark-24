@@ -225,7 +225,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
         style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(4px)" }}
       />
       <div aria-hidden className="absolute inset-0 bg-foreground/20" />
-      <div className="relative w-full max-w-[420px] flex flex-col items-center">
+      <div className="relative w-full max-w-2xl flex flex-col items-center">
         {/* Main card */}
         <div
           key={q.id}
@@ -264,13 +264,13 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
           {/* Question */}
           <div className="text-center mb-8 md:mb-10">
-            <h1 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground">
-              <TypewriterText text={q.text} />
+            <h1 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground animate-fade-in">
+              {q.text}
             </h1>
           </div>
 
           {/* Answer buttons */}
-          <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
+          <div className="grid grid-cols-1 gap-3 w-full">
             {q.options.map((opt) => {
               const isSelected = selected === opt.value;
               return (

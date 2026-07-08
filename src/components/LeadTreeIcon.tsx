@@ -4,7 +4,7 @@ import { SVGProps } from "react";
  * LeadTree brand icon — a simple tree mark.
  * Works in light + dark mode (fills/stroke are explicit brand colors).
  */
-export const LeadBeadIcon = ({
+export const LeadTreeIcon = ({
   size = 24,
   className,
   ...props
@@ -33,4 +33,4 @@ export const LeadBeadIcon = ({
   </svg>
 );
 
-export default LeadBeadIcon;
+export default LeadTreeIcon;

@@ -53,6 +53,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
     try {
       const response = await ask(prompt);
       setThreads((prev) => ({ ...prev, [key]: [...(prev[key] ?? []), { role: "ai", text: response }] }));
+      setHasAnswered(true);
     } finally {
       setLoadingKey(null);
     }

@@ -50,10 +50,10 @@ Rules:
   - Pioneer: early, still figuring out attention and offer. Speak to clarity, first traction, avoiding overwhelm.
   - Architect: has some traction, needs structure and repeatable flow. Speak to systems, sequencing, tightening the machine.
   - Authority: established, needs leverage and compounding. Speak to positioning, referrals, scaling what already works.
-- Structure: exactly two short paragraphs. The first paragraph gives one clear, useful insight. The second paragraph is one natural sentence steering them toward the 3-Day Challenge. No additional paragraphs, no extra advice.
-- Length: three to five sentences total. Never exceed five sentences.
+- Structure: exactly two short paragraphs. The first paragraph gives one clear, useful insight in 2-3 short sentences. The second paragraph is one natural sentence steering them toward the 3-Day Challenge. No additional paragraphs, no extra advice.
+- Total length: three to five sentences. Never exceed five sentences.
 - Diagnose the issue and point the way forward rather than fully solving the problem. Be genuinely useful, but leave the depth for the challenge.
-- Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless truly natural. Do not use em dashes. Do not use the word "once".`;
+- Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless truly natural. Do not use long dashes (—) or em dashes. Use commas or periods instead. Do not use the word "once".`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

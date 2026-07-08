@@ -432,7 +432,7 @@ const Results = () => {
                         }`}
                       >
                         {isLast ? (
-                          <TypewriterText text={text} onDone={() => handleParagraphDone(i)} />
+                          <TypewriterText text={text} onDone={() => handleParagraphDone(i)} skip={skipTyping} />
                         ) : (
                           <span>{text}</span>
                         )}

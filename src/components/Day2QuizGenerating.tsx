@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { normaliseQuiz } from "@/components/Day2QuizPlayable";
-import leadbeadLogo from "@/assets/leadbead-logo.png";
+import leadbeadLogo from "@/assets/leadbead-logo.png.asset.json";
 
 const MESSAGE_MS = 1800;
 const FADE_MS = 350;
@@ -335,7 +335,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
             Powered by
           </p>
           <img
-            src={leadbeadLogo}
+            src={leadbeadLogo.url}
             alt="LeadBead"
             width={120}
             className="h-auto w-[120px]"

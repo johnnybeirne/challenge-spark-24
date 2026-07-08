@@ -59,11 +59,27 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Pro
   if (prompts === null) return null;
 
   return (
-    <LearningAssistant
-      topic={`${archetypeLabel} advisor`}
-      prompts={prompts}
-      ask={ask}
-    />
+    <div className="space-y-4">
+      {(heading || subline) && (
+        <div>
+          {heading && (
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              {heading}
+            </h2>
+          )}
+          {subline && (
+            <p className="mt-1 text-sm sm:text-base text-muted-foreground">
+              {subline}
+            </p>
+          )}
+        </div>
+      )}
+      <LearningAssistant
+        topic={`${archetypeLabel} advisor`}
+        prompts={prompts}
+        ask={ask}
+      />
+    </div>
   );
 };
 

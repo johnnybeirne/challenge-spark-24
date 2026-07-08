@@ -36,12 +36,14 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
 
   useEffect(() => {
     const el = openPill ? scrollRefs.current[openPill] : null;
-    el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [threads, loadingKey, openPill]);
+    if (!el) return;
+    el.scrollTo({ top: typewriter ? 0 : el.scrollHeight, behavior: "smooth" });
+  }, [threads, loadingKey, openPill, typewriter]);
 
   useEffect(() => {
-    freeRef.current?.scrollTo({ top: freeRef.current.scrollHeight, behavior: "smooth" });
-  }, [freeThread, loadingKey]);
+    if (!freeRef.current) return;
+    freeRef.current.scrollTo({ top: typewriter ? 0 : freeRef.current.scrollHeight, behavior: "smooth" });
+  }, [freeThread, loadingKey, typewriter]);
 
   const run = async (key: string, prompt: string) => {
     setThreads((prev) => ({ ...prev, [key]: [...(prev[key] ?? []), { role: "user", text: prompt }] }));

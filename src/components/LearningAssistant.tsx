@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Loader2, Send, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Loader2, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import ReactMarkdown from "react-markdown";
@@ -14,6 +14,7 @@ type Props = {
   ask: (prompt: string) => Promise<string>;
   autoOpen?: boolean;
   typewriter?: boolean;
+  onJoinCtaClick?: () => void;
 };
 
 const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false }: Props) => {

@@ -23,7 +23,7 @@ const DEFAULT_HTML = `<!doctype html><html><body style="font-family:-apple-syste
     <p style="margin:0 0 24px;"><a href="{{url}}" style="display:inline-block;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;">Open your invite link</a></p>
     <p style="font-size:13px;line-height:1.6;margin:0 0 8px;color:#475569;word-break:break-all;">Or share this URL directly:<br/><a href="{{url}}" style="color:#4f46e5;">{{url}}</a></p>
     <p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:#334155;"><strong>Invite 3 people to unlock priority access to extra bonuses.</strong></p>
-    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The LeadBead team</p>
+    <p style="font-size:12px;line-height:1.6;margin:32px 0 0;color:#94a3b8;">— The LeadTree team</p>
   </div>
 </body></html>`;
 

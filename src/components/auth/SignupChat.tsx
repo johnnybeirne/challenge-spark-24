@@ -303,7 +303,7 @@ const SignupChat = ({
           <>
             <div className="flex flex-col items-center gap-3 mb-4">
               <LeadBeadIcon size={40} />
-              <span className="text-xs font-black tracking-[0.2em] text-muted-foreground">LEADBEAD</span>
+              <span className="text-xs font-black tracking-[0.2em] text-muted-foreground">LEADTREE</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-3">{headline}</h1>
             <p className="text-base text-muted-foreground text-center mb-2 max-w-xl mx-auto">{subcopy}</p>
@@ -396,7 +396,7 @@ const SignupChat = ({
           <>
             <div className="flex flex-col items-center gap-3 mb-4">
               <LeadBeadIcon size={36} />
-              <span className="text-xs font-black tracking-[0.2em] text-muted-foreground">LEADBEAD</span>
+              <span className="text-xs font-black tracking-[0.2em] text-muted-foreground">LEADTREE</span>
             </div>
             <h1 className="text-2xl font-bold text-foreground text-center mb-2">Welcome back</h1>
             <p className="text-sm text-muted-foreground text-center mb-6">Sign in to continue.</p>

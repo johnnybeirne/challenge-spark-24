@@ -191,7 +191,7 @@ const WaitlistThanks = () => {
   return (
     <>
       <SEO
-        title="You're on the waitlist — LeadBead"
+        title="You're on the waitlist — LeadTree"
         description="You're on the waitlist for the 3-day challenge. Invite 3 people to unlock priority access to extra bonuses."
         canonical="/waitlist/thanks"
       />

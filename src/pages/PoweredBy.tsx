@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import ReferralGrowthNetworkHorizontal from "@/components/ReferralGrowthNetworkHorizontal";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
-import leadbeadLogo from "@/assets/leadbead-logo.png.asset.json";
+import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 
 /** Fade-up on scroll via IntersectionObserver. */
 function Reveal({
@@ -58,7 +58,7 @@ const growthEngineOverlays = [
   {
     range: "0–25%",
     title: "You build your 3-day challenge.",
-    body: "Define your audience, your result, and your experience. LeadBead guides every step.",
+    body: "Define your audience, your result, and your experience. LeadTree guides every step.",
   },
   {
     range: "25–50%",
@@ -114,8 +114,8 @@ export default function PoweredBy() {
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-neutral-900 antialiased selection:bg-primary/40">
       <SEO
-        title="LeadBead — Build your own lead generation system in 3 days"
-        description="LeadBead teaches coaches, consultants, and experts how to build an evergreen 3-day challenge — with a quiz funnel that attracts leads and a referral loop that keeps it growing."
+        title="LeadTree — Build your own lead generation system in 3 days"
+        description="LeadTree teaches coaches, consultants, and experts how to build an evergreen 3-day challenge — with a quiz funnel that attracts leads and a referral loop that keeps it growing."
         canonical="/powered-by"
       />
 
@@ -155,8 +155,8 @@ export default function PoweredBy() {
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
           <Reveal>
             <img
-              src={leadbeadLogo.url}
-              alt="LeadBead"
+              src={leadtreeLogo.url}
+              alt="LeadTree"
               className="mx-auto mb-6 h-24 w-auto md:h-32"
             />
           </Reveal>
@@ -190,7 +190,7 @@ export default function PoweredBy() {
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <p className="mb-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-primary">
-              The LeadBead growth engine
+              The LeadTree growth engine
             </p>
           </Reveal>
           <Reveal delay={100}>
@@ -311,7 +311,7 @@ export default function PoweredBy() {
           </Reveal>
           <Reveal delay={100}>
             <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-neutral-700">
-              LeadBead challenges come with a built-in points system. Participants earn points
+              LeadTree challenges come with a built-in points system. Participants earn points
               for completing tasks and inviting others. The more engaged they are, the more
               they share.
             </p>
@@ -410,7 +410,7 @@ export default function PoweredBy() {
         <p className="text-center text-xs text-neutral-500">
           This challenge was built on{" "}
           <Link to="/powered-by" className="text-primary underline-offset-4 hover:underline">
-            LeadBead
+            LeadTree
           </Link>
           .
         </p>

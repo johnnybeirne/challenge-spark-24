@@ -1670,6 +1670,27 @@ export type Database = {
         }
         Relationships: []
       }
+      results_advisor_prompts: {
+        Row: {
+          id: string
+          prompts: Json
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          prompts?: Json
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          prompts?: Json
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           column_slot: string

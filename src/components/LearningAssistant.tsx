@@ -21,7 +21,6 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
-  const [followUp, setFollowUp] = useState<Record<string, string>>({});
   const [freeform, setFreeform] = useState("");
   const [freeThread, setFreeThread] = useState<Turn[]>([]);
   const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -131,35 +130,6 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               {loadingKey === openPill && <Typing />}
             </div>
 
-            <div className="border-t border-border bg-background p-3 flex gap-2">
-              <input
-                value={followUp[openPill] ?? ""}
-                onChange={(e) => setFollowUp((p) => ({ ...p, [openPill]: e.target.value }))}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    const v = (followUp[openPill] ?? "").trim();
-                    if (!v || loadingKey) return;
-                    setFollowUp((p) => ({ ...p, [openPill]: "" }));
-                    void run(openPill, v);
-                  }
-                }}
-                placeholder="Follow up on this answer…"
-                className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-              <Button
-                size="sm"
-                disabled={loadingKey !== null || !(followUp[openPill] ?? "").trim()}
-                onClick={() => {
-                  const v = (followUp[openPill] ?? "").trim();
-                  if (!v) return;
-                  setFollowUp((p) => ({ ...p, [openPill]: "" }));
-                  void run(openPill, v);
-                }}
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         )}
 

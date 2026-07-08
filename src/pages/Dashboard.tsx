@@ -285,7 +285,7 @@ const Dashboard = () => {
           {/* INTRO VIDEO — welcome briefing */}
 
           <section className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-            <div className="grid grid-cols-1 gap-4 border-b border-border bg-muted/40 px-4 py-3 sm:grid-cols-2 sm:items-center">
+            <div className="grid grid-cols-1 gap-4 border-b border-border bg-muted/40 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
               <div className="flex items-center gap-3 min-w-0">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                   <Play className="h-4 w-4" fill="currentColor" />

@@ -208,7 +208,9 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   );
 };
 
-const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
+const Bubble = ({ turn, typewriter, onJoinCtaClick }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void }) => {
+  const [typingDone, setTypingDone] = useState(!typewriter);
+
   if (turn.role === "user") {
     return (
       <div className="flex justify-end gap-2">
@@ -221,6 +223,9 @@ const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
       </div>
     );
   }
+
+  const showCta = onJoinCtaClick && typingDone;
+
   return (
     <div className="flex justify-start gap-2">
       <img
@@ -230,11 +235,21 @@ const Bubble = ({ turn, typewriter }: { turn: Turn; typewriter?: boolean }) => {
       />
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground">
         {typewriter ? (
-          <TypewriterText text={turn.text} />
+          <TypewriterText text={turn.text} onDone={() => setTypingDone(true)} />
         ) : (
           <div className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown>{turn.text}</ReactMarkdown>
           </div>
+        )}
+        {showCta && (
+          <Button
+            size="sm"
+            onClick={onJoinCtaClick}
+            className="mt-3 w-full gap-2 rounded-xl font-semibold tracking-tight shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 animate-fade-in"
+          >
+            Join the 3-Day Challenge today
+            <ArrowRight className="w-4 h-4" />
+          </Button>
         )}
       </div>
     </div>

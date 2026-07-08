@@ -170,6 +170,8 @@ const Results = () => {
     if (paragraphs.length === 0) return;
     setVisibleCount(0);
     setThinking(true);
+    setSkipTyping(false);
+    setSequenceComplete(false);
     if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     revealTimerRef.current = window.setTimeout(() => {
       setVisibleCount(1);

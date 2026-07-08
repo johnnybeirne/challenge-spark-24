@@ -13,7 +13,6 @@ import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useDeadline } from "@/hooks/useDeadline";
 
-
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
 const TYPING_SPEED_MS = 18;

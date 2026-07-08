@@ -125,7 +125,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               className="px-4 py-4 max-h-[360px] overflow-y-auto space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
-                <Bubble key={i} turn={t} />
+                <Bubble key={i} turn={t} typewriter={typewriter} />
               ))}
               {loadingKey === openPill && <Typing />}
             </div>

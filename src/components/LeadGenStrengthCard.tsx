@@ -628,7 +628,7 @@ const LeadGenStrengthCard = () => {
                   <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="h-4 w-4 text-rose-500" />
                     <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
-                      Optimization Priorities
+                      Your Top Priorities
                       <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
                         ({priorities.length})
                       </span>

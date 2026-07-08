@@ -60,8 +60,8 @@ async function retrieveKb(sb: any, query: string, stage?: string) {
 function formatKbAnswer(docs: any[]): string {
   if (!docs.length) return "";
   const top = docs[0];
-  const source = top.source ?? "LeadBead Blueprint";
-  return `${top.content}\n\n_Answer powered by LeadBead Blueprint — ${source}_`;
+  const source = top.source ?? "LeadTree Blueprint";
+  return `${top.content}\n\n_Answer powered by LeadTree Blueprint — ${source}_`;
 }
 
 serve(async (req) => {
@@ -125,7 +125,7 @@ serve(async (req) => {
       }
     }
 
-    // 2. Knowledge-base retrieval — LeadBead frameworks are the primary intelligence layer
+    // 2. Knowledge-base retrieval — LeadTree frameworks are the primary intelligence layer
     if (!answer) {
       const docs = await retrieveKb(sb, prompt, stage);
       if (docs.length > 0) {

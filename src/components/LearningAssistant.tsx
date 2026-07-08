@@ -24,6 +24,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [freeform, setFreeform] = useState("");
   const [freeThread, setFreeThread] = useState<Turn[]>([]);
+  const [hasAnswered, setHasAnswered] = useState(false);
   const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const freeRef = useRef<HTMLDivElement | null>(null);
 

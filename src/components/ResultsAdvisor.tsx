@@ -13,7 +13,7 @@ type Props = {
   onJoinCtaClick?: () => void;
 };
 
-const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline }: Props) => {
+const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoinCtaClick }: Props) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
   useEffect(() => {

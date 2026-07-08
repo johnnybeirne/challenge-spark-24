@@ -475,7 +475,7 @@ const Results = () => {
             archetypeLabel={
               urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
             }
-            heading="Get a feel for how the challenge guides you"
+            heading="See what the 3-Day Challenge can do for you"
             subline="Ask a question and see the kind of guidance you get inside the 3-Day Challenge."
           />
         </section>

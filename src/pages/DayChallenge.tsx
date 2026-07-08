@@ -538,17 +538,15 @@ const DayChallenge = () => {
         </div>
       )}
       <div className="mb-6">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-          Day {dayNum} of 3
-        </p>
-        <h1 className="text-2xl font-bold text-foreground">{config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {config.intro}
-        </p>
-        {config.nudge && !isReadOnly && (
-          <p className="mt-2 text-sm text-primary font-medium italic">{config.nudge}</p>
-        )}
-      </div>
+      <StepHeader
+        dayNum={dayNum}
+        heading={config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}
+        subheading={config.intro}
+        secondary={config.nudge && !isReadOnly ? (
+          <span className="text-primary font-medium italic">{config.nudge}</span>
+        ) : undefined}
+      />
+
 
       {dayNum === 1 && (
         <div className="mb-6 rounded-2xl border border-border bg-card p-6 md:p-8 shadow-sm">

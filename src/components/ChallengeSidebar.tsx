@@ -15,6 +15,7 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
+import leadbeadLogo from "@/assets/leadbead-logo.png.asset.json";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
@@ -174,10 +175,11 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* Brand */}
         {!collapsed ? (
           <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
-            <div className="flex items-center gap-2">
-              <LeadBeadIcon size={22} />
-              <p className="text-xl font-black tracking-tight text-foreground">LEADBEAD</p>
-            </div>
+            <img
+              src={leadbeadLogo.url}
+              alt="LeadBead"
+              className="h-8 w-auto"
+            />
             {identity.isPersonalised && (
               <p
                 className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"

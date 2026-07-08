@@ -24,13 +24,13 @@ export const LeadBeadIcon = ({
       y1="12"
       x2="20"
       y2="12"
-      stroke="#F4A06A"
+      stroke="#FF8A5C"
       strokeWidth="1.6"
       strokeLinecap="round"
     />
-    <circle cx="4" cy="12" r="2.5" fill="#E8611A" />
-    <circle cx="12" cy="12" r="3.5" fill="#E8611A" />
-    <circle cx="20" cy="12" r="2.5" fill="#E8611A" />
+    <circle cx="4" cy="12" r="2.5" fill="#F65127" />
+    <circle cx="12" cy="12" r="3.5" fill="#F65127" />
+    <circle cx="20" cy="12" r="2.5" fill="#F65127" />
   </svg>
 );
 

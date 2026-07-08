@@ -82,18 +82,21 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   return (
     <div
       data-experience={mode}
-      className="experience-root min-h-screen bg-background overflow-x-hidden"
+      className="experience-root flex flex-col min-h-screen bg-background overflow-x-hidden"
     >
       {showChallengeSidebar && <ChallengeSidebar onCollapsedChange={setSidebarCollapsed} collapsed={effectiveCollapsed} />}
-      <div className={`w-full relative transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (effectiveCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
+      <div className={`w-full relative flex flex-col flex-1 min-h-0 transition-[padding] duration-300 ${showNav && authenticated && !showChallengeSidebar ? "pb-24" : ""} ${showChallengeSidebar ? "pt-12 lg:pt-0" : ""} ${showChallengeSidebar ? (effectiveCollapsed ? "lg:pl-[84px]" : "lg:pl-[260px]") : ""}`}>
         {showChallengeSidebar && <TopBar />}
-        <div className={showChallengeSidebar ? "flex w-full" : undefined}>
+        <div className={`min-w-0 flex-1 ${showChallengeSidebar ? "flex w-full" : ""}`}>
           <div className="min-w-0 flex-1">
             {showNav && authenticated && <BackButton />}
             <Outlet />
           </div>
           {showRightRail && <RightRail />}
         </div>
+        <footer className="py-6 text-center text-sm text-muted-foreground mb-16">
+          © {new Date().getFullYear()} LeadTree. All rights reserved.
+        </footer>
         {showNav && authenticated && !showChallengeSidebar && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}

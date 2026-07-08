@@ -133,9 +133,9 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
           </div>
         )}
 
-        {/* Freeform */}
-        <div>
-          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-2">ASK ANYTHING</p>
+        {/* Freeform — independent ask-a-question field */}
+        <div className="pt-3 border-t border-border">
+          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-2">ASK A QUESTION</p>
           {freeThread.length > 0 && (
             <div
               ref={freeRef}
@@ -151,7 +151,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
             <DictatedTextarea
               value={freeform}
               onChange={(e) => setFreeform(e.target.value)}
-              placeholder="Ask one more question"
+              placeholder="Ask a question"
               className="min-h-[64px] border-0 focus-visible:ring-0 resize-none bg-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {

@@ -161,7 +161,10 @@ const Results = () => {
 
   const [visibleCount, setVisibleCount] = useState(0);
   const [thinking, setThinking] = useState(true);
+  const [skipTyping, setSkipTyping] = useState(false);
+  const [sequenceComplete, setSequenceComplete] = useState(false);
   const revealTimerRef = useRef<number | null>(null);
+  const skipTypingRef = useRef(skipTyping);
 
   useEffect(() => {
     if (paragraphs.length === 0) return;

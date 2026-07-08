@@ -462,34 +462,39 @@ const Day2Screen1 = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-[90%] max-w-[1400px] px-4 py-6 sm:py-8 pb-24">
-        {/* Step indicator */}
-        <div className="mb-6 flex items-center justify-between">
-          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
-            Day 2 · Step 1 of 5
-          </span>
-          <div className="flex gap-1.5">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <span
-                key={n}
-                className={cn("h-1.5 w-6 rounded-full", n <= 1 ? "bg-primary" : "bg-muted")}
-              />
-            ))}
-          </div>
-        </div>
+        <StepHeader
+          dayNum={2}
+          stepNumber={DAY2_STEP_NUMBER}
+          totalSteps={DAY2_TOTAL_STEPS}
+          heading={<>Day 2{nameSuffix}: Build your quiz</>}
+          subheading={
+            <>
+              {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
+              <br />
+              Your challenge builds the trust that converts.
+            </>
+          }
+          secondary={<>Let’s build the quiz that gets {clientAvatar} into your challenge.</>}
+          eyebrowAside={
+            <div className="flex gap-1.5">
+              {Array.from({ length: DAY2_TOTAL_STEPS }, (_, i) => i + 1).map((n) => (
+                <span
+                  key={n}
+                  className={cn(
+                    "h-1.5 w-6 rounded-full",
+                    n <= DAY2_STEP_NUMBER ? "bg-primary" : "bg-muted",
+                  )}
+                />
+              ))}
+            </div>
+          }
+        />
 
-        {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
-            Day 2{nameSuffix}: Build your quiz
-          </h1>
-          <p className="mt-3 text-base sm:text-lg font-semibold text-foreground">
-            {firstName ? `${firstName}, your quiz starts the conversation.` : "Your quiz starts the conversation."}
-            <br />
-            Your challenge builds the trust that converts.
-          </p>
-          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            Let’s build the quiz that gets {clientAvatar} into your challenge.
-          </p>
+        <div>
+
+
+
+
 
 
 

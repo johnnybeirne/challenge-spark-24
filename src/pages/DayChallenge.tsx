@@ -537,7 +537,6 @@ const DayChallenge = () => {
           Your answers are saved.
         </div>
       )}
-      <div className="mb-6">
       <StepHeader
         dayNum={dayNum}
         heading={config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}
@@ -546,6 +545,7 @@ const DayChallenge = () => {
           <span className="text-primary font-medium italic">{config.nudge}</span>
         ) : undefined}
       />
+
 
 
       {dayNum === 1 && (

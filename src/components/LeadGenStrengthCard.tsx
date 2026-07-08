@@ -12,7 +12,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
@@ -20,9 +19,6 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
-
-type AiAsset = { title: string; description: string };
-const ASSETS_CACHE = new Map<string, AiAsset[]>();
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {

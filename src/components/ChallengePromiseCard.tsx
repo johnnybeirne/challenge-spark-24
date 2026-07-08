@@ -186,13 +186,13 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
         </>
       ) : (
         <>
-          <p className="text-base leading-relaxed text-foreground rounded-xl border border-border bg-background px-4 py-3">
+          <p className="text-xl md:text-2xl font-semibold leading-relaxed text-foreground rounded-xl border border-border bg-background px-6 py-5 text-center">
             {loading && !displayText ? (
               <span className="inline-flex items-center gap-2 text-muted-foreground">
                 <Sparkles className="h-4 w-4 animate-pulse" /> Polishing your promise…
               </span>
             ) : (
-              <span className="font-medium text-foreground">{displayText}</span>
+              <span className="text-foreground">“{displayText}”</span>
             )}
           </p>
           {displayText && (

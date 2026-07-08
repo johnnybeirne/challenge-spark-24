@@ -12,7 +12,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
 import ChallengeRecord from "@/components/ChallengeRecord";
 import YourChallengeRecap from "@/components/YourChallengeRecap";
 import { cn } from "@/lib/utils";
@@ -20,9 +19,6 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
-
-type AiAsset = { title: string; description: string };
-const ASSETS_CACHE = new Map<string, AiAsset[]>();
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {
@@ -289,9 +285,6 @@ const LeadGenStrengthCard = () => {
   const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
-  const [assets, setAssets] = useState<AiAsset[] | null>(null);
-  const [assetsLoading, setAssetsLoading] = useState(false);
-  const [assetsError, setAssetsError] = useState<string | null>(null);
   const [quizTiers, setQuizTiers] = useState<Array<{
     tier: string;
     min_percent: number;
@@ -485,46 +478,6 @@ const LeadGenStrengthCard = () => {
   const heroTeaser = teaser(archetype.narrative, 20);
 
   const hasQuizResult = !!assessment && (data.strong > 0 || data.priorities.length > 0 || !!qaArchetype);
-  const assetsKey = hasQuizResult ? `${archetype.name}::${percent}` : null;
-
-  useEffect(() => {
-    if (!assetsKey) {
-      setAssets(null);
-      setAssetsError(null);
-      return;
-    }
-    const cached = ASSETS_CACHE.get(assetsKey);
-    if (cached) {
-      setAssets(cached);
-      setAssetsError(null);
-      return;
-    }
-    let cancelled = false;
-    setAssetsLoading(true);
-    setAssetsError(null);
-    (async () => {
-      try {
-        const { data: res, error } = await supabase.functions.invoke("your-assets", {
-          body: { archetype: archetype.name, score: percent },
-        });
-        if (cancelled) return;
-        if (error) throw new Error(error.message);
-        const out = (res?.assets ?? []) as AiAsset[];
-        if (!out.length) throw new Error("No assets returned");
-        ASSETS_CACHE.set(assetsKey, out);
-        setAssets(out);
-      } catch (e) {
-        if (cancelled) return;
-        setAssetsError(e instanceof Error ? e.message : "Failed");
-        setAssets(null);
-      } finally {
-        if (!cancelled) setAssetsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [assetsKey, archetype.name, percent]);
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
@@ -675,44 +628,6 @@ const LeadGenStrengthCard = () => {
                     ))}
                   </Accordion>
                 </div>
-              )}
-
-              {/* AI-generated strengths (moved back from Your Assets) */}
-              {hasQuizResult && (
-                assetsLoading || (!assets && !assetsError) ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-border bg-card p-4 shadow-sm"
-                      >
-                        <div className="flex items-start gap-2">
-                          <Skeleton className="h-4 w-4 rounded-full mt-0.5" />
-                          <Skeleton className="h-4 w-32" />
-                        </div>
-                        <Skeleton className="mt-3 h-3 w-full" />
-                        <Skeleton className="mt-1.5 h-3 w-4/5" />
-                      </div>
-                    ))}
-                  </div>
-                ) : assetsError || !assets ? null : (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {assets.map((a) => (
-                      <div
-                        key={a.title}
-                        className="rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                          <p className="text-[14px] font-bold text-foreground">{a.title}</p>
-                        </div>
-                        <p className="mt-2 text-[13px] leading-snug text-muted-foreground">
-                          {a.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )
               )}
 
               {/* Your Challenge recap (kept here so Day 1 answers stay visible) */}

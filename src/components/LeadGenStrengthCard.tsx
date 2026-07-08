@@ -285,9 +285,6 @@ const LeadGenStrengthCard = () => {
   const qa = useQaPreview();
   const navigate = useNavigate();
   const [showFullNarrative, setShowFullNarrative] = useState(false);
-  const [assets, setAssets] = useState<AiAsset[] | null>(null);
-  const [assetsLoading, setAssetsLoading] = useState(false);
-  const [assetsError, setAssetsError] = useState<string | null>(null);
   const [quizTiers, setQuizTiers] = useState<Array<{
     tier: string;
     min_percent: number;

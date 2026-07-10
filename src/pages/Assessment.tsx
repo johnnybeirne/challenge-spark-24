@@ -218,13 +218,6 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     <>
       <SEO title="Lead Flow Diagnosis Quiz" description="Answer 9 quick questions about how leads find, trust, and choose you." canonical="/assessment" />
     <div className="relative min-h-screen w-full flex items-start md:items-center justify-center p-4 md:p-6 overflow-hidden">
-      {/* Blurred app screenshot background */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{ backgroundImage: `url(${assessmentBg.url})`, filter: "blur(4px)" }}
-      />
-      <div aria-hidden className="absolute inset-0 bg-foreground/20" />
       <div className="relative w-full max-w-2xl flex flex-col items-center">
         {/* Main card */}
         <div

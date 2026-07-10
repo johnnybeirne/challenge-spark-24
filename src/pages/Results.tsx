@@ -299,12 +299,7 @@ const Results = () => {
     ? FREE_TRAINING_COURSE_PATH
     : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
-  const challengeLabel = (() => {
-    const fmt = new Intl.DateTimeFormat("en-US", { weekday: "long" });
-    const setUpBy = new Date();
-    setUpBy.setDate(setUpBy.getDate() + 2);
-    return `Join the 3-Day Challenge today and be set up by ${fmt.format(setUpBy)}.`;
-  })();
+  const challengeLabel = `Join the 3-Day Challenge today and be set up by ${deadline.dayName}.`;
 
   const cta = (() => {
     if (entryIntent === "free_training") {

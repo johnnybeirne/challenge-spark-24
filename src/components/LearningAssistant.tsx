@@ -140,7 +140,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               className="px-4 py-4 space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
-                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
+                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} />
               ))}
               {loadingKey === openPill && <Typing />}
             </div>
@@ -154,7 +154,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
             className="rounded-xl border border-border bg-background p-4 space-y-3"
           >
             {freeThread.map((t, i) => (
-              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} />
+              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} />
             ))}
             {loadingKey === "__free__" && <Typing />}
           </div>
@@ -209,7 +209,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   );
 };
 
-const Bubble = ({ turn, typewriter, onJoinCtaClick }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void }) => {
+const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void; limitToOneQuestion?: boolean }) => {
   const [typingDone, setTypingDone] = useState(!typewriter);
 
   if (turn.role === "user") {
@@ -225,7 +225,7 @@ const Bubble = ({ turn, typewriter, onJoinCtaClick }: { turn: Turn; typewriter?:
     );
   }
 
-  const showCta = onJoinCtaClick && typingDone;
+  const showCta = onJoinCtaClick && typingDone && !limitToOneQuestion;
 
   return (
     <div className="flex justify-start gap-2">

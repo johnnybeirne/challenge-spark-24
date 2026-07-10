@@ -190,7 +190,7 @@ const Waitlist = () => {
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
             <div className="text-center lg:text-left">
               <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-primary shadow-sm lg:mx-0">
-                Waitlist · Pre-launch
+                Just days away
               </p>
               <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
                 Run a 3-day challenge people want to share

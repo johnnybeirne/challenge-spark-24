@@ -362,7 +362,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
 
         {/* Step counter */}
         <p className="mt-3 text-xs text-muted-foreground/70">
-          Step {stepNumber} of {BEADS.length}
+          Step {stepNumber} of {TOTAL_STEPS}
         </p>
       </div>
     </div>

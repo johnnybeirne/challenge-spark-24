@@ -325,54 +325,26 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         </div>
 
 
-        {/* Bead animation */}
-        <svg
-          width={220}
-          height={220}
-          viewBox="0 0 220 220"
-          aria-hidden="true"
-          className="mb-8"
-        >
-          <circle
-            cx={TRACK_CX}
-            cy={TRACK_CY}
-            r={TRACK_R}
-            fill="none"
-            stroke="#E8E6E1"
-            strokeWidth={2}
-            strokeDasharray="4 4"
+        {/* Logo mark animation */}
+        <style>{`
+          @keyframes leadtree-grow {
+            from { transform: scale(0.2); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+          @keyframes leadtree-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+        `}</style>
+        <div className="mb-8 flex items-center justify-center">
+          <LeadTreeIcon
+            size={96}
+            aria-hidden="true"
+            style={{
+              animation: "leadtree-grow 0.8s ease-out forwards, leadtree-pulse 2s ease-in-out infinite 0.8s",
+            }}
           />
-          {BEADS.map((b, i) => {
-            const rad = (b.angle * Math.PI) / 180;
-            const cx = TRACK_CX + TRACK_R * Math.cos(rad);
-            const cy = TRACK_CY + TRACK_R * Math.sin(rad);
-            const visible = started && idx >= i;
-            const shineOffset = b.r * 0.35;
-            return (
-              <g key={i}>
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={visible ? b.r : 0}
-                  fill={b.color}
-                  style={{
-                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  }}
-                />
-                <circle
-                  cx={cx - shineOffset}
-                  cy={cy - shineOffset}
-                  r={visible ? b.r * 0.32 : 0}
-                  fill="#ffffff"
-                  opacity={0.3}
-                  style={{
-                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  }}
-                />
-              </g>
-            );
-          })}
-        </svg>
+        </div>
 
         {/* Status message */}
         <div className="flex h-6 items-center justify-center">

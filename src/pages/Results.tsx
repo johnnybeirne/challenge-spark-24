@@ -324,7 +324,7 @@ const Results = () => {
           </p>
 
           <div className="relative">
-            <div className={`text-[8rem] sm:text-[10rem] font-black leading-none tracking-tighter ${accent.text}`}>
+            <div className={`text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black leading-none tracking-tighter ${accent.text}`}>
               {animatedScore}
             </div>
             <p className="mt-2 text-[var(--body-size)] font-medium uppercase tracking-[0.25em] text-muted-foreground">
@@ -370,7 +370,7 @@ const Results = () => {
                 <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
                   {intro}
                 </p>
-                <h1 className={`mt-3 text-[var(--h1-size)] sm:text-5xl font-black tracking-tight ${accent.text}`}>
+                <h1 className={`mt-3 text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black tracking-tight ${accent.text}`}>
                   {name}
                 </h1>
                 <p className="mt-3 text-[var(--body-size)] sm:text-[var(--h2-size)] text-muted-foreground">

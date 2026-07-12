@@ -369,7 +369,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 Built for {audienceShort}
                 <HelpTip text={previewTips.audience_eyebrow} className="ml-2 align-middle" label="About this eyebrow" />
               </Eyebrow>
-              <h1 className="mt-4 font-montserrat font-bold text-[var(--h1-size)] md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
+              <h1 className="mt-4 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] lg:text-[var(--h1-size)] leading-[1.05] tracking-tight text-slate-900">
                 {headline}
                 <HelpTip text={previewTips.hero_headline} className="ml-2 align-middle" label="About this headline" />
               </h1>

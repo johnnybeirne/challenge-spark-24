@@ -36,6 +36,12 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 248 39% 50%;
+
+    /* Typography sizes — overridable via TypographyLoader (admin controlled). */
+    --h1-size: 28px;
+    --h2-size: 20px;
+    --h3-size: 15px;
+    --body-size: 14px;
   }
 }
 
@@ -55,6 +61,14 @@
      headings drop to medium (500) so they read as subheadings rather
      than competing with page titles. Body text stays at 400. */
   h2, h3, h4, h5, h6 { font-weight: 500; }
+
+  /* ───── Admin-controlled typography sizes ─────
+     Applied via CSS variables so the Typography admin page can update
+     them at runtime without touching component code. */
+  h1 { font-size: var(--h1-size); }
+  h2 { font-size: var(--h2-size); }
+  h3 { font-size: var(--h3-size); }
+  body { font-size: var(--body-size); }
 }
 
 @layer utilities {

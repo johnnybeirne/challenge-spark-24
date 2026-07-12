@@ -1769,6 +1769,33 @@ export type Database = {
         }
         Relationships: []
       }
+      typography_settings: {
+        Row: {
+          body_size: number
+          h1_size: number
+          h2_size: number
+          h3_size: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          body_size?: number
+          h1_size?: number
+          h2_size?: number
+          h3_size?: number
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          body_size?: number
+          h1_size?: number
+          h2_size?: number
+          h3_size?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       unlocks: {
         Row: {
           id: string

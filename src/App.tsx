@@ -79,6 +79,7 @@ import AdminOverview from "@/pages/AdminOverview";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
+import AdminTypography from "@/pages/admin/AdminTypography";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -98,6 +99,7 @@ import FreePreviewBadge from "@/components/FreePreviewBadge";
 
 import ScrollToTop from "@/components/ScrollToTop";
 import AttributionCapture from "@/components/AttributionCapture";
+import TypographyLoader from "@/components/TypographyLoader";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";
 
 if (typeof window !== "undefined") initFreePreviewFromUrl();
@@ -115,7 +117,9 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <AttributionCapture />
+            <TypographyLoader />
             <FreePreviewBadge />
+
             
             <ExperienceShell>
             <Routes>
@@ -264,6 +268,7 @@ const App = () => (
                 <Route path="jv-partners" element={<AdminJvPartners />} />
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
+                <Route path="typography" element={<AdminTypography />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

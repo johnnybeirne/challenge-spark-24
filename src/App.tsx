@@ -91,6 +91,7 @@ import InviteEntry from "@/pages/InviteEntry";
 import Links from "@/pages/Links";
 import Premium from "@/pages/Premium";
 import PoweredBy from "@/pages/PoweredBy";
+import LogoAnimationPreview from "@/pages/LogoAnimationPreview";
 import DebugAttribution from "@/pages/DebugAttribution";
 import NotFound from "@/pages/NotFound";
 import FreePreviewBadge from "@/components/FreePreviewBadge";
@@ -228,6 +229,8 @@ const App = () => (
               {/* Quiz preview — full-screen, no app shell / sidebar / nav */}
               <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
               <Route path="/powered-by" element={<PoweredBy />} />
+              <Route path="/logo-animation" element={<LogoAnimationPreview />} />
+
 
 
               {/* Owner console — sidebar layout, password-protected */}

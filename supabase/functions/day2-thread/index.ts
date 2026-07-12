@@ -442,15 +442,15 @@ function fallbackInsightS2(key: string, p: ReturnType<typeof builderProfile>): s
   const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : "";
   switch (key) {
     case "quiz_vs_pdf":
-      return `${expertOpener}a PDF tells every reader the same thing and sits forgotten in a downloads folder — it asks ${aud} to do the diagnostic work themselves. A quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets your judgement actually land at scale.`;
+      return `${expertOpener}a PDF tells every reader the same thing and sits forgotten in a downloads folder — it asks ${aud} to do the diagnostic work themselves.\n\nA quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets your judgement actually land at scale.`;
     case "quiz_vs_calls":
-      return `${expertOpener}discovery calls are expensive on time and depend on you being on the phone before anything useful happens. A quiz delivers the diagnostic part instantly and at scale, so ${aud} arrive at any later conversation already self-qualified, with context, and warmer.`;
+      return `${expertOpener}discovery calls are expensive on time and depend on you being on the phone before anything useful happens.\n\nA quiz delivers the diagnostic part instantly and at scale, so ${aud} arrive at any later conversation already self-qualified, with context, and warmer.`;
     case "quiz_vs_checklist":
-      return `A checklist is shallow and generic — it gives ${aud} the same boxes everyone else gets and asks them to apply it themselves. A quiz asks for explicit choices and uses those answers to produce a result they could not have reached alone, and that asymmetry is what makes them lean in instead of skim.`;
+      return `A checklist is shallow and generic — it gives ${aud} the same boxes everyone else gets and asks them to apply it themselves.\n\nA quiz asks for explicit choices and uses those answers to produce a result they could not have reached alone, and that asymmetry is what makes them lean in instead of skim.`;
     case "quiz_prequalifies":
-      return `Because a quiz captures present state, preferred future and the pitfall in between, it segments ${aud} automatically before they ever land on your challenge page. The people who opt into the 3-day challenge already match the profile, so the room is warmer and the work is easier.`;
+      return `Because a quiz captures present state, preferred future and the pitfall in between, it segments ${aud} automatically before they ever land on your challenge page.\n\nThe people who opt into the 3-day challenge already match the profile, so the room is warmer and the work is easier.`;
     case "quiz_vs_webinar":
-      return `${expertOpener}a free webinar asks ${aud} for 45 to 90 minutes of attention before any personalised value is delivered — that is a big ask from a cold lead. A quiz inverts the trade: it returns an accurate reflection in under three minutes, and trust gets built by that accuracy, not by airtime.`;
+      return `${expertOpener}a free webinar asks ${aud} for 45 to 90 minutes of attention before any personalised value is delivered — that is a big ask from a cold lead.\n\nA quiz inverts the trade: it returns an accurate reflection in under three minutes, and trust gets built by that accuracy, not by airtime.`;
     default:
       return `${expertOpener}compared to other lead magnets, a quiz returns a personalised next step for ${aud} in under three minutes — that is where the trust is earned.`;
   }

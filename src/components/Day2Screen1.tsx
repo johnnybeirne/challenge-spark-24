@@ -175,12 +175,16 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
               <div className="h-3 rounded bg-muted w-9/12" />
             </div>
           ) : (
-            <p className="text-sm sm:text-base leading-relaxed text-foreground whitespace-pre-line" aria-live="polite">
-              {typed}
-              {!typingDone && (
-                <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
-              )}
-            </p>
+            <div className="space-y-4" aria-live="polite">
+              {typed.split(/\n\n+/).map((para, idx, arr) => (
+                <p key={idx} className="text-sm sm:text-base leading-relaxed text-foreground">
+                  {para}
+                  {idx === arr.length - 1 && !typingDone && (
+                    <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
+                  )}
+                </p>
+              ))}
+            </div>
           )}
           {!isLoading && typingDone && (
             isRead ? (

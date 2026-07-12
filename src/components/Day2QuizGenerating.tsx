@@ -325,28 +325,81 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         </div>
 
 
-        {/* Logo mark animation — gentle breathe + subtle sway */}
+        {/* Logo mark — sequential stroke draw-on: trunk → canopy → seed */}
         <style>{`
-          @keyframes leadtree-breathe {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50%      { transform: scale(1.08) rotate(-2deg); }
+          .leadtree-draw path,
+          .leadtree-draw circle {
+            fill: transparent;
+            stroke-linecap: round;
+            stroke-linejoin: round;
           }
-          @keyframes leadtree-leaf-glow {
-            0%, 100% { opacity: 1; }
-            50%      { opacity: 0.65; }
+          @keyframes lt-trunk-draw  { 0%{stroke-dashoffset:var(--len);} 25%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-canopy-draw { 0%,25%{stroke-dashoffset:var(--len);} 75%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-seed-draw   { 0%,75%{stroke-dashoffset:var(--len);} 92%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-seed-fill   { 0%,88%{fill:transparent;} 100%{fill:#86EFAC;} }
+          @keyframes lt-canopy-fill { 0%,80%{fill:transparent;} 100%{fill:#22C55E;} }
+
+          .leadtree-draw .lt-trunk {
+            stroke-dasharray: var(--len);
+            stroke-dashoffset: var(--len);
+            animation: lt-trunk-draw 3s ease-in-out infinite;
           }
-          .leadtree-breathe {
-            animation: leadtree-breathe 2.4s ease-in-out infinite;
-            transform-origin: 12px 20px;
+          .leadtree-draw .lt-canopy {
+            stroke-dasharray: var(--len);
+            stroke-dashoffset: var(--len);
+            animation:
+              lt-canopy-draw 3s ease-in-out infinite,
+              lt-canopy-fill 3s ease-in-out infinite;
           }
-          .leadtree-breathe .lt-leaf {
-            animation: leadtree-leaf-glow 2.4s ease-in-out infinite;
-            transform-origin: center;
+          .leadtree-draw .lt-seed {
+            stroke-dasharray: var(--len);
+            stroke-dashoffset: var(--len);
+            animation:
+              lt-seed-draw 3s ease-in-out infinite,
+              lt-seed-fill 3s ease-in-out infinite;
           }
         `}</style>
         <div className="mb-8 flex items-center justify-center">
-          <LeadTreeIcon size={96} className="leadtree-breathe" />
+          <svg
+            width={96}
+            height={96}
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            className="leadtree-draw"
+            aria-hidden="true"
+          >
+            {/* Trunk — draws first */}
+            <path
+              className="lt-trunk"
+              d="M12 22 L12 16"
+              stroke="#16A34A"
+              strokeWidth={2}
+              pathLength={10}
+              style={{ ["--len" as any]: 10 }}
+            />
+            {/* Canopy / leaf silhouette — draws second */}
+            <path
+              className="lt-canopy"
+              d="M12 2 C 9 6 5 9 5 13 c 0 2.5 1.5 4.5 4 5.5 V 22 h 6 v -3.5 c 2.5 -1 4 -3 4 -5.5 0 -4 -4 -7 -7 -11 z"
+              stroke="#16A34A"
+              strokeWidth={1.5}
+              pathLength={100}
+              style={{ ["--len" as any]: 100 }}
+            />
+            {/* Seed dot — draws last */}
+            <circle
+              className="lt-seed"
+              cx={12}
+              cy={10}
+              r={2}
+              stroke="#22C55E"
+              strokeWidth={1.25}
+              pathLength={20}
+              style={{ ["--len" as any]: 20 }}
+            />
+          </svg>
         </div>
+
 
 
         {/* Status message */}

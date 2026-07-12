@@ -299,14 +299,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     }, REVEAL_FADE_MS);
   };
 
-  // First bead has a small additional delay vs. the rest, per spec.
-  const [started, setStarted] = useState(false);
-  useEffect(() => {
-    const t = window.setTimeout(() => setStarted(true), FIRST_BEAD_DELAY_MS);
-    return () => window.clearTimeout(t);
-  }, []);
-
-  const stepNumber = Math.min(idx + 1, BEADS.length);
+  const stepNumber = Math.min(idx + 1, TOTAL_STEPS);
 
   return (
     <div

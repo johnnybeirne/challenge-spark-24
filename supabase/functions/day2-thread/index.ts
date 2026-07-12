@@ -304,15 +304,15 @@ function fallbackInsight(key: string, p: ReturnType<typeof builderProfile>): str
   const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : fn;
   switch (key) {
     case "audience_fit":
-      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand. A quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
+      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand.\n\nA quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
     case "problem_gap":
-      return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis. Your quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
+      return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis.\n\nYour quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
     case "share_trigger":
-      return `${aud} share a quiz result when it names them more accurately than they could name themselves. Personalised results turn into identity statements, and identity statements travel.`;
+      return `${aud} share a quiz result when it names them more accurately than they could name themselves.\n\nPersonalised results turn into identity statements, and identity statements travel.`;
     case "superpower_question":
-      return `Your superpower — ${sp} — becomes a quiz question by measuring the observable behaviour it acts on, not the opinion behind it. That single question reveals the pitfall only you are positioned to resolve.`;
+      return `Your superpower — ${sp} — becomes a quiz question by measuring the observable behaviour it acts on, not the opinion behind it.\n\nThat single question reveals the pitfall only you are positioned to resolve.`;
     case "buy_decision":
-      return `${aud} invest when they can see their present state, their preferred future and the pitfall in between in one glance. The quiz is the mirror that turns that tension into a next step that feels achievable.`;
+      return `${aud} invest when they can see their present state, their preferred future and the pitfall in between in one glance.\n\nThe quiz is the mirror that turns that tension into a next step that feels achievable.`;
     default:
       return `${fn}quiz marketing works for ${aud} because it mirrors the conversation already in their head and hands them the next clear step.`;
   }

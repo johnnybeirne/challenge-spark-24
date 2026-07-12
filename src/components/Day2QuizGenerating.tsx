@@ -325,85 +325,29 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         </div>
 
 
-        {/* Logo mark draw-on animation */}
+        {/* Logo mark animation — gentle breathe + subtle sway */}
         <style>{`
-          @keyframes leadtree-draw {
-            to { stroke-dashoffset: 0; }
+          @keyframes leadtree-breathe {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50%      { transform: scale(1.08) rotate(-2deg); }
           }
-          .leadtree-anim path,
-          .leadtree-anim circle {
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: var(--len, 100);
-            stroke-dashoffset: var(--len, 100);
-            animation: leadtree-draw 0.5s ease-in-out forwards;
-            animation-iteration-count: infinite;
-            animation-duration: 3s;
+          @keyframes leadtree-leaf-glow {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: 0.65; }
           }
-          /* Sequential timing across a 3s loop: 2s draw + 1s hold.
-             Each part draws over 0.5s of the 3s cycle (≈16.67%). */
-          .leadtree-anim .lt-trunk {
-            animation-name: leadtree-draw;
-            animation-timing-function: ease-in-out;
-            /* draw 0–0.5s, hold rest via keyframes */
+          .leadtree-breathe {
+            animation: leadtree-breathe 2.4s ease-in-out infinite;
+            transform-origin: 12px 20px;
           }
-          @keyframes lt-trunk-kf   { 0%{stroke-dashoffset:var(--len);} 16.67%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-branchL-kf { 0%,16.67%{stroke-dashoffset:var(--len);} 33.33%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-branchR-kf { 0%,33.33%{stroke-dashoffset:var(--len);} 50%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-leaves-kf  { 0%,50%{stroke-dashoffset:var(--len);} 66.67%,100%{stroke-dashoffset:0;} }
-          .leadtree-anim .lt-trunk   { animation-name: lt-trunk-kf; }
-          .leadtree-anim .lt-branchL { animation-name: lt-branchL-kf; }
-          .leadtree-anim .lt-branchR { animation-name: lt-branchR-kf; }
-          .leadtree-anim .lt-leaves  { animation-name: lt-leaves-kf; }
+          .leadtree-breathe .lt-leaf {
+            animation: leadtree-leaf-glow 2.4s ease-in-out infinite;
+            transform-origin: center;
+          }
         `}</style>
         <div className="mb-8 flex items-center justify-center">
-          <svg
-            width={96}
-            height={96}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            className="leadtree-anim"
-            aria-hidden="true"
-          >
-            {/* Trunk — draws bottom to top */}
-            <path
-              className="lt-trunk"
-              d="M12 22 L12 14"
-              stroke="#16A34A"
-              strokeWidth="2"
-              style={{ ["--len" as any]: 8 }}
-              pathLength={8}
-            />
-            {/* Left branch */}
-            <path
-              className="lt-branchL"
-              d="M12 16 L7 11"
-              stroke="#16A34A"
-              strokeWidth="1.75"
-              style={{ ["--len" as any]: 8 }}
-              pathLength={8}
-            />
-            {/* Right branch */}
-            <path
-              className="lt-branchR"
-              d="M12 15 L17 10"
-              stroke="#16A34A"
-              strokeWidth="1.75"
-              style={{ ["--len" as any]: 8 }}
-              pathLength={8}
-            />
-            {/* Leaves / canopy — drawn last */}
-            <path
-              className="lt-leaves"
-              d="M12 2 C 9 6 5 9 5 13 c 0 2.5 1.5 4.5 4 5.5 M12 2 c 3 4 7 7 7 11 0 2.5 -1.5 4.5 -4 5.5"
-              stroke="#22C55E"
-              strokeWidth="2"
-              style={{ ["--len" as any]: 40 }}
-              pathLength={40}
-            />
-          </svg>
+          <LeadTreeIcon size={96} className="leadtree-breathe" />
         </div>
+
 
         {/* Status message */}
         <div className="flex h-6 items-center justify-center">

@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { getCompletionDayName } from "@/lib/utils";
 
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
@@ -98,7 +99,7 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
-  const completionDayName = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });
+  const completionDayName = getCompletionDayName();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {

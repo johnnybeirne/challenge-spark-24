@@ -931,13 +931,12 @@ const QuizResultScreen = ({
         <section className="mb-10">
           <div className="flex items-start gap-5 sm:gap-6">
             <div className="relative shrink-0">
-              <img
-                src={aiAvatar}
-                alt={advisorName}
-                width={88}
-                height={88}
-                className="w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-2 ring-foreground/10"
-              />
+              <div
+                aria-label={advisorName}
+                className="w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-2 ring-foreground/10 bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center text-primary-foreground font-bold text-[var(--h1-size)] select-none"
+              >
+                {(ownerFirstName || "?").charAt(0).toUpperCase()}
+              </div>
               <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-background" />
             </div>
             <div className="flex-1 min-w-0 pt-1">

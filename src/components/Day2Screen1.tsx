@@ -594,25 +594,26 @@ const Day2Screen1 = () => {
           <div className="h-px w-full bg-border" />
           <Card>
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg">
+              <CardTitle style={{ fontSize: "var(--h3-size)" }}>
                 Want to go deeper on quiz funnel strategy?
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                 The full course is <span className="font-bold text-foreground">$497</span>. Invite three friends and it is yours free, or upgrade now and skip the invites.
               </p>
               <div className="space-y-2">
                 <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5 bg-[#534AB7] hover:bg-[#534AB7]/90 text-white">
                   <Link to="/referrals">
-                    <span className="text-base font-bold">Invite 3 friends, unlock free</span>
-                    <span className="text-xs font-medium opacity-90">Worth $497</span>
+                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Invite 3 friends, unlock free</span>
+                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>Worth $497</span>
                   </Link>
                 </Button>
                 <div className="text-center">
                   <Link
                     to="/upgrade"
-                    className="text-xs text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                    className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                    style={{ fontSize: "var(--body-size)" }}
                   >
                     or upgrade now for $497 &rarr;
                   </Link>

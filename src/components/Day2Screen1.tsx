@@ -571,7 +571,10 @@ const Day2Screen1 = () => {
                 </p>
               </div>
               <p className="mb-3 text-xs sm:text-sm text-muted-foreground">
-                Download your quiz right here, or grab it any time from Your Assets on your dashboard.
+                Download your quiz right here, or grab it any time from Your Assets on your dashboard.{" "}
+                <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
+                  Go to Your Assets &rarr;
+                </Link>
               </p>
               <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs.day2_s2_quiz} />
             </div>

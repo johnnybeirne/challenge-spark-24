@@ -11,19 +11,7 @@ const MESSAGE_MS = 1800;
 const FADE_MS = 350;
 const REVEAL_FADE_MS = 450;
 const AUDIO_FADE_OUT_SECONDS = 1.4;
-const FIRST_BEAD_DELAY_MS = 400;
-
-// Bead palette + geometry (per design spec).
-const BEADS = [
-  { angle: -90, color: "#E85D4A", r: 13 },
-  { angle: -18, color: "#F5A623", r: 11 },
-  { angle: 54, color: "#4CAF82", r: 13 },
-  { angle: 126, color: "#534AB7", r: 11 },
-  { angle: 198, color: "#29B6D4", r: 12 },
-];
-const TRACK_CX = 110;
-const TRACK_CY = 110;
-const TRACK_R = 80;
+const TOTAL_STEPS = 5;
 
 
 const readDay1 = (aiOutputs: Record<string, string> | undefined) => {

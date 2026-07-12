@@ -487,7 +487,8 @@ const Day2Screen1 = () => {
             href="/assessment"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
+            style={{ fontSize: "var(--body-size)" }}
           >
             <Eye className="h-4 w-4" />
             Take the quiz for this challenge again

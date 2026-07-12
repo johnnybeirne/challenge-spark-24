@@ -528,9 +528,9 @@ function fallbackCards(p: ReturnType<typeof builderProfile>) {
   const arcPhrase2 = arc ? ` That is ${arc} territory.` : "";
   const arcPhrase3 = arc ? ` This is where an ${arc} like you wins.` : "";
   return {
-    card1: `${open}three days is a lot to ask of someone who has never met you. A two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.${arcPhrase1} ${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
-    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened. Yours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.${arcPhrase2} They do not have to imagine what you can do; they get to feel it.`,
-    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers. Three days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.${arcPhrase3}`,
+    card1: `${open}three days is a lot to ask of someone who has never met you.\n\nA two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.${arcPhrase1}\n\n${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
+    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened.\n\nYours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.${arcPhrase2}\n\nThey do not have to imagine what you can do; they get to feel it.`,
+    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers.\n\nThree days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.${arcPhrase3}`,
   };
 }
 

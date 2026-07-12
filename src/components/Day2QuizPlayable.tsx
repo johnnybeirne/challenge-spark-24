@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, CheckCircle2, Trophy, RefreshCw, Share2, Play,
   Camera, Target, Compass, Lightbulb, AlertTriangle, Search,
@@ -6,7 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
+import { cn, getCompletionDayName } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,6 +16,8 @@ import quizHeroPortrait from "@/assets/quiz-hero-portrait.jpg";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
+import TypingDots from "@/components/TypingDots";
+import LearningAssistant from "@/components/LearningAssistant";
 
 import { HelpTip } from "@/components/HelpTip";
 import { useQuizPreviewTips } from "@/hooks/useQuizPreviewTips";
@@ -578,53 +581,15 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Result screen ─────────────
   if (result) {
     return (
-      <Frame>
-        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-            Your archetype
-          </p>
-
-          <div className="mt-5 flex items-center justify-center">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-              <Trophy className="h-8 w-8" />
-            </div>
-          </div>
-
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            You are
-          </p>
-          <h2 className="mt-1 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight text-foreground">
-            {result.tier.name}
-          </h2>
-          <p className="mt-4 text-[var(--body-size)] sm:text-[var(--body-size)] text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            {result.tier.description}
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Button variant="outline" className="flex-1" onClick={reset}>
-              <RefreshCw className="h-4 w-4" /> Try again
-            </Button>
-            <Button
-              className="flex-1"
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({ title: quiz.quizTitle, text: `I'm a ${result.tier.name}.` }).catch(() => {});
-                } else {
-                  toast.success("Result ready to share");
-                }
-              }}
-            >
-              <Share2 className="h-4 w-4" /> Share result
-            </Button>
-          </div>
-
-          <p className="mt-6 text-xs text-muted-foreground">
-            This is exactly what {d1.audience} will see after taking your quiz.
-          </p>
-        </div>
-      </Frame>
+      <QuizResultScreen
+        quiz={quiz}
+        result={result}
+        ownerFirstName={firstName}
+        challengeName={identity.isPersonalised ? identity.shortTitle : "3-Day Challenge"}
+      />
     );
   }
+
 
 
   // ───────────── Question screen ─────────────
@@ -697,6 +662,373 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         </div>
       </div>
     </Frame>
+  );
+};
+
+// ═════════════ Result screen (Results-page structure) ═════════════
+const TYPING_SPEED_MS = 18;
+const THINKING_MS = 900;
+const BETWEEN_MESSAGES_MS = 500;
+
+const ResultTypewriter = ({
+  text,
+  onDone,
+  skip = false,
+}: {
+  text: string;
+  onDone?: () => void;
+  skip?: boolean;
+}) => {
+  const [shown, setShown] = useState("");
+  const onDoneRef = useRef(onDone);
+  const doneRef = useRef(false);
+  onDoneRef.current = onDone;
+
+  useEffect(() => {
+    if (doneRef.current) return;
+    if (skip) {
+      setShown(text);
+      doneRef.current = true;
+      onDoneRef.current?.();
+      return;
+    }
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setShown(text);
+      doneRef.current = true;
+      onDoneRef.current?.();
+      return;
+    }
+    setShown("");
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) {
+        window.clearInterval(id);
+        doneRef.current = true;
+        onDoneRef.current?.();
+      }
+    }, TYPING_SPEED_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, skip]);
+
+  return (
+    <span>
+      {shown}
+      {shown.length < text.length && !skip && (
+        <span className="ml-0.5 inline-block h-[0.9em] w-[2px] animate-pulse bg-foreground/40 align-[-0.12em]" />
+      )}
+    </span>
+  );
+};
+
+type ResultData = {
+  counts: Record<Tier, number>;
+  winning: Tier;
+  tier: QuizTier;
+};
+
+const QuizResultScreen = ({
+  quiz,
+  result,
+  ownerFirstName,
+  challengeName,
+}: {
+  quiz: QuizDraft;
+  result: ResultData;
+  ownerFirstName: string;
+  challengeName: string;
+}) => {
+  const navigate = useNavigate();
+  const completionDayName = getCompletionDayName();
+
+  // Score: low=1, mid=2, high=3 across all questions, normalised to 0-100.
+  const total = quiz.questions.length;
+  const rawScore = result.counts.low * 1 + result.counts.mid * 2 + result.counts.high * 3;
+  const percentageScore = total > 0 ? Math.round((rawScore / (total * 3)) * 100) : 0;
+
+  const [animatedScore, setAnimatedScore] = useState(0);
+  const [animatedBar, setAnimatedBar] = useState(0);
+
+  useEffect(() => {
+    const duration = 1100;
+    const start = performance.now();
+    let frameId: number;
+    const tick = (timestamp: number) => {
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedScore(Math.round(percentageScore * eased));
+      setAnimatedBar(percentageScore * eased);
+      if (progress < 1) frameId = requestAnimationFrame(tick);
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [percentageScore]);
+
+  const tier = result.winning;
+  const accent =
+    tier === "high"
+      ? {
+          text: "text-emerald-500",
+          bar: "bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600",
+          glow: "shadow-[0_0_40px_-8px_hsl(152_76%_45%/0.55)]",
+        }
+      : tier === "mid"
+      ? {
+          text: "text-blue-500",
+          bar: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
+          glow: "shadow-[0_0_40px_-8px_hsl(217_91%_60%/0.55)]",
+        }
+      : {
+          text: "text-amber-500",
+          bar: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
+          glow: "shadow-[0_0_40px_-8px_hsl(28_95%_55%/0.55)]",
+        };
+
+  // Advisor message paragraphs: archetype title first, then description sentences.
+  const paragraphs = useMemo(() => {
+    const desc = (result.tier.description || "").trim();
+    const sentences = desc
+      .split(/(?<=[.!?])\s+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return [result.tier.name, ...sentences].filter(Boolean);
+  }, [result.tier.name, result.tier.description]);
+
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [thinking, setThinking] = useState(true);
+  const [skipTyping, setSkipTyping] = useState(false);
+  const [sequenceComplete, setSequenceComplete] = useState(false);
+  const revealTimerRef = useRef<number | null>(null);
+  const skipTypingRef = useRef(skipTyping);
+  skipTypingRef.current = skipTyping;
+
+  useEffect(() => {
+    if (paragraphs.length === 0) return;
+    setVisibleCount(0);
+    setThinking(true);
+    setSkipTyping(false);
+    setSequenceComplete(false);
+    if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
+    revealTimerRef.current = window.setTimeout(() => {
+      setVisibleCount(1);
+      setThinking(false);
+      revealTimerRef.current = null;
+    }, THINKING_MS);
+    return () => {
+      if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
+    };
+  }, [paragraphs.length]);
+
+  const handleParagraphDone = (index: number) => {
+    if (skipTypingRef.current || index + 1 >= paragraphs.length) {
+      setSequenceComplete(true);
+      return;
+    }
+    if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
+    setThinking(true);
+    revealTimerRef.current = window.setTimeout(() => {
+      setVisibleCount((c) => Math.max(c, index + 2));
+      setThinking(false);
+      revealTimerRef.current = null;
+    }, BETWEEN_MESSAGES_MS);
+  };
+
+  const handleSkip = () => {
+    if (sequenceComplete) return;
+    setSkipTyping(true);
+    setSequenceComplete(true);
+    setVisibleCount(paragraphs.length);
+    setThinking(false);
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
+  };
+
+  const paragraphsToRender = paragraphs.slice(0, visibleCount);
+
+  const goJoin = () => navigate("/challenge/join");
+  const ctaLabel = `Join the ${challengeName} today and be set up by ${completionDayName}`;
+
+  const urgencyLine =
+    tier === "high"
+      ? `You are closer than you think. Start now and have this in place by ${completionDayName}.`
+      : tier === "mid"
+      ? `Don't let another month pass on the same plateau. Start now and have this in place by ${completionDayName}.`
+      : `Your first real win is 3 days away. Start now and have this in place by ${completionDayName}.`;
+
+  const advisorName = `${ownerFirstName} AI`;
+
+  const preQuestion =
+    tier === "high"
+      ? `How do I scale what's already working?`
+      : tier === "mid"
+      ? `How do I turn what I have into consistent results?`
+      : `What's the fastest way to build momentum from here?`;
+
+  const ask = async (_q: string): Promise<string> => {
+    const opener =
+      tier === "high"
+        ? `You are already ahead of most. The ${challengeName} sharpens what's working so it compounds instead of stalling.`
+        : tier === "mid"
+        ? `You have the pieces. The ${challengeName} shows you how to connect them so results become predictable, not sporadic.`
+        : `Start with one clear next move. The ${challengeName} walks you through it step by step so you get a real win in days, not months.`;
+    return `${opener}\n\nOver three focused days you'll get the exact plan, the assets, and the confidence to put it in place. You'll be set up by ${completionDayName}.`;
+  };
+
+  return (
+    <div className="relative w-full min-h-full bg-background">
+      <SampleQuizBanner />
+      <div className="flex min-h-screen flex-col px-6 pt-16 pb-24 max-w-2xl mx-auto sm:px-6 lg:px-8">
+        {/* SECTION 1 — SCORE REVEAL */}
+        <section className="mb-16 text-center animate-fade-in">
+          <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+            Your {quiz.quizTitle} Score
+          </p>
+
+          <div className="relative">
+            <div className={`text-[var(--h1-size)] font-black leading-none tracking-tighter ${accent.text}`}>
+              {animatedScore}
+            </div>
+            <p className="mt-2 text-[var(--body-size)] font-medium uppercase tracking-[0.25em] text-muted-foreground">
+              out of 100
+            </p>
+          </div>
+
+          <div className="mx-auto mt-10 max-w-md">
+            <div
+              className="h-3 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
+              role="meter"
+              aria-valuenow={percentageScore}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Quiz score"
+            >
+              <div
+                className={`h-full rounded-full ${accent.bar} ${accent.glow} transition-[width] duration-100 ease-out`}
+                style={{ width: `${animatedBar}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
+              Based on your answers...
+            </p>
+            <h1 className={`mt-3 text-[var(--h1-size)] font-black tracking-tight ${accent.text}`}>
+              {result.tier.name}
+            </h1>
+            <p className="mt-3 text-[var(--body-size)] sm:text-[var(--h2-size)] text-muted-foreground">
+              {(result.tier.description || "").split(/(?<=[.!?])\s+/)[0]}
+            </p>
+          </div>
+        </section>
+
+        {/* SECTION 2 — ADVISOR MESSAGE */}
+        <section className="mb-10">
+          <div className="flex items-start gap-5 sm:gap-6">
+            <div className="relative shrink-0">
+              <img
+                src={aiAvatar}
+                alt={advisorName}
+                width={88}
+                height={88}
+                className="w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-2 ring-foreground/10"
+              />
+              <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-background" />
+            </div>
+            <div className="flex-1 min-w-0 pt-1">
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                {advisorName}
+              </div>
+              <div className={`relative ${!sequenceComplete ? "cursor-pointer" : ""}`} onClick={handleSkip}>
+                <div className="invisible space-y-6" aria-hidden="true">
+                  {paragraphs.map((text, i) => (
+                    <p
+                      key={`ph-${i}`}
+                      className={`whitespace-pre-line ${
+                        i === 0
+                          ? "text-[var(--h1-size)] font-semibold leading-[1.25] tracking-tight"
+                          : "text-[var(--h2-size)] leading-[1.6]"
+                      }`}
+                    >
+                      {text}
+                    </p>
+                  ))}
+                </div>
+                <div className="absolute inset-0 space-y-6">
+                  {paragraphsToRender.map((text, i) => {
+                    const isLast = i === paragraphsToRender.length - 1;
+                    const isLead = i === 0;
+                    return (
+                      <p
+                        key={i}
+                        className={`whitespace-pre-line text-foreground/90 ${
+                          isLead
+                            ? "text-[var(--h1-size)] font-semibold leading-[1.25] tracking-tight text-foreground"
+                            : "text-[var(--h2-size)] leading-[1.6]"
+                        }`}
+                      >
+                        {isLast ? (
+                          <ResultTypewriter text={text} onDone={() => handleParagraphDone(i)} skip={skipTyping} />
+                        ) : (
+                          <span>{text}</span>
+                        )}
+                      </p>
+                    );
+                  })}
+                  {thinking && (
+                    <div className="pt-1">
+                      <TypingDots />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3 — CTA */}
+        {sequenceComplete && (
+          <section className="mb-10 space-y-4 pt-4 animate-fade-in">
+            <Button
+              size="lg"
+              onClick={goJoin}
+              className="h-[72px] w-full gap-3 rounded-2xl text-[var(--h2-size)] font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
+            >
+              {ctaLabel}
+              <ArrowRight className="w-6 h-6" />
+            </Button>
+            <p className="text-center text-[var(--body-size)] sm:text-[var(--h2-size)] font-medium text-muted-foreground">
+              {urgencyLine}
+            </p>
+          </section>
+        )}
+
+        {/* SECTION 4 — ADVISOR INTERACTION */}
+        {sequenceComplete && (
+          <section className="mb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
+            <div className="space-y-4">
+              <h2 className="text-[var(--h2-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">
+                See what the {challengeName} can do for you
+              </h2>
+              <LearningAssistant
+                topic={`${result.tier.name} advisor`}
+                prompts={[preQuestion]}
+                ask={ask}
+                autoOpen={false}
+                typewriter={true}
+                onJoinCtaClick={goJoin}
+                limitToOneQuestion={true}
+              />
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ActivityFeed from "@/components/ActivityFeed";
 import { trackEvent } from "@/lib/analytics";
+import { getCompletionDayName } from "@/lib/utils";
 
 const Section = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <section className={`px-5 py-16 sm:px-6 md:py-24 lg:px-8 ${className}`}>

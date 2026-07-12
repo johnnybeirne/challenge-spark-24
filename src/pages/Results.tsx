@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { getCompletionDayName } from "@/lib/utils";
 
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";

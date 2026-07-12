@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronDown, Lock, Eye, ExternalLink, Sparkles, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Lock, Eye, ExternalLink, Sparkles, Loader2, Download } from "lucide-react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

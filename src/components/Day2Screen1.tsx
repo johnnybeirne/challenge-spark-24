@@ -181,7 +181,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           ) : (
             <div className="space-y-4" aria-live="polite">
               {typed.split(/\n\n+/).map((para, idx, arr) => (
-                <p key={idx} className="text-sm sm:text-base leading-relaxed text-foreground">
+                <p key={idx} className="leading-relaxed text-foreground" style={{ fontSize: "var(--body-size)" }}>
                   {para}
                   {idx === arr.length - 1 && !typingDone && (
                     <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
@@ -192,11 +192,11 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           )}
           {!isLoading && typingDone && (
             isRead ? (
-              <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+              <p className="inline-flex items-center gap-1.5 font-semibold text-primary" style={{ fontSize: "var(--body-size)" }}>
                 <Check className="h-3.5 w-3.5" /> Marked as read
               </p>
             ) : (
-              <Button type="button" size="sm" variant="outline" onClick={onMarkRead}>
+              <Button type="button" size="sm" variant="outline" onClick={onMarkRead} style={{ fontSize: "var(--body-size)" }}>
                 Mark as read to continue
               </Button>
             )

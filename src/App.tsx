@@ -268,6 +268,7 @@ const App = () => (
                 <Route path="jv-partners" element={<AdminJvPartners />} />
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
+                <Route path="typography" element={<AdminTypography />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

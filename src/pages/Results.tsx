@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { useDeadline } from "@/hooks/useDeadline";
+
 
 const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
@@ -98,7 +98,7 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
-  const deadline = useDeadline();
+  const completionDayName = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {
@@ -283,12 +283,12 @@ const Results = () => {
       ? "mid"
       : "low";
   const urgencyDefaults = {
-    low: `Your first real win is 3 days away — don't put this off. Start now and have this in place by ${deadline.dayName}.`,
-    mid: `Don't let another month pass on the same plateau. Start now and have this in place by ${deadline.dayName}.`,
-    high: `Spots are limited — the next cohort starts in days, not weeks. Start now and have this in place by ${deadline.dayName}.`,
+    low: `Your first real win is 3 days away — don't put this off. Start now and have this in place by ${completionDayName}.`,
+    mid: `Don't let another month pass on the same plateau. Start now and have this in place by ${completionDayName}.`,
+    high: `Spots are limited — the next cohort starts in days, not weeks. Start now and have this in place by ${completionDayName}.`,
   } as const;
   const urgencyTemplate = tGlobal(`urgency.results_${urgencyTier}`, urgencyDefaults[urgencyTier]);
-  const urgencyLine = deadline.render(urgencyTemplate);
+  const urgencyLine = urgencyTemplate.replace(/\{day\}/g, completionDayName);
 
   let entryIntent: string | null = null;
   let pendingCoupon: string | null = null;
@@ -299,7 +299,7 @@ const Results = () => {
     ? FREE_TRAINING_COURSE_PATH
     : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
-  const challengeLabel = `Join the 3-Day Challenge today and be set up by ${deadline.dayName}.`;
+  const challengeLabel = `Join the 3-Day Challenge today and be set up by ${completionDayName}.`;
 
   const cta = (() => {
     if (entryIntent === "free_training") {

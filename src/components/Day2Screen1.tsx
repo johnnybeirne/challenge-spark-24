@@ -544,7 +544,8 @@ const Day2Screen1 = () => {
               {showLockHint && (
                 <div
                   role="status"
-                  className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 text-sm font-semibold shadow-xl animate-fade-in"
+                  className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 font-semibold shadow-xl animate-fade-in"
+                  style={{ fontSize: "var(--body-size)" }}
                 >
                   Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.
                   <span
@@ -558,7 +559,8 @@ const Day2Screen1 = () => {
                 onClick={triggerLockHint}
                 aria-disabled="true"
                 title="Mark all three sections as read to unlock"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
+                style={{ fontSize: "var(--body-size)" }}
               >
                 <Lock className="h-4 w-4" />
                 Mark 1, 2 & 3 as read to generate your quiz

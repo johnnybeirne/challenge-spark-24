@@ -165,8 +165,8 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
               className="h-8 w-8 rounded-full object-cover border border-border"
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-xs font-semibold text-foreground">Johnny B AI</span>
-              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <span className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>Johnny B AI</span>
+              <span className="uppercase tracking-wide text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                 {typingDone ? "Message" : "Thinking…"}
               </span>
             </div>

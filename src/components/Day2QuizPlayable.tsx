@@ -1032,6 +1032,7 @@ const QuizResultScreen = ({
   );
 };
 
+const ReadinessRing = ({ pct }: { pct: number }) => {
   const r = 56;
   const c = 2 * Math.PI * r;
   const offset = c - (pct / 100) * c;

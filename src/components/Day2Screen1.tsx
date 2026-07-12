@@ -126,15 +126,19 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           <div className="flex items-center gap-3 min-w-0">
             <span
               className={cn(
-                "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black",
+                "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-black",
                 isLocked
                   ? "bg-muted text-muted-foreground border border-border"
                   : "bg-[#534AB7] text-white",
               )}
+              style={{ fontSize: "var(--body-size)" }}
             >
               {isLocked ? <Lock className="h-3.5 w-3.5" /> : isRead ? <Check className="h-3.5 w-3.5" /> : index}
             </span>
-            <CardTitle className={cn("text-base sm:text-lg leading-snug", isLocked && "text-muted-foreground")}>
+            <CardTitle
+              className={cn("leading-snug", isLocked && "text-muted-foreground")}
+              style={{ fontSize: "var(--h3-size)" }}
+            >
               {title}
             </CardTitle>
           </div>

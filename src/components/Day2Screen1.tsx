@@ -506,7 +506,8 @@ const Day2Screen1 = () => {
                 onClick={handleGenerateQuiz}
                 disabled={quizGenerating}
                 aria-busy={quizGenerating}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+                style={{ fontSize: "var(--body-size)" }}
               >
                 {quizGenerating ? (
                   <>
@@ -525,10 +526,10 @@ const Day2Screen1 = () => {
                 <div className="flex items-start gap-3">
                   <Download className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden="true" />
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-foreground">
+                    <p className="font-bold text-foreground" style={{ fontSize: "var(--body-size)" }}>
                       Your quiz downloads will land in Your Assets
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                       Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.{" "}
                       <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
                         Go to Your Assets &rarr;

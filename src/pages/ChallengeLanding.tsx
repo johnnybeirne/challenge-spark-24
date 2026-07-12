@@ -174,6 +174,9 @@ const ChallengeLanding = () => {
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
             </div>
+            <p className="mt-3 text-center text-sm text-muted-foreground lg:text-left">
+              Start today and have this in place by {completionDayName}.
+            </p>
             <ActivityFeed title="Live builder activity" className="mx-auto mt-8 max-w-md text-left lg:mx-0" />
           </div>
 

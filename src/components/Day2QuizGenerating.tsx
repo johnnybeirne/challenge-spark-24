@@ -4,25 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { normaliseQuiz } from "@/components/Day2QuizPlayable";
+import { LeadTreeIcon } from "@/components/LeadTreeIcon";
 import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 
 const MESSAGE_MS = 1800;
 const FADE_MS = 350;
 const REVEAL_FADE_MS = 450;
 const AUDIO_FADE_OUT_SECONDS = 1.4;
-const FIRST_BEAD_DELAY_MS = 400;
-
-// Bead palette + geometry (per design spec).
-const BEADS = [
-  { angle: -90, color: "#E85D4A", r: 13 },
-  { angle: -18, color: "#F5A623", r: 11 },
-  { angle: 54, color: "#4CAF82", r: 13 },
-  { angle: 126, color: "#534AB7", r: 11 },
-  { angle: 198, color: "#29B6D4", r: 12 },
-];
-const TRACK_CX = 110;
-const TRACK_CY = 110;
-const TRACK_R = 80;
+const TOTAL_STEPS = 5;
 
 
 const readDay1 = (aiOutputs: Record<string, string> | undefined) => {
@@ -310,14 +299,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
     }, REVEAL_FADE_MS);
   };
 
-  // First bead has a small additional delay vs. the rest, per spec.
-  const [started, setStarted] = useState(false);
-  useEffect(() => {
-    const t = window.setTimeout(() => setStarted(true), FIRST_BEAD_DELAY_MS);
-    return () => window.clearTimeout(t);
-  }, []);
-
-  const stepNumber = Math.min(idx + 1, BEADS.length);
+  const stepNumber = Math.min(idx + 1, TOTAL_STEPS);
 
   return (
     <div
@@ -343,54 +325,26 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         </div>
 
 
-        {/* Bead animation */}
-        <svg
-          width={220}
-          height={220}
-          viewBox="0 0 220 220"
-          aria-hidden="true"
-          className="mb-8"
-        >
-          <circle
-            cx={TRACK_CX}
-            cy={TRACK_CY}
-            r={TRACK_R}
-            fill="none"
-            stroke="#E8E6E1"
-            strokeWidth={2}
-            strokeDasharray="4 4"
+        {/* Logo mark animation */}
+        <style>{`
+          @keyframes leadtree-grow {
+            from { transform: scale(0.2); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+          @keyframes leadtree-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+        `}</style>
+        <div className="mb-8 flex items-center justify-center">
+          <LeadTreeIcon
+            size={96}
+            aria-hidden="true"
+            style={{
+              animation: "leadtree-grow 0.8s ease-out forwards, leadtree-pulse 2s ease-in-out infinite 0.8s",
+            }}
           />
-          {BEADS.map((b, i) => {
-            const rad = (b.angle * Math.PI) / 180;
-            const cx = TRACK_CX + TRACK_R * Math.cos(rad);
-            const cy = TRACK_CY + TRACK_R * Math.sin(rad);
-            const visible = started && idx >= i;
-            const shineOffset = b.r * 0.35;
-            return (
-              <g key={i}>
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={visible ? b.r : 0}
-                  fill={b.color}
-                  style={{
-                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  }}
-                />
-                <circle
-                  cx={cx - shineOffset}
-                  cy={cy - shineOffset}
-                  r={visible ? b.r * 0.32 : 0}
-                  fill="#ffffff"
-                  opacity={0.3}
-                  style={{
-                    transition: "r 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  }}
-                />
-              </g>
-            );
-          })}
-        </svg>
+        </div>
 
         {/* Status message */}
         <div className="flex h-6 items-center justify-center">
@@ -408,7 +362,7 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
 
         {/* Step counter */}
         <p className="mt-3 text-xs text-muted-foreground/70">
-          Step {stepNumber} of {BEADS.length}
+          Step {stepNumber} of {TOTAL_STEPS}
         </p>
       </div>
     </div>

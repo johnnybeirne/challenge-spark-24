@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, CheckCircle2, Trophy, RefreshCw, Share2, Play,
   Camera, Target, Compass, Lightbulb, AlertTriangle, Search,
@@ -6,7 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
+import { cn, getCompletionDayName } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,6 +16,8 @@ import quizHeroPortrait from "@/assets/quiz-hero-portrait.jpg";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import { getQaState } from "@/lib/qaPreview";
 import aiAvatar from "@/assets/ai-avatar.png";
+import TypingDots from "@/components/TypingDots";
+import LearningAssistant from "@/components/LearningAssistant";
 
 import { HelpTip } from "@/components/HelpTip";
 import { useQuizPreviewTips } from "@/hooks/useQuizPreviewTips";

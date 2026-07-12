@@ -581,53 +581,15 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
   // ───────────── Result screen ─────────────
   if (result) {
     return (
-      <Frame>
-        <div className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in text-center">
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-primary">
-            Your archetype
-          </p>
-
-          <div className="mt-5 flex items-center justify-center">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-              <Trophy className="h-8 w-8" />
-            </div>
-          </div>
-
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            You are
-          </p>
-          <h2 className="mt-1 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight text-foreground">
-            {result.tier.name}
-          </h2>
-          <p className="mt-4 text-[var(--body-size)] sm:text-[var(--body-size)] text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            {result.tier.description}
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Button variant="outline" className="flex-1" onClick={reset}>
-              <RefreshCw className="h-4 w-4" /> Try again
-            </Button>
-            <Button
-              className="flex-1"
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({ title: quiz.quizTitle, text: `I'm a ${result.tier.name}.` }).catch(() => {});
-                } else {
-                  toast.success("Result ready to share");
-                }
-              }}
-            >
-              <Share2 className="h-4 w-4" /> Share result
-            </Button>
-          </div>
-
-          <p className="mt-6 text-xs text-muted-foreground">
-            This is exactly what {d1.audience} will see after taking your quiz.
-          </p>
-        </div>
-      </Frame>
+      <QuizResultScreen
+        quiz={quiz}
+        result={result}
+        ownerFirstName={firstName}
+        challengeName={identity.isPersonalised ? identity.shortTitle : "3-Day Challenge"}
+      />
     );
   }
+
 
 
   // ───────────── Question screen ─────────────

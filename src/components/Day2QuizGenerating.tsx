@@ -325,80 +325,87 @@ const Day2QuizGenerating = ({ onComplete, onError }: Day2QuizGeneratingProps = {
         </div>
 
 
-        {/* Logo mark — sequential stroke draw-on: trunk → canopy → seed */}
+        {/* Logo mark — sapling: roots → stem → left leaf → right leaf → top leaf */}
         <style>{`
-          .leadtree-draw path,
-          .leadtree-draw circle {
+          .leadtree-sapling path {
             fill: transparent;
             stroke-linecap: round;
             stroke-linejoin: round;
+            stroke-dasharray: var(--len);
+            stroke-dashoffset: var(--len);
           }
-          @keyframes lt-trunk-draw  { 0%{stroke-dashoffset:var(--len);} 25%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-canopy-draw { 0%,25%{stroke-dashoffset:var(--len);} 75%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-seed-draw   { 0%,75%{stroke-dashoffset:var(--len);} 92%,100%{stroke-dashoffset:0;} }
-          @keyframes lt-seed-fill   { 0%,88%{fill:transparent;} 100%{fill:#86EFAC;} }
-          @keyframes lt-canopy-fill { 0%,80%{fill:transparent;} 100%{fill:#22C55E;} }
+          @keyframes lt-roots-kf  { 0%{stroke-dashoffset:var(--len);} 15%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-stem-kf   { 0%,15%{stroke-dashoffset:var(--len);} 30%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-leafL-kf  { 0%,30%{stroke-dashoffset:var(--len);} 50%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-leafR-kf  { 0%,50%{stroke-dashoffset:var(--len);} 70%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-leafT-kf  { 0%,70%{stroke-dashoffset:var(--len);} 88%,100%{stroke-dashoffset:0;} }
+          @keyframes lt-leafL-fill { 0%,45%{fill:transparent;} 55%,100%{fill:#8BC34A;} }
+          @keyframes lt-leafR-fill { 0%,65%{fill:transparent;} 75%,100%{fill:#8BC34A;} }
+          @keyframes lt-leafT-fill { 0%,83%{fill:transparent;} 92%,100%{fill:#2E7D32;} }
 
-          .leadtree-draw .lt-trunk {
-            stroke-dasharray: var(--len);
-            stroke-dashoffset: var(--len);
-            animation: lt-trunk-draw 3s ease-in-out infinite;
-          }
-          .leadtree-draw .lt-canopy {
-            stroke-dasharray: var(--len);
-            stroke-dashoffset: var(--len);
-            animation:
-              lt-canopy-draw 3s ease-in-out infinite,
-              lt-canopy-fill 3s ease-in-out infinite;
-          }
-          .leadtree-draw .lt-seed {
-            stroke-dasharray: var(--len);
-            stroke-dashoffset: var(--len);
-            animation:
-              lt-seed-draw 3s ease-in-out infinite,
-              lt-seed-fill 3s ease-in-out infinite;
-          }
+          .leadtree-sapling .lt-roots  { animation: lt-roots-kf 3s ease-in-out infinite; }
+          .leadtree-sapling .lt-stem   { animation: lt-stem-kf 3s ease-in-out infinite; }
+          .leadtree-sapling .lt-leafL  { animation: lt-leafL-kf 3s ease-in-out infinite, lt-leafL-fill 3s ease-in-out infinite; }
+          .leadtree-sapling .lt-leafR  { animation: lt-leafR-kf 3s ease-in-out infinite, lt-leafR-fill 3s ease-in-out infinite; }
+          .leadtree-sapling .lt-leafT  { animation: lt-leafT-kf 3s ease-in-out infinite, lt-leafT-fill 3s ease-in-out infinite; }
         `}</style>
         <div className="mb-8 flex items-center justify-center">
           <svg
             width={96}
             height={96}
-            viewBox="0 0 24 24"
+            viewBox="0 0 40 40"
             xmlns="http://www.w3.org/2000/svg"
-            className="leadtree-draw"
+            className="leadtree-sapling"
             aria-hidden="true"
           >
-            {/* Trunk — draws first */}
+            {/* Roots — small fan at the base */}
             <path
-              className="lt-trunk"
-              d="M12 22 L12 16"
-              stroke="#16A34A"
+              className="lt-roots"
+              d="M14 36 Q17 33 20 34 M26 36 Q23 33 20 34 M20 36 L20 34"
+              stroke="#1F2937"
+              strokeWidth={1.6}
+              pathLength={30}
+              style={{ ["--len" as any]: 30 }}
+            />
+            {/* Stem — draws upward */}
+            <path
+              className="lt-stem"
+              d="M20 34 L20 14"
+              stroke="#1F2937"
               strokeWidth={2}
-              pathLength={10}
-              style={{ ["--len" as any]: 10 }}
-            />
-            {/* Canopy / leaf silhouette — draws second */}
-            <path
-              className="lt-canopy"
-              d="M12 2 C 9 6 5 9 5 13 c 0 2.5 1.5 4.5 4 5.5 V 22 h 6 v -3.5 c 2.5 -1 4 -3 4 -5.5 0 -4 -4 -7 -7 -11 z"
-              stroke="#16A34A"
-              strokeWidth={1.5}
-              pathLength={100}
-              style={{ ["--len" as any]: 100 }}
-            />
-            {/* Seed dot — draws last */}
-            <circle
-              className="lt-seed"
-              cx={12}
-              cy={10}
-              r={2}
-              stroke="#22C55E"
-              strokeWidth={1.25}
               pathLength={20}
               style={{ ["--len" as any]: 20 }}
             />
+            {/* Left leaf — teardrop pointing up-left */}
+            <path
+              className="lt-leafL"
+              d="M20 20 C 14 20 10 16 10 12 C 15 12 19 15 20 20 Z"
+              stroke="#7CB342"
+              strokeWidth={1.4}
+              pathLength={30}
+              style={{ ["--len" as any]: 30 }}
+            />
+            {/* Right leaf — teardrop pointing up-right */}
+            <path
+              className="lt-leafR"
+              d="M20 20 C 26 20 30 16 30 12 C 25 12 21 15 20 20 Z"
+              stroke="#7CB342"
+              strokeWidth={1.4}
+              pathLength={30}
+              style={{ ["--len" as any]: 30 }}
+            />
+            {/* Top leaf — upright teardrop */}
+            <path
+              className="lt-leafT"
+              d="M20 14 C 16 12 16 7 20 3 C 24 7 24 12 20 14 Z"
+              stroke="#2E7D32"
+              strokeWidth={1.4}
+              pathLength={30}
+              style={{ ["--len" as any]: 30 }}
+            />
           </svg>
         </div>
+
 
 
 

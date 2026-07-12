@@ -304,15 +304,15 @@ function fallbackInsight(key: string, p: ReturnType<typeof builderProfile>): str
   const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : fn;
   switch (key) {
     case "audience_fit":
-      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand. A quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
+      return `${expertOpener}you sell expertise — and ${aud} don't need another generic PDF, they need someone who can name where they actually stand.\n\nA quiz joins the private conversation they're already having about ${prob}, returns a personalised next step in under three minutes, and lets your authority land before any sales call.`;
     case "problem_gap":
-      return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis. Your quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
+      return `${aud} can describe ${prob} but cannot diagnose the system underneath it — that is the expert axis.\n\nYour quiz makes the hidden pitfall visible, which is exactly where your authority lands.`;
     case "share_trigger":
-      return `${aud} share a quiz result when it names them more accurately than they could name themselves. Personalised results turn into identity statements, and identity statements travel.`;
+      return `${aud} share a quiz result when it names them more accurately than they could name themselves.\n\nPersonalised results turn into identity statements, and identity statements travel.`;
     case "superpower_question":
-      return `Your superpower — ${sp} — becomes a quiz question by measuring the observable behaviour it acts on, not the opinion behind it. That single question reveals the pitfall only you are positioned to resolve.`;
+      return `Your superpower — ${sp} — becomes a quiz question by measuring the observable behaviour it acts on, not the opinion behind it.\n\nThat single question reveals the pitfall only you are positioned to resolve.`;
     case "buy_decision":
-      return `${aud} invest when they can see their present state, their preferred future and the pitfall in between in one glance. The quiz is the mirror that turns that tension into a next step that feels achievable.`;
+      return `${aud} invest when they can see their present state, their preferred future and the pitfall in between in one glance.\n\nThe quiz is the mirror that turns that tension into a next step that feels achievable.`;
     default:
       return `${fn}quiz marketing works for ${aud} because it mirrors the conversation already in their head and hands them the next clear step.`;
   }
@@ -442,15 +442,15 @@ function fallbackInsightS2(key: string, p: ReturnType<typeof builderProfile>): s
   const expertOpener = p.expertPhrase ? `As a ${p.expertPhrase}, ` : "";
   switch (key) {
     case "quiz_vs_pdf":
-      return `${expertOpener}a PDF tells every reader the same thing and sits forgotten in a downloads folder — it asks ${aud} to do the diagnostic work themselves. A quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets your judgement actually land at scale.`;
+      return `${expertOpener}a PDF tells every reader the same thing and sits forgotten in a downloads folder — it asks ${aud} to do the diagnostic work themselves.\n\nA quiz returns a personalised verdict and one clear next step in under three minutes, which is the only format that lets your judgement actually land at scale.`;
     case "quiz_vs_calls":
-      return `${expertOpener}discovery calls are expensive on time and depend on you being on the phone before anything useful happens. A quiz delivers the diagnostic part instantly and at scale, so ${aud} arrive at any later conversation already self-qualified, with context, and warmer.`;
+      return `${expertOpener}discovery calls are expensive on time and depend on you being on the phone before anything useful happens.\n\nA quiz delivers the diagnostic part instantly and at scale, so ${aud} arrive at any later conversation already self-qualified, with context, and warmer.`;
     case "quiz_vs_checklist":
-      return `A checklist is shallow and generic — it gives ${aud} the same boxes everyone else gets and asks them to apply it themselves. A quiz asks for explicit choices and uses those answers to produce a result they could not have reached alone, and that asymmetry is what makes them lean in instead of skim.`;
+      return `A checklist is shallow and generic — it gives ${aud} the same boxes everyone else gets and asks them to apply it themselves.\n\nA quiz asks for explicit choices and uses those answers to produce a result they could not have reached alone, and that asymmetry is what makes them lean in instead of skim.`;
     case "quiz_prequalifies":
-      return `Because a quiz captures present state, preferred future and the pitfall in between, it segments ${aud} automatically before they ever land on your challenge page. The people who opt into the 3-day challenge already match the profile, so the room is warmer and the work is easier.`;
+      return `Because a quiz captures present state, preferred future and the pitfall in between, it segments ${aud} automatically before they ever land on your challenge page.\n\nThe people who opt into the 3-day challenge already match the profile, so the room is warmer and the work is easier.`;
     case "quiz_vs_webinar":
-      return `${expertOpener}a free webinar asks ${aud} for 45 to 90 minutes of attention before any personalised value is delivered — that is a big ask from a cold lead. A quiz inverts the trade: it returns an accurate reflection in under three minutes, and trust gets built by that accuracy, not by airtime.`;
+      return `${expertOpener}a free webinar asks ${aud} for 45 to 90 minutes of attention before any personalised value is delivered — that is a big ask from a cold lead.\n\nA quiz inverts the trade: it returns an accurate reflection in under three minutes, and trust gets built by that accuracy, not by airtime.`;
     default:
       return `${expertOpener}compared to other lead magnets, a quiz returns a personalised next step for ${aud} in under three minutes — that is where the trust is earned.`;
   }
@@ -528,9 +528,9 @@ function fallbackCards(p: ReturnType<typeof builderProfile>) {
   const arcPhrase2 = arc ? ` That is ${arc} territory.` : "";
   const arcPhrase3 = arc ? ` This is where an ${arc} like you wins.` : "";
   return {
-    card1: `${open}three days is a lot to ask of someone who has never met you. A two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.${arcPhrase1} ${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
-    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened. Yours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.${arcPhrase2} They do not have to imagine what you can do; they get to feel it.`,
-    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers. Three days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.${arcPhrase3}`,
+    card1: `${open}three days is a lot to ask of someone who has never met you.\n\nA two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.${arcPhrase1}\n\n${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
+    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened.\n\nYours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.${arcPhrase2}\n\nThey do not have to imagine what you can do; they get to feel it.`,
+    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers.\n\nThree days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.${arcPhrase3}`,
   };
 }
 
@@ -550,7 +550,12 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
     `- challengeOutcome: ${p.outcome || "(not provided)"}`,
     `- challengePromise: ${p.promise || "(not provided)"}`,
     "",
-    "Write three short card body paragraphs in natural flowing prose. Each card must be 3 to 4 sentences maximum.",
+    "Write three short card bodies in natural flowing prose.",
+    "Formatting rules — apply to every card:",
+    "- Each paragraph must contain exactly one sentence.",
+    "- Leave a blank line between every paragraph.",
+    "- Never combine multiple points into one paragraph.",
+    "- Each card must be 3 to 4 short paragraphs total.",
     p.firstName
       ? `IMPORTANT: Address the builder directly by first name. Each card MUST include the first name "${p.firstName}" at least once and at most twice, woven in naturally (e.g. as a direct address at the start, or mid-sentence like "Here is the thing, ${p.firstName} —"). Never start two cards with the same opening phrase. Do not overuse the name.`
       : "Write in second person ('you'). Do not invent a name.",

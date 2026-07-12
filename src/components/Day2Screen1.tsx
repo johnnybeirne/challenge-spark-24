@@ -250,6 +250,8 @@ const Day2Screen1 = () => {
   const [readCards, setReadCards] = useState<Set<number>>(new Set());
   const [typedCards, setTypedCards] = useState<Set<number>>(new Set());
   const [openCard, setOpenCard] = useState<number | null>(0);
+  const allRead = qaUnlock || (readCards.has(0) && readCards.has(1) && readCards.has(2));
+  const allOpened = true;
 
   const handleMarkRead = (idx: number) => {
     setReadCards((prev) => {

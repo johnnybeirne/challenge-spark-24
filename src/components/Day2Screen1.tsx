@@ -574,11 +574,11 @@ const Day2Screen1 = () => {
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Check className="h-3.5 w-3.5" />
                 </span>
-                <p className="text-sm sm:text-base font-black text-foreground">
+                <p className="font-black text-foreground" style={{ fontSize: "var(--body-size)" }}>
                   Your quiz assets are ready
                 </p>
               </div>
-              <p className="mb-3 text-xs sm:text-sm text-muted-foreground">
+              <p className="mb-3 text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                 Download your quiz right here, or grab it any time from Your Assets on your dashboard.{" "}
                 <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
                   Go to Your Assets &rarr;

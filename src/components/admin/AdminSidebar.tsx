@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -39,6 +39,7 @@ const items = [
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle },
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles },
+  { title: "Typography", url: "/owner-console/typography", icon: Type },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck },

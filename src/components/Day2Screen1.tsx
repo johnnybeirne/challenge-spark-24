@@ -488,7 +488,80 @@ const Day2Screen1 = () => {
           </a>
         </section>
 
-        {/* ZONE 3 - UPSELL */}
+        {/* ZONE 3 - QUIZ GENERATION */}
+        <section className="space-y-4">
+          {allRead ? (
+            <div className="space-y-1.5">
+              <button
+                type="button"
+                onClick={handleGenerateQuiz}
+                disabled={quizGenerating}
+                aria-busy={quizGenerating}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+              >
+                {quizGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating your quiz...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generate your quiz now
+                    <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+              <p className="text-center text-xs text-muted-foreground">
+                Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting in Your Assets on your dashboard.
+              </p>
+            </div>
+          ) : (
+            <div className="relative">
+              {showLockHint && (
+                <div
+                  role="status"
+                  className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 text-sm font-semibold shadow-xl animate-fade-in"
+                >
+                  Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-1/2 -translate-x-1/2 top-full -mt-px h-3 w-3 rotate-45 bg-foreground"
+                  />
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={triggerLockHint}
+                aria-disabled="true"
+                title="Mark all three sections as read to unlock"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center text-sm font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
+              >
+                <Lock className="h-4 w-4" />
+                Mark 1, 2 & 3 as read to generate your quiz
+              </button>
+            </div>
+          )}
+
+          {state.challenge.aiOutputs?.day2_s2_quiz && (
+            <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5 animate-fade-in">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <Check className="h-3.5 w-3.5" />
+                </span>
+                <p className="text-sm sm:text-base font-black text-foreground">
+                  Your quiz assets are ready
+                </p>
+              </div>
+              <p className="mb-3 text-xs sm:text-sm text-muted-foreground">
+                Download your quiz right here, or grab it any time from Your Assets on your dashboard.
+              </p>
+              <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs.day2_s2_quiz} />
+            </div>
+          )}
+        </section>
+
+        {/* ZONE 4 - UPSELL */}
         <section className="space-y-6">
           <div className="h-px w-full bg-border" />
           <Card>

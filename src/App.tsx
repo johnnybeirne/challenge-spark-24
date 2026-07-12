@@ -117,7 +117,9 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <AttributionCapture />
+            <TypographyLoader />
             <FreePreviewBadge />
+
             
             <ExperienceShell>
             <Routes>

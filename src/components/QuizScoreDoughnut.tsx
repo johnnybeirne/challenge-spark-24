@@ -81,7 +81,7 @@ const QuizScoreDoughnut = () => {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`text-3xl font-black leading-none ${tier.tone}`}>{percent}%</span>
+            <span className={`text-[var(--h1-size)] font-black leading-none ${tier.tone}`}>{percent}%</span>
             <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {score}/{total}
             </span>
@@ -91,11 +91,11 @@ const QuizScoreDoughnut = () => {
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
             <Trophy className="h-3 w-3" /> Quiz Score
           </div>
-          <h2 className="mt-2 text-xl font-black text-foreground sm:text-2xl">
+          <h2 className="mt-2 text-[var(--h2-size)] font-black text-foreground sm:text-[var(--h1-size)]">
             <span className={tier.tone}>{tier.label}</span>
           </h2>
           {tier.description && (
-            <p className="mt-1 text-sm leading-snug text-muted-foreground">
+            <p className="mt-1 text-[var(--body-size)] leading-snug text-muted-foreground">
               {tier.description}
             </p>
           )}

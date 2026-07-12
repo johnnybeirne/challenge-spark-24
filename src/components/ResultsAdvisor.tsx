@@ -64,12 +64,12 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoi
       {(heading || subline) && (
         <div>
           {heading && (
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            <h2 className="text-[var(--h2-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">
               {heading}
             </h2>
           )}
           {subline && (
-            <p className="mt-1 text-sm sm:text-base text-muted-foreground">
+            <p className="mt-1 text-[var(--body-size)] sm:text-[var(--body-size)] text-muted-foreground">
               {subline}
             </p>
           )}

@@ -151,7 +151,7 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
 
   if (!fragments && !displayText) {
     const empty = (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-[var(--body-size)] text-muted-foreground">
         Your Challenge Promise isn't available yet.
       </p>
     );
@@ -176,7 +176,7 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             rows={4}
-            className="text-base leading-relaxed"
+            className="text-[var(--body-size)] leading-relaxed"
           />
           <div className="flex flex-wrap gap-2">
             <Button size="sm" onClick={saveEdit}>Save</Button>
@@ -190,7 +190,7 @@ const ChallengePromiseCard = ({ variant = "card" }: Props) => {
         </>
       ) : (
         <>
-          <p className="text-xl md:text-2xl font-semibold leading-relaxed text-foreground rounded-xl border border-border bg-background px-6 py-5 text-center">
+          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] font-semibold leading-relaxed text-foreground rounded-xl border border-border bg-background px-6 py-5 text-center">
             {loading && !displayText ? (
               <span className="inline-flex items-center gap-2 text-muted-foreground">
                 <Sparkles className="h-4 w-4 animate-pulse" /> Polishing your promise…

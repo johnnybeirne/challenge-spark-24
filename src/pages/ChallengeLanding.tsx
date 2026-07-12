@@ -122,7 +122,7 @@ const AnimatedDayCards = () => {
               <div>
                 <p className="text-xs font-black uppercase text-primary">{step.day}</p>
                 <h2
-                  className={`mt-1 text-xl font-black text-foreground transition-opacity duration-500 ${isVisible ? "opacity-100" : "opacity-0"}`}
+                  className={`mt-1 text-[var(--h2-size)] font-black text-foreground transition-opacity duration-500 ${isVisible ? "opacity-100" : "opacity-0"}`}
                   style={{ transitionDelay: isVisible ? `${cardDelay + textDelay}ms` : "0ms" }}
                 >
                   {step.title}
@@ -163,19 +163,19 @@ const ChallengeLanding = () => {
       <section className="px-5 py-10 sm:px-6 md:py-16 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div className="text-center lg:text-left">
-            <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-black uppercase text-primary shadow-sm lg:mx-0">
+            <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-[var(--body-size)] font-black uppercase text-primary shadow-sm lg:mx-0">
               Free 3-day builder challenge
             </p>
-            <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
+            <h1 className="mx-auto mt-6 max-w-4xl text-[var(--h1-size)] font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
               Turn trust into a lead engine that grows itself
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
+            <p className="mx-auto mt-5 max-w-2xl text-[var(--h2-size)] leading-8 text-muted-foreground sm:text-[var(--h2-size)] lg:mx-0">
               Build a challenge in 3 days where people get a real result, and feel excited to invite others along the way.
             </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
+              <Button className="h-14 gap-2 rounded-xl px-8 text-[var(--body-size)] font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
             </div>
-            <p className="mt-3 text-center text-sm text-muted-foreground lg:text-left">
+            <p className="mt-3 text-center text-[var(--body-size)] text-muted-foreground lg:text-left">
               Start today and have this in place by {completionDayName}.
             </p>
             <ActivityFeed title="Live builder activity" className="mx-auto mt-8 max-w-md text-left lg:mx-0" />
@@ -187,9 +187,9 @@ const ChallengeLanding = () => {
 
       <Section className="border-y border-border bg-card/55">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-black uppercase text-primary">Why it works</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">People do not just consume content. They participate.</h2>
-          <p className="mt-5 text-lg leading-8 text-muted-foreground">The challenge gives your audience a clear next step, captures intent, and encourages sharing as part of the experience.</p>
+          <p className="text-[var(--body-size)] font-black uppercase text-primary">Why it works</p>
+          <h2 className="mt-3 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)] md:text-5xl">People do not just consume content. They participate.</h2>
+          <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">The challenge gives your audience a clear next step, captures intent, and encourages sharing as part of the experience.</p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {[
@@ -199,7 +199,7 @@ const ChallengeLanding = () => {
           ].map((item) => (
             <div key={item.title} className="rounded-xl border border-border bg-background p-6 shadow-sm">
               <item.icon className="h-6 w-6 text-primary" />
-              <h3 className="mt-5 text-xl font-black text-foreground">{item.title}</h3>
+              <h3 className="mt-5 text-[var(--h2-size)] font-black text-foreground">{item.title}</h3>
               <p className="mt-3 leading-7 text-muted-foreground">{item.body}</p>
             </div>
           ))}
@@ -215,7 +215,7 @@ const ChallengeLanding = () => {
           ].map((item) => (
             <div key={item.title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
               <item.icon className="h-6 w-6 text-primary" />
-              <h2 className="mt-5 text-xl font-black text-foreground">{item.title}</h2>
+              <h2 className="mt-5 text-[var(--h2-size)] font-black text-foreground">{item.title}</h2>
               <p className="mt-3 leading-7 text-muted-foreground">{item.body}</p>
             </div>
           ))}
@@ -225,11 +225,11 @@ const ChallengeLanding = () => {
       <Section className="border-t border-border">
         <div className="mx-auto max-w-3xl text-center">
           <Calendar className="mx-auto h-9 w-9 text-primary" />
-          <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">Start building your challenge</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Join the 3-day builder challenge, or take the quiz first if you want a recommended strategy.</p>
+          <h2 className="mt-5 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)] md:text-5xl">Start building your challenge</h2>
+          <p className="mx-auto mt-5 max-w-2xl text-[var(--h2-size)] leading-8 text-muted-foreground">Join the 3-day builder challenge, or take the quiz first if you want a recommended strategy.</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button className="h-14 gap-2 rounded-xl px-8 text-base font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_bottom")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
-            <Button variant="outline" className="h-14 rounded-xl px-8 text-base font-black uppercase" onClick={startQuiz}>Take the quiz</Button>
+            <Button className="h-14 gap-2 rounded-xl px-8 text-[var(--body-size)] font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_bottom")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
+            <Button variant="outline" className="h-14 rounded-xl px-8 text-[var(--body-size)] font-black uppercase" onClick={startQuiz}>Take the quiz</Button>
           </div>
         </div>
       </Section>

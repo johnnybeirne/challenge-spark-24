@@ -36,15 +36,15 @@ const QuizScoreCard = () => {
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
             <Trophy className="h-3 w-3" /> Quiz Score
           </div>
-          <h2 className="mt-3 text-xl font-black text-foreground sm:text-2xl">
-            {score} / {total} <span className={`text-base font-bold ${tier.tone}`}>· {tier.label}</span>
+          <h2 className="mt-3 text-[var(--h2-size)] font-black text-foreground sm:text-[var(--h1-size)]">
+            {score} / {total} <span className={`text-[var(--body-size)] font-bold ${tier.tone}`}>· {tier.label}</span>
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-[var(--body-size)] text-muted-foreground">
             You answered {score} of {total} growth signals in the strong direction.
           </p>
         </div>
         <div className="shrink-0 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-center">
-          <div className="text-2xl font-black text-primary">{percent}%</div>
+          <div className="text-[var(--h1-size)] font-black text-primary">{percent}%</div>
           <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Strength</div>
         </div>
       </div>
@@ -67,7 +67,7 @@ const QuizScoreCard = () => {
                 <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-sm leading-snug text-foreground">
+                <p className="text-[var(--body-size)] leading-snug text-foreground">
                   <span className="font-bold text-muted-foreground">Q{i + 1}.</span> {b.text}
                 </p>
                 <p className="mt-0.5 text-xs font-medium text-muted-foreground">

@@ -74,12 +74,12 @@ const AssessmentResultCard = () => {
               <span className="text-[11px] font-medium text-muted-foreground">Completed {completedAt}</span>
             )}
           </div>
-          <h2 className="mt-3 text-xl font-black text-foreground sm:text-2xl">{title}</h2>
-          <p className="mt-1.5 text-sm leading-6 text-muted-foreground line-clamp-3">{message}</p>
+          <h2 className="mt-3 text-[var(--h2-size)] font-black text-foreground sm:text-[var(--h1-size)]">{title}</h2>
+          <p className="mt-1.5 text-[var(--body-size)] leading-6 text-muted-foreground line-clamp-3">{message}</p>
         </div>
         <div className="shrink-0 rounded-2xl border border-primary/20 bg-background/80 p-4 text-center sm:w-44">
           <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Readiness</div>
-          <div className="mt-1 text-4xl font-black text-primary">{percent}%</div>
+          <div className="mt-1 text-[var(--h1-size)] font-black text-primary">{percent}%</div>
           <div className="mt-1 text-[11px] font-bold text-foreground">{stage}</div>
           <Progress value={percent} className="mt-2 h-1.5" />
         </div>
@@ -87,17 +87,17 @@ const AssessmentResultCard = () => {
 
       <div className="mt-5 rounded-xl border border-border bg-background/60 p-3 sm:p-4">
         <p className="text-[10px] font-black uppercase tracking-wider text-primary">Recommended next step</p>
-        <p className="mt-1 text-sm font-semibold text-foreground">{cfg.nextStep}</p>
+        <p className="mt-1 text-[var(--body-size)] font-semibold text-foreground">{cfg.nextStep}</p>
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <Button onClick={() => navigate(cfg.href)} className="h-11 gap-2 px-5 text-sm font-black uppercase">
+        <Button onClick={() => navigate(cfg.href)} className="h-11 gap-2 px-5 text-[var(--body-size)] font-black uppercase">
           {cfg.cta} <ArrowRight className="h-4 w-4" />
         </Button>
-        <Button variant="outline" onClick={() => navigate("/results")} className="h-11 gap-2 px-5 text-sm font-bold">
+        <Button variant="outline" onClick={() => navigate("/results")} className="h-11 gap-2 px-5 text-[var(--body-size)] font-bold">
           View full result
         </Button>
-        <Button variant="ghost" onClick={() => navigate(cfg.retakeHref)} className="h-11 gap-2 px-5 text-sm font-bold">
+        <Button variant="ghost" onClick={() => navigate(cfg.retakeHref)} className="h-11 gap-2 px-5 text-[var(--body-size)] font-bold">
           <RotateCcw className="h-4 w-4" /> Retake assessment
         </Button>
       </div>

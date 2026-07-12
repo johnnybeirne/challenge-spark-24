@@ -136,7 +136,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Johnny B AI
         </div>
-        <p className="max-w-md text-center text-lg font-semibold text-foreground">
+        <p className="max-w-md text-center text-[var(--h2-size)] font-semibold text-foreground">
           <TypewriterText text="Analysing your results and preparing your personalised advice..." />
         </p>
       </div>
@@ -233,7 +233,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                 setStarted(false);
               }
             }}
-            className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
+            className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-[var(--body-size)] font-medium text-foreground hover:text-primary transition-colors group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back
@@ -257,7 +257,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
           {/* Question */}
           <div className="text-center mb-8 md:mb-10">
-            <h1 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground animate-fade-in">
+            <h1 className="font-montserrat font-semibold text-[var(--h2-size)] md:text-[var(--h1-size)] leading-[1.25] text-foreground animate-fade-in">
               {q.text}
             </h1>
           </div>
@@ -271,7 +271,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                   key={opt.value}
                   onClick={() => handleAnswer(opt.value)}
                   disabled={selected !== null}
-                  className={`w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3 ${
+                  className={`w-full py-4 px-5 rounded-2xl border-2 font-semibold text-[var(--body-size)] transition-all active:scale-[0.99] flex items-center justify-between gap-3 ${
                     isSelected
                       ? "border-primary bg-primary/10 text-foreground"
                       : "border-border bg-card text-foreground hover:border-primary hover:bg-background"

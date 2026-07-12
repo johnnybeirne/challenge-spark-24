@@ -61,12 +61,12 @@ const YourChallengeRecap = () => {
 
   return (
     <section className="space-y-2">
-      <h2 className="text-sm font-semibold text-foreground/90 px-1">What we have so far</h2>
+      <h2 className="text-[var(--body-size)] font-semibold text-foreground/90 px-1">What we have so far</h2>
       <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 space-y-1.5">
         {rows.map((r) => (
           <div
             key={r.label}
-            className="text-sm md:text-base leading-snug text-foreground/80"
+            className="text-[var(--body-size)] md:text-[var(--body-size)] leading-snug text-foreground/80"
           >
             <span>{r.label} </span>
             <span className="font-medium text-primary">{r.value}</span>

@@ -126,7 +126,7 @@ const Day1 = () => {
               alt="Johnny AI"
               className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
             />
-            <div className="flex-1 min-w-0 text-sm md:text-base leading-relaxed">
+            <div className="flex-1 min-w-0 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed">
               Nice work, {firstName}. Day 1 is locked in — here's the challenge promise you shaped together.
             </div>
           </div>
@@ -137,11 +137,11 @@ const Day1 = () => {
                 Challenge Promise
               </p>
               {promiseText ? (
-                <p className="text-base leading-relaxed text-foreground rounded-xl border border-border bg-background px-4 py-3 font-medium">
+                <p className="text-[var(--body-size)] leading-relaxed text-foreground rounded-xl border border-border bg-background px-4 py-3 font-medium">
                   {promiseText}
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-[var(--body-size)] text-muted-foreground">
                   Your Challenge Promise isn't available yet.
                 </p>
               )}

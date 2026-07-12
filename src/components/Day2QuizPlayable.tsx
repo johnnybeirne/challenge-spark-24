@@ -262,7 +262,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           <div className="mt-4 text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
             Johnny B AI
           </div>
-          <p className="mt-3 max-w-md text-center text-lg font-semibold text-foreground">
+          <p className="mt-3 max-w-md text-center text-[var(--h2-size)] font-semibold text-foreground">
             <TypewriterText text={`Analysing your results, ${firstName}...`} />
           </p>
         </div>
@@ -340,7 +340,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-indigo-600">{children}</p>
     );
     const SectionHeading = ({ children }: { children: ReactNode }) => (
-      <h2 className="mt-3 font-montserrat font-bold text-3xl md:text-4xl leading-tight tracking-tight text-slate-900">
+      <h2 className="mt-3 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight tracking-tight text-slate-900">
         {children}
       </h2>
     );
@@ -349,7 +349,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         type="button"
         onClick={onClick}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-7 py-4 text-base font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 active:scale-[0.99]",
+          "inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-7 py-4 text-[var(--body-size)] font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 active:scale-[0.99]",
           className,
         )}
       >
@@ -369,11 +369,11 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 Built for {audienceShort}
                 <HelpTip text={previewTips.audience_eyebrow} className="ml-2 align-middle" label="About this eyebrow" />
               </Eyebrow>
-              <h1 className="mt-4 font-montserrat font-bold text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
+              <h1 className="mt-4 font-montserrat font-bold text-[var(--h1-size)] md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-slate-900">
                 {headline}
                 <HelpTip text={previewTips.hero_headline} className="ml-2 align-middle" label="About this headline" />
               </h1>
-              <p className="mt-5 text-lg text-slate-600 leading-relaxed max-w-xl">
+              <p className="mt-5 text-[var(--h2-size)] text-slate-600 leading-relaxed max-w-xl">
                 {subhead}
                 <HelpTip text={previewTips.subheading} className="ml-1.5 align-middle" label="About this subheading" />
               </p>
@@ -381,7 +381,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 <CtaButton onClick={startQuiz}>
                   <Play className="h-5 w-5" /> Start the quiz
                 </CtaButton>
-                <p className="mt-3 text-sm text-slate-500">
+                <p className="mt-3 text-[var(--body-size)] text-slate-500">
                   {quiz.questions.length} questions. Under 2 minutes. Instant result.
                 </p>
               </div>
@@ -407,7 +407,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 <HelpTip text={previewTips.problem_section} className="ml-2 align-middle" label="About the problem section" />
               </Eyebrow>
               <SectionHeading>{problem.charAt(0).toUpperCase() + problem.slice(1)}.</SectionHeading>
-              <p className="mt-4 text-lg text-slate-600 leading-relaxed">
+              <p className="mt-4 text-[var(--h2-size)] text-slate-600 leading-relaxed">
                 Most {audience} stay stuck here because they're treating symptoms, not the actual cause.
                 <HelpTip text={previewTips.problem_paragraph} className="ml-1.5 align-middle" label="About this paragraph" />
               </p>
@@ -421,8 +421,8 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                   <div className="absolute top-4 right-4">
                     <HelpTip text={previewTips[tipKey]} label={`About: ${title}`} />
                   </div>
-                  <h3 className="mt-4 font-semibold text-lg text-slate-900">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{body}</p>
+                  <h3 className="mt-4 font-semibold text-[var(--h2-size)] text-slate-900">{title}</h3>
+                  <p className="mt-2 text-[var(--body-size)] text-slate-600 leading-relaxed">{body}</p>
                 </div>
               ))}
             </div>
@@ -466,7 +466,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               </div>
               <div className="flex flex-col items-center justify-center rounded-3xl bg-white border border-slate-200 p-10">
                 <ReadinessRing pct={72} />
-                <p className="mt-5 text-sm font-semibold uppercase tracking-wider text-slate-500">
+                <p className="mt-5 text-[var(--body-size)] font-semibold uppercase tracking-wider text-slate-500">
                   Readiness score
                 </p>
               </div>
@@ -486,7 +486,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 <div className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <Icon className="h-5 w-5" />
                 </div>
-                <p className="mt-4 text-sm font-semibold text-slate-900 leading-snug">{label}</p>
+                <p className="mt-4 text-[var(--body-size)] font-semibold text-slate-900 leading-snug">{label}</p>
               </div>
             ))}
           </div>
@@ -499,7 +499,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
               <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white">
                 <Users className="h-7 w-7" />
               </div>
-              <h2 className="mt-6 font-montserrat font-bold text-2xl md:text-3xl leading-tight text-slate-900">
+              <h2 className="mt-6 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight text-slate-900">
                 Built for {audience}, not another theory.
               </h2>
               <p className="mt-4 text-slate-600 leading-relaxed">
@@ -519,7 +519,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           <Accordion type="single" collapsible className="mt-10">
             {faqs.map((item, i) => (
               <AccordionItem key={i} value={`faq-${i}`} className="border-slate-200">
-                <AccordionTrigger className="text-left text-base font-semibold text-slate-900 hover:no-underline">
+                <AccordionTrigger className="text-left text-[var(--body-size)] font-semibold text-slate-900 hover:no-underline">
                   {item.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-slate-600 leading-relaxed">
@@ -533,10 +533,10 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         {/* SECTION 8 — BOTTOM CTA */}
         <section className="bg-slate-50 border-t border-slate-100">
           <div className="mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-24 text-center">
-            <h2 className="font-montserrat font-bold text-3xl md:text-4xl leading-tight text-slate-900">
+            <h2 className="font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight text-slate-900">
               Find out where you stand with {topicShort}.
             </h2>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-[var(--h2-size)] text-slate-600">
               Two minutes. One honest answer. A clear next step.
             </p>
             <div className="mt-8">
@@ -553,11 +553,11 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         {/* Sticky bottom bar */}
         <div className="fixed bottom-0 left-0 right-0 z-[90] border-t border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto max-w-6xl px-5 md:px-8 py-3 flex items-center justify-between gap-4">
-            <p className="text-sm md:text-base font-semibold text-slate-900">Ready?</p>
+            <p className="text-[var(--body-size)] md:text-[var(--body-size)] font-semibold text-slate-900">Ready?</p>
             <button
               type="button"
               onClick={startQuiz}
-              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700"
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-[var(--body-size)] font-semibold text-white shadow-md transition hover:bg-indigo-700"
             >
               Start the quiz <ArrowRight className="h-4 w-4" />
             </button>
@@ -593,10 +593,10 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
           <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             You are
           </p>
-          <h2 className="mt-1 font-montserrat font-bold text-3xl md:text-4xl leading-tight text-foreground">
+          <h2 className="mt-1 font-montserrat font-bold text-[var(--h1-size)] md:text-[var(--h1-size)] leading-tight text-foreground">
             {result.tier.name}
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          <p className="mt-4 text-[var(--body-size)] sm:text-[var(--body-size)] text-muted-foreground leading-relaxed max-w-xl mx-auto">
             {result.tier.description}
           </p>
 
@@ -643,7 +643,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
       >
         <button
           onClick={handleBackQuestion}
-          className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors group"
+          className="absolute top-5 left-5 md:top-6 md:left-6 flex items-center gap-1.5 text-[var(--body-size)] font-medium text-foreground hover:text-primary transition-colors group"
           aria-label="Back"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -651,7 +651,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         </button>
 
         {/* Question */}
-        <h2 className="font-montserrat font-semibold text-xl md:text-2xl leading-[1.25] text-foreground text-center mt-6 mb-8 md:mb-10">
+        <h2 className="font-montserrat font-semibold text-[var(--h2-size)] md:text-[var(--h1-size)] leading-[1.25] text-foreground text-center mt-6 mb-8 md:mb-10">
           {q.text}
         </h2>
 
@@ -666,7 +666,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
                 onClick={() => handleAnswer(tier)}
                 disabled={selected !== null}
                 className={cn(
-                  "w-full py-4 px-5 rounded-2xl border-2 font-semibold text-base transition-all active:scale-[0.99] flex items-center justify-between gap-3",
+                  "w-full py-4 px-5 rounded-2xl border-2 font-semibold text-[var(--body-size)] transition-all active:scale-[0.99] flex items-center justify-between gap-3",
                   isSelected
                     ? "border-primary bg-primary/10 text-foreground"
                     : "border-border bg-card text-foreground hover:border-primary hover:bg-background",
@@ -715,7 +715,7 @@ const ReadinessRing = ({ pct }: { pct: number }) => {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold text-slate-900">{pct}%</span>
+        <span className="text-[var(--h1-size)] font-bold text-slate-900">{pct}%</span>
       </div>
     </div>
   );
@@ -730,7 +730,7 @@ const SampleQuizBanner = () => {
         <p className="text-xs font-black uppercase tracking-wider text-amber-700">
           Sample quiz preview
         </p>
-        <p className="mt-2 text-base sm:text-lg font-semibold leading-snug text-amber-900">
+        <p className="mt-2 text-[var(--body-size)] sm:text-[var(--h2-size)] font-semibold leading-snug text-amber-900">
           {firstName}, your sample quiz is below for review. Your Word doc and Google Doc versions are ready to download in Your Assets on your dashboard. Scroll down to see your quiz in action, then click Start Quiz to try it yourself. Close this tab to return to Day 2 of your challenge.
         </p>
       </div>

@@ -516,9 +516,22 @@ const Day2Screen1 = () => {
                   </>
                 )}
               </button>
-              <p className="text-center text-xs text-muted-foreground">
-                Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting in Your Assets on your dashboard.
-              </p>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 sm:p-4">
+                <div className="flex items-start gap-3">
+                  <Download className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden="true" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-foreground">
+                      Your quiz downloads will land in Your Assets
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.{" "}
+                      <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
+                        Go to Your Assets &rarr;
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="relative">

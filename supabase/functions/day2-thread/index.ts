@@ -550,7 +550,12 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
     `- challengeOutcome: ${p.outcome || "(not provided)"}`,
     `- challengePromise: ${p.promise || "(not provided)"}`,
     "",
-    "Write three short card body paragraphs in natural flowing prose. Each card must be 3 to 4 sentences maximum.",
+    "Write three short card bodies in natural flowing prose.",
+    "Formatting rules — apply to every card:",
+    "- Each paragraph must contain exactly one sentence.",
+    "- Leave a blank line between every paragraph.",
+    "- Never combine multiple points into one paragraph.",
+    "- Each card must be 3 to 4 short paragraphs total.",
     p.firstName
       ? `IMPORTANT: Address the builder directly by first name. Each card MUST include the first name "${p.firstName}" at least once and at most twice, woven in naturally (e.g. as a direct address at the start, or mid-sentence like "Here is the thing, ${p.firstName} —"). Never start two cards with the same opening phrase. Do not overuse the name.`
       : "Write in second person ('you'). Do not invent a name.",

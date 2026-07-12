@@ -380,10 +380,10 @@ const DayChallenge = () => {
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary">
               Day {dayNum} complete
             </p>
-            <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+            <h1 className="mt-2 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)]">
               {completedLine}
             </h1>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <p className="mt-3 text-[var(--body-size)] text-muted-foreground">
               {dayNum} of 3 days done · Momentum is building{identity.isPersonalised ? ` in ${identity.shortTitle}` : ""}.
             </p>
           </div>
@@ -398,8 +398,8 @@ const DayChallenge = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
                     Tomorrow's focus
                   </p>
-                  <p className="mt-1 text-base font-bold text-foreground">{next.title}</p>
-                  <p className="mt-1.5 text-sm text-muted-foreground">{next.focus}</p>
+                  <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">{next.title}</p>
+                  <p className="mt-1.5 text-[var(--body-size)] text-muted-foreground">{next.focus}</p>
                 </div>
               </div>
             </CardContent>
@@ -414,7 +414,7 @@ const DayChallenge = () => {
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
                   Next unlock
                 </p>
-                <p className="text-sm font-bold text-foreground">{next.unlock}</p>
+                <p className="text-[var(--body-size)] font-bold text-foreground">{next.unlock}</p>
               </div>
             </CardContent>
           </Card>
@@ -422,7 +422,7 @@ const DayChallenge = () => {
           <div className="flex flex-col gap-2 pt-2 sm:flex-row">
             <Button
               size="lg"
-              className="h-12 flex-1 gap-2 text-sm font-black uppercase tracking-wider"
+              className="h-12 flex-1 gap-2 text-[var(--body-size)] font-black uppercase tracking-wider"
               onClick={() => navigate(`/day/${dayNum + 1}`)}
             >
               Start Day {dayNum + 1}
@@ -431,7 +431,7 @@ const DayChallenge = () => {
             <Button
               size="lg"
               variant="outline"
-              className="h-12 flex-1 text-sm font-bold"
+              className="h-12 flex-1 text-[var(--body-size)] font-bold"
               onClick={() => navigate("/challenger-dashboard")}
             >
               Back to dashboard
@@ -455,20 +455,20 @@ const DayChallenge = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <Rocket className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground mb-3">
+          <h1 className="text-[var(--h1-size)] font-bold text-foreground mb-3">
             You launched something real, {firstName}.
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-[var(--body-size)]">
             That puts you ahead of most.
           </p>
         </div>
 
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
-            <p className="text-sm font-semibold text-foreground leading-relaxed">
+            <p className="text-[var(--body-size)] font-semibold text-foreground leading-relaxed">
               Your challenge is now live.
             </p>
-            <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+            <p className="text-[var(--body-size)] text-muted-foreground mt-1 leading-relaxed">
               It runs continuously and grows as people go through it and invite others.
             </p>
           </CardContent>
@@ -480,12 +480,12 @@ const DayChallenge = () => {
               <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
                 <Users className="w-5 h-5 text-accent-foreground" />
               </div>
-              <h2 className="text-lg font-bold text-foreground">Builder Circle</h2>
+              <h2 className="text-[var(--h2-size)] font-bold text-foreground">Builder Circle</h2>
             </div>
-            <p className="text-sm text-foreground font-medium mb-1">
+            <p className="text-[var(--body-size)] text-foreground font-medium mb-1">
               You've built something real. Now get it seen.
             </p>
-            <p className="text-sm text-muted-foreground mb-5">
+            <p className="text-[var(--body-size)] text-muted-foreground mb-5">
               Join a network where builders promote each other.
             </p>
 
@@ -532,7 +532,7 @@ const DayChallenge = () => {
     <div className="app-page-container flex flex-col min-h-screen py-6 pb-24 lg:py-8">
       <TaskCompleteAnim show={showTaskAnim} />
       {isReadOnly && (
-        <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-sm text-muted-foreground">
+        <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-[var(--body-size)] text-muted-foreground">
           <span className="font-semibold text-foreground">Day {dayNum} is complete.</span>{" "}
           Your answers are saved.
         </div>
@@ -551,8 +551,8 @@ const DayChallenge = () => {
       {dayNum === 1 && (
         <div className="mb-6 rounded-2xl border border-border bg-card p-6 md:p-8 shadow-sm">
           <div className="space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Let's Shape Your Challenge</h2>
-            <p className="text-sm md:text-base text-muted-foreground">
+            <h2 className="text-[var(--h1-size)] md:text-[var(--h1-size)] font-bold tracking-tight">Let's Shape Your Challenge</h2>
+            <p className="text-[var(--body-size)] md:text-[var(--body-size)] text-muted-foreground">
               Define the transformation your challenge takers will achieve.
             </p>
           </div>
@@ -563,10 +563,10 @@ const DayChallenge = () => {
               "How do you solve it?",
             ].map((q, i) => (
               <li key={q} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[var(--body-size)] font-black text-primary">
                   {i + 1}
                 </span>
-                <span className="text-base font-semibold text-foreground">{q}</span>
+                <span className="text-[var(--body-size)] font-semibold text-foreground">{q}</span>
               </li>
             ))}
           </ul>
@@ -623,8 +623,8 @@ const DayChallenge = () => {
           <DayTrainingCard dayNum={dayNum} />
           {dayNum !== 1 && (
             <div className="mt-3 rounded-md border border-primary/20 bg-primary/5 p-4">
-              <p className="text-sm text-foreground leading-relaxed">{config.lesson}</p>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{config.reinforcement}</p>
+              <p className="text-[var(--body-size)] text-foreground leading-relaxed">{config.lesson}</p>
+              <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">{config.reinforcement}</p>
             </div>
           )}
         </div>
@@ -636,7 +636,7 @@ const DayChallenge = () => {
         <Card className="mb-4 border-border">
           <CardContent className="p-5">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Example Diagnostic</p>
-            <ol className="space-y-3 text-sm text-foreground">
+            <ol className="space-y-3 text-[var(--body-size)] text-foreground">
               {diagnosticQuestions.map((question, index) => (
                 <li key={question} className="flex gap-3 leading-relaxed">
                   <span className="text-muted-foreground">{index + 1}.</span>
@@ -661,7 +661,7 @@ const DayChallenge = () => {
               >
                 <Checkbox checked={isChecked(task.key)} disabled={isReadOnly} className="pointer-events-none" />
                 <span
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-[var(--body-size)] font-medium transition-colors ${
                     isChecked(task.key)
                       ? "line-through text-muted-foreground"
                       : isReadOnly
@@ -710,12 +710,12 @@ const DayChallenge = () => {
           <CardContent className="p-5">
             <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
               <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Tool Note</p>
-              <p className="text-sm text-foreground leading-relaxed">This challenge was built using Lovable.</p>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+              <p className="text-[var(--body-size)] text-foreground leading-relaxed">This challenge was built using Lovable.</p>
+              <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">
                 To build your own version, you’ll use the same approach. A Pro account gives you more credits and flexibility.
               </p>
             </div>
-            <label className="text-sm font-medium text-foreground block mb-2">
+            <label className="text-[var(--body-size)] font-medium text-foreground block mb-2">
               Paste your live URL
             </label>
             <Input
@@ -735,7 +735,7 @@ const DayChallenge = () => {
         <Card className="mt-4">
           <CardContent className="p-5">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Your live URL</p>
-            <a href={state.challenge.launchUrl} target="_blank" rel="noreferrer" className="text-sm text-primary underline break-all">
+            <a href={state.challenge.launchUrl} target="_blank" rel="noreferrer" className="text-[var(--body-size)] text-primary underline break-all">
               {state.challenge.launchUrl}
             </a>
           </CardContent>
@@ -745,7 +745,7 @@ const DayChallenge = () => {
       {canComplete && !isReadOnly && (
         <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
           <CardContent className="p-5">
-            <p className="mb-4 text-sm font-semibold leading-relaxed text-foreground">
+            <p className="mb-4 text-[var(--body-size)] font-semibold leading-relaxed text-foreground">
               {config.completion.replace(".", `, ${firstName}.`)}
             </p>
             <Button className="w-full gap-2" size="lg" onClick={completeDay}>
@@ -843,18 +843,18 @@ function LockedDayScreen({
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">
             Day {dayNum} locked
           </p>
-          <h1 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">
+          <h1 className="mt-2 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)]">
             Day {dayNum} opens {unlockLabel}
           </h1>
           <div className="mt-6 inline-flex items-baseline gap-2 rounded-2xl border border-border bg-card px-6 py-4 shadow-sm">
-            <span className="font-mono text-3xl sm:text-4xl font-black tabular-nums text-orange-500">
+            <span className="font-mono text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black tabular-nums text-orange-500">
               {hh}:{mm}:{ss}
             </span>
             <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               until unlock
             </span>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-[var(--body-size)] text-muted-foreground">
             Or skip the wait — pick a pathway below.
           </p>
         </div>
@@ -866,10 +866,10 @@ function LockedDayScreen({
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-primary">
                 <Rocket className="h-3 w-3" /> Unlock instantly
               </div>
-              <h3 className="text-lg font-black text-foreground">
+              <h3 className="text-[var(--h2-size)] font-black text-foreground">
                 Skip the wait — $497
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-[var(--body-size)] text-muted-foreground">
                 Get Day {dayNum} (and the rest of the challenge) right now with lifetime access.
               </p>
               <Button onClick={handleBuy} className="w-full font-bold">
@@ -884,7 +884,7 @@ function LockedDayScreen({
               <div className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-success">
                 <Users className="h-3 w-3" /> Free pathway
               </div>
-              <h3 className="text-lg font-black text-foreground">
+              <h3 className="text-[var(--h2-size)] font-black text-foreground">
                 Invite 3 friends — unlock free
               </h3>
               <div className="space-y-1.5">

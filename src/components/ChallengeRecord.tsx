@@ -78,9 +78,9 @@ const Section = ({
             <StatusIcon className={`h-4 w-4 ${statusColor}`} />
             {eyebrow}
           </p>
-          <h2 className="mt-1.5 text-xl font-bold leading-tight text-foreground">{title}</h2>
+          <h2 className="mt-1.5 text-[var(--h2-size)] font-bold leading-tight text-foreground">{title}</h2>
           {description && (
-            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+            <p className="mt-1 text-[var(--body-size)] text-muted-foreground">{description}</p>
           )}
         </div>
         {action}
@@ -97,10 +97,10 @@ const sentenceCase = (s: string) => {
 
 const Field = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-lg border border-border/60 bg-background/60 p-3">
-    <p className="text-sm font-semibold text-muted-foreground">
+    <p className="text-[var(--body-size)] font-semibold text-muted-foreground">
       {sentenceCase(label)}
     </p>
-    <p className="mt-1 whitespace-pre-wrap text-sm font-medium text-foreground">{sentenceCase(value)}</p>
+    <p className="mt-1 whitespace-pre-wrap text-[var(--body-size)] font-medium text-foreground">{sentenceCase(value)}</p>
   </div>
 );
 
@@ -111,7 +111,7 @@ const EmptyDay = ({ day, href }: { day: number; href: string }) => {
         <Button
           asChild
           size="lg"
-          className="w-full h-14 gap-2 text-base font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 animate-pulse-glow-orange transition-all duration-300 hover:-translate-y-0.5 hover:[&_svg]:translate-x-1 [&_svg]:transition-transform"
+          className="w-full h-14 gap-2 text-[var(--body-size)] font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 animate-pulse-glow-orange transition-all duration-300 hover:-translate-y-0.5 hover:[&_svg]:translate-x-1 [&_svg]:transition-transform"
         >
           <Link to={href}>
             Start Day 1
@@ -170,7 +170,7 @@ const EditableTitle = ({ identity }: { identity: ReturnType<typeof useChallengeI
             if (e.key === "Escape") { e.preventDefault(); cancel(); }
           }}
           placeholder="Lead Generation"
-          className="h-10 text-lg font-bold"
+          className="h-10 text-[var(--h2-size)] font-bold"
           maxLength={48}
           aria-label="Edit challenge topic"
         />
@@ -186,7 +186,7 @@ const EditableTitle = ({ identity }: { identity: ReturnType<typeof useChallengeI
 
   return (
     <div className="mt-2 flex items-start gap-2">
-      <h3 className="text-2xl font-bold leading-tight text-foreground">{identity.title}</h3>
+      <h3 className="text-[var(--h1-size)] font-bold leading-tight text-foreground">{identity.title}</h3>
       <button
         type="button"
         onClick={() => setEditing(true)}
@@ -332,7 +332,7 @@ const ChallengeRecord = () => {
                     <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">
                       {c.label}
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
+                    <p className="mt-1 whitespace-pre-wrap text-[var(--body-size)] text-foreground">
                       {sentenceCase(
                         c.value
                           .replace(/\s*(Day\s*\d+\s*:)/g, (_, m, idx) => (idx === 0 ? m : `\n${m}`))
@@ -389,7 +389,7 @@ const ChallengeRecord = () => {
                   href={day3.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-1 inline-flex items-center gap-1.5 break-all text-sm font-semibold text-primary hover:underline"
+                  className="mt-1 inline-flex items-center gap-1.5 break-all text-[var(--body-size)] font-semibold text-primary hover:underline"
                 >
                   {day3.url}
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -412,7 +412,7 @@ const ChallengeRecord = () => {
                   </p>
                 </div>
                 {item.value && (
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
+                  <p className="mt-1 whitespace-pre-wrap text-[var(--body-size)] text-foreground">
                     {item.value}
                   </p>
                 )}

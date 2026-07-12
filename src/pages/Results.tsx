@@ -244,7 +244,7 @@ const Results = () => {
   if (!hasResult) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
-        <h1 className="text-xl font-bold text-foreground">No results yet</h1>
+        <h1 className="text-[var(--h2-size)] font-bold text-foreground">No results yet</h1>
         <Button onClick={() => navigate("/assessment")}>Take the quiz</Button>
       </div>
     );
@@ -324,10 +324,10 @@ const Results = () => {
           </p>
 
           <div className="relative">
-            <div className={`text-[8rem] sm:text-[10rem] font-black leading-none tracking-tighter ${accent.text}`}>
+            <div className={`text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black leading-none tracking-tighter ${accent.text}`}>
               {animatedScore}
             </div>
-            <p className="mt-2 text-sm font-medium uppercase tracking-[0.25em] text-muted-foreground">
+            <p className="mt-2 text-[var(--body-size)] font-medium uppercase tracking-[0.25em] text-muted-foreground">
               out of 100
             </p>
           </div>
@@ -370,10 +370,10 @@ const Results = () => {
                 <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
                   {intro}
                 </p>
-                <h1 className={`mt-3 text-4xl sm:text-5xl font-black tracking-tight ${accent.text}`}>
+                <h1 className={`mt-3 text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black tracking-tight ${accent.text}`}>
                   {name}
                 </h1>
-                <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+                <p className="mt-3 text-[var(--body-size)] sm:text-[var(--h2-size)] text-muted-foreground">
                   {tagline}
                 </p>
               </div>
@@ -406,8 +406,8 @@ const Results = () => {
                       key={`ph-${i}`}
                       className={`whitespace-pre-line ${
                         i === 0
-                          ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight"
-                          : "text-lg sm:text-xl leading-[1.6]"
+                          ? "text-[var(--h1-size)] sm:text-[var(--h1-size)] font-semibold leading-[1.25] tracking-tight"
+                          : "text-[var(--h2-size)] sm:text-[var(--h2-size)] leading-[1.6]"
                       }`}
                     >
                       {text}
@@ -423,8 +423,8 @@ const Results = () => {
                         key={i}
                         className={`whitespace-pre-line text-foreground/90 ${
                           isLead
-                            ? "text-2xl sm:text-[28px] font-semibold leading-[1.25] tracking-tight text-foreground"
-                            : "text-lg sm:text-xl leading-[1.6]"
+                            ? "text-[var(--h1-size)] sm:text-[var(--h1-size)] font-semibold leading-[1.25] tracking-tight text-foreground"
+                            : "text-[var(--h2-size)] sm:text-[var(--h2-size)] leading-[1.6]"
                         }`}
                       >
                         {isLast ? (
@@ -451,12 +451,12 @@ const Results = () => {
             <Button
               size="lg"
               onClick={cta.onClick}
-              className="h-[72px] w-full gap-3 rounded-2xl text-lg sm:text-xl font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
+              className="h-[72px] w-full gap-3 rounded-2xl text-[var(--h2-size)] sm:text-[var(--h2-size)] font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
             >
               {cta.label}
               <ArrowRight className="w-6 h-6" />
             </Button>
-            <p className="text-center text-base sm:text-lg font-medium text-muted-foreground">
+            <p className="text-center text-[var(--body-size)] sm:text-[var(--h2-size)] font-medium text-muted-foreground">
               {pendingCoupon && entryIntent === "premium_course"
                 ? `Coupon ${pendingCoupon} will be applied at checkout.`
                 : urgencyLine}

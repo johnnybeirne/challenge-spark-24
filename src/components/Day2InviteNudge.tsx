@@ -28,7 +28,7 @@ const Day2InviteNudge = ({ onContinue }: { onContinue: () => void }) => {
     <Card className="border-accent/30 bg-accent/5 mb-6">
       <CardContent className="p-5 text-center">
         <Rocket className="w-6 h-6 text-accent mx-auto mb-3" />
-        <h3 className="text-sm font-semibold text-foreground mb-1">
+        <h3 className="text-[var(--body-size)] font-semibold text-foreground mb-1">
           Want to move faster?
         </h3>
         <p className="text-xs text-muted-foreground mb-4">

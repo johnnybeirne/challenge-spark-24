@@ -269,7 +269,7 @@ const StaticAi = ({ messages, echoMap }: { messages: Msg[]; echoMap?: EchoMap })
     <div className="flex-1 space-y-1.5 min-w-0">
       {messages.map((m, i) => (
         <div key={i} className="flex">
-          <div className="max-w-[90%] px-1 py-0.5 text-sm md:text-base leading-snug whitespace-pre-line">
+          <div className="max-w-[90%] px-1 py-0.5 text-[var(--body-size)] md:text-[var(--body-size)] leading-snug whitespace-pre-line">
             {renderMsg(m, echoMap, `m${i}-`)}
           </div>
         </div>
@@ -313,7 +313,7 @@ const RecapCard = ({ rows, echoMap, bare = false }: { rows: RecapRow[]; echoMap:
         return (
           <div
             key={r.echo}
-            className="text-sm md:text-base leading-snug text-foreground/80"
+            className="text-[var(--body-size)] md:text-[var(--body-size)] leading-snug text-foreground/80"
           >
             <span>{r.label} </span>
             <EchoText
@@ -350,15 +350,15 @@ const JohnnyRecapPanel = ({
     <JohnnyAvatar />
     <div className="flex-1 space-y-3 min-w-0">
       {leadIn && (
-        <div className="text-sm md:text-base leading-relaxed text-foreground/80">
+        <div className="text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed text-foreground/80">
           {leadIn}
         </div>
       )}
-      <div className="text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
+      <div className="text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed font-medium whitespace-pre-line">
         {acknowledgement}
       </div>
       <RecapCard rows={rows} echoMap={echoMap} />
-      <div className="text-sm md:text-base leading-relaxed whitespace-pre-line">{question}</div>
+      <div className="text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed whitespace-pre-line">{question}</div>
     </div>
   </div>
 );
@@ -372,7 +372,7 @@ const DelayedFeedback = ({ text }: { text: string }) => {
   }, []);
   return (
     <div className="flex animate-fade-in pt-1">
-      <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-sm text-foreground/80 italic">
+      <div className="max-w-[90%] rounded-xl px-3 py-2 text-xs md:text-[var(--body-size)] text-foreground/80 italic">
         {ready ? text : <span className="text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>}
       </div>
     </div>
@@ -478,14 +478,14 @@ const TypedSequence = ({
       <div className="flex-1 space-y-3 min-w-0">
         {shown.map((shownIdx, i) => (
           <div key={i} className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-line">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed whitespace-pre-line">
               {renderMsg(messages[shownIdx], echoMap, `t${shownIdx}-`)}
             </div>
           </div>
         ))}
         {idx < plain.length && (
           <div className="flex animate-fade-in">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed min-h-[44px] whitespace-pre-line">
+            <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed min-h-[44px] whitespace-pre-line">
               {isMakingNotes ? (
                 <span className="italic text-muted-foreground">Making notes<span className="inline-block animate-pulse">...</span></span>
               ) : showDots ? (
@@ -644,7 +644,7 @@ const FoundationStep = ({
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+        <h1 className="text-[var(--h1-size)] md:text-[var(--h1-size)] font-bold tracking-tight">{title}</h1>
       </div>
 
 
@@ -654,7 +654,7 @@ const FoundationStep = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="min-h-[70px] text-base"
+          className="min-h-[70px] text-[var(--body-size)]"
         />
         {length > 0 && (
           <p className="text-xs text-muted-foreground">{length} characters</p>
@@ -664,7 +664,7 @@ const FoundationStep = ({
       <Button
         size="lg"
         onClick={onNext}
-        className="w-full h-12 text-base font-semibold"
+        className="w-full h-12 text-[var(--body-size)] font-semibold"
       >
         Continue
         <ArrowRight className="ml-2 h-5 w-5" />
@@ -1440,7 +1440,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         {step !== 4 && step !== 8 && step !== 0 && (
           <button
             onClick={goBack}
-            className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="mb-6 inline-flex items-center gap-2 text-[var(--body-size)] text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -1474,7 +1474,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           return (
             <div className="space-y-6 animate-fade-in">
               {step1AudienceTypeDisplay && (
-                <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 text-sm md:text-base leading-snug text-foreground/80">
+                <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 text-[var(--body-size)] md:text-[var(--body-size)] leading-snug text-foreground/80">
                   <span>You serve: </span>
                   <span className="font-medium text-primary">{step1AudienceTypeDisplay}</span>
                 </div>
@@ -1506,7 +1506,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                             : "e.g. New parents in their 30s."
                         }
                         rows={3}
-                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(1);
                         }}
@@ -1532,7 +1532,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(1)}
                       disabled={!audience.trim()}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1586,7 +1586,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                           >
                             {selected && <Check className="h-3.5 w-3.5 text-primary-foreground" />}
                           </span>
-                          <span className="text-base font-semibold leading-tight">{opt}</span>
+                          <span className="text-[var(--body-size)] font-semibold leading-tight">{opt}</span>
                         </button>
                       );
                     })}
@@ -1596,7 +1596,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleExpertTypeNext}
                       disabled={expertType.length === 0}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1640,7 +1640,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setSuperpower(e.target.value)}
                         placeholder="e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding."
                         rows={3}
-                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSuperpowerNext();
                         }}
@@ -1655,7 +1655,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleSuperpowerNext}
                       disabled={!superpower.trim()}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1737,7 +1737,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setProblem(e.target.value)}
                         placeholder="Describe the single most painful problem they have right now…"
                         rows={3}
-                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(2);
                         }}
@@ -1752,7 +1752,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(2)}
                       disabled={!problem.trim() || navLoading === "problem"}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       {navLoading === "problem" ? (
                         <>
@@ -1837,7 +1837,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                     <JohnnyAvatar />
                     <div className="flex-1 space-y-3 min-w-0">
                       <div className="flex">
-                        <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm md:text-base leading-relaxed font-medium whitespace-pre-line">
+                        <div className="max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-3 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed font-medium whitespace-pre-line">
                           {step3Ack}
                         </div>
                       </div>
@@ -1848,7 +1848,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
-                    <div className="flex-1 min-w-0 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                    <div className="flex-1 min-w-0 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed whitespace-pre-line">
                       {step3Question}
                     </div>
                   </div>
@@ -1861,7 +1861,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setHow(e.target.value)}
                         placeholder={processPlaceholder}
                         rows={3}
-                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFoundationNext(3);
                         }}
@@ -1876,7 +1876,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(3)}
                       disabled={!how.trim()}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1959,7 +1959,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         onChange={(e) => setOutcome(e.target.value)}
                         placeholder={outcomePlaceholder}
                         rows={3}
-                        className="min-h-[70px] text-base p-4 pb-12 leading-relaxed"
+                        className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleOutcomeNext();
                         }}
@@ -1974,7 +1974,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleOutcomeNext}
                       disabled={!outcome.trim() || navLoading === "outcome"}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold"
                     >
                       {navLoading === "outcome" ? (
                         <>
@@ -2052,11 +2052,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
                         <span className="flex flex-col gap-0.5">
-                          <span className="text-base font-semibold leading-tight">
+                          <span className="text-[var(--body-size)] font-semibold leading-tight">
                             <span className="mr-1.5">{opt.emoji}</span>
                             {opt.label}
                           </span>
-                          <span className="text-sm text-muted-foreground leading-snug">
+                          <span className="text-[var(--body-size)] text-muted-foreground leading-snug">
                             {opt.description}
                           </span>
                         </span>
@@ -2143,8 +2143,8 @@ const Day1Setup = ({ onComplete }: Props) => {
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
                         <span className="flex flex-col gap-1">
-                          <span className="text-base font-semibold leading-tight">{opt.title}</span>
-                          <span className="text-sm text-muted-foreground leading-snug">{opt.description}</span>
+                          <span className="text-[var(--body-size)] font-semibold leading-tight">{opt.title}</span>
+                          <span className="text-[var(--body-size)] text-muted-foreground leading-snug">{opt.description}</span>
                           <span className="text-xs text-muted-foreground leading-snug mt-0.5">
                             Examples: {opt.examples.join(", ")}
                           </span>
@@ -2278,7 +2278,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   {/* Render the full summary statically once typing finishes */}
                   <div className="flex items-start gap-3">
                     <JohnnyAvatar />
-                    <div className="flex-1 space-y-3 min-w-0 text-sm md:text-base leading-relaxed text-foreground">
+                    <div className="flex-1 space-y-3 min-w-0 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed text-foreground">
                       {summaryNodes.map((p, i) => (
                         <p key={i}>{p}</p>
                       ))}
@@ -2295,7 +2295,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                          <p className="text-xl md:text-2xl font-semibold leading-snug text-foreground">
+                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] font-semibold leading-snug text-foreground">
                             Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
                           </p>
                         </div>
@@ -2305,7 +2305,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                     <Button
                       size="lg"
                       onClick={handleSaveAssessment}
-                      className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                      className="w-full h-14 text-[var(--body-size)] font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                     >
                       Continue Building Your Challenge
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -2362,8 +2362,8 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-5 animate-fade-in">
 
             {/* Snapshot */}
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Your Starting Point</h2>
-            <div className="rounded-xl border border-border bg-card/60 p-4 text-sm space-y-2">
+            <h2 className="text-[var(--h1-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">Your Starting Point</h2>
+            <div className="rounded-xl border border-border bg-card/60 p-4 text-[var(--body-size)] space-y-2">
 
               <p className="font-semibold text-foreground">
                 {(() => {
@@ -2396,7 +2396,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               <Button
                 size="lg"
                 onClick={handleFinishDay1}
-                className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full h-14 text-[var(--body-size)] font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 <CheckCircle2 className="h-5 w-5 mr-2" />
                 Complete Day 1 &amp; Unlock Day 2

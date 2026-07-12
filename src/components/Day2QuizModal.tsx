@@ -154,10 +154,10 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
           ) : phase === "error" ? (
             <div className="flex h-full w-full items-center justify-center p-8">
               <div className="max-w-sm rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-                <h3 className="text-lg font-black text-foreground">
+                <h3 className="text-[var(--h2-size)] font-black text-foreground">
                   We couldn't generate your quiz
                 </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-[var(--body-size)] text-muted-foreground">
                   Something went wrong on our side. Your previous quiz (if any) is still saved.
                 </p>
                 <div className="mt-6 flex flex-col gap-2">
@@ -167,7 +167,7 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
                       setAttempt((a) => a + 1);
                       setPhase("generating");
                     }}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-[var(--body-size)] font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                   >
                     <RefreshCw className="h-4 w-4" />
                     Try again
@@ -175,7 +175,7 @@ const Day2QuizModal = ({ open, onClose }: Props) => {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-sm font-semibold text-muted-foreground hover:text-foreground"
+                    className="text-[var(--body-size)] font-semibold text-muted-foreground hover:text-foreground"
                   >
                     Close
                   </button>

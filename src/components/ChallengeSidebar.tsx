@@ -182,7 +182,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             />
             {identity.isPersonalised && (
               <p
-                className="mt-1 truncate text-sm font-black uppercase tracking-[0.14em] text-primary"
+                className="mt-1 truncate text-[var(--body-size)] font-black uppercase tracking-[0.14em] text-primary"
                 title={identity.title}
               >
                 {identity.shortTitle}
@@ -190,7 +190,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             )}
           </button>
         ) : (
-          <p className="text-center text-base font-black tracking-tight text-foreground">L</p>
+          <p className="text-center text-[var(--body-size)] font-black tracking-tight text-foreground">L</p>
         )}
 
         {/* Start Here */}
@@ -209,7 +209,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         >
           <div className="flex items-center gap-2">
             <Rocket className={cn("h-4 w-4 shrink-0", dashboardActive ? "text-primary" : "text-muted-foreground")} />
-            {!collapsed && <span className="text-sm font-semibold text-foreground">Your Dashboard</span>}
+            {!collapsed && <span className="text-[var(--body-size)] font-semibold text-foreground">Your Dashboard</span>}
           </div>
         </button>
 
@@ -251,15 +251,15 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                       {!collapsed && (
                         <div className="min-w-0 flex-1">
                           <div className="flex items-baseline justify-between gap-2">
-                            <p className={cn("text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
+                            <p className={cn("text-[var(--body-size)] font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>
                               Day {n}
                             </p>
-                            <p className={cn("text-sm font-semibold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
+                            <p className={cn("text-[var(--body-size)] font-semibold tabular-nums", locked ? "text-muted-foreground" : "text-foreground/70")}>
                               {dateLabel}
                             </p>
                           </div>
                           <p className={cn(
-                            "mt-0.5 text-sm font-semibold",
+                            "mt-0.5 text-[var(--body-size)] font-semibold",
                             complete ? "text-success" : inProgress ? "text-primary" : "text-muted-foreground"
                           )}>
                             {status}
@@ -277,7 +277,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         {/* TOOLS */}
         <section className="space-y-1.5">
           {!collapsed && (
-            <p className="flex items-center gap-1.5 px-1 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="flex items-center gap-1.5 px-1 text-[var(--body-size)] font-black uppercase tracking-[0.14em] text-muted-foreground">
               <Rocket className="h-3.5 w-3.5" /> Build Momentum
             </p>
           )}
@@ -297,7 +297,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               >
                 <div className="flex items-center gap-2">
                   <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary" : "text-muted-foreground")} />
-                  {!collapsed && <span className="text-sm font-semibold text-foreground">{label}</span>}
+                  {!collapsed && <span className="text-[var(--body-size)] font-semibold text-foreground">{label}</span>}
                 </div>
               </button>
             );
@@ -319,7 +319,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
             >
               <div className="flex items-center gap-2">
                 <Icon className="h-4 w-4 shrink-0" />
-                {!collapsed && <span className="text-sm font-semibold">{label}</span>}
+                {!collapsed && <span className="text-[var(--body-size)] font-semibold">{label}</span>}
               </div>
             </button>
           ))}
@@ -338,7 +338,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           >
             <div className="flex items-center gap-2">
               <LogOut className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+              {!collapsed && <span className="text-[var(--body-size)] font-semibold">Log out</span>}
             </div>
           </button>
         </div>
@@ -404,7 +404,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               </span>
             </button>
             <button onClick={() => go("/challenger-dashboard")} className="w-full text-center" title="Back to dashboard">
-              <p className="truncate text-lg font-bold text-foreground">
+              <p className="truncate text-[var(--h2-size)] font-bold text-foreground">
                 {hasSavedProgress ? `Welcome back ${displayName}` : `Welcome ${displayName}`}
               </p>
               {photoUploading ? (
@@ -412,7 +412,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               ) : hasAvatar && hasName ? (
                 <p className="truncate text-xs text-muted-foreground">Dashboard</p>
               ) : (
-                <span className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black uppercase tracking-wider text-primary-foreground shadow-md">
+                <span className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-[var(--body-size)] font-black uppercase tracking-wider text-primary-foreground shadow-md">
                   👉 Start here
                 </span>
               )}
@@ -457,7 +457,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                   {!collapsed ? (
                     <div className="min-w-0 flex-1">
                       <p className={cn("text-[10px] font-black uppercase tracking-wider", locked && !complete ? "text-muted-foreground" : complete ? "text-success" : "text-primary")}>Day {n}{complete ? " · Completed" : ""}</p>
-                      <p className={cn("truncate text-sm font-semibold", locked && !complete ? "text-muted-foreground" : complete ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                      <p className={cn("truncate text-[var(--body-size)] font-semibold", locked && !complete ? "text-muted-foreground" : complete ? "text-muted-foreground" : "text-foreground")}>{label}</p>
                     </div>
                   ) : (
                     <span className={cn(
@@ -509,7 +509,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                     {!collapsed ? (
                       <div className="min-w-0 flex-1">
                         <p className={cn("text-[10px] font-black uppercase tracking-wider", locked ? "text-muted-foreground" : "text-primary")}>Module {n}</p>
-                        <p className={cn("truncate text-sm font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
+                        <p className={cn("truncate text-[var(--body-size)] font-semibold", locked ? "text-muted-foreground" : "text-foreground")}>{label}</p>
                       </div>
                     ) : (
                       <span className={cn(
@@ -558,7 +558,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
               title={label}
             >
               <div className="flex items-center justify-between gap-2">
-                {!collapsed && <p className="text-sm font-semibold text-foreground">{label}</p>}
+                {!collapsed && <p className="text-[var(--body-size)] font-semibold text-foreground">{label}</p>}
                 <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", tint)}>
                   <Icon className="h-4 w-4" />
                 </span>
@@ -590,7 +590,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
                   <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white">
                     100% Free
                   </span>
-                  <p className="mt-1.5 text-sm font-black text-emerald-700 dark:text-emerald-300">Start the 3-Day Challenge</p>
+                  <p className="mt-1.5 text-[var(--body-size)] font-black text-emerald-700 dark:text-emerald-300">Start the 3-Day Challenge</p>
                   <p className="mt-0.5 text-[11px] font-semibold text-emerald-700/80 dark:text-emerald-300/80">No credit card required</p>
                 </div>
               ) : (
@@ -617,7 +617,7 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
         title="Log out"
       >
         <div className="flex items-center justify-between gap-2">
-          {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+          {!collapsed && <span className="text-[var(--body-size)] font-semibold">Log out</span>}
           <LogOut className="h-4 w-4 shrink-0" />
         </div>
       </button>
@@ -669,7 +669,7 @@ const ChallengeSidebar = ({
           </SheetTrigger>
           <div className="flex items-center gap-2">
             <LeadTreeIcon size={18} />
-            <p className="text-sm font-black tracking-tight text-foreground">LEADTREE</p>
+            <p className="text-[var(--body-size)] font-black tracking-tight text-foreground">LEADTREE</p>
           </div>
           <span className="h-9 w-9" aria-hidden />
         </div>

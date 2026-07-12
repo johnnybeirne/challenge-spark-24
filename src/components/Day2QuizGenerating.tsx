@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { normaliseQuiz } from "@/components/Day2QuizPlayable";
 import { LeadTreeIcon } from "@/components/LeadTreeIcon";
+import LeadTreeLogoAnimation from "@/components/LeadTreeLogoAnimation";
 import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 
 const MESSAGE_MS = 1800;

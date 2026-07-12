@@ -144,7 +144,7 @@ const AnimatedDayCards = () => {
 
 const ChallengeLanding = () => {
   const navigate = useNavigate();
-  const completionDayName = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });
+  const completionDayName = getCompletionDayName();
 
   const joinChallenge = (section: string) => {
     trackEvent("landing_cta_clicked", { section });

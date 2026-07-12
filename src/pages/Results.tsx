@@ -99,7 +99,7 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
-  const completionDayName = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });
+  const completionDayName = getCompletionDayName();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {

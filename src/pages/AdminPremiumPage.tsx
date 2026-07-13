@@ -551,12 +551,19 @@ const AdminPremiumPage = () => {
             value={extra.trainer_bio}
             onChange={(v) => updateExtra("trainer_bio", v)}
           />
-          <EditableField
-            label="Trainer image URL"
+          <TrainerImageUploader
             value={extra.trainer_image_url}
-            onChange={(v) => updateExtra("trainer_image_url", v)}
-            placeholder="https://…"
+            onChange={async (url) => {
+              updateExtra("trainer_image_url", url);
+              if (rowId) {
+                await supabase
+                  .from("premium_page_settings" as any)
+                  .update({ trainer_image_url: url })
+                  .eq("id", rowId);
+              }
+            }}
           />
+
         </EditorCard>
         <EditorCard title="Trainer stats">
           <EditableField label="Stat 1" value={extra.trainer_stat_1} onChange={(v) => updateExtra("trainer_stat_1", v)} />

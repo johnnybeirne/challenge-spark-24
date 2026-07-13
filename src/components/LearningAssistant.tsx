@@ -211,7 +211,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   );
 };
 
-const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void; limitToOneQuestion?: boolean }) => {
+const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion, advisorAvatar, advisorName }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void; limitToOneQuestion?: boolean; advisorAvatar?: string | null; advisorName?: string }) => {
   const [typingDone, setTypingDone] = useState(!typewriter);
 
   if (turn.role === "user") {
@@ -229,13 +229,27 @@ const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion }: { turn
 
   const showCta = onJoinCtaClick && typingDone && !limitToOneQuestion;
 
+  const advisorInitial = (advisorName || "?").charAt(0).toUpperCase();
+
   return (
     <div className="flex justify-start gap-2">
-      <img
-        src={johnnyAvatar}
-        alt="Johnny AI"
-        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
-      />
+      {advisorAvatar ? (
+        <img
+          src={advisorAvatar}
+          alt={`${advisorName || "AI"} avatar`}
+          className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+        />
+      ) : advisorAvatar === null || advisorAvatar === "" ? (
+        <div className="h-7 w-7 shrink-0 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-border">
+          {advisorInitial}
+        </div>
+      ) : (
+        <img
+          src={johnnyAvatar}
+          alt="Johnny AI"
+          className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+        />
+      )}
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground">
         {typewriter ? (
           <TypewriterText text={turn.text} onDone={() => setTypingDone(true)} />

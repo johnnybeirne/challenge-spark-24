@@ -68,7 +68,7 @@ const QaSimulatedDate = () => {
       <div className="grid grid-cols-2 gap-1.5">
         <button
           onClick={apply}
-          className="rounded border border-primary bg-primary px-2 py-1 text-[11px] font-black uppercase tracking-wider text-primary-foreground hover:opacity-90"
+          className="rounded border border-primary bg-primary px-2 py-1 text-[11px] font-black uppercase tracking-wider text-white hover:opacity-90 hover:text-white focus-visible:text-white disabled:text-white"
         >
           Apply
         </button>

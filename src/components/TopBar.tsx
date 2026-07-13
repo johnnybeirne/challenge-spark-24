@@ -61,7 +61,7 @@ const TopBar = () => {
                 className={cn(
                   "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-colors",
                   focusMode
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    ? "bg-primary text-white hover:bg-primary/90 hover:text-white focus-visible:text-white disabled:text-white"
                     : "bg-foreground/10 text-foreground hover:bg-foreground/20"
                 )}
                 aria-pressed={focusMode}

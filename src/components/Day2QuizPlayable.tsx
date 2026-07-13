@@ -621,7 +621,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         </h2>
 
         {/* Answers */}
-        <div className="grid grid-cols-1 gap-3 max-w-xs mx-auto">
+        <div className="grid grid-cols-1 gap-3 w-full">
           {answers_options.map(({ tier, label }) => {
             const isSelected = selected === tier;
             return (

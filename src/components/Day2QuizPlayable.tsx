@@ -1027,7 +1027,12 @@ const QuizResultScreen = ({
                 limitToOneQuestion={true}
                 advisorAvatar={ownerAvatarUrl}
                 advisorName={advisorName}
+                allowFollowUpQuestion={true}
+                followUpPlaceholder="Ask a question about your result..."
+                followUpButtonLabel="Ask"
+                joinCtaLabel={`Join the ${challengeName}`}
               />
+
             </div>
           </section>
         )}

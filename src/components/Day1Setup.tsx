@@ -664,7 +664,7 @@ const FoundationStep = ({
       <Button
         size="lg"
         onClick={onNext}
-        className="w-full h-12 text-[var(--body-size)] font-semibold"
+        className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
       >
         Continue
         <ArrowRight className="ml-2 h-5 w-5" />
@@ -1532,7 +1532,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(1)}
                       disabled={!audience.trim()}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1596,7 +1596,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleExpertTypeNext}
                       disabled={expertType.length === 0}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1655,7 +1655,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleSuperpowerNext}
                       disabled={!superpower.trim()}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1752,7 +1752,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(2)}
                       disabled={!problem.trim() || navLoading === "problem"}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       {navLoading === "problem" ? (
                         <>
@@ -1876,7 +1876,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={() => handleFoundationNext(3)}
                       disabled={!how.trim()}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       Continue
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1974,7 +1974,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       size="lg"
                       onClick={handleOutcomeNext}
                       disabled={!outcome.trim() || navLoading === "outcome"}
-                      className="w-full h-12 text-[var(--body-size)] font-semibold"
+                      className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
                       {navLoading === "outcome" ? (
                         <>
@@ -2305,7 +2305,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                     <Button
                       size="lg"
                       onClick={handleSaveAssessment}
-                      className="w-full h-14 text-[var(--body-size)] font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                      className="w-full h-14 text-[var(--body-size)] font-semibold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                     >
                       Continue Building Your Challenge
                       <ArrowRight className="ml-2 h-5 w-5" />

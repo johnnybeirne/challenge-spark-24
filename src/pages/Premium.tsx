@@ -549,7 +549,7 @@ const Premium = () => {
           <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-center">
             <Button
               size="lg"
-              className="gap-2 font-black uppercase"
+              className="gap-2 font-black uppercase text-white"
               onClick={() => {
                 setCouponSuccessOpen(false);
                 handlePrimaryCta();

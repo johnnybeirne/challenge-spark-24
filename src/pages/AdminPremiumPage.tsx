@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -305,10 +306,18 @@ const AdminPremiumPage = () => {
 
   return (
     <div className="space-y-8 px-6 py-6 max-w-3xl">
-      <CmsPageHeader
-        title="Premium Page"
-        description="Edit the content shown on the /premium sales page. Each section saves independently."
-      />
+      <div className="flex items-start justify-between gap-4">
+        <CmsPageHeader
+          title="Premium Page"
+          description="Edit the content shown on the /premium sales page. Each section saves independently."
+        />
+        <Button variant="outline" size="sm" asChild>
+          <a href="/premium" target="_blank" rel="noopener noreferrer">
+            <Eye className="h-4 w-4 mr-2" />
+            Preview
+          </a>
+        </Button>
+      </div>
 
       {/* HERO */}
       <section className="space-y-4">

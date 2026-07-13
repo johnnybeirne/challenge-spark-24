@@ -735,11 +735,13 @@ const QuizResultScreen = ({
   quiz,
   result,
   ownerFirstName,
+  ownerAvatarUrl,
   challengeName,
 }: {
   quiz: QuizDraft;
   result: ResultData;
   ownerFirstName: string;
+  ownerAvatarUrl?: string | null;
   challengeName: string;
 }) => {
   const navigate = useNavigate();

@@ -137,6 +137,7 @@ const App = () => (
                 {/* VIP: /premium canonical, /vip alias */}
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/vip" element={<RedirectKeepingQuery to="/premium" />} />
+                <Route path="/admin/landing-preview" element={<AdminLandingPreview />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}

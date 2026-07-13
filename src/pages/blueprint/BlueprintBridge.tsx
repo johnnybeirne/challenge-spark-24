@@ -218,7 +218,7 @@ const BlueprintBridge = () => {
         <Button onClick={startChallenge} className="h-14 gap-2 px-8 text-base font-black uppercase shadow-lg shadow-primary/20">
           <Rocket className="h-5 w-5" /> Start The 3-Day Challenge <ArrowRight className="h-4 w-4" />
         </Button>
-        <Button asChild variant="outline" className="h-14 px-8 text-sm font-black uppercase text-white">
+        <Button asChild className="h-14 px-8 text-sm font-black uppercase text-white">
           <Link to="/blueprint/dashboard">Continue Learning</Link>
         </Button>
       </section>

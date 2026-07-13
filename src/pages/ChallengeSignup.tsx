@@ -42,7 +42,7 @@ const ChallengeSignup = () => {
         cameFromAssessment ? (
           <>
             <AddToCalendar firstNameOverride={firstName || ""} className="h-12" />
-            <Button variant="secondary" className="h-12 text-white" onClick={goToRedirect}>Continue</Button>
+            <Button className="h-12 text-white" onClick={goToRedirect}>Continue</Button>
           </>
         ) : (
           <Button className="h-12" onClick={goToRedirect}>Start Day 1</Button>

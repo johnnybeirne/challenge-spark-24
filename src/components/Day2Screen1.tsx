@@ -506,7 +506,7 @@ const Day2Screen1 = () => {
                 onClick={handleGenerateQuiz}
                 disabled={quizGenerating}
                 aria-busy={quizGenerating}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-center font-semibold text-white shadow-sm transition hover:opacity-90 hover:text-white focus-visible:text-white disabled:opacity-70 disabled:cursor-wait disabled:text-white"
                 style={{ fontSize: "var(--body-size)" }}
               >
                 {quizGenerating ? (

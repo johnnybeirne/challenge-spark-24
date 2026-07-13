@@ -343,7 +343,7 @@ const Dashboard = () => {
                       <button
                         type="button"
                         aria-label="Play training video"
-                        className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition hover:scale-105"
+                        className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition hover:scale-105 hover:text-white focus-visible:text-white disabled:text-white"
                       >
                         <Play className="h-6 w-6" fill="currentColor" />
                       </button>

@@ -73,7 +73,7 @@ const Pill = ({
     onClick={onClick}
     className={`rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider transition ${
       active
-        ? "border-primary bg-primary text-primary-foreground"
+        ? "border-primary bg-primary text-white"
         : "border-border bg-background text-muted-foreground hover:bg-muted"
     }`}
   >
@@ -538,7 +538,7 @@ const QaModePanel = () => {
                     onClick={() => simulateSession(id)}
                     className={`rounded border border-border px-2 py-1.5 text-[11px] font-black uppercase tracking-wider transition ${
                       qa.active && qa.tier === SIM_CONFIG[id].tier && qa.assessmentMode === SIM_CONFIG[id].assessmentMode
-                        ? "border-primary bg-primary text-primary-foreground"
+                        ? "border-primary bg-primary text-white"
                         : "bg-background hover:bg-muted"
                     } disabled:opacity-50`}
                   >
@@ -556,7 +556,7 @@ const QaModePanel = () => {
               <div className="grid grid-cols-2 gap-1.5">
                 <button
                   onClick={() => window.open("/quiz-preview", "_blank", "noopener,noreferrer")}
-                  className="rounded border border-primary bg-primary px-2 py-1.5 text-[11px] font-black uppercase tracking-wider text-primary-foreground hover:opacity-90"
+                  className="rounded border border-primary bg-primary px-2 py-1.5 text-[11px] font-black uppercase tracking-wider text-white hover:opacity-90 hover:text-white focus-visible:text-white disabled:text-white"
                 >
                   Open in new tab
                 </button>

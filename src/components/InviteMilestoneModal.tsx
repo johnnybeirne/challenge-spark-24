@@ -43,7 +43,7 @@ const InviteMilestoneModal = () => {
             You've unlocked faster progress and visibility inside the network.
           </DialogDescription>
         </DialogHeader>
-        <Button className="w-full mt-2" onClick={() => setOpen(false)}>
+        <Button className="w-full mt-2 text-white" onClick={() => setOpen(false)}>
           Continue
         </Button>
       </DialogContent>

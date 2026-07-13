@@ -748,7 +748,7 @@ const DayChallenge = () => {
             <p className="mb-4 text-[var(--body-size)] font-semibold leading-relaxed text-foreground">
               {config.completion.replace(".", `, ${firstName}.`)}
             </p>
-            <Button className="w-full gap-2" size="lg" onClick={completeDay}>
+            <Button className="w-full gap-2 text-white" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
               {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
             </Button>

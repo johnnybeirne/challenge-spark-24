@@ -294,7 +294,7 @@ const SignupChat = ({
               {renderSuccessActions ? (
                 renderSuccessActions({ firstName, redirect: redirectAfterAuth, goToRedirect })
               ) : (
-                <Button className="h-12" onClick={goToRedirect}>Continue</Button>
+                <Button className="h-12 text-white" onClick={goToRedirect}>Continue</Button>
               )}
             </div>
           </div>
@@ -373,7 +373,7 @@ const SignupChat = ({
               <Button
                 type="submit"
                 disabled={!canAdvanceSignup || loading}
-                className="h-12 w-12 rounded-xl shrink-0 p-0 border-2 border-foreground"
+                className="h-12 w-12 rounded-xl shrink-0 p-0 border-2 border-foreground text-white"
                 aria-label="Continue"
               >
                 <ArrowRight className="!w-5 !h-5" />

@@ -171,28 +171,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           }}
         />
 
-        {/* Brand */}
-        {!collapsed ? (
-          <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
-            <img
-              src={leadtreeLogo.url}
-              alt="LeadTree"
-              className="h-8 w-auto"
-            />
-            {identity.isPersonalised && (
-              <p
-                className="mt-1 truncate text-[var(--body-size)] font-black uppercase tracking-[0.14em] text-primary"
-                title={identity.title}
-              >
-                {identity.shortTitle}
-              </p>
-            )}
-          </button>
-        ) : (
-          <p className="text-center text-[var(--body-size)] font-black tracking-tight text-foreground">L</p>
-        )}
-
         {/* Start Here */}
+
         <button
           onClick={() => {
             go("/challenger-dashboard");

@@ -16,9 +16,11 @@ type Props = {
   typewriter?: boolean;
   onJoinCtaClick?: () => void;
   limitToOneQuestion?: boolean;
+  advisorAvatar?: string | null;
+  advisorName?: string;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false }: Props) => {
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false, advisorAvatar, advisorName }: Props) => {
   const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
@@ -140,9 +142,9 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               className="px-4 py-4 space-y-3 bg-background"
             >
               {(threads[openPill] ?? []).map((t, i) => (
-                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} />
+                <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} advisorAvatar={advisorAvatar} advisorName={advisorName} />
               ))}
-              {loadingKey === openPill && <Typing />}
+              {loadingKey === openPill && <Typing advisorAvatar={advisorAvatar} advisorName={advisorName} />}
             </div>
           </div>
         )}
@@ -154,9 +156,9 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
             className="rounded-xl border border-border bg-background p-4 space-y-3"
           >
             {freeThread.map((t, i) => (
-              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} />
+              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} advisorAvatar={advisorAvatar} advisorName={advisorName} />
             ))}
-            {loadingKey === "__free__" && <Typing />}
+            {loadingKey === "__free__" && <Typing advisorAvatar={advisorAvatar} advisorName={advisorName} />}
           </div>
         )}
 
@@ -209,7 +211,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
   );
 };
 
-const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void; limitToOneQuestion?: boolean }) => {
+const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion, advisorAvatar, advisorName }: { turn: Turn; typewriter?: boolean; onJoinCtaClick?: () => void; limitToOneQuestion?: boolean; advisorAvatar?: string | null; advisorName?: string }) => {
   const [typingDone, setTypingDone] = useState(!typewriter);
 
   if (turn.role === "user") {
@@ -227,13 +229,27 @@ const Bubble = ({ turn, typewriter, onJoinCtaClick, limitToOneQuestion }: { turn
 
   const showCta = onJoinCtaClick && typingDone && !limitToOneQuestion;
 
+  const advisorInitial = (advisorName || "?").charAt(0).toUpperCase();
+
   return (
     <div className="flex justify-start gap-2">
-      <img
-        src={johnnyAvatar}
-        alt="Johnny AI"
-        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
-      />
+      {advisorAvatar ? (
+        <img
+          src={advisorAvatar}
+          alt={`${advisorName || "AI"} avatar`}
+          className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+        />
+      ) : advisorAvatar === null || advisorAvatar === "" ? (
+        <div className="h-7 w-7 shrink-0 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-border">
+          {advisorInitial}
+        </div>
+      ) : (
+        <img
+          src={johnnyAvatar}
+          alt="Johnny AI"
+          className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
+        />
+      )}
       <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-sm text-foreground">
         {typewriter ? (
           <TypewriterText text={turn.text} onDone={() => setTypingDone(true)} />
@@ -310,13 +326,24 @@ const TypewriterText = ({ text, onDone }: { text: string; onDone?: () => void })
   );
 };
 
-const Typing = () => (
-  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-    <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
-    <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
-      <Loader2 className="h-4 w-4 animate-spin" />
+const Typing = ({ advisorAvatar, advisorName }: { advisorAvatar?: string | null; advisorName?: string }) => {
+  const advisorInitial = (advisorName || "?").charAt(0).toUpperCase();
+  return (
+    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      {advisorAvatar ? (
+        <img src={advisorAvatar} alt={`${advisorName || "AI"} avatar`} className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
+      ) : advisorAvatar === null || advisorAvatar === "" ? (
+        <div className="h-7 w-7 shrink-0 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-border">
+          {advisorInitial}
+        </div>
+      ) : (
+        <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
+      )}
+      <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
+        <Loader2 className="h-4 w-4 animate-spin" />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default LearningAssistant;

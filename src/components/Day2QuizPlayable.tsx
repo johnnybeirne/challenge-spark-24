@@ -585,6 +585,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         quiz={quiz}
         result={result}
         ownerFirstName={firstName}
+        ownerAvatarUrl={state.user?.avatarUrl}
         challengeName={identity.isPersonalised ? identity.shortTitle : "3-Day Challenge"}
       />
     );
@@ -734,11 +735,13 @@ const QuizResultScreen = ({
   quiz,
   result,
   ownerFirstName,
+  ownerAvatarUrl,
   challengeName,
 }: {
   quiz: QuizDraft;
   result: ResultData;
   ownerFirstName: string;
+  ownerAvatarUrl?: string | null;
   challengeName: string;
 }) => {
   const navigate = useNavigate();
@@ -1022,6 +1025,8 @@ const QuizResultScreen = ({
                 typewriter={true}
                 onJoinCtaClick={goJoin}
                 limitToOneQuestion={true}
+                advisorAvatar={ownerAvatarUrl}
+                advisorName={advisorName}
               />
             </div>
           </section>

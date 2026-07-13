@@ -80,6 +80,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminTypography from "@/pages/admin/AdminTypography";
+import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -136,6 +137,7 @@ const App = () => (
                 {/* VIP: /premium canonical, /vip alias */}
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/vip" element={<RedirectKeepingQuery to="/premium" />} />
+                <Route path="/admin/landing-preview" element={<AdminLandingPreview />} />
               </Route>
 
               {/* Public routes – narrow mobile container */}

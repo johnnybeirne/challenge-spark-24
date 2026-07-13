@@ -1249,6 +1249,87 @@ export type Database = {
           },
         ]
       }
+      premium_page_settings: {
+        Row: {
+          build_cards: Json
+          build_eyebrow: string
+          build_headline: string
+          build_subheadline: string
+          coupon_enabled: boolean
+          created_at: string
+          hero_cta_label: string
+          hero_cta_url: string
+          hero_eyebrow: string
+          hero_headline: string
+          hero_stat_1: string
+          hero_stat_2: string
+          hero_stat_3: string
+          hero_subheadline: string
+          hero_supporting_line: string
+          id: string
+          preview_badge: string
+          preview_bullets: string[]
+          preview_title: string
+          price: number
+          problem_cards: Json
+          problem_eyebrow: string
+          problem_headline: string
+          updated_at: string
+        }
+        Insert: {
+          build_cards?: Json
+          build_eyebrow?: string
+          build_headline?: string
+          build_subheadline?: string
+          coupon_enabled?: boolean
+          created_at?: string
+          hero_cta_label?: string
+          hero_cta_url?: string
+          hero_eyebrow?: string
+          hero_headline?: string
+          hero_stat_1?: string
+          hero_stat_2?: string
+          hero_stat_3?: string
+          hero_subheadline?: string
+          hero_supporting_line?: string
+          id?: string
+          preview_badge?: string
+          preview_bullets?: string[]
+          preview_title?: string
+          price?: number
+          problem_cards?: Json
+          problem_eyebrow?: string
+          problem_headline?: string
+          updated_at?: string
+        }
+        Update: {
+          build_cards?: Json
+          build_eyebrow?: string
+          build_headline?: string
+          build_subheadline?: string
+          coupon_enabled?: boolean
+          created_at?: string
+          hero_cta_label?: string
+          hero_cta_url?: string
+          hero_eyebrow?: string
+          hero_headline?: string
+          hero_stat_1?: string
+          hero_stat_2?: string
+          hero_stat_3?: string
+          hero_subheadline?: string
+          hero_supporting_line?: string
+          id?: string
+          preview_badge?: string
+          preview_bullets?: string[]
+          preview_title?: string
+          price?: number
+          problem_cards?: Json
+          problem_eyebrow?: string
+          problem_headline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       premium_upsell_settings: {
         Row: {
           body_text: string

@@ -15,11 +15,10 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
-import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
-import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { LeadTreeIcon } from "@/components/LeadTreeIcon";
+
 
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {
@@ -40,8 +39,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const photoInputRef = useRef<HTMLInputElement>(null);
   const asideRef = useRef<HTMLElement>(null);
   const prevJoinedRef = useRef(hasJoinedChallenge);
-  const identity = useChallengeIdentity();
   useEffect(() => {
+
     if (!prevJoinedRef.current && hasJoinedChallenge) {
       asideRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -172,28 +171,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
           }}
         />
 
-        {/* Brand */}
-        {!collapsed ? (
-          <button onClick={() => go("/challenger-dashboard")} className="px-1 text-left">
-            <img
-              src={leadtreeLogo.url}
-              alt="LeadTree"
-              className="h-8 w-auto"
-            />
-            {identity.isPersonalised && (
-              <p
-                className="mt-1 truncate text-[var(--body-size)] font-black uppercase tracking-[0.14em] text-primary"
-                title={identity.title}
-              >
-                {identity.shortTitle}
-              </p>
-            )}
-          </button>
-        ) : (
-          <p className="text-center text-[var(--body-size)] font-black tracking-tight text-foreground">L</p>
-        )}
-
         {/* Start Here */}
+
         <button
           onClick={() => {
             go("/challenger-dashboard");

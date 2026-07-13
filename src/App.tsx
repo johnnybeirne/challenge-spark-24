@@ -81,6 +81,7 @@ import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
+import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";

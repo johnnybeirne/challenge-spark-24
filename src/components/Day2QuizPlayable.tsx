@@ -1025,6 +1025,8 @@ const QuizResultScreen = ({
                 typewriter={true}
                 onJoinCtaClick={goJoin}
                 limitToOneQuestion={true}
+                advisorAvatar={ownerAvatarUrl}
+                advisorName={advisorName}
               />
             </div>
           </section>

@@ -597,27 +597,27 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                Want to go deeper on quiz funnel strategy?
+                {upsell.heading}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                The full course is <span className="font-bold text-foreground">$497</span>. Invite three friends and it is yours free, or upgrade now and skip the invites.
+                {upsell.body_text}
               </p>
               <div className="space-y-2">
                 <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5 bg-[#534AB7] hover:bg-[#534AB7]/90 text-white">
                   <Link to="/referrals">
-                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Invite 3 friends, unlock free</span>
-                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>Worth $497</span>
+                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{upsell.button_label}</span>
+                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>{upsell.button_sublabel}</span>
                   </Link>
                 </Button>
                 <div className="text-center">
                   <Link
-                    to="/upgrade"
+                    to={upsell.upgrade_url || "/upgrade"}
                     className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
                     style={{ fontSize: "var(--body-size)" }}
                   >
-                    or upgrade now for $497 &rarr;
+                    {upsell.upgrade_link_label} &rarr;
                   </Link>
                 </div>
               </div>

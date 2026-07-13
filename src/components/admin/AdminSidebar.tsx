@@ -41,6 +41,7 @@ const items = [
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles },
   { title: "Typography", url: "/owner-console/typography", icon: Type },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
+  { title: "Premium upsell", url: "/owner-console/premium-upsell", icon: Sparkles },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck },
 ];

@@ -18,15 +18,20 @@ type Props = {
   limitToOneQuestion?: boolean;
   advisorAvatar?: string | null;
   advisorName?: string;
+  allowFollowUpQuestion?: boolean;
+  followUpPlaceholder?: string;
+  followUpButtonLabel?: string;
+  joinCtaLabel?: string;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false, advisorAvatar, advisorName }: Props) => {
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false, advisorAvatar, advisorName, allowFollowUpQuestion = false, followUpPlaceholder, followUpButtonLabel, joinCtaLabel }: Props) => {
   const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [freeform, setFreeform] = useState("");
   const [freeThread, setFreeThread] = useState<Turn[]>([]);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [freeformAnswered, setFreeformAnswered] = useState(false);
   const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const freeRef = useRef<HTMLDivElement | null>(null);
 

@@ -119,6 +119,14 @@ export function AdminSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="LeadTree Course Sales Page">
+                  <a href="/owner-console/premium-page" target="_blank" rel="noopener noreferrer">
+                    <FileEdit className="h-4 w-4" />
+                    <span>LeadTree Course Sales Page</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
                   <LogOut className="h-4 w-4" />
                   <span>Log out</span>

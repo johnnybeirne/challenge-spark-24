@@ -1249,6 +1249,48 @@ export type Database = {
           },
         ]
       }
+      premium_upsell_settings: {
+        Row: {
+          body_text: string
+          button_label: string
+          button_sublabel: string
+          created_at: string
+          heading: string
+          id: string
+          invite_count: number
+          price: number
+          updated_at: string
+          upgrade_link_label: string
+          upgrade_url: string
+        }
+        Insert: {
+          body_text?: string
+          button_label?: string
+          button_sublabel?: string
+          created_at?: string
+          heading?: string
+          id?: string
+          invite_count?: number
+          price?: number
+          updated_at?: string
+          upgrade_link_label?: string
+          upgrade_url?: string
+        }
+        Update: {
+          body_text?: string
+          button_label?: string
+          button_sublabel?: string
+          created_at?: string
+          heading?: string
+          id?: string
+          invite_count?: number
+          price?: number
+          updated_at?: string
+          upgrade_link_label?: string
+          upgrade_url?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

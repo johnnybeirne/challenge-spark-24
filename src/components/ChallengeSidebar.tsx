@@ -15,11 +15,10 @@ import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { usePulseOnLogin } from "@/hooks/usePulseOnLogin";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import sampleUserAvatar from "@/assets/sample-user-avatar.jpg";
-import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 import ExperienceModeBadge from "@/components/ExperienceModeBadge";
-import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { LeadTreeIcon } from "@/components/LeadTreeIcon";
+
 
 
 const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => {

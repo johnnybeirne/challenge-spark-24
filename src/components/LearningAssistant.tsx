@@ -18,15 +18,20 @@ type Props = {
   limitToOneQuestion?: boolean;
   advisorAvatar?: string | null;
   advisorName?: string;
+  allowFollowUpQuestion?: boolean;
+  followUpPlaceholder?: string;
+  followUpButtonLabel?: string;
+  joinCtaLabel?: string;
 };
 
-const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false, advisorAvatar, advisorName }: Props) => {
+const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = true, typewriter = false, onJoinCtaClick, limitToOneQuestion = false, advisorAvatar, advisorName, allowFollowUpQuestion = false, followUpPlaceholder, followUpButtonLabel, joinCtaLabel }: Props) => {
   const [openPill, setOpenPill] = useState<string | null>(autoOpen ? prompts[0] ?? null : null);
   const [threads, setThreads] = useState<Record<string, Turn[]>>({});
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [freeform, setFreeform] = useState("");
   const [freeThread, setFreeThread] = useState<Turn[]>([]);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [freeformAnswered, setFreeformAnswered] = useState(false);
   const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const freeRef = useRef<HTMLDivElement | null>(null);
 
@@ -71,6 +76,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
       const response = await ask(prompt);
       setFreeThread((prev) => [...prev, { role: "ai", text: response }]);
       setHasAnswered(true);
+      setFreeformAnswered(true);
     } finally {
       setLoadingKey(null);
     }
@@ -163,7 +169,46 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
         )}
 
         {/* Freeform input or warm handoff */}
-        {limitToOneQuestion && hasAnswered ? (
+        {limitToOneQuestion && allowFollowUpQuestion ? (
+          <>
+            {hasAnswered && !freeformAnswered && (
+              <div className="pt-3 border-t border-border">
+                <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-2">
+                  <DictatedTextarea
+                    value={freeform}
+                    onChange={(e) => setFreeform(e.target.value)}
+                    placeholder={followUpPlaceholder ?? "Ask a question about your result..."}
+                    className="min-h-[40px] border-0 focus-visible:ring-0 resize-none bg-transparent flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        void runFree();
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={runFree}
+                    disabled={loadingKey !== null || !freeform.trim()}
+                    className="h-9 rounded-full px-4 text-sm font-semibold"
+                  >
+                    {followUpButtonLabel ?? "Ask"}
+                  </Button>
+                </div>
+              </div>
+            )}
+            {freeformAnswered && (
+              <div className="pt-3 border-t border-border">
+                <Button
+                  onClick={onJoinCtaClick}
+                  className="w-full gap-2 rounded-xl font-semibold tracking-tight shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40"
+                >
+                  {joinCtaLabel ?? "Join the 3-Day Challenge today"}
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        ) : limitToOneQuestion && hasAnswered ? (
           <div className="pt-3 border-t border-border space-y-3">
             <p className="text-sm text-foreground">
               That is one piece of what the challenge helps you work through. Join to get the full guidance built around your situation.
@@ -172,7 +217,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               onClick={onJoinCtaClick}
               className="w-full gap-2 rounded-xl font-semibold tracking-tight shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40"
             >
-              Join the 3-Day Challenge today
+              {joinCtaLabel ?? "Join the 3-Day Challenge today"}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>

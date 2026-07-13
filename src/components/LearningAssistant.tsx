@@ -326,13 +326,24 @@ const TypewriterText = ({ text, onDone }: { text: string; onDone?: () => void })
   );
 };
 
-const Typing = () => (
-  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-    <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
-    <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
-      <Loader2 className="h-4 w-4 animate-spin" />
+const Typing = ({ advisorAvatar, advisorName }: { advisorAvatar?: string | null; advisorName?: string }) => {
+  const advisorInitial = (advisorName || "?").charAt(0).toUpperCase();
+  return (
+    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      {advisorAvatar ? (
+        <img src={advisorAvatar} alt={`${advisorName || "AI"} avatar`} className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
+      ) : advisorAvatar === null || advisorAvatar === "" ? (
+        <div className="h-7 w-7 shrink-0 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-border">
+          {advisorInitial}
+        </div>
+      ) : (
+        <img src={johnnyAvatar} alt="Johnny AI" className="h-7 w-7 rounded-full object-cover ring-1 ring-border" />
+      )}
+      <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
+        <Loader2 className="h-4 w-4 animate-spin" />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default LearningAssistant;

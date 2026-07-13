@@ -210,6 +210,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
+  const { settings: upsell } = usePremiumUpsellSettings();
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's
   // "Day 2: bypass mark-as-read gate" toggle. Active QA mode alone

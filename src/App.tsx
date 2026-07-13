@@ -272,6 +272,7 @@ const App = () => (
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
                 <Route path="typography" element={<AdminTypography />} />
+                <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

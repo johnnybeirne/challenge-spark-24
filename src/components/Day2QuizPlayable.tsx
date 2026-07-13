@@ -585,6 +585,7 @@ const Day2QuizPlayable = ({ onClose }: Props) => {
         quiz={quiz}
         result={result}
         ownerFirstName={firstName}
+        ownerAvatarUrl={state.user?.avatarUrl}
         challengeName={identity.isPersonalised ? identity.shortTitle : "3-Day Challenge"}
       />
     );

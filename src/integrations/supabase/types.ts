@@ -1251,10 +1251,17 @@ export type Database = {
       }
       premium_page_settings: {
         Row: {
+          audience_eyebrow: string | null
+          audience_tags: Json | null
           build_cards: Json
           build_eyebrow: string
           build_headline: string
           build_subheadline: string
+          closing_cta_label: string | null
+          closing_cta_url: string | null
+          closing_headline: string | null
+          closing_partner_cta_label: string | null
+          closing_subheadline: string | null
           coupon_enabled: boolean
           created_at: string
           hero_cta_label: string
@@ -1267,20 +1274,42 @@ export type Database = {
           hero_subheadline: string
           hero_supporting_line: string
           id: string
+          modules_eyebrow: string | null
+          modules_headline: string | null
+          modules_list: Json | null
           preview_badge: string
           preview_bullets: string[]
           preview_title: string
           price: number
+          pricing_cta_label: string | null
+          pricing_cta_url: string | null
+          pricing_eyebrow: string | null
+          pricing_supporting_line: string | null
           problem_cards: Json
           problem_eyebrow: string
           problem_headline: string
+          trainer_bio: string | null
+          trainer_eyebrow: string | null
+          trainer_image_url: string | null
+          trainer_name: string | null
+          trainer_stat_1: string | null
+          trainer_stat_2: string | null
+          trainer_stat_3: string | null
+          trainer_title: string | null
           updated_at: string
         }
         Insert: {
+          audience_eyebrow?: string | null
+          audience_tags?: Json | null
           build_cards?: Json
           build_eyebrow?: string
           build_headline?: string
           build_subheadline?: string
+          closing_cta_label?: string | null
+          closing_cta_url?: string | null
+          closing_headline?: string | null
+          closing_partner_cta_label?: string | null
+          closing_subheadline?: string | null
           coupon_enabled?: boolean
           created_at?: string
           hero_cta_label?: string
@@ -1293,20 +1322,42 @@ export type Database = {
           hero_subheadline?: string
           hero_supporting_line?: string
           id?: string
+          modules_eyebrow?: string | null
+          modules_headline?: string | null
+          modules_list?: Json | null
           preview_badge?: string
           preview_bullets?: string[]
           preview_title?: string
           price?: number
+          pricing_cta_label?: string | null
+          pricing_cta_url?: string | null
+          pricing_eyebrow?: string | null
+          pricing_supporting_line?: string | null
           problem_cards?: Json
           problem_eyebrow?: string
           problem_headline?: string
+          trainer_bio?: string | null
+          trainer_eyebrow?: string | null
+          trainer_image_url?: string | null
+          trainer_name?: string | null
+          trainer_stat_1?: string | null
+          trainer_stat_2?: string | null
+          trainer_stat_3?: string | null
+          trainer_title?: string | null
           updated_at?: string
         }
         Update: {
+          audience_eyebrow?: string | null
+          audience_tags?: Json | null
           build_cards?: Json
           build_eyebrow?: string
           build_headline?: string
           build_subheadline?: string
+          closing_cta_label?: string | null
+          closing_cta_url?: string | null
+          closing_headline?: string | null
+          closing_partner_cta_label?: string | null
+          closing_subheadline?: string | null
           coupon_enabled?: boolean
           created_at?: string
           hero_cta_label?: string
@@ -1319,13 +1370,28 @@ export type Database = {
           hero_subheadline?: string
           hero_supporting_line?: string
           id?: string
+          modules_eyebrow?: string | null
+          modules_headline?: string | null
+          modules_list?: Json | null
           preview_badge?: string
           preview_bullets?: string[]
           preview_title?: string
           price?: number
+          pricing_cta_label?: string | null
+          pricing_cta_url?: string | null
+          pricing_eyebrow?: string | null
+          pricing_supporting_line?: string | null
           problem_cards?: Json
           problem_eyebrow?: string
           problem_headline?: string
+          trainer_bio?: string | null
+          trainer_eyebrow?: string | null
+          trainer_image_url?: string | null
+          trainer_name?: string | null
+          trainer_stat_1?: string | null
+          trainer_stat_2?: string | null
+          trainer_stat_3?: string | null
+          trainer_title?: string | null
           updated_at?: string
         }
         Relationships: []

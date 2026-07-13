@@ -122,6 +122,83 @@ const SECTION_FIELDS: Record<SectionKey, (keyof PremiumPageSettings)[]> = {
   build: ["build_eyebrow", "build_headline", "build_subheadline", "build_cards"],
 };
 
+const TrainerImageUploader = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (url: string) => void | Promise<void>;
+}) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    if (!/^image\/(jpe?g|png|webp)$/i.test(file.type)) {
+      toast.error("Upload failed. Try again.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `trainer/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("site-images")
+        .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+      await onChange(data.publicUrl);
+    } catch {
+      toast.error("Upload failed. Try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <Label>Trainer photo</Label>
+      {value && (
+        <div className="flex flex-col items-start gap-2">
+          <img
+            src={value}
+            alt="Trainer"
+            className="h-[120px] w-[120px] rounded-full object-cover border"
+          />
+          <button
+            type="button"
+            className="text-sm text-red-500/80 hover:text-red-500 underline"
+            onClick={() => onChange("")}
+          >
+            Remove photo
+          </button>
+        </div>
+      )}
+      <label
+        className={`flex items-center gap-3 rounded-md border border-dashed px-4 py-4 text-sm ${
+          uploading ? "opacity-60 pointer-events-none" : "cursor-pointer hover:bg-muted/50"
+        }`}
+      >
+        {uploading ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <Camera className="h-5 w-5 text-muted-foreground" />
+        )}
+        <span>{uploading ? "Uploading…" : "Upload trainer photo"}</span>
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          disabled={uploading}
+          onChange={(e) => {
+            handleFile(e.target.files?.[0]);
+            e.currentTarget.value = "";
+          }}
+        />
+      </label>
+    </div>
+  );
+};
+
 const AdminPremiumPage = () => {
   const [row, setRow] = useState<PremiumPageSettings>(PREMIUM_PAGE_DEFAULTS);
   const [rowId, setRowId] = useState<string | null>(null);

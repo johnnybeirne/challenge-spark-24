@@ -144,7 +144,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
               {(threads[openPill] ?? []).map((t, i) => (
                 <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} advisorAvatar={advisorAvatar} advisorName={advisorName} />
               ))}
-              {loadingKey === openPill && <Typing />}
+              {loadingKey === openPill && <Typing advisorAvatar={advisorAvatar} advisorName={advisorName} />}
             </div>
           </div>
         )}

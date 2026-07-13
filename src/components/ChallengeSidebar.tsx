@@ -39,8 +39,8 @@ const SidebarContent = ({ collapsed = false, onNavigate }: { collapsed?: boolean
   const photoInputRef = useRef<HTMLInputElement>(null);
   const asideRef = useRef<HTMLElement>(null);
   const prevJoinedRef = useRef(hasJoinedChallenge);
-  const identity = useChallengeIdentity();
   useEffect(() => {
+
     if (!prevJoinedRef.current && hasJoinedChallenge) {
       asideRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }

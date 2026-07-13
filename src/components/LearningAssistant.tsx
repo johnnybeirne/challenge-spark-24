@@ -156,7 +156,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
             className="rounded-xl border border-border bg-background p-4 space-y-3"
           >
             {freeThread.map((t, i) => (
-              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} />
+              <Bubble key={i} turn={t} typewriter={typewriter} onJoinCtaClick={onJoinCtaClick} limitToOneQuestion={limitToOneQuestion} advisorAvatar={advisorAvatar} advisorName={advisorName} />
             ))}
             {loadingKey === "__free__" && <Typing />}
           </div>

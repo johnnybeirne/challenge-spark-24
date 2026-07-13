@@ -81,6 +81,7 @@ import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
+import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -271,6 +272,7 @@ const App = () => (
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
                 <Route path="typography" element={<AdminTypography />} />
+                <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

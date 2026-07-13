@@ -11,6 +11,7 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
+import { usePremiumUpsellSettings } from "@/hooks/usePremiumUpsellSettings";
 
 const DAY2_STEP_NUMBER = 1;
 const DAY2_TOTAL_STEPS = 5;
@@ -209,6 +210,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
+  const { settings: upsell } = usePremiumUpsellSettings();
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's
   // "Day 2: bypass mark-as-read gate" toggle. Active QA mode alone
@@ -595,27 +597,27 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                Want to go deeper on quiz funnel strategy?
+                {upsell.heading}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                The full course is <span className="font-bold text-foreground">$497</span>. Invite three friends and it is yours free, or upgrade now and skip the invites.
+                {upsell.body_text}
               </p>
               <div className="space-y-2">
                 <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5 bg-[#534AB7] hover:bg-[#534AB7]/90 text-white">
                   <Link to="/referrals">
-                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Invite 3 friends, unlock free</span>
-                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>Worth $497</span>
+                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{upsell.button_label}</span>
+                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>{upsell.button_sublabel}</span>
                   </Link>
                 </Button>
                 <div className="text-center">
                   <Link
-                    to="/upgrade"
+                    to={upsell.upgrade_url || "/upgrade"}
                     className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
                     style={{ fontSize: "var(--body-size)" }}
                   >
-                    or upgrade now for $497 &rarr;
+                    {upsell.upgrade_link_label} &rarr;
                   </Link>
                 </div>
               </div>

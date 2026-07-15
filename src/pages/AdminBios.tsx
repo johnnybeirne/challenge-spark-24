@@ -1081,6 +1081,26 @@ const AdminBios = () => {
                       )}
                     </div>
                   </div>
+                  {openRow.referral_code && (
+                    <div className="col-span-2">
+                      <div className="text-muted-foreground">Full referral link</div>
+                      <div className="font-mono text-xs flex items-start gap-1.5 break-all">
+                        <span className="flex-1">{`https://leadio.johnnybeirne.com/waitlist?ref=${openRow.referral_code}`}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            copyText(
+                              `https://leadio.johnnybeirne.com/waitlist?ref=${openRow.referral_code}`,
+                              "Referral link copied"
+                            )
+                          }
+                          className="hover:text-foreground shrink-0 mt-0.5"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

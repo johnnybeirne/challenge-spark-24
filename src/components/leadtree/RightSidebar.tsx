@@ -76,9 +76,9 @@ const RightSidebar = () => {
         type="button"
         onClick={toggleRight}
         aria-label="Collapse insights"
-        className="absolute -left-4 top-6 z-10 flex h-8 w-4 items-center justify-center rounded-l-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
+        className="absolute -left-3 top-6 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
       >
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-4 w-4" />
       </button>
       {/* Top Referrers */}
       <div className={cardCls}>

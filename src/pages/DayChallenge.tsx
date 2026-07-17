@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import DictatedInput from "@/components/dictation/DictatedInput";
 import DictatedTextarea from "@/components/dictation/DictatedTextarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowRight, Brain, CheckCircle, Gift, Lock, PlayCircle, Rocket, Sparkles, Users, Share2, UserPlus } from "lucide-react";
+import { ArrowRight, Brain, CheckCircle, Gift, Lock, Play, PlayCircle, Rocket, Sparkles, Users, Share2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import Confetti from "@/components/Confetti";
 import TaskCompleteAnim from "@/components/TaskCompleteAnim";
@@ -40,6 +40,9 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
+import pioneerAsset from "@/assets/pioneer.png.asset.json";
+import architectAsset from "@/assets/architect.png.asset.json";
+import authorityAsset from "@/assets/authority.png.asset.json";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",
@@ -134,6 +137,19 @@ const DayChallenge = () => {
   const [showPostActionPromo, setShowPostActionPromo] = useState(false);
   // Setup state moved to /training hub
   const firstName = state.user?.name?.split(" ")[0] || "";
+
+  const archetypeLabel = (() => {
+    const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
+    if (!a) return "";
+    const tier =
+      a.diagnosticLevel === "low" || a.diagnosticLevel === "mid" || a.diagnosticLevel === "high"
+        ? a.diagnosticLevel
+        : (() => {
+            const pct = Math.round(((a.diagnosticScore ?? 0) / 9) * 100);
+            return pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
+          })();
+    return { low: "Pioneer", mid: "Architect", high: "Authority" }[tier] || "";
+  })();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -620,6 +636,44 @@ const DayChallenge = () => {
           Optional briefing video
         </summary>
         <div className="px-4 pb-4">
+          {dayNum === 1 && (
+            <div className="-mx-4 mb-4 grid grid-cols-1 gap-4 border-b border-border bg-white px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Play className="h-4 w-4" fill="currentColor" />
+                </span>
+                <p className="text-[20pt] font-bold text-foreground leading-tight">
+                  {(() => {
+                    const rawName =
+                      state.user?.name ||
+                      (authUser?.user_metadata as any)?.full_name ||
+                      (authUser?.user_metadata as any)?.name ||
+                      authUser?.email?.split("@")[0] ||
+                      "";
+                    const fn = rawName.split(" ")[0] || "";
+                    const greeting = fn ? `Welcome ${fn}.` : "Welcome.";
+                    const article = archetypeLabel && /^[aeiou]/i.test(archetypeLabel) ? "an" : "a";
+                    return archetypeLabel ? `${greeting} You're ${article} ${archetypeLabel}.` : greeting;
+                  })()}
+                </p>
+              </div>
+              {(archetypeLabel === "Pioneer" || archetypeLabel === "Architect" || archetypeLabel === "Authority") && (
+                <div className="flex justify-center sm:justify-end">
+                  <img
+                    src={
+                      archetypeLabel === "Authority"
+                        ? authorityAsset.url
+                        : archetypeLabel === "Architect"
+                          ? architectAsset.url
+                          : pioneerAsset.url
+                    }
+                    alt={`${archetypeLabel} character`}
+                    className="h-48 w-auto sm:h-56 lg:h-64"
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <DayTrainingCard dayNum={dayNum} />
           {dayNum !== 1 && (
             <div className="mt-3 rounded-md border border-primary/20 bg-primary/5 p-4">

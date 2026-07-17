@@ -55,7 +55,7 @@ const LeftSidebar = () => {
 
   return (
     <aside
-      className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[280px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
+      className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[300px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
       aria-label="Sidebar"
     >
       <button
@@ -66,13 +66,13 @@ const LeftSidebar = () => {
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <div className="flex-1 space-y-8 overflow-y-auto px-5 py-6">
+      <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
         {/* Countdown */}
         <section>
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
             Challenge Countdown
           </p>
-          <div className="rounded-[12px] bg-[#F7F8FA] px-4 py-3">
+          <div className="rounded-[12px] bg-[#F7F8FA] px-5 py-4">
             <ChallengeCountdown compact />
           </div>
         </section>
@@ -159,7 +159,7 @@ const LeftSidebar = () => {
       </div>
 
       {/* Pinned bottom */}
-      <div className="border-t border-[#E5E7EB] px-3 py-3">
+      <div className="border-t border-[#E5E7EB] px-4 py-4">
         <nav className="space-y-0.5">
           <Link to="/profile" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
             <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings

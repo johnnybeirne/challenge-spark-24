@@ -41,7 +41,7 @@ const ChallengeCountdownBar = ({ className }: Props) => {
       role="status"
       aria-label="Challenge countdown"
     >
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
+      <div className="mx-auto flex max-w-[1320px] items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Calendar className="h-4 w-4" />

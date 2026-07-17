@@ -8,9 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { getNextReward, pointRewards } from "@/lib/points";
 
 const cardCls =
-  "rounded-[16px] bg-white p-6 shadow-[0_4px_12px_rgba(0,0,0,0.05)]";
+  "rounded-[16px] bg-white p-7 shadow-[0_4px_12px_rgba(0,0,0,0.05)]";
 const headingCls =
-  "mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]";
+  "mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]";
 
 const RightSidebar = () => {
   const { state } = useAppState();
@@ -69,7 +69,7 @@ const RightSidebar = () => {
 
   return (
     <aside
-      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[320px] flex-col bg-[#F7F8FA] lg:flex"
+      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex"
       aria-label="Insights"
     >
       <button
@@ -80,7 +80,7 @@ const RightSidebar = () => {
       >
         <ChevronRight className="h-4 w-4" />
       </button>
-      <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
+      <div className="flex-1 space-y-8 overflow-y-auto px-7 py-8">
         {/* Top Referrers */}
         <div className={cardCls}>
           <p className={headingCls}>

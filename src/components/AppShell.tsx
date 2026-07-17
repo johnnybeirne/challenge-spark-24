@@ -25,7 +25,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
-  const { focusMode } = useFocusMode();
+  const { focusMode, leftCollapsed, rightCollapsed } = useFocusMode();
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const useLeadtreeShell = showNav && authenticated && experience !== "partner";

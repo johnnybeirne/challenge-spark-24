@@ -106,7 +106,7 @@ const LeftSidebar = () => {
                     to={locked ? "#" : to}
                     aria-disabled={locked}
                     className={[
-                      "block text-sm",
+                      "block text-sm leading-tight",
                       isCurrent
                         ? "font-semibold text-[#1F2937]"
                         : locked
@@ -115,6 +115,9 @@ const LeftSidebar = () => {
                     ].join(" ")}
                   >
                     Day {d}
+                    <span className="mt-0.5 block text-[11px] font-normal text-[#6B7280]">
+                      {dayDate(d)}
+                    </span>
                   </Link>
                 </li>
               );

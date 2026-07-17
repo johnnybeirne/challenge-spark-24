@@ -8,12 +8,13 @@ import {
   Trophy,
   Search,
   Bell,
+  Minimize2,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { useFocusMode } from "@/context/FocusModeContext";
 import { Button } from "@/components/ui/button";
 
 const centerLinks = [
-  { to: "/challenger-dashboard", label: "Focus Mode", icon: Focus },
   { to: "/training", label: "Training", icon: GraduationCap },
   { to: "/community", label: "Community", icon: Users },
   { to: "/calendar", label: "Events", icon: CalendarDays },

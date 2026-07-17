@@ -8,8 +8,11 @@ import {
   LogOut,
   Check,
   Lock,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { useFocusMode } from "@/context/FocusModeContext";
 import ChallengeCountdown from "@/components/ChallengeCountdown";
 
 const momentumLinks = [
@@ -21,15 +24,42 @@ const momentumLinks = [
 const LeftSidebar = () => {
   const { state } = useAppState();
   const { pathname } = useLocation();
+  const { leftCollapsed, toggleLeft } = useFocusMode();
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];
+
+  if (leftCollapsed) {
+    return (
+      <aside
+        className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[48px] flex-col items-center border-r border-[#E5E7EB] bg-white py-4 lg:flex"
+        aria-label="Sidebar (collapsed)"
+      >
+        <button
+          type="button"
+          onClick={toggleLeft}
+          aria-label="Expand sidebar"
+          className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </aside>
+    );
+  }
 
   return (
     <aside
       className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[280px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
       aria-label="Sidebar"
     >
+      <button
+        type="button"
+        onClick={toggleLeft}
+        aria-label="Collapse sidebar"
+        className="absolute -right-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#6B7280] shadow-sm hover:text-[#1F2937]"
+      >
+        <ChevronLeft className="h-3.5 w-3.5" />
+      </button>
       <div className="flex-1 space-y-8 overflow-y-auto px-5 py-6">
         {/* Countdown */}
         <section>

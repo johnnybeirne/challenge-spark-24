@@ -55,7 +55,7 @@ const LeftSidebar = () => {
 
   return (
     <aside
-      className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[280px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
+      className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[300px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
       aria-label="Sidebar"
     >
       <button
@@ -66,7 +66,7 @@ const LeftSidebar = () => {
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <div className="flex-1 space-y-8 overflow-y-auto px-5 py-6">
+      <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
         {/* Countdown */}
         <section>
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">

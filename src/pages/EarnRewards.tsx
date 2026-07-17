@@ -162,54 +162,54 @@ const EarnRewards = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-2xl px-5 py-8 pb-24 lg:py-10">
+      <div className="app-page-container py-6 pb-24 lg:py-8">
         {/* Eyebrow */}
-        <p className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Earn Rewards</p>
+        <p className="mb-4 text-[11px] font-black uppercase tracking-[0.18em] text-primary">Earn Rewards</p>
 
-        {/* 1. INVITE FRIENDS — dominant hero */}
+        {/* Header */}
+        <header className="mb-8">
+          <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
+            {firstName ? `Invite Friends, ${firstName}` : "Invite Friends"}
+          </h1>
+          <p className="mt-3 text-base sm:text-lg font-semibold text-foreground">
+            Invite others to join the challenge and unlock bonus rewards, training, and visibility opportunities.
+          </p>
+        </header>
+
+        {/* 1. INVITE FRIENDS */}
         <section className="mb-16">
-          <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-7 shadow-sm sm:p-9">
-            <div className="mb-6 max-w-xl">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {firstName ? `Invite Friends, ${firstName}` : "Invite Friends"}
-              </h1>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Invite others to join the challenge and unlock bonus rewards, training, and visibility opportunities.
-              </p>
-            </div>
-
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Your personal referral link</p>
-            <div className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-background/80 px-3 py-3 backdrop-blur">
-              <code className="flex-1 truncate text-sm text-foreground">{referralLink}</code>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
-                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-              </Button>
-            </div>
-
-            <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
-              <Button size="lg" className="w-full gap-2 sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
-                <Share2 className="h-4 w-4" /> Share my link
-              </Button>
-              <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" onClick={copyLink}>
-                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-                {copied ? "Copied" : "Copy link"}
-              </Button>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              <span>Share via</span>
-              <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
-                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-              </button>
-              <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
-                <Mail className="h-3.5 w-3.5" /> Email
-              </button>
-            </div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Your personal referral link</p>
+          <div className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-3">
+            <code className="flex-1 truncate text-sm text-foreground">{referralLink}</code>
+            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
+              {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+            </Button>
           </div>
 
-          <p className="mt-4 text-center text-xs text-muted-foreground">
+          <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
+            <Button size="lg" className="w-full gap-2 sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
+              <Share2 className="h-4 w-4" /> Share my link
+            </Button>
+            <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" onClick={copyLink}>
+              {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied" : "Copy link"}
+            </Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+            <span>Share via</span>
+            <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
+              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+            </button>
+            <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
+              <Mail className="h-3.5 w-3.5" /> Email
+            </button>
+          </div>
+
+          <p className="mt-4 text-xs text-muted-foreground">
             The fastest way to unlock rewards is by sharing your invite link.
           </p>
         </section>
+
 
         <ReferralMilestoneCard />
 

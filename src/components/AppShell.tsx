@@ -75,7 +75,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           className={[
-            "pt-[72px]",
+            "pt-[72px] pb-24 lg:pb-8",
             focusMode ? "" : "lg:pl-[280px] xl:pr-[320px]",
           ].join(" ")}
         >
@@ -89,7 +89,11 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         </main>
 
         {showCopilotChat && <AiCopilotChat />}
+        <div className="lg:hidden">
+          <ConsumerNav />
+        </div>
         <QaModePanel />
+
       </div>
     );
   }

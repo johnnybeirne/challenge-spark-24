@@ -62,7 +62,7 @@ const LeftSidebar = () => {
         type="button"
         onClick={toggleLeft}
         aria-label="Collapse sidebar"
-        className="absolute -right-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[#6756F3] bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
+        className="absolute -right-4 top-6 z-10 flex h-8 w-4 items-center justify-center rounded-r-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
       </button>

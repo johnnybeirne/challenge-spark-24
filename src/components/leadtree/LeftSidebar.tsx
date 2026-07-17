@@ -69,9 +69,6 @@ const LeftSidebar = () => {
       <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
         {/* Countdown */}
         <section>
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
-            Challenge Countdown
-          </p>
           <div className="rounded-[12px] bg-[#F7F8FA] px-5 py-4">
             <ChallengeCountdown compact />
           </div>

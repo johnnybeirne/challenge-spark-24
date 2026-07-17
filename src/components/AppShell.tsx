@@ -77,11 +77,11 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <main
           className={[
             "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-200",
-            focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[280px]",
-            focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[320px]",
+            focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[300px]",
+            focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
           ].join(" ")}
         >
-          <div className="mx-auto w-full max-w-[1200px] px-6 py-10 sm:px-10">
+          <div className="mx-auto w-full max-w-[1320px] px-8 py-12 sm:px-12">
             <BackButton />
             <Outlet />
           </div>

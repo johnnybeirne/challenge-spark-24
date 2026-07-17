@@ -8,6 +8,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import TopNavigation from "./leadtree/TopNavigation";
 import LeftSidebar from "./leadtree/LeftSidebar";
 import RightSidebar from "./leadtree/RightSidebar";
+import ChallengeCountdownBar from "./ChallengeCountdownBar";
 
 import BackButton from "./BackButton";
 import QaModePanel from "./QaModePanel";
@@ -75,7 +76,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           className={[
-            "leadtree-shell-main pt-[72px] pb-24 lg:pb-8 transition-[padding] duration-200",
+            "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-200",
             focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[280px]",
             focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[320px]",
           ].join(" ")}
@@ -89,6 +90,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           </footer>
         </main>
 
+        <ChallengeCountdownBar />
         {showCopilotChat && <AiCopilotChat />}
         <div className="lg:hidden">
           <ConsumerNav />

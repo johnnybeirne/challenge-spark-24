@@ -8,12 +8,13 @@ import {
   Trophy,
   Search,
   Bell,
+  Minimize2,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { useFocusMode } from "@/context/FocusModeContext";
 import { Button } from "@/components/ui/button";
 
 const centerLinks = [
-  { to: "/challenger-dashboard", label: "Focus Mode", icon: Focus },
   { to: "/training", label: "Training", icon: GraduationCap },
   { to: "/community", label: "Community", icon: Users },
   { to: "/calendar", label: "Events", icon: CalendarDays },
@@ -23,6 +24,7 @@ const centerLinks = [
 
 const TopNavigation = () => {
   const { state } = useAppState();
+  const { focusMode, toggleFocusMode } = useFocusMode();
   const name = state.user?.name || "";
   const initial = name.trim().charAt(0).toUpperCase() || "U";
 
@@ -42,6 +44,20 @@ const TopNavigation = () => {
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex" aria-label="Primary">
+          <button
+            type="button"
+            onClick={toggleFocusMode}
+            aria-pressed={focusMode}
+            className={[
+              "relative inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors",
+              focusMode
+                ? "font-medium text-primary"
+                : "font-normal text-[#6B7280] hover:text-[#1F2937]",
+            ].join(" ")}
+          >
+            {focusMode ? <Minimize2 className="h-4 w-4" strokeWidth={1.75} /> : <Focus className="h-4 w-4" strokeWidth={1.75} />}
+            {focusMode ? "Exit Focus" : "Focus Mode"}
+          </button>
           {centerLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}

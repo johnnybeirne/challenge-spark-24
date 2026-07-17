@@ -135,19 +135,6 @@ const DayChallenge = () => {
   // Setup state moved to /training hub
   const firstName = state.user?.name?.split(" ")[0] || "";
 
-  const archetypeLabel = (() => {
-    const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
-    if (!a) return "";
-    const tier =
-      a.diagnosticLevel === "low" || a.diagnosticLevel === "mid" || a.diagnosticLevel === "high"
-        ? a.diagnosticLevel
-        : (() => {
-            const pct = Math.round(((a.diagnosticScore ?? 0) / 9) * 100);
-            return pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
-          })();
-    return { low: "Pioneer", mid: "Architect", high: "Authority" }[tier] || "";
-  })();
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [dayNum]);

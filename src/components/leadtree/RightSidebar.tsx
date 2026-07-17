@@ -49,7 +49,7 @@ const RightSidebar = () => {
 
   return (
     <aside
-      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[320px] flex-col gap-6 overflow-y-auto bg-[#F7F8FA] px-6 py-6 xl:flex"
+      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[320px] flex-col gap-6 overflow-y-auto bg-[#F7F8FA] px-6 py-6 lg:flex"
       aria-label="Insights"
     >
       {/* Top Referrers */}

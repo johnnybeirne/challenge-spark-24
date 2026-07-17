@@ -76,7 +76,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <main
           className={[
             "pt-[72px] pb-24 lg:pb-8",
-            focusMode ? "" : "lg:pl-[280px] xl:pr-[320px]",
+            focusMode ? "" : "lg:pl-[280px] lg:pr-[320px]",
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1200px] px-6 py-10 sm:px-10">

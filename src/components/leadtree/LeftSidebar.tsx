@@ -77,10 +77,10 @@ const LeftSidebar = () => {
           </div>
         </section>
 
-        {/* Timeline */}
+        {/* Day Progress timeline */}
         <section>
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
-            Progress
+            Day Progress
           </p>
           <ol className="relative ml-3 border-l border-[#E5E7EB]">
             {days.map((d) => {
@@ -89,7 +89,7 @@ const LeftSidebar = () => {
               const locked = d > currentDay;
               const to = `/challenge/day-${d}`;
               return (
-                <li key={d} className="relative pl-6 pb-4 last:pb-0">
+                <li key={d} className="relative pl-6 pb-5 last:pb-0">
                   <span
                     className={[
                       "absolute -left-[9px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
@@ -108,15 +108,20 @@ const LeftSidebar = () => {
                     className={[
                       "block text-sm leading-tight",
                       isCurrent
-                        ? "font-semibold text-[#1F2937]"
+                        ? "font-semibold text-primary"
                         : locked
                           ? "text-[#6B7280]"
                           : "text-[#1F2937] hover:text-primary",
                     ].join(" ")}
                   >
-                    Day {d}
-                    <span className="mt-0.5 block text-[11px] font-normal text-[#6B7280]">
-                      {dayDate(d)}
+                    <span className="flex items-center justify-between gap-2">
+                      <span>Day {d}</span>
+                      <span className="text-[11px] font-normal text-[#6B7280]">
+                        {dayDate(d)}
+                      </span>
+                    </span>
+                    <span className="mt-0.5 block text-[11px] font-normal">
+                      {isDone ? "Completed" : isCurrent ? "In Progress" : "Locked"}
                     </span>
                   </Link>
                 </li>

@@ -45,7 +45,7 @@ const LeftSidebar = () => {
           type="button"
           onClick={toggleLeft}
           aria-label="Expand sidebar"
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-[#6756F3] bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -62,7 +62,7 @@ const LeftSidebar = () => {
         type="button"
         onClick={toggleLeft}
         aria-label="Collapse sidebar"
-        className="absolute -right-3 top-6 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
+        className="absolute -right-4 top-6 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>

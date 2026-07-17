@@ -8,6 +8,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import TopNavigation from "./leadtree/TopNavigation";
 import LeftSidebar from "./leadtree/LeftSidebar";
 import RightSidebar from "./leadtree/RightSidebar";
+import ChallengeCountdownBar from "./ChallengeCountdownBar";
 
 import BackButton from "./BackButton";
 import QaModePanel from "./QaModePanel";

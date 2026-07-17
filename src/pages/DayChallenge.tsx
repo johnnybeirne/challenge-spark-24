@@ -40,9 +40,6 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
-import pioneerAsset from "@/assets/pioneer.png.asset.json";
-import architectAsset from "@/assets/architect.png.asset.json";
-import authorityAsset from "@/assets/authority.png.asset.json";
 
 const diagnosticQuestions = [
   "Do you have a reliable way to generate leads that doesn’t depend on constant effort?",

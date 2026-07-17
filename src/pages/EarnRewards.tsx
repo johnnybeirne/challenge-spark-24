@@ -161,61 +161,57 @@ const EarnRewards = () => {
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Spinner /></div>;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="app-page-container py-6 pb-24 lg:py-8">
-        <header className="mb-8">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
-              Earn Rewards
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
-            {firstName ? `Invite Friends, ${firstName}` : "Invite Friends"}
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <div className="mx-auto w-full max-w-[1200px] px-6 py-10 pb-24 sm:px-10 lg:py-12">
+        <header className="mb-10">
+          <h1 className="text-3xl sm:text-[32px] font-semibold tracking-tight text-[#1F2937]">
+            {firstName ? `Invite friends, ${firstName}` : "Invite friends"}
           </h1>
-          <p className="mt-3 text-base sm:text-lg font-semibold text-foreground">
+          <p className="mt-2 text-base text-[#6B7280]">
             Invite others to join the challenge and unlock bonus rewards, training, and visibility opportunities.
           </p>
         </header>
 
-
         {/* 1. INVITE FRIENDS */}
-        <section className="mb-16">
-          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Your personal referral link</p>
-          <div className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-3">
-            <code className="flex-1 truncate text-sm text-foreground">{referralLink}</code>
-            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
-              {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-            </Button>
-          </div>
+        <section className="mb-8">
+          <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+            <p className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Your personal referral link</p>
+            <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
+              <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
+              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
+                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
 
-          <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
-            <Button size="lg" className="w-full gap-2 sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
-              <Share2 className="h-4 w-4" /> Share my link
-            </Button>
-            <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" onClick={copyLink}>
-              {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copied" : "Copy link"}
-            </Button>
+            <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+              <Button size="lg" className="w-full gap-2 rounded-[12px] sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
+                <Share2 className="h-4 w-4" /> Share my link
+              </Button>
+              <Button size="lg" variant="outline" className="w-full gap-2 rounded-[12px] sm:w-auto" onClick={copyLink}>
+                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Copied" : "Copy link"}
+              </Button>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#6B7280]">
+              <span>Share via</span>
+              <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
+                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+              </button>
+              <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
+                <Mail className="h-3.5 w-3.5" /> Email
+              </button>
+            </div>
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            <span>Share via</span>
-            <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
-              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-            </button>
-            <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary">
-              <Mail className="h-3.5 w-3.5" /> Email
-            </button>
-          </div>
-
-          <p className="mt-4 text-xs text-muted-foreground">
+          <p className="mt-3 text-xs text-[#6B7280]">
             The fastest way to unlock rewards is by sharing your invite link.
           </p>
         </section>
 
+        <div className="mb-8">
+          <ReferralMilestoneCard />
+        </div>
 
-        <ReferralMilestoneCard />
-
-        {/* 2. YOUR PROGRESS — simple clarity */}
+        {/* 2. YOUR PROGRESS */}
         {(() => {
           const points = state.points?.total ?? 0;
           const nextReward = getNextReward(points);
@@ -228,34 +224,37 @@ const EarnRewards = () => {
             ? Math.min(100, Math.max(0, ((points - prevThreshold) / Math.max(1, threshold - prevThreshold)) * 100))
             : 100;
           return (
-            <section className="mb-14">
-              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Your progress</h2>
-              <div className="rounded-xl border border-border bg-card px-5 py-5">
-                <div className="space-y-1.5">
-                  <p className="text-sm text-foreground">
-                    <span className="font-semibold tabular-nums">{direct}</span>{" "}
-                    <span className="text-muted-foreground">successful invite{direct === 1 ? "" : "s"}</span>
-                  </p>
-                  <p className="text-sm text-foreground">
-                    <span className="font-semibold tabular-nums">{points}</span>{" "}
-                    <span className="text-muted-foreground">points earned</span>
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {nextReward
-                      ? <>Next unlock at <span className="font-semibold text-foreground tabular-nums">{threshold}</span> points</>
-                      : "You've unlocked every reward."}
-                  </p>
+            <section className="mb-8">
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Your progress</h2>
+              <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+                <div className="grid gap-6 sm:grid-cols-3">
+                  <div>
+                    <p className="text-3xl font-semibold tabular-nums text-[#1F2937]">{direct}</p>
+                    <p className="mt-1 text-sm text-[#6B7280]">Successful invite{direct === 1 ? "" : "s"}</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-semibold tabular-nums text-[#1F2937]">{points}</p>
+                    <p className="mt-1 text-sm text-[#6B7280]">Points earned</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-semibold tabular-nums text-[#1F2937]">
+                      {nextReward ? threshold : "—"}
+                    </p>
+                    <p className="mt-1 text-sm text-[#6B7280]">
+                      {nextReward ? "Points for next unlock" : "All rewards unlocked"}
+                    </p>
+                  </div>
                 </div>
-                <Progress value={pct} className="mt-4 h-1.5" />
+                <Progress value={pct} className="mt-6 h-1.5" />
+                <p className="mt-3 text-xs text-[#6B7280]">
+                  Most users unlock their first reward by inviting 2–3 people.
+                </p>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                Most users unlock their first reward by inviting 2–3 people.
-              </p>
             </section>
           );
         })()}
 
-        {/* 3. REWARD LADDER — emphasise current + next + next major */}
+        {/* 3. REWARD LADDER */}
         {(() => {
           const points = state.points?.total ?? 0;
           const unlockedRungs = ladder.filter((r) => points >= r.points);
@@ -274,34 +273,28 @@ const EarnRewards = () => {
             const label =
               kind === "unlocked" ? "Just unlocked" :
               kind === "next" ? "Next unlock" : "Next major reward";
-            const accent =
-              kind === "next"
-                ? "border-primary/40 bg-primary/5"
-                : kind === "unlocked"
-                  ? "border-border bg-card"
-                  : "border-border bg-card";
             const pillCls =
               kind === "next"
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-white"
                 : kind === "unlocked"
-                  ? "bg-foreground/90 text-background"
-                  : "bg-muted text-muted-foreground";
+                  ? "bg-[#10B981] text-white"
+                  : "bg-[#F7F8FA] text-[#6B7280]";
             return (
-              <div className={`rounded-xl border ${accent} px-5 py-4`}>
-                <div className="mb-2 flex items-center gap-2">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${pillCls}`}>
+              <div className="rounded-[16px] bg-white p-6 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${pillCls}`}>
                     {label}
                   </span>
-                  <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                  <span className="text-xs font-medium text-[#6B7280] tabular-nums">
                     {rung.points} pts
                   </span>
                 </div>
-                <p className="text-base font-semibold text-foreground">{rung.title}</p>
+                <p className="text-base font-semibold text-[#1F2937]">{rung.title}</p>
                 {rung.desc && (
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{rung.desc}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[#6B7280]">{rung.desc}</p>
                 )}
                 {kind === "next" && (
-                  <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+                  <p className="mt-3 text-xs text-[#6B7280] tabular-nums">
                     {Math.max(0, rung.points - points)} points to go
                   </p>
                 )}
@@ -310,34 +303,35 @@ const EarnRewards = () => {
           };
 
           return (
-            <section className="mb-14">
-              <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reward ladder</h2>
-              <p className="mb-4 text-xs text-muted-foreground">
+            <section className="mb-8">
+              <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Reward ladder</h2>
+              <p className="mb-4 text-xs text-[#6B7280]">
                 Some rewards include visibility and promotion opportunities.
               </p>
 
-
-              <div className="space-y-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {justUnlocked && <FeaturedCard rung={justUnlocked} kind="unlocked" />}
                 {nextUp && <FeaturedCard rung={nextUp} kind="next" />}
                 {nextMajor && <FeaturedCard rung={nextMajor} kind="major" />}
               </div>
 
               {otherLocked.length > 0 && (
-                <ol className="mt-4 overflow-hidden rounded-xl border border-border">
-                  {otherLocked.map((rung, i) => (
-                    <li
-                      key={rung.points}
-                      className={`flex items-center gap-4 px-5 py-3 bg-muted/20 ${i > 0 ? "border-t border-border" : ""}`}
-                    >
-                      <span className="w-12 shrink-0 text-xs font-semibold text-muted-foreground tabular-nums">
-                        {rung.points}
-                      </span>
-                      <span className="flex-1 truncate text-sm text-muted-foreground">{rung.title}</span>
-                      <Lock className="h-3.5 w-3.5 text-muted-foreground" />
-                    </li>
-                  ))}
-                </ol>
+                <div className="mt-4 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+                  <ol>
+                    {otherLocked.map((rung, i) => (
+                      <li
+                        key={rung.points}
+                        className={`flex items-center gap-4 px-6 py-4 ${i > 0 ? "border-t border-[#E5E7EB]" : ""}`}
+                      >
+                        <span className="w-12 shrink-0 text-xs font-semibold text-[#6B7280] tabular-nums">
+                          {rung.points}
+                        </span>
+                        <span className="flex-1 truncate text-sm text-[#1F2937]">{rung.title}</span>
+                        <Lock className="h-3.5 w-3.5 text-[#6B7280]" />
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               )}
             </section>
           );
@@ -347,57 +341,59 @@ const EarnRewards = () => {
         {(() => {
           const points = state.points?.total ?? 0;
           return (
-            <section className="mb-14">
-              <h2 className="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Partner bonuses</h2>
-              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+            <section className="mb-8">
+              <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Partner bonuses</h2>
+              <p className="mb-4 text-sm leading-relaxed text-[#6B7280]">
                 Exclusive rewards, tools, training, and opportunities contributed by LEADTREE partners and experts.
               </p>
-              <ul className="overflow-hidden rounded-xl border border-border">
-                {partnerBonuses.map((bonus, i) => {
-                  const unlocked = points >= bonus.threshold;
-                  return (
-                    <li
-                      key={bonus.partner + bonus.title}
-                      className={`flex items-start gap-4 px-5 py-4 ${i > 0 ? "border-t border-border" : ""} ${unlocked ? "bg-card" : "bg-muted/20"}`}
-                    >
-                      <div
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold tracking-wide ${
-                          unlocked ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                        }`}
-                        aria-hidden
+              <div className="rounded-[16px] bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+                <ul>
+                  {partnerBonuses.map((bonus, i) => {
+                    const unlocked = points >= bonus.threshold;
+                    return (
+                      <li
+                        key={bonus.partner + bonus.title}
+                        className={`flex items-start gap-4 px-6 py-5 ${i > 0 ? "border-t border-[#E5E7EB]" : ""}`}
                       >
-                        {partnerInitials(bonus.partner)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                          {bonus.partner}
-                        </p>
-                        <p className={`mt-0.5 text-sm font-semibold ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>
-                          {bonus.title}
-                        </p>
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                          {bonus.description}
-                        </p>
-                      </div>
-                      <div className="ml-2 flex shrink-0 flex-col items-end gap-1">
-                        {unlocked ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
-                            <Gift className="h-3.5 w-3.5" /> Unlocked
+                        <div
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold tracking-wide ${
+                            unlocked ? "bg-primary/10 text-primary" : "bg-[#F7F8FA] text-[#6B7280]"
+                          }`}
+                          aria-hidden
+                        >
+                          {partnerInitials(bonus.partner)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[11px] font-medium uppercase tracking-wider text-[#6B7280]">
+                            {bonus.partner}
+                          </p>
+                          <p className={`mt-0.5 text-sm font-semibold ${unlocked ? "text-[#1F2937]" : "text-[#6B7280]"}`}>
+                            {bonus.title}
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-[#6B7280]">
+                            {bonus.description}
+                          </p>
+                        </div>
+                        <div className="ml-2 flex shrink-0 flex-col items-end gap-1">
+                          {unlocked ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                              <Gift className="h-3.5 w-3.5" /> Unlocked
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#6B7280]">
+                              <Lock className="h-3 w-3" /> Locked
+                            </span>
+                          )}
+                          <span className="text-[11px] text-[#6B7280] tabular-nums">
+                            {bonus.threshold} pts
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                            <Lock className="h-3 w-3" /> Locked
-                          </span>
-                        )}
-                        <span className="text-[11px] text-muted-foreground tabular-nums">
-                          {bonus.threshold} pts
-                        </span>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-3 text-xs text-muted-foreground">
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+              <p className="mt-3 text-xs text-[#6B7280]">
                 Partner bonuses are added regularly.
               </p>
             </section>
@@ -407,36 +403,39 @@ const EarnRewards = () => {
         {/* 5. LEADERBOARD */}
         <section>
           <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">Leaderboard</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Leaderboard</h2>
             <Link to="/leaderboard" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
               View all <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
           {topChallengers.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-6 text-center">
-              <Trophy className="mx-auto mb-2 h-5 w-5 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Be the first to invite — climb the leaderboard.</p>
+            <div className="rounded-[16px] bg-white p-10 text-center shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+              <Trophy className="mx-auto mb-2 h-5 w-5 text-[#6B7280]" />
+              <p className="text-sm text-[#6B7280]">Be the first to invite — climb the leaderboard.</p>
             </div>
           ) : (
-            <ol className="overflow-hidden rounded-xl border border-border">
-              {topChallengers.map((c, i) => (
-                <li key={c.name} className={`${i > 0 ? "border-t border-border" : ""}`}>
-                  <Link
-                    to={`/leaderboard?focus=${encodeURIComponent(c.name)}`}
-                    className="flex items-center gap-4 px-5 py-3 hover:bg-muted/40"
-                  >
-                    <span className="w-5 text-xs font-semibold text-muted-foreground tabular-nums">{i + 1}</span>
-                    <span className="flex-1 truncate text-sm font-semibold text-foreground">{c.name}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                </li>
-              ))}
-            </ol>
+            <div className="rounded-[16px] bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+              <ol>
+                {topChallengers.map((c, i) => (
+                  <li key={c.name} className={`${i > 0 ? "border-t border-[#E5E7EB]" : ""}`}>
+                    <Link
+                      to={`/leaderboard?focus=${encodeURIComponent(c.name)}`}
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#F7F8FA]"
+                    >
+                      <span className="w-5 text-xs font-semibold text-[#6B7280] tabular-nums">{i + 1}</span>
+                      <span className="flex-1 truncate text-sm font-semibold text-[#1F2937]">{c.name}</span>
+                      <ChevronRight className="h-4 w-4 text-[#6B7280]" />
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
           )}
         </section>
       </div>
     </div>
   );
 };
+
 
 export default EarnRewards;

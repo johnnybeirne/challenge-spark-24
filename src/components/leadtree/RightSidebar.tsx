@@ -59,7 +59,7 @@ const RightSidebar = () => {
           type="button"
           onClick={toggleRight}
           aria-label="Expand insights"
-          className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-[#6756F3] bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>

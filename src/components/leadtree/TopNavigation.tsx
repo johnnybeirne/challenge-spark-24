@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
-import { Button } from "@/components/ui/button";
 
 const centerLinks = [
   { to: "/training", label: "Training", icon: GraduationCap },

@@ -116,7 +116,7 @@ const LeftSidebar = () => {
                   >
                     <span className="flex items-center justify-between gap-2">
                       <span>Day {d}</span>
-                      <span className="text-[11px] font-normal text-[#6B7280]">
+                      <span className="text-sm font-normal text-[#6B7280]">
                         {dayDate(d)}
                       </span>
                     </span>

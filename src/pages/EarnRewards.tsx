@@ -163,11 +163,12 @@ const EarnRewards = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="app-page-container py-6 pb-24 lg:py-8">
-        {/* Eyebrow */}
-        <p className="mb-4 text-[11px] font-black uppercase tracking-[0.18em] text-primary">Earn Rewards</p>
-
-        {/* Header */}
         <header className="mb-8">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <span className="text-[11px] font-black uppercase tracking-[0.18em] text-primary">
+              Earn Rewards
+            </span>
+          </div>
           <h1 className="text-2xl sm:text-3xl font-black leading-tight text-foreground">
             {firstName ? `Invite Friends, ${firstName}` : "Invite Friends"}
           </h1>
@@ -175,6 +176,7 @@ const EarnRewards = () => {
             Invite others to join the challenge and unlock bonus rewards, training, and visibility opportunities.
           </p>
         </header>
+
 
         {/* 1. INVITE FRIENDS */}
         <section className="mb-16">

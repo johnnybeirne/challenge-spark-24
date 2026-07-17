@@ -49,11 +49,37 @@ const RightSidebar = () => {
     ? Math.min(100, Math.max(0, ((points - prevThreshold) / Math.max(1, threshold - prevThreshold)) * 100))
     : 100;
 
+  if (rightCollapsed) {
+    return (
+      <aside
+        className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[48px] flex-col items-center border-l border-[#E5E7EB] bg-white py-4 lg:flex"
+        aria-label="Insights (collapsed)"
+      >
+        <button
+          type="button"
+          onClick={toggleRight}
+          aria-label="Expand insights"
+          className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside
       className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[320px] flex-col gap-6 overflow-y-auto bg-[#F7F8FA] px-6 py-6 lg:flex"
       aria-label="Insights"
     >
+      <button
+        type="button"
+        onClick={toggleRight}
+        aria-label="Collapse insights"
+        className="absolute -left-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#6B7280] shadow-sm hover:text-[#1F2937]"
+      >
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
       {/* Top Referrers */}
       <div className={cardCls}>
         <p className={headingCls}>

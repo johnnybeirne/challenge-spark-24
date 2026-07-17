@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Trophy, TrendingUp, Gift, ChevronRight } from "lucide-react";
+import { Trophy, TrendingUp, Gift, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
+import { useFocusMode } from "@/context/FocusModeContext";
 import { Progress } from "@/components/ui/progress";
 import { getNextReward, pointRewards } from "@/lib/points";
 
@@ -13,6 +14,7 @@ const headingCls =
 
 const RightSidebar = () => {
   const { state } = useAppState();
+  const { rightCollapsed, toggleRight } = useFocusMode();
   const [top, setTop] = useState<{ name: string; pts: number }[]>([]);
 
   useEffect(() => {

@@ -24,6 +24,7 @@ const centerLinks = [
 
 const TopNavigation = () => {
   const { state } = useAppState();
+  const { focusMode, toggleFocusMode } = useFocusMode();
   const name = state.user?.name || "";
   const initial = name.trim().charAt(0).toUpperCase() || "U";
 

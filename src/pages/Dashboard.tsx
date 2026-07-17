@@ -266,16 +266,33 @@ const Dashboard = () => {
       if (qa.active && qa.archetypeOverride) {
         return { pioneer: "Pioneer", architect: "Architect", authority: "Authority" }[qa.archetypeOverride];
       }
-      const a = state.assessment as { diagnosticScore?: number; diagnosticLevel?: string } | null;
+      const a = state.assessment as {
+        diagnosticScore?: number;
+        diagnosticLevel?: string;
+        answers?: Record<string, string>;
+      } | null;
       if (!a) return "";
-      const tier =
-        a.diagnosticLevel === "low" || a.diagnosticLevel === "mid" || a.diagnosticLevel === "high"
-          ? a.diagnosticLevel
-          : (() => {
-              const pct = Math.round(((a.diagnosticScore ?? 0) / 9) * 100);
-              return pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
-            })();
-      return { low: "Pioneer", mid: "Architect", high: "Authority" }[tier];
+      let tier: "low" | "mid" | "high" | undefined;
+      if (a.diagnosticLevel === "low" || a.diagnosticLevel === "mid" || a.diagnosticLevel === "high") {
+        tier = a.diagnosticLevel;
+      } else if (typeof a.diagnosticScore === "number") {
+        const pct = Math.round(((a.diagnosticScore ?? 0) / 9) * 100);
+        tier = pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
+      } else if (a.answers && Object.keys(a.answers).length > 0) {
+        const REVERSE = new Set(["q2", "q6", "q9"]);
+        const questions = [
+          "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9",
+        ];
+        const strong = questions.reduce((count, id) => {
+          const ans = a.answers?.[id];
+          if (!ans) return count;
+          const isStrong = REVERSE.has(id) ? ans === "no" : ans === "yes";
+          return isStrong ? count + 1 : count;
+        }, 0);
+        const pct = Math.round((strong / 9) * 100);
+        tier = pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
+      }
+      return tier ? { low: "Pioneer", mid: "Architect", high: "Authority" }[tier] : "";
     })();
 
     return (

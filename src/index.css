@@ -262,6 +262,22 @@
   }
 }
 
+/* ── Neutralize legacy page-level wrappers inside the LEADTREE shell ──
+   The shared AppShell already provides max-width, horizontal padding,
+   scroll container, and background. Pages built before the shell often
+   add their own `app-page-container`, `min-h-screen`, and full-bleed
+   backgrounds which double up on padding (compressing content) and
+   create nested full-height wrappers. Reset them when nested. */
+.leadtree-shell-main .app-page-container {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+}
+.leadtree-shell-main .min-h-screen {
+  min-height: 0 !important;
+}
+
 /* ───── Experience mode separation ─────
    A subtle visual signal of which "mode" of LeadTree the user is in.
    - Top accent bar across the viewport

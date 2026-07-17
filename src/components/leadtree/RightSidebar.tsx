@@ -59,7 +59,7 @@ const RightSidebar = () => {
           type="button"
           onClick={toggleRight}
           aria-label="Expand insights"
-          className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-[#6756F3] bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -76,7 +76,7 @@ const RightSidebar = () => {
         type="button"
         onClick={toggleRight}
         aria-label="Collapse insights"
-        className="absolute -left-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#6B7280] shadow-sm hover:text-[#1F2937]"
+        className="absolute -left-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[#6756F3] bg-[#6756F3] text-white shadow-sm hover:bg-[#5646d9]"
       >
         <ChevronRight className="h-3.5 w-3.5" />
       </button>

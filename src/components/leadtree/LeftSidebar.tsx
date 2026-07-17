@@ -28,6 +28,12 @@ const LeftSidebar = () => {
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];
+  const startedAt = state.challenge?.startedAt ? new Date(state.challenge.startedAt) : new Date();
+  const dayDate = (d: number) => {
+    const dt = new Date(startedAt);
+    dt.setDate(dt.getDate() + (d - 1));
+    return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  };
 
   if (leftCollapsed) {
     return (
@@ -100,7 +106,7 @@ const LeftSidebar = () => {
                     to={locked ? "#" : to}
                     aria-disabled={locked}
                     className={[
-                      "block text-sm",
+                      "block text-sm leading-tight",
                       isCurrent
                         ? "font-semibold text-[#1F2937]"
                         : locked
@@ -109,6 +115,9 @@ const LeftSidebar = () => {
                     ].join(" ")}
                   >
                     Day {d}
+                    <span className="mt-0.5 block text-[11px] font-normal text-[#6B7280]">
+                      {dayDate(d)}
+                    </span>
                   </Link>
                 </li>
               );

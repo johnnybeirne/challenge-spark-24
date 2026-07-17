@@ -76,7 +76,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           className={[
-            "leadtree-shell-main pt-[72px] pb-24 lg:pb-8 transition-[padding] duration-200",
+            "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-200",
             focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[280px]",
             focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[320px]",
           ].join(" ")}
@@ -90,6 +90,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           </footer>
         </main>
 
+        <ChallengeCountdownBar />
         {showCopilotChat && <AiCopilotChat />}
         <div className="lg:hidden">
           <ConsumerNav />

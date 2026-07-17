@@ -25,7 +25,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const { pathname } = useLocation();
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
-  const { focusMode } = useFocusMode();
+  const { focusMode, leftCollapsed, rightCollapsed } = useFocusMode();
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const useLeadtreeShell = showNav && authenticated && experience !== "partner";
@@ -75,8 +75,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           className={[
-            "pt-[72px] pb-24 lg:pb-8",
-            focusMode ? "" : "lg:pl-[280px] lg:pr-[320px]",
+            "pt-[72px] pb-24 lg:pb-8 transition-[padding] duration-200",
+            focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[280px]",
+            focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[320px]",
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1200px] px-6 py-10 sm:px-10">

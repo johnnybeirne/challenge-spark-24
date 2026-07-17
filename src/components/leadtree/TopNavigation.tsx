@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
-import { Button } from "@/components/ui/button";
 
 const centerLinks = [
   { to: "/training", label: "Training", icon: GraduationCap },
@@ -85,9 +84,6 @@ const TopNavigation = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="outline" size="sm" className="rounded-[10px] border-[#E5E7EB] text-[#6B7280]">
-            QA Mode
-          </Button>
           <button
             aria-label="Search"
             className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]"

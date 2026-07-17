@@ -28,6 +28,12 @@ const LeftSidebar = () => {
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];
+  const startedAt = state.challenge?.startedAt ? new Date(state.challenge.startedAt) : new Date();
+  const dayDate = (d: number) => {
+    const dt = new Date(startedAt);
+    dt.setDate(dt.getDate() + (d - 1));
+    return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  };
 
   if (leftCollapsed) {
     return (

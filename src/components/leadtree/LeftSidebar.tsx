@@ -18,7 +18,7 @@ import { useFocusMode } from "@/context/FocusModeContext";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useNavTips } from "@/hooks/useNavTips";
 import { useNavTour } from "@/hooks/useNavTour";
-import { applyTooltipTokens, getFirstName } from "@/lib/tooltipTokens";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
   { to: "/earn",      label: "Invites",   icon: Users,    key: "nav_invites" },

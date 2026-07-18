@@ -10,20 +10,38 @@ import {
   Lock,
   ChevronLeft,
   ChevronRight,
+  PlayCircle,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useNavTips } from "@/hooks/useNavTips";
+import { useNavTour } from "@/hooks/useNavTour";
 
 const momentumLinks = [
-  { to: "/earn", label: "Invites", icon: Users },
-  { to: "/rewards", label: "Rewards", icon: Gift },
-  { to: "/resources", label: "Resources", icon: BookOpen },
+  { to: "/earn",      label: "Invites",   icon: Users,    key: "nav_invites" },
+  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards" },
+  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources" },
 ];
+
+const withTip = (tip: string, children: React.ReactNode) => {
+  if (!tip) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" className="max-w-[240px]">
+        <p>{tip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 const LeftSidebar = () => {
   const { state } = useAppState();
   const { pathname } = useLocation();
   const { leftCollapsed, toggleLeft, focusMode } = useFocusMode();
+  const { byKey } = useNavTips();
+  const { start: startTour } = useNavTour();
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];
@@ -61,6 +79,8 @@ const LeftSidebar = () => {
     );
   }
 
+  const dayTip = byKey("day_progress");
+
   return (
     <aside
       className={[
@@ -81,7 +101,7 @@ const LeftSidebar = () => {
       </button>
       <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
         {/* Day Progress timeline */}
-        <section>
+        <section data-tour="day_progress">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
             Day Progress
           </p>
@@ -91,7 +111,7 @@ const LeftSidebar = () => {
               const isCurrent = d === currentDay;
               const locked = d > currentDay;
               const to = `/challenge/day-${d}`;
-              return (
+              const row = (
                 <li
                   key={d}
                   className={[
@@ -132,6 +152,15 @@ const LeftSidebar = () => {
                   </Link>
                 </li>
               );
+              if (!dayTip) return row;
+              return (
+                <Tooltip key={d}>
+                  <TooltipTrigger asChild>{row}</TooltipTrigger>
+                  <TooltipContent side="right" className="max-w-[240px]">
+                    <p>{dayTip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              );
             })}
           </ol>
         </section>
@@ -142,12 +171,14 @@ const LeftSidebar = () => {
             Build Momentum
           </p>
           <nav className="space-y-1">
-            {momentumLinks.map(({ to, label, icon: Icon }) => {
+            {momentumLinks.map(({ to, label, icon: Icon, key }) => {
               const active = pathname.startsWith(to);
-              return (
+              return withTip(
+                byKey(key),
                 <NavLink
                   key={to}
                   to={to}
+                  data-tour={key}
                   className={[
                     "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
                     active
@@ -157,7 +188,7 @@ const LeftSidebar = () => {
                 >
                   <Icon className="h-4 w-4" strokeWidth={1.75} />
                   {label}
-                </NavLink>
+                </NavLink>,
               );
             })}
           </nav>
@@ -167,15 +198,31 @@ const LeftSidebar = () => {
       {/* Pinned bottom */}
       <div className="border-t border-[#E5E7EB] px-4 py-4">
         <nav className="space-y-0.5">
-          <Link to="/profile" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-            <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
-          </Link>
-          <a href="mailto:support@leadtree.io" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-            <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
-          </a>
-          <Link to="/" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-            <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout
-          </Link>
+          {withTip(
+            byKey("nav_settings"),
+            <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+              <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
+            </Link>,
+          )}
+          <button
+            type="button"
+            onClick={() => startTour()}
+            className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-left text-sm text-[#1F2937] hover:bg-[#F7F8FA]"
+          >
+            <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
+          </button>
+          {withTip(
+            byKey("nav_support"),
+            <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+              <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
+            </a>,
+          )}
+          {withTip(
+            byKey("nav_logout"),
+            <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+              <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout
+            </Link>,
+          )}
         </nav>
       </div>
     </aside>

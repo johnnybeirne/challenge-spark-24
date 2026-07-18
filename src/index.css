@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    /* Shell top-bar height — used by AppShell main and both sidebars to size the three scroll regions. */
+    --topbar-h: 72px;
     --background: 50 20% 97.6%;
     --foreground: 60 4% 16.5%;
     --card: 0 0% 100%;

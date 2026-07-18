@@ -41,7 +41,8 @@ const LeftSidebar = () => {
     return (
       <aside
         className={[
-          "fixed left-0 top-[72px] bottom-0 z-30 hidden lg:flex w-[48px] flex-col items-center border-r border-[#E5E7EB] bg-white py-4",
+          "fixed left-0 top-[72px] bottom-0 z-30 hidden lg:flex flex-col items-center border-r border-[#E5E7EB] bg-white py-4",
+          width,
           "transition-[transform,opacity] duration-[400ms] ease-in-out",
           hidden ? "-translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
         ].join(" ")}

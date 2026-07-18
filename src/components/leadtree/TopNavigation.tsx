@@ -44,18 +44,25 @@ const TopNavigation = () => {
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex" aria-label="Primary">
-          <button
-            type="button"
-            onClick={toggleFocusMode}
-            aria-pressed={focusMode}
-            className={[
-              "relative inline-flex items-center gap-2 rounded-full border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors",
-              focusMode ? "bg-primary/10" : "bg-transparent hover:bg-primary/5",
-            ].join(" ")}
-          >
-            {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={2} /> : <Focus className="h-5 w-5" strokeWidth={2} />}
-            {focusMode ? "Exit Focus" : "Focus Mode"}
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={toggleFocusMode}
+                aria-pressed={focusMode}
+                className={[
+                  "relative inline-flex items-center gap-2 rounded-full border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors",
+                  focusMode ? "bg-primary/10" : "bg-transparent hover:bg-primary/5",
+                ].join(" ")}
+              >
+                {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={2} /> : <Focus className="h-5 w-5" strokeWidth={2} />}
+                {focusMode ? "Exit Focus" : "Focus Mode"}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[220px] text-center">
+              <p>Hides the side menus so you can concentrate on the lesson.</p>
+            </TooltipContent>
+          </Tooltip>
           {centerLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}

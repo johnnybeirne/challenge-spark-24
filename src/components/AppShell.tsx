@@ -87,7 +87,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           </div>
         </main>
 
-        <div className="fixed bottom-0 left-0 right-0 z-20">
+        <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
           <ChallengeCountdownBar className="relative w-full" />
         </div>
         {showCopilotChat && <AiCopilotChat />}

@@ -33,7 +33,7 @@ const ChallengeCountdownBar = ({ className }: Props) => {
   return (
     <div
       className={cn(
-        "z-20 border-t border-[#E5E7EB] bg-white/70 backdrop-blur-md px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]",
+        "z-40 border-t border-[#E5E7EB] bg-white/60 backdrop-blur-md px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]",
         className,
       )}
       role="status"

@@ -1,30 +1,28 @@
-## Goal
-Make `/earn` (src/pages/EarnRewards.tsx) visually match `/challenge/day-1`'s page shell and header treatment. Content, sections, and logic stay unchanged.
+Audit result
+-----------
+The only Day Progress timeline in the app is in `src/components/leadtree/LeftSidebar.tsx` (lines 83-131). It already renders each day row as a single inline label:
 
-## Scope
-Only edit `src/pages/EarnRewards.tsx`. No other files touched. No changes to invite logic, referral fetches, points, ladder, partner bonuses, or leaderboard.
+```tsx
+<span className="block text-sm leading-tight">
+  Day {d} <span className="text-[#6B7280]">- {dayDate(d)}</span>
+</span>
+<span className="mt-0.5 block text-[11px] font-normal">
+  {isDone ? "Completed" : isCurrent ? "In Progress" : "Locked"}
+</span>
+```
 
-## Changes
+- Day label and date read as one line: "Day 1 - Sat 18 Jul".
+- The separate right-hand date column has already been removed.
+- Status line (Completed / In Progress / Locked) remains below the combined label.
+- Dates are still dynamic, driven by the same `dayDate(d)` helper based on `state.challenge.startedAt`.
+- Icons, colours, and spacing are unchanged.
 
-1. Container width & padding
-   - Replace the outer `<div className="mx-auto max-w-2xl px-5 py-8 pb-24 lg:py-10">` with Day 1's `app-page-container py-6 pb-24 lg:py-8` wrapper so the page uses the same width and vertical rhythm as Day 1.
+Plan
+----
+1. Confirm the running preview reflects the current code (the layout should already show the hyphenated day-date line).
+2. If the preview is stale, trigger a rebuild/refresh so the latest `LeftSidebar.tsx` is rendered.
+3. No file edits are required for this request.
 
-2. Eyebrow style
-   - Replace the current muted eyebrow (`text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground`) with Day 1's StepHeader eyebrow: `text-[11px] font-black uppercase tracking-[0.18em] text-primary`.
-   - Text stays "Earn Rewards" (no day/step numbering since this isn't a challenge day).
-
-3. Heading typography
-   - Add a header block above section 1 using Day 1 StepHeader classes:
-     - h1: `text-2xl sm:text-3xl font-black leading-tight text-foreground` — "Invite Friends, {firstName}" / "Invite Friends".
-     - Subheading: `mt-3 text-base sm:text-lg font-semibold text-foreground` — the current invite intro line.
-   - This h1 replaces the h1 currently inside the gradient card.
-
-4. Remove gradient hero card
-   - Drop the `rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-7 shadow-sm` wrapper.
-   - Keep every child element (referral link display, Share/Copy buttons, WhatsApp/Email row) in the same order, rendered directly on the page background like Day 1 content.
-   - The "The fastest way to unlock rewards…" helper line stays.
-
-## Out of scope
-- No changes to sections 2–5 (Progress, Ladder, Partner Bonuses, Leaderboard) beyond inheriting the new container width.
-- No copy edits, no color-token changes, no button variant changes.
-- No route or navigation changes.
+Files reviewed
+--------------
+- `src/components/leadtree/LeftSidebar.tsx`

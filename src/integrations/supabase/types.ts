@@ -820,6 +820,39 @@ export type Database = {
         }
         Relationships: []
       }
+      nav_tips: {
+        Row: {
+          created_at: string
+          id: string
+          in_tour: boolean
+          key: string
+          label: string
+          sort_order: number
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          in_tour?: boolean
+          key: string
+          label: string
+          sort_order?: number
+          tip?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          in_tour?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+          tip?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           audience: Json
@@ -1457,6 +1490,7 @@ export type Database = {
           is_premium: boolean
           linkedin_url: string | null
           name: string | null
+          nav_tour_completed_at: string | null
           partner_code_used: string | null
           premium_since: string | null
           referral_day1_complete_count: number
@@ -1495,6 +1529,7 @@ export type Database = {
           is_premium?: boolean
           linkedin_url?: string | null
           name?: string | null
+          nav_tour_completed_at?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
           referral_day1_complete_count?: number
@@ -1533,6 +1568,7 @@ export type Database = {
           is_premium?: boolean
           linkedin_url?: string | null
           name?: string | null
+          nav_tour_completed_at?: string | null
           partner_code_used?: string | null
           premium_since?: string | null
           referral_day1_complete_count?: number

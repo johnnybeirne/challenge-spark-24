@@ -13,20 +13,34 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
+import { useNavTips } from "@/hooks/useNavTips";
 
 const centerLinks = [
-  { to: "/training", label: "Training", icon: GraduationCap },
-  { to: "/community", label: "Community", icon: Users },
-  { to: "/calendar", label: "Events", icon: CalendarDays },
-  { to: "/mentor", label: "AI Coach", icon: Sparkles },
-  { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },
+  { to: "/community",   label: "Community",   icon: Users,         key: "top_community" },
+  { to: "/calendar",    label: "Events",      icon: CalendarDays,  key: "top_events" },
+  { to: "/mentor",      label: "AI Coach",    icon: Sparkles,      key: "top_ai_coach" },
+  { to: "/leaderboard", label: "Leaderboard", icon: Trophy,        key: "top_leaderboard" },
 ];
 
 const TopNavigation = () => {
   const { state } = useAppState();
   const { focusMode, toggleFocusMode } = useFocusMode();
+  const { byKey } = useNavTips();
   const name = state.user?.name || "";
   const initial = name.trim().charAt(0).toUpperCase() || "U";
+
+  const withTip = (tip: string, children: React.ReactNode) => {
+    if (!tip) return <>{children}</>;
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[240px] text-center">
+          <p>{tip}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
 
   return (
     <header
@@ -44,48 +58,50 @@ const TopNavigation = () => {
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex" aria-label="Primary">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={toggleFocusMode}
-                aria-pressed={focusMode}
-                className={[
-                  "relative inline-flex items-center gap-2 rounded-full border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors",
-                  focusMode ? "bg-primary/10" : "bg-transparent hover:bg-primary/5",
-                ].join(" ")}
-              >
-                {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={2} /> : <Focus className="h-5 w-5" strokeWidth={2} />}
-                {focusMode ? "Exit Focus" : "Focus Mode"}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-[220px] text-center">
-              <p>Hides the side menus so you can concentrate on the lesson.</p>
-            </TooltipContent>
-          </Tooltip>
-          {centerLinks.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                [
-                  "relative inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors",
-                  isActive
-                    ? "font-medium text-primary"
-                    : "font-normal text-[#6B7280] hover:text-[#1F2937]",
-                ].join(" ")
-              }
+          {withTip(
+            byKey("focus_mode"),
+            <button
+              type="button"
+              data-tour="focus_mode"
+              onClick={toggleFocusMode}
+              aria-pressed={focusMode}
+              className={[
+                "relative inline-flex items-center gap-2 rounded-full border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors",
+                focusMode ? "bg-primary/10" : "bg-transparent hover:bg-primary/5",
+              ].join(" ")}
             >
-              {({ isActive }) => (
-                <>
-                  <Icon className="h-4 w-4" strokeWidth={1.75} />
-                  {label}
-                  {isActive && (
-                    <span className="absolute inset-x-3 -bottom-[9px] h-0.5 rounded-full bg-primary" />
+              {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={2} /> : <Focus className="h-5 w-5" strokeWidth={2} />}
+              {focusMode ? "Exit Focus" : "Focus Mode"}
+            </button>,
+          )}
+          {centerLinks.map(({ to, label, icon: Icon, key }) => (
+            <span key={to} className="contents">
+              {withTip(
+                byKey(key),
+                <NavLink
+                  to={to}
+                  data-tour={key}
+                  className={({ isActive }) =>
+                    [
+                      "relative inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors",
+                      isActive
+                        ? "font-medium text-primary"
+                        : "font-normal text-[#6B7280] hover:text-[#1F2937]",
+                    ].join(" ")
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                      {label}
+                      {isActive && (
+                        <span className="absolute inset-x-3 -bottom-[9px] h-0.5 rounded-full bg-primary" />
+                      )}
+                    </>
                   )}
-                </>
+                </NavLink>,
               )}
-            </NavLink>
+            </span>
           ))}
         </nav>
 

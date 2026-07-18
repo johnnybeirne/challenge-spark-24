@@ -83,6 +83,7 @@ import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
+import AdminNavTips from "@/pages/AdminNavTips";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -275,6 +276,7 @@ const App = () => (
                 <Route path="typography" element={<AdminTypography />} />
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
+                <Route path="nav-tips" element={<AdminNavTips />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

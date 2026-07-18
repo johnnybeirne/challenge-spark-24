@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { toast } from "sonner";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
@@ -23,7 +23,18 @@ const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 
 const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boolean; fullWidth?: boolean }) => {
   const { state, authUser } = useAppState();
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
+  const mainScrollRef = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    if (hash) return;
+    const el = mainScrollRef.current;
+    if (!el) return;
+    try {
+      el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    } catch {
+      el.scrollTop = 0;
+    }
+  }, [pathname, hash]);
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
   const { focusMode, leftCollapsed, rightCollapsed } = useFocusMode();
@@ -78,6 +89,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <RightSidebar />
 
         <main
+          ref={mainScrollRef}
           style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)" }}
           className={[
             "leadtree-shell-main overflow-y-auto overflow-x-hidden overscroll-contain transition-[padding] duration-[400ms] ease-in-out",

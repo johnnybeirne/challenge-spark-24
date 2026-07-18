@@ -29,24 +29,11 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
     if (hash) return;
     const el = mainScrollRef.current;
     if (!el) return;
-    const reset = () => {
-      try {
-        el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-      } catch {
-        el.scrollTop = 0;
-      }
-    };
-    reset();
-    // Re-assert after paint in case children mount and shift scroll position.
-    const raf1 = requestAnimationFrame(() => {
-      reset();
-      const raf2 = requestAnimationFrame(reset);
-      (reset as any)._raf2 = raf2;
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      if ((reset as any)._raf2) cancelAnimationFrame((reset as any)._raf2);
-    };
+    try {
+      el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    } catch {
+      el.scrollTop = 0;
+    }
   }, [locationKey, pathname, hash]);
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
@@ -103,7 +90,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           ref={mainScrollRef}
-          style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)" }}
+          style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)", overflowAnchor: "none" }}
           className={[
             "leadtree-shell-main overflow-y-auto overflow-x-hidden overscroll-contain transition-[padding] duration-[400ms] ease-in-out",
             focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",

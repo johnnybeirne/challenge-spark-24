@@ -62,7 +62,12 @@ const LeftSidebar = () => {
 
   return (
     <aside
-      className="fixed left-0 top-[72px] bottom-0 z-30 hidden w-[300px] flex-col border-r border-[#E5E7EB] bg-white lg:flex"
+      className={[
+        "fixed left-0 top-[72px] bottom-0 z-30 hidden w-[300px] flex-col border-r border-[#E5E7EB] bg-white lg:flex",
+        "transition-[transform,opacity] duration-[400ms] ease-in-out",
+        hidden ? "-translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
+      ].join(" ")}
+      aria-hidden={hidden}
       aria-label="Sidebar"
     >
       <button

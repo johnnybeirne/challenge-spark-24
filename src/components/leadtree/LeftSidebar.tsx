@@ -173,21 +173,27 @@ const LeftSidebar = () => {
           <nav className="space-y-1">
             {momentumLinks.map(({ to, label, icon: Icon, key }) => {
               const active = pathname.startsWith(to);
-              return withTip(
-                byKey(key),
-                <NavLink
-                  key={to}
-                  to={to}
-                  data-tour={key}
-                  className={[
-                    "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
-                    active
-                      ? "bg-primary/10 font-medium text-primary"
-                      : "text-[#1F2937] hover:bg-[#F7F8FA]",
-                  ].join(" ")}
-                >
-                  <Icon className="h-4 w-4" strokeWidth={1.75} />
-                  {label}
+              return (
+                <span key={to} className="contents">
+                  {withTip(
+                    byKey(key),
+                    <NavLink
+                      to={to}
+                      data-tour={key}
+                      className={[
+                        "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
+                        active
+                          ? "bg-primary/10 font-medium text-primary"
+                          : "text-[#1F2937] hover:bg-[#F7F8FA]",
+                      ].join(" ")}
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                      {label}
+                    </NavLink>,
+                  )}
+                </span>
+              );
+            })}
                 </NavLink>,
               );
             })}

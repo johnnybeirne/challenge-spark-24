@@ -76,7 +76,12 @@ const RightSidebar = () => {
 
   return (
     <aside
-      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex"
+      className={[
+        "fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex",
+        "transition-[transform,opacity] duration-[400ms] ease-in-out",
+        hidden ? "translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
+      ].join(" ")}
+      aria-hidden={hidden}
       aria-label="Insights"
     >
       <button

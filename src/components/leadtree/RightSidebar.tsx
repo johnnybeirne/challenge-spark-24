@@ -14,7 +14,7 @@ const headingCls =
 
 const RightSidebar = () => {
   const { state } = useAppState();
-  const { rightCollapsed, toggleRight } = useFocusMode();
+  const { rightCollapsed, toggleRight, focusMode } = useFocusMode();
   const [top, setTop] = useState<{ name: string; pts: number }[]>([]);
 
   useEffect(() => {

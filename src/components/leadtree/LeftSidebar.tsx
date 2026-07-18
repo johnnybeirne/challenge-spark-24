@@ -175,12 +175,13 @@ const LeftSidebar = () => {
                   </Link>
                 </li>
               );
-              if (!dayTip) return row;
+              const perDayTip = byKey(`day_${d}_tooltip`);
+              if (!perDayTip) return row;
               return (
                 <Tooltip key={d}>
                   <TooltipTrigger asChild>{row}</TooltipTrigger>
                   <TooltipContent side="right" className="max-w-[240px]">
-                    <p>{dayTip}</p>
+                    <p>{perDayTip}</p>
                   </TooltipContent>
                 </Tooltip>
               );

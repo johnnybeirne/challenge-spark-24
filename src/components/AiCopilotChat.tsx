@@ -59,6 +59,22 @@ const AiCopilotChat = () => {
     };
   };
 
+  // Re-clamp persisted position against the current viewport on mount and on
+  // resize. Without this, a bubble dragged near an edge on a larger window
+  // restores off-screen on a smaller one and looks "missing".
+  useEffect(() => {
+    const reclamp = () => {
+      setPos((p) => {
+        if (!p) return p;
+        const c = clampPos(p.x, p.y);
+        return c.x === p.x && c.y === p.y ? p : c;
+      });
+    };
+    reclamp();
+    window.addEventListener("resize", reclamp);
+    return () => window.removeEventListener("resize", reclamp);
+  }, []);
+
   useEffect(() => {
     (async () => {
       const { data } = await (supabase.from("copilot_config") as any)

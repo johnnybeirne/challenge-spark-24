@@ -80,7 +80,7 @@ const LeftSidebar = () => {
     );
   }
 
-  const dayTip = byKey("day_progress");
+  
 
   return (
     <aside

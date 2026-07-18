@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
-import ChallengeCountdown from "@/components/ChallengeCountdown";
 
 const momentumLinks = [
   { to: "/earn", label: "Invites", icon: Users },
@@ -67,13 +66,6 @@ const LeftSidebar = () => {
         <ChevronLeft className="h-4 w-4" />
       </button>
       <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
-        {/* Countdown */}
-        <section>
-          <div className="rounded-[12px] bg-[#F7F8FA] px-5 py-4">
-            <ChallengeCountdown compact />
-          </div>
-        </section>
-
         {/* Day Progress timeline */}
         <section>
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">

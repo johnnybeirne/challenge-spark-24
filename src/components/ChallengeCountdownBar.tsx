@@ -39,12 +39,12 @@ const ChallengeCountdownBar = ({ className }: Props) => {
       role="status"
       aria-label="Challenge countdown"
     >
-      <div className="mx-auto flex max-w-[1320px] items-center justify-end gap-4">
+      <div className="mx-auto flex max-w-[1320px] items-center justify-center gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Clock className="h-4 w-4" />
           </div>
-          <div className="text-right">
+          <div>
             <p className="text-xs font-medium text-[#6B7280]">Time remaining</p>
             <p className={cn("text-sm font-semibold tabular-nums", expired ? "text-destructive" : "text-[#1F2937]")}>
               {expired ? "Window ended" : `${parts.join(" ")} left`}

@@ -117,11 +117,8 @@ const LeftSidebar = () => {
                           : "text-[#1F2937] hover:text-primary",
                     ].join(" ")}
                   >
-                    <span className="flex items-center justify-between gap-2">
-                      <span>Day {d}</span>
-                      <span className="text-sm font-normal text-[#6B7280]">
-                        {dayDate(d)}
-                      </span>
+                    <span className="block text-sm leading-tight">
+                      Day {d} <span className="text-[#6B7280]">- {dayDate(d)}</span>
                     </span>
                     <span className="mt-0.5 block text-[11px] font-normal">
                       {isDone ? "Completed" : isCurrent ? "In Progress" : "Locked"}

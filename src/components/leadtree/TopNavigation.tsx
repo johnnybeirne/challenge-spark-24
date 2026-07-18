@@ -30,6 +30,8 @@ const TopNavigation = () => {
   const { byKey } = useNavTips();
   const name = state.user?.name || "";
   const initial = name.trim().charAt(0).toUpperCase() || "U";
+  const firstName = getFirstName(name);
+  const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
 
   const withTip = (tip: string, children: React.ReactNode) => {
     if (!tip) return <>{children}</>;

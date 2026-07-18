@@ -276,6 +276,7 @@ const App = () => (
                 <Route path="typography" element={<AdminTypography />} />
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
+                <Route path="nav-tips" element={<AdminNavTips />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

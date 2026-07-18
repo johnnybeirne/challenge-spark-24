@@ -36,7 +36,7 @@ const TopNavigation = () => {
         <Link to="/challenger-dashboard" className="flex flex-col items-start gap-0.5">
           <span className="text-[10pt] leading-none text-[#6B7280]">Powered by</span>
           <img
-            src={leadtreeLogo.url}
+            src="/leadtree-logo.png"
             alt="LeadTree"
             className="h-8 w-auto"
           />

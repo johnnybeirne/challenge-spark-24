@@ -26,27 +26,27 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const { pathname, hash, key: locationKey } = useLocation();
   const mainScrollRef = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
+    console.log("[shell-scroll-reset]", { pathname, locationKey, hash, hasEl: !!mainScrollRef.current, scrollTop: mainScrollRef.current?.scrollTop });
     if (hash) return;
     const el = mainScrollRef.current;
     if (!el) return;
-    const reset = () => {
-      try {
-        el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-      } catch {
-        el.scrollTop = 0;
+    const reset = (label: string) => {
+      const before = el.scrollTop;
+      el.scrollTop = 0;
+      try { el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior }); } catch {}
+      console.log("[shell-scroll-reset:reset]", label, "before=", before, "after=", el.scrollTop);
+    };
+    reset("initial");
+    const start = performance.now();
+    let rafId = 0;
+    const tick = () => {
+      if (el.scrollTop !== 0) reset("tick");
+      if (performance.now() - start < 1500) {
+        rafId = requestAnimationFrame(tick);
       }
     };
-    reset();
-    // Re-assert after paint in case children mount and shift scroll position.
-    const raf1 = requestAnimationFrame(() => {
-      reset();
-      const raf2 = requestAnimationFrame(reset);
-      (reset as any)._raf2 = raf2;
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      if ((reset as any)._raf2) cancelAnimationFrame((reset as any)._raf2);
-    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, [locationKey, pathname, hash]);
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
@@ -103,7 +103,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <main
           ref={mainScrollRef}
-          style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)" }}
+          style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)", overflowAnchor: "none" }}
           className={[
             "leadtree-shell-main overflow-y-auto overflow-x-hidden overscroll-contain transition-[padding] duration-[400ms] ease-in-out",
             focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",

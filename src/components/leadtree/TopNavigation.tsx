@@ -33,13 +33,13 @@ const TopNavigation = () => {
       role="banner"
     >
       <div className="mx-auto flex h-full items-center gap-8 px-6">
-        <Link to="/challenger-dashboard" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-primary text-sm font-bold text-white">
-            L
-          </span>
-          <span className="text-[15px] font-semibold tracking-tight text-[#1F2937]">
-            LEADTREE
-          </span>
+        <Link to="/challenger-dashboard" className="flex flex-col items-start gap-0.5">
+          <span className="text-[10pt] leading-none text-[#6B7280]">Powered by</span>
+          <img
+            src="/leadtree-logo.png"
+            alt="LeadTree"
+            className="h-8 w-auto"
+          />
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex" aria-label="Primary">

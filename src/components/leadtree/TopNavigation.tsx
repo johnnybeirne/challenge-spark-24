@@ -14,6 +14,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
+import { applyTooltipTokens, getFirstName } from "@/lib/tooltipTokens";
 
 const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },

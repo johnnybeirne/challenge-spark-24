@@ -59,8 +59,9 @@ const LeftSidebar = () => {
   if (leftCollapsed) {
     return (
       <aside
+        style={{ top: "var(--topbar-h)" }}
         className={[
-          "fixed left-0 top-[72px] bottom-0 z-30 hidden lg:flex flex-col items-center border-r border-[#E5E7EB] bg-white py-4",
+          "fixed left-0 bottom-0 z-30 hidden lg:flex flex-col items-center border-r border-[#E5E7EB] bg-white py-4",
           width,
           "transition-[transform,opacity] duration-[400ms] ease-in-out",
           hidden ? "-translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
@@ -84,8 +85,9 @@ const LeftSidebar = () => {
 
   return (
     <aside
+      style={{ top: "var(--topbar-h)" }}
       className={[
-        "fixed left-0 top-[72px] bottom-0 z-30 hidden w-[260px] flex-col border-r border-[#E5E7EB] bg-white lg:flex",
+        "fixed left-0 bottom-0 z-30 hidden w-[260px] flex-col border-r border-[#E5E7EB] bg-white lg:flex",
         "transition-[transform,opacity] duration-[400ms] ease-in-out",
         hidden ? "-translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
       ].join(" ")}
@@ -100,7 +102,8 @@ const LeftSidebar = () => {
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
+      <div className="min-h-0 flex-1 space-y-10 overflow-y-auto overflow-x-hidden overscroll-contain px-6 py-8">
+
         {/* Your Dashboard */}
         <nav>
           {withTip(

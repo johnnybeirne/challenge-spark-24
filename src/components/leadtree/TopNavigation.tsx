@@ -34,7 +34,7 @@ const TopNavigation = () => {
     >
       <div className="mx-auto flex h-full items-center gap-8 px-6">
         <Link to="/challenger-dashboard" className="flex flex-col items-start gap-0.5">
-          <span className="text-[10pt] leading-none text-[#6B7280]">Powered by</span>
+          <span className="text-[8pt] leading-none text-[#6B7280]">Powered by</span>
           <img
             src="/leadtree-logo.png"
             alt="LeadTree"

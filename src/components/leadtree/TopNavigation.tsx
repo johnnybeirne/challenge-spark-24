@@ -48,13 +48,11 @@ const TopNavigation = () => {
             onClick={toggleFocusMode}
             aria-pressed={focusMode}
             className={[
-              "relative inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm transition-colors",
-              focusMode
-                ? "font-semibold text-primary"
-                : "font-semibold text-[#6B7280] hover:text-[#1F2937]",
+              "relative inline-flex items-center gap-2 rounded-full border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors",
+              focusMode ? "bg-primary/10" : "bg-transparent hover:bg-primary/5",
             ].join(" ")}
           >
-            {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={1.75} /> : <Focus className="h-5 w-5" strokeWidth={1.75} />}
+            {focusMode ? <Minimize2 className="h-5 w-5" strokeWidth={2} /> : <Focus className="h-5 w-5" strokeWidth={2} />}
             {focusMode ? "Exit Focus" : "Focus Mode"}
           </button>
           {centerLinks.map(({ to, label, icon: Icon }) => (

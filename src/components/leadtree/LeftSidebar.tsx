@@ -107,7 +107,7 @@ const LeftSidebar = () => {
         {/* Your Dashboard */}
         <nav>
           {withTip(
-            byKey("nav_dashboard"),
+            tip("nav_dashboard"),
             <NavLink
               to="/challenger-dashboard"
               data-tour="nav_dashboard"
@@ -178,7 +178,7 @@ const LeftSidebar = () => {
                   </Link>
                 </li>
               );
-              const perDayTip = byKey(`day_${d}_tooltip`);
+              const perDayTip = tip(`day_${d}_tooltip`);
               if (!perDayTip) return row;
               return (
                 <Tooltip key={d}>
@@ -203,7 +203,7 @@ const LeftSidebar = () => {
               return (
                 <span key={to} className="contents">
                   {withTip(
-                    byKey(key),
+                    tip(key),
                     <NavLink
                       to={to}
                       data-tour={key}
@@ -227,7 +227,7 @@ const LeftSidebar = () => {
         <div className="-mx-6 border-t border-[#E5E7EB] px-4 py-4">
           <nav className="space-y-0.5">
             {withTip(
-              byKey("nav_settings"),
+              tip("nav_settings"),
               <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
                 <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
               </Link>,
@@ -240,13 +240,13 @@ const LeftSidebar = () => {
               <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
             </button>
             {withTip(
-              byKey("nav_support"),
+              tip("nav_support"),
               <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
                 <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
               </a>,
             )}
             {withTip(
-              byKey("nav_logout"),
+              tip("nav_logout"),
               <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
                 <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout
               </Link>,

@@ -59,7 +59,7 @@ const TopNavigation = () => {
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex" aria-label="Primary">
           {withTip(
-            byKey("focus_mode"),
+            tip("focus_mode"),
             <button
               type="button"
               data-tour="focus_mode"
@@ -77,7 +77,7 @@ const TopNavigation = () => {
           {centerLinks.map(({ to, label, icon: Icon, key }) => (
             <span key={to} className="contents">
               {withTip(
-                byKey(key),
+                tip(key),
                 <NavLink
                   to={to}
                   data-tour={key}

@@ -194,9 +194,6 @@ const LeftSidebar = () => {
                 </span>
               );
             })}
-                </NavLink>,
-              );
-            })}
           </nav>
         </section>
       </div>

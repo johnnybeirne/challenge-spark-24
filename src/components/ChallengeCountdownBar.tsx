@@ -25,8 +25,6 @@ const ChallengeCountdownBar = ({ className }: Props) => {
   const remaining = getRemainingMs(endsAt, now);
   const expired = remaining <= 0;
   const { days, hours, minutes } = formatRemaining(remaining);
-  const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
-
   const parts: string[] = [];
   if (days > 0) parts.push(`${days}d`);
   if (hours > 0 || days === 0) parts.push(`${hours}h`);
@@ -41,17 +39,7 @@ const ChallengeCountdownBar = ({ className }: Props) => {
       role="status"
       aria-label="Challenge countdown"
     >
-      <div className="mx-auto flex max-w-[1320px] items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Calendar className="h-4 w-4" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-[#6B7280]">Current day</p>
-            <p className="text-sm font-semibold text-[#1F2937]">Day {currentDay} of 3</p>
-          </div>
-        </div>
-
+      <div className="mx-auto flex max-w-[1320px] items-center justify-end gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Clock className="h-4 w-4" />

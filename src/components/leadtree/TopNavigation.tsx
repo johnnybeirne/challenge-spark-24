@@ -38,7 +38,7 @@ const TopNavigation = () => {
           <img
             src="/leadtree-logo.png"
             alt="LeadTree"
-            className="h-8 w-auto"
+            className="h-auto w-full max-w-[220px]"
           />
         </Link>
 

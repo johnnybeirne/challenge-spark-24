@@ -44,6 +44,8 @@ const LeftSidebar = () => {
   const { leftCollapsed, toggleLeft, focusMode } = useFocusMode();
   const { byKey } = useNavTips();
   const { start: startTour } = useNavTour();
+  const firstName = getFirstName(state.user?.name);
+  const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];

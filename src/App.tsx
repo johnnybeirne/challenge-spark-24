@@ -83,6 +83,7 @@ import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
+import AdminNavTips from "@/pages/AdminNavTips";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";

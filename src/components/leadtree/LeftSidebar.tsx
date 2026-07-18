@@ -34,7 +34,7 @@ const LeftSidebar = () => {
     return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
   };
 
-  const width = leftCollapsed ? "w-[48px]" : "w-[300px]";
+  const width = leftCollapsed ? "w-[48px]" : "w-[260px]";
   const hidden = focusMode;
 
   if (leftCollapsed) {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, Calendar } from "lucide-react";
+import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/context/AppContext";
 import {

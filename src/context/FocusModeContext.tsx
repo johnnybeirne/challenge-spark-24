@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type FocusModeCtx = {
   focusMode: boolean;
@@ -24,6 +24,18 @@ export const FocusModeProvider = ({ children }: { children: ReactNode }) => {
   const [focusMode, setFocusMode] = useState(false);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+
+  // Focus mode is the master control over both side menus.
+  useEffect(() => {
+    if (focusMode) {
+      setLeftCollapsed(true);
+      setRightCollapsed(true);
+    } else {
+      setLeftCollapsed(false);
+      setRightCollapsed(false);
+    }
+  }, [focusMode]);
+
   return (
     <Ctx.Provider
       value={{

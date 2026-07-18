@@ -223,37 +223,36 @@ const LeftSidebar = () => {
             })}
           </nav>
         </section>
-      </div>
 
-      {/* Pinned bottom */}
-      <div className="border-t border-[#E5E7EB] px-4 py-4">
-        <nav className="space-y-0.5">
-          {withTip(
-            byKey("nav_settings"),
-            <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-              <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
-            </Link>,
-          )}
-          <button
-            type="button"
-            onClick={() => startTour()}
-            className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-left text-sm text-[#1F2937] hover:bg-[#F7F8FA]"
-          >
-            <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
-          </button>
-          {withTip(
-            byKey("nav_support"),
-            <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-              <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
-            </a>,
-          )}
-          {withTip(
-            byKey("nav_logout"),
-            <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-              <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout
-            </Link>,
-          )}
-        </nav>
+        <div className="-mx-6 border-t border-[#E5E7EB] px-4 py-4">
+          <nav className="space-y-0.5">
+            {withTip(
+              byKey("nav_settings"),
+              <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+                <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
+              </Link>,
+            )}
+            <button
+              type="button"
+              onClick={() => startTour()}
+              className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-left text-sm text-[#1F2937] hover:bg-[#F7F8FA]"
+            >
+              <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
+            </button>
+            {withTip(
+              byKey("nav_support"),
+              <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+                <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
+              </a>,
+            )}
+            {withTip(
+              byKey("nav_logout"),
+              <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
+                <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout
+              </Link>,
+            )}
+          </nav>
+        </div>
       </div>
     </aside>
   );

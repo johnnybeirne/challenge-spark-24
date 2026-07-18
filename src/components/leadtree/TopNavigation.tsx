@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
+import leadtreeLogo from "@/assets/LeadTree_Logo-2.png.asset.json";
 
 const centerLinks = [
   { to: "/training", label: "Training", icon: GraduationCap },

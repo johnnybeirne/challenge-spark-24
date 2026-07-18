@@ -77,8 +77,8 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <main
           className={[
             "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-[400ms] ease-in-out",
-            focusMode ? "lg:pl-0" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[260px]",
-            focusMode ? "lg:pr-0" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
+            focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",
+            focusMode || rightCollapsed ? "lg:pr-0" : "lg:pr-[360px]",
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1320px] px-8 py-12 sm:px-12">
@@ -90,8 +90,8 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <div
           className={[
             "fixed bottom-0 left-0 right-0 z-40 transition-[padding] duration-[400ms] ease-in-out",
-            focusMode ? "lg:pl-0" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[260px]",
-            focusMode ? "lg:pr-0" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
+            focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",
+            focusMode || rightCollapsed ? "lg:pr-0" : "lg:pr-[360px]",
           ].join(" ")}
         >
           <ChallengeCountdownBar className="relative w-full" />

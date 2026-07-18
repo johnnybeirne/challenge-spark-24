@@ -85,9 +85,6 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
             <BackButton />
             <Outlet />
           </div>
-          <footer className="pb-8 text-center text-xs text-[#6B7280]">
-            © {new Date().getFullYear()} LEADTREE. All rights reserved.
-          </footer>
         </main>
 
         <ChallengeCountdownBar />

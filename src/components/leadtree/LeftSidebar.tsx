@@ -18,7 +18,7 @@ import { useFocusMode } from "@/context/FocusModeContext";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useNavTips } from "@/hooks/useNavTips";
 import { useNavTour } from "@/hooks/useNavTour";
-import { applyTooltipTokens, getFirstName } from "@/lib/tooltipTokens";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
   { to: "/earn",      label: "Invites",   icon: Users,    key: "nav_invites" },
@@ -39,12 +39,12 @@ const withTip = (tip: string, children: React.ReactNode) => {
 };
 
 const LeftSidebar = () => {
-  const { state } = useAppState();
+  const { state, authUser } = useAppState();
   const { pathname } = useLocation();
   const { leftCollapsed, toggleLeft, focusMode } = useFocusMode();
   const { byKey } = useNavTips();
   const { start: startTour } = useNavTour();
-  const firstName = getFirstName(state.user?.name);
+  const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 

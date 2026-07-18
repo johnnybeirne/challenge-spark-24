@@ -14,15 +14,39 @@ export function applyTooltipTokens(text: string | null | undefined, firstName?: 
   } else {
     // Remove leading "{{first_name}}, " (or " - " / " : " etc.) cleanly.
     out = out.replace(/^\s*\{\{\s*first_name\s*\}\}\s*[,\-:;]?\s*/i, "");
-    // Remove any remaining mid-sentence tokens, and collapse doubled spaces / stray commas.
+    // Remove any remaining mid-sentence tokens.
     out = out.replace(/\{\{\s*first_name\s*\}\}/gi, "");
     out = out.replace(/\s{2,}/g, " ").replace(/\s+([,.!?;:])/g, "$1").trim();
-    // Capitalise the first character in case leading token was stripped.
     if (out.length > 0) out = out.charAt(0).toUpperCase() + out.slice(1);
   }
   return out;
 }
 
+/**
+ * Resolve the participant's first name from any available source in priority order:
+ * app state user, auth user metadata (first_name / full_name / name), email prefix.
+ */
+export function resolveFirstName(opts: {
+  stateUserName?: string | null;
+  authUser?: { user_metadata?: Record<string, any> | null; email?: string | null } | null;
+}): string {
+  const meta = opts.authUser?.user_metadata ?? {};
+  const candidates: Array<string | undefined | null> = [
+    opts.stateUserName,
+    meta.first_name,
+    meta.firstName,
+    meta.full_name,
+    meta.name,
+    opts.authUser?.email ? String(opts.authUser.email).split("@")[0] : null,
+  ];
+  for (const c of candidates) {
+    const first = (c ?? "").toString().trim().split(/\s+/)[0];
+    if (first) return first;
+  }
+  return "";
+}
+
+/** @deprecated use resolveFirstName */
 export function getFirstName(userName?: string | null): string {
   return (userName ?? "").trim().split(/\s+/)[0] ?? "";
 }

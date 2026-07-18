@@ -14,7 +14,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
-import { applyTooltipTokens, getFirstName } from "@/lib/tooltipTokens";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },
@@ -25,12 +25,12 @@ const centerLinks = [
 ];
 
 const TopNavigation = () => {
-  const { state } = useAppState();
+  const { state, authUser } = useAppState();
   const { focusMode, toggleFocusMode } = useFocusMode();
   const { byKey } = useNavTips();
   const name = state.user?.name || "";
   const initial = name.trim().charAt(0).toUpperCase() || "U";
-  const firstName = getFirstName(name);
+  const firstName = resolveFirstName({ stateUserName: name, authUser });
   const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
 
   const withTip = (tip: string, children: React.ReactNode) => {

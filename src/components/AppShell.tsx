@@ -26,27 +26,14 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const { pathname, hash, key: locationKey } = useLocation();
   const mainScrollRef = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
-    console.log("[shell-scroll-reset]", { pathname, locationKey, hash, hasEl: !!mainScrollRef.current, scrollTop: mainScrollRef.current?.scrollTop });
     if (hash) return;
     const el = mainScrollRef.current;
     if (!el) return;
-    const reset = (label: string) => {
-      const before = el.scrollTop;
+    try {
+      el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    } catch {
       el.scrollTop = 0;
-      try { el.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior }); } catch {}
-      console.log("[shell-scroll-reset:reset]", label, "before=", before, "after=", el.scrollTop);
-    };
-    reset("initial");
-    const start = performance.now();
-    let rafId = 0;
-    const tick = () => {
-      if (el.scrollTop !== 0) reset("tick");
-      if (performance.now() - start < 1500) {
-        rafId = requestAnimationFrame(tick);
-      }
-    };
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
+    }
   }, [locationKey, pathname, hash]);
   const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";

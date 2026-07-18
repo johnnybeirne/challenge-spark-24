@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   PlayCircle,
+  Rocket,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
@@ -100,6 +101,28 @@ const LeftSidebar = () => {
         <ChevronLeft className="h-4 w-4" />
       </button>
       <div className="flex-1 space-y-10 overflow-y-auto px-6 py-8">
+        {/* Your Dashboard */}
+        <nav>
+          {withTip(
+            byKey("nav_dashboard"),
+            <NavLink
+              to="/challenger-dashboard"
+              data-tour="nav_dashboard"
+              className={({ isActive }) =>
+                [
+                  "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
+                  isActive
+                    ? "bg-primary/10 font-medium text-primary"
+                    : "text-[#1F2937] hover:bg-[#F7F8FA]",
+                ].join(" ")
+              }
+            >
+              <Rocket className="h-4 w-4" strokeWidth={1.75} />
+              Your Dashboard
+            </NavLink>,
+          )}
+        </nav>
+
         {/* Day Progress timeline */}
         <section data-tour="day_progress">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">

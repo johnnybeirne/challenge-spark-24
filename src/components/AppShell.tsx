@@ -69,19 +69,19 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   // ---------- LEADTREE 3-column shell (authenticated) ----------
   if (useLeadtreeShell) {
     return (
-      <div data-experience={mode} className="min-h-screen bg-[#F7F8FA]">
+      <div data-experience={mode} className="h-screen overflow-hidden bg-[#F7F8FA]">
         <TopNavigation />
         <LeftSidebar />
         <RightSidebar />
 
         <main
           className={[
-            "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-[400ms] ease-in-out",
+            "leadtree-shell-main h-[calc(100vh-72px)] mt-[72px] overflow-y-auto overflow-x-hidden transition-[padding] duration-[400ms] ease-in-out",
             focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",
             focusMode || rightCollapsed ? "lg:pr-0" : "lg:pr-[360px]",
           ].join(" ")}
         >
-          <div className="mx-auto w-full max-w-[1320px] px-8 py-12 sm:px-12">
+          <div className="mx-auto w-full max-w-[1320px] px-8 py-12 pb-32 sm:px-12">
             <BackButton />
             <Outlet />
           </div>

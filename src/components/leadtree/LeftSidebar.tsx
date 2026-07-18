@@ -92,10 +92,16 @@ const LeftSidebar = () => {
               const locked = d > currentDay;
               const to = `/challenge/day-${d}`;
               return (
-                <li key={d} className="relative pl-6 pb-5 last:pb-0">
+                <li
+                  key={d}
+                  className={[
+                    "relative rounded-[10px] pb-2 pl-6 pt-1 last:pb-0",
+                    isCurrent ? "bg-primary/10" : "",
+                  ].join(" ")}
+                >
                   <span
                     className={[
-                      "absolute -left-[9px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
+                      "absolute -left-[5px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
                       isDone
                         ? "bg-[#10B981] text-white"
                         : isCurrent

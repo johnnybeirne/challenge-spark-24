@@ -22,14 +22,28 @@ const RightSidebar = () => {
     (async () => {
       const { data } = await supabase
         .from("waitlist_signups")
-        .select("name, confirmed_invites")
+        .select("name, first_name, surname, confirmed_invites")
         .gt("confirmed_invites", 0)
         .order("confirmed_invites", { ascending: false })
         .limit(5);
       if (cancelled) return;
+      const format = (
+        first: string | null,
+        surname: string | null,
+        name: string | null,
+      ) => {
+        const f = (first || "").trim();
+        const s = (surname || "").trim();
+        if (f && s) return `${f} ${s.charAt(0).toUpperCase()}.`;
+        if (f) return f;
+        const parts = (name || "Builder").trim().split(/\s+/);
+        const nf = parts[0] || "Builder";
+        const nl = parts[1];
+        return nl ? `${nf} ${nl.charAt(0).toUpperCase()}.` : nf;
+      };
       setTop(
-        (data ?? []).map((r: { name: string | null; confirmed_invites: number | null }) => ({
-          name: (r.name || "Builder").split(" ")[0],
+        (data ?? []).map((r: { name: string | null; first_name: string | null; surname: string | null; confirmed_invites: number | null }) => ({
+          name: format(r.first_name, r.surname, r.name),
           pts: r.confirmed_invites ?? 0,
         })),
       );

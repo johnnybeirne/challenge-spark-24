@@ -71,14 +71,14 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
     return (
       <div data-experience={mode} className="min-h-screen bg-[#F7F8FA]">
         <TopNavigation />
-        {!focusMode && <LeftSidebar />}
-        {!focusMode && <RightSidebar />}
+        <LeftSidebar />
+        <RightSidebar />
 
         <main
           className={[
-            "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-200",
-            focusMode ? "" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[300px]",
-            focusMode ? "" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
+            "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-[400ms] ease-in-out",
+            focusMode ? "lg:pl-0" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[300px]",
+            focusMode ? "lg:pr-0" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1320px] px-8 py-12 sm:px-12">

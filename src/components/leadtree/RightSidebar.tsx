@@ -14,7 +14,7 @@ const headingCls =
 
 const RightSidebar = () => {
   const { state } = useAppState();
-  const { rightCollapsed, toggleRight } = useFocusMode();
+  const { rightCollapsed, toggleRight, focusMode } = useFocusMode();
   const [top, setTop] = useState<{ name: string; pts: number }[]>([]);
 
   useEffect(() => {
@@ -49,10 +49,17 @@ const RightSidebar = () => {
     ? Math.min(100, Math.max(0, ((points - prevThreshold) / Math.max(1, threshold - prevThreshold)) * 100))
     : 100;
 
+  const hidden = focusMode;
+
   if (rightCollapsed) {
     return (
       <aside
-        className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[48px] flex-col items-center border-l border-[#E5E7EB] bg-white py-4 lg:flex"
+        className={[
+          "fixed right-0 top-[72px] bottom-0 z-30 hidden w-[48px] flex-col items-center border-l border-[#E5E7EB] bg-white py-4 lg:flex",
+          "transition-[transform,opacity] duration-[400ms] ease-in-out",
+          hidden ? "translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
+        ].join(" ")}
+        aria-hidden={hidden}
         aria-label="Insights (collapsed)"
       >
         <button
@@ -69,7 +76,12 @@ const RightSidebar = () => {
 
   return (
     <aside
-      className="fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex"
+      className={[
+        "fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex",
+        "transition-[transform,opacity] duration-[400ms] ease-in-out",
+        hidden ? "translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
+      ].join(" ")}
+      aria-hidden={hidden}
       aria-label="Insights"
     >
       <button

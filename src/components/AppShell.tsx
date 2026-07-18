@@ -77,7 +77,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <main
           className={[
             "leadtree-shell-main pt-[72px] pb-28 transition-[padding] duration-[400ms] ease-in-out",
-            focusMode ? "lg:pl-0" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[300px]",
+            focusMode ? "lg:pl-0" : leftCollapsed ? "lg:pl-[48px]" : "lg:pl-[260px]",
             focusMode ? "lg:pr-0" : rightCollapsed ? "lg:pr-[48px]" : "lg:pr-[360px]",
           ].join(" ")}
         >

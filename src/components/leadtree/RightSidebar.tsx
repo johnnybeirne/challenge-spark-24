@@ -54,8 +54,9 @@ const RightSidebar = () => {
   if (rightCollapsed) {
     return (
       <aside
+        style={{ top: "var(--topbar-h)" }}
         className={[
-          "fixed right-0 top-[72px] bottom-0 z-30 hidden w-[48px] flex-col items-center border-l border-[#E5E7EB] bg-white py-4 lg:flex",
+          "fixed right-0 bottom-0 z-30 hidden w-[48px] flex-col items-center border-l border-[#E5E7EB] bg-white py-4 lg:flex",
           "transition-[transform,opacity] duration-[400ms] ease-in-out",
           hidden ? "translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
         ].join(" ")}
@@ -76,8 +77,9 @@ const RightSidebar = () => {
 
   return (
     <aside
+      style={{ top: "var(--topbar-h)" }}
       className={[
-        "fixed right-0 top-[72px] bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex",
+        "fixed right-0 bottom-0 z-30 hidden w-[360px] flex-col bg-[#F7F8FA] lg:flex",
         "transition-[transform,opacity] duration-[400ms] ease-in-out",
         hidden ? "translate-x-full opacity-0 pointer-events-none" : "translate-x-0 opacity-100",
       ].join(" ")}
@@ -92,7 +94,8 @@ const RightSidebar = () => {
       >
         <ChevronRight className="h-4 w-4" />
       </button>
-      <div className="flex-1 space-y-8 overflow-y-auto px-7 py-8">
+      <div className="min-h-0 flex-1 space-y-8 overflow-y-auto overflow-x-hidden overscroll-contain px-7 py-8">
+
         {/* Top Referrers */}
         <div className={cardCls}>
           <p className={headingCls}>

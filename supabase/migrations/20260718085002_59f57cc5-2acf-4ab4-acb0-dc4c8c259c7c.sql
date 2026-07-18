@@ -1,0 +1,1 @@
+UPDATE public.nav_tips SET tip = 'Your 3-day path. Each day covers the next step in building and launching your challenge — tap any unlocked day to jump to it.' WHERE key = 'day_progress';

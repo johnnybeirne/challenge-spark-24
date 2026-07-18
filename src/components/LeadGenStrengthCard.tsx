@@ -530,7 +530,16 @@ const LeadGenStrengthCard = () => {
                 value={t.value}
                 ref={(el) => {
                   if (el && el.getAttribute("data-state") === "active") {
-                    el.scrollIntoView({ block: "nearest", inline: "center" });
+                    // Scroll the tab horizontally within the TabsList only —
+                    // never scroll ancestors (was hijacking the app shell scroll).
+                    const list = el.parentElement;
+                    if (!list) return;
+                    const elRect = el.getBoundingClientRect();
+                    const listRect = list.getBoundingClientRect();
+                    if (elRect.left < listRect.left || elRect.right > listRect.right) {
+                      const delta = (elRect.left + elRect.width / 2) - (listRect.left + listRect.width / 2);
+                      list.scrollLeft += delta;
+                    }
                   }
                 }}
                 className="group relative shrink-0 rounded-none border-0 bg-transparent px-5 pt-1 pb-3 text-[15px] font-normal text-muted-foreground shadow-none hover:text-foreground data-[state=active]:text-[#534AB7] data-[state=active]:font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-colors duration-150 ease-out after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-[1.5px] after:h-[2.5px] after:bg-[#534AB7] after:opacity-0 data-[state=active]:after:opacity-100 after:transition-opacity after:duration-150"

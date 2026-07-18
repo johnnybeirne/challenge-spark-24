@@ -68,6 +68,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
   // ---------- LEADTREE 3-column shell (authenticated) ----------
   if (useLeadtreeShell) {
+    // SHELL SCROLL RULE: three independent scroll regions (left sidebar, main, right sidebar)
+    // inside a non-scrolling viewport-locked shell; each region contains its own scroll.
+    // Do not add page-level scrolling here or in any child of these regions.
     return (
       <div data-experience={mode} className="h-screen overflow-hidden bg-[#F7F8FA]">
         <TopNavigation />
@@ -75,8 +78,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <RightSidebar />
 
         <main
+          style={{ height: "calc(100vh - var(--topbar-h))", marginTop: "var(--topbar-h)" }}
           className={[
-            "leadtree-shell-main h-[calc(100vh-72px)] mt-[72px] overflow-y-auto overflow-x-hidden transition-[padding] duration-[400ms] ease-in-out",
+            "leadtree-shell-main overflow-y-auto overflow-x-hidden overscroll-contain transition-[padding] duration-[400ms] ease-in-out",
             focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",
             focusMode || rightCollapsed ? "lg:pr-0" : "lg:pr-[360px]",
           ].join(" ")}
@@ -86,6 +90,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
             <Outlet />
           </div>
         </main>
+
 
         <div
           className={[

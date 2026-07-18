@@ -87,13 +87,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           </div>
         </main>
 
-        <div
-          className={[
-            "fixed bottom-0 left-0 right-0 z-40 transition-[padding] duration-[400ms] ease-in-out",
-            focusMode || leftCollapsed ? "lg:pl-0" : "lg:pl-[260px]",
-            focusMode || rightCollapsed ? "lg:pr-0" : "lg:pr-[360px]",
-          ].join(" ")}
-        >
+        <div className="fixed bottom-0 left-0 right-0 z-20">
           <ChallengeCountdownBar className="relative w-full" />
         </div>
         {showCopilotChat && <AiCopilotChat />}

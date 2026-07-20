@@ -10,7 +10,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const FROM = "Johnny Beirne <johnny@johnnybeirne.com>";
-const DEFAULT_APP_BASE_URL = "https://leadio.johnnybeirne.com";
+const DEFAULT_APP_BASE_URL = "https://leadtree.johnnybeirne.com";
 
 type Milestone = "day1_complete" | "quiz_assets_ready" | "challenge_complete";
 const VALID: Milestone[] = ["day1_complete", "quiz_assets_ready", "challenge_complete"];

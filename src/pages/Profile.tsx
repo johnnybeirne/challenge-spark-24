@@ -33,10 +33,13 @@ const splitName = (full?: string | null): { first: string; last: string } => {
 };
 
 const Profile = () => {
+  const { state } = useAppState();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [copied, setCopied] = useState<"quiz" | "challenge" | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
 
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [firstName, setFirstName] = useState("");

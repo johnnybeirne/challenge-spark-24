@@ -10,7 +10,7 @@ interface SEOProps {
 const BASE_TITLE = "LeadTree";
 const DEFAULT_DESCRIPTION =
   "Get more leads with an AI-powered challenge that diagnoses your lead flow and recommends the next step.";
-const SITE_ORIGIN = "https://leadio.johnnybeirne.com";
+const SITE_ORIGIN = "https://leadtree.johnnybeirne.com";
 
 const upsertMeta = (selector: string, attrs: Record<string, string>) => {
   let el = document.head.querySelector<HTMLMetaElement>(selector);

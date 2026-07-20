@@ -6,7 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown, RefreshCw, Copy, Download, AlertTriangle, ShieldAlert, Layers, ExternalLink, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
 
-const PROD_ORIGIN = "https://leadio.johnnybeirne.com";
+const PROD_ORIGIN = "https://leadtree.johnnybeirne.com";
 
 // Clickable route code chip — opens on the real domain
 const RouteCode = ({ route, className = "" }: { route: string; className?: string }) => {

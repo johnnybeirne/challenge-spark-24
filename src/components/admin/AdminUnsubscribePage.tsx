@@ -89,7 +89,7 @@ const AdminUnsubscribePage = () => {
             <h3 className="font-semibold">Email link base URL</h3>
             <p className="text-xs text-muted-foreground">Used for unsubscribe and referral links in newsletter emails. No trailing slash.</p>
           </div>
-          <Field label="App base URL" value={appBaseUrl} onChange={setAppBaseUrl} hint="e.g. https://leadio.johnnybeirne.com" />
+          <Field label="App base URL" value={appBaseUrl} onChange={setAppBaseUrl} hint="e.g. https://leadtree.johnnybeirne.com" />
         </CardContent>
       </Card>
 

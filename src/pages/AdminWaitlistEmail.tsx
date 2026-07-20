@@ -29,7 +29,7 @@ const DEFAULT_HTML = `<!doctype html><html><body style="font-family:-apple-syste
 
 const renderTemplate = (template: string, name: string) => {
   const greeting = name.trim() ? `Hi ${name.trim()},` : "Hi there,";
-  const url = "https://leadio.johnnybeirne.com/waitlist?ref=PREVIEW123";
+  const url = "https://leadtree.johnnybeirne.com/waitlist?ref=PREVIEW123";
   return template
     .split("{{greeting}}").join(greeting)
     .split("{{url}}").join(url)

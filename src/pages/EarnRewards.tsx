@@ -79,13 +79,16 @@ const partnerInitials = (name: string) =>
 const EarnRewards = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"quiz" | "challenge" | null>(null);
   const [assets, setAssets] = useState<PartnerAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
 
   const inviteCode = state.user?.inviteCode ?? "builder";
-  const referralLink = `${window.location.origin}/assess?ref=${inviteCode}`;
+  const quizLink = `${window.location.origin}/assess?ref=${inviteCode}`;
+  const challengeLink = `${window.location.origin}/challenge?ref=${inviteCode}`;
+  const referralLink = quizLink; // legacy alias for share text helpers below
+
   const shareText = memoryShareText(state.memory);
   const firstName = state.user?.name?.split(" ")[0] || state.memory.name?.split(" ")[0] || "";
 

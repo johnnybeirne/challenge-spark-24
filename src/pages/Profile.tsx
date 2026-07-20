@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save } from "lucide-react";
+import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { pushNotification } from "@/lib/notifications";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
+import { useAppState } from "@/context/AppContext";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+
 
 type ProfileRow = {
   user_id: string;

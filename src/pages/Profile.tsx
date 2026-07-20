@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle } from "lucide-react";
+import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";

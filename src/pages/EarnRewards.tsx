@@ -139,29 +139,74 @@ const EarnRewards = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const copyLink = async () => {
+  const copyLink = async (which: "quiz" | "challenge", url: string) => {
     try {
-      await navigator.clipboard.writeText(referralLink);
-      setCopied(true);
+      await navigator.clipboard.writeText(url);
+      setCopied(which);
       toast("Link copied! Share it with your network.");
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(null), 2000);
     } catch {
       toast.error("Failed to copy");
     }
   };
 
-  const shareWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(shareText + "\n\n" + referralLink)}`;
-    window.open(url, "_blank");
+  const shareWhatsApp = (url: string) => {
+    const wa = `https://wa.me/?text=${encodeURIComponent(shareText + "\n\n" + url)}`;
+    window.open(wa, "_blank");
   };
 
-  const shareEmail = () => {
+  const shareEmail = (url: string) => {
     const subject = encodeURIComponent("Quick assessment on audience growth");
-    const body = encodeURIComponent(shareText + "\n\n" + referralLink);
+    const body = encodeURIComponent(shareText + "\n\n" + url);
     window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
   };
 
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Spinner /></div>;
+
+  const LinkCard = ({
+    which,
+    title,
+    hint,
+    url,
+  }: {
+    which: "quiz" | "challenge";
+    title: string;
+    hint: string;
+    url: string;
+  }) => {
+    const isCopied = copied === which;
+    return (
+      <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+        <p className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">{title}</p>
+        <p className="mt-1 text-xs text-[#6B7280]">{hint}</p>
+        <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
+          <code className="flex-1 truncate text-sm text-[#1F2937]">{url}</code>
+          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyLink(which, url)} aria-label="Copy link">
+            {isCopied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+          </Button>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <Button size="lg" className="w-full gap-2 rounded-[12px] sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url })}>
+            <Share2 className="h-4 w-4" /> Share this link
+          </Button>
+          <Button size="lg" variant="outline" className="w-full gap-2 rounded-[12px] sm:w-auto" onClick={() => copyLink(which, url)}>
+            {isCopied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+            {isCopied ? "Copied" : "Copy link"}
+          </Button>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#6B7280]">
+          <span>Share via</span>
+          <button onClick={() => shareWhatsApp(url)} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
+            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+          </button>
+          <button onClick={() => shareEmail(url)} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
+            <Mail className="h-3.5 w-3.5" /> Email
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
@@ -175,40 +220,25 @@ const EarnRewards = () => {
           </p>
         </header>
 
-        {/* 1. INVITE FRIENDS */}
-        <section className="mb-8">
-          <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
-            <p className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Your personal referral link</p>
-            <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
-              <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copyLink} aria-label="Copy link">
-                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-              </Button>
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
-              <Button size="lg" className="w-full gap-2 rounded-[12px] sm:min-w-[220px]" onClick={() => shareOrCopy({ text: shareText, url: referralLink })}>
-                <Share2 className="h-4 w-4" /> Share my link
-              </Button>
-              <Button size="lg" variant="outline" className="w-full gap-2 rounded-[12px] sm:w-auto" onClick={copyLink}>
-                {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-                {copied ? "Copied" : "Copy link"}
-              </Button>
-            </div>
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#6B7280]">
-              <span>Share via</span>
-              <button onClick={shareWhatsApp} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
-                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-              </button>
-              <button onClick={shareEmail} className="inline-flex items-center gap-1.5 font-medium text-[#1F2937] hover:text-primary">
-                <Mail className="h-3.5 w-3.5" /> Email
-              </button>
-            </div>
-          </div>
-          <p className="mt-3 text-xs text-[#6B7280]">
-            The fastest way to unlock rewards is by sharing your invite link.
-          </p>
+        {/* 1. INVITE FRIENDS — two referral links */}
+        <section className="mb-8 grid gap-6 lg:grid-cols-2">
+          <LinkCard
+            which="quiz"
+            title="Quiz referral link"
+            hint="Send people to the assessment quiz first."
+            url={quizLink}
+          />
+          <LinkCard
+            which="challenge"
+            title="Challenge referral link"
+            hint="Send people straight to the challenge."
+            url={challengeLink}
+          />
         </section>
+        <p className="mb-8 -mt-4 text-xs text-[#6B7280]">
+          Both links track referrals to you. Pick the one that fits where you're sharing.
+        </p>
+
 
         <div className="mb-8">
           <ReferralMilestoneCard />

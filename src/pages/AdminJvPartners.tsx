@@ -24,7 +24,7 @@ type Partner = {
 type LeaderRow = { partner_id: string; signups: number };
 
 const LANDING_OPTIONS = ["/", "/premium", "/waitlist", "/assess", "/challenge"];
-const BASE_URL = "https://leadio.johnnybeirne.com";
+const BASE_URL = "https://leadtree.johnnybeirne.com";
 
 const slugify = (v: string) =>
   v.toLowerCase().trim().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");

@@ -77,7 +77,7 @@ const Waitlist = () => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const sendInviteEmail = async (entry: WaitlistEntry) => {
-    const url = `https://leadio.johnnybeirne.com/waitlist?ref=${entry.referral_code}`;
+    const url = `https://leadtree.johnnybeirne.com/waitlist?ref=${entry.referral_code}`;
     const greeting = entry.name?.trim() ? `Hi ${entry.name.trim()},` : "Hi there,";
     const firstName = entry.name?.trim()?.split(" ")[0] || "there";
 

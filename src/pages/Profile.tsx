@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle } from "lucide-react";
+import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -278,6 +278,17 @@ const Profile = () => {
               toast.error("Failed to copy");
             }
           };
+          const shareText = (which: "quiz" | "challenge") =>
+            which === "quiz"
+              ? "Take this quick 2-minute quiz — I think you'll find it useful:"
+              : "Join me on this 3-day challenge — I think you'd get a lot out of it:";
+          const waHref = (which: "quiz" | "challenge", url: string) =>
+            `https://wa.me/?text=${encodeURIComponent(`${shareText(which)} ${url}`)}`;
+          const mailHref = (which: "quiz" | "challenge", url: string) => {
+            const subject = which === "quiz" ? "A quick 2-minute quiz" : "A 3-day challenge worth joining";
+            const body = `${shareText(which)}\n\n${url}`;
+            return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          };
           const Row = ({ which, label, url }: { which: "quiz" | "challenge"; label: string; url: string }) => (
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</label>
@@ -285,6 +296,24 @@ const Profile = () => {
                 <code className="flex-1 truncate text-sm">{url}</code>
                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyLink(which, url)} aria-label={`Copy ${label}`}>
                   {copied === which ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button variant="outline" size="sm" onClick={() => copyLink(which, url)}>
+                  {copied === which ? <CheckCircle className="h-4 w-4 mr-1.5 text-primary" /> : <Copy className="h-4 w-4 mr-1.5" />}
+                  Copy
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={waHref(which, url)} target="_blank" rel="noopener noreferrer" aria-label={`Share ${label} on WhatsApp`}>
+                    <MessageCircle className="h-4 w-4 mr-1.5" />
+                    WhatsApp
+                  </a>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={mailHref(which, url)} aria-label={`Share ${label} by email`}>
+                    <Mail className="h-4 w-4 mr-1.5" />
+                    Email
+                  </a>
                 </Button>
               </div>
             </div>

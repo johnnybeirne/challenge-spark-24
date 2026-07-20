@@ -1067,7 +1067,7 @@ const AdminBios = () => {
                     </div>
                   </div>
                   <div className="col-span-2">
-                    <div className="text-muted-foreground">Their referral code</div>
+                    <div className="text-muted-foreground">Referral Code</div>
                     <div className="font-mono text-xs flex items-center gap-1.5">
                       {openRow.referral_code || "—"}
                       {openRow.referral_code && (

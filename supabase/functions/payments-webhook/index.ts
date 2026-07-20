@@ -37,7 +37,7 @@ async function sendConfirmationEmail(toEmail: string) {
             <p>Your payment is confirmed and lifetime access is active.</p>
             <p>You can now access the full Premium course, advanced systems, and Builder Circle.</p>
             <p style="margin-top:24px">
-              <a href="https://leadio.johnnybeirne.com/blueprint/dashboard"
+              <a href="https://leadtree.johnnybeirne.com/blueprint/dashboard"
                  style="display:inline-block;background:#0f172a;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700">
                 Open Premium Course
               </a>

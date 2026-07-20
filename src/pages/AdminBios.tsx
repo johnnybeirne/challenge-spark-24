@@ -148,6 +148,11 @@ const AdminBios = () => {
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
 
+  const isWaitlistUrl = useMemo(
+    () => typeof window !== "undefined" && window.location.pathname.toLowerCase().includes("waitlist"),
+    []
+  );
+
   const load = async () => {
     setLoading(true);
     const [profilesRes, waitlistRes] = await Promise.all([
@@ -1083,7 +1088,7 @@ const AdminBios = () => {
                   </div>
                   {openRow.referral_code && (
                     <div className="col-span-2">
-                      <div className="text-muted-foreground">Full referral link</div>
+                      <div className="text-muted-foreground">{isWaitlistUrl ? "Waitlist Referral Link" : "Full referral link"}</div>
                       <div className="font-mono text-xs flex items-start gap-1.5 break-all">
                         <span className="flex-1">{`https://leadtree.johnnybeirne.com/waitlist?ref=${openRow.referral_code}`}</span>
                         <button

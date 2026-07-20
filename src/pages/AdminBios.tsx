@@ -148,6 +148,11 @@ const AdminBios = () => {
   const [draft, setDraft] = useState<Partial<BioRow>>({});
   const [saving, setSaving] = useState(false);
 
+  const isWaitlistUrl = useMemo(
+    () => typeof window !== "undefined" && window.location.pathname.toLowerCase().includes("waitlist"),
+    []
+  );
+
   const load = async () => {
     setLoading(true);
     const [profilesRes, waitlistRes] = await Promise.all([

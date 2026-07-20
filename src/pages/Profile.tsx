@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, Loader2, Link as LinkIcon, Save } from "lucide-react";
+import { Camera, Loader2, Link as LinkIcon, Save, Copy, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { pushNotification } from "@/lib/notifications";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
+import { useAppState } from "@/context/AppContext";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+
 
 type ProfileRow = {
   user_id: string;
@@ -31,10 +33,13 @@ const splitName = (full?: string | null): { first: string; last: string } => {
 };
 
 const Profile = () => {
+  const { state } = useAppState();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [copied, setCopied] = useState<"quiz" | "challenge" | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
 
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -256,6 +261,49 @@ const Profile = () => {
           </div>
         </section>
 
+        {/* Referral links */}
+        {(() => {
+          const inviteCode = state.user?.inviteCode;
+          if (!inviteCode) return null;
+          const origin = typeof window !== "undefined" ? window.location.origin : "";
+          const quizLink = `${origin}/assess?ref=${inviteCode}`;
+          const challengeLink = `${origin}/challenge?ref=${inviteCode}`;
+          const copyLink = async (which: "quiz" | "challenge", url: string) => {
+            try {
+              await navigator.clipboard.writeText(url);
+              setCopied(which);
+              toast.success("Link copied");
+              setTimeout(() => setCopied(null), 2000);
+            } catch {
+              toast.error("Failed to copy");
+            }
+          };
+          const Row = ({ which, label, url }: { which: "quiz" | "challenge"; label: string; url: string }) => (
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</label>
+              <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2">
+                <code className="flex-1 truncate text-sm">{url}</code>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyLink(which, url)} aria-label={`Copy ${label}`}>
+                  {copied === which ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+          );
+          return (
+            <section className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+              <div>
+                <h2 className="text-lg font-bold">Your referral links</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Both links track referrals to you. Use whichever fits where you're sharing.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <Row which="quiz" label="Quiz referral link" url={quizLink} />
+                <Row which="challenge" label="Challenge referral link" url={challengeLink} />
+              </div>
+            </section>
+          );
+        })()}
 
         <div className="sticky bottom-4 flex justify-end">
           <Button onClick={handleSave} disabled={saving} size="lg" className="shadow-lg">
@@ -263,6 +311,7 @@ const Profile = () => {
             Save profile
           </Button>
         </div>
+
       </div>
     </div>
   );

@@ -88,6 +88,8 @@ import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
 import WaitlistThanks from "@/pages/WaitlistThanks";
+import AboutMe from "@/pages/AboutMe";
+
 
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";

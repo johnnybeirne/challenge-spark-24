@@ -24,16 +24,13 @@ const AboutMe = () => {
                   loading="eager"
                 />
               </div>
-              <a
-                href={johnnyPortrait}
-                download="johnny-beirne.png"
-                className="mt-4 block w-full"
-              >
-                <Button variant="default" className="w-full gap-2">
+              <Button asChild variant="default" className="mt-4 w-full gap-2">
+                <a href={johnnyPortrait} download="johnny-beirne.png">
                   <Download className="h-4 w-4" />
                   Download photo
-                </Button>
-              </a>
+                </a>
+              </Button>
+
             </div>
 
             <div className="flex-1 text-center sm:text-left">

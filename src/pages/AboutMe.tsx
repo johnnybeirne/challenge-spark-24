@@ -1,9 +1,12 @@
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import johnnyPortrait from "@/assets/johnny-beirne.png";
 
 const AboutMe = () => {
+  const { t } = useSiteContent("about-me");
+
   return (
     <>
       <SEO
@@ -43,24 +46,22 @@ const AboutMe = () => {
 
               <div className="mt-6 space-y-4 text-base leading-7 text-muted-foreground">
                 <p>
-                  Johnny Beirne is the creator of LeadTree and the architect behind
-                  ChallengeOS, a 3-day builder experience that turns coaches,
-                  consultants and expert-led businesses into consistent lead
-                  generators.
+                  {t(
+                    "bio.paragraph_1",
+                    "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."
+                  )}
                 </p>
                 <p>
-                  Over the last decade he has helped founders move away from
-                  unpredictable outreach and into assessment-first funnels,
-                  AI-guided challenges and trust-based referral loops. LeadTree is
-                  the distillation of the systems, prompts and workflows that have
-                  launched challenges, built referral engines and ascended offers
-                  across dozens of niches.
+                  {t(
+                    "bio.paragraph_2",
+                    "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do. The knowledge is theirs; the results are theirs. Clients move from idea to finished tool, freeing them to do more of what they do best; and to be more productive and profitable."
+                  )}
                 </p>
                 <p>
-                  When he is not building the next challenge, Johnny is usually
-                  interviewing operators, refining the referral playbook or
-                  testing a new way to make lead generation feel less like a chase
-                  and more like a conversation.
+                  {t(
+                    "bio.paragraph_3",
+                    "Johnny is also the co-author of the best-selling Rethink Remoting, a speaker, and an educator who makes powerful technology feel within reach."
+                  )}
                 </p>
               </div>
             </div>

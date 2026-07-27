@@ -58,6 +58,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 const PAGES: { id: string; label: string; previewUrl: string; description: string }[] = [
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page" },
+  { id: "about-me", label: "About Me", previewUrl: "/about-me", description: "Founder bio and photo" },
   { id: "signup", label: "Signup", previewUrl: "/join", description: "Account creation" },
   { id: "results", label: "Results", previewUrl: "/results", description: "Diagnostic results copy" },
   { id: "dashboard", label: "Dashboard", previewUrl: "/challenger-dashboard", description: "Authenticated dashboard" },
@@ -81,6 +82,9 @@ const SECTION_META: Record<string, Record<string, { label: string; hint: string;
     faq: { label: "FAQ", hint: "Accordion of questions and answers.", anchor: "faq" },
     cta: { label: "Final CTA", hint: "Bottom call-to-action band.", anchor: "cta" },
     sticky: { label: "Sticky bottom bar", hint: "Persistent bar pinned to the bottom of the page.", anchor: "cta" },
+  },
+  "about-me": {
+    bio: { label: "Bio", hint: "Three paragraphs shown next to the photo on /about-me.", anchor: "" },
   },
   "jv-partners": {
     step_tooltips: { label: "JV Partner Step Tooltips", hint: "Tooltip text shown when a visitor hovers or taps the help icon on each journey step card.", anchor: "" },

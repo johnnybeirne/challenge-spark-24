@@ -88,6 +88,8 @@ import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
 import WaitlistThanks from "@/pages/WaitlistThanks";
+import AboutMe from "@/pages/AboutMe";
+
 
 import PartnerSales from "@/pages/PartnerSales";
 import CheckoutReturn from "@/pages/CheckoutReturn";
@@ -186,7 +188,10 @@ const App = () => (
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
                 <Route path="/debug/attribution" element={<DebugAttribution />} />
+                <Route path="/about-me" element={<AboutMe />} />
+                <Route path="/about" element={<Navigate to="/about-me" replace />} />
               </Route>
+
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>

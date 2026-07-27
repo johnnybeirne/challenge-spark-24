@@ -188,7 +188,10 @@ const App = () => (
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
                 <Route path="/checkout/return" element={<CheckoutReturn />} />
                 <Route path="/debug/attribution" element={<DebugAttribution />} />
+                <Route path="/about-me" element={<AboutMe />} />
+                <Route path="/about" element={<Navigate to="/about-me" replace />} />
               </Route>
+
 
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>

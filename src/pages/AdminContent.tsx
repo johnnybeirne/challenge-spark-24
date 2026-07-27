@@ -58,6 +58,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 const PAGES: { id: string; label: string; previewUrl: string; description: string }[] = [
   { id: "landing", label: "Landing", previewUrl: "/", description: "Public landing page" },
+  { id: "about-me", label: "About Me", previewUrl: "/about-me", description: "Founder bio and photo" },
   { id: "signup", label: "Signup", previewUrl: "/join", description: "Account creation" },
   { id: "results", label: "Results", previewUrl: "/results", description: "Diagnostic results copy" },
   { id: "dashboard", label: "Dashboard", previewUrl: "/challenger-dashboard", description: "Authenticated dashboard" },

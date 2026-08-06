@@ -1,7 +1,8 @@
 import type { UserMemory } from "@/lib/personalisation";
+import { CANONICAL_APP_URL } from "@/lib/utils";
 
 const TIME_ZONE = "America/New_York";
-const APP_URL = typeof window !== "undefined" ? window.location.origin : "https://challenge-spark-24.lovable.app";
+const APP_URL = CANONICAL_APP_URL;
 
 export type CalendarEvent = {
   day: number;

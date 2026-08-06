@@ -241,9 +241,7 @@ export function usePartner() {
     fetchAll();
   }, [fetchAll]);
 
-  const shareLink = partner?.slug
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/assess?ref=${partner.slug}`
-    : "";
+  const shareLink = partner?.slug ? `https://leadtree.johnnybeirne.com/assess?ref=${partner.slug}` : "";
 
   return {
     loading,

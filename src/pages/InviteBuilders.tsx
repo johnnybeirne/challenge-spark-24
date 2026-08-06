@@ -6,6 +6,7 @@ import { Users, ArrowRight } from "lucide-react";
 import { LeadTreeIcon } from "@/components/LeadTreeIcon";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
+import { getCanonicalUrl } from "@/lib/utils";
 import { useEffect } from "react";
 
 const InviteBuilders = () => {
@@ -17,7 +18,7 @@ const InviteBuilders = () => {
   }, []);
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+  const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
 
   const handleInvite = () => {
     trackEvent("onboarding_invite_started");

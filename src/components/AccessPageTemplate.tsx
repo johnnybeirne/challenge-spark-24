@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { shareOrCopy } from "@/lib/share";
+import { getCanonicalUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { getAccessIcon } from "@/lib/accessPageIcons";
@@ -26,7 +27,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
   // Reuses the existing referral system — the participant's own invite code.
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = `${window.location.origin}/challenge?ref=${inviteCode}`;
+  const referralLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
 
   const copy = async () => {
     try {

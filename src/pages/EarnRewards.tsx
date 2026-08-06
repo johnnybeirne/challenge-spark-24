@@ -18,6 +18,7 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 import { memoryShareText } from "@/lib/personalisation";
+import { getCanonicalUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
@@ -85,8 +86,8 @@ const EarnRewards = () => {
   const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
 
   const inviteCode = state.user?.inviteCode ?? "builder";
-  const quizLink = `${window.location.origin}/assess?ref=${inviteCode}`;
-  const challengeLink = `${window.location.origin}/challenge?ref=${inviteCode}`;
+  const quizLink = getCanonicalUrl(`/assess?ref=${inviteCode}`);
+  const challengeLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
   const referralLink = quizLink; // legacy alias for share text helpers below
 
   const shareText = memoryShareText(state.memory);

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
+import { getCanonicalUrl } from "@/lib/utils";
 
 const Day2InviteNudge = ({ onContinue }: { onContinue: () => void }) => {
   const { state } = useAppState();
@@ -14,7 +15,7 @@ const Day2InviteNudge = ({ onContinue }: { onContinue: () => void }) => {
   if (dismissed || invites >= 3) return null;
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+  const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
 
   const handleInvite = () => {
     trackEvent("onboarding_invite_started");

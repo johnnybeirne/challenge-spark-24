@@ -1,17 +1,19 @@
 import { useMemo } from "react";
 import { useAppState } from "@/context/AppContext";
-import { useSiteConfig } from "@/context/SiteConfigContext";
-import { getPointTier, pointTiers } from "@/lib/points";
+import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
+import { getPointTier } from "@/lib/points";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
-import { ChevronRight, Sparkles, Lock, Check } from "lucide-react";
+import { Sparkles, Lock, Check, Trophy, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function tierForPoints(points: number) {
-  return pointTiers.find(
-    (t) => points >= t.min && (t.max === null || points <= t.max),
-  )!;
+/** Ladder order is driven by one shared `position` field, sorted ascending. */
+export function sortRungs(rungs: LadderRung[]): LadderRung[] {
+  return rungs
+    .map((r, i) => ({ ...r, position: typeof r.position === "number" ? r.position : i + 1 }))
+    .sort((a, b) => a.position - b.position);
 }
 
 export default function Rewards() {
@@ -23,8 +25,11 @@ export default function Rewards() {
   const userTier = getPointTier(userPoints);
   const { rungs, fullSuitePrice, fullSuitePriceId } = config.rewards.ladder;
 
-  // Top-to-bottom: 1000 → 100
-  const sortedRungs = useMemo(() => [...rungs].sort((a, b) => b.points - a.points), [rungs]);
+  const ordered = useMemo(() => sortRungs(rungs), [rungs]);
+  const totalRetail = useMemo(
+    () => ordered.reduce((sum, r) => sum + (r.retailValue || 0), 0),
+    [ordered],
+  );
 
   const handleBuy = (priceId: string) => {
     openCheckout({
@@ -38,15 +43,19 @@ export default function Rewards() {
 
   return (
     <div className="flex h-[100svh] flex-col bg-gradient-to-b from-background to-muted/40">
-      <SEO title="Points Rewards Ladder" description="Climb to 1000 points and unlock the full reward suite." />
+      <SEO
+        title="Rewards Ladder"
+        description="Earn rewards with points, or buy any reward outright."
+      />
 
       {/* Header */}
       <header className="border-b bg-background/80 px-6 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
-          <div>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
             <h1 className="text-lg font-bold tracking-tight">Rewards Ladder</h1>
             <p className="text-xs text-muted-foreground">
-              Climb to 1000 to unlock the full suite.
+              Two ways to get every reward: climb by earning points (invite friends +
+              complete challenge days), or buy any reward outright.
             </p>
           </div>
           <div className="flex items-center gap-3 text-sm">
@@ -54,96 +63,102 @@ export default function Rewards() {
               <span className="font-bold text-primary">{userPoints}</span>
               <span className="text-muted-foreground"> pts</span>
             </div>
-            <span className="text-xs font-medium text-muted-foreground">
-              {userTier.name}
-            </span>
+            <span className="text-xs font-medium text-muted-foreground">{userTier.name}</span>
           </div>
         </div>
       </header>
 
       {/* Ladder */}
-      <main className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="mx-auto max-w-3xl">
-          {sortedRungs.map((rung, idx) => {
+      <main className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6">
+        <div className="mx-auto max-w-3xl space-y-3">
+          {ordered.map((rung) => {
             const reached = userPoints >= rung.points;
-            const isCurrentRung =
-              rung.points <= userPoints &&
-              !sortedRungs.some((r) => r.points <= userPoints && r.points > rung.points);
-            const tier = tierForPoints(rung.points);
-            const prevTier = idx > 0 ? tierForPoints(sortedRungs[idx - 1].points) : null;
-            const showTierDivider = !prevTier || prevTier.name !== tier.name;
+            const away = Math.max(0, rung.points - userPoints);
+            const pct = Math.min(100, Math.round((userPoints / Math.max(rung.points, 1)) * 100));
             const isGold = rung.doubleUnlock;
 
             return (
-              <div key={rung.points}>
-                {showTierDivider && (
-                  <div className={cn("mb-3 mt-6 flex items-center gap-3", idx === 0 ? "" : "")}>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {tier.name}
-                    </span>
-                    <div className="h-px flex-1 bg-border" />
-                  </div>
+              <div
+                key={rung.priceId || rung.position}
+                className={cn(
+                  "rounded-xl border p-4 transition-all",
+                  isGold
+                    ? "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20"
+                    : "bg-card",
+                  reached && "ring-1 ring-emerald-500/40",
                 )}
-
-                <div
-                  className={cn(
-                    "relative grid grid-cols-[64px_1fr_auto] items-center gap-5 rounded-xl border px-5 py-4 transition-all",
-                    reached ? "opacity-100" : "opacity-60",
-                    isGold && "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20",
-                    !isGold && "bg-card",
-                    isCurrentRung && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+              >
+                {/* Reward name + value */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {reached ? (
+                    <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                  ) : (
+                    <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                   )}
-                >
-                  {/* Points marker */}
-                  <div className="flex items-center gap-2">
-                    {isCurrentRung && (
-                      <ChevronRight className="h-4 w-4 shrink-0 animate-pulse text-primary" />
-                    )}
-                    <div className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold",
-                      reached ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
-                      isGold && reached && "bg-amber-500 text-white",
-                    )}>
-                      {rung.points}
-                    </div>
+                  <p className="text-base font-bold tracking-tight">{rung.name}</p>
+                  {rung.retailValue > 0 && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-foreground">
+                      ${rung.retailValue} value
+                    </span>
+                  )}
+                  {isGold && (
+                    <span className="inline-flex shrink-0 items-center rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                      <Sparkles className="mr-0.5 inline h-2 w-2" />
+                      2×
+                    </span>
+                  )}
+                </div>
+
+                {/* Two paths, equal weight */}
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {/* EARN */}
+                  <div className="rounded-lg border bg-background/60 p-3">
+                    <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <Trophy className="h-3.5 w-3.5" /> Earn it free
+                    </p>
+                    <p className="mt-1 text-sm font-semibold">
+                      {reached ? "Unlocked" : `Unlock free at ${rung.points} pts`}
+                    </p>
+                    <Progress value={pct} className="mt-2 h-1.5" />
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      {reached
+                        ? `You have ${userPoints} pts — this is yours.`
+                        : `${userPoints} / ${rung.points} pts — ${away} pts away`}
+                    </p>
                   </div>
 
-                  {/* Reward name (dominant) + retail (small, muted) */}
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      {reached ? (
-                        <Check className="h-4 w-4 shrink-0 text-emerald-600" />
-                      ) : (
-                        <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      )}
-                      <p className={cn("truncate text-base font-bold tracking-tight")}>
-                        {rung.name}
-                      </p>
-                      {isGold && (
-                        <span className="inline-flex shrink-0 items-center rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
-                          <Sparkles className="mr-0.5 inline h-2 w-2" />
-                          2×
-                        </span>
-                      )}
-                    </div>
-                    {rung.retailValue > 0 && (
-                      <p className="mt-0.5 pl-6 text-xs text-muted-foreground">
-                        Retail ${rung.retailValue}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Buy button — clean, minimal */}
-                  <div className="flex shrink-0 items-center">
+                  {/* BUY */}
+                  <div className="rounded-lg border bg-background/60 p-3">
+                    <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <ShoppingCart className="h-3.5 w-3.5" /> Or buy it now
+                    </p>
                     {rung.buyPrice > 0 ? (
-                      <Button
-                        size="sm"
-                        className="h-9 bg-primary text-white text-sm font-semibold transition-transform duration-150 hover:scale-110 hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
-                        onClick={() => handleBuy(rung.priceId)}
-                      >
-                        Buy ${rung.buyPrice}
-                      </Button>
-                    ) : null}
+                      <>
+                        <p className="mt-1 text-sm font-semibold">
+                          ${rung.buyPrice}
+                          {rung.retailValue > 0 && (
+                            <span className="ml-1.5 text-xs font-normal text-muted-foreground line-through">
+                              ${rung.retailValue}
+                            </span>
+                          )}
+                        </p>
+                        <Button
+                          size="sm"
+                          className="mt-2 h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
+                          onClick={() => handleBuy(rung.priceId)}
+                          disabled={reached}
+                        >
+                          {reached ? "Already unlocked" : `Buy $${rung.buyPrice}`}
+                        </Button>
+                        <p className="mt-1.5 text-xs text-muted-foreground">
+                          Skip the wait — get it instantly.
+                        </p>
+                      </>
+                    ) : (
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Earn-only reward — not available to buy.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -152,23 +167,23 @@ export default function Rewards() {
         </div>
       </main>
 
-
-
       {/* Sticky full-suite footer */}
       <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-bold">Can't wait?</p>
             <p className="text-xs text-muted-foreground">
-              Get every reward unlocked instantly. Total value $1,497. Yours for $497.
+              Every reward unlocked instantly.{" "}
+              {totalRetail > 0 && <span className="line-through">${totalRetail} value</span>}{" "}
+              <span className="font-semibold text-foreground">${fullSuitePrice}</span>
             </p>
           </div>
           <Button
             size="lg"
-            className="font-bold transition-transform duration-150 hover:scale-105 hover:brightness-90"
+            className="font-bold text-white transition-transform duration-150 hover:scale-105 hover:brightness-90 hover:text-white"
             onClick={() => handleBuy(fullSuitePriceId)}
           >
-            Buy now — ${fullSuitePrice}
+            Buy everything — ${fullSuitePrice}
           </Button>
         </div>
       </footer>

@@ -9,6 +9,7 @@ import { pushNotification } from "@/lib/notifications";
 import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import { useAppState } from "@/context/AppContext";
+import { getCanonicalUrl } from "@/lib/utils";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 
 
@@ -265,9 +266,8 @@ const Profile = () => {
         {(() => {
           const inviteCode = state.user?.inviteCode;
           if (!inviteCode) return null;
-          const origin = typeof window !== "undefined" ? window.location.origin : "";
-          const quizLink = `${origin}/assess?ref=${inviteCode}`;
-          const challengeLink = `${origin}/challenge?ref=${inviteCode}`;
+          const quizLink = getCanonicalUrl(`/assess?ref=${inviteCode}`);
+          const challengeLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
           const copyLink = async (which: "quiz" | "challenge", url: string) => {
             try {
               await navigator.clipboard.writeText(url);

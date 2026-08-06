@@ -71,6 +71,7 @@ export default function Rewards() {
       {/* Ladder */}
       <main className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6">
         <div className="mx-auto max-w-3xl space-y-3">
+          <LadderInviteBlock />
           {ordered.map((rung) => {
             const reached = userPoints >= rung.points;
             const away = Math.max(0, rung.points - userPoints);

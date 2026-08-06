@@ -216,6 +216,7 @@ const App = () => (
 
                 <Route path="/unlocks" element={<AuthGuard><Unlocks /></AuthGuard>} />
                 <Route path="/redeem" element={<AuthGuard><RedeemPoints /></AuthGuard>} />
+                <Route path="/invites" element={<AuthGuard><EarnRewards /></AuthGuard>} />
                 <Route path="/earn" element={<AuthGuard><EarnRewards /></AuthGuard>} />
                 {/* Legacy routes — redirect to the unified Earn Rewards page */}
                 <Route path="/referrals" element={<Navigate to="/earn" replace />} />

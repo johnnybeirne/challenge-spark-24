@@ -141,12 +141,10 @@ serve(async (req) => {
     }
 
     // 2. Knowledge-base retrieval — LeadTree frameworks are the primary intelligence layer
-    if (!answer) {
-      const docs = await retrieveKb(sb, prompt, stage);
-      if (docs.length > 0) {
-        answer = formatKbAnswer(docs);
-        source = "kb";
-      }
+    const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
+    if (!answer && kbDocs.length > 0) {
+      answer = formatKbAnswer(kbDocs);
+      source = "kb";
     }
 
     // 3. Keyword-scored QA fallback
@@ -175,8 +173,20 @@ serve(async (req) => {
       }
     }
 
-    const rawResponse = withMemory(answer ?? fallback, memoryContext);
+    // 4. AI strategist — generate a real answer instead of repeating the fallback
+    if (!answer) {
+      const aiAnswer = await generateAiAnswer(prompt, memoryContext, kbDocs, rows ?? []);
+      if (aiAnswer) {
+        answer = aiAnswer;
+        source = "ai";
+      }
+    }
+
+    const rawResponse = source === "ai"
+      ? (answer as string)
+      : withMemory(answer ?? fallback, memoryContext);
     const response = ensureNoForbiddenFallback(rawResponse);
+
 
     return new Response(
       JSON.stringify({

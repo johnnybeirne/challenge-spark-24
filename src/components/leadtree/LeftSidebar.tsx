@@ -131,7 +131,7 @@ const LeftSidebar = () => {
 
         {/* Day Progress timeline */}
         <section data-tour="day_progress">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
+          <p className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">
             Day Progress
           </p>
           <ol className="relative ml-3 border-l border-[#E5E7EB]">
@@ -144,13 +144,13 @@ const LeftSidebar = () => {
                 <li
                   key={d}
                   className={[
-                    "relative rounded-[10px] pb-2 pl-6 pt-1 last:pb-0",
+                    "relative rounded-[10px] pb-3 pl-6 pt-2 last:pb-0",
                     isCurrent ? "bg-primary/10" : "",
                   ].join(" ")}
                 >
                   <span
                     className={[
-                      "absolute -left-[5px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
+                      "absolute -left-[5px] top-2 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-white",
                       isDone
                         ? "bg-[#10B981] text-white"
                         : isCurrent
@@ -175,7 +175,7 @@ const LeftSidebar = () => {
                     <span className="block text-sm leading-tight">
                       Day {d} <span className="text-[#6B7280]">- {dayDate(d)}</span>
                     </span>
-                    <span className="mt-0.5 block text-[11px] font-normal">
+                    <span className="mt-1 block text-[11px] font-normal">
                       {isDone ? "Completed" : isCurrent ? "In Progress" : "Locked"}
                     </span>
                   </Link>

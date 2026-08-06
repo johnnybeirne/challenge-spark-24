@@ -24,6 +24,7 @@ import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { generateResult } from "@/lib/assessmentData";
 import { canAccessDay, getDayUnlock } from "@/lib/challengeProgression";
+import { getCanonicalUrl } from "@/lib/utils";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
 import DayCopilot from "@/components/DayCopilot";
@@ -177,7 +178,7 @@ const DayChallenge = () => {
   if (dayLocked && (dayNum === 2 || dayNum === 3)) {
     const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
     const inviteCode = state.user?.inviteCode ?? "";
-    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+    const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     return (
       <LockedDayScreen
         dayNum={dayNum}
@@ -298,7 +299,7 @@ const DayChallenge = () => {
 
   const handleShare = () => {
     const inviteCode = state.user?.inviteCode ?? "";
-    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+    const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
     toast.success("Thanks for spreading the word!");
@@ -306,7 +307,7 @@ const DayChallenge = () => {
 
   const handleInvite = () => {
     const inviteCode = state.user?.inviteCode ?? "";
-    const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+    const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum, type: "invite" });
     toast.success("Invite sent — one step closer to Builder Circle.");

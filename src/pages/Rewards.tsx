@@ -112,7 +112,7 @@ export default function Rewards() {
                       <Trophy className="h-3.5 w-3.5" /> Earn it free
                     </p>
                     <p className="mt-1 text-sm font-semibold">
-                      {reached ? "Unlocked" : `Unlock free at ${rung.points} pts`}
+                      {reached ? "Unlocked" : `Free at ${rung.points} pts`}
                       {rung.buyPrice > 0 && (
                         <span className="ml-1.5 text-xs font-normal text-muted-foreground">
                           worth ${rung.buyPrice}
@@ -121,9 +121,7 @@ export default function Rewards() {
                     </p>
                     <Progress value={pct} className="mt-2 h-1.5" />
                     <p className="mt-1.5 text-xs text-muted-foreground">
-                      {reached
-                        ? `You have ${userPoints} pts — this is yours.`
-                        : `${userPoints} / ${rung.points} pts — ${away} pts away`}
+                      {reached ? "Yours." : `${away} pts away`}
                     </p>
                   </div>
 
@@ -134,7 +132,6 @@ export default function Rewards() {
                     </p>
                     {rung.buyPrice > 0 ? (
                       <>
-                        <p className="mt-1 text-sm font-semibold">${rung.buyPrice}</p>
                         <Button
                           size="sm"
                           className="mt-2 h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"

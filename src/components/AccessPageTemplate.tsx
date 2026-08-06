@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { shareOrCopy } from "@/lib/share";
-import { getCanonicalUrl } from "@/lib/utils";
+import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { getAccessIcon } from "@/lib/accessPageIcons";
@@ -27,7 +27,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
   // Reuses the existing referral system — the participant's own invite code.
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
+  const referralLink = getReferralUrl("/challenge", inviteCode);
 
   const copy = async () => {
     try {
@@ -87,21 +87,29 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           {content?.referral_copy && (
             <p className="mt-2 text-sm text-muted-foreground">{text(content.referral_copy)}</p>
           )}
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm">
-              {referralLink}
-            </div>
-            <Button onClick={copy} size="lg" className="gap-2 text-white">
-              {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copied" : "Copy link"}
-            </Button>
-          </div>
-          <button
-            onClick={() => shareOrCopy({ text: text(content?.referral_copy), url: referralLink })}
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
-          >
-            <Share2 className="h-3.5 w-3.5" /> Share this link
-          </button>
+          {referralLink ? (
+            <>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="min-w-0 flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm">
+                  {referralLink}
+                </div>
+                <Button onClick={copy} size="lg" className="gap-2 text-white">
+                  {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? "Copied" : "Copy link"}
+                </Button>
+              </div>
+              <button
+                onClick={() => shareOrCopy({ text: text(content?.referral_copy), url: referralLink })}
+                className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+              >
+                <Share2 className="h-3.5 w-3.5" /> Share this link
+              </button>
+            </>
+          ) : (
+            <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
+              Your personal invite link appears here when you're signed in.
+            </p>
+          )}
         </section>
 
         <ItemList list={items} />

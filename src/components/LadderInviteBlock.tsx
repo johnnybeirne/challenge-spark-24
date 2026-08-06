@@ -4,7 +4,7 @@ import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { getCanonicalUrl } from "@/lib/utils";
+import { getReferralUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,7 +18,7 @@ export function LadderInviteBlock({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
+  const referralLink = getReferralUrl("/challenge", inviteCode);
 
   const heading = config.rewards.ladder.inviteHeading || "Your invite link";
   const body =
@@ -35,6 +35,9 @@ export function LadderInviteBlock({ className }: { className?: string }) {
       toast.error("Could not copy link");
     }
   };
+
+  // No invite code yet (e.g. signed out) — never render a broken `?ref=` link.
+  if (!referralLink) return null;
 
   return (
     <div className={cn("rounded-xl border bg-card p-4", className)}>

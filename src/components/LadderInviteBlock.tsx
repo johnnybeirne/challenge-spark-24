@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { getReferralUrl } from "@/lib/utils";
+import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,7 +19,7 @@ export function LadderInviteBlock({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getReferralUrl("/challenge", inviteCode);
+  const referralLink = getReferralUrl("/", inviteCode);
 
   const heading = config.rewards.ladder.inviteHeading || "Your invite link";
   const body =
@@ -44,9 +45,7 @@ export function LadderInviteBlock({ className }: { className?: string }) {
       <p className="text-sm font-bold tracking-tight">{heading}</p>
       <p className="mt-0.5 text-xs text-muted-foreground">{body}</p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="min-w-0 flex-1 truncate rounded-lg border bg-background px-3 py-2 font-mono text-xs">
-          {referralLink}
-        </div>
+        <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
         <Button
           size="sm"
           className="h-9 shrink-0 bg-primary font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white"

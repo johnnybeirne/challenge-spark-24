@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
-import { getPointTier } from "@/lib/points";
+import { getPointTier, pointRules } from "@/lib/points";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
-import { Sparkles, Lock, Check } from "lucide-react";
+import { Sparkles, Lock, Check, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 

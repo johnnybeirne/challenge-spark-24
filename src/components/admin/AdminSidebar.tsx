@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, ClipboardList, Tag, UserPlus, LogOut, Mail, Handshake, BookOpen, FlaskConical, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -42,6 +42,7 @@ const items = [
   { title: "Typography", url: "/owner-console/typography", icon: Type },
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
   { title: "Premium upsell", url: "/owner-console/premium-upsell", icon: Sparkles },
+  { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy },
   { title: "Nav tips", url: "/owner-console/nav-tips", icon: HelpCircle },
   { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
@@ -120,10 +121,10 @@ export function AdminSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="LeadTree Course Sales Page">
+                <SidebarMenuButton asChild tooltip="Course Sales Page">
                   <a href="/owner-console/premium-page" target="_blank" rel="noopener noreferrer">
                     <FileEdit className="h-4 w-4" />
-                    <span>LeadTree Course Sales Page</span>
+                    <span>Course Sales Page</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -55,7 +55,7 @@ const TopNavigation = () => {
           <span className="text-[8pt] leading-none text-[#6B7280]">Powered by</span>
           <img
             src="/leadtree-logo.png"
-            alt="LeadTree"
+            alt="Brand logo"
             className="h-auto w-full max-w-[264px]"
           />
         </Link>

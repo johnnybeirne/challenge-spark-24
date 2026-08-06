@@ -27,7 +27,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
   // Reuses the existing referral system — the participant's own invite code.
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
+  const referralLink = getReferralUrl("/challenge", inviteCode);
 
   const copy = async () => {
     try {

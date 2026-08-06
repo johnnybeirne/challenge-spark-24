@@ -240,7 +240,92 @@ const DraggableQaButton = ({
   );
 };
 
+/** Draggable QA status pill. Position persists in localStorage. */
+const DraggableQaBanner = ({ label, onExit }: { label: string; onExit: () => void }) => {
+  const KEY = "leadio_qa_banner_pos";
+  const W = 420;
+  const H = 40;
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === "undefined") return { x: 16, y: 16 };
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") return p;
+      }
+    } catch {}
+    return { x: 16, y: Math.max(16, window.innerHeight - H - 24) };
+  });
+  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = useCallback((x: number, y: number) => {
+    if (typeof window === "undefined") return { x, y };
+    return {
+      x: Math.min(Math.max(0, x), Math.max(0, window.innerWidth - 120)),
+      y: Math.min(Math.max(0, y), Math.max(0, window.innerHeight - H)),
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const point = "touches" in e ? e.touches[0] : (e as MouseEvent);
+      if (!dragRef.current || !point) return;
+      setPos(clamp(point.clientX - dragRef.current.dx, point.clientY - dragRef.current.dy));
+    };
+    const onUp = () => {
+      setDragging(false);
+      dragRef.current = null;
+      try { localStorage.setItem(KEY, JSON.stringify(pos)); } catch {}
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [dragging, pos, clamp]);
+
+  const startDrag = (cx: number, cy: number) => {
+    dragRef.current = { dx: cx - pos.x, dy: cy - pos.y };
+    setDragging(true);
+  };
+
+  return (
+    <div
+      className="fixed z-[90]"
+      style={{ left: pos.x, top: pos.y, maxWidth: `min(${W}px, calc(100vw - 2rem))` }}
+    >
+      <div
+        onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+        onTouchStart={(e) => {
+          const t = e.touches[0];
+          if (t) startDrag(t.clientX, t.clientY);
+        }}
+        className={`flex select-none items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500 px-3 py-1.5 text-xs font-bold text-amber-950 shadow-lg ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+      >
+        <Eye className="h-3.5 w-3.5 shrink-0" />
+        <span className="truncate uppercase tracking-wider">{label}</span>
+        <button
+          onClick={onExit}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="shrink-0 rounded-full bg-amber-950/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider hover:bg-amber-950/25"
+        >
+          Exit Preview
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const QaModePanel = () => {
+
   const { user } = useAuth();
   const qa = useQaPreview();
   const navigate = useNavigate();

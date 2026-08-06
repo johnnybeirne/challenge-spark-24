@@ -108,28 +108,18 @@ export default function Rewards() {
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {/* EARN */}
                   <div className="rounded-lg border bg-background/60 p-3">
-                    <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                      <Trophy className="h-3.5 w-3.5" /> Earn it free
-                    </p>
-                    <p className="mt-1 text-sm font-semibold">
-                      {reached ? "Unlocked" : `Free at ${rung.points} pts`}
-                      {rung.buyPrice > 0 && (
-                        <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                          worth ${rung.buyPrice}
-                        </span>
-                      )}
+                    <p className="text-sm font-semibold">
+                      {reached ? "Unlocked" : `Earn free at ${rung.points} pts`}
                     </p>
                     <Progress value={pct} className="mt-2 h-1.5" />
                     <p className="mt-1.5 text-xs text-muted-foreground">
-                      {reached ? "Yours." : `${away} pts away`}
+                      {reached ? "Yours." : `${away} more to go`}
                     </p>
                   </div>
 
                   {/* BUY */}
                   <div className="rounded-lg border bg-background/60 p-3">
-                    <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                      <ShoppingCart className="h-3.5 w-3.5" /> Or buy it now
-                    </p>
+                    <p className="text-sm font-semibold">Or buy it now</p>
                     {rung.buyPrice > 0 ? (
                       <>
                         <Button

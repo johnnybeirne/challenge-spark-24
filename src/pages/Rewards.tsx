@@ -121,23 +121,22 @@ export default function Rewards() {
 
                   {/* BUY */}
                   <div className="rounded-lg border bg-background/60 p-3">
-                    <p className="text-sm font-semibold">Or buy it now</p>
                     {rung.buyPrice > 0 ? (
                       <>
                         <Button
                           size="sm"
-                          className="mt-2 h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
+                          className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
                           onClick={() => handleBuy(rung.priceId)}
                           disabled={reached}
                         >
-                          {reached ? "Already unlocked" : `Buy $${rung.buyPrice}`}
+                          {reached ? "Already unlocked" : `Buy it now — $${rung.buyPrice}`}
                         </Button>
-                        <p className="mt-1.5 text-xs text-muted-foreground">
+                        <p className="mt-1.5 text-center text-xs text-muted-foreground">
                           Skip the wait — get it instantly.
                         </p>
                       </>
                     ) : (
-                      <p className="mt-1 text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         Earn-only reward — not available to buy.
                       </p>
                     )}

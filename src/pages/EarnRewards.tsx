@@ -176,6 +176,17 @@ const EarnRewards = () => {
     url: string;
   }) => {
     const isCopied = copied === which;
+    if (!url) {
+      return (
+        <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+          <p className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">{title}</p>
+          <p className="mt-1 text-xs text-[#6B7280]">{hint}</p>
+          <p className="mt-3 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3 text-sm text-[#6B7280]">
+            Your personal link is being set up — refresh in a moment.
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="rounded-[16px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
         <p className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">{title}</p>

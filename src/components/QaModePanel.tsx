@@ -529,21 +529,12 @@ const QaModePanel = () => {
   };
 
   const banner = qa.active && (
-    <div className="fixed bottom-4 left-4 z-[90] max-w-[calc(100vw-2rem)]">
-      <div className="flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500 px-3 py-1.5 text-xs font-bold text-amber-950 shadow-lg">
-        <Eye className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate uppercase tracking-wider">
-          QA Preview Active: {qa.tier} · {qa.entry.replace(/_/g, " ")}
-        </span>
-        <button
-          onClick={exit}
-          className="shrink-0 rounded-full bg-amber-950/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider hover:bg-amber-950/25"
-        >
-          Exit Preview
-        </button>
-      </div>
-    </div>
+    <DraggableQaBanner
+      label={`QA Preview Active: ${qa.tier} · ${qa.entry.replace(/_/g, " ")}`}
+      onExit={exit}
+    />
   );
+
 
 
   return (

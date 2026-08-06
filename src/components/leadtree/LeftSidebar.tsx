@@ -21,7 +21,7 @@ import { useNavTour } from "@/hooks/useNavTour";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
-  { to: "/earn",      label: "Invites",   icon: Users,    key: "nav_invites" },
+  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites" },
   { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards" },
   { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources" },
 ];

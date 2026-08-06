@@ -47,9 +47,8 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
     );
   }
 
-  const items = content?.items ?? [];
-  const before = items.slice(0, Math.ceil(items.length / 2));
-  const after = items.slice(Math.ceil(items.length / 2));
+  // Single source of truth for order: each item's saved `position`, ascending.
+  const items = [...(content?.items ?? [])].sort((a, b) => a.position - b.position);
 
   const ItemList = ({ list }: { list: typeof items }) =>
     list.length === 0 ? null : (
@@ -81,8 +80,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           )}
         </header>
 
-        <ItemList list={before} />
-
         {/* Referral link — the hero of the page */}
         <section className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 sm:p-8">
           <h2 className="text-xl font-bold tracking-tight">{text(content?.referral_heading)}</h2>
@@ -106,7 +103,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           </button>
         </section>
 
-        <ItemList list={after} />
+        <ItemList list={items} />
       </div>
     </div>
   );

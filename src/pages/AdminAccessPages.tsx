@@ -19,6 +19,7 @@ import {
   ACCESS_PAGE_ROUTES,
   type AccessPageContent,
   type AccessPageKey,
+  withPositions,
 } from "@/hooks/useAccessPage";
 import { ACCESS_ICON_OPTIONS, getAccessIcon } from "@/lib/accessPageIcons";
 
@@ -41,7 +42,7 @@ const AdminAccessPages = () => {
           intro_text: page.intro_text,
           referral_heading: page.referral_heading,
           referral_copy: page.referral_copy,
-          items: page.items,
+          items: withPositions(page.items),
         })
         .eq("id", page.id);
       if (error) throw error;
@@ -139,11 +140,16 @@ const AdminAccessPages = () => {
                 itemLabel={(i) => `Item ${i + 1}`}
                 onAdd={() =>
                   patch(page.page_key, {
-                    items: [...page.items, { icon: "Sparkles", heading: "", copy: "" }],
+                    items: withPositions([
+                      ...page.items,
+                      { icon: "Sparkles", heading: "", copy: "", position: page.items.length },
+                    ]),
                   })
                 }
                 onRemove={(i) =>
-                  patch(page.page_key, { items: page.items.filter((_, idx) => idx !== i) })
+                  patch(page.page_key, {
+                    items: withPositions(page.items.filter((_, idx) => idx !== i)),
+                  })
                 }
                 renderItem={(item, i) => {
                   const move = (dir: -1 | 1) => {
@@ -151,7 +157,7 @@ const AdminAccessPages = () => {
                     const target = i + dir;
                     if (target < 0 || target >= next.length) return;
                     [next[i], next[target]] = [next[target], next[i]];
-                    patch(page.page_key, { items: next });
+                    patch(page.page_key, { items: withPositions(next) });
                   };
                   const setItem = (changes: Partial<typeof item>) =>
                     patch(page.page_key, {

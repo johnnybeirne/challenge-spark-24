@@ -8,7 +8,14 @@ export type AccessPageItem = {
   icon: string;
   heading: string;
   copy: string;
+  /** Single source of truth for display order — ascending. */
+  position: number;
 };
+
+/** Re-number a list so positions are 0..n-1 in the given array order. */
+export function withPositions(items: AccessPageItem[]): AccessPageItem[] {
+  return items.map((item, index) => ({ ...item, position: index }));
+}
 
 export type AccessPageContent = {
   id: string;
@@ -41,11 +48,15 @@ function normalise(row: any): AccessPageContent {
     intro_text: row.intro_text ?? "",
     referral_heading: row.referral_heading ?? "",
     referral_copy: row.referral_copy ?? "",
-    items: rawItems.map((i: any) => ({
-      icon: String(i?.icon ?? "Sparkles"),
-      heading: String(i?.heading ?? ""),
-      copy: String(i?.copy ?? ""),
-    })),
+    items: rawItems
+      .map((i: any, index: number) => ({
+        icon: String(i?.icon ?? "Sparkles"),
+        heading: String(i?.heading ?? ""),
+        copy: String(i?.copy ?? ""),
+        position: Number.isFinite(Number(i?.position)) ? Number(i.position) : index,
+      }))
+      .sort((a, b) => a.position - b.position)
+      .map((item, index) => ({ ...item, position: index })),
   };
 }
 

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
-import { getPointTier } from "@/lib/points";
+import { getPointTier, pointRules } from "@/lib/points";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
-import { Sparkles, Lock, Check } from "lucide-react";
+import { Sparkles, Lock, Check, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 
@@ -31,6 +31,9 @@ export default function Rewards() {
     () => ordered.reduce((sum, r) => sum + (r.buyPrice || 0), 0),
     [ordered],
   );
+
+  const pointsPerDay =
+    pointRules.find((rule) => rule.id === "complete_day_1")?.points ?? 50;
 
   const handleBuy = (priceId: string) => {
     openCheckout({
@@ -73,6 +76,17 @@ export default function Rewards() {
       <main className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6">
         <div className="mx-auto max-w-3xl space-y-3">
           <LadderInviteBlock />
+          <div className="flex items-start gap-3 rounded-xl border bg-muted/40 p-4">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <p className="text-sm text-muted-foreground">
+              Two ways to climb: share your invite link, and complete each
+              challenge day — you earn{" "}
+              <span className="font-semibold text-foreground">
+                {pointsPerDay} points
+              </span>{" "}
+              for every day you finish.
+            </p>
+          </div>
           {ordered.map((rung) => {
             const reached = userPoints >= rung.points;
             const away = Math.max(0, rung.points - userPoints);

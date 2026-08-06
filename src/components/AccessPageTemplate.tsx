@@ -5,6 +5,7 @@ import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { shareOrCopy } from "@/lib/share";
 import { getReferralUrl } from "@/lib/utils";
+import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { getAccessIcon } from "@/lib/accessPageIcons";
@@ -27,7 +28,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
   // Reuses the existing referral system — the participant's own invite code.
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getReferralUrl("/challenge", inviteCode);
+  const referralLink = getReferralUrl("/", inviteCode);
 
   const copy = async () => {
     try {
@@ -90,9 +91,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           {referralLink ? (
             <>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="min-w-0 flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm">
-                  {referralLink}
-                </div>
+                <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
                 <Button onClick={copy} size="lg" className="gap-2 text-white">
                   {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   {copied ? "Copied" : "Copy link"}

@@ -36,6 +36,9 @@ export function LadderInviteBlock({ className }: { className?: string }) {
     }
   };
 
+  // No invite code yet (e.g. signed out) — never render a broken `?ref=` link.
+  if (!referralLink) return null;
+
   return (
     <div className={cn("rounded-xl border bg-card p-4", className)}>
       <p className="text-sm font-bold tracking-tight">{heading}</p>

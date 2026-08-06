@@ -22,7 +22,7 @@ const TYPE_INTERVAL_MS = 18;
 const TYPE_CHARS_PER_TICK = 2;
 
 const DEFAULT_WELCOME = "Ask Johnny B AI anything about the challenge";
-const DEFAULT_FALLBACK = "I don't have an answer for that yet. Try one of the suggested questions below.";
+const DEFAULT_FALLBACK = "I couldn't find a matching answer in my library. Try rephrasing your question or tap one of the suggestions below.";
 const CHAT_PANEL_HEIGHT = "min(520px, calc(100vh - 8rem))";
 
 const BUBBLE_SIZE = 72;

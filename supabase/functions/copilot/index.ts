@@ -8,11 +8,26 @@ const corsHeaders = {
 };
 
 const FALLBACK_DEFAULT =
+  "I couldn't find a matching answer in my library. Try rephrasing your question or tap one of the suggestions below.";
+
+const FORBIDDEN_FALLBACK_ENDING =
   "I don't have an answer for that yet. Try one of the suggested questions below.";
 
 function withMemory(answer: string, memoryContext?: string): string {
   if (!memoryContext || !memoryContext.trim()) return answer;
   return `${memoryContext}\n\nHere’s the next step:\n\n${answer}`;
+}
+
+function ensureNoForbiddenFallback(response: string): string {
+  const trimmed = response.trim();
+  if (trimmed.endsWith(FORBIDDEN_FALLBACK_ENDING)) {
+    return (
+      trimmed.slice(0, -FORBIDDEN_FALLBACK_ENDING.length).trim() +
+      "\n\n" +
+      FALLBACK_DEFAULT
+    );
+  }
+  return response;
 }
 
 function normalize(s: string): string {

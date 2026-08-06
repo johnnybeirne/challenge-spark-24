@@ -34,7 +34,7 @@ interface QaRow {
 const DEFAULTS: CopilotConfig = {
   welcome_message: "Ask Johnny B AI anything about the challenge",
   fallback_message:
-    "I don't have an answer for that yet. Try one of the suggested questions below.",
+    "I couldn't find a matching answer in my library. Try rephrasing your question or tap one of the suggestions below.",
   starter_questions: [],
   next_qa_date: null,
 };

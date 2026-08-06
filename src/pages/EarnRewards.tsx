@@ -87,7 +87,7 @@ const EarnRewards = () => {
 
   const inviteCode = state.user?.inviteCode ?? "";
   const quizLink = getReferralUrl("/assess", inviteCode);
-  const challengeLink = getReferralUrl("/challenge", inviteCode);
+  const challengeLink = getReferralUrl("/", inviteCode);
   const referralLink = quizLink; // legacy alias for share text helpers below
 
   const shareText = memoryShareText(state.memory);

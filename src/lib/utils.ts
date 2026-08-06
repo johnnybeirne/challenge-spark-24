@@ -24,7 +24,9 @@ export function getCanonicalUrl(path = ""): string {
 export function getReferralUrl(path: string, code?: string | null): string {
   const trimmedCode = (code ?? "").trim();
   if (!trimmedCode) return "";
-  return getCanonicalUrl(`${path}?ref=${encodeURIComponent(trimmedCode)}`);
+  // Root path stays as the short "/?ref=" form (no double slash).
+  const base = !path || path === "/" ? "/" : path;
+  return getCanonicalUrl(`${base}?ref=${encodeURIComponent(trimmedCode)}`);
 }
 
 

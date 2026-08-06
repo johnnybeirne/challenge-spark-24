@@ -453,8 +453,10 @@ const LeadGenStrengthCard = () => {
       return null;
     }
 
-    const percent = Math.round((strong / total) * 100);
-    const archetype = pickArchetype(strong);
+    // Test floor: never show 0% for a completed quiz.
+    const flooredStrong = hasAnswers ? Math.max(1, strong) : strong;
+    const percent = Math.round((flooredStrong / total) * 100);
+    const archetype = pickArchetype(flooredStrong);
     return { strong, total, percent, archetype, active, priorities, quiz };
   }, [assessment, qaArchetype]);
 

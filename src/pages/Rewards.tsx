@@ -6,7 +6,7 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
-import { Sparkles, Lock, Check, Trophy, ShoppingCart } from "lucide-react";
+import { Sparkles, Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Ladder order is driven by one shared `position` field, sorted ascending. */

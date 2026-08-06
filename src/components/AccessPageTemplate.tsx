@@ -1,0 +1,115 @@
+import { useState } from "react";
+import { Copy, CheckCircle, Share2 } from "lucide-react";
+import { toast } from "sonner";
+import { useAppState } from "@/context/AppContext";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
+import { shareOrCopy } from "@/lib/share";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
+import { getAccessIcon } from "@/lib/accessPageIcons";
+import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
+
+/**
+ * Shared access page template — one component, three instances
+ * (Training, Community, Events). It renders ONLY inside the existing
+ * participant shell content area: the app shell already provides the single
+ * top bar, left sidebar (+ sidebar footer), right sidebar and countdown bar.
+ * This template must never add a second nav, header or footer.
+ */
+const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
+  const { state, authUser } = useAppState();
+  const { content, loading } = useAccessPage(pageKey);
+  const [copied, setCopied] = useState(false);
+
+  const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
+  const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
+
+  // Reuses the existing referral system — the participant's own invite code.
+  const inviteCode = state.user?.inviteCode ?? "";
+  const referralLink = `${window.location.origin}/challenge?ref=${inviteCode}`;
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      toast.success("Invite link copied");
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Could not copy — try selecting the link manually");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <Spinner />
+      </div>
+    );
+  }
+
+  const items = content?.items ?? [];
+  const before = items.slice(0, Math.ceil(items.length / 2));
+  const after = items.slice(Math.ceil(items.length / 2));
+
+  const ItemList = ({ list }: { list: typeof items }) =>
+    list.length === 0 ? null : (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {list.map((item, i) => {
+          const Icon = getAccessIcon(item.icon);
+          return (
+            <div key={i} className="rounded-xl border border-border bg-card p-5">
+              <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Icon className="h-4 w-4" />
+              </div>
+              <p className="font-semibold leading-snug">{text(item.heading)}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{text(item.copy)}</p>
+            </div>
+          );
+        })}
+      </div>
+    );
+
+  return (
+    <div className="app-page-container py-6 pb-24 lg:py-8 animate-fade-in">
+      <div className="mx-auto w-full max-w-3xl space-y-8">
+        <header className="space-y-3">
+          <h1 className="text-3xl font-bold tracking-tight">{text(content?.header_text)}</h1>
+          {content?.intro_text && (
+            <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground">
+              {text(content.intro_text)}
+            </p>
+          )}
+        </header>
+
+        <ItemList list={before} />
+
+        {/* Referral link — the hero of the page */}
+        <section className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 sm:p-8">
+          <h2 className="text-xl font-bold tracking-tight">{text(content?.referral_heading)}</h2>
+          {content?.referral_copy && (
+            <p className="mt-2 text-sm text-muted-foreground">{text(content.referral_copy)}</p>
+          )}
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm">
+              {referralLink}
+            </div>
+            <Button onClick={copy} size="lg" className="gap-2 text-white">
+              {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied" : "Copy link"}
+            </Button>
+          </div>
+          <button
+            onClick={() => shareOrCopy({ text: text(content?.referral_copy), url: referralLink })}
+            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            <Share2 className="h-3.5 w-3.5" /> Share this link
+          </button>
+        </section>
+
+        <ItemList list={after} />
+      </div>
+    </div>
+  );
+};
+
+export default AccessPageTemplate;

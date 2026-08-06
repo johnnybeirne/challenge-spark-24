@@ -84,6 +84,8 @@ import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
 import AdminNavTips from "@/pages/AdminNavTips";
+import AdminAccessPages from "@/pages/AdminAccessPages";
+import AccessPageTemplate from "@/components/AccessPageTemplate";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
 import RequirementsChecklist from "@/pages/RequirementsChecklist";
@@ -201,7 +203,7 @@ const App = () => (
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
-                <Route path="/training" element={<AuthGuard><Training /></AuthGuard>} />
+                <Route path="/training" element={<AuthGuard><AccessPageTemplate pageKey="training" /></AuthGuard>} />
                 {/* Day 1 — canonical route. Day1Setup (assessment + AI builder). */}
                 <Route path="/challenge/day-1" element={<AuthGuard><Day1 /></AuthGuard>} />
                 <Route path="/challenge/day/1" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
@@ -219,8 +221,8 @@ const App = () => (
                 <Route path="/earn" element={<AuthGuard><EarnRewards /></AuthGuard>} />
                 {/* Legacy routes — redirect to the unified Earn Rewards page */}
                 <Route path="/referrals" element={<Navigate to="/earn" replace />} />
-                <Route path="/community" element={<AuthGuard><Community /></AuthGuard>} />
-                <Route path="/calendar" element={<AuthGuard><Calendar /></AuthGuard>} />
+                <Route path="/community" element={<AuthGuard><AccessPageTemplate pageKey="community" /></AuthGuard>} />
+                <Route path="/calendar" element={<AuthGuard><AccessPageTemplate pageKey="events" /></AuthGuard>} />
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
                 <Route path="/bonus-vault" element={<Navigate to="/earn" replace />} />
                 <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
@@ -281,6 +283,7 @@ const App = () => (
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
+                <Route path="access-pages" element={<AdminAccessPages />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

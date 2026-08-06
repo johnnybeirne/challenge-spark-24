@@ -43,6 +43,7 @@ const items = [
   { title: "Coupons", url: "/owner-console/coupons", icon: Tag },
   { title: "Premium upsell", url: "/owner-console/premium-upsell", icon: Sparkles },
   { title: "Nav tips", url: "/owner-console/nav-tips", icon: HelpCircle },
+  { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck },
 ];

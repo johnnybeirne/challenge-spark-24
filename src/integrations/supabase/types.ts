@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_pages: {
+        Row: {
+          created_at: string
+          header_text: string
+          id: string
+          intro_text: string
+          items: Json
+          page_key: string
+          referral_copy: string
+          referral_heading: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          header_text?: string
+          id?: string
+          intro_text?: string
+          items?: Json
+          page_key: string
+          referral_copy?: string
+          referral_heading?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          header_text?: string
+          id?: string
+          intro_text?: string
+          items?: Json
+          page_key?: string
+          referral_copy?: string
+          referral_heading?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       activity_feed_items: {
         Row: {
           action: string

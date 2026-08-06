@@ -129,7 +129,7 @@ serve(async (req) => {
     const promptTokens = new Set(tokenize(prompt));
 
     let answer: string | null = null;
-    let source: "qa-exact" | "kb" | "qa" | "fallback" = "fallback";
+    let source: "qa-exact" | "kb" | "qa" | "ai" | "fallback" = "fallback";
 
     // 1. Exact (normalized) question match — highest confidence
     for (const r of rows ?? []) {

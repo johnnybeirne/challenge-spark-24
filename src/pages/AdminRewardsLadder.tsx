@@ -79,7 +79,7 @@ const AdminRewardsLadder = () => {
 
       <EditorCard
         title="Ladder rungs"
-        description="Reward name, retail value, points to earn it free, buy price, and order."
+        description="Reward name, points to earn it free, one price, and order."
       >
         <div className="space-y-3">
           {ladder.rungs.map((rung, i) => (

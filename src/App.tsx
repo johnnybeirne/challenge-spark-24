@@ -101,7 +101,6 @@ import PoweredBy from "@/pages/PoweredBy";
 import LogoAnimationPreview from "@/pages/LogoAnimationPreview";
 import DebugAttribution from "@/pages/DebugAttribution";
 import NotFound from "@/pages/NotFound";
-import FreePreviewBadge from "@/components/FreePreviewBadge";
 
 import ScrollToTop from "@/components/ScrollToTop";
 import AttributionCapture from "@/components/AttributionCapture";

@@ -220,6 +220,8 @@ export interface RewardsConfig {
   ladder: {
     fullSuitePrice: number;
     fullSuitePriceId: string;
+    inviteHeading?: string;
+    inviteBody?: string;
     rungs: LadderRung[];
   };
 }
@@ -537,6 +539,8 @@ export const defaultSiteConfig: SiteConfig = {
     ladder: {
       fullSuitePrice: 497,
       fullSuitePriceId: "reward_full_suite",
+      inviteHeading: "Your invite link",
+      inviteBody: "Share this — every friend who joins moves you up the ladder.",
       rungs: [
         { points: 100, name: "Launch Checklist",                 retailValue: 47,  buyPrice: 27, priceId: "reward_100", doubleUnlock: false , position: 1 },
         { points: 200, name: "AI Prompt Pack",                   retailValue: 97,  buyPrice: 37, priceId: "reward_200", doubleUnlock: false , position: 2 },

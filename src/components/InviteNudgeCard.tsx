@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Users } from "lucide-react";
 import { shareOrCopy } from "@/lib/share";
 import { trackEvent } from "@/lib/analytics";
+import { getCanonicalUrl } from "@/lib/utils";
 
 const InviteNudgeCard = () => {
   const { state } = useAppState();
@@ -14,7 +15,7 @@ const InviteNudgeCard = () => {
   const pct = Math.min(100, Math.round((invites / target) * 100));
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = `${window.location.origin}/assess${inviteCode ? `?ref=${inviteCode}` : ""}`;
+  const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
 
   if (invites >= target) return null;
 

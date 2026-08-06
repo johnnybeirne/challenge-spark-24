@@ -27,7 +27,7 @@ export default function Rewards() {
 
   const ordered = useMemo(() => sortRungs(rungs), [rungs]);
   const totalRetail = useMemo(
-    () => ordered.reduce((sum, r) => sum + (r.retailValue || 0), 0),
+    () => ordered.reduce((sum, r) => sum + (r.buyPrice || 0), 0),
     [ordered],
   );
 
@@ -96,9 +96,9 @@ export default function Rewards() {
                     <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                   )}
                   <p className="text-base font-bold tracking-tight">{rung.name}</p>
-                  {rung.retailValue > 0 && (
+                  {rung.buyPrice > 0 && (
                     <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-foreground">
-                      ${rung.retailValue} value
+                      worth ${rung.buyPrice}
                     </span>
                   )}
                   {isGold && (
@@ -118,6 +118,11 @@ export default function Rewards() {
                     </p>
                     <p className="mt-1 text-sm font-semibold">
                       {reached ? "Unlocked" : `Unlock free at ${rung.points} pts`}
+                      {rung.buyPrice > 0 && (
+                        <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                          worth ${rung.buyPrice}
+                        </span>
+                      )}
                     </p>
                     <Progress value={pct} className="mt-2 h-1.5" />
                     <p className="mt-1.5 text-xs text-muted-foreground">
@@ -134,14 +139,7 @@ export default function Rewards() {
                     </p>
                     {rung.buyPrice > 0 ? (
                       <>
-                        <p className="mt-1 text-sm font-semibold">
-                          ${rung.buyPrice}
-                          {rung.retailValue > 0 && (
-                            <span className="ml-1.5 text-xs font-normal text-muted-foreground line-through">
-                              ${rung.retailValue}
-                            </span>
-                          )}
-                        </p>
+                        <p className="mt-1 text-sm font-semibold">${rung.buyPrice}</p>
                         <Button
                           size="sm"
                           className="mt-2 h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"

@@ -115,21 +115,14 @@ const AdminRewardsLadder = () => {
                   onChange={(v) => updateRung(i, { name: v })}
                 />
                 <EditableField
-                  label="Retail value (USD)"
-                  helper="Shown as “$X value” — the value being unlocked."
-                  type="number"
-                  value={String(rung.retailValue)}
-                  onChange={(v) => updateRung(i, { retailValue: Number(v) })}
-                />
-                <EditableField
                   label="Points to earn it free"
                   type="number"
                   value={String(rung.points)}
                   onChange={(v) => updateRung(i, { points: Number(v) })}
                 />
                 <EditableField
-                  label="Buy price (USD)"
-                  helper="Set to 0 to make this an earn-only reward."
+                  label="Price (USD)"
+                  helper="One price per rung — shown as “worth $X” on the earn side and the buy price. Set to 0 for an earn-only reward."
                   type="number"
                   value={String(rung.buyPrice)}
                   onChange={(v) => updateRung(i, { buyPrice: Number(v) })}

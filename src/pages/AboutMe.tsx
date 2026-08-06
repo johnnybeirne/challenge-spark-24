@@ -11,7 +11,7 @@ const AboutMe = () => {
     <>
       <SEO
         title="About Johnny Beirne"
-        description="Meet Johnny Beirne, creator of LeadTree — helping coaches, consultants and expert-led businesses turn knowledge into repeatable lead-generation systems."
+        description="Meet Johnny Beirne — helping coaches, consultants and expert-led businesses turn knowledge into repeatable lead-generation systems."
         canonical="/about-me"
       />
 
@@ -22,7 +22,7 @@ const AboutMe = () => {
               <div className="relative overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
                 <img
                   src={johnnyPortrait}
-                  alt="Johnny Beirne — creator of LeadTree"
+                  alt="Johnny Beirne — founder and lead strategist"
                   className="block aspect-[4/5] w-64 object-cover sm:w-72"
                   loading="eager"
                 />

@@ -1,28 +1,18 @@
-## Problem
+# Fix: QA preview banner covers the top navigation
 
-Navigating between routes (e.g. clicking "Your Dashboard") leaves the middle content region scrolled to wherever the previous page left it, so `/challenger-dashboard` opens mid-page instead of at the top.
+The QA preview bar is pinned across the very top of the screen and sits on top of the app's top navigation, hiding the logo and nav links.
 
-## Root cause (verified)
+## Change
 
-In `src/components/AppShell.tsx`, the LeadTree shell's `<main>` element is the actual scroll container (`overflow-y-auto`, height `calc(100vh - var(--topbar-h))`). The `window` never scrolls, so React Router's default behavior and any `window.scrollTo(0,0)` calls have no effect on it. Nothing currently resets `main.scrollTop` on pathname change.
+Turn the full-width top bar into a small floating pill that never overlaps navigation:
 
-## Fix
+- Position it bottom-left, above the countdown bar area, instead of `top-0` full width.
+- Keep the same amber styling, eye icon, tier/entry label, and Exit Preview button.
+- Compact: rounded pill, shadow, auto width, no layout shift on any page.
+- Mobile: stays within the viewport, text truncates, Exit Preview button always tappable.
 
-Scope: `src/components/AppShell.tsx` only.
+No changes to QA state logic, tier switching, or anything else.
 
-1. Attach a `ref` to the `<main>` element in the LeadTree shell branch.
-2. On every `pathname` change, reset that element's `scrollTop` to `0` inside a `useLayoutEffect` (runs before paint, so no visible jump).
-3. Use `element.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior })` with a fallback to direct `scrollTop = 0` assignment.
-4. Guard against hash links: if `location.hash` is present, skip the reset so in-page anchor navigation still works.
+## Technical
 
-## Out of scope
-
-- No changes to sidebars, right rail, countdown pill, or any page component.
-- No changes to the fallback (non-LeadTree) shell — the window scrolls there normally.
-- No new dependencies.
-
-## Verification
-
-- Scroll down on any page, click "Your Dashboard" → middle region lands at top.
-- Repeat between Day 1 / Day 2 / Day 3 and Earn.
-- Anchor links (`#section`) still jump to their target.
+Single file: `src/components/QaModePanel.tsx`, the `banner` element (currently `fixed left-0 right-0 top-0 z-[90]`). Replace with a `fixed bottom-4 left-4 z-[90]` pill wrapper; inner content unchanged apart from spacing classes.

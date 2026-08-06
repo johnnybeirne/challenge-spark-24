@@ -175,9 +175,12 @@ serve(async (req) => {
       }
     }
 
+    const rawResponse = withMemory(answer ?? fallback, memoryContext);
+    const response = ensureNoForbiddenFallback(rawResponse);
+
     return new Response(
       JSON.stringify({
-        response: withMemory(answer ?? fallback, memoryContext),
+        response,
         source,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },

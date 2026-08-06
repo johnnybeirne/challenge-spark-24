@@ -146,6 +146,7 @@ export default function Rewards() {
               </div>
             );
           })}
+          <LadderInviteBlock className="mt-3" />
         </div>
       </main>
 

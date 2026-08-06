@@ -78,6 +78,24 @@ const AdminRewardsLadder = () => {
       </EditorCard>
 
       <EditorCard
+        title="Invite block"
+        description="Shown at the top and bottom of the ladder. The link itself is unique to each participant."
+      >
+        <div className="grid gap-3">
+          <EditableField
+            label="Heading"
+            value={ladder.inviteHeading ?? ""}
+            onChange={(v) => setLadder((p) => ({ ...p, inviteHeading: v }))}
+          />
+          <EditableField
+            label="Copy line"
+            value={ladder.inviteBody ?? ""}
+            onChange={(v) => setLadder((p) => ({ ...p, inviteBody: v }))}
+          />
+        </div>
+      </EditorCard>
+
+      <EditorCard
         title="Ladder rungs"
         description="Reward name, points to earn it free, one price, and order."
       >

@@ -4,7 +4,7 @@ import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { getCanonicalUrl } from "@/lib/utils";
+import { getReferralUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /**

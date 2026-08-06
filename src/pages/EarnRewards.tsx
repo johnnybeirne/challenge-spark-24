@@ -18,7 +18,7 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 import { memoryShareText } from "@/lib/personalisation";
-import { getCanonicalUrl } from "@/lib/utils";
+import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";

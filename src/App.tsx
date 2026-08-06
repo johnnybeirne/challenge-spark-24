@@ -124,7 +124,7 @@ const App = () => (
             <ScrollToTop />
             <AttributionCapture />
             <TypographyLoader />
-            <FreePreviewBadge />
+            {/* QA preview status pill is rendered by QaModePanel — no separate badge needed */}
 
             
             <ExperienceShell>

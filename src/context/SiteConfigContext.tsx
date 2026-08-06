@@ -197,7 +197,8 @@ export interface RewardDef {
 export interface LadderRung {
   points: number;
   name: string;
-  retailValue: number;
+  /** @deprecated single price per rung — use buyPrice */
+  retailValue?: number;
   buyPrice: number;
   priceId: string;
   doubleUnlock: boolean;

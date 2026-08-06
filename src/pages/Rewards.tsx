@@ -96,11 +96,6 @@ export default function Rewards() {
                     <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                   )}
                   <p className="text-base font-bold tracking-tight">{rung.name}</p>
-                  {rung.buyPrice > 0 && (
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-foreground">
-                      worth ${rung.buyPrice}
-                    </span>
-                  )}
                   {isGold && (
                     <span className="inline-flex shrink-0 items-center rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
                       <Sparkles className="mr-0.5 inline h-2 w-2" />

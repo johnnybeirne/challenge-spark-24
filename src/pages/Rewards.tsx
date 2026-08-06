@@ -32,6 +32,9 @@ export default function Rewards() {
     [ordered],
   );
 
+  const pointsPerDay =
+    pointRules.find((rule) => rule.id === "complete_day_1")?.points ?? 50;
+
   const handleBuy = (priceId: string) => {
     openCheckout({
       priceId,

@@ -17,6 +17,17 @@ export function getCanonicalUrl(path = ""): string {
   return `${CANONICAL_APP_URL}${trimmed}`;
 }
 
+/**
+ * Build a referral link. Returns "" when the participant has no invite code yet,
+ * so callers never render a broken `?ref=` link with an empty code.
+ */
+export function getReferralUrl(path: string, code?: string | null): string {
+  const trimmedCode = (code ?? "").trim();
+  if (!trimmedCode) return "";
+  return getCanonicalUrl(`${path}?ref=${encodeURIComponent(trimmedCode)}`);
+}
+
+
 export function getCompletionDayName(referenceDate: number | Date = Date.now()): string {
   const base = typeof referenceDate === "number" ? referenceDate : referenceDate.getTime();
   return new Date(base + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });

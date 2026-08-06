@@ -18,7 +18,7 @@ export function LadderInviteBlock({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const inviteCode = state.user?.inviteCode ?? "";
-  const referralLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
+  const referralLink = getReferralUrl("/challenge", inviteCode);
 
   const heading = config.rewards.ladder.inviteHeading || "Your invite link";
   const body =

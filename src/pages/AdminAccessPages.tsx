@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { ExternalLink, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Spinner from "@/components/Spinner";
 import {
@@ -158,7 +157,6 @@ const AdminAccessPages = () => {
                     patch(page.page_key, {
                       items: page.items.map((it, idx) => (idx === i ? { ...it, ...changes } : it)),
                     });
-                  const Icon = getAccessIcon(item.icon);
                   return (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
@@ -214,11 +212,6 @@ const AdminAccessPages = () => {
                         multiline
                         rows={2}
                       />
-                      <div className="sr-only">
-                        <Label>
-                          <Icon className="h-3 w-3" />
-                        </Label>
-                      </div>
                     </div>
                   );
                 }}

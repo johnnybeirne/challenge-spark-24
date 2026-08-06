@@ -85,9 +85,9 @@ const EarnRewards = () => {
   const [loading, setLoading] = useState(true);
   const [topChallengers, setTopChallengers] = useState<{ name: string; pts: number }[]>([]);
 
-  const inviteCode = state.user?.inviteCode ?? "builder";
-  const quizLink = getCanonicalUrl(`/assess?ref=${inviteCode}`);
-  const challengeLink = getCanonicalUrl(`/challenge?ref=${inviteCode}`);
+  const inviteCode = state.user?.inviteCode ?? "";
+  const quizLink = getReferralUrl("/assess", inviteCode);
+  const challengeLink = getReferralUrl("/challenge", inviteCode);
   const referralLink = quizLink; // legacy alias for share text helpers below
 
   const shareText = memoryShareText(state.memory);

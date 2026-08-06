@@ -79,6 +79,65 @@ function formatKbAnswer(docs: any[]): string {
   return `${top.content}\n\n_Answer powered by LeadTree Blueprint — ${source}_`;
 }
 
+// Generates a genuine strategist answer via Lovable AI, grounded in the LeadTree
+// knowledge base + Q&A library. Used when no stored answer matches, so distinct
+// prompts no longer collapse to the same canned fallback.
+async function generateAiAnswer(
+  prompt: string,
+  memoryContext: string | undefined,
+  kbDocs: any[],
+  qaRows: any[],
+): Promise<string | null> {
+  const key = Deno.env.get("LOVABLE_API_KEY");
+  if (!key) return null;
+
+  const kbContext = kbDocs
+    .map((d) => `# ${d.title}\n${String(d.content).slice(0, 2000)}`)
+    .join("\n\n");
+  const qaContext = qaRows
+    .slice(0, 25)
+    .map((r) => `Q: ${r.question}\nA: ${String(r.answer).slice(0, 400)}`)
+    .join("\n\n");
+
+  const system = [
+    "You are the LEADTREE challenge strategist, coaching a builder through a 3-day challenge.",
+    "Answer the specific question asked — be concrete, practical and specific to their context.",
+    "Never use bold markdown (** **) anywhere in your response.",
+    "Keep answers under 250 words. Use short paragraphs or simple dashes for lists.",
+    "Never say you don't have an answer; always give your best strategic guidance.",
+    memoryContext ? `Context about this builder:\n${memoryContext}` : "",
+    kbContext ? `LeadTree knowledge base excerpts:\n${kbContext}` : "",
+    qaContext ? `Existing Q&A library for tone and doctrine:\n${qaContext}` : "",
+  ].filter(Boolean).join("\n\n");
+
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": key,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3.6-flash",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: prompt },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      console.error("ai gateway error:", res.status, await res.text());
+      return null;
+    }
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    return typeof text === "string" && text.trim() ? text.replace(/\*\*/g, "").trim() : null;
+  } catch (e) {
+    console.error("ai generate failed:", e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -129,7 +188,7 @@ serve(async (req) => {
     const promptTokens = new Set(tokenize(prompt));
 
     let answer: string | null = null;
-    let source: "qa-exact" | "kb" | "qa" | "fallback" = "fallback";
+    let source: "qa-exact" | "kb" | "qa" | "ai" | "fallback" = "fallback";
 
     // 1. Exact (normalized) question match — highest confidence
     for (const r of rows ?? []) {
@@ -141,12 +200,10 @@ serve(async (req) => {
     }
 
     // 2. Knowledge-base retrieval — LeadTree frameworks are the primary intelligence layer
-    if (!answer) {
-      const docs = await retrieveKb(sb, prompt, stage);
-      if (docs.length > 0) {
-        answer = formatKbAnswer(docs);
-        source = "kb";
-      }
+    const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
+    if (!answer && kbDocs.length > 0) {
+      answer = formatKbAnswer(kbDocs);
+      source = "kb";
     }
 
     // 3. Keyword-scored QA fallback
@@ -175,8 +232,20 @@ serve(async (req) => {
       }
     }
 
-    const rawResponse = withMemory(answer ?? fallback, memoryContext);
+    // 4. AI strategist — generate a real answer instead of repeating the fallback
+    if (!answer) {
+      const aiAnswer = await generateAiAnswer(prompt, memoryContext, kbDocs, rows ?? []);
+      if (aiAnswer) {
+        answer = aiAnswer;
+        source = "ai";
+      }
+    }
+
+    const rawResponse = source === "ai"
+      ? (answer as string)
+      : withMemory(answer ?? fallback, memoryContext);
     const response = ensureNoForbiddenFallback(rawResponse);
+
 
     return new Response(
       JSON.stringify({

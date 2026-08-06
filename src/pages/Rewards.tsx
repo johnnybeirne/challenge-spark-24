@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { Sparkles, Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 
 /** Ladder order is driven by one shared `position` field, sorted ascending. */
 export function sortRungs(rungs: LadderRung[]): LadderRung[] {

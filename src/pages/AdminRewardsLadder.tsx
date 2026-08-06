@@ -154,7 +154,7 @@ const AdminRewardsLadder = () => {
               {
                 points: 0,
                 name: "New reward",
-                retailValue: 0,
+                
                 buyPrice: 0,
                 priceId: "",
                 doubleUnlock: false,

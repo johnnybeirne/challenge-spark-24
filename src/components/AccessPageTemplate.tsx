@@ -107,7 +107,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             </>
           ) : (
             <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
-              Your personal invite link appears hereateway once you're signed in.
+              Your personal invite link appears here when you're signed in.
             </p>
           )}
         </section>

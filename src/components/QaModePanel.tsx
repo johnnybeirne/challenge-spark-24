@@ -626,6 +626,18 @@ const QaModePanel = () => {
               </p>
             </div>
 
+            <div className="space-y-1.5 rounded-md border border-rose-500/40 bg-rose-500/5 p-2">
+              <SectionLabel>Unlock Gates</SectionLabel>
+              <Toggle
+                label="Preview locked state"
+                checked={qa.flags.previewLockedGates}
+                onChange={(v) => updateQaFlags({ previewLockedGates: v })}
+              />
+              <p className="text-[10px] leading-snug text-muted-foreground">
+                Forces gated pages (like Day 1) to show the lock screen, even if you already completed or unlocked them.
+              </p>
+            </div>
+
             <div className="space-y-1.5 rounded-md border border-primary/40 bg-primary/5 p-2">
               <SectionLabel>Live Quiz (challenge taker view)</SectionLabel>
               <div className="grid grid-cols-2 gap-1.5">

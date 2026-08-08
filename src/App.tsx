@@ -80,6 +80,7 @@ import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
+import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminNavTips from "@/pages/AdminNavTips";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
@@ -284,6 +285,7 @@ const App = () => (
                 <Route path="nav-tips" element={<AdminNavTips />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
+                <Route path="unlocks" element={<AdminUnlockGates />} />
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

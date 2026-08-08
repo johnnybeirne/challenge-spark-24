@@ -664,7 +664,6 @@ const QaModePanel = () => {
               </p>
             </div>
 
-            <QaPersonas />
             <QaSimulatedDate />
 
 

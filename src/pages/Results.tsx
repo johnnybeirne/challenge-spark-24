@@ -15,7 +15,6 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
 
 
-const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
 const TYPING_SPEED_MS = 18;
 const THINKING_MS = 900;
@@ -296,20 +295,16 @@ const Results = () => {
   try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
   try { pendingCoupon = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
 
-  const freeTrainingDestination = state.user
-    ? FREE_TRAINING_COURSE_PATH
-    : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
   const cta = (() => {
-    if (entryIntent === "free_training") {
-      return { label: joinLabel, onClick: () => navigate(freeTrainingDestination) };
-    }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
       return { label: joinLabel, onClick: () => navigate(dest) };
     }
+    // Everyone joining the challenge from results goes to challenge signup,
+    // which lands them on the participant challenge dashboard.
     return { label: joinLabel, onClick: () => navigate("/challenge/join") };
   })();
 

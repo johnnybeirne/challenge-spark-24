@@ -43,7 +43,7 @@ const AdminUnlockGates = () => {
         teaser_lines: Number(row.teaser_lines) || 0,
         price_cents: Math.round(Number(row.price_cents) || 0),
         invites_required: Number(row.invites_required) || 0,
-        free_window_hours: Number(row.free_window_hours) || 0,
+        window_hours: Number(row.window_hours) || 0,
         show_buy: row.show_buy,
         show_invite: row.show_invite,
         buy_label: row.buy_label,
@@ -150,16 +150,17 @@ const AdminUnlockGates = () => {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs">Free window (hours)</Label>
+                  <Label className="text-xs">Window length (hours from signup)</Label>
                   <Input
                     type="number"
-                    value={row.free_window_hours}
+                    value={row.window_hours}
                     onChange={(e) =>
-                      update(row.id, "free_window_hours", Number(e.target.value) as any)
+                      update(row.id, "window_hours", Number(e.target.value) as any)
                     }
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    Counted from each participant finishing the previous step. Set 0 for no free window.
+                    How long this day stays free. Day 1 opens at signup, Day 2 opens when Day 1
+                    closes, Day 3 opens when Day 2 closes.
                   </p>
                 </div>
               </div>

@@ -779,21 +779,21 @@ function isValidUrl(url: string | undefined): boolean {
 }
 
 /**
- * Day 2 and Day 3 sit behind the standard unlock gate. The free window starts
- * at this participant's own completion of the previous day, so it is evergreen
- * and never anchored to a calendar date. Day 1 is always open.
+ * Every day sits behind the standard unlock gate. Each day is live for its own
+ * window on the signup clock, and a bought or invite-earned grant opens it for
+ * life. Completion has no effect on access.
  */
 const DayChallenge = () => {
   const { day } = useParams<{ day: string }>();
   const { state } = useAppState();
   const dayNum = Number(day) || 1;
 
-  if (dayNum !== 2 && dayNum !== 3) return <DayChallengeInner />;
-
-  const anchor = state.challenge.dayCompletedAt?.[`day${dayNum - 1}`] || null;
-
   return (
-    <UnlockGate gateKey={`day${dayNum}`} freeWindowAnchor={anchor}>
+    <UnlockGate
+      gateKey={`day${dayNum}`}
+      dayIndex={dayNum}
+      signupAt={state.challenge.startedAt}
+    >
       <DayChallengeInner />
     </UnlockGate>
   );

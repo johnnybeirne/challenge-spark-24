@@ -138,7 +138,7 @@ const LeftSidebar = () => {
             {days.map((d) => {
               const isDone = d < currentDay;
               const isCurrent = d === currentDay;
-              const locked = d > currentDay;
+              const locked = !isDayLive(d);
               const to = `/challenge/day-${d}`;
               const isActiveDay = pathname === to;
               const row = (
@@ -162,8 +162,7 @@ const LeftSidebar = () => {
                     {isDone ? <Check className="h-2.5 w-2.5" strokeWidth={3} /> : locked ? <Lock className="h-2 w-2" /> : null}
                   </span>
                   <Link
-                    to={locked ? "#" : to}
-                    aria-disabled={locked}
+                    to={to}
                     className={[
                       "block text-sm leading-tight",
                       isActiveDay || isCurrent

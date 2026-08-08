@@ -8,12 +8,11 @@ import { getEntryIntent } from "@/lib/entryIntent";
 const ChallengeSignup = () => {
   const navigate = useNavigate();
 
-  // Two onboarding paths share /join:
-  // - Assessment funnel (entryIntent === "challenge"): land on the challenger
-  //   dashboard so they see their tailored invitation/onboarding hub.
-  // - Direct challenge signup (no intent): drop straight into Day 1.
+  // Every challenge signup lands on the participant challenge dashboard
+  // (Day 1 / Day 2 / Day 3 with Day Progress). The signup clock gate then
+  // decides which day is open.
   const cameFromAssessment = getEntryIntent() === "challenge";
-  const defaultRedirect = cameFromAssessment ? "/challenger-dashboard" : "/challenge/day-1";
+  const defaultRedirect = "/challenger-dashboard";
 
   const successHeadline = cameFromAssessment
     ? (first: string) => `Your 3-day challenge is ready, ${first}.`

@@ -85,17 +85,20 @@ const QaDayAccess = () => {
   };
 
   /**
-   * Simulate genuinely being at day N on the signup clock: set the demo
-   * participant's signup timestamp to now minus (N-1) windows, so now falls
-   * inside day N's own window. Grants from day N onwards are cleared so the
-   * real gate decides access on its own, nothing is bypassed.
+   * Single write path for the signup anchor, shared by the day jump and the
+   * fresh signup reset. Sets the demo participant's signup timestamp to now
+   * minus (day - 1) windows, so now falls inside day N's own window, clears
+   * the preview-locked override and any persona or simulated date overlay,
+   * and removes stale grants so the real gate decides access on its own.
    */
-  const jumpToDay = async (day: number) => {
-    if (busy) return;
-    setBusy(true);
-    // A jump is a fresh simulation, so drop the "preview locked" override that
-    // would otherwise force every gate closed no matter what the state says.
-    updateQaState({ active: true, flags: { ...getQaState().flags, previewLockedGates: false } });
+  const applySignupAnchor = async (day: number, clearAllGrants = false) => {
+    const qaState = getQaState();
+    updateQaState({
+      active: true,
+      persona: null,
+      simulatedJoinedAt: null,
+      flags: { ...qaState.flags, previewLockedGates: false },
+    });
 
     // Always compute a fresh anchor from now, never reuse a stale signup time.
     const anchor = new Date(
@@ -108,7 +111,14 @@ const QaDayAccess = () => {
     }));
 
     if (user?.id) {
-      const stale = DAYS.filter((d) => d >= day).map((d) => `day${d}`);
+      // Persist the anchor so it survives a reload, since the normal progress
+      // save deliberately never writes started_at.
+      await (supabase.from("challenge_progress") as any).upsert(
+        { user_id: user.id, started_at: anchor, current_day: day },
+        { onConflict: "user_id" }
+      );
+
+      const stale = DAYS.filter((d) => clearAllGrants || d >= day).map((d) => `day${d}`);
       if (stale.length) {
         await supabase
           .from("unlock_grants")
@@ -118,10 +128,25 @@ const QaDayAccess = () => {
       }
       await loadGrants();
     }
+  };
 
+  const jumpToDay = async (day: number) => {
+    if (busy) return;
+    setBusy(true);
+    await applySignupAnchor(day);
     setBusy(false);
     navigate(`/challenge/day-${day}`);
   };
+
+  /** Fresh signup: signup time is now, no grants, nothing carried over. */
+  const freshSignup = async () => {
+    if (busy) return;
+    setBusy(true);
+    await applySignupAnchor(1, true);
+    setBusy(false);
+    navigate("/challenge/day-1");
+  };
+
 
   const signupAt = state.challenge?.startedAt;
 

@@ -195,14 +195,13 @@ const QaDayAccess = () => {
 
   const goToDay = (day: number) => {
     const target = dayPath(day);
-    if (location.pathname === target) {
-      // Already on the target route, so force a remount to pick up the new clock.
-      navigate("/dashboard", { replace: true });
-      setTimeout(() => navigate(target), 0);
-      return;
-    }
-    navigate(target);
+    // Full page load, so the day view always rebuilds from the new signup anchor,
+    // including when we are already sitting on the target route.
+    window.location.assign(target);
+    void navigate;
+    void location;
   };
+
 
   const jumpToDay = async (day: number) => {
     if (busy) return;

@@ -337,9 +337,11 @@ const QaDayAccess = () => {
         {DAYS.map((d) => (
           <button
             key={d}
+            disabled={busy}
             onClick={() => jumpToDay(d)}
-            className="flex-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-black uppercase tracking-wider hover:bg-muted"
+            className="flex-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-black uppercase tracking-wider hover:bg-muted disabled:opacity-50"
           >
+
             Go Day {d}
           </button>
         ))}

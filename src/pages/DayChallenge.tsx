@@ -170,28 +170,13 @@ const DayChallengeInner = () => {
 
 
 
-  // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")
-  // lives in /training under "Quiz Funnel Strategy".
+  // Day 2 — single-screen flow. The live quiz preview never mounts here: it only
+  // renders in its own standalone tab at /quiz-preview. Day 2 inside the platform
+  // shows the quiz-strategy teaching plus the download-your-quiz assets.
   if (dayNum === 2) {
-    const step = state.challenge.aiOutputs.day2_step;
-    if (step === "generating") {
-      return <Day2QuizGenerating />;
-    }
-    if (step === "2") {
-      return (
-        <Day2QuizPlayable
-          onClose={() => setState((prev) => ({
-            ...prev,
-            challenge: {
-              ...prev.challenge,
-              aiOutputs: { ...prev.challenge.aiOutputs, day2_step: "1" },
-            },
-          }))}
-        />
-      );
-    }
     return <Day2Screen1 />;
   }
+
 
 
 

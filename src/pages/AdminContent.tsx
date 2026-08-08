@@ -62,6 +62,8 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "signup", label: "Signup", previewUrl: "/join", description: "Account creation" },
   { id: "results", label: "Results", previewUrl: "/results", description: "Diagnostic results copy" },
   { id: "dashboard", label: "Dashboard", previewUrl: "/challenger-dashboard", description: "Authenticated dashboard" },
+  { id: "day2", label: "Day 2 Build Quiz", previewUrl: "/challenge/day/2", description: "Day 2 build your quiz page title and subtitle" },
+
   { id: "unlocks", label: "Unlocks", previewUrl: "/unlocks", description: "Unlocks page copy" },
   { id: "rewards", label: "Rewards", previewUrl: "/bonus-vault", description: "Rewards page copy" },
   { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },

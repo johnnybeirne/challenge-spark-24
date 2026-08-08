@@ -12,6 +12,7 @@ import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
 import { usePremiumUpsellSettings } from "@/hooks/usePremiumUpsellSettings";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;
 const DAY2_TOTAL_STEPS = 5;
@@ -137,8 +138,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
               {isLocked ? <Lock className="h-3.5 w-3.5" /> : isRead ? <Check className="h-3.5 w-3.5" /> : index}
             </span>
             <CardTitle
-              className={cn("leading-snug", isLocked && "text-muted-foreground")}
-              style={{ fontSize: "var(--h3-size)" }}
+              className={cn("text-[16px] font-semibold leading-snug", isLocked && "text-muted-foreground")}
             >
               {title}
             </CardTitle>
@@ -182,7 +182,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           ) : (
             <div className="space-y-4" aria-live="polite">
               {typed.split(/\n\n+/).map((para, idx, arr) => (
-                <p key={idx} className="leading-relaxed text-foreground" style={{ fontSize: "var(--body-size)" }}>
+                <p key={idx} className="text-[15px] leading-relaxed text-foreground">
                   {para}
                   {idx === arr.length - 1 && !typingDone && (
                     <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
@@ -211,6 +211,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
   const { settings: upsell } = usePremiumUpsellSettings();
+  const { t: tDay2 } = useSiteContent("day2");
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's
   // "Day 2: bypass mark-as-read gate" toggle. Active QA mode alone
@@ -441,11 +442,14 @@ const Day2Screen1 = () => {
       <div className="mx-auto w-[90%] max-w-[1400px] px-4 py-6 sm:py-8 pb-24">
         {/* ZONE 1 - PAGE HEADER */}
         <header className="mb-10 space-y-2">
-          <h1 className="font-black leading-tight text-foreground" style={{ fontSize: "var(--h1-size)" }}>
-            Build your quiz
+          <h1 className="font-black leading-tight tracking-tight text-foreground text-[36px]">
+            {tDay2("header.title", "Build your quiz")}
           </h1>
-          <p className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>
-            Your quiz starts the conversation. Your challenge builds the trust that converts.
+          <p className="font-medium text-muted-foreground text-[18px]">
+            {tDay2(
+              "header.subtitle",
+              "Your quiz starts the conversation. Your challenge builds the trust that converts.",
+            )}
           </p>
           <p className="italic text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
             You're building this for {audience}.
@@ -454,9 +458,7 @@ const Day2Screen1 = () => {
 
         {/* ZONE 2 - TEACHING CONTENT */}
         <section className="mb-10 space-y-4">
-          <h2 className="font-black tracking-tight text-foreground" style={{ fontSize: "var(--h2-size)" }}>
-            Create the quiz that makes people want to complete your challenge
-          </h2>
+
 
           <div className="rounded-xl border border-border overflow-hidden divide-y divide-border">
             {cardCopy.map((c, idx) => {

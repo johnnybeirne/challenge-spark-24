@@ -21,6 +21,58 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
 
 const QA_SOURCE = "qa";
 const DAYS = [1, 2, 3] as const;
+const STEP_KEY = "leadioQaJourneyStep";
+
+/**
+ * The six-step journey. Each step is fully recomputed from this table, never
+ * from a stored snapshot, so Next, Back and Reset all land on the same state.
+ * anchorDay N means the signup clock is set to now minus (N-1) windows.
+ */
+const JOURNEY = [
+  {
+    label: "Fresh signup",
+    anchorDay: 1,
+    completed: [] as number[],
+    expected: "Day 1 open, Day 2 locked, Day 3 locked",
+    path: "/challenge/day-1",
+  },
+  {
+    label: "Day 1 completed",
+    anchorDay: 1,
+    completed: [1],
+    expected: "Day 1 open and completed, Day 2 locked, Day 3 locked",
+    path: "/challenge/day-1",
+  },
+  {
+    label: "Clock to end of Day 1 window",
+    anchorDay: 2,
+    completed: [1],
+    expected: "Day 1 locked, Day 2 open, Day 3 locked",
+    path: "/challenge/day/2",
+  },
+  {
+    label: "Day 2 completed",
+    anchorDay: 2,
+    completed: [1, 2],
+    expected: "Day 1 locked, Day 2 open and completed, Day 3 locked",
+    path: "/challenge/day/2",
+  },
+  {
+    label: "Clock to end of Day 2 window",
+    anchorDay: 3,
+    completed: [1, 2],
+    expected: "Day 1 locked, Day 2 locked, Day 3 open",
+    path: "/challenge/day/3",
+  },
+  {
+    label: "Day 3 completed",
+    anchorDay: 3,
+    completed: [1, 2, 3],
+    expected: "Day 3 open and completed, journey end",
+    path: "/challenge/day/3",
+  },
+];
+
 
 const QaDayAccess = () => {
   const { user } = useAuth();
@@ -28,6 +80,10 @@ const QaDayAccess = () => {
   const navigate = useNavigate();
   const [grants, setGrants] = useState<Record<string, boolean>>({});
   const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
+  const [stepIndex, setStepIndex] = useState(() => {
+    const raw = Number(localStorage.getItem(STEP_KEY));
+    return Number.isFinite(raw) && raw >= 0 && raw < JOURNEY.length ? raw : 0;
+  });
   const [busy, setBusy] = useState(false);
 
   const loadGrants = useCallback(async () => {
@@ -147,11 +203,94 @@ const QaDayAccess = () => {
     navigate("/challenge/day-1");
   };
 
+  /**
+   * Real completion write, scoped to the demo participant. Same rows the real
+   * flow uses: challenge.dayCompletedAt in state, persisted to
+   * challenge_progress.day_completed_at. Never bypasses the gate.
+   */
+  const applyCompletions = async (days: number[]) => {
+    const stamp = new Date().toISOString();
+    const map: Record<string, string> = {};
+    days.forEach((d) => {
+      map[`day${d}`] = stamp;
+    });
+    const currentDay = Math.min(3, (days.length ? Math.max(...days) : 0) + 1);
+
+    setState((prev) => ({
+      ...prev,
+      challenge: {
+        ...prev.challenge,
+        currentDay,
+        completed: days.includes(3),
+        dayCompletedAt: map,
+      },
+    }));
+
+    if (user?.id) {
+      await (supabase.from("challenge_progress") as any).upsert(
+        { user_id: user.id, day_completed_at: map, current_day: currentDay },
+        { onConflict: "user_id" }
+      );
+    }
+  };
+
+  const runStep = async (index: number) => {
+    if (busy) return;
+    const step = JOURNEY[index];
+    if (!step) return;
+    setBusy(true);
+    await applySignupAnchor(step.anchorDay, true);
+    await applyCompletions(step.completed);
+    localStorage.setItem(STEP_KEY, String(index));
+    setStepIndex(index);
+    setBusy(false);
+    navigate(step.path);
+  };
 
   const signupAt = state.challenge?.startedAt;
+  const step = JOURNEY[stepIndex];
+
 
   return (
     <div className="space-y-2 rounded-md border border-rose-500/40 bg-rose-500/5 p-2">
+      <SectionLabel>Journey Stepper (real gate)</SectionLabel>
+
+      <div className="space-y-1.5 rounded border border-border/60 bg-background p-2">
+        <div className="text-[11px] font-black uppercase tracking-wider">
+          Step {stepIndex + 1} of {JOURNEY.length}: {step.label}
+        </div>
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          Expected: {step.expected}
+        </p>
+        <div className="flex gap-1.5">
+          <button
+            disabled={busy || stepIndex === 0}
+            onClick={() => runStep(stepIndex - 1)}
+            className="flex-1 rounded border border-border px-2 py-1 text-[10px] font-bold uppercase hover:bg-muted disabled:opacity-40"
+          >
+            Back
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => runStep(Math.min(JOURNEY.length - 1, stepIndex + 1))}
+            className="flex-[2] rounded border border-primary bg-primary px-2 py-1 text-[10px] font-black uppercase tracking-wider text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {stepIndex === JOURNEY.length - 1 ? "Re-run step" : "Next"}
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => runStep(0)}
+            className="flex-1 rounded border border-border px-2 py-1 text-[10px] font-bold uppercase hover:bg-muted disabled:opacity-40"
+          >
+            Reset
+          </button>
+        </div>
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          Window length W is {windowHours}h, read from gate settings. Every step sets the real
+          signup anchor and writes real completion rows for this demo account only.
+        </p>
+      </div>
+
       <SectionLabel>Day Access (real gate)</SectionLabel>
 
       <button

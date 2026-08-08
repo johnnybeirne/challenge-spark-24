@@ -17,6 +17,7 @@ import {
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import QaSimulatedDate from "@/components/qa/QaSimulatedDate";
 import QaPersonas from "@/components/qa/QaPersonas";
+import QaDayAccess from "@/components/qa/QaDayAccess";
 
 const TIERS: { id: QaTier; label: string }[] = [
   { id: "free", label: "Free" },
@@ -637,6 +638,8 @@ const QaModePanel = () => {
                 Forces gated pages (like Day 1) to show the lock screen, even if you already completed or unlocked them.
               </p>
             </div>
+
+            <QaDayAccess />
 
             <div className="space-y-1.5 rounded-md border border-primary/40 bg-primary/5 p-2">
               <SectionLabel>Live Quiz (challenge taker view)</SectionLabel>

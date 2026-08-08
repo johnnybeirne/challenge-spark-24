@@ -6,7 +6,9 @@
 // so anything shown afterwards is the real participant view.
 
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppState } from "@/context/AppContext";
@@ -78,6 +80,8 @@ const QaDayAccess = () => {
   const { user } = useAuth();
   const { state, setState } = useAppState();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [grants, setGrants] = useState<Record<string, boolean>>({});
   const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
   const [stepIndex, setStepIndex] = useState(() => {
@@ -186,22 +190,50 @@ const QaDayAccess = () => {
     }
   };
 
+  /** Canonical route per day: Day 1 has its own page, Days 2 and 3 share one. */
+  const dayPath = (day: number) => (day === 1 ? "/challenge/day-1" : `/challenge/day/${day}`);
+
+  const goToDay = (day: number) => {
+    const target = dayPath(day);
+    if (location.pathname === target) {
+      // Already on the target route, so force a remount to pick up the new clock.
+      navigate("/dashboard", { replace: true });
+      setTimeout(() => navigate(target), 0);
+      return;
+    }
+    navigate(target);
+  };
+
   const jumpToDay = async (day: number) => {
     if (busy) return;
     setBusy(true);
-    await applySignupAnchor(day);
-    setBusy(false);
-    navigate(`/challenge/day-${day}`);
+    try {
+      await applySignupAnchor(day, true);
+      toast.success(`Jumped to Day ${day}`);
+      goToDay(day);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not jump. Try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   /** Fresh signup: signup time is now, no grants, nothing carried over. */
   const freshSignup = async () => {
     if (busy) return;
     setBusy(true);
-    await applySignupAnchor(1, true);
-    setBusy(false);
-    navigate("/challenge/day-1");
+    try {
+      await applySignupAnchor(1, true);
+      toast.success("Fresh signup applied");
+      goToDay(1);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not reset. Try again.");
+    } finally {
+      setBusy(false);
+    }
   };
+
+
 
   /**
    * Real completion write, scoped to the demo participant. Same rows the real
@@ -305,9 +337,11 @@ const QaDayAccess = () => {
         {DAYS.map((d) => (
           <button
             key={d}
+            disabled={busy}
             onClick={() => jumpToDay(d)}
-            className="flex-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-black uppercase tracking-wider hover:bg-muted"
+            className="flex-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-black uppercase tracking-wider hover:bg-muted disabled:opacity-50"
           >
+
             Go Day {d}
           </button>
         ))}

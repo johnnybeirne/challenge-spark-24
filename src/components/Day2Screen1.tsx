@@ -12,6 +12,7 @@ import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
 import { usePremiumUpsellSettings } from "@/hooks/usePremiumUpsellSettings";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;
 const DAY2_TOTAL_STEPS = 5;
@@ -137,8 +138,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
               {isLocked ? <Lock className="h-3.5 w-3.5" /> : isRead ? <Check className="h-3.5 w-3.5" /> : index}
             </span>
             <CardTitle
-              className={cn("leading-snug", isLocked && "text-muted-foreground")}
-              style={{ fontSize: "var(--h3-size)" }}
+              className={cn("text-[16px] font-semibold leading-snug", isLocked && "text-muted-foreground")}
             >
               {title}
             </CardTitle>
@@ -182,7 +182,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           ) : (
             <div className="space-y-4" aria-live="polite">
               {typed.split(/\n\n+/).map((para, idx, arr) => (
-                <p key={idx} className="leading-relaxed text-foreground" style={{ fontSize: "var(--body-size)" }}>
+                <p key={idx} className="text-[15px] leading-relaxed text-foreground">
                   {para}
                   {idx === arr.length - 1 && !typingDone && (
                     <span className="inline-block w-2 h-2 rounded-full ml-1 align-[1px] bg-foreground/70 animate-pulse" aria-hidden="true" />
@@ -211,6 +211,7 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
   const { settings: upsell } = usePremiumUpsellSettings();
+  const { t: tDay2 } = useSiteContent("day2");
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's
   // "Day 2: bypass mark-as-read gate" toggle. Active QA mode alone

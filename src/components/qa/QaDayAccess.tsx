@@ -147,8 +147,53 @@ const QaDayAccess = () => {
     navigate("/challenge/day-1");
   };
 
+  /**
+   * Real completion write, scoped to the demo participant. Same rows the real
+   * flow uses: challenge.dayCompletedAt in state, persisted to
+   * challenge_progress.day_completed_at. Never bypasses the gate.
+   */
+  const applyCompletions = async (days: number[]) => {
+    const stamp = new Date().toISOString();
+    const map: Record<string, string> = {};
+    days.forEach((d) => {
+      map[`day${d}`] = stamp;
+    });
+    const currentDay = Math.min(3, (days.length ? Math.max(...days) : 0) + 1);
+
+    setState((prev) => ({
+      ...prev,
+      challenge: {
+        ...prev.challenge,
+        currentDay,
+        completed: days.includes(3),
+        dayCompletedAt: map,
+      },
+    }));
+
+    if (user?.id) {
+      await (supabase.from("challenge_progress") as any).upsert(
+        { user_id: user.id, day_completed_at: map, current_day: currentDay },
+        { onConflict: "user_id" }
+      );
+    }
+  };
+
+  const runStep = async (index: number) => {
+    if (busy) return;
+    const step = JOURNEY[index];
+    if (!step) return;
+    setBusy(true);
+    await applySignupAnchor(step.anchorDay, true);
+    await applyCompletions(step.completed);
+    localStorage.setItem(STEP_KEY, String(index));
+    setStepIndex(index);
+    setBusy(false);
+    navigate(step.path);
+  };
 
   const signupAt = state.challenge?.startedAt;
+  const step = JOURNEY[stepIndex];
+
 
   return (
     <div className="space-y-2 rounded-md border border-rose-500/40 bg-rose-500/5 p-2">

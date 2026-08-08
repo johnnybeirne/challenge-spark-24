@@ -300,17 +300,17 @@ const Results = () => {
     ? FREE_TRAINING_COURSE_PATH
     : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
-  const challengeLabel = `Join the 3-Day Challenge today and be set up by ${completionDayName}.`;
+  const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
   const cta = (() => {
     if (entryIntent === "free_training") {
-      return { label: "Enrol in Free Training", onClick: () => navigate(freeTrainingDestination) };
+      return { label: joinLabel, onClick: () => navigate(freeTrainingDestination) };
     }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
-      return { label: challengeLabel, onClick: () => navigate(dest) };
+      return { label: joinLabel, onClick: () => navigate(dest) };
     }
-    return { label: challengeLabel, onClick: () => navigate("/challenge/join") };
+    return { label: joinLabel, onClick: () => navigate("/challenge/join") };
   })();
 
   return (
@@ -451,10 +451,10 @@ const Results = () => {
             <Button
               size="lg"
               onClick={cta.onClick}
-              className="h-[72px] w-full gap-3 rounded-2xl text-[var(--h2-size)] sm:text-[var(--h2-size)] font-bold tracking-tight shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
+              className="h-[72px] w-full gap-3 rounded-2xl text-[var(--h2-size)] sm:text-[var(--h2-size)] font-bold tracking-tight text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
             >
               {cta.label}
-              <ArrowRight className="w-6 h-6" />
+              <ArrowRight className="w-6 h-6 text-white" />
             </Button>
             <p className="text-center text-[var(--body-size)] sm:text-[var(--h2-size)] font-medium text-muted-foreground">
               {pendingCoupon && entryIntent === "premium_course"

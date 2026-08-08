@@ -20,7 +20,7 @@ import ReferralLinkField from "@/components/ReferralLinkField";
 import { getReferralUrl } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
-import { getQaState } from "@/lib/qaPreview";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 const formatPrice = (cents: number) =>
   `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
@@ -48,6 +48,7 @@ interface Props {
 
 export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Props) {
   const navigate = useNavigate();
+  const qa = useQaPreview();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
@@ -74,7 +75,7 @@ export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Prop
   }, [stateCode, user?.id]);
 
   if (loading) return null;
-  const qa = getQaState();
+  
   const forceLocked = qa.active && qa.flags.previewLockedGates;
   if (!config) return <>{children}</>;
   if (unlocked && !forceLocked) return <>{children}</>;

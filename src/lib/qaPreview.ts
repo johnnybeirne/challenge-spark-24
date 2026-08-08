@@ -113,7 +113,9 @@ export const updateQaState = (patch: Partial<QaPreviewState>) => {
 
 export const updateQaFlags = (patch: Partial<QaFlags>) => {
   const cur = getQaState();
-  setQaState({ ...cur, flags: { ...cur.flags, ...patch } });
+  // Toggling any flag implies QA preview should be on, otherwise consumers
+  // (which all check `active`) would silently ignore the change.
+  setQaState({ ...cur, active: true, flags: { ...cur.flags, ...patch } });
 };
 
 export const clearQaState = () => {

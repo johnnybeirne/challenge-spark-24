@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppState } from "@/context/AppContext";
-import { updateQaState } from "@/lib/qaPreview";
+import { getQaState, updateQaState } from "@/lib/qaPreview";
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">
@@ -102,12 +102,16 @@ const QaDayAccess = () => {
   const jumpToDay = async (day: number) => {
     if (busy) return;
     setBusy(true);
-    updateQaState({ active: true });
+    // A jump is a fresh simulation, so drop the "preview locked" override that
+    // would otherwise force every gate closed no matter what the state says.
+    updateQaState({ active: true, flags: { ...getQaState().flags, previewLockedGates: false } });
 
+    // Stamp the prior days as completed right now, so the free window for the
+    // target day is open. Reusing an old timestamp would leave it elapsed.
     const stamp = new Date().toISOString();
     setState((prev) => {
       const map: Record<string, string> = {};
-      for (let d = 1; d < day; d++) map[`day${d}`] = prev.challenge.dayCompletedAt?.[`day${d}`] || stamp;
+      for (let d = 1; d < day; d++) map[`day${d}`] = stamp;
       return {
         ...prev,
         challenge: { ...prev.challenge, currentDay: day, dayCompletedAt: map },

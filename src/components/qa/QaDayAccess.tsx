@@ -154,6 +154,14 @@ const QaDayAccess = () => {
     <div className="space-y-2 rounded-md border border-rose-500/40 bg-rose-500/5 p-2">
       <SectionLabel>Day Access (real gate)</SectionLabel>
 
+      <button
+        disabled={busy}
+        onClick={freshSignup}
+        className="w-full rounded border border-primary bg-primary px-2 py-1 text-[11px] font-black uppercase tracking-wider text-white hover:opacity-90 disabled:opacity-50"
+      >
+        Fresh signup (reset)
+      </button>
+
       <div className="flex gap-1.5">
         {DAYS.map((d) => (
           <button
@@ -165,6 +173,7 @@ const QaDayAccess = () => {
           </button>
         ))}
       </div>
+
 
       {DAYS.map((d) => {
         const w = getDayWindow(d, signupAt, windowHours);

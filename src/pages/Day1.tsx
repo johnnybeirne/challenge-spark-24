@@ -163,24 +163,7 @@ const Day1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <UnlockGate
-        gateKey="day1"
-        teaser={
-          <>
-            Day 1 is where you shape your Challenge Promise. It takes about 15 minutes.
-            Everything you create today is saved to your dashboard so you can come back to it anytime.{" "}
-            <button
-              onClick={() => navigate("/challenger-dashboard")}
-              className="inline text-primary underline underline-offset-2 hover:text-primary/80 font-semibold"
-            >
-              Click here to go to your dashboard
-            </button>
-          </>
-        }
-      >
-        <div className="app-page-container pt-6 space-y-4" />
-        <Day1Setup onComplete={handleComplete} />
-      </UnlockGate>
+      <Day1Setup onComplete={handleComplete} />
     </div>
   );
 };

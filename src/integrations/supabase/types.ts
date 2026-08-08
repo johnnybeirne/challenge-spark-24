@@ -2057,6 +2057,96 @@ export type Database = {
         }
         Relationships: []
       }
+      unlock_gates: {
+        Row: {
+          body: string
+          buy_label: string
+          created_at: string
+          enabled: boolean
+          id: string
+          invite_label: string
+          invites_required: number
+          key: string
+          label: string
+          price_cents: number
+          price_id: string
+          show_buy: boolean
+          show_invite: boolean
+          sort_order: number
+          teaser_lines: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          buy_label?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          invite_label?: string
+          invites_required?: number
+          key: string
+          label?: string
+          price_cents?: number
+          price_id?: string
+          show_buy?: boolean
+          show_invite?: boolean
+          sort_order?: number
+          teaser_lines?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          buy_label?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          invite_label?: string
+          invites_required?: number
+          key?: string
+          label?: string
+          price_cents?: number
+          price_id?: string
+          show_buy?: boolean
+          show_invite?: boolean
+          sort_order?: number
+          teaser_lines?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      unlock_grants: {
+        Row: {
+          created_at: string
+          gate_key: string
+          granted_at: string
+          id: string
+          source: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          gate_key: string
+          granted_at?: string
+          id?: string
+          source?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          gate_key?: string
+          granted_at?: string
+          id?: string
+          source?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       unlocks: {
         Row: {
           id: string

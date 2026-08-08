@@ -90,6 +90,10 @@ const Day1 = () => {
       challenge: {
         ...prev.challenge,
         currentDay: Math.max(prev.challenge.currentDay || 1, 2),
+        dayCompletedAt: {
+          ...(prev.challenge.dayCompletedAt || {}),
+          day1: prev.challenge.dayCompletedAt?.day1 || new Date().toISOString(),
+        },
       },
     }));
     trackEvent("training_hub_completed");

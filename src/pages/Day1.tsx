@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Day1Setup, { SETUP_KEY } from "@/components/Day1Setup";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
+import UnlockGate from "@/components/UnlockGate";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -107,64 +108,12 @@ const Day1 = () => {
     navigate("/challenger-dashboard");
   };
 
-  if (isLocked) {
-    const rawName =
-      (state.user?.name as string | undefined) ||
-      (authUser?.user_metadata?.full_name as string | undefined) ||
-      (authUser?.user_metadata?.name as string | undefined) ||
-      (authUser?.user_metadata?.first_name as string | undefined) ||
-      "";
-    const firstName = rawName.trim().split(/\s+/)[0] || "there";
-
-    // Read-only view of completed Day 1 — match Day 1 conversational style.
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="app-page-container py-6 pb-24 lg:py-8 space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Want to do Day 1 again?
-            </h1>
-            <p className="mt-2 text-[var(--body-size)] leading-relaxed text-muted-foreground">
-              Day 1 is where you shaped your Challenge Promise.
-            </p>
-            <p className="mt-2 text-[var(--body-size)] leading-relaxed text-muted-foreground">
-              Everything you created is in your dashboard.{" "}
-              <button
-                onClick={() => navigate("/challenger-dashboard")}
-                className="inline text-primary underline underline-offset-2 hover:text-primary/80 font-semibold"
-              >
-                Click here to go to your dashboard
-              </button>
-            </p>
-          </div>
-
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
-                Challenge Promise
-              </p>
-              {promiseText ? (
-                <p className="text-[var(--body-size)] leading-relaxed text-foreground rounded-xl border border-border bg-background px-4 py-3 font-medium">
-                  {promiseText}
-                </p>
-              ) : (
-                <p className="text-[var(--body-size)] text-muted-foreground">
-                  Your Challenge Promise isn't available yet.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-
-
   return (
-    <div className="min-h-screen bg-background">
-      <Day1Setup onComplete={handleComplete} />
-    </div>
+    <UnlockGate gateKey="day1" dayIndex={1} signupAt={state.challenge.startedAt}>
+      <div className="min-h-screen bg-background">
+        <Day1Setup onComplete={handleComplete} />
+      </div>
+    </UnlockGate>
   );
 };
 

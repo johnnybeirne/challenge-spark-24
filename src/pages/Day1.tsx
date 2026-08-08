@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Day1Setup, { SETUP_KEY } from "@/components/Day1Setup";
-import UnlockGate from "@/components/UnlockGate";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
@@ -10,7 +9,6 @@ import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 
 import { supabase } from "@/integrations/supabase/client";
-import { getQaState } from "@/lib/qaPreview";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;

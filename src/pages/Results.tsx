@@ -324,7 +324,7 @@ const Results = () => {
           </p>
 
           <div className="relative">
-            <div className={`text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black leading-none tracking-tighter ${accent.text}`}>
+            <div className={`text-7xl sm:text-8xl font-black leading-none tracking-tighter ${accent.text}`}>
               {animatedScore}
             </div>
             <p className="mt-2 text-[var(--body-size)] font-medium uppercase tracking-[0.25em] text-muted-foreground">

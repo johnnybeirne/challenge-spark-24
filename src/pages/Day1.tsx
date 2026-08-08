@@ -169,6 +169,7 @@ const Day1 = () => {
           <>
             Day 1 is where you shape your Challenge Promise — the single sentence that makes
             everything else in your challenge obvious. It takes about 15 minutes.
+            Everything you create today is saved to your dashboard so you can come back to it anytime.
           </>
         }
       >

@@ -15,7 +15,6 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
 
 
-const FREE_TRAINING_COURSE_PATH = "/blueprint/dashboard";
 
 const TYPING_SPEED_MS = 18;
 const THINKING_MS = 900;

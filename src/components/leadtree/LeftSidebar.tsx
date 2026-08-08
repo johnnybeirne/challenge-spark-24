@@ -118,7 +118,7 @@ const LeftSidebar = () => {
                 [
                   "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
                   isActive
-                    ? "bg-primary/10 font-medium text-primary"
+                    ? "border border-black bg-primary/10 font-medium text-primary"
                     : "text-[#1F2937] hover:bg-[#F7F8FA]",
                 ].join(" ")
               }

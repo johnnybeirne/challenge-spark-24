@@ -137,7 +137,7 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
             )}
 
             {config.show_buy && (
-              <div className="flex flex-col rounded-xl border border-border bg-card p-4">
+              <div className="flex flex-col rounded-xl border-2 border-primary/30 bg-primary/5 p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Sparkles className="h-4 w-4 text-primary" />
                   Unlock instantly

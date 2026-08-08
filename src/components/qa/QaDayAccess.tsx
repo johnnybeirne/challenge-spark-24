@@ -253,6 +253,44 @@ const QaDayAccess = () => {
 
   return (
     <div className="space-y-2 rounded-md border border-rose-500/40 bg-rose-500/5 p-2">
+      <SectionLabel>Journey Stepper (real gate)</SectionLabel>
+
+      <div className="space-y-1.5 rounded border border-border/60 bg-background p-2">
+        <div className="text-[11px] font-black uppercase tracking-wider">
+          Step {stepIndex + 1} of {JOURNEY.length}: {step.label}
+        </div>
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          Expected: {step.expected}
+        </p>
+        <div className="flex gap-1.5">
+          <button
+            disabled={busy || stepIndex === 0}
+            onClick={() => runStep(stepIndex - 1)}
+            className="flex-1 rounded border border-border px-2 py-1 text-[10px] font-bold uppercase hover:bg-muted disabled:opacity-40"
+          >
+            Back
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => runStep(stepIndex === 0 && !state.challenge?.startedAt ? 0 : Math.min(JOURNEY.length - 1, stepIndex + 1))}
+            className="flex-[2] rounded border border-primary bg-primary px-2 py-1 text-[10px] font-black uppercase tracking-wider text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {stepIndex === JOURNEY.length - 1 ? "Re-run step" : "Next"}
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => runStep(0)}
+            className="flex-1 rounded border border-border px-2 py-1 text-[10px] font-bold uppercase hover:bg-muted disabled:opacity-40"
+          >
+            Reset
+          </button>
+        </div>
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          Window length W is {windowHours}h, read from gate settings. Every step sets the real
+          signup anchor and writes real completion rows for this demo account only.
+        </p>
+      </div>
+
       <SectionLabel>Day Access (real gate)</SectionLabel>
 
       <button

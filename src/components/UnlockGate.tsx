@@ -38,21 +38,20 @@ interface Props {
   gateKey: string;
   /** Optional short teaser shown above the unlock card. */
   teaser?: ReactNode;
-  /**
-   * ISO timestamp of this participant's completion of the previous step.
-   * Starts the owner-set free window. Omit when the gate has no free window.
-   */
-  freeWindowAnchor?: string | null;
+  /** ISO timestamp of this participant's signup for the challenge. */
+  signupAt?: string | null;
+  /** 1-based position of this day in the signup-anchored schedule. */
+  dayIndex?: number;
   children: ReactNode;
 }
 
-export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Props) {
+export function UnlockGate({ gateKey, teaser, signupAt, dayIndex, children }: Props) {
   const navigate = useNavigate();
   const qa = useQaPreview();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
-    useUnlockGate(gateKey, { freeWindowAnchor });
+    useUnlockGate(gateKey, { signupAt, dayIndex });
   const { openCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [fetchedCode, setFetchedCode] = useState<string | null>(null);
 

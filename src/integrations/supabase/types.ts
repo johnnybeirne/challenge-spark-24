@@ -2104,7 +2104,6 @@ export type Database = {
           dashboard_label: string
           dashboard_note: string
           enabled: boolean
-          free_window_hours: number
           id: string
           instant_body: string
           instant_caption: string
@@ -2124,6 +2123,7 @@ export type Database = {
           teaser_lines: number
           title: string
           updated_at: string
+          window_hours: number
         }
         Insert: {
           body?: string
@@ -2132,7 +2132,6 @@ export type Database = {
           dashboard_label?: string
           dashboard_note?: string
           enabled?: boolean
-          free_window_hours?: number
           id?: string
           instant_body?: string
           instant_caption?: string
@@ -2152,6 +2151,7 @@ export type Database = {
           teaser_lines?: number
           title?: string
           updated_at?: string
+          window_hours?: number
         }
         Update: {
           body?: string
@@ -2160,7 +2160,6 @@ export type Database = {
           dashboard_label?: string
           dashboard_note?: string
           enabled?: boolean
-          free_window_hours?: number
           id?: string
           instant_body?: string
           instant_caption?: string
@@ -2180,6 +2179,7 @@ export type Database = {
           teaser_lines?: number
           title?: string
           updated_at?: string
+          window_hours?: number
         }
         Relationships: []
       }

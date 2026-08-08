@@ -324,17 +324,32 @@ const DayChallenge = () => {
   };
 
   const completeDay = () => {
+    const stamp = new Date().toISOString();
     if (dayNum < 3) {
       setState((prev) => ({
         ...prev,
-        challenge: { ...prev.challenge, currentDay: dayNum + 1 },
+        challenge: {
+          ...prev.challenge,
+          currentDay: dayNum + 1,
+          dayCompletedAt: {
+            ...(prev.challenge.dayCompletedAt || {}),
+            [`day${dayNum}`]: prev.challenge.dayCompletedAt?.[`day${dayNum}`] || stamp,
+          },
+        },
       }));
       trackEvent("day_completed", { day: dayNum });
       setShowCelebration(true);
     } else {
       setState((prev) => ({
         ...prev,
-        challenge: { ...prev.challenge, completed: true },
+        challenge: {
+          ...prev.challenge,
+          completed: true,
+          dayCompletedAt: {
+            ...(prev.challenge.dayCompletedAt || {}),
+            day3: prev.challenge.dayCompletedAt?.day3 || stamp,
+          },
+        },
       }));
       trackEvent("day_completed", { day: 3 });
       trackEvent("challenge_completed");

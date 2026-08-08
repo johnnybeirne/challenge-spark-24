@@ -48,6 +48,7 @@ interface Props {
 
 export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Props) {
   const navigate = useNavigate();
+  const qa = useQaPreview();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =

@@ -272,7 +272,7 @@ const QaDayAccess = () => {
           </button>
           <button
             disabled={busy}
-            onClick={() => runStep(stepIndex === 0 && !state.challenge?.startedAt ? 0 : Math.min(JOURNEY.length - 1, stepIndex + 1))}
+            onClick={() => runStep(Math.min(JOURNEY.length - 1, stepIndex + 1))}
             className="flex-[2] rounded border border-primary bg-primary px-2 py-1 text-[10px] font-black uppercase tracking-wider text-white hover:opacity-90 disabled:opacity-50"
           >
             {stepIndex === JOURNEY.length - 1 ? "Re-run step" : "Next"}

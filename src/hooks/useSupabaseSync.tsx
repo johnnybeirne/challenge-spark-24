@@ -248,6 +248,7 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       const startedAt = ensureStartedAt(base.startedAt);
       await saveChallengeProgress(userId, {
         currentDay: base.currentDay ?? 1,
+        dayCompletedAt: base.dayCompletedAt ?? {},
         startedAt,
         endsAt: getChallengeEndsAt(startedAt, base.endsAt),
         tasks: base.tasks ?? {},

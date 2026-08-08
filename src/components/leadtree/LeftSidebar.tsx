@@ -166,7 +166,7 @@ const LeftSidebar = () => {
                     aria-disabled={locked}
                     className={[
                       "block text-sm leading-tight",
-                      isCurrent
+                      isActiveDay || isCurrent
                         ? "font-semibold text-primary"
                         : locked
                           ? "text-[#6B7280]"

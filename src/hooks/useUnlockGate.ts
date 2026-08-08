@@ -1,18 +1,19 @@
 // Canonical unlock-gate logic.
-// A gate locks any piece of content behind three paths, in order:
-//   0. A time-boxed free window that starts at the participant's own
-//      completion of the previous step (owner-set hours, evergreen, never a
-//      calendar date). Opening the content inside that window grants access
-//      permanently. If the window elapses unopened, the free path is gone and
-//      never reopens.
-//   1. Invite N friends who join (state.network.direct)
-//   2. Buy it outright (owner-set single price)
+// Access to a day is decided by exactly two things:
+//   1. The signup-anchored schedule. Each day is live for one window of
+//      `window_hours` measured from the participant's signup time, so Day N is
+//      live from signup + (N-1) windows to signup + N windows. Before that
+//      window and after it, the day is locked. Completion is irrelevant.
+//   2. A permanent unlock_grant, earned by inviting N friends who join or by
+//      buying the day at the owner-set single price. A granted day stays open
+//      for life and never re-locks, whether its window has passed or not.
 // Config lives in `unlock_gates`; per-user unlocks live in `unlock_grants`.
 
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
+import { DEFAULT_WINDOW_HOURS, getDayWindow } from "@/lib/daySchedule";
 
 export interface UnlockGateConfig {
   key: string;
@@ -29,7 +30,7 @@ export interface UnlockGateConfig {
   buy_label: string;
   invite_label: string;
   sort_order: number;
-  free_window_hours: number;
+  window_hours: number;
   instant_heading: string;
   instant_body: string;
   instant_caption: string;
@@ -55,7 +56,7 @@ export const UNLOCK_GATE_DEFAULTS: UnlockGateConfig = {
   buy_label: "Unlock now",
   invite_label: "Invite to unlock",
   sort_order: 0,
-  free_window_hours: 24,
+  window_hours: DEFAULT_WINDOW_HOURS,
   instant_heading: "Unlock instantly",
   instant_body: "Get access right now and carry on building.",
   instant_caption: "Instant access, no waiting.",
@@ -68,15 +69,16 @@ export const UNLOCK_GATE_DEFAULTS: UnlockGateConfig = {
 
 export interface UnlockGateOptions {
   /**
-   * ISO timestamp of the participant's own completion of the previous step.
-   * The free window runs for `free_window_hours` from this moment.
-   * Pass null/undefined when there is no free window for this gate.
+   * ISO timestamp of the participant's signup for the challenge. The whole
+   * schedule is measured from here.
    */
-  freeWindowAnchor?: string | null;
+  signupAt?: string | null;
+  /** 1-based position of this day in the schedule. Omit for non-day gates. */
+  dayIndex?: number;
 }
 
 export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) {
-  const { freeWindowAnchor } = options;
+  const { signupAt, dayIndex } = options;
   const { state } = useAppState();
   const { user } = useAuth();
   const [config, setConfig] = useState<UnlockGateConfig | null>(null);
@@ -118,27 +120,24 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
   const invitesRequired = config?.invites_required ?? 3;
   const invitesMet = !!config?.show_invite && invites >= invitesRequired;
 
-  const windowHours = config?.free_window_hours ?? 0;
-  const windowEndsAt =
-    freeWindowAnchor && windowHours > 0
-      ? new Date(new Date(freeWindowAnchor).getTime() + windowHours * 60 * 60 * 1000)
-      : null;
-  const inFreeWindow = !!windowEndsAt && windowEndsAt.getTime() > Date.now();
+  const windowHours = config?.window_hours ?? DEFAULT_WINDOW_HOURS;
+  const dayWindow = dayIndex ? getDayWindow(dayIndex, signupAt, windowHours) : null;
+  const inFreeWindow = !!dayWindow?.live;
+  const windowEndsAt = dayWindow?.endsAt ?? null;
+  const windowStartsAt = dayWindow?.startsAt ?? null;
 
-  // Persist any earned unlock so it survives a later referral reversal, and so
-  // that opening inside the free window keeps access open afterwards.
+  // Persist an invite-earned unlock so it survives a later referral reversal.
+  // The scheduled window is never persisted: it opens and closes on its own.
   useEffect(() => {
-    if (!user?.id || !config?.enabled || granted) return;
-    if (!invitesMet && !inFreeWindow) return;
-    const source = inFreeWindow && !invitesMet ? "free_window" : "invites";
+    if (!user?.id || !config?.enabled || granted || !invitesMet) return;
     (async () => {
       await supabase
         .from("unlock_grants")
-        .insert({ user_id: user.id, gate_key: gateKey, source });
+        .insert({ user_id: user.id, gate_key: gateKey, source: "invites" });
       setGranted(true);
-      setGrantSource(source);
+      setGrantSource("invites");
     })();
-  }, [user?.id, config?.enabled, granted, invitesMet, inFreeWindow, gateKey]);
+  }, [user?.id, config?.enabled, granted, invitesMet, gateKey]);
 
   const gateOff = !config || !config.enabled;
   const unlocked = gateOff || granted || invitesMet || inFreeWindow;
@@ -150,7 +149,9 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
     granted,
     grantSource,
     inFreeWindow,
+    windowStartsAt,
     windowEndsAt,
+    dayWindow,
     invites,
     invitesRequired,
     invitesRemaining: Math.max(0, invitesRequired - invites),
@@ -161,7 +162,7 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
         : invitesMet
           ? "invites"
           : inFreeWindow
-            ? "free_window"
+            ? "in_window"
             : "locked",
     refresh: load,
   };

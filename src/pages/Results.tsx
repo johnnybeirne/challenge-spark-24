@@ -303,13 +303,12 @@ const Results = () => {
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
   const cta = (() => {
-    if (entryIntent === "free_training") {
-      return { label: joinLabel, onClick: () => navigate(freeTrainingDestination) };
-    }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
       return { label: joinLabel, onClick: () => navigate(dest) };
     }
+    // Everyone joining the challenge from results goes to challenge signup,
+    // which lands them on the participant challenge dashboard.
     return { label: joinLabel, onClick: () => navigate("/challenge/join") };
   })();
 

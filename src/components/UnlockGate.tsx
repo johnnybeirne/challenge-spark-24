@@ -75,7 +75,7 @@ export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Prop
   }, [stateCode, user?.id]);
 
   if (loading) return null;
-  const qa = getQaState();
+  
   const forceLocked = qa.active && qa.flags.previewLockedGates;
   if (!config) return <>{children}</>;
   if (unlocked && !forceLocked) return <>{children}</>;

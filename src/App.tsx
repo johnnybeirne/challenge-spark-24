@@ -287,6 +287,8 @@ const App = () => (
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="unlocks" element={<AdminUnlockGates />} />
+                <Route path="builder-prompts" element={<AdminBuilderPrompts />} />
+
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

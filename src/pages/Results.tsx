@@ -300,17 +300,17 @@ const Results = () => {
     ? FREE_TRAINING_COURSE_PATH
     : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
-  const challengeLabel = `Join the 3-Day Challenge today and be set up by ${completionDayName}.`;
+  const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
   const cta = (() => {
     if (entryIntent === "free_training") {
-      return { label: "Enrol in Free Training", onClick: () => navigate(freeTrainingDestination) };
+      return { label: joinLabel, onClick: () => navigate(freeTrainingDestination) };
     }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
-      return { label: challengeLabel, onClick: () => navigate(dest) };
+      return { label: joinLabel, onClick: () => navigate(dest) };
     }
-    return { label: challengeLabel, onClick: () => navigate("/challenge/join") };
+    return { label: joinLabel, onClick: () => navigate("/challenge/join") };
   })();
 
   return (

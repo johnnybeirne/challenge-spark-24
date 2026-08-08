@@ -140,12 +140,13 @@ const LeftSidebar = () => {
               const isCurrent = d === currentDay;
               const locked = d > currentDay;
               const to = `/challenge/day-${d}`;
+              const isActiveDay = pathname === to;
               const row = (
                 <li
                   key={d}
                   className={[
                     "relative rounded-[10px] pb-3 pl-6 pt-2 last:pb-0",
-                    isCurrent ? "bg-primary/10" : "",
+                    isActiveDay ? "border border-black bg-primary/10" : isCurrent ? "bg-primary/10" : "",
                   ].join(" ")}
                 >
                   <span

@@ -1,8 +1,10 @@
 // Standard unlock gate.
-// Wrap any locked content:  <UnlockGate gateKey="day1">{content}</UnlockGate>
+// Wrap any locked content:  <UnlockGate gateKey="day2">{content}</UnlockGate>
 // Shows a short teaser, then one card with two equal paths: invite N friends,
-// or buy it now. Config (price, invites, copy, on/off) is owner-editable at
-// /owner-console/unlocks.
+// or buy it now at a single price. A time-boxed free window (anchored to the
+// participant's own completion of the previous step) can open it with neither.
+// Config, including every piece of participant-facing copy, is owner-editable
+// at /owner-console/unlocks.
 
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,19 +25,33 @@ import { getQaState } from "@/lib/qaPreview";
 const formatPrice = (cents: number) =>
   `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
 
+const fillTokens = (
+  template: string,
+  tokens: Record<string, string | number>
+) =>
+  Object.entries(tokens).reduce(
+    (acc, [k, v]) => acc.split(`{${k}}`).join(String(v)),
+    template || ""
+  );
+
 interface Props {
   gateKey: string;
   /** Optional short teaser shown above the unlock card. */
   teaser?: ReactNode;
+  /**
+   * ISO timestamp of this participant's completion of the previous step.
+   * Starts the owner-set free window. Omit when the gate has no free window.
+   */
+  freeWindowAnchor?: string | null;
   children: ReactNode;
 }
 
-export function UnlockGate({ gateKey, teaser, children }: Props) {
+export function UnlockGate({ gateKey, teaser, freeWindowAnchor, children }: Props) {
   const navigate = useNavigate();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
-    useUnlockGate(gateKey);
+    useUnlockGate(gateKey, { freeWindowAnchor });
   const { openCheckout, isOpen, checkoutElement } = useStripeCheckout();
   const [fetchedCode, setFetchedCode] = useState<string | null>(null);
 
@@ -65,7 +81,14 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
 
   const referralUrl = getReferralUrl("/", stateCode || fetchedCode || undefined);
   const progress = Math.min(100, Math.round((invites / Math.max(1, invitesRequired)) * 100));
-
+  const progressLine =
+    invitesRemaining > 0
+      ? fillTokens(config.progress_template, {
+          joined: invites,
+          required: invitesRequired,
+          remaining: invitesRemaining,
+        })
+      : config.progress_complete_text;
 
   const handleBuy = () => {
     trackEvent("lock_screen_buy_click", { gate: gateKey });
@@ -110,14 +133,11 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
               <div className="rounded-xl border border-border bg-card p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Users className="h-4 w-4 text-primary" />
-                  {config.invite_label} — {invitesRequired} friends
+                  {config.invite_label}
                 </p>
                 <div className="mt-3">
                   <Progress value={progress} className="h-2" />
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {invites} of {invitesRequired} joined
-                    {invitesRemaining > 0 ? ` — ${invitesRemaining} more to go` : ""}
-                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">{progressLine}</p>
                 </div>
                 {referralUrl ? (
                   <div className="mt-3">
@@ -140,27 +160,27 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
               <div className="flex flex-col rounded-xl border-2 border-primary/30 bg-primary/5 p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  Unlock instantly
+                  {config.instant_heading}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Prefer not to wait for invites? Get instant access and start right now.
-                </p>
+                {config.instant_body && (
+                  <p className="mt-2 text-xs text-muted-foreground">{config.instant_body}</p>
+                )}
                 <div className="mt-auto pt-4">
                   <Button className="w-full" onClick={handleBuy}>
-                    {config.buy_label} — {formatPrice(config.price_cents)}
+                    {config.buy_label}, {formatPrice(config.price_cents)}
                   </Button>
-                  <p className="mt-2 text-center text-xs text-muted-foreground">
-                    Instant access, no waiting.
-                  </p>
+                  {config.instant_caption && (
+                    <p className="mt-2 text-center text-xs text-muted-foreground">
+                      {config.instant_caption}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
           <div className="mt-6 flex flex-col items-start gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-muted-foreground">
-              Everything you have created so far is saved in your dashboard.
-            </p>
+            <p className="text-xs text-muted-foreground">{config.dashboard_note}</p>
             <Button
               variant="outline"
               size="sm"
@@ -168,7 +188,7 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
               className="gap-1.5"
             >
               <LayoutDashboard className="h-4 w-4" />
-              Go to your dashboard
+              {config.dashboard_label}
             </Button>
           </div>
         </CardContent>

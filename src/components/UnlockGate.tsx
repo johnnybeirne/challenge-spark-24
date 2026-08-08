@@ -5,10 +5,11 @@
 // /owner-console/unlocks.
 
 import { ReactNode, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Lock, Users, Sparkles } from "lucide-react";
+import { Lock, Users, Sparkles, LayoutDashboard } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnlockGate } from "@/hooks/useUnlockGate";
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function UnlockGate({ gateKey, teaser, children }: Props) {
+  const navigate = useNavigate();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
@@ -128,7 +130,7 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
                   </div>
                 ) : (
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Your invite link appears here once your profile finishes loading.
+                    Your invite link appears here as soon as your profile finishes loading.
                   </p>
                 )}
               </div>

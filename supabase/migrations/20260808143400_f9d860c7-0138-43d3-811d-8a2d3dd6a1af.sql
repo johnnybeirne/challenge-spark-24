@@ -1,0 +1,1 @@
+ALTER TABLE public.unlock_gates RENAME COLUMN free_window_hours TO window_hours;

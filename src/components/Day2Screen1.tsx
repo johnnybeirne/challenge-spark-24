@@ -441,11 +441,14 @@ const Day2Screen1 = () => {
       <div className="mx-auto w-[90%] max-w-[1400px] px-4 py-6 sm:py-8 pb-24">
         {/* ZONE 1 - PAGE HEADER */}
         <header className="mb-10 space-y-2">
-          <h1 className="font-black leading-tight text-foreground" style={{ fontSize: "var(--h1-size)" }}>
-            Build your quiz
+          <h1 className="font-black leading-tight tracking-tight text-foreground text-[36px]">
+            {tDay2("header.title", "Build your quiz")}
           </h1>
-          <p className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>
-            Your quiz starts the conversation. Your challenge builds the trust that converts.
+          <p className="font-medium text-muted-foreground text-[18px]">
+            {tDay2(
+              "header.subtitle",
+              "Your quiz starts the conversation. Your challenge builds the trust that converts.",
+            )}
           </p>
           <p className="italic text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
             You're building this for {audience}.
@@ -454,9 +457,7 @@ const Day2Screen1 = () => {
 
         {/* ZONE 2 - TEACHING CONTENT */}
         <section className="mb-10 space-y-4">
-          <h2 className="font-black tracking-tight text-foreground" style={{ fontSize: "var(--h2-size)" }}>
-            Create the quiz that makes people want to complete your challenge
-          </h2>
+
 
           <div className="rounded-xl border border-border overflow-hidden divide-y divide-border">
             {cardCopy.map((c, idx) => {

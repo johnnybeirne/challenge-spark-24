@@ -81,6 +81,7 @@ import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
+import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
@@ -286,6 +287,8 @@ const App = () => (
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="unlocks" element={<AdminUnlockGates />} />
+                <Route path="builder-prompts" element={<AdminBuilderPrompts />} />
+
               </Route>
 
               {/* Feature extractor — admin only, full-bleed page */}

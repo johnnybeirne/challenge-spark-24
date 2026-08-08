@@ -137,6 +137,15 @@ export function AdminSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Builder Prompts">
+                  <a href="/owner-console/builder-prompts">
+                    <FileEdit className="h-4 w-4" />
+                    <span>Builder Prompts</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
                   <LogOut className="h-4 w-4" />
                   <span>Log out</span>

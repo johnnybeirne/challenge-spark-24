@@ -21,6 +21,58 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
 
 const QA_SOURCE = "qa";
 const DAYS = [1, 2, 3] as const;
+const STEP_KEY = "leadioQaJourneyStep";
+
+/**
+ * The six-step journey. Each step is fully recomputed from this table, never
+ * from a stored snapshot, so Next, Back and Reset all land on the same state.
+ * anchorDay N means the signup clock is set to now minus (N-1) windows.
+ */
+const JOURNEY = [
+  {
+    label: "Fresh signup",
+    anchorDay: 1,
+    completed: [] as number[],
+    expected: "Day 1 open, Day 2 locked, Day 3 locked",
+    path: "/challenge/day-1",
+  },
+  {
+    label: "Day 1 completed",
+    anchorDay: 1,
+    completed: [1],
+    expected: "Day 1 open and completed, Day 2 locked, Day 3 locked",
+    path: "/challenge/day-1",
+  },
+  {
+    label: "Clock to end of Day 1 window",
+    anchorDay: 2,
+    completed: [1],
+    expected: "Day 1 locked, Day 2 open, Day 3 locked",
+    path: "/challenge/day/2",
+  },
+  {
+    label: "Day 2 completed",
+    anchorDay: 2,
+    completed: [1, 2],
+    expected: "Day 1 locked, Day 2 open and completed, Day 3 locked",
+    path: "/challenge/day/2",
+  },
+  {
+    label: "Clock to end of Day 2 window",
+    anchorDay: 3,
+    completed: [1, 2],
+    expected: "Day 1 locked, Day 2 locked, Day 3 open",
+    path: "/challenge/day/3",
+  },
+  {
+    label: "Day 3 completed",
+    anchorDay: 3,
+    completed: [1, 2, 3],
+    expected: "Day 3 open and completed, journey end",
+    path: "/challenge/day/3",
+  },
+];
+
 
 const QaDayAccess = () => {
   const { user } = useAuth();

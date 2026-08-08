@@ -93,14 +93,43 @@ const QaDayAccess = () => {
     await revoke(day);
   };
 
-  const jumpToDay = (day: number) => {
+  /**
+   * Simulate genuinely reaching day N: mark days 1..N-1 complete right now
+   * (the same day_completed_at field the real flow writes), clear completions
+   * and grants from day N onwards, then navigate. The real gate then decides
+   * access on its own, nothing is bypassed.
+   */
+  const jumpToDay = async (day: number) => {
+    if (busy) return;
+    setBusy(true);
     updateQaState({ active: true });
-    setState((prev) => ({
-      ...prev,
-      challenge: { ...prev.challenge, currentDay: day },
-    }));
-    navigate(day === 1 ? "/challenge/day/1" : `/challenge/day/${day}`);
+
+    const stamp = new Date().toISOString();
+    setState((prev) => {
+      const map: Record<string, string> = {};
+      for (let d = 1; d < day; d++) map[`day${d}`] = prev.challenge.dayCompletedAt?.[`day${d}`] || stamp;
+      return {
+        ...prev,
+        challenge: { ...prev.challenge, currentDay: day, dayCompletedAt: map },
+      };
+    });
+
+    if (user?.id) {
+      const stale = DAYS.filter((d) => d >= day).map((d) => `day${d}`);
+      if (stale.length) {
+        await supabase
+          .from("unlock_grants")
+          .delete()
+          .eq("user_id", user.id)
+          .in("gate_key", stale);
+      }
+      await loadGrants();
+    }
+
+    setBusy(false);
+    navigate(`/challenge/day/${day}`);
   };
+
 
   const completedAt = state.challenge.dayCompletedAt || {};
 

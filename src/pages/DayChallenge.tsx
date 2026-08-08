@@ -23,7 +23,6 @@ import ChallengeCountdown from "@/components/ChallengeCountdown";
 import { shareOrCopy } from "@/lib/share";
 import { audienceLabel, challengeTypeLabel, deriveChallengeName, memoryShareText, mergeMemory } from "@/lib/personalisation";
 import { generateResult } from "@/lib/assessmentData";
-import { canAccessDay, getDayUnlock } from "@/lib/challengeProgression";
 import { getCanonicalUrl } from "@/lib/utils";
 import AddToCalendar from "@/components/AddToCalendar";
 import DayTrainingCard from "@/components/DayTrainingCard";
@@ -35,6 +34,7 @@ import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 
 import DayVideoModal from "@/components/DayVideoModal";
 import StepHeader from "@/components/StepHeader";
+import UnlockGate from "@/components/UnlockGate";
 
 import UpgradeCards from "@/components/UpgradeCards";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
@@ -98,7 +98,7 @@ const dayConfig: Record<number, { title: string; intro: string; lesson: string; 
   },
 };
 
-const DayChallenge = () => {
+const DayChallengeInner = () => {
   const { day } = useParams<{ day: string }>();
   const navigate = useNavigate();
   const { state, setState } = useAppState();
@@ -163,35 +163,11 @@ const DayChallenge = () => {
     return () => { cancelled = true; };
   }, [authUser?.id]);
 
-  const dayLocked = adminChecked && !isAdmin && !canAccessDay(dayNum, state.challenge.startedAt);
-  if (dayLocked && dayNum !== 2 && dayNum !== 3) {
-    navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
-    return null;
-  }
-
-  // Completed days are view-only — answers remain visible but nothing is editable.
+  // Completed days are view-only. Answers remain visible but nothing is editable.
   const currentDayNum = state.challenge.currentDay ?? 1;
   const isReadOnly =
     adminChecked && !isAdmin && (currentDayNum > dayNum || (state.challenge.completed && dayNum < 3));
 
-  // Locked screen for Day 2 / Day 3 before they unlock
-  if (dayLocked && (dayNum === 2 || dayNum === 3)) {
-    const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
-    const inviteCode = state.user?.inviteCode ?? "";
-    const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
-    return (
-      <LockedDayScreen
-        dayNum={dayNum}
-        unlockAt={unlock.unlockAt}
-        unlockLabel={unlock.label}
-        onBack={() => navigate("/challenger-dashboard")}
-        directReferrals={state.network.direct}
-        referralLink={referralLink}
-        customerEmail={authUser?.email ?? undefined}
-        userId={authUser?.id ?? undefined}
-      />
-    );
-  }
 
 
   // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")
@@ -324,17 +300,32 @@ const DayChallenge = () => {
   };
 
   const completeDay = () => {
+    const stamp = new Date().toISOString();
     if (dayNum < 3) {
       setState((prev) => ({
         ...prev,
-        challenge: { ...prev.challenge, currentDay: dayNum + 1 },
+        challenge: {
+          ...prev.challenge,
+          currentDay: dayNum + 1,
+          dayCompletedAt: {
+            ...(prev.challenge.dayCompletedAt || {}),
+            [`day${dayNum}`]: prev.challenge.dayCompletedAt?.[`day${dayNum}`] || stamp,
+          },
+        },
       }));
       trackEvent("day_completed", { day: dayNum });
       setShowCelebration(true);
     } else {
       setState((prev) => ({
         ...prev,
-        challenge: { ...prev.challenge, completed: true },
+        challenge: {
+          ...prev.challenge,
+          completed: true,
+          dayCompletedAt: {
+            ...(prev.challenge.dayCompletedAt || {}),
+            day3: prev.challenge.dayCompletedAt?.day3 || stamp,
+          },
+        },
       }));
       trackEvent("day_completed", { day: 3 });
       trackEvent("challenge_completed");
@@ -775,163 +766,6 @@ const DayChallenge = () => {
   );
 };
 
-function LockedDayScreen({
-  dayNum,
-  unlockAt,
-  unlockLabel,
-  onBack,
-  directReferrals,
-  referralLink,
-  customerEmail,
-  userId,
-}: {
-  dayNum: number;
-  unlockAt: string;
-  unlockLabel: string;
-  onBack: () => void;
-  directReferrals: number;
-  referralLink: string;
-  customerEmail?: string;
-  userId?: string;
-}) {
-  const [remaining, setRemaining] = useState(() =>
-    Math.max(0, new Date(unlockAt).getTime() - Date.now()),
-  );
-  useEffect(() => {
-    const id = setInterval(() => {
-      setRemaining(Math.max(0, new Date(unlockAt).getTime() - Date.now()));
-    }, 1000);
-    return () => clearInterval(id);
-  }, [unlockAt]);
-
-  const { openCheckout, checkoutElement, isOpen, closeCheckout } = useStripeCheckout();
-
-  const totalSec = Math.floor(remaining / 1000);
-  const hh = String(Math.floor(totalSec / 3600)).padStart(2, "0");
-  const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
-  const ss = String(totalSec % 60).padStart(2, "0");
-
-  const refCount = Math.min(directReferrals, 3);
-  const refsToGo = Math.max(0, 3 - directReferrals);
-  const refPct = Math.round((refCount / 3) * 100);
-
-  const handleBuy = () => {
-    trackEvent("lock_screen_buy_click", { day: dayNum });
-    openCheckout({
-      priceId: "leadio_premium_lifetime_usd",
-      customerEmail,
-      userId,
-      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
-    });
-    setTimeout(() => {
-      document.getElementById("lock-checkout-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
-  };
-
-  const handleCopyLink = async () => {
-    trackEvent("lock_screen_referral_share", { day: dayNum, direct: directReferrals });
-    await shareOrCopy({ text: `Join me on the 3-day Leadio challenge.`, url: referralLink });
-    toast.success("Referral link copied");
-  };
-
-  return (
-    <div className="app-page-container min-h-screen py-8 pb-24 lg:py-12">
-      <section className="mx-auto max-w-3xl space-y-6">
-        <div className="text-center">
-          <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <Lock className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-            Day {dayNum} locked
-          </p>
-          <h1 className="mt-2 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)]">
-            Day {dayNum} opens {unlockLabel}
-          </h1>
-          <div className="mt-6 inline-flex items-baseline gap-2 rounded-2xl border border-border bg-card px-6 py-4 shadow-sm">
-            <span className="font-mono text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black tabular-nums text-orange-500">
-              {hh}:{mm}:{ss}
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              until unlock
-            </span>
-          </div>
-          <p className="mt-4 text-[var(--body-size)] text-muted-foreground">
-            Or skip the wait — pick a pathway below.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          {/* Premium pathway */}
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card">
-            <CardContent className="p-5 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-primary">
-                <Rocket className="h-3 w-3" /> Unlock instantly
-              </div>
-              <h3 className="text-[var(--h2-size)] font-black text-foreground">
-                Skip the wait — $497
-              </h3>
-              <p className="text-[var(--body-size)] text-muted-foreground">
-                Get Day {dayNum} (and the rest of the challenge) right now with lifetime access.
-              </p>
-              <Button onClick={handleBuy} className="w-full font-bold">
-                Unlock Day {dayNum} now — $497
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Viral pathway */}
-          <Card className="border-success/30 bg-gradient-to-br from-success/5 via-card to-card">
-            <CardContent className="p-5 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-success">
-                <Users className="h-3 w-3" /> Free pathway
-              </div>
-              <h3 className="text-[var(--h2-size)] font-black text-foreground">
-                Invite 3 friends — unlock free
-              </h3>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-muted-foreground">{refCount} / 3 friends joined</span>
-                  <span className="text-success">{refPct}%</span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full bg-success transition-all"
-                    style={{ width: `${refPct}%` }}
-                  />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {refsToGo === 0
-                  ? "You hit 3 — Day " + dayNum + " is unlocking."
-                  : `${refsToGo} more to unlock Day ${dayNum} immediately.`}
-              </p>
-              <Button onClick={handleCopyLink} variant="outline" className="w-full font-bold">
-                <Share2 className="h-4 w-4 mr-2" /> Copy referral link
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {isOpen && (
-          <div id="lock-checkout-anchor" className="rounded-2xl border border-border bg-card p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-black text-foreground">Complete your purchase</h3>
-              <Button variant="ghost" size="sm" onClick={closeCheckout}>Close</Button>
-            </div>
-            {checkoutElement}
-          </div>
-        )}
-
-        <UpgradeCards />
-        <div className="flex justify-center">
-          <Button variant="outline" onClick={onBack}>
-            Back to dashboard
-          </Button>
-        </div>
-      </section>
-    </div>
-  );
-}
 
 
 function isValidUrl(url: string | undefined): boolean {
@@ -943,5 +777,26 @@ function isValidUrl(url: string | undefined): boolean {
     return false;
   }
 }
+
+/**
+ * Day 2 and Day 3 sit behind the standard unlock gate. The free window starts
+ * at this participant's own completion of the previous day, so it is evergreen
+ * and never anchored to a calendar date. Day 1 is always open.
+ */
+const DayChallenge = () => {
+  const { day } = useParams<{ day: string }>();
+  const { state } = useAppState();
+  const dayNum = Number(day) || 1;
+
+  if (dayNum !== 2 && dayNum !== 3) return <DayChallengeInner />;
+
+  const anchor = state.challenge.dayCompletedAt?.[`day${dayNum - 1}`] || null;
+
+  return (
+    <UnlockGate gateKey={`day${dayNum}`} freeWindowAnchor={anchor}>
+      <DayChallengeInner />
+    </UnlockGate>
+  );
+};
 
 export default DayChallenge;

@@ -82,6 +82,7 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
       },
       challenge: {
         currentDay: progress?.current_day ?? 1,
+        dayCompletedAt: ((progress as any)?.day_completed_at ?? {}) as Record<string, string>,
         startedAt: ensureStartedAt(progress?.started_at),
         endsAt: getChallengeEndsAt(progress?.started_at, progress?.ends_at),
         tasks: progress?.tasks ?? {},
@@ -146,6 +147,7 @@ export async function saveChallengeProgress(
       {
         user_id: userId,
         current_day: challenge.currentDay,
+        day_completed_at: challenge.dayCompletedAt ?? {},
         tasks: challenge.tasks,
         ai_outputs: challenge.aiOutputs,
         launch_url: challenge.launchUrl,
@@ -247,6 +249,7 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
       const startedAt = ensureStartedAt(base.startedAt);
       await saveChallengeProgress(userId, {
         currentDay: base.currentDay ?? 1,
+        dayCompletedAt: base.dayCompletedAt ?? {},
         startedAt,
         endsAt: getChallengeEndsAt(startedAt, base.endsAt),
         tasks: base.tasks ?? {},

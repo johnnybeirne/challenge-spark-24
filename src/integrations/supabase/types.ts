@@ -248,6 +248,7 @@ export type Database = {
           completed: boolean
           created_at: string
           current_day: number
+          day_completed_at: Json
           ends_at: string | null
           id: string
           launch_url: string | null
@@ -261,6 +262,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           current_day?: number
+          day_completed_at?: Json
           ends_at?: string | null
           id?: string
           launch_url?: string | null
@@ -274,6 +276,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           current_day?: number
+          day_completed_at?: Json
           ends_at?: string | null
           id?: string
           launch_url?: string | null
@@ -2098,14 +2101,23 @@ export type Database = {
           body: string
           buy_label: string
           created_at: string
+          dashboard_label: string
+          dashboard_note: string
           enabled: boolean
+          free_window_hours: number
           id: string
+          instant_body: string
+          instant_caption: string
+          instant_heading: string
           invite_label: string
           invites_required: number
           key: string
           label: string
+          preview_path: string
           price_cents: number
           price_id: string
+          progress_complete_text: string
+          progress_template: string
           show_buy: boolean
           show_invite: boolean
           sort_order: number
@@ -2117,14 +2129,23 @@ export type Database = {
           body?: string
           buy_label?: string
           created_at?: string
+          dashboard_label?: string
+          dashboard_note?: string
           enabled?: boolean
+          free_window_hours?: number
           id?: string
+          instant_body?: string
+          instant_caption?: string
+          instant_heading?: string
           invite_label?: string
           invites_required?: number
           key: string
           label?: string
+          preview_path?: string
           price_cents?: number
           price_id?: string
+          progress_complete_text?: string
+          progress_template?: string
           show_buy?: boolean
           show_invite?: boolean
           sort_order?: number
@@ -2136,14 +2157,23 @@ export type Database = {
           body?: string
           buy_label?: string
           created_at?: string
+          dashboard_label?: string
+          dashboard_note?: string
           enabled?: boolean
+          free_window_hours?: number
           id?: string
+          instant_body?: string
+          instant_caption?: string
+          instant_heading?: string
           invite_label?: string
           invites_required?: number
           key?: string
           label?: string
+          preview_path?: string
           price_cents?: number
           price_id?: string
+          progress_complete_text?: string
+          progress_template?: string
           show_buy?: boolean
           show_invite?: boolean
           sort_order?: number

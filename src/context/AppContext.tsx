@@ -90,6 +90,8 @@ export interface AppState {
   memory: UserMemory;
   challenge: {
     currentDay: number;
+    /** ISO timestamp of this participant's completion of each day, keyed "day1" | "day2" | "day3". */
+    dayCompletedAt: Record<string, string>;
     startedAt: string;
     endsAt: string;
     tasks: Record<string, boolean>;

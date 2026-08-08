@@ -186,22 +186,50 @@ const QaDayAccess = () => {
     }
   };
 
+  /** Canonical route per day: Day 1 has its own page, Days 2 and 3 share one. */
+  const dayPath = (day: number) => (day === 1 ? "/challenge/day-1" : `/challenge/day/${day}`);
+
+  const goToDay = (day: number) => {
+    const target = dayPath(day);
+    if (location.pathname === target) {
+      // Already on the target route, so force a remount to pick up the new clock.
+      navigate("/dashboard", { replace: true });
+      setTimeout(() => navigate(target), 0);
+      return;
+    }
+    navigate(target);
+  };
+
   const jumpToDay = async (day: number) => {
     if (busy) return;
     setBusy(true);
-    await applySignupAnchor(day);
-    setBusy(false);
-    navigate(`/challenge/day-${day}`);
+    try {
+      await applySignupAnchor(day, true);
+      toast.success(`Jumped to Day ${day}`);
+      goToDay(day);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not jump. Try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   /** Fresh signup: signup time is now, no grants, nothing carried over. */
   const freshSignup = async () => {
     if (busy) return;
     setBusy(true);
-    await applySignupAnchor(1, true);
-    setBusy(false);
-    navigate("/challenge/day-1");
+    try {
+      await applySignupAnchor(1, true);
+      toast.success("Fresh signup applied");
+      goToDay(1);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not reset. Try again.");
+    } finally {
+      setBusy(false);
+    }
   };
+
+
 
   /**
    * Real completion write, scoped to the demo participant. Same rows the real

@@ -17,6 +17,7 @@ import ReferralLinkField from "@/components/ReferralLinkField";
 import { getReferralUrl } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
+import { getQaState } from "@/lib/qaPreview";
 
 const formatPrice = (cents: number) =>
   `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
@@ -55,7 +56,10 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
   }, [stateCode, user?.id]);
 
   if (loading) return null;
-  if (unlocked || !config) return <>{children}</>;
+  const qa = getQaState();
+  const forceLocked = qa.active && qa.flags.previewLockedGates;
+  if (!config) return <>{children}</>;
+  if (unlocked && !forceLocked) return <>{children}</>;
 
   const referralUrl = getReferralUrl("/", stateCode || fetchedCode || undefined);
   const progress = Math.min(100, Math.round((invites / Math.max(1, invitesRequired)) * 100));

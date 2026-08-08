@@ -10,6 +10,7 @@ import johnnyAvatar from "@/assets/johnny-beirne.png";
 
 
 import { supabase } from "@/integrations/supabase/client";
+import { getQaState } from "@/lib/qaPreview";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;
@@ -49,7 +50,8 @@ const Day1 = () => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
-  const isLocked = (state.challenge?.currentDay ?? 1) > 1;
+  const qaForceLocked = (() => { const q = getQaState(); return q.active && q.flags.previewLockedGates; })();
+  const isLocked = !qaForceLocked && (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {
     trackEvent(isLocked ? "training_hub_viewed" : "training_hub_viewed", { surface: "day1", readOnly: isLocked });

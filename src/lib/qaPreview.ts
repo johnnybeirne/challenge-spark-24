@@ -27,6 +27,8 @@ export interface QaFlags {
   module4Unlocked: boolean;
   module5Unlocked: boolean;
   day2BypassReadGate: boolean;
+  /** Force unlock gates (Day 1 etc.) to render their locked state for preview. */
+  previewLockedGates: boolean;
 }
 
 export interface QaPreviewState {
@@ -65,6 +67,7 @@ export const defaultQaState: QaPreviewState = {
     module4Unlocked: false,
     module5Unlocked: false,
     day2BypassReadGate: true,
+    previewLockedGates: false,
   },
 };
 

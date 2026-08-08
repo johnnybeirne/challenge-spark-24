@@ -183,6 +183,7 @@ export const defaultState: AppState = {
   memory: defaultMemory,
   challenge: {
     currentDay: 1,
+    dayCompletedAt: {},
     startedAt: new Date().toISOString(),
     endsAt: new Date(Date.now() + CHALLENGE_DURATION_MS).toISOString(),
     tasks: {},

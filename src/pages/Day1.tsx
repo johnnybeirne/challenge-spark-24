@@ -1,16 +1,10 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Day1Setup, { SETUP_KEY } from "@/components/Day1Setup";
-import UnlockGate from "@/components/UnlockGate";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
-import { Button } from "@/components/ui/button";
-import johnnyAvatar from "@/assets/johnny-beirne.png";
-
-
 import { supabase } from "@/integrations/supabase/client";
-import { getQaState } from "@/lib/qaPreview";
 
 const parseJson = (raw: unknown): any => {
   if (!raw) return null;
@@ -50,11 +44,10 @@ const Day1 = () => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
-  const qaForceLocked = (() => { const q = getQaState(); return q.active && q.flags.previewLockedGates; })();
-  const isLocked = !qaForceLocked && (state.challenge?.currentDay ?? 1) > 1;
+  const isLocked = (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {
-    trackEvent(isLocked ? "training_hub_viewed" : "training_hub_viewed", { surface: "day1", readOnly: isLocked });
+    trackEvent("training_hub_viewed", { surface: "day1", readOnly: isLocked });
   }, [isLocked]);
 
   const aiOutputs = (state.challenge?.aiOutputs ?? {}) as Record<string, string>;
@@ -166,24 +159,7 @@ const Day1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <UnlockGate
-        gateKey="day1"
-        teaser={
-          <>
-            Day 1 is where you shape your Challenge Promise. It takes about 15 minutes.
-            Everything you create today is saved to your dashboard so you can come back to it anytime.{" "}
-            <button
-              onClick={() => navigate("/challenger-dashboard")}
-              className="inline text-primary underline underline-offset-2 hover:text-primary/80 font-semibold"
-            >
-              Click here to go to your dashboard
-            </button>
-          </>
-        }
-      >
-        <div className="app-page-container pt-6 space-y-4" />
-        <Day1Setup onComplete={handleComplete} />
-      </UnlockGate>
+      <Day1Setup onComplete={handleComplete} />
     </div>
   );
 };

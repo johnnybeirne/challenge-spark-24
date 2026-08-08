@@ -163,35 +163,11 @@ const DayChallenge = () => {
     return () => { cancelled = true; };
   }, [authUser?.id]);
 
-  const dayLocked = adminChecked && !isAdmin && !canAccessDay(dayNum, state.challenge.startedAt);
-  if (dayLocked && dayNum !== 2 && dayNum !== 3) {
-    navigate(`/day/${state.challenge.currentDay || 1}`, { replace: true });
-    return null;
-  }
-
-  // Completed days are view-only — answers remain visible but nothing is editable.
+  // Completed days are view-only. Answers remain visible but nothing is editable.
   const currentDayNum = state.challenge.currentDay ?? 1;
   const isReadOnly =
     adminChecked && !isAdmin && (currentDayNum > dayNum || (state.challenge.completed && dayNum < 3));
 
-  // Locked screen for Day 2 / Day 3 before they unlock
-  if (dayLocked && (dayNum === 2 || dayNum === 3)) {
-    const unlock = getDayUnlock(dayNum, state.challenge.startedAt);
-    const inviteCode = state.user?.inviteCode ?? "";
-    const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
-    return (
-      <LockedDayScreen
-        dayNum={dayNum}
-        unlockAt={unlock.unlockAt}
-        unlockLabel={unlock.label}
-        onBack={() => navigate("/challenger-dashboard")}
-        directReferrals={state.network.direct}
-        referralLink={referralLink}
-        customerEmail={authUser?.email ?? undefined}
-        userId={authUser?.id ?? undefined}
-      />
-    );
-  }
 
 
   // Day 2 — single-screen flow. The old Step 2 ("Why a quiz beats other lead magnets")

@@ -147,6 +147,7 @@ export async function saveChallengeProgress(
       {
         user_id: userId,
         current_day: challenge.currentDay,
+        day_completed_at: challenge.dayCompletedAt ?? {},
         tasks: challenge.tasks,
         ai_outputs: challenge.aiOutputs,
         launch_url: challenge.launchUrl,

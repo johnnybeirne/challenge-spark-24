@@ -1435,13 +1435,16 @@ const Day1Setup = ({ onComplete }: Props) => {
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
         {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
 
-        <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+        <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 space-y-2">
           <p className="text-[var(--body-size)] leading-relaxed text-foreground">
-            Day 1 is where you shape your Challenge Promise — the single sentence that makes everything else in your challenge obvious. It takes about 15 minutes.
+            Day 1 is where you shape your Challenge Promise. It takes about 15 minutes. Everything you create today is saved to your dashboard so you can come back to it anytime.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Everything you create today is saved to your dashboard so you can come back to it anytime.
-          </p>
+          <button
+            onClick={() => navigate("/challenger-dashboard")}
+            className="inline-flex items-center text-xs font-black uppercase tracking-wider text-primary underline underline-offset-2 hover:text-primary/80"
+          >
+            Click here to go to your dashboard
+          </button>
         </div>
 
         <DayVideoModal dayNum={1} />

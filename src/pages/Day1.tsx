@@ -167,9 +167,14 @@ const Day1 = () => {
         gateKey="day1"
         teaser={
           <>
-            Day 1 is where you shape your Challenge Promise — the single sentence that makes
-            everything else in your challenge obvious. It takes about 15 minutes.
-            Everything you create today is saved to your dashboard so you can come back to it anytime.
+            Day 1 is where you shape your Challenge Promise. It takes about 15 minutes.
+            Everything you create today is saved to your dashboard so you can come back to it anytime.{" "}
+            <button
+              onClick={() => navigate("/challenger-dashboard")}
+              className="inline text-primary underline underline-offset-2 hover:text-primary/80 font-semibold"
+            >
+              Click here to go to your dashboard
+            </button>
           </>
         }
       >

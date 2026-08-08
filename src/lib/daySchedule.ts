@@ -25,9 +25,12 @@ export function getDayWindow(
   windowHours: number = DEFAULT_WINDOW_HOURS,
   now: number = Date.now()
 ): DayWindow | null {
-  if (!signupAt || !dayIndex || windowHours <= 0) return null;
-  const base = new Date(signupAt).getTime();
+  if (!dayIndex || windowHours <= 0) return null;
+  // A missing signup time must never read as long-past. Treat it as signing up
+  // right now, so Day 1 is live and later days are simply upcoming.
+  const base = signupAt ? new Date(signupAt).getTime() : now;
   if (Number.isNaN(base)) return null;
+
   const ms = windowHours * 60 * 60 * 1000;
   const startsAt = new Date(base + (dayIndex - 1) * ms);
   const endsAt = new Date(startsAt.getTime() + ms);

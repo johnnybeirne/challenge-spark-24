@@ -6,7 +6,7 @@
 // so anything shown afterwards is the real participant view.
 
 import { useCallback, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -80,7 +80,6 @@ const QaDayAccess = () => {
   const { user } = useAuth();
   const { state, setState } = useAppState();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [grants, setGrants] = useState<Record<string, boolean>>({});
   const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
@@ -195,14 +194,11 @@ const QaDayAccess = () => {
 
   const goToDay = (day: number) => {
     const target = dayPath(day);
-    if (location.pathname === target) {
-      // Already on the target route, so force a remount to pick up the new clock.
-      navigate("/dashboard", { replace: true });
-      setTimeout(() => navigate(target), 0);
-      return;
-    }
-    navigate(target);
+    // Full page load, so the day view always rebuilds from the new signup anchor,
+    // including when we are already sitting on the target route.
+    window.location.assign(target);
   };
+
 
   const jumpToDay = async (day: number) => {
     if (busy) return;

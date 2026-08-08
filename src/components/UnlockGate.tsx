@@ -4,7 +4,7 @@
 // or buy it now. Config (price, invites, copy, on/off) is owner-editable at
 // /owner-console/unlocks.
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -16,6 +16,7 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import ReferralLinkField from "@/components/ReferralLinkField";
 import { getReferralUrl } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 
 const formatPrice = (cents: number) =>
   `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
@@ -33,12 +34,32 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
     useUnlockGate(gateKey);
   const { openCheckout, isOpen, checkoutElement } = useStripeCheckout();
+  const [fetchedCode, setFetchedCode] = useState<string | null>(null);
+
+  const stateCode = state.user?.inviteCode;
+
+  useEffect(() => {
+    if (stateCode || !user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("invite_code")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!cancelled && data?.invite_code) setFetchedCode(data.invite_code);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [stateCode, user?.id]);
 
   if (loading) return null;
   if (unlocked || !config) return <>{children}</>;
 
-  const referralUrl = getReferralUrl("/", state.user?.inviteCode);
+  const referralUrl = getReferralUrl("/", stateCode || fetchedCode || undefined);
   const progress = Math.min(100, Math.round((invites / Math.max(1, invitesRequired)) * 100));
+
 
   const handleBuy = () => {
     trackEvent("lock_screen_buy_click", { gate: gateKey });

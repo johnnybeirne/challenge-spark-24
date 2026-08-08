@@ -160,11 +160,22 @@ const Day1 = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="app-page-container pt-6 space-y-4" />
-      <Day1Setup onComplete={handleComplete} />
+      <UnlockGate
+        gateKey="day1"
+        teaser={
+          <>
+            Day 1 is where you shape your Challenge Promise — the single sentence that makes
+            everything else in your challenge obvious. It takes about 15 minutes.
+          </>
+        }
+      >
+        <div className="app-page-container pt-6 space-y-4" />
+        <Day1Setup onComplete={handleComplete} />
+      </UnlockGate>
     </div>
   );
 };
+
 
 
 export default Day1;

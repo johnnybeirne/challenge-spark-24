@@ -8,6 +8,7 @@ interface CheckoutOptions {
   userId?: string;
   returnUrl?: string;
   promotionCode?: string;
+  gateKey?: string;
 }
 
 export function useStripeCheckout() {

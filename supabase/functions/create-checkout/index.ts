@@ -13,6 +13,7 @@ interface CheckoutBody {
   returnUrl: string;
   environment: StripeEnv;
   promotionCode?: string; // partner code — looked up silently
+  gateKey?: string; // unlock gate this purchase unlocks (optional)
 }
 
 async function resolveOrCreateCustomer(
@@ -59,7 +60,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = (await req.json()) as CheckoutBody;
-    const { priceId, quantity, customerEmail, userId, returnUrl, environment, promotionCode } = body;
+    const { priceId, quantity, customerEmail, userId, returnUrl, environment, promotionCode, gateKey } = body;
 
     if (!priceId || !/^[a-zA-Z0-9_-]+$/.test(priceId)) throw new Error("Invalid priceId");
     if (!returnUrl) throw new Error("Missing returnUrl");
@@ -97,6 +98,7 @@ Deno.serve(async (req) => {
       metadata: {
         ...(userId && { userId }),
         ...(promotionCode && { partner_code: promotionCode }),
+        ...(gateKey && /^[a-zA-Z0-9_-]{1,60}$/.test(gateKey) && { gate_key: gateKey }),
       },
     });
 

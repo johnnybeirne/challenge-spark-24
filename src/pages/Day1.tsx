@@ -48,11 +48,10 @@ const Day1 = () => {
   const navigate = useNavigate();
   const { state, setState, authUser } = useAppState();
 
-  const qaForceLocked = (() => { const q = getQaState(); return q.active && q.flags.previewLockedGates; })();
-  const isLocked = !qaForceLocked && (state.challenge?.currentDay ?? 1) > 1;
+  const isLocked = (state.challenge?.currentDay ?? 1) > 1;
 
   useEffect(() => {
-    trackEvent(isLocked ? "training_hub_viewed" : "training_hub_viewed", { surface: "day1", readOnly: isLocked });
+    trackEvent("training_hub_viewed", { surface: "day1", readOnly: isLocked });
   }, [isLocked]);
 
   const aiOutputs = (state.challenge?.aiOutputs ?? {}) as Record<string, string>;

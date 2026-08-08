@@ -5,10 +5,11 @@
 // /owner-console/unlocks.
 
 import { ReactNode, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Lock, Users, Sparkles } from "lucide-react";
+import { Lock, Users, Sparkles, LayoutDashboard } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnlockGate } from "@/hooks/useUnlockGate";
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function UnlockGate({ gateKey, teaser, children }: Props) {
+  const navigate = useNavigate();
   const { state } = useAppState();
   const { user } = useAuth();
   const { loading, config, unlocked, invites, invitesRequired, invitesRemaining } =
@@ -128,7 +130,7 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
                   </div>
                 ) : (
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Your invite link appears here once your profile finishes loading.
+                    Your invite link appears here as soon as your profile finishes loading.
                   </p>
                 )}
               </div>
@@ -140,21 +142,40 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
                   <Sparkles className="h-4 w-4 text-primary" />
                   Unlock instantly
                 </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Prefer not to wait for invites? Get instant access and start right now.
+                </p>
                 <div className="mt-auto pt-4">
                   <Button className="w-full" onClick={handleBuy}>
                     {config.buy_label} — {formatPrice(config.price_cents)}
                   </Button>
                   <p className="mt-2 text-center text-xs text-muted-foreground">
-                    Skip the wait — get it instantly.
+                    Instant access, no waiting.
                   </p>
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="mt-6 flex flex-col items-start gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-muted-foreground">
+              Everything you have created so far is saved in your dashboard.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/challenger-dashboard")}
+              className="gap-1.5"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Go to your dashboard
+            </Button>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+
 
 export default UnlockGate;

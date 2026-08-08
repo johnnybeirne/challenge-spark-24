@@ -4,10 +4,6 @@ import Day1Setup, { SETUP_KEY } from "@/components/Day1Setup";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
-import { Button } from "@/components/ui/button";
-import johnnyAvatar from "@/assets/johnny-beirne.png";
-
-
 import { supabase } from "@/integrations/supabase/client";
 
 const parseJson = (raw: unknown): any => {

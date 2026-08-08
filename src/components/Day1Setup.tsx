@@ -1435,15 +1435,33 @@ const Day1Setup = ({ onComplete }: Props) => {
       <div className="w-full max-w-md md:max-w-4xl mx-auto">
         {/* No restart control — Day 1 answers are edited in-place during the 24h window. */}
 
-        <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 space-y-2">
+        {showProgress && (
+          <h1 className="text-3xl sm:text-4xl font-black leading-tight text-foreground">
+            {`Day 1 - Step ${stepNumber} of ${TOTAL_STEPS}`}
+          </h1>
+        )}
+
+        {(() => {
+          const welcome = renderTemplate("day1-welcome", "Welcome").replace(/[.,]\s*$/, "").trim();
+          return welcome ? (
+            <h2 className="mt-2 text-xl sm:text-2xl font-bold leading-snug text-foreground">
+              {welcome}
+            </h2>
+          ) : null;
+        })()}
+
+        <div className="mt-4 mb-6 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 space-y-2">
           <p className="text-[var(--body-size)] leading-relaxed text-foreground">
-            Day 1 is where you shape your Challenge Promise. It takes about 15 minutes. Everything you create today is saved to your dashboard so you can come back to it anytime.
+            {renderTemplate(
+              "day1-intro",
+              "Day 1 is where you shape your Challenge Promise. It takes about 15 minutes. Everything you create today is saved to your dashboard so you can come back to it anytime.",
+            )}
           </p>
           <button
             onClick={() => navigate("/challenger-dashboard")}
             className="inline-flex items-center text-xs font-black uppercase tracking-wider text-primary underline underline-offset-2 hover:text-primary/80"
           >
-            Click here to go to your dashboard
+            {renderTemplate("day1-dashboard-link", "Click here to go to your dashboard")}
           </button>
         </div>
 
@@ -1460,11 +1478,11 @@ const Day1Setup = ({ onComplete }: Props) => {
         )}
 
         {showProgress && (
-          <div className="mb-6 space-y-3">
-            <StepHeader dayNum={1} stepNumber={stepNumber} totalSteps={TOTAL_STEPS} className="mb-0" />
+          <div className="mb-6">
             <Progress value={(stepNumber / TOTAL_STEPS) * 100} className="h-2" />
           </div>
         )}
+
 
 
 

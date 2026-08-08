@@ -46,10 +46,26 @@ export const DAY1_TAG_KEYS: Day1TagKey[] = Object.keys(
 
 export const defaultDay1Steps: Day1StepMessage[] = [
   {
+    id: "day1-welcome",
+    label: "Page header — Welcome line",
+    message: "Welcome [first_name]",
+  },
+  {
+    id: "day1-intro",
+    label: "Page header — Day intro",
+    message:
+      "Day 1 is where you shape your Challenge Promise. It takes about 15 minutes. Everything you create today is saved to your dashboard so you can come back to it anytime.",
+  },
+  {
+    id: "day1-dashboard-link",
+    label: "Page header — Dashboard link label",
+    message: "Click here to go to your dashboard",
+  },
+  {
     id: "step-1",
     label: "Step 1 of 9 — Audience type",
     message:
-      "Welcome [first_name]. Before we shape your challenge, who do you mainly serve — other businesses or individual consumers?",
+      "Before we shape your challenge, who do you mainly serve, other businesses or individual consumers?",
   },
   {
     id: "step-2",

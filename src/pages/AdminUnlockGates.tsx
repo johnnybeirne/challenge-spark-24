@@ -279,11 +279,19 @@ const AdminUnlockGates = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  disabled={!row.preview_path}
+                  onClick={() => window.open(row.preview_path, "_blank", "noopener")}
+                >
+                  Preview
+                </Button>
                 <Button onClick={() => save(row)} disabled={savingId === row.id}>
                   {savingId === row.id ? "Saving…" : "Save"}
                 </Button>
               </div>
+
             </CardContent>
           </Card>
         ))}

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppState } from "@/context/AppContext";
-import { updateQaState } from "@/lib/qaPreview";
+import { getQaState, updateQaState } from "@/lib/qaPreview";
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">

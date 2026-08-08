@@ -45,8 +45,9 @@ const QuizPreview = () => {
     return (
       <Day2QuizGenerating
         onComplete={(quiz) => {
-          // Persist the generated quiz into shared state so Day2QuizPlayable
-          // (which reads from state) can render it.
+          // Persist only the generated quiz so Day2QuizPlayable (which reads from
+          // state) can render it. Never set day2_step: that flag would make the
+          // preview mount inside the Day 2 content area in the main tab.
           setState((p) => ({
             ...p,
             challenge: {
@@ -54,7 +55,6 @@ const QuizPreview = () => {
               aiOutputs: {
                 ...p.challenge.aiOutputs,
                 day2_s2_quiz: JSON.stringify(quiz ?? {}),
-                day2_step: "2",
               },
             },
           }));
@@ -64,6 +64,7 @@ const QuizPreview = () => {
       />
     );
   }
+
 
   return <Day2QuizPlayable onClose={handleClose} />;
 };

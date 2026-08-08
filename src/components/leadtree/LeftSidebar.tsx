@@ -14,6 +14,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
+import { getDayWindow } from "@/lib/daySchedule";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useNavTips } from "@/hooks/useNavTips";
@@ -49,6 +50,8 @@ const LeftSidebar = () => {
   const currentDay = Math.min(Math.max(state.challenge?.currentDay ?? 1, 1), 3);
 
   const days = [1, 2, 3];
+  const isDayLive = (d: number) =>
+    !!getDayWindow(d, state.challenge?.startedAt)?.live;
   const startedAt = state.challenge?.startedAt ? new Date(state.challenge.startedAt) : new Date();
   const dayDate = (d: number) => {
     const dt = new Date(startedAt);
@@ -176,7 +179,7 @@ const LeftSidebar = () => {
                       Day {d} <span className="text-[#6B7280]">- {dayDate(d)}</span>
                     </span>
                     <span className="mt-1 block text-[11px] font-normal">
-                      {isDone ? "Completed" : isCurrent ? "In Progress" : "Locked"}
+                      {isDayLive(d) ? "Open now" : isDone ? "Completed" : "Locked"}
                     </span>
                   </Link>
                 </li>

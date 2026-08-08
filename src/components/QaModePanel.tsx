@@ -583,6 +583,8 @@ const QaModePanel = () => {
           </div>
 
           <div className="space-y-4 p-3">
+            <QaPersonas />
+
             <div className="flex items-center justify-between gap-2">
               <SectionLabel>Preview</SectionLabel>
               <div className="flex gap-1">
@@ -662,7 +664,6 @@ const QaModePanel = () => {
               </p>
             </div>
 
-            <QaPersonas />
             <QaSimulatedDate />
 
 

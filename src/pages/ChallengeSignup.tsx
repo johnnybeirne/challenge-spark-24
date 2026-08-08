@@ -44,7 +44,7 @@ const ChallengeSignup = () => {
             <Button className="h-12 text-white" onClick={goToRedirect}>Continue</Button>
           </>
         ) : (
-          <Button className="h-12" onClick={goToRedirect}>Start Day 1</Button>
+          <Button className="h-12" onClick={goToRedirect}>Go to your dashboard</Button>
         )
       }
     />

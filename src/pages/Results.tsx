@@ -296,9 +296,6 @@ const Results = () => {
   try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
   try { pendingCoupon = sessionStorage.getItem("leadio_pending_coupon"); } catch {}
 
-  const freeTrainingDestination = state.user
-    ? FREE_TRAINING_COURSE_PATH
-    : `/free-training/enrol?redirect=${encodeURIComponent(FREE_TRAINING_COURSE_PATH)}`;
 
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 

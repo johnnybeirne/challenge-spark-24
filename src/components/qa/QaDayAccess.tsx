@@ -80,6 +80,10 @@ const QaDayAccess = () => {
   const navigate = useNavigate();
   const [grants, setGrants] = useState<Record<string, boolean>>({});
   const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
+  const [stepIndex, setStepIndex] = useState(() => {
+    const raw = Number(localStorage.getItem(STEP_KEY));
+    return Number.isFinite(raw) && raw >= 0 && raw < JOURNEY.length ? raw : 0;
+  });
   const [busy, setBusy] = useState(false);
 
   const loadGrants = useCallback(async () => {

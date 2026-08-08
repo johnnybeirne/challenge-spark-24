@@ -1,7 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Day1Setup, { SETUP_KEY } from "@/components/Day1Setup";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
 import UnlockGate from "@/components/UnlockGate";
 import { trackEvent } from "@/lib/analytics";
@@ -43,46 +42,11 @@ const ensurePainQuoted = (text: string, pain?: string) => {
 
 const Day1 = () => {
   const navigate = useNavigate();
-  const { state, setState, authUser } = useAppState();
-
-  const isLocked = (state.challenge?.currentDay ?? 1) > 1;
+  const { state, setState } = useAppState();
 
   useEffect(() => {
-    trackEvent("training_hub_viewed", { surface: "day1", readOnly: isLocked });
-  }, [isLocked]);
-
-  const aiOutputs = (state.challenge?.aiOutputs ?? {}) as Record<string, string>;
-  const memory: any = state.memory || {};
-
-  const promiseText = useMemo(() => {
-    const userEdit = (aiOutputs.day1_promise_user_edit || "").trim();
-    const storedPolished = aiOutputs.day1_promise_polished || "";
-    let saved: any = null;
-    try {
-      const aiSetup = aiOutputs.day1Setup;
-      if (typeof aiSetup === "string") saved = JSON.parse(aiSetup);
-      else if (aiSetup && typeof aiSetup === "object") saved = aiSetup;
-      if (!saved) saved = JSON.parse(localStorage.getItem(SETUP_KEY) || "null");
-    } catch { /* ignore */ }
-
-    const foundation = parseJson(aiOutputs.day1_foundation) ?? {};
-    const assessment = parseJson(aiOutputs.day1_assessment) ?? {};
-
-    const whoRaw = pick(memory.topic, assessment.transformation, foundation.audience, saved?.topicHint, saved?.audience);
-    const painRaw = pick(assessment.problem, foundation.problem, saved?.problem);
-    const resultRaw = pick(memory.desiredOutcome, saved?.outcome, saved?.how, foundation.how);
-    const challengeKey = pick(saved?.challengeType, assessment.challengeType, memory.challengeType);
-    const method = METHOD_MAP[challengeKey] ?? "a clear, day-by-day structure";
-
-    const who = whoRaw ? strip(whoRaw) : "";
-    const pain = painRaw ? strip(painRaw).toLowerCase() : "";
-    const result = resultRaw ? strip(resultRaw).toLowerCase() : "";
-
-    const fallback = who && pain && result
-      ? `Help ${who} move from "${pain}" to ${result} through ${method}.`
-      : "";
-    return ensurePainQuoted(userEdit || storedPolished || fallback, pain);
-  }, [aiOutputs, memory]);
+    trackEvent("training_hub_viewed", { surface: "day1" });
+  }, []);
 
   const handleComplete = () => {
     setState((prev) => ({

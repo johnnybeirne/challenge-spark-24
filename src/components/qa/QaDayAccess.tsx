@@ -80,6 +80,8 @@ const QaDayAccess = () => {
   const { user } = useAuth();
   const { state, setState } = useAppState();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [grants, setGrants] = useState<Record<string, boolean>>({});
   const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
   const [stepIndex, setStepIndex] = useState(() => {

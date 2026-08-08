@@ -43,16 +43,26 @@ const AdminUnlockGates = () => {
         teaser_lines: Number(row.teaser_lines) || 0,
         price_cents: Math.round(Number(row.price_cents) || 0),
         invites_required: Number(row.invites_required) || 0,
+        free_window_hours: Number(row.free_window_hours) || 0,
         show_buy: row.show_buy,
         show_invite: row.show_invite,
         buy_label: row.buy_label,
         invite_label: row.invite_label,
-      })
+        instant_heading: row.instant_heading,
+        instant_body: row.instant_body,
+        instant_caption: row.instant_caption,
+        progress_template: row.progress_template,
+        progress_complete_text: row.progress_complete_text,
+        dashboard_label: row.dashboard_label,
+        dashboard_note: row.dashboard_note,
+        preview_path: row.preview_path,
+      } as any)
       .eq("id", row.id);
     setSavingId(null);
     if (error) toast.error("Could not save. Try again.");
     else toast.success("Saved");
   };
+
 
   if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
 

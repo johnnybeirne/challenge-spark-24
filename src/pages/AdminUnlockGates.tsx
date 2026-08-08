@@ -150,11 +150,35 @@ const AdminUnlockGates = () => {
                   />
                 </div>
                 <div>
+                  <Label className="text-xs">Free window (hours)</Label>
+                  <Input
+                    type="number"
+                    value={row.free_window_hours}
+                    onChange={(e) =>
+                      update(row.id, "free_window_hours", Number(e.target.value) as any)
+                    }
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Counted from each participant finishing the previous step. Set 0 for no free window.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
                   <Label className="text-xs">Teaser lines</Label>
                   <Input
                     type="number"
                     value={row.teaser_lines}
                     onChange={(e) => update(row.id, "teaser_lines", Number(e.target.value) as any)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Preview path</Label>
+                  <Input
+                    value={row.preview_path}
+                    onChange={(e) => update(row.id, "preview_path", e.target.value)}
+                    placeholder="/challenge/day-2"
                   />
                 </div>
               </div>
@@ -166,15 +190,71 @@ const AdminUnlockGates = () => {
                     value={row.buy_label}
                     onChange={(e) => update(row.id, "buy_label", e.target.value)}
                   />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    The price is added automatically, for example "Unlock now, $47".
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-xs">Invite path label</Label>
+                  <Label className="text-xs">Invite panel heading</Label>
                   <Input
                     value={row.invite_label}
                     onChange={(e) => update(row.id, "invite_label", e.target.value)}
                   />
                 </div>
+                <div>
+                  <Label className="text-xs">Buy panel heading</Label>
+                  <Input
+                    value={row.instant_heading}
+                    onChange={(e) => update(row.id, "instant_heading", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Buy panel body</Label>
+                  <Input
+                    value={row.instant_body}
+                    onChange={(e) => update(row.id, "instant_body", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Buy panel caption</Label>
+                  <Input
+                    value={row.instant_caption}
+                    onChange={(e) => update(row.id, "instant_caption", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Referral progress line</Label>
+                  <Input
+                    value={row.progress_template}
+                    onChange={(e) => update(row.id, "progress_template", e.target.value)}
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Use {"{joined}"}, {"{required}"} and {"{remaining}"}.
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-xs">Progress line when complete</Label>
+                  <Input
+                    value={row.progress_complete_text}
+                    onChange={(e) => update(row.id, "progress_complete_text", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Dashboard link label</Label>
+                  <Input
+                    value={row.dashboard_label}
+                    onChange={(e) => update(row.id, "dashboard_label", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Dashboard note</Label>
+                  <Input
+                    value={row.dashboard_note}
+                    onChange={(e) => update(row.id, "dashboard_note", e.target.value)}
+                  />
+                </div>
               </div>
+
 
               <div className="flex flex-wrap items-center gap-6">
                 <div className="flex items-center gap-2">

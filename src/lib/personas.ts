@@ -515,6 +515,19 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     challenge: {
       ...state.challenge,
       startedAt: timing.startedAtIso,
+      // Record a completion timestamp for each fully-completed day so the real
+      // unlock gate has its free-window anchor, exactly as a live participant would.
+      dayCompletedAt: (() => {
+        const map: Record<string, string> = { ...(state.challenge.dayCompletedAt || {}) };
+        ([1, 2, 3] as const).forEach((day) => {
+          if (persona.dayProgress[day] < 1) return;
+          const offsetHours = Math.max(0, persona.elapsedHours - (3 - day) * 12);
+          map[`day${day}`] =
+            map[`day${day}`] ||
+            new Date(Date.now() - offsetHours * 60 * 60 * 1000).toISOString();
+        });
+        return map;
+      })(),
       endsAt: timing.endsAtIso,
       currentDay,
       completed,

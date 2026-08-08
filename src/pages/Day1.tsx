@@ -122,16 +122,23 @@ const Day1 = () => {
     // Read-only view of completed Day 1 — match Day 1 conversational style.
     return (
       <div className="min-h-screen bg-background">
-        <div className="app-page-container py-6 pb-24 lg:py-8">
-          <div className="flex items-start gap-3 mb-6">
-            <img
-              src={johnnyAvatar}
-              alt="Johnny AI"
-              className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-border"
-            />
-            <div className="flex-1 min-w-0 text-[var(--body-size)] md:text-[var(--body-size)] leading-relaxed">
-              Nice work, {firstName}. Day 1 is locked in — here's the challenge promise you shaped together.
-            </div>
+        <div className="app-page-container py-6 pb-24 lg:py-8 space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">
+              Want to do Day 1 again?
+            </h1>
+            <p className="mt-2 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+              Day 1 is where you shaped your Challenge Promise.
+            </p>
+            <p className="mt-2 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+              Everything you created is in your dashboard.{" "}
+              <button
+                onClick={() => navigate("/challenger-dashboard")}
+                className="inline text-primary underline underline-offset-2 hover:text-primary/80 font-semibold"
+              >
+                Click here to go to your dashboard
+              </button>
+            </p>
           </div>
 
           <Card>
@@ -150,10 +157,6 @@ const Day1 = () => {
               )}
             </CardContent>
           </Card>
-
-          <Button className="mt-6" onClick={() => navigate("/challenger-dashboard")}>
-            Go to dashboard
-          </Button>
         </div>
       </div>
     );

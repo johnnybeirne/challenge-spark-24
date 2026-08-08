@@ -213,6 +213,40 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   const sb = getSupabase();
 
+  // Unlock-gate purchase: grants access to one gated area only — it is NOT a
+  // premium upgrade, so it never touches profiles.is_premium.
+  const gateKey = session.metadata?.gate_key as string | undefined;
+  if (gateKey) {
+    if (userId) {
+      await sb.from("purchases").upsert(
+        {
+          user_id: userId,
+          stripe_session_id: sessionId,
+          stripe_payment_intent_id: session.payment_intent ?? null,
+          stripe_customer_id: customerId ?? null,
+          amount_cents: amount,
+          currency,
+          price_id: `unlock_${gateKey}`,
+          partner_code: partnerCode ?? null,
+          coupon_code: couponCode,
+          status: "paid",
+          environment: env,
+        },
+        { onConflict: "stripe_session_id" },
+      );
+
+      await sb
+        .from("unlock_grants")
+        .upsert(
+          { user_id: userId, gate_key: gateKey, source: "purchase" },
+          { onConflict: "user_id,gate_key" },
+        );
+    }
+    if (customerEmail) await sendConfirmationEmail(customerEmail);
+    return;
+  }
+
+
   // 1. Insert purchase record (idempotent on stripe_session_id)
   if (userId) {
     const { data: purchaseRow } = await sb.from("purchases").upsert(

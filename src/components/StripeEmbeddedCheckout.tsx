@@ -9,6 +9,7 @@ interface Props {
   userId?: string;
   returnUrl?: string;
   promotionCode?: string;
+  gateKey?: string;
 }
 
 export function StripeEmbeddedCheckout({
@@ -18,6 +19,7 @@ export function StripeEmbeddedCheckout({
   userId,
   returnUrl,
   promotionCode,
+  gateKey,
 }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -29,6 +31,7 @@ export function StripeEmbeddedCheckout({
         returnUrl: returnUrl ?? `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
         environment: getStripeEnvironment(),
         promotionCode,
+        gateKey,
       },
     });
     if (error || !data?.clientSecret) {

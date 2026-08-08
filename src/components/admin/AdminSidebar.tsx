@@ -129,6 +129,14 @@ export function AdminSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Unlocks">
+                  <a href="/owner-console/unlocks">
+                    <FileEdit className="h-4 w-4" />
+                    <span>Unlocks</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
                   <LogOut className="h-4 w-4" />
                   <span>Log out</span>

@@ -140,21 +140,40 @@ export function UnlockGate({ gateKey, teaser, children }: Props) {
                   <Sparkles className="h-4 w-4 text-primary" />
                   Unlock instantly
                 </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Prefer not to wait for invites? Get instant access and start right now.
+                </p>
                 <div className="mt-auto pt-4">
                   <Button className="w-full" onClick={handleBuy}>
                     {config.buy_label} — {formatPrice(config.price_cents)}
                   </Button>
                   <p className="mt-2 text-center text-xs text-muted-foreground">
-                    Skip the wait — get it instantly.
+                    Instant access, no waiting.
                   </p>
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="mt-6 flex flex-col items-start gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-muted-foreground">
+              Everything you have created so far is saved in your dashboard.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/challenger-dashboard")}
+              className="gap-1.5"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Go to your dashboard
+            </Button>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+
 
 export default UnlockGate;

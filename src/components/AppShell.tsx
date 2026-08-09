@@ -18,6 +18,9 @@ import { getExperience } from "@/lib/experience";
 import { getExperienceFromPath } from "@/lib/experienceShell";
 import { trackEvent } from "@/lib/analytics";
 import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
+import AccessGraceBanner from "./access/AccessGraceBanner";
+import AccessLockedScreen from "./access/AccessLockedScreen";
 
 const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 
@@ -77,6 +80,15 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
     trackEvent("signup_completed");
   }, [authenticated, signupAwarded, awardedActions.length]);
 
+  const access = useAccessStatus();
+  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium";
+  const showLockedScreen = accessGateApplies && !access.loading && !access.hasAccess && !access.gracePeriod;
+  const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
+
+  if (showLockedScreen) {
+    return <AccessLockedScreen inviteCount={access.inviteCount} onRefresh={() => void access.refresh()} />;
+  }
+
   // ---------- LEADTREE 3-column shell (authenticated) ----------
   if (useLeadtreeShell) {
     // SHELL SCROLL RULE: three independent scroll regions (left sidebar, main, right sidebar)
@@ -98,6 +110,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1320px] px-8 py-12 pb-32 sm:px-12">
+            {showGraceBanner && <AccessGraceBanner invitesNeeded={access.invitesNeeded} />}
             <BackButton />
             <Outlet />
           </div>
@@ -127,6 +140,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
     <div data-experience={mode} className="experience-root flex flex-col min-h-screen bg-background overflow-x-hidden">
       <div className={`w-full relative flex flex-col flex-1 min-h-0 ${showNav && authenticated ? "pb-24" : ""}`}>
         <div className="min-w-0 flex-1">
+          {showGraceBanner && <AccessGraceBanner invitesNeeded={access.invitesNeeded} />}
           {showNav && authenticated && <BackButton />}
           <Outlet />
         </div>

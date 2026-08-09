@@ -6,10 +6,12 @@ import { resolveFirstName } from "@/lib/tooltipTokens";
 import ReferralLinkField from "@/components/ReferralLinkField";
 
 export const AccessLockedScreen = ({
-  inviteCount,
+  pointsTotal,
+  pointsNeeded,
   onRefresh,
 }: {
-  inviteCount: number;
+  pointsTotal: number;
+  pointsNeeded: number;
   onRefresh: () => void;
 }) => {
   const navigate = useNavigate();
@@ -28,24 +30,21 @@ export const AccessLockedScreen = ({
           {firstName}, your access has lapsed
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Invite 5 people who join the challenge each month to keep your access free, or upgrade for
-          $97/month.
+          Earn 500 points per month to keep your access free, or upgrade for $97/month.
         </p>
 
         <p className="mt-8 text-sm font-medium text-foreground">
-          You have invited {inviteCount} of 5 people this month
+          You have {pointsTotal} of 500 points this month
         </p>
-        <div className="mt-3 flex items-center justify-center gap-2">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <span
-              key={i}
-              className={[
-                "h-4 w-4 rounded-full border-2",
-                i < inviteCount ? "border-[#534AB7] bg-[#534AB7]" : "border-border bg-transparent",
-              ].join(" ")}
-            />
-          ))}
+        <div className="mt-3 h-3 w-full max-w-xs overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-[#534AB7]"
+            style={{ width: `${Math.min(100, (pointsTotal / 500) * 100)}%` }}
+          />
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Complete Day 1: +50 pts · Complete Day 2: +50 pts · Complete Day 3: +50 pts · Each invite signup: +50 pts
+        </p>
 
         <div ref={inviteRef} className="mt-8 text-left">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -80,7 +79,7 @@ export const AccessLockedScreen = ({
             onClick={onRefresh}
             className="text-xs text-muted-foreground underline underline-offset-2"
           >
-            I have already invited 5 people, check again
+            I have already earned 500 points — check again
           </button>
         </div>
       </div>

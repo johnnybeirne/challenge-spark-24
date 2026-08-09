@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Copy, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
-import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
+import { resolveFirstName } from "@/lib/tooltipTokens";
 import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";

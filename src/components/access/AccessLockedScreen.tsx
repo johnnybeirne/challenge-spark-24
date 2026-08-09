@@ -42,9 +42,6 @@ export const AccessLockedScreen = ({
             style={{ width: `${Math.min(100, (pointsTotal / 500) * 100)}%` }}
           />
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Complete Day 1: +50 pts · Complete Day 2: +50 pts · Complete Day 3: +50 pts · Each invite signup: +50 pts
-        </p>
 
         <div ref={inviteRef} className="mt-8 text-left">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

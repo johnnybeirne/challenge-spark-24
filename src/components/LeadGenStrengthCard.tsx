@@ -646,10 +646,10 @@ const LeadGenStrengthCard = () => {
                 className="rounded-xl bg-background px-4 py-4"
                 style={{ border: "1.5px solid #534AB7" }}
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                <p className="text-[11px] font-bold tracking-wider text-primary">
                   {firstName
-                    ? `${firstName}, what should you call your challenge?`
-                    : "What should you call your challenge?"}
+                    ? `${firstName}, here is a proposed challenge title based on your answers`
+                    : "Here is a proposed challenge title based on your answers"}
                 </p>
                 {editingTitle ? (
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">

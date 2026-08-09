@@ -116,6 +116,12 @@ const InviteFriends = () => {
             );
           })}
         </div>
+
+        {currentMonthCount === 0 && (
+          <p className="text-[var(--body-size)] text-muted-foreground">
+            Share your invite link below to get your first signup this month.
+          </p>
+        )}
       </section>
 
       {/* Section 2 - All time */}

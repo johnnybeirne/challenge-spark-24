@@ -8,7 +8,7 @@ import { cn, getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
-import { useReferralStats } from "@/hooks/useReferralStats";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
 
 /**
  * Shared access page template — one component, three instances

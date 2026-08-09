@@ -3,15 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { useUserRole } from "@/hooks/useUserRole";
-
+import { getCycle, getPreviousCycle, CYCLE_DAYS } from "@/lib/accessCycle";
 
 export const REQUIRED_MONTHLY_INVITES = 5;
 export const REQUIRED_MONTHLY_POINTS = 500;
-
-const monthKey = (d: Date) => d.toISOString().slice(0, 7);
-
-const previousMonthKey = (d: Date) =>
-  monthKey(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 1, 1)));
+export { CYCLE_DAYS };
 
 export interface AccessStatus {
   hasAccess: boolean;
@@ -20,6 +16,9 @@ export interface AccessStatus {
   inviteCount: number;
   gracePeriod: boolean;
   gracePeriodEndsAt: Date;
+  /** end of the participant's current 28 day cycle */
+  cycleEndsAt: Date;
+  daysLeftInCycle: number;
   loading: boolean;
   refresh: () => Promise<void>;
 }
@@ -31,10 +30,10 @@ export const useAccessStatus = (): AccessStatus => {
   // "Owner" maps to the admin role in this system; admins are exempt from the access gate.
   const isExempt = isAdmin;
 
-
   const [pointsTotal, setPointsTotal] = useState(0);
   const [inviteCount, setInviteCount] = useState(0);
   const [prevStatus, setPrevStatus] = useState<string | null>(null);
+  const [signupAt, setSignupAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -42,48 +41,58 @@ export const useAccessStatus = (): AccessStatus => {
       setPointsTotal(0);
       setInviteCount(0);
       setPrevStatus(null);
+      setSignupAt(null);
       setLoading(false);
       return;
     }
     setLoading(true);
-    const now = new Date();
-    const months = [monthKey(now), previousMonthKey(now)];
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const anchor = profile?.created_at ?? user.created_at ?? null;
+    setSignupAt(anchor);
+
+    const current = getCycle(anchor);
+    const previous = getPreviousCycle(anchor);
+    const keys = [current.key, previous?.key].filter(Boolean) as string[];
 
     const [pointsRes, invitesRes] = await Promise.all([
       supabase
         .from("monthly_points_tracking")
         .select("month, points_total, access_status")
         .eq("user_id", user.id)
-        .in("month", months),
+        .in("month", keys),
       supabase
         .from("monthly_invite_tracking")
         .select("month, invite_count")
         .eq("user_id", user.id)
-        .in("month", months),
+        .in("month", keys),
     ]);
 
     const pointRows = pointsRes.data ?? [];
-    const currentPoints = pointRows.find((r) => r.month === monthKey(now));
-    const previousPoints = pointRows.find((r) => r.month === previousMonthKey(now));
-    setPointsTotal(currentPoints?.points_total ?? 0);
-    setPrevStatus(previousPoints?.access_status ?? null);
+    setPointsTotal(pointRows.find((r) => r.month === current.key)?.points_total ?? 0);
+    setPrevStatus(
+      previous ? pointRows.find((r) => r.month === previous.key)?.access_status ?? null : null
+    );
 
     const inviteRows = invitesRes.data ?? [];
-    const currentInvites = inviteRows.find((r) => r.month === monthKey(now));
-    setInviteCount(currentInvites?.invite_count ?? 0);
+    setInviteCount(inviteRows.find((r) => r.month === current.key)?.invite_count ?? 0);
 
     setLoading(false);
-  }, [user?.id]);
+  }, [user?.id, user?.created_at]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const now = new Date();
-  const monthStart = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0)
-  );
-  const gracePeriodEndsAt = new Date(monthStart.getTime() + 24 * 60 * 60 * 1000);
+  const cycle = getCycle(signupAt, now.getTime());
+  // Grace runs for the first 24 hours of the participant's own new cycle.
+  const gracePeriodEndsAt = new Date(cycle.startsAt.getTime() + 24 * 60 * 60 * 1000);
 
   const hasAccess = isExempt || isPremium || pointsTotal >= REQUIRED_MONTHLY_POINTS;
   const pointsNeeded = Math.max(0, REQUIRED_MONTHLY_POINTS - pointsTotal);
@@ -93,7 +102,6 @@ export const useAccessStatus = (): AccessStatus => {
     !isPremium &&
     prevStatus === "locked_out" &&
     pointsTotal < REQUIRED_MONTHLY_POINTS &&
-    now.getUTCDate() === 1 &&
     now.getTime() < gracePeriodEndsAt.getTime();
 
   return {
@@ -103,10 +111,12 @@ export const useAccessStatus = (): AccessStatus => {
     inviteCount,
     gracePeriod,
     gracePeriodEndsAt,
+    cycleEndsAt: cycle.endsAt,
+    daysLeftInCycle: cycle.daysLeft,
     loading: loading || roleLoading,
     refresh: load,
   };
-
 };
+
 
 export default useAccessStatus;

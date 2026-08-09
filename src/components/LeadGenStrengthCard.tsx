@@ -538,7 +538,7 @@ const LeadGenStrengthCard = () => {
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
-              
+              { value: "roadmap", label: "Your Roadmap" },
               { value: "quiz", label: "Quiz Results" },
             ].map((t) => (
               <TabsTrigger
@@ -773,6 +773,37 @@ const LeadGenStrengthCard = () => {
 
 
           {/* TAB 3: ROADMAP */}
+          <TabsContent value="roadmap" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-[var(--body-size)] font-black text-foreground">
+                  {archetype.roadmapHeader}
+                </h3>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                  {archetype.roadmapIntro}
+                </p>
+              </div>
+              <div className="space-y-3">
+                {archetype.roadmap.map((r) => (
+                  <div
+                    key={r.day}
+                    className="rounded-xl border border-border bg-background px-4 py-3"
+                  >
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                      {r.day}
+                    </p>
+                    <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">
+                      {r.title}
+                    </p>
+                    <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                      {r.copy}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+
 
           {/* TAB 4: QUIZ RESULTS */}
           <TabsContent value="quiz" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">

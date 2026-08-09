@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { useUserRole } from "@/hooks/useUserRole";
+
 
 export const REQUIRED_MONTHLY_INVITES = 3;
 
@@ -23,6 +25,9 @@ export interface AccessStatus {
 export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const { isAdmin, loading: roleLoading } = useUserRole();
+  const isExempt = isAdmin;
+
 
   const [inviteCount, setInviteCount] = useState(0);
   const [prevStatus, setPrevStatus] = useState<string | null>(null);

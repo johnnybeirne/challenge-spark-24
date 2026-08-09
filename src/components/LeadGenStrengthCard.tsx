@@ -528,6 +528,24 @@ const LeadGenStrengthCard = () => {
         </div>
       </div>
 
+      {/* START DAY 1 CTA */}
+      <div style={{ padding: "12px 20px" }}>
+        <Button
+          className="w-full"
+          style={{
+            backgroundColor: "#534AB7",
+            color: "#ffffff",
+            fontSize: "16px",
+            fontWeight: 600,
+            borderRadius: "10px",
+            padding: "16px 20px",
+          }}
+          onClick={() => navigate("/challenge/day-1")}
+        >
+          Start Day 1 — Begin building your challenge →
+        </Button>
+      </div>
+
       {/* TABS */}
       <div className="border-t border-border bg-background px-5 sm:px-7 pt-4">
         <Tabs defaultValue="profile" className="w-full">

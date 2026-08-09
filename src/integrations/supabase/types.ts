@@ -2698,6 +2698,10 @@ export type Database = {
       }
     }
     Functions: {
+      access_cycle_key: {
+        Args: { p_now?: string; p_signup_at: string }
+        Returns: string
+      }
       admin_adjust_partner_score: {
         Args: { p_delta: number; p_partner_id: string }
         Returns: undefined

@@ -499,16 +499,21 @@ const LeadGenStrengthCard = () => {
           {/* Left: Score + archetype */}
           <div className="min-w-0 flex-1">
             <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Lead Gen Strength
+              Your lead gen strength
             </p>
             <div className="mt-1 flex items-baseline gap-3 flex-wrap">
               <span className={cn("text-5xl sm:text-6xl font-black leading-none", archetype.tone.gaugeText)}>
                 {percent}%
               </span>
               <span className={cn("text-base font-bold", archetype.tone.gaugeText)}>
-                {archetype.name}
+                {(() => {
+                  const plain = archetype.name.replace(/^the\s+/i, "").trim();
+                  const article = /^[aeiou]/i.test(plain) ? "an" : "a";
+                  return `You are ${article} ${plain}`;
+                })()}
               </span>
             </div>
+
             <div className="mt-4 h-1.5 w-full max-w-md rounded-full bg-muted overflow-hidden">
               <div
                 className={cn("h-full rounded-full transition-all", archetype.tone.bar)}

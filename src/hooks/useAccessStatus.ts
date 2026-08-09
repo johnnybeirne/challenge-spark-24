@@ -26,6 +26,7 @@ export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
   const { isAdmin, loading: roleLoading } = useUserRole();
+  // "Owner" maps to the admin role in this system; admins are exempt from the access gate.
   const isExempt = isAdmin;
 
 

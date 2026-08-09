@@ -19,6 +19,7 @@ import { getExperienceFromPath } from "@/lib/experienceShell";
 import { trackEvent } from "@/lib/analytics";
 import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { useUserRole } from "@/hooks/useUserRole";
 import AccessGraceBanner from "./access/AccessGraceBanner";
 import AccessLockedScreen from "./access/AccessLockedScreen";
 

@@ -5,11 +5,10 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { cn, getReferralUrl } from "@/lib/utils";
-import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
-import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { useReferralStats } from "@/hooks/useReferralStats";
 
 /**
  * Shared access page template — one component, three instances
@@ -25,9 +24,10 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { inviteCount, invitesNeeded } = useAccessStatus();
+  const { currentMonthCount } = useReferralStats();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
@@ -73,19 +73,19 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           className="rounded-[10px] border border-[#1D9E75] bg-background p-5 sm:p-6"
           aria-labelledby="access-free-heading"
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#0F6E56]">
+          <h2
+            id="access-free-heading"
+            className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
+          >
             Get access for free
-          </p>
-          <h2 id="access-free-heading" className="mt-2 text-lg font-bold leading-snug">
-            Invite 5 people this month or upgrade for $97
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Invite 5 people who sign up for the challenge and your access stays free this month.
+          <p className="mt-2 text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
+            Invite 5 people this month or upgrade for $97
           </p>
 
           <div className="mt-4 flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
-              {inviteCount} of 5 invites this month
+              {currentMonthCount} of 5 invites in {monthName}
             </span>
             <div className="flex items-center gap-1.5">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -93,7 +93,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   key={i}
                   className={cn(
                     "h-2.5 w-2.5 rounded-full",
-                    i < inviteCount ? "bg-[#1D9E75]" : "border border-[#1D9E75] bg-transparent"
+                    i < currentMonthCount ? "bg-[#1D9E75]" : "border border-[#1D9E75] bg-transparent"
                   )}
                 />
               ))}
@@ -105,12 +105,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               <div className="rounded-lg bg-[#F0FAF6] p-5">
                 <p className="font-semibold">Invite friends</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {invitesNeeded === 0
-                    ? "You are all set for this month. Keep inviting to stay ahead."
-                    : `Invite ${invitesNeeded} more ${invitesNeeded === 1 ? "person" : "people"} to keep your access free`}
+                  Share your link. Every person who signs up counts toward your 5.
                 </p>
                 <div className="mt-4 flex flex-col gap-3">
-                  <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
                   <Button
                     onClick={copy}
                     className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"

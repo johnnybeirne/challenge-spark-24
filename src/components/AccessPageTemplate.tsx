@@ -131,7 +131,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               <div className="rounded-lg bg-[#EEEDFE] p-5">
                 <p className="font-semibold">Upgrade instead</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Skip the invites and get instant access
+                  Skip the points target and get instant access
                 </p>
                 <Button
                   onClick={() => navigate("/premium")}
@@ -153,7 +153,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               onClick={() => navigate("/invites")}
               className="text-sm text-muted-foreground hover:underline"
             >
-              See your full invite progress and rewards →
+              See your full points progress and rewards →
             </button>
           </div>
           <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">

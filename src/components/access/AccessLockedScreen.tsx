@@ -67,7 +67,7 @@ export const AccessLockedScreen = ({
           onClick={() => inviteRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
           className="mt-4 text-sm font-medium text-[#534AB7] underline underline-offset-2"
         >
-          I want to invite people instead
+          I want to earn points instead
         </button>
 
         <div className="mt-10">

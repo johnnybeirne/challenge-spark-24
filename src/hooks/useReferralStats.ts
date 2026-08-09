@@ -18,6 +18,8 @@ export interface ReferralBadge {
 export interface ReferralStats {
   currentMonthCount: number;
   invitesNeeded: number;
+  pointsTotal: number;
+  pointsNeeded: number;
   allTimeCount: number;
   featuredCreatorThreshold: number;
   featuredCreatorProgress: number;
@@ -32,6 +34,7 @@ export const useReferralStats = (): ReferralStats => {
   const { user } = useAuth();
 
   const [currentMonthCount, setCurrentMonthCount] = useState(0);
+  const [pointsTotal, setPointsTotal] = useState(0);
   const [allTimeCount, setAllTimeCount] = useState(0);
   const [featuredCreatorThreshold, setFeaturedCreatorThreshold] = useState(
     DEFAULT_FEATURED_THRESHOLD
@@ -46,11 +49,19 @@ export const useReferralStats = (): ReferralStats => {
 
     const now = new Date();
 
-    const [trackingRes, profileRes, settingsRes, badgesRes] = await Promise.all([
+    const [trackingRes, pointsRes, profileRes, settingsRes, badgesRes] = await Promise.all([
       user?.id
         ? supabase
             .from("monthly_invite_tracking")
             .select("invite_count")
+            .eq("user_id", user.id)
+            .eq("month", monthKey(now))
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      user?.id
+        ? supabase
+            .from("monthly_points_tracking")
+            .select("points_total")
             .eq("user_id", user.id)
             .eq("month", monthKey(now))
             .maybeSingle()
@@ -74,6 +85,7 @@ export const useReferralStats = (): ReferralStats => {
     ]);
 
     setCurrentMonthCount(trackingRes.data?.invite_count ?? 0);
+    setPointsTotal(pointsRes.data?.points_total ?? 0);
     setAllTimeCount(profileRes.data?.direct_referral_count ?? 0);
     setFeaturedCreatorThreshold(
       settingsRes.data?.threshold ?? DEFAULT_FEATURED_THRESHOLD
@@ -101,6 +113,8 @@ export const useReferralStats = (): ReferralStats => {
   return {
     currentMonthCount,
     invitesNeeded: Math.max(0, REQUIRED_MONTHLY_INVITES - currentMonthCount),
+    pointsTotal,
+    pointsNeeded: Math.max(0, 500 - pointsTotal),
     allTimeCount,
     featuredCreatorThreshold,
     featuredCreatorProgress: Math.min(allTimeCount, featuredCreatorThreshold),

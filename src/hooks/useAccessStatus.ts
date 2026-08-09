@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { useUserRole } from "@/hooks/useUserRole";
+
 
 export const REQUIRED_MONTHLY_INVITES = 3;
 
@@ -23,6 +25,9 @@ export interface AccessStatus {
 export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const { isAdmin, loading: roleLoading } = useUserRole();
+  const isExempt = isAdmin;
+
 
   const [inviteCount, setInviteCount] = useState(0);
   const [prevStatus, setPrevStatus] = useState<string | null>(null);
@@ -61,10 +66,11 @@ export const useAccessStatus = (): AccessStatus => {
   );
   const gracePeriodEndsAt = new Date(monthStart.getTime() + 24 * 60 * 60 * 1000);
 
-  const hasAccess = isPremium || inviteCount >= REQUIRED_MONTHLY_INVITES;
+  const hasAccess = isExempt || isPremium || inviteCount >= REQUIRED_MONTHLY_INVITES;
   const invitesNeeded = Math.max(0, REQUIRED_MONTHLY_INVITES - inviteCount);
 
   const gracePeriod =
+    !isExempt &&
     !isPremium &&
     prevStatus === "locked_out" &&
     now.getUTCDate() === 1 &&
@@ -76,9 +82,10 @@ export const useAccessStatus = (): AccessStatus => {
     invitesNeeded,
     gracePeriod,
     gracePeriodEndsAt,
-    loading,
+    loading: loading || roleLoading,
     refresh: load,
   };
+
 };
 
 export default useAccessStatus;

@@ -109,7 +109,7 @@ export const useReferralStats = (): ReferralStats => {
       }))
     );
     setLoading(false);
-  }, [user?.id]);
+  }, [user?.id, user?.created_at]);
 
   useEffect(() => {
     void load();

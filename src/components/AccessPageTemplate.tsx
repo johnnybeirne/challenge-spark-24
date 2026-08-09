@@ -111,13 +111,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   </p>
                 </div>
 
-                <div className="mt-4 space-y-1">
-                  <p className="text-xs font-medium text-[var(--text-primary)]">How to earn points</p>
-                  <p className="text-xs text-muted-foreground">Complete Day 1: +50 points</p>
-                  <p className="text-xs text-muted-foreground">Complete Day 2: +50 points</p>
-                  <p className="text-xs text-muted-foreground">Complete Day 3: +50 points</p>
-                  <p className="text-xs text-muted-foreground">Each person who signs up through your link: +50 points</p>
-                </div>
 
                 <p className="mt-4 text-sm text-muted-foreground">
                   Share your link. Every person who signs up counts.

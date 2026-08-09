@@ -779,12 +779,6 @@ const LeadGenStrengthCard = () => {
 
           {/* TAB 2: ASSETS */}
           <TabsContent value="assets" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
-            <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                Your Challenge Promise
-              </p>
-              <ChallengePromiseCard variant="inline" />
-            </div>
             <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs?.day2_s2_quiz} />
           </TabsContent>
 

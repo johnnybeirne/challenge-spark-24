@@ -622,7 +622,7 @@ const LeadGenStrengthCard = () => {
                 return (
                   <div className="rounded-xl border border-border bg-background px-4 py-3 space-y-1.5">
                     {rows.map((r) => (
-                      <div key={r.label} className="text-[var(--body-size)] leading-snug text-foreground/80">
+                      <div key={r.label} className="text-[var(--body-size)] leading-snug text-foreground/80 whitespace-nowrap overflow-hidden text-ellipsis">
                         <span>{r.label} </span>
                         <span className="font-medium text-primary break-words">
                           {r.value.charAt(0).toUpperCase() + r.value.slice(1)}

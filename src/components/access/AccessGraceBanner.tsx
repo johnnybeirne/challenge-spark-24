@@ -47,7 +47,7 @@ export const AccessGraceBanner = ({ pointsNeeded }: { pointsNeeded: number }) =>
   return (
     <div className="relative z-[60] w-full bg-[#BA7517] px-4 py-3 text-center text-sm text-white">
       <span>
-        Your new 28 day cycle has started and you have 24 hours of access left. Earn {pointsNeeded} more points or upgrade to keep access.
+        Your free access expires in 24 hours. Earn {pointsNeeded} more points or upgrade to keep access.
       </span>{" "}
       <button
         type="button"

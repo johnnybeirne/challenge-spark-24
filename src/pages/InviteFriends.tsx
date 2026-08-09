@@ -86,7 +86,7 @@ const InviteFriends = () => {
             </h2>
             <p className="text-[var(--body-size)] text-muted-foreground">
               {pointsNeeded > 0
-                ? `${pointsNeeded} points to go`
+                ? `${pointsNeeded} points to go this cycle`
                 : "You are all set this cycle"}
             </p>
           </div>
@@ -111,7 +111,7 @@ const InviteFriends = () => {
           </div>
           <p className="text-[var(--body-size)] text-muted-foreground">
             {pointsNeeded > 0
-              ? `${pointsNeeded} points to go`
+              ? `${pointsNeeded} points to go this cycle`
               : "You are all set this cycle"}
           </p>
         </div>

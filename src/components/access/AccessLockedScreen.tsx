@@ -76,7 +76,7 @@ export const AccessLockedScreen = ({
             onClick={onRefresh}
             className="text-xs text-muted-foreground underline underline-offset-2"
           >
-            I have already earned 500 points — check again
+            I have already earned 500 points this cycle — check again
           </button>
         </div>
       </div>

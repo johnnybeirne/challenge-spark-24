@@ -113,7 +113,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
               <Button
                 onClick={copy}
-                className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"
+                className="w-full gap-2 bg-[#1D9E75] font-medium text-white hover:bg-[#1D9E75] hover:text-black"
               >
                 {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {copied ? "Copied" : "Copy invite link"}

@@ -5,7 +5,7 @@ import { usePremium } from "@/hooks/usePremium";
 import { useUserRole } from "@/hooks/useUserRole";
 
 
-export const REQUIRED_MONTHLY_INVITES = 3;
+export const REQUIRED_MONTHLY_INVITES = 5;
 
 const monthKey = (d: Date) => d.toISOString().slice(0, 7);
 

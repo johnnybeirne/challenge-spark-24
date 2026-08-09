@@ -136,10 +136,10 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
           <div className="mt-4 flex items-center gap-2">
             <span className="text-sm text-muted-foreground">
-              {inviteCount} of 3 invites this month
+              {inviteCount} of 5 invites this month
             </span>
             <div className="flex items-center gap-1.5">
-              {Array.from({ length: 3 }).map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
                   className={cn(

@@ -28,15 +28,15 @@ export const AccessLockedScreen = ({
           {firstName}, your access has lapsed
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Invite 3 people who join the challenge each month to keep your access free, or upgrade for
+          Invite 5 people who join the challenge each month to keep your access free, or upgrade for
           $97/month.
         </p>
 
         <p className="mt-8 text-sm font-medium text-foreground">
-          You have invited {inviteCount} of 3 people this month
+          You have invited {inviteCount} of 5 people this month
         </p>
         <div className="mt-3 flex items-center justify-center gap-2">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2, 3, 4].map((i) => (
             <span
               key={i}
               className={[
@@ -80,7 +80,7 @@ export const AccessLockedScreen = ({
             onClick={onRefresh}
             className="text-xs text-muted-foreground underline underline-offset-2"
           >
-            I have already invited 3 people, check again
+            I have already invited 5 people, check again
           </button>
         </div>
       </div>

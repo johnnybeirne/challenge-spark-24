@@ -973,6 +973,36 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_points_tracking: {
+        Row: {
+          access_status: string
+          created_at: string
+          id: string
+          month: string
+          points_total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_status?: string
+          created_at?: string
+          id?: string
+          month: string
+          points_total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_status?: string
+          created_at?: string
+          id?: string
+          month?: string
+          points_total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nav_tips: {
         Row: {
           created_at: string

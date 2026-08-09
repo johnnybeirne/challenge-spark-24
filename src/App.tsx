@@ -80,6 +80,7 @@ import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
 import AdminPremiumPage from "@/pages/AdminPremiumPage";
+import AdminReferralSettings from "@/pages/AdminReferralSettings";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
@@ -288,6 +289,7 @@ const App = () => (
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="unlocks" element={<AdminUnlockGates />} />
                 <Route path="builder-prompts" element={<AdminBuilderPrompts />} />
+                <Route path="referral-settings" element={<AdminReferralSettings />} />
 
               </Route>
 

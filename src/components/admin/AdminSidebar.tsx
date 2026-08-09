@@ -144,6 +144,15 @@ export function AdminSidebar() {
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Referral settings">
+                  <a href="/owner-console/referral-settings">
+                    <FileEdit className="h-4 w-4" />
+                    <span>Referral settings</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
 
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} tooltip="Log out">

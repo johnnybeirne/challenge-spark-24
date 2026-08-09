@@ -77,7 +77,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get monthly access for free when you invite 5 people per month*
+            Get access for free when you invite 5 people every 28 days*
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             or upgrade for $97/month
@@ -92,10 +92,10 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                 <div className="mt-3 space-y-2">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm font-medium text-[var(--text-primary)]">
-                      {pointsTotal} of 500 points this month
+                      {pointsTotal} of 500 points this cycle
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      {pointsTotal} of 500 points in {monthName}
+                      {daysLeftInCycle} days left, ends {formatCycleDate(cycleEndsAt)}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
@@ -106,10 +106,11 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {pointsNeeded === 0
-                      ? "You have reached 500 points this month"
+                      ? "You have reached 500 points this cycle"
                       : `${pointsNeeded} points to go`}
                   </p>
                 </div>
+
 
 
                 <p className="mt-4 text-sm text-muted-foreground">

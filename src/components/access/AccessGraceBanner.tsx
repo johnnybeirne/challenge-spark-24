@@ -7,7 +7,7 @@ import { getReferralUrl } from "@/lib/utils";
 
 const DISMISS_KEY = "leadtree_access_grace_banner_dismissed";
 
-export const AccessGraceBanner = ({ invitesNeeded }: { invitesNeeded: number }) => {
+export const AccessGraceBanner = ({ pointsNeeded }: { pointsNeeded: number }) => {
   const navigate = useNavigate();
   const { state } = useAppState();
   const [dismissed, setDismissed] = useState(() => {
@@ -47,8 +47,7 @@ export const AccessGraceBanner = ({ invitesNeeded }: { invitesNeeded: number }) 
   return (
     <div className="relative z-[60] w-full bg-[#BA7517] px-4 py-3 text-center text-sm text-white">
       <span>
-        Your free access expires in 24 hours. Invite {invitesNeeded} more{" "}
-        {invitesNeeded === 1 ? "person" : "people"} to keep it free.
+        Your free access expires in 24 hours. Earn {pointsNeeded} more points or upgrade to keep access.
       </span>{" "}
       <button
         type="button"

@@ -89,7 +89,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
 
   if (showLockedScreen) {
-    return <AccessLockedScreen inviteCount={access.inviteCount} onRefresh={() => void access.refresh()} />;
+    return <AccessLockedScreen pointsTotal={access.pointsTotal} pointsNeeded={access.pointsNeeded} onRefresh={() => void access.refresh()} />;
   }
 
   // ---------- LEADTREE 3-column shell (authenticated) ----------
@@ -113,7 +113,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           ].join(" ")}
         >
           <div className="mx-auto w-full max-w-[1320px] px-8 py-12 pb-32 sm:px-12">
-            {showGraceBanner && <AccessGraceBanner invitesNeeded={Math.max(0, 5 - access.inviteCount)} />}
+            {showGraceBanner && <AccessGraceBanner pointsNeeded={access.pointsNeeded} />}
             <BackButton />
             <Outlet />
           </div>
@@ -143,7 +143,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
     <div data-experience={mode} className="experience-root flex flex-col min-h-screen bg-background overflow-x-hidden">
       <div className={`w-full relative flex flex-col flex-1 min-h-0 ${showNav && authenticated ? "pb-24" : ""}`}>
         <div className="min-w-0 flex-1">
-          {showGraceBanner && <AccessGraceBanner invitesNeeded={Math.max(0, 5 - access.inviteCount)} />}
+          {showGraceBanner && <AccessGraceBanner pointsNeeded={access.pointsNeeded} />}
           {showNav && authenticated && <BackButton />}
           <Outlet />
         </div>

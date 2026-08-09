@@ -24,16 +24,16 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded } = useAccessStatus();
+  const { pointsTotal, pointsNeeded, cycleEndsAt, daysLeftInCycle } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = getReferralUrl("/", inviteCode);
+
 
   const copy = async () => {
     try {

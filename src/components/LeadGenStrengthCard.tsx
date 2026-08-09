@@ -579,12 +579,12 @@ const LeadGenStrengthCard = () => {
           {/* TAB 1: PROFILE */}
           <TabsContent value="profile" className="pt-6 pb-6 animate-fade-in focus-visible:outline-none">
             <div className="space-y-6">
-              {/* Strategic profile */}
+              {/* 1. Strategic profile */}
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                  Strategic Profile
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  Your strategic profile
                 </p>
-                <p className="text-sm leading-relaxed text-foreground">
+                <p className="text-[var(--body-size)] leading-relaxed text-foreground">
                   {narrativeShort}
                   {showFullNarrative && narrativeRest && (
                     <span className="block mt-2">{narrativeRest}</span>
@@ -601,31 +601,131 @@ const LeadGenStrengthCard = () => {
                 )}
               </div>
 
-              {/* Optimization Priorities accordion */}
+              {/* 2. Divider */}
+              <div className="h-px w-full bg-border" />
+
+              {/* 3. What you have so far */}
+              {(() => {
+                const raw = state.challenge?.aiOutputs?.day1Setup as unknown;
+                let setup: any = {};
+                try {
+                  setup = typeof raw === "string" ? JSON.parse(raw) : (raw && typeof raw === "object" ? raw : {});
+                } catch {
+                  setup = {};
+                }
+                const rows = [
+                  { label: "Your audience:", value: (setup?.audience ?? "").toString().trim() },
+                  { label: "Their problem:", value: (setup?.problem ?? "").toString().trim() },
+                  { label: "Your superpower:", value: (setup?.superpower ?? "").toString().trim() },
+                ].filter((r) => r.value);
+                if (rows.length === 0) return null;
+                return (
+                  <div className="rounded-xl border border-border bg-background px-4 py-3 space-y-1.5">
+                    {rows.map((r) => (
+                      <div key={r.label} className="text-[var(--body-size)] leading-snug text-foreground/80">
+                        <span>{r.label} </span>
+                        <span className="font-medium text-primary break-words">
+                          {r.value.charAt(0).toUpperCase() + r.value.slice(1)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {/* 4. Challenge promise */}
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  {firstName ? `${firstName}, your challenge promise` : "Your challenge promise"}
+                </p>
+                <ChallengePromiseCard variant="inline" />
+              </div>
+
+              {/* 5. Challenge title */}
+              <div
+                className="rounded-xl bg-background px-4 py-4"
+                style={{ border: "1.5px solid #534AB7" }}
+              >
+                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  {firstName
+                    ? `${firstName}, what should you call your challenge?`
+                    : "What should you call your challenge?"}
+                </p>
+                {editingTitle ? (
+                  <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <Input
+                      value={titleDraft}
+                      onChange={(e) => setTitleDraft(e.target.value)}
+                      className="text-[18px] font-bold"
+                      aria-label="Challenge title"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          identity.setTopic(titleDraft);
+                          setEditingTitle(false);
+                        }}
+                      >
+                        Save
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingTitle(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-[18px] font-bold leading-snug text-foreground break-words">
+                      {identity.title}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTitleDraft(identity.topic || identity.shortTitle);
+                        setEditingTitle(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> Edit
+                    </button>
+                  </div>
+                )}
+                <p className="mt-2 text-xs text-muted-foreground">
+                  We suggested this from your Day 1 answers. Make it yours.
+                </p>
+              </div>
+
+              {/* 6. Divider */}
+              <div className="h-px w-full bg-border" />
+
+              {/* 7. Top priorities */}
               {priorities.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="h-4 w-4 text-rose-500" />
+                  <div className="flex items-center gap-2 mb-3">
                     <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
-                      Your Top Priorities
+                      {firstName ? `${firstName}, your top priorities` : "Your top priorities"}
                       <span className="ml-2 text-muted-foreground font-bold normal-case tracking-normal">
                         ({priorities.length})
                       </span>
                     </h3>
                   </div>
-                  <p className="mb-3 text-xs font-semibold text-rose-600">
-                    👇 Tap each item to read the fix
-                  </p>
                   <Accordion type="single" collapsible className="space-y-2">
                     {priorities.map((p) => (
                       <AccordionItem
                         key={p.id}
                         value={p.id}
-                        className="rounded-lg border-2 border-rose-200 bg-rose-50/60 px-4 shadow-sm hover:border-rose-400 hover:bg-rose-50 transition-colors data-[state=open]:border-rose-500 data-[state=open]:bg-rose-500/10 data-[state=open]:shadow-md"
+                        className="rounded-lg border border-border bg-card px-4 shadow-sm transition-colors data-[state=open]:bg-[#F0FAF6] data-[state=open]:shadow-md data-[state=open]:border-[#1D9E75] data-[state=open]:[border-width:1.5px]"
                       >
-                        <AccordionTrigger className="py-3 text-left text-sm font-bold text-foreground hover:no-underline [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-rose-600 [&>svg]:shrink-0">
+                        <AccordionTrigger className="py-3 text-left text-[var(--body-size)] font-bold text-foreground hover:no-underline [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-[#1D9E75] [&>svg]:shrink-0">
                           <span className="flex items-center gap-2">
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white">!</span>
+                            <span
+                              aria-hidden="true"
+                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white"
+                              style={{ backgroundColor: "#1D9E75" }}
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                            </span>
                             {p.title}
                           </span>
                         </AccordionTrigger>
@@ -633,7 +733,7 @@ const LeadGenStrengthCard = () => {
                         <AccordionContent className="pb-4">
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>
-                              <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                              <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1D9E75" }}>
                                 From
                               </p>
                               <p className="mt-1 text-xs leading-snug text-foreground">
@@ -641,7 +741,7 @@ const LeadGenStrengthCard = () => {
                               </p>
                             </div>
                             <div>
-                              <p className="text-[10px] font-black uppercase tracking-wider text-primary">
+                              <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: "#1D9E75" }}>
                                 To
                               </p>
                               <p className="mt-1 text-xs leading-snug text-foreground">
@@ -656,8 +756,6 @@ const LeadGenStrengthCard = () => {
                 </div>
               )}
 
-              {/* Your Challenge recap (kept here so Day 1 answers stay visible) */}
-              <YourChallengeRecap />
             </div>
           </TabsContent>
 

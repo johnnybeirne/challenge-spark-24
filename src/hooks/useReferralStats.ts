@@ -47,7 +47,16 @@ export const useReferralStats = (): ReferralStats => {
   const load = useCallback(async () => {
     setLoading(true);
 
-    const now = new Date();
+    let anchor: string | null = user?.created_at ?? null;
+    if (user?.id) {
+      const { data: p } = await supabase
+        .from("profiles")
+        .select("created_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      anchor = p?.created_at ?? anchor;
+    }
+    const cycleKey = getCycle(anchor).key;
 
     const [trackingRes, pointsRes, profileRes, settingsRes, badgesRes] = await Promise.all([
       user?.id
@@ -55,7 +64,7 @@ export const useReferralStats = (): ReferralStats => {
             .from("monthly_invite_tracking")
             .select("invite_count")
             .eq("user_id", user.id)
-            .eq("month", monthKey(now))
+            .eq("month", cycleKey)
             .maybeSingle()
         : Promise.resolve({ data: null }),
       user?.id
@@ -63,9 +72,10 @@ export const useReferralStats = (): ReferralStats => {
             .from("monthly_points_tracking")
             .select("points_total")
             .eq("user_id", user.id)
-            .eq("month", monthKey(now))
+            .eq("month", cycleKey)
             .maybeSingle()
         : Promise.resolve({ data: null }),
+
       user?.id
         ? supabase
             .from("profiles")

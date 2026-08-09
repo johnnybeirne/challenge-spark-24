@@ -4,11 +4,11 @@ import { Copy, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
-import { cn, getReferralUrl } from "@/lib/utils";
+import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
-import { useReferralStats } from "@/hooks/useReferralStats";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
 
 /**
  * Shared access page template — one component, three instances
@@ -24,7 +24,7 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { currentMonthCount } = useReferralStats();
+  const { pointsTotal, pointsNeeded } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const monthName = new Date().toLocaleString("default", { month: "long" });
@@ -83,31 +83,46 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             or upgrade for $97/month
           </p>
 
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
-              {currentMonthCount} invites in {monthName}
-            </span>
-            <div className="flex items-center gap-1.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-2.5 w-2.5 rounded-full",
-                    i < currentMonthCount ? "bg-[#1D9E75]" : "border border-[#1D9E75] bg-transparent"
-                  )}
-                />
-              ))}
-            </div>
-          </div>
 
           {referralLink ? (
             <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
               <div className="rounded-lg bg-[#F0FAF6] p-5">
                 <p className="font-semibold">Invite friends</p>
-                <p className="mt-1 text-sm text-muted-foreground">
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-[var(--text-primary)]">
+                      {pointsTotal} of 500 points this month
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {pointsTotal} of 500 points in {monthName}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
+                    <div
+                      className="h-full rounded-full bg-[#534AB7] transition-all"
+                      style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {pointsNeeded === 0
+                      ? "You have reached 500 points this month"
+                      : `${pointsNeeded} points to go`}
+                  </p>
+                </div>
+
+                <div className="mt-4 space-y-1">
+                  <p className="text-xs font-medium text-[var(--text-primary)]">How to earn points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 1: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 2: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 3: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Each person who signs up through your link: +50 points</p>
+                </div>
+
+                <p className="mt-4 text-sm text-muted-foreground">
                   Share your link. Every person who signs up counts.
                 </p>
-                <div className="mt-4 flex flex-col gap-3">
+                <div className="mt-3 flex flex-col gap-3">
                   <Button
                     onClick={copy}
                     className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"

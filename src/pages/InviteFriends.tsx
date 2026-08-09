@@ -145,46 +145,54 @@ const InviteFriends = () => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full transition-all"
-              style={{ width: `${featuredPct}%`, backgroundColor: PURPLE }}
-            />
-          </div>
-          <div className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-            <span>
-              {allTimeCount} of {featuredCreatorThreshold} signups
-            </span>
-            <span>Featured Creator at {featuredCreatorThreshold}</span>
-          </div>
-        </div>
+        {allTimeCount === 0 ? (
+          <p className="text-[var(--body-size)] text-muted-foreground">
+            Your all-time signups will appear here once your first referral joins.
+          </p>
+        ) : (
+          <>
+            <div className="space-y-2">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${featuredPct}%`, backgroundColor: PURPLE }}
+                />
+              </div>
+              <div className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+                <span>
+                  {allTimeCount} of {featuredCreatorThreshold} signups
+                </span>
+                <span>Featured Creator at {featuredCreatorThreshold}</span>
+              </div>
+            </div>
 
-        <div
-          className="rounded-lg border p-4"
-          style={{ backgroundColor: PURPLE_TINT, borderColor: PURPLE_BORDER }}
-        >
-          {isFeaturedCreator ? (
-            <>
-              <h3 className="text-[var(--h3-size)] font-semibold text-foreground">
-                Featured Creator
-              </h3>
-              <p className="text-[var(--body-size)] text-foreground/70">
-                Your challenge is eligible for promotion. Johnny will be in touch.
-              </p>
-            </>
-          ) : (
-            <>
-              <h3 className="text-[var(--h3-size)] font-semibold text-foreground">
-                Featured Creator: {featuredCreatorRemaining} signups to go
-              </h3>
-              <p className="text-[var(--body-size)] text-foreground/70">
-                Reach {featuredCreatorThreshold} all-time signups and your challenge gets
-                promoted to the LeadTree community plus a 1-to-1 with Johnny.
-              </p>
-            </>
-          )}
-        </div>
+            <div
+              className="rounded-lg border p-4"
+              style={{ backgroundColor: PURPLE_TINT, borderColor: PURPLE_BORDER }}
+            >
+              {isFeaturedCreator ? (
+                <>
+                  <h3 className="text-[var(--h3-size)] font-semibold text-foreground">
+                    Featured Creator
+                  </h3>
+                  <p className="text-[var(--body-size)] text-foreground/70">
+                    Your challenge is eligible for promotion. Johnny will be in touch.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-[var(--h3-size)] font-semibold text-foreground">
+                    Featured Creator: {featuredCreatorRemaining} signups to go
+                  </h3>
+                  <p className="text-[var(--body-size)] text-foreground/70">
+                    Reach {featuredCreatorThreshold} all-time signups and your challenge gets
+                    promoted to the LeadTree community plus a 1-to-1 with Johnny.
+                  </p>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </section>
 
       {/* Section 3 - Badges */}

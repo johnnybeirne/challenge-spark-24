@@ -54,9 +54,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "You have identified a channel that consistently brings prospects to your door. You aren't guessing where your next lead is coming from; you just need to automate and scale the delivery mechanism.",
     weakTitle: "Unpredictable Pipeline",
     weakReality:
-      "You are operating in a \u201Cfeast or famine\u201D lead cycle, relying on sporadic referrals or unpredictable networking.",
+      "My leads come in waves, and I never know if next month will be full or empty.",
     weakFix:
-      "In Day 1, you will define a high-ticket, high-relevance challenge promise that turns cold traffic into enthusiastic participants.",
+      "I have a steady, predictable flow of enquiries every single month.",
   },
   q2: {
     strongTitle: "Content Autonomy",
@@ -64,9 +64,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your content operates as a true asset, generating interest even when you step away. Your business isn't held hostage by daily content schedules.",
     weakTitle: "The Content Treadmill",
     weakReality:
-      "If you stop posting, writing, or promoting for even a few days, your lead flow immediately dries up.",
+      "If I stop posting, writing, or showing up online, my lead flow dries up within days.",
     weakFix:
-      "Day 3 focuses on creating an evergreen experience that captures, nurtures, and converts leads 24/7/365, giving you your time back.",
+      "Leads keep arriving even when I step away from content and social media.",
   },
   q3: {
     strongTitle: "Attribution Clarity",
@@ -74,9 +74,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "You know exactly which channels, campaigns, or partnerships are driving your revenue. You can safely allocate budget and time because you have data.",
     weakTitle: "Attribution Blind Spot",
     weakReality:
-      "You are getting leads, but you have no clear idea which specific efforts are producing them, leading to wasted time on dead-end channels.",
+      "I am getting leads, but I have no idea which effort is actually producing them.",
     weakFix:
-      "Our backend integration binds tracking tokens on signup, allowing you to instantly see which referral links and partnerships are converting.",
+      "I know exactly where every lead comes from and which activities are worth my time.",
   },
   q4: {
     strongTitle: "Pre-Sold Authority",
@@ -84,9 +84,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your audience respects your expertise before they ever jump on a call. This slashes your sales cycle and eliminates the need for aggressive, high-pressure selling.",
     weakTitle: "Skeptical Audience",
     weakReality:
-      "You have to spend the first half of every sales conversation proving your basic credibility, fighting against cold-traffic skepticism.",
+      "I spend the first half of every sales call proving I know what I am talking about.",
     weakFix:
-      "By structuring your quiz and challenge using our pre-built templates, you educate and build authority before you make an offer.",
+      "Prospects trust my expertise before we ever speak, so the call starts warm.",
   },
   q5: {
     strongTitle: "Self-Propelling Virality",
@@ -94,9 +94,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your existing audience does your marketing for you. Every new signup has a high probability of bringing in peers, driving down your customer acquisition cost to near zero.",
     weakTitle: "Isolated Signups",
     weakReality:
-      "Your lead generation is entirely linear, each lead must be manually found and acquired by you.",
+      "Every new lead has to be found and won by me, one by one.",
     weakFix:
-      "LeadTree's built-in Referral & Invite System encourages participants to invite 3 peers to unlock bonus templates, turning one lead into four.",
+      "My existing leads bring in their peers, so my audience grows without me chasing it.",
   },
   q6: {
     strongTitle: "Tailored Diagnostics",
@@ -104,9 +104,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "You treat different audience segments with tailored solutions. This personalized approach maximizes opt-in rates and makes prospects feel uniquely understood.",
     weakTitle: "One-Size-Fits-All Magnet",
     weakReality:
-      "You serve a single static PDF or ebook to everyone, ignoring the fact that different buyers have completely different pain points.",
+      "I serve the same lead magnet to everyone, even though my buyers have completely different problems.",
     weakFix:
-      "In Day 2, you'll construct an interactive quiz that automatically segments leads into custom archetypes and serves dynamic advice.",
+      "Different prospects see exactly the message that matches their specific situation.",
   },
   q7: {
     strongTitle: "Seamless Lead Onboarding",
@@ -114,9 +114,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your signups have zero friction. They are immediately directed to an actionable next step, keeping their momentum high and driving them deeper into your ecosystem.",
     weakTitle: "Onboarding Leak",
     weakReality:
-      "Leads sign up and then sit in limbo, wondering what to do next, which causes their excitement and buying intent to plummet.",
+      "People sign up and then go quiet, and I have no clear next step to keep them moving.",
     weakFix:
-      "Our Challenger Progress Hub visually updates in real-time, showing new signups exactly what daily tasks they need to perform.",
+      "Every new sign-up knows exactly what to do next and stays engaged.",
   },
   q8: {
     strongTitle: "Evergreen Asset Leverage",
@@ -124,9 +124,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "You have built assets that generate compound returns. They act as automated 24/7 business developers, freeing you up to focus on product and high-level strategy.",
     weakTitle: "Temporary Campaigns",
     weakReality:
-      "You are constantly building temporary campaigns, webinars, or launches that generate a brief spike of leads and then go completely dead.",
+      "I am always launching something new just to create a short spike of interest.",
     weakFix:
-      "Build your challenge once and flip it into \u201CEvergreen Mode,\u201D where the 72-hour countdown runs automatically for every new visitor.",
+      "I have one core system that generates leads continuously, launch after launch.",
   },
   q9: {
     strongTitle: "Passive Generation",
@@ -134,9 +134,9 @@ const SIGNALS: Record<string, SignalCopy> = {
       "Your pipeline is completely decoupled from your physical presence. You wake up to new pre-sold leads in your database without having worked overnight.",
     weakTitle: "Manual Pipeline Maintenance",
     weakReality:
-      "If you take a vacation, get sick, or focus on fulfillment, your lead generation grinds to a halt.",
+      "If I take a break, get sick, or focus on delivery, my pipeline grinds to a halt.",
     weakFix:
-      "The unified 3-day challenge framework automates the entire relationship-building process, turning traffic into warmed-up leads passively.",
+      "New enquiries show up whether I am working that day or not.",
   },
 };
 

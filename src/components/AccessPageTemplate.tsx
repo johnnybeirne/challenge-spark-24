@@ -16,21 +16,27 @@ import { useAccessStatus } from "@/hooks/useAccessStatus";
  * (Training, Community, Events). Renders inside the participant shell only:
  * never adds a second nav, header or footer.
  */
-const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
-  training: (n) => `Welcome to LeadTree Training, ${n}`,
-  community: (n) => `Welcome to the LeadTree Community, ${n}`,
-  events: (n) => `Welcome to LeadTree Live Events, ${n}`,
+const PAGE_TITLE: Record<AccessPageKey, string> = {
+  training: "Training",
+  community: "Community",
+  events: "Live Events",
+};
+
+const TAG_ORDER: AccessPageKey[] = ["training", "community", "events"];
+const TAG_LABELS: Record<AccessPageKey, string> = {
+  training: "Training",
+  community: "Community",
+  events: "Live Events",
 };
 
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
-  const { content, loading } = useAccessPage(pageKey);
+  const { loading } = useAccessPage(pageKey);
   const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
-  const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = getReferralUrl("/", inviteCode);
@@ -55,18 +61,33 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
     );
   }
 
-  const title = PAGE_TITLES[pageKey](firstName || "there");
-
   return (
     <div className="app-page-container py-6 pb-24 lg:py-8 animate-fade-in">
       <div className="mx-auto w-full max-w-3xl space-y-8">
-        <header className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-          {content?.intro_text && (
-            <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground">
-              {text(content.intro_text)}
-            </p>
-          )}
+        <header
+          className="space-y-4 border-l-4 border-l-[#534AB7] border-[0.5px] border-[var(--border)] bg-[var(--surface-2)] rounded-[12px] py-5 px-6"
+        >
+          <span className="inline-block rounded-[20px] bg-[#EEEDFE] px-[10px] py-[3px] text-[10px] font-semibold uppercase text-[#534AB7]">
+            ⭐ LeadTree Premium
+          </span>
+          <h1 className="text-[28px] font-bold text-[var(--text-primary)]">
+            {PAGE_TITLE[pageKey]}
+          </h1>
+          <div className="flex flex-wrap gap-2">
+            {TAG_ORDER.map((key) => {
+              const active = key === pageKey;
+              return (
+                <span
+                  key={key}
+                  className={`rounded-[20px] px-[12px] py-[4px] text-[11px] font-semibold ${
+                    active ? "bg-[#1D9E75] text-white" : "bg-[#534AB7] text-white"
+                  }`}
+                >
+                  {TAG_LABELS[key]}
+                </span>
+              );
+            })}
+          </div>
         </header>
 
         {/* SECTION 1 — Get access for free */}
@@ -78,7 +99,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get LeadTree Premium access for free every month when you invite 5 people*
+            {firstName ? `${firstName}, keep your membership free` : "Keep your membership free"}
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             or upgrade for $97/month

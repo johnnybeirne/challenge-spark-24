@@ -78,7 +78,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get access for free every 28 days when you invite 5 people*
+            Get access for free every month when you invite 5 people*
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             or upgrade for $97/month
@@ -160,7 +160,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             </button>
           </div>
           <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">
-            *Every person who signs up for the challenge through your link counts toward your 5 for this cycle.
+            *Invite 5 people who sign up for the challenge each month. Your cycle runs for 28 days from your signup date.
           </p>
         </section>
       </div>

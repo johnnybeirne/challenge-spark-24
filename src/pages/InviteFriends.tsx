@@ -5,6 +5,7 @@ import { useAppState } from "@/context/AppContext";
 import { getReferralUrl } from "@/lib/utils";
 import { useReferralStats } from "@/hooks/useReferralStats";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { formatCycleDate } from "@/lib/accessCycle";
 import Spinner from "@/components/Spinner";
 
 const GREEN = "#1D9E75";
@@ -14,7 +15,7 @@ const PURPLE_BORDER = "#AFA9EC";
 
 const InviteFriends = () => {
   const { state } = useAppState();
-  const { pointsTotal, pointsNeeded } = useAccessStatus();
+  const { pointsTotal, pointsNeeded, cycleEndsAt, daysLeftInCycle } = useAccessStatus();
   const {
     currentMonthCount,
     allTimeCount,
@@ -30,7 +31,6 @@ const InviteFriends = () => {
   const inviteCode = state.user?.inviteCode ?? "";
   const quizLink = getReferralUrl("/assess", inviteCode);
   const challengeLink = getReferralUrl("/", inviteCode);
-  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const copy = async (kind: "quiz" | "challenge", url: string) => {
     if (!url) {
@@ -62,11 +62,11 @@ const InviteFriends = () => {
           Your referral dashboard
         </h1>
         <p className="text-[var(--body-size)] text-muted-foreground">
-          Invite people to join the challenge and keep your access free.
+          Invite people to join the challenge and keep your access free. Your cycle ends {
         </p>
       </header>
 
-      {/* Section 1 - This month */}
+      {/* Section 1 - This cycle */}
       <section
         className="rounded-xl border-2 bg-card p-5 space-y-4"
         style={{ borderColor: GREEN }}
@@ -77,15 +77,15 @@ const InviteFriends = () => {
               className="text-xs font-semibold tracking-wide"
               style={{ color: GREEN }}
             >
-              This month
+              This cycle
             </p>
             <h2 className="text-[var(--h2-size)] font-bold text-foreground">
-              {pointsTotal} of 500 points in {monthName}
+              {pointsTotal} of 500 points this cycle
             </h2>
             <p className="text-[var(--body-size)] text-muted-foreground">
               {pointsNeeded > 0
                 ? `${pointsNeeded} points to go`
-                : "You are all set this month"}
+                : "You are all set this cycle"}
             </p>
           </div>
           <span
@@ -110,7 +110,7 @@ const InviteFriends = () => {
           <p className="text-[var(--body-size)] text-muted-foreground">
             {pointsNeeded > 0
               ? `${pointsNeeded} points to go`
-              : "You are all set this month"}
+              : "You are all set this cycle"}
           </p>
         </div>
 
@@ -123,7 +123,7 @@ const InviteFriends = () => {
 
         {currentMonthCount === 0 && (
           <p className="text-[var(--body-size)] text-muted-foreground">
-            Share your invite link below to get your first signup this month.
+            Share your invite link below to get your first signup this cycle.
           </p>
         )}
       </section>

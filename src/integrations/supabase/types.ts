@@ -697,6 +697,24 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_creator_settings: {
+        Row: {
+          id: string
+          threshold: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          threshold?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          threshold?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       founding_config: {
         Row: {
           created_at: string
@@ -717,6 +735,33 @@ export type Database = {
           cutoff_date?: string | null
           id?: string
           max_founders?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invite_badges: {
+        Row: {
+          description: string
+          id: string
+          name: string
+          sort_order: number
+          threshold: number
+          updated_at: string
+        }
+        Insert: {
+          description?: string
+          id?: string
+          name: string
+          sort_order?: number
+          threshold: number
+          updated_at?: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          threshold?: number
           updated_at?: string
         }
         Relationships: []

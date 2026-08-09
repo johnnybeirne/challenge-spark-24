@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Copy, CheckCircle, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { shareOrCopy } from "@/lib/share";
-import { getReferralUrl } from "@/lib/utils";
+import { cn, getReferralUrl } from "@/lib/utils";
 import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { getAccessIcon } from "@/lib/accessPageIcons";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
 
 /**
  * Shared access page template — one component, three instances

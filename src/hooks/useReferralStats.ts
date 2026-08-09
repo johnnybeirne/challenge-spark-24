@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getCycle } from "@/lib/accessCycle";
 
 export const REQUIRED_MONTHLY_INVITES = 5;
 const DEFAULT_FEATURED_THRESHOLD = 100;
 
-const monthKey = (d: Date) => d.toISOString().slice(0, 7);
 
 export interface ReferralBadge {
   id: string;

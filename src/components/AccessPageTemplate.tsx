@@ -23,6 +23,8 @@ import { useAccessStatus } from "@/hooks/useAccessStatus";
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
+  const { inviteCount, invitesNeeded } = useAccessStatus();
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, ArrowRight, Sparkles, FileDown, FileText } from "lucide-react";
+import { CheckCircle2, ArrowRight, Sparkles, FileDown, FileText, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { questions } from "@/lib/assessmentData";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
@@ -17,9 +18,12 @@ import YourChallengeRecap from "@/components/YourChallengeRecap";
 import ChallengePromiseCard from "@/components/ChallengePromiseCard";
 import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
+import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
+import { resolveFirstName } from "@/lib/tooltipTokens";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadQuizAsDocx } from "@/lib/downloadQuizDocx";
 import { openQuizInGoogleDocs } from "@/lib/downloadQuizGdoc";
+
 
 /** Trim narrative to first N sentences. */
 function firstSentences(text: string, n: number) {

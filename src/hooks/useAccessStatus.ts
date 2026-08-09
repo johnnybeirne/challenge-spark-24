@@ -61,10 +61,11 @@ export const useAccessStatus = (): AccessStatus => {
   );
   const gracePeriodEndsAt = new Date(monthStart.getTime() + 24 * 60 * 60 * 1000);
 
-  const hasAccess = isPremium || inviteCount >= REQUIRED_MONTHLY_INVITES;
+  const hasAccess = isExempt || isPremium || inviteCount >= REQUIRED_MONTHLY_INVITES;
   const invitesNeeded = Math.max(0, REQUIRED_MONTHLY_INVITES - inviteCount);
 
   const gracePeriod =
+    !isExempt &&
     !isPremium &&
     prevStatus === "locked_out" &&
     now.getUTCDate() === 1 &&
@@ -76,9 +77,10 @@ export const useAccessStatus = (): AccessStatus => {
     invitesNeeded,
     gracePeriod,
     gracePeriodEndsAt,
-    loading,
+    loading: loading || roleLoading,
     refresh: load,
   };
+
 };
 
 export default useAccessStatus;

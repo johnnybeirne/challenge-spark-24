@@ -895,6 +895,39 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_invite_tracking: {
+        Row: {
+          access_granted: boolean
+          access_status: string
+          created_at: string
+          id: string
+          invite_count: number
+          month: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_granted?: boolean
+          access_status?: string
+          created_at?: string
+          id?: string
+          invite_count?: number
+          month: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_granted?: boolean
+          access_status?: string
+          created_at?: string
+          id?: string
+          invite_count?: number
+          month?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nav_tips: {
         Row: {
           created_at: string

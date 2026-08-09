@@ -77,10 +77,10 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get access for free
+            Get monthly access for free when you invite 5 people per month*
           </h2>
-          <p className="mt-2 text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
-            Invite 5 people this month or upgrade for $97
+          <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
+            or upgrade for $97/month
           </p>
 
           <div className="mt-4 flex items-center gap-3">
@@ -148,6 +148,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               See your full invite progress and rewards →
             </button>
           </div>
+          <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">
+            *Every person who signs up for the challenge through your link counts toward your monthly 5.
+          </p>
         </section>
       </div>
     </div>

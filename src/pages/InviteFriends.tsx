@@ -62,7 +62,9 @@ const InviteFriends = () => {
           Your referral dashboard
         </h1>
         <p className="text-[var(--body-size)] text-muted-foreground">
-          Invite people to join the challenge and keep your access free. Your cycle ends {
+          Invite people to join the challenge and keep your access free. Your current
+          28 day cycle ends {formatCycleDate(cycleEndsAt)}, {daysLeftInCycle} days from now.
+
         </p>
       </header>
 

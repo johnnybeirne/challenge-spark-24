@@ -85,7 +85,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
           <div className="mt-4 flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
-              {currentMonthCount} of 5 invites in {monthName}
+              {currentMonthCount} invites in {monthName}
             </span>
             <div className="flex items-center gap-1.5">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -105,7 +105,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               <div className="rounded-lg bg-[#F0FAF6] p-5">
                 <p className="font-semibold">Invite friends</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Share your link. Every person who signs up counts toward your 5.
+                  Share your link. Every person who signs up counts.
                 </p>
                 <div className="mt-4 flex flex-col gap-3">
                   <Button

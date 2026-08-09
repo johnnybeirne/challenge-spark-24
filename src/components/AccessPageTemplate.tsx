@@ -25,9 +25,10 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { inviteCount, invitesNeeded } = useAccessStatus();
+  const { currentMonthCount } = useReferralStats();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);

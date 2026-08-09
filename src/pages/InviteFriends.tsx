@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { getReferralUrl } from "@/lib/utils";
 import { useReferralStats } from "@/hooks/useReferralStats";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
 import Spinner from "@/components/Spinner";
 
 const GREEN = "#1D9E75";
@@ -13,9 +14,9 @@ const PURPLE_BORDER = "#AFA9EC";
 
 const InviteFriends = () => {
   const { state } = useAppState();
+  const { pointsTotal, pointsNeeded } = useAccessStatus();
   const {
     currentMonthCount,
-    invitesNeeded,
     allTimeCount,
     featuredCreatorThreshold,
     featuredCreatorRemaining,
@@ -29,6 +30,7 @@ const InviteFriends = () => {
   const inviteCode = state.user?.inviteCode ?? "";
   const quizLink = getReferralUrl("/assess", inviteCode);
   const challengeLink = getReferralUrl("/", inviteCode);
+  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const copy = async (kind: "quiz" | "challenge", url: string) => {
     if (!url) {
@@ -78,43 +80,45 @@ const InviteFriends = () => {
               This month
             </p>
             <h2 className="text-[var(--h2-size)] font-bold text-foreground">
-              {currentMonthCount} of 5 signups this month
+              {pointsTotal} of 500 points in {monthName}
             </h2>
             <p className="text-[var(--body-size)] text-muted-foreground">
-              {invitesNeeded > 0
-                ? `${invitesNeeded} more ${invitesNeeded === 1 ? "signup" : "signups"} and your access stays free for another month.`
-                : "You are all set for this month."}
+              {pointsNeeded > 0
+                ? `${pointsNeeded} points to go`
+                : "You are all set this month"}
             </p>
           </div>
           <span
             className="rounded-full px-3 py-1 text-xs font-semibold"
             style={
-              invitesNeeded === 0
+              pointsNeeded === 0
                 ? { backgroundColor: "#E4F6EF", color: GREEN }
                 : { backgroundColor: "#FEF3C7", color: "#92400E" }
             }
           >
-            {invitesNeeded === 0 ? "Access active" : "Access at risk"}
+            {pointsNeeded === 0 ? "Access active" : "Access at risk"}
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {[1, 2, 3, 4, 5].map((n) => {
-            const filled = n <= currentMonthCount;
-            return (
-              <div
-                key={n}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
-                style={
-                  filled
-                    ? { backgroundColor: GREEN, color: "#ffffff" }
-                    : { backgroundColor: "#F1F1F1", color: "#8A8A8A" }
-                }
-              >
-                {n}
-              </div>
-            );
-          })}
+        <div className="space-y-2">
+          <div className="h-2 w-full overflow-hidden rounded-[4px] bg-[#EEEDFE]">
+            <div
+              className="h-full rounded-[4px] bg-[#534AB7] transition-all"
+              style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
+            />
+          </div>
+          <p className="text-[var(--body-size)] text-muted-foreground">
+            {pointsNeeded > 0
+              ? `${pointsNeeded} points to go`
+              : "You are all set this month"}
+          </p>
+        </div>
+
+        <div className="space-y-1 text-xs text-muted-foreground">
+          <p>Day 1 complete: +50 pts</p>
+          <p>Day 2 complete: +50 pts</p>
+          <p>Day 3 complete: +50 pts</p>
+          <p>Each invite signup: +50 pts</p>
         </div>
 
         {currentMonthCount === 0 && (

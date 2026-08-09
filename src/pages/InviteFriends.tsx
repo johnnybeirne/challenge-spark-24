@@ -224,6 +224,12 @@ const InviteFriends = () => {
             </div>
           ))}
         </div>
+
+        {allTimeCount === 0 && (
+          <p className="text-[var(--body-size)] text-muted-foreground">
+            Invite your first person to start earning badges.
+          </p>
+        )}
       </section>
 
       {/* Section 4 - Invite links */}

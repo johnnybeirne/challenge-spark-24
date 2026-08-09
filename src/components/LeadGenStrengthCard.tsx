@@ -538,7 +538,7 @@ const LeadGenStrengthCard = () => {
             {[
               { value: "profile", label: "Your Profile" },
               { value: "assets", label: "Your Assets" },
-              
+              { value: "roadmap", label: "Your Roadmap" },
               { value: "quiz", label: "Quiz Results" },
             ].map((t) => (
               <TabsTrigger

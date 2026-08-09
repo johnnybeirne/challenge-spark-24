@@ -1,25 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, CheckCircle, Share2 } from "lucide-react";
+import { Copy, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
-import { shareOrCopy } from "@/lib/share";
 import { cn, getReferralUrl } from "@/lib/utils";
 import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
-import { getAccessIcon } from "@/lib/accessPageIcons";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 
 /**
  * Shared access page template — one component, three instances
- * (Training, Community, Events). It renders ONLY inside the existing
- * participant shell content area: the app shell already provides the single
- * top bar, left sidebar (+ sidebar footer), right sidebar and countdown bar.
- * This template must never add a second nav, header or footer.
+ * (Training, Community, Events). Renders inside the participant shell only:
+ * never adds a second nav, header or footer.
  */
+const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
+  training: (n) => `Welcome to LeadTree Training, ${n}`,
+  community: (n) => `Welcome to the LeadTree Community, ${n}`,
+  events: (n) => `Welcome to LeadTree Live Events, ${n}`,
+};
+
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
@@ -30,7 +32,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
 
-  // Reuses the existing referral system — the participant's own invite code.
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = getReferralUrl("/", inviteCode);
 
@@ -53,32 +54,13 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
     );
   }
 
-  // Single source of truth for order: each item's saved `position`, ascending.
-  const items = [...(content?.items ?? [])].sort((a, b) => a.position - b.position);
-
-  const ItemList = ({ list }: { list: typeof items }) =>
-    list.length === 0 ? null : (
-      <div className="grid gap-4 sm:grid-cols-2">
-        {list.map((item, i) => {
-          const Icon = getAccessIcon(item.icon);
-          return (
-            <div key={i} className="rounded-xl border border-border bg-card p-5">
-              <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon className="h-4 w-4" />
-              </div>
-              <p className="font-semibold leading-snug">{text(item.heading)}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{text(item.copy)}</p>
-            </div>
-          );
-        })}
-      </div>
-    );
+  const title = PAGE_TITLES[pageKey](firstName || "there");
 
   return (
     <div className="app-page-container py-6 pb-24 lg:py-8 animate-fade-in">
       <div className="mx-auto w-full max-w-3xl space-y-8">
         <header className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight">{text(content?.header_text)}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
           {content?.intro_text && (
             <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground">
               {text(content.intro_text)}
@@ -86,55 +68,22 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           )}
         </header>
 
-        {/* Referral link — the hero of the page */}
-        <section className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 sm:p-8">
-          <h2 className="text-xl font-bold tracking-tight">{text(content?.referral_heading)}</h2>
-          {content?.referral_copy && (
-            <p className="mt-2 text-sm text-muted-foreground">{text(content.referral_copy)}</p>
-          )}
-          {referralLink ? (
-            <>
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
-                <Button onClick={copy} size="lg" className="gap-2 text-white">
-                  {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  {copied ? "Copied" : "Copy link"}
-                </Button>
-              </div>
-              <button
-                onClick={() => shareOrCopy({ text: text(content?.referral_copy), url: referralLink })}
-                className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
-              >
-                <Share2 className="h-3.5 w-3.5" /> Share this link
-              </button>
-            </>
-          ) : (
-            <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
-              Your personal invite link appears here when you're signed in.
-            </p>
-          )}
-        </section>
-
-        <ItemList list={items} />
-
-        {/* Invite-to-unlock / upgrade card */}
+        {/* SECTION 1 — Get access for free */}
         <section
-          className="rounded-[10px] border border-[#534AB7] bg-background p-5"
-          aria-labelledby="access-invite-heading"
+          className="rounded-[10px] border border-[#1D9E75] bg-background p-5 sm:p-6"
+          aria-labelledby="access-free-heading"
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#534AB7]">
-            Keep your access free
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#0F6E56]">
+            Get access for free
           </p>
-          <h2
-            id="access-invite-heading"
-            className="mt-2 text-lg font-bold leading-snug text-foreground"
-          >
-            {invitesNeeded === 0
-              ? "You are all set for this month. Keep inviting to stay ahead."
-              : `Invite ${invitesNeeded} more ${invitesNeeded === 1 ? "person" : "people"} this month to maintain your free access`}
+          <h2 id="access-free-heading" className="mt-2 text-lg font-bold leading-snug">
+            Invite 5 people this month or upgrade for $97
           </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Invite 5 people who sign up for the challenge and your access stays free this month.
+          </p>
 
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-4 flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
               {inviteCount} of 5 invites this month
             </span>
@@ -144,9 +93,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   key={i}
                   className={cn(
                     "h-2.5 w-2.5 rounded-full",
-                    i < inviteCount
-                      ? "bg-[#534AB7]"
-                      : "border border-[#534AB7] bg-transparent"
+                    i < inviteCount ? "bg-[#1D9E75]" : "border border-[#1D9E75] bg-transparent"
                   )}
                 />
               ))}
@@ -155,11 +102,12 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
           {referralLink ? (
             <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
-              {/* Invite option */}
               <div className="rounded-lg bg-[#F0FAF6] p-5">
-                <p className="font-semibold text-foreground">Invite friends</p>
+                <p className="font-semibold">Invite friends</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Share your link to keep access free
+                  {invitesNeeded === 0
+                    ? "You are all set for this month. Keep inviting to stay ahead."
+                    : `Invite ${invitesNeeded} more ${invitesNeeded === 1 ? "person" : "people"} to keep your access free`}
                 </p>
                 <div className="mt-4 flex flex-col gap-3">
                   <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
@@ -173,12 +121,10 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                 </div>
               </div>
 
-              {/* Vertical divider */}
-              <div className="hidden sm:block w-px bg-border" />
+              <div className="hidden w-px bg-border sm:block" />
 
-              {/* Upgrade option */}
               <div className="rounded-lg bg-[#EEEDFE] p-5">
-                <p className="font-semibold text-foreground">Upgrade instead</p>
+                <p className="font-semibold">Upgrade instead</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Skip the invites and get instant access
                 </p>

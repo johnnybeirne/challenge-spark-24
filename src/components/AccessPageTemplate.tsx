@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { formatCycleDate } from "@/lib/accessCycle";
 
 /**
  * Shared access page template — one component, three instances
@@ -24,16 +25,16 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded } = useAccessStatus();
+  const { pointsTotal, pointsNeeded, cycleEndsAt, daysLeftInCycle } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
   const text = (v?: string) => applyTooltipTokens(v ?? "", firstName);
 
   const inviteCode = state.user?.inviteCode ?? "";
   const referralLink = getReferralUrl("/", inviteCode);
+
 
   const copy = async () => {
     try {
@@ -77,7 +78,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get monthly access for free when you invite 5 people per month*
+            Get access for free when you invite 5 people every 28 days*
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             or upgrade for $97/month
@@ -92,10 +93,10 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                 <div className="mt-3 space-y-2">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm font-medium text-[var(--text-primary)]">
-                      {pointsTotal} of 500 points this month
+                      {pointsTotal} of 500 points this cycle
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      {pointsTotal} of 500 points in {monthName}
+                      {daysLeftInCycle} days left, ends {formatCycleDate(cycleEndsAt)}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
@@ -106,10 +107,11 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {pointsNeeded === 0
-                      ? "You have reached 500 points this month"
+                      ? "You have reached 500 points this cycle"
                       : `${pointsNeeded} points to go`}
                   </p>
                 </div>
+
 
 
                 <p className="mt-4 text-sm text-muted-foreground">
@@ -157,7 +159,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             </button>
           </div>
           <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">
-            *Every person who signs up for the challenge through your link counts toward your monthly 5.
+            *Your cycle runs for 28 days from the day you signed up, then starts again. Every person who signs up for the challenge through your link counts toward that cycle.
           </p>
         </section>
       </div>

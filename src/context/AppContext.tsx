@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
 import { supabase } from "@/integrations/supabase/client";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
+import { getCycle, isInCycle } from "@/lib/accessCycle";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { applySimulatedDate } from "@/lib/simulatedDate";
@@ -343,26 +344,31 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
-function currentMonthKey(): string {
-  return new Date().toISOString().slice(0, 7);
-}
-
-// Fire-and-forget sync of this calendar month's points total to the backend.
+// Fire-and-forget sync of the current 28 day access cycle's points total.
 function syncMonthlyPoints(activity: PointActivityEntry[]) {
-  const month = currentMonthKey();
-  const pointsTotal = activity
-    .filter((entry) => (entry.timestamp ?? "").slice(0, 7) === month)
-    .reduce((sum, entry) => sum + (entry.points ?? 0), 0);
-
   void (async () => {
     try {
       const { data } = await supabase.auth.getUser();
-      const userId = data.user?.id;
-      if (!userId) return;
+      const authUser = data.user;
+      if (!authUser?.id) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("created_at")
+        .eq("user_id", authUser.id)
+        .maybeSingle();
+
+      const signupAt = profile?.created_at ?? authUser.created_at ?? null;
+      const cycle = getCycle(signupAt);
+
+      const pointsTotal = activity
+        .filter((entry) => isInCycle(entry.timestamp, cycle))
+        .reduce((sum, entry) => sum + (entry.points ?? 0), 0);
+
       await supabase
         .from("monthly_points_tracking")
         .upsert(
-          { user_id: userId, month, points_total: pointsTotal },
+          { user_id: authUser.id, month: cycle.key, points_total: pointsTotal },
           { onConflict: "user_id,month" }
         );
     } catch {
@@ -370,6 +376,7 @@ function syncMonthlyPoints(activity: PointActivityEntry[]) {
     }
   })();
 }
+
 
 function awardPoints(state: AppState, id: string, label: string, points: number): AppState {
   const current = state.points ?? defaultPoints;

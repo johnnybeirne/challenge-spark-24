@@ -1,20 +1,32 @@
-// Runs on the 1st of every month at 00:01 UTC via pg_cron.
-// For each tracked user, if last month's invite_count is below the required
-// threshold and the user is not premium, mark them locked out.
+// Runs daily. Access cycles are rolling 28 day windows anchored to each
+// participant's signup date, not calendar months. This job closes out any
+// cycle that ended in the last 24 hours: 500 points keeps access active,
+// anything less locks the participant out unless they are on the paid plan.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const REQUIRED_INVITES = 5;
 const REQUIRED_POINTS = 500;
+const CYCLE_DAYS = 28;
+const CYCLE_MS = CYCLE_DAYS * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const previousMonthKey = (now: Date): string => {
-  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
-};
+const dateKey = (d: Date) => d.toISOString().slice(0, 10);
+
+/** The cycle that ended within the last 24 hours, or null when none did. */
+function justClosedCycleKey(signupAt: string, now: number): string | null {
+  const base = new Date(signupAt).getTime();
+  if (Number.isNaN(base) || now <= base) return null;
+  const index = Math.floor((now - base) / CYCLE_MS);
+  if (index < 1) return null;
+  const closedStart = base + (index - 1) * CYCLE_MS;
+  const closedEnd = closedStart + CYCLE_MS;
+  if (now - closedEnd > DAY_MS) return null;
+  return dateKey(new Date(closedStart));
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -25,84 +37,60 @@ Deno.serve(async (req) => {
   );
 
   try {
-    const month = previousMonthKey(new Date());
+    const now = Date.now();
 
-    const { data: rows, error } = await supabase
-      .from("monthly_invite_tracking")
-      .select("id, user_id, invite_count, access_granted")
-      .eq("month", month);
-    if (error) throw error;
+    // Everyone whose 28 day cycle rolled over in the last day.
+    const { data: profiles, error: profilesError } = await supabase
+      .from("profiles")
+      .select("user_id, created_at, is_premium");
+    if (profilesError) throw profilesError;
 
-    const shortfall = (rows ?? []).filter(
-      (r: any) => !r.access_granted && (r.invite_count ?? 0) < REQUIRED_INVITES,
-    );
-
-    let lockedOut = 0;
-    if (shortfall.length > 0) {
-      const userIds = shortfall.map((r: any) => r.user_id);
-      const { data: premiumRows } = await supabase
-        .from("profiles")
-        .select("user_id, is_premium")
-        .in("user_id", userIds);
-      const premium = new Set(
-        (premiumRows ?? []).filter((p: any) => p.is_premium).map((p: any) => p.user_id),
-      );
-
-      const toLock = shortfall.filter((r: any) => !premium.has(r.user_id));
-      for (const row of toLock) {
-        await supabase
-          .from("monthly_invite_tracking")
-          .update({ access_status: "locked_out" })
-          .eq("id", row.id);
-      }
-      lockedOut = toLock.length;
+    const due: { userId: string; key: string; premium: boolean }[] = [];
+    for (const p of profiles ?? []) {
+      const key = justClosedCycleKey(p.created_at as string, now);
+      if (key) due.push({ userId: p.user_id as string, key, premium: !!p.is_premium });
     }
 
-    // Points-based access check (500 points per month)
-    let pointsLockedOut = 0;
-    let pointsKeptActive = 0;
-    const { data: pointRows, error: pointsError } = await supabase
-      .from("monthly_points_tracking")
-      .select("id, user_id, points_total")
-      .eq("month", month);
-    if (pointsError) throw pointsError;
+    let lockedOut = 0;
+    let keptActive = 0;
 
-    if ((pointRows ?? []).length > 0) {
-      const pointUserIds = (pointRows ?? []).map((r: any) => r.user_id);
-      const { data: pointPremiumRows } = await supabase
-        .from("profiles")
-        .select("user_id, is_premium")
-        .in("user_id", pointUserIds);
-      const subscribed = new Set(
-        (pointPremiumRows ?? []).filter((p: any) => p.is_premium).map((p: any) => p.user_id),
-      );
+    for (const row of due) {
+      const { data: pointRow } = await supabase
+        .from("monthly_points_tracking")
+        .select("id, points_total")
+        .eq("user_id", row.userId)
+        .eq("month", row.key)
+        .maybeSingle();
 
-      for (const row of pointRows ?? []) {
-        const total = row.points_total ?? 0;
-        if (total >= REQUIRED_POINTS) {
-          await supabase
-            .from("monthly_points_tracking")
-            .update({ access_status: "active" })
-            .eq("id", row.id);
-          pointsKeptActive++;
-        } else if (!subscribed.has(row.user_id)) {
-          await supabase
-            .from("monthly_points_tracking")
-            .update({ access_status: "locked_out" })
-            .eq("id", row.id);
-          pointsLockedOut++;
-        }
+      const total = pointRow?.points_total ?? 0;
+      const status = total >= REQUIRED_POINTS || row.premium ? "active" : "locked_out";
+
+      if (pointRow?.id) {
+        await supabase
+          .from("monthly_points_tracking")
+          .update({ access_status: status })
+          .eq("id", pointRow.id);
+      } else {
+        await supabase
+          .from("monthly_points_tracking")
+          .insert({
+            user_id: row.userId,
+            month: row.key,
+            points_total: 0,
+            access_status: status,
+          });
       }
+
+      if (status === "locked_out") lockedOut++;
+      else keptActive++;
     }
 
     return new Response(JSON.stringify({
       ok: true,
-      month,
-      checked: rows?.length ?? 0,
+      cycleDays: CYCLE_DAYS,
+      checked: due.length,
       lockedOut,
-      pointsChecked: pointRows?.length ?? 0,
-      pointsLockedOut,
-      pointsKeptActive,
+      keptActive,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

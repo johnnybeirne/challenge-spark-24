@@ -24,7 +24,7 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { currentMonthCount } = useReferralStats();
+  const { pointsTotal, pointsNeeded } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const monthName = new Date().toLocaleString("default", { month: "long" });
@@ -83,22 +83,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             or upgrade for $97/month
           </p>
 
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
-              {currentMonthCount} invites in {monthName}
-            </span>
-            <div className="flex items-center gap-1.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-2.5 w-2.5 rounded-full",
-                    i < currentMonthCount ? "bg-[#1D9E75]" : "border border-[#1D9E75] bg-transparent"
-                  )}
-                />
-              ))}
-            </div>
-          </div>
 
           {referralLink ? (
             <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">

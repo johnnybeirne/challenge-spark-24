@@ -159,7 +159,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             </button>
           </div>
           <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">
-            *Every person who signs up for the challenge through your link counts toward your monthly 5.
+            *Your cycle runs for 28 days from the day you signed up, then starts again. Every person who signs up for the challenge through your link counts toward that cycle.
           </p>
         </section>
       </div>

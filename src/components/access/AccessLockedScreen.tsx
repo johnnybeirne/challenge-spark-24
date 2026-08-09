@@ -30,11 +30,11 @@ export const AccessLockedScreen = ({
           {firstName}, your access has lapsed
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Earn 500 points per month to keep your access free, or upgrade for $97/month.
+          Earn 500 points every 28 days to keep your access free, or upgrade for $97/month.
         </p>
 
         <p className="mt-8 text-sm font-medium text-foreground">
-          You have {pointsTotal} of 500 points this month
+          You have {pointsTotal} of 500 points this cycle
         </p>
         <div className="mt-3 h-3 w-full max-w-xs overflow-hidden rounded-full bg-muted">
           <div

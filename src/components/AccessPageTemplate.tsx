@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
-import { formatCycleDate } from "@/lib/accessCycle";
+
 
 /**
  * Shared access page template — one component, three instances
@@ -25,7 +25,7 @@ const PAGE_TITLES: Record<AccessPageKey, (firstName: string) => string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded, cycleEndsAt, daysLeftInCycle } = useAccessStatus();
+  const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
@@ -91,14 +91,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                 <p className="font-semibold">Invite friends</p>
 
                 <div className="mt-3 space-y-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium text-[var(--text-primary)]">
-                      {pointsTotal} of 500 points this cycle
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {daysLeftInCycle} days left, ends {formatCycleDate(cycleEndsAt)}
-                    </span>
-                  </div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    {pointsTotal} of 500 points this cycle
+                  </p>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
                     <div
                       className="h-full rounded-full bg-[#534AB7] transition-all"
@@ -108,13 +103,8 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   <p className="text-sm text-muted-foreground">
                     {pointsNeeded === 0
                       ? "You have reached 500 points this cycle"
-                      : `${pointsNeeded} points to go`}
+                      : `${pointsNeeded} points to go · ${daysLeftInCycle} days left`}
                   </p>
-                  {pointsNeeded > 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      Your cycle resets in {daysLeftInCycle} days.
-                    </p>
-                  )}
                 </div>
 
 
@@ -123,6 +113,12 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   Share your link. Every person who signs up counts.
                 </p>
                 <div className="mt-3 flex flex-col gap-3">
+                  <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
+                    <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy} aria-label="Copy invite link">
+                      {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
                   <Button
                     onClick={copy}
                     className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"

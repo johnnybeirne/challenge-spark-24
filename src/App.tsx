@@ -28,6 +28,7 @@ import QuizPreview from "@/pages/QuizPreview";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
+import InviteFriends from "@/pages/InviteFriends";
 import Leaderboard from "@/pages/Leaderboard";
 import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { formatCycleDate } from "@/lib/accessCycle";
 
 /**
  * Shared access page template — one component, three instances

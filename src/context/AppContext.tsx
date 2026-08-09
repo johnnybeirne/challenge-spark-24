@@ -343,11 +343,46 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
+function currentMonthKey(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+// Fire-and-forget sync of this calendar month's points total to the backend.
+function syncMonthlyPoints(activity: PointActivityEntry[]) {
+  const month = currentMonthKey();
+  const pointsTotal = activity
+    .filter((entry) => (entry.timestamp ?? "").slice(0, 7) === month)
+    .reduce((sum, entry) => sum + (entry.points ?? 0), 0);
+
+  void (async () => {
+    try {
+      const { data } = await supabase.auth.getUser();
+      const userId = data.user?.id;
+      if (!userId) return;
+      await supabase
+        .from("monthly_points_tracking")
+        .upsert(
+          { user_id: userId, month, points_total: pointsTotal },
+          { onConflict: "user_id,month" }
+        );
+    } catch {
+      // non-blocking
+    }
+  })();
+}
+
 function awardPoints(state: AppState, id: string, label: string, points: number): AppState {
   const current = state.points ?? defaultPoints;
   if (current.awardedActions.includes(id)) return state;
 
   const total = current.total + points;
+  const activity = [
+    { id, label, points, timestamp: new Date().toISOString() },
+    ...current.activity,
+  ].slice(0, 12);
+
+  syncMonthlyPoints(activity);
+
   return {
     ...state,
     points: {
@@ -356,13 +391,11 @@ function awardPoints(state: AppState, id: string, label: string, points: number)
       completedDays: current.completedDays,
       awardedActions: [...current.awardedActions, id],
       unlockedRewards: getUnlockedRewards(total).map((reward) => reward.title),
-      activity: [
-        { id, label, points, timestamp: new Date().toISOString() },
-        ...current.activity,
-      ].slice(0, 12),
+      activity,
     },
   };
 }
+
 
 function applyPointRules(state: AppState): AppState {
   const current = { ...defaultPoints, ...(state.points ?? {}) };

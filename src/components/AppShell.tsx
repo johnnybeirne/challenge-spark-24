@@ -82,7 +82,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   }, [authenticated, signupAwarded, awardedActions.length]);
 
   const access = useAccessStatus();
-  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium";
+  const { isAdmin } = useUserRole();
+  // Admin/owner users are exempt from the monthly-invite access gate entirely.
+  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium" && !isAdmin;
   const showLockedScreen = accessGateApplies && !access.loading && !access.hasAccess && !access.gracePeriod;
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
 

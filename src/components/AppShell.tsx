@@ -19,6 +19,7 @@ import { getExperienceFromPath } from "@/lib/experienceShell";
 import { trackEvent } from "@/lib/analytics";
 import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { useUserRole } from "@/hooks/useUserRole";
 import AccessGraceBanner from "./access/AccessGraceBanner";
 import AccessLockedScreen from "./access/AccessLockedScreen";
 
@@ -81,7 +82,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   }, [authenticated, signupAwarded, awardedActions.length]);
 
   const access = useAccessStatus();
-  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium";
+  const { isAdmin } = useUserRole();
+  // Admin/owner users are exempt from the monthly-invite access gate entirely.
+  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium" && !isAdmin;
   const showLockedScreen = accessGateApplies && !access.loading && !access.hasAccess && !access.gracePeriod;
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
 

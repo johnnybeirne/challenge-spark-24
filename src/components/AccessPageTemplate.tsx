@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { cn, getReferralUrl } from "@/lib/utils";
-import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";

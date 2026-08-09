@@ -110,6 +110,11 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                       ? "You have reached 500 points this cycle"
                       : `${pointsNeeded} points to go`}
                   </p>
+                  {pointsNeeded > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Your cycle resets in {daysLeftInCycle} days.
+                    </p>
+                  )}
                 </div>
 
 

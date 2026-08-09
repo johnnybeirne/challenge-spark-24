@@ -88,10 +88,41 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
               <div className="rounded-lg bg-[#F0FAF6] p-5">
                 <p className="font-semibold">Invite friends</p>
-                <p className="mt-1 text-sm text-muted-foreground">
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-[var(--text-primary)]">
+                      {pointsTotal} of 500 points this month
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {pointsTotal} of 500 points in {monthName}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
+                    <div
+                      className="h-full rounded-full bg-[#534AB7] transition-all"
+                      style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {pointsNeeded === 0
+                      ? "You have reached 500 points this month"
+                      : `${pointsNeeded} points to go`}
+                  </p>
+                </div>
+
+                <div className="mt-4 space-y-1">
+                  <p className="text-xs font-medium text-[var(--text-primary)]">How to earn points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 1: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 2: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Complete Day 3: +50 points</p>
+                  <p className="text-xs text-muted-foreground">Each person who signs up through your link: +50 points</p>
+                </div>
+
+                <p className="mt-4 text-sm text-muted-foreground">
                   Share your link. Every person who signs up counts.
                 </p>
-                <div className="mt-4 flex flex-col gap-3">
+                <div className="mt-3 flex flex-col gap-3">
                   <Button
                     onClick={copy}
                     className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"

@@ -3,7 +3,7 @@
 // threshold and the user is not premium, mark them locked out.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const REQUIRED_INVITES = 3;
+const REQUIRED_INVITES = 5;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

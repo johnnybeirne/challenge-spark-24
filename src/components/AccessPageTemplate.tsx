@@ -154,28 +154,57 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           </div>
 
           {referralLink ? (
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
-              <Button onClick={copy} size="lg" className="gap-2 text-white">
-                {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? "Copied" : "Copy link"}
-              </Button>
+            <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
+              {/* Invite option */}
+              <div className="rounded-lg bg-[#F0FAF6] p-5">
+                <p className="font-semibold text-foreground">Invite friends</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Share your link to keep access free
+                </p>
+                <div className="mt-4 flex flex-col gap-3">
+                  <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
+                  <Button
+                    onClick={copy}
+                    className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"
+                  >
+                    {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? "Copied" : "Copy invite link"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Vertical divider */}
+              <div className="hidden sm:block w-px bg-border" />
+
+              {/* Upgrade option */}
+              <div className="rounded-lg bg-[#EEEDFE] p-5">
+                <p className="font-semibold text-foreground">Upgrade instead</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Skip the invites and get instant access
+                </p>
+                <Button
+                  onClick={() => navigate("/premium")}
+                  className="mt-4 w-full gap-2 bg-[#534AB7] font-medium text-white hover:bg-[#534AB7]/90"
+                >
+                  Upgrade for $97/month
+                </Button>
+              </div>
             </div>
           ) : (
-            <p className="mt-4 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
+            <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
               Your personal invite link appears here when you're signed in.
             </p>
           )}
 
-          <hr className="my-5 border-border" />
-
-          <button
-            type="button"
-            onClick={() => navigate("/premium")}
-            className="text-sm font-medium text-[#534AB7] hover:underline"
-          >
-            Or upgrade for $97/month and skip the invites
-          </button>
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => navigate("/invites")}
+              className="text-sm text-muted-foreground hover:underline"
+            >
+              See your full invite progress and rewards →
+            </button>
+          </div>
         </section>
       </div>
     </div>

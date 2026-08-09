@@ -1,20 +1,18 @@
-# Plan: Restructure access-card headline
+# Access card heading fix
 
 ## Goal
-Update the green "Get access for free" card in `src/components/AccessPageTemplate.tsx` so the offer hierarchy matches the user's wording.
-
-## Current state
-The card currently has:
-- H2: "Get access for free"
-- Subtext: "Invite 5 people this month or upgrade for $97"
+Replace the heading block at the top of the access card in `src/components/AccessPageTemplate.tsx` with the exact single-line structure requested, and add the asterisk footnote at the bottom of the card.
 
 ## Changes
-1. Replace the H2/subtext block with:
-   - Primary heading: "Get access for free when you invite five people*"
-   - Asterisk line directly under the heading: "*per month"
-   - Secondary line below: "or upgrade for $97 per month"
-2. Keep the existing two-column layout (Invite friends / Upgrade instead), progress dots, copy button, and the bottom "See your full invite progress and rewards →" link untouched.
-3. Preserve all existing styling tokens and responsive behaviour.
+1. In `src/components/AccessPageTemplate.tsx`, replace the existing access-card heading (lines 76-84):
+   - Old: `<h2>Get access for free</h2>` + `<p className="mt-2">Invite 5 people this month or upgrade for $97</p>`
+   - New:
+     - Line 1: `<h2>Get monthly access for free when you invite 5 people per month*</h2>` with `text-[var(--h2-size)] font-bold text-[var(--text-primary)]`
+     - Line 2: `<p>or upgrade for $97/month</p>` with `text-[var(--body-size)] font-normal text-[var(--text-secondary)]` and no top margin
+2. Add the asterisk note just before the closing `</section>` tag:
+   - Text: "*Every person who signs up for the challenge through your link counts toward your monthly 5."
+   - Styles: `text-[11px] italic text-[var(--text-muted)]`
+3. Leave the progress circles, two-column options, buttons, and "See your full invite progress" link untouched.
 
-## File touched
+## Files touched
 - `src/components/AccessPageTemplate.tsx` only.

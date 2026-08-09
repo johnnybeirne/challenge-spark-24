@@ -112,6 +112,10 @@ const AdminReferralSettings = () => {
           value={thresholdInput}
           onChange={setThresholdInput}
         />
+        <p className="text-sm text-muted-foreground">
+          At this threshold, a user who invites {parseInt(thresholdInput, 10) || 0} people has
+          earned {((parseInt(thresholdInput, 10) || 0) / 5).toFixed(1)} months of free access.
+        </p>
       </EditorCard>
 
       <div className="space-y-1">

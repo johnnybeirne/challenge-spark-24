@@ -498,7 +498,7 @@ const LeadGenStrengthCard = () => {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           {/* Left: Score + archetype */}
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs font-bold tracking-wider text-muted-foreground">
               Your lead gen strength
             </p>
             <div className="mt-1 flex items-baseline gap-3 flex-wrap">

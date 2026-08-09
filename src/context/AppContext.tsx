@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { loadFromSupabase, migrateLocalToSupabase, useSupabaseSync } from "@/hooks/useSupabaseSync";
 import { supabase } from "@/integrations/supabase/client";
 import { getPointTier, getUnlockedRewards } from "@/lib/points";
+import { getCycle, isInCycle } from "@/lib/accessCycle";
 import { defaultMemory, type UserMemory } from "@/lib/personalisation";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import { applySimulatedDate } from "@/lib/simulatedDate";

@@ -620,7 +620,7 @@ const LeadGenStrengthCard = () => {
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>
                               <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                                Current Reality
+                                From
                               </p>
                               <p className="mt-1 text-xs leading-snug text-foreground">
                                 {p.reality}
@@ -628,7 +628,7 @@ const LeadGenStrengthCard = () => {
                             </div>
                             <div>
                               <p className="text-[10px] font-black uppercase tracking-wider text-primary">
-                                The LeadTree Fix
+                                To
                               </p>
                               <p className="mt-1 text-xs leading-snug text-foreground">
                                 {p.fix}

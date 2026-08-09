@@ -78,7 +78,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            Get access for free every month when you invite 5 people*
+            Get LeadTree Premium access for free every month when you invite 5 people*
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             or upgrade for $97/month

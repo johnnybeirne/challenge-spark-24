@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Copy, CheckCircle, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import { shareOrCopy } from "@/lib/share";
-import { getReferralUrl } from "@/lib/utils";
+import { cn, getReferralUrl } from "@/lib/utils";
 import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { getAccessIcon } from "@/lib/accessPageIcons";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
+import { useAccessStatus } from "@/hooks/useAccessStatus";
 
 /**
  * Shared access page template — one component, three instances
@@ -21,6 +23,8 @@ import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { content, loading } = useAccessPage(pageKey);
+  const { inviteCount, invitesNeeded } = useAccessStatus();
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
@@ -112,6 +116,67 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
         </section>
 
         <ItemList list={items} />
+
+        {/* Invite-to-unlock / upgrade card */}
+        <section
+          className="rounded-[10px] border border-[#534AB7] bg-background p-5"
+          aria-labelledby="access-invite-heading"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#534AB7]">
+            Keep your access free
+          </p>
+          <h2
+            id="access-invite-heading"
+            className="mt-2 text-lg font-bold leading-snug text-foreground"
+          >
+            {invitesNeeded === 0
+              ? "You are all set for this month. Keep inviting to stay ahead."
+              : `Invite ${invitesNeeded} more ${invitesNeeded === 1 ? "person" : "people"} this month to maintain your free access`}
+          </h2>
+
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              {inviteCount} of 3 invites this month
+            </span>
+            <div className="flex items-center gap-1.5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-2.5 w-2.5 rounded-full",
+                    i < inviteCount
+                      ? "bg-[#534AB7]"
+                      : "border border-[#534AB7] bg-transparent"
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+
+          {referralLink ? (
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
+              <Button onClick={copy} size="lg" className="gap-2 text-white">
+                {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Copied" : "Copy link"}
+              </Button>
+            </div>
+          ) : (
+            <p className="mt-4 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
+              Your personal invite link appears here when you're signed in.
+            </p>
+          )}
+
+          <hr className="my-5 border-border" />
+
+          <button
+            type="button"
+            onClick={() => navigate("/premium")}
+            className="text-sm font-medium text-[#534AB7] hover:underline"
+          >
+            Or upgrade for $97/month and skip the invites
+          </button>
+        </section>
       </div>
     </div>
   );

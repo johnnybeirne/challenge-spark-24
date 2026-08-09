@@ -86,59 +86,49 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
 
 
           {referralLink ? (
-            <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
-              <div className="rounded-lg bg-[#F0FAF6] p-5">
-                <p className="font-semibold">Invite friends</p>
-
-                <div className="mt-3 space-y-2">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">
-                    {pointsTotal} of 500 points this cycle
-                  </p>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
-                    <div
-                      className="h-full rounded-full bg-[#534AB7] transition-all"
-                      style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
-                    />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {pointsNeeded === 0
-                      ? "You have reached 500 points this cycle"
-                      : `${pointsNeeded} points to go · ${daysLeftInCycle} days left`}
-                  </p>
-                </div>
-
-
-
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Share your link. Every person who signs up counts.
+            <div className="mt-5 space-y-5">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
+                  {pointsTotal} of 500 points this cycle
                 </p>
-                <div className="mt-3 flex flex-col gap-3">
-                  <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
-                    <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy} aria-label="Copy invite link">
-                      {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  <Button
-                    onClick={copy}
-                    className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"
-                  >
-                    {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? "Copied" : "Copy invite link"}
-                  </Button>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
+                  <div
+                    className="h-full rounded-full bg-[#534AB7] transition-all"
+                    style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
+                  />
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {pointsNeeded === 0
+                    ? "You have reached 500 points this cycle"
+                    : `${pointsNeeded} points to go · ${daysLeftInCycle} days left`}
+                </p>
               </div>
 
-              <div className="hidden w-px bg-border sm:block" />
+              <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
+                <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy} aria-label="Copy invite link">
+                  {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
 
-              <div className="rounded-lg bg-[#EEEDFE] p-5">
+              <Button
+                onClick={copy}
+                className="w-full gap-2 bg-[#1D9E75] font-medium text-black hover:bg-[#1D9E75]/90"
+              >
+                {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Copied" : "Copy invite link"}
+              </Button>
+
+              <div className="border-t border-border" />
+
+              <div className="space-y-3">
                 <p className="font-semibold">Upgrade instead</p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Skip the points target and get instant access
                 </p>
                 <Button
                   onClick={() => navigate("/premium")}
-                  className="mt-4 w-full gap-2 bg-[#534AB7] font-medium text-white hover:bg-[#534AB7]/90"
+                  className="w-full gap-2 bg-[#534AB7] font-medium text-white hover:bg-[#534AB7]/90"
                 >
                   Upgrade for $97/month
                 </Button>

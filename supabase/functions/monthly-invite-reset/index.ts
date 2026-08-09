@@ -4,6 +4,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const REQUIRED_INVITES = 5;
+const REQUIRED_POINTS = 500;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -57,7 +58,52 @@ Deno.serve(async (req) => {
       lockedOut = toLock.length;
     }
 
-    return new Response(JSON.stringify({ ok: true, month, checked: rows?.length ?? 0, lockedOut }), {
+    // Points-based access check (500 points per month)
+    let pointsLockedOut = 0;
+    let pointsKeptActive = 0;
+    const { data: pointRows, error: pointsError } = await supabase
+      .from("monthly_points_tracking")
+      .select("id, user_id, points_total")
+      .eq("month", month);
+    if (pointsError) throw pointsError;
+
+    if ((pointRows ?? []).length > 0) {
+      const pointUserIds = (pointRows ?? []).map((r: any) => r.user_id);
+      const { data: pointPremiumRows } = await supabase
+        .from("profiles")
+        .select("user_id, is_premium")
+        .in("user_id", pointUserIds);
+      const subscribed = new Set(
+        (pointPremiumRows ?? []).filter((p: any) => p.is_premium).map((p: any) => p.user_id),
+      );
+
+      for (const row of pointRows ?? []) {
+        const total = row.points_total ?? 0;
+        if (total >= REQUIRED_POINTS) {
+          await supabase
+            .from("monthly_points_tracking")
+            .update({ access_status: "active" })
+            .eq("id", row.id);
+          pointsKeptActive++;
+        } else if (!subscribed.has(row.user_id)) {
+          await supabase
+            .from("monthly_points_tracking")
+            .update({ access_status: "locked_out" })
+            .eq("id", row.id);
+          pointsLockedOut++;
+        }
+      }
+    }
+
+    return new Response(JSON.stringify({
+      ok: true,
+      month,
+      checked: rows?.length ?? 0,
+      lockedOut,
+      pointsChecked: pointRows?.length ?? 0,
+      pointsLockedOut,
+      pointsKeptActive,
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

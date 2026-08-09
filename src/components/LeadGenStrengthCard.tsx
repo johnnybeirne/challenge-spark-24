@@ -289,7 +289,12 @@ const LeadGenStrengthCard = () => {
   const { state, setState, authUser } = useAppState();
   const qa = useQaPreview();
   const navigate = useNavigate();
+  const identity = useChallengeIdentity();
+  const firstName = resolveFirstName({ stateUserName: state.memory?.name || state.user?.name, authUser });
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
   const [showFullNarrative, setShowFullNarrative] = useState(false);
+
   const [quizTiers, setQuizTiers] = useState<Array<{
     tier: string;
     min_percent: number;

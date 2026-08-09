@@ -9,7 +9,7 @@ import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
-import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { useReferralStats } from "@/hooks/useReferralStats";
 
 /**
  * Shared access page template — one component, three instances

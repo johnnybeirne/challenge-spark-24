@@ -164,7 +164,13 @@ const Mentor = () => {
                     </div>
                     {fullyTyped && (
                       <>
-                        <p className="mt-2 text-xs italic text-muted-foreground">Ask me anything below.</p>
+                        <button
+                          type="button"
+                          onClick={() => textareaRef.current?.focus()}
+                          className="mt-2 block cursor-pointer bg-transparent p-0 text-left text-xs italic text-muted-foreground"
+                        >
+                          Ask me anything below.
+                        </button>
                         <button
                           onClick={() => copy(m.content)}
                           className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"

@@ -79,6 +79,13 @@ const items: NavItem[] = [
     external: true,
     keywords: ["mentor", "coach", "starter", "prompts", "suggested"],
   },
+  {
+    title: "AI Coach settings",
+    url: "/owner-console/ai-coach-settings",
+    icon: Sparkles,
+    external: true,
+    keywords: ["system prompt", "mentor", "copilot", "max tokens", "heading", "fallback"],
+  },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true },
 ];

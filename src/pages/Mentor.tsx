@@ -138,24 +138,7 @@ const Mentor = () => {
         </header>
 
 
-      <section className="min-h-[50vh] flex-1 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4">
-        {messages.length === 0 && (
-          <div className="py-8 text-center">
-            <p className="text-sm text-muted-foreground">Try a starter prompt:</p>
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {SUGGESTED.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => ask(q)}
-                  className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
+      <section className="min-h-[50vh] flex-1 rounded-2xl border border-border bg-card/40 p-4">
         <div className="space-y-4">
           {messages.map((m, i) => {
             const isLast = i === messages.length - 1;
@@ -197,6 +180,20 @@ const Mentor = () => {
           <div ref={endRef} />
         </div>
 
+        <div className="py-8 text-center">
+          <p className="text-sm text-muted-foreground">Try a starter prompt:</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {SUGGESTED.map((q) => (
+              <button
+                key={q}
+                onClick={() => ask(q)}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
       </section>
 
       <div className="mt-4 rounded-2xl border border-border bg-card p-3">

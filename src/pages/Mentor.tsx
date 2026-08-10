@@ -132,7 +132,10 @@ const Mentor = () => {
     <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
       <section className="mx-auto flex max-w-5xl flex-col space-y-5 sm:space-y-6">
         <header>
-          <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">{coachSettings.page_heading}</h1>
+          <div className="mt-3 flex items-center gap-3">
+            <img src={leadtreeAiIcon.url} alt="LeadTree AI" className="h-10 w-10 rounded-lg object-cover" />
+            <h1 className="text-3xl font-black text-foreground sm:text-4xl">{coachSettings.page_heading}</h1>
+          </div>
           <p className="mt-2 text-sm text-muted-foreground">
             {coachSettings.page_subheading}
           </p>

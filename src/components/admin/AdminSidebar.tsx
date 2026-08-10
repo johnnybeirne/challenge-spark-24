@@ -73,14 +73,14 @@ const items: NavItem[] = [
   { title: "Nav tips", url: "/owner-console/nav-tips", icon: HelpCircle, external: true },
   { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true },
   {
-    title: "AI Coach prompts",
+    title: "LeadTree AI prompts",
     url: "/owner-console/mentor-prompts",
     icon: Sparkles,
     external: true,
     keywords: ["mentor", "coach", "starter", "prompts", "suggested"],
   },
   {
-    title: "AI Coach settings",
+    title: "LeadTree AI settings",
     url: "/owner-console/ai-coach-settings",
     icon: Sparkles,
     external: true,

@@ -49,8 +49,8 @@ const AdminAiCoachSettings = () => {
   return (
     <div className="space-y-6 max-w-3xl">
       <CmsPageHeader
-        title="AI Coach settings"
-        description="Page copy, system prompt, response length, and fallback message for the AI Coach."
+        title="LeadTree AI settings"
+        description="Page copy, system prompt, response length, and fallback message for the LeadTree AI."
       />
 
       <EditorCard title="Page copy">

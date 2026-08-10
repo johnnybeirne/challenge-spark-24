@@ -20,7 +20,7 @@ const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },
   { to: "/community",   label: "Community",   icon: Users,         key: "top_community" },
   { to: "/calendar",    label: "Events",      icon: CalendarDays,  key: "top_events" },
-  { to: "/mentor",      label: "AI Coach",    icon: Sparkles,      key: "top_ai_coach" },
+  { to: "/mentor",      label: "LeadTree AI", icon: Sparkles,      key: "top_ai_coach" },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy,        key: "top_leaderboard" },
 ];
 

@@ -12,7 +12,7 @@ export interface CopilotSettings {
 
 export const COPILOT_SETTINGS_FALLBACK: CopilotSettings = {
   id: null,
-  page_heading: "Ask Johnny AI",
+  page_heading: "LeadTree AI",
   page_subheading:
     "Get practical, beginner-friendly help designing, launching, and running your challenge.",
   system_prompt: "",

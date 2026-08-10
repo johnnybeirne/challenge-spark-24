@@ -161,6 +161,12 @@ const AdminAccessPages = () => {
                 value={page.header_text}
                 onChange={(v) => patch(page.page_key, { header_text: v })}
               />
+              <EditableField
+                label="Page tagline"
+                placeholder="e.g. 24/7 access to challenge strategy training"
+                value={page.tagline}
+                onChange={(v) => patch(page.page_key, { tagline: v })}
+              />
             </EditorCard>
 
             <EditorCard title="Intro" description="The paragraph directly beneath the header.">

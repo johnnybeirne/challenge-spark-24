@@ -78,35 +78,34 @@ const TopNavigation = () => {
               {focusMode ? "Exit Focus" : "Focus Mode"}
             </button>,
           )}
-          {centerLinks.map(({ to, label, icon: Icon, key }) => (
-            <span key={to} className="contents">
-              {withTip(
-                tip(key),
-                <NavLink
-                  to={to}
-                  data-tour={key}
-                  className={({ isActive }) =>
-                    [
-                      "relative inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors",
+          {centerLinks.map(({ to, label, icon: Icon, key }) => {
+            const isActive = pathname === to;
+            return (
+              <span key={to} className="contents">
+                {withTip(
+                  tip(key),
+                  <NavLink
+                    to={to}
+                    data-tour={key}
+                    className={[
+                      "inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors",
                       isActive
-                        ? "font-medium text-primary"
-                        : "font-normal text-[#6B7280] hover:text-[#1F2937]",
-                    ].join(" ")
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                        ? "font-semibold text-[#534AB7]"
+                        : "font-normal text-[#6B7280] hover:text-[var(--text-primary)]",
+                    ].join(" ")}
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={1.75} />
+                    <span className="relative">
                       {label}
                       {isActive && (
-                        <span className="absolute inset-x-3 -bottom-[9px] h-0.5 rounded-full bg-primary" />
+                        <span className="absolute left-0 right-0 -bottom-2 h-[2px] bg-[#534AB7]" />
                       )}
-                    </>
-                  )}
-                </NavLink>,
-              )}
-            </span>
-          ))}
+                    </span>
+                  </NavLink>,
+                )}
+              </span>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">

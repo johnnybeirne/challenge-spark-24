@@ -34,7 +34,7 @@ const TAG_LABELS: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
+  const { hasAccess, pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
   const { content: membership } = usePremiumMembershipContent();
 
   const navigate = useNavigate();
@@ -103,7 +103,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            {membership.heading}
+            {!hasAccess || pointsTotal === 0
+              ? `${firstName}, share and get free access.`
+              : `${firstName}, share and keep free access.`}
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
             {membership.description}

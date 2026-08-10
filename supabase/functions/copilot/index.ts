@@ -101,19 +101,32 @@ async function generateAiAnswer(
     .map((r) => `Q: ${r.question}\nA: ${String(r.answer).slice(0, 400)}`)
     .join("\n\n");
 
-  const baseInstructions = configuredSystemPrompt && configuredSystemPrompt.trim()
-    ? [configuredSystemPrompt.trim()]
-    : null;
-
-  const system = (baseInstructions ?? [
+  const HARDCODED_FALLBACK_INSTRUCTIONS = [
     "You are the LeadTree challenge strategist. You coach people building a 3-day challenge.",
     "Answer only the specific question asked. Do not explain the whole system.",
     "Maximum 3 short paragraphs. One sentence per paragraph. No exceptions.",
     "Every sentence must be its own paragraph. Never put two sentences in the same paragraph. Always add a blank line between sentences.",
     "Never use bold markdown. Never use bullet points. Never use dashes for lists.",
     "Never say you don't have an answer. Give your best practical guidance.",
-    "If you reference the knowledge base, pick one relevant point only — do not summarise everything.",
-  ]).concat([
+    "If you reference the knowledge base, pick one relevant point only. Do not summarise everything.",
+  ];
+
+  // Database value, when present, is the SOLE base instruction. It replaces the
+  // hardcoded array entirely (never appended to it).
+  const dbPrompt = typeof configuredSystemPrompt === "string" ? configuredSystemPrompt.trim() : "";
+  const baseInstructions = dbPrompt ? [dbPrompt] : HARDCODED_FALLBACK_INSTRUCTIONS;
+  const effectiveMaxTokens = typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 200;
+  console.log(
+    "copilot ai config:",
+    JSON.stringify({
+      systemPromptSource: dbPrompt ? "copilot_config" : "hardcoded-fallback",
+      systemPromptChars: baseInstructions.join("\n").length,
+      maxTokens: effectiveMaxTokens,
+      maxTokensSource: typeof maxTokens === "number" && maxTokens > 0 ? "copilot_config" : "default",
+    }),
+  );
+
+  const system = baseInstructions.concat([
     memoryContext ? `Context about this builder:\n${memoryContext}` : "",
     kbContext ? `One relevant excerpt from the LeadTree knowledge base:\n${kbContext}` : "",
   ]).filter(Boolean).join("\n\n");
@@ -127,7 +140,7 @@ async function generateAiAnswer(
       },
       body: JSON.stringify({
         model: "google/gemini-3.6-flash",
-        max_tokens: maxTokens && maxTokens > 0 ? maxTokens : 200,
+        max_tokens: effectiveMaxTokens,
         messages: [
           { role: "system", content: system },
           { role: "user", content: prompt },

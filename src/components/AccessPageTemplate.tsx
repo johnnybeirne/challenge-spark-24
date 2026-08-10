@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { usePremiumMembershipContent } from "@/hooks/usePremiumMembershipContent";
+
 
 
 /**
@@ -33,6 +35,8 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
   const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
+  const { content: membership } = usePremiumMembershipContent();
+
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
@@ -99,11 +103,12 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            {firstName ? `${firstName}, keep your membership free` : "Keep your membership free"}
+            {membership.heading}
           </h2>
           <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
-            or upgrade for $97/month
+            {membership.description}
           </p>
+
 
 
           {referralLink ? (
@@ -171,8 +176,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             </button>
           </div>
           <p className="mt-4 text-[11px] italic text-[var(--text-muted)]">
-            *Invite 5 people who sign up for the challenge each month. Your cycle runs for 28 days from your signup date.
+            {membership.asterisk_note}
           </p>
+
         </section>
       </div>
     </div>

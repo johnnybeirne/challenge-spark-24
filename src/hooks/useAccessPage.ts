@@ -21,6 +21,7 @@ export type AccessPageContent = {
   id: string;
   page_key: AccessPageKey;
   header_text: string;
+  tagline: string;
   intro_text: string;
   referral_heading: string;
   referral_copy: string;
@@ -45,6 +46,7 @@ function normalise(row: any): AccessPageContent {
     id: row.id,
     page_key: row.page_key,
     header_text: row.header_text ?? "",
+    tagline: row.tagline ?? "",
     intro_text: row.intro_text ?? "",
     referral_heading: row.referral_heading ?? "",
     referral_copy: row.referral_copy ?? "",

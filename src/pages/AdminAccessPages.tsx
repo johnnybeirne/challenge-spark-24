@@ -98,6 +98,7 @@ const AdminAccessPages = () => {
         .from("access_pages")
         .update({
           header_text: page.header_text,
+          tagline: page.tagline || null,
           intro_text: page.intro_text,
           referral_heading: page.referral_heading,
           referral_copy: page.referral_copy,

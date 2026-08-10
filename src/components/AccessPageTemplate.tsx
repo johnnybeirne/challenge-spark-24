@@ -122,15 +122,22 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               </div>
 
               <p
-                className="text-[11px] font-medium uppercase tracking-[0.06em] text-[var(--text-muted)]"
-                style={{ marginBottom: "6px" }}
+                className="text-center text-[12px] font-medium text-[#534AB7]"
+                style={{ marginBottom: "8px" }}
               >
                 Your invite link for sharing
               </p>
-              <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
-                <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
-                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy} aria-label="Copy invite link">
-                  {copied ? <CheckCircle className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+              <div
+                className="flex cursor-pointer items-center gap-2 rounded-[8px] border-[1.5px] border-[#534AB7] bg-white px-4 py-3"
+                onClick={copy}
+                role="button"
+                aria-label="Copy invite link"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") copy(); }}
+              >
+                <code className="flex-1 truncate font-mono text-[13px] text-[var(--text-primary)]">{referralLink}</code>
+                <Button variant="ghost" size="icon" className="pointer-events-none h-8 w-8 shrink-0" aria-label="Copy invite link">
+                  {copied ? <CheckCircle className="h-4 w-4 text-[#534AB7]" /> : <Copy className="h-4 w-4 text-[#534AB7]" />}
                 </Button>
               </div>
 

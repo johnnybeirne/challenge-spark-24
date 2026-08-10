@@ -50,6 +50,24 @@ export type Database = {
         }
         Relationships: []
       }
+      access_settings: {
+        Row: {
+          id: string
+          points_threshold: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          points_threshold?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          points_threshold?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       activity_feed_items: {
         Row: {
           action: string

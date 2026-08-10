@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
+import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { usePremiumMembershipContent } from "@/hooks/usePremiumMembershipContent";
 
 
@@ -36,6 +37,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { loading } = useAccessPage(pageKey);
   const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
   const { content: membership } = usePremiumMembershipContent();
+  const { pointsThreshold } = useAccessSettings();
 
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -103,7 +105,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             id="access-free-heading"
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
-            {pointsTotal < 500
+            {pointsTotal < pointsThreshold
               ? `${firstName}, share and get free access.`
               : `${firstName}, share and keep free access.`}
           </h2>
@@ -117,17 +119,17 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             <div className="mt-5 space-y-5">
               <div className="space-y-2">
                 <p className="text-sm font-medium text-[var(--text-primary)]">
-                  {pointsTotal} of 500 points this cycle
+                  {pointsTotal} of {pointsThreshold} points this cycle
                 </p>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
                   <div
                     className="h-full rounded-full bg-[#534AB7] transition-all"
-                    style={{ width: `${Math.min((pointsTotal / 500) * 100, 100)}%` }}
+                    style={{ width: `${Math.min((pointsTotal / pointsThreshold) * 100, 100)}%` }}
                   />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {pointsNeeded === 0
-                    ? "You have reached 500 points this cycle"
+                    ? `You have reached ${pointsThreshold} points this cycle`
                     : `${pointsNeeded} points to go · ${daysLeftInCycle} days left`}
                 </p>
               </div>

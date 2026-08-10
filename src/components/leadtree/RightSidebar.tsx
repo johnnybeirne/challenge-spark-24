@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trophy, TrendingUp, Gift, ChevronRight, ChevronLeft } from "lucide-react";
+import { Trophy, TrendingUp, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
@@ -154,21 +154,6 @@ const RightSidebar = () => {
           </p>
         </div>
 
-        {/* Referral Rewards */}
-        <div className={cardCls}>
-          <p className={headingCls}>
-            <Gift className="h-3.5 w-3.5" /> Referral Rewards
-          </p>
-          <p className="text-sm text-[#1F2937]">
-            {nextReward ? nextReward.title : "You've unlocked every reward."}
-          </p>
-          {nextReward && (
-            <p className="mt-1 text-xs text-[#6B7280]">at {nextReward.points} pts</p>
-          )}
-          <Link to="/earn" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
-            Earn more <ChevronRight className="h-3 w-3" />
-          </Link>
-        </div>
       </div>
     </aside>
   );

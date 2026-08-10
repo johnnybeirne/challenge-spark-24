@@ -42,6 +42,26 @@ function tokenize(s: string): string[] {
   return normalize(s).split(" ").filter((w) => w.length > 2);
 }
 
+const QA_MATCH_STOPWORDS = new Set([
+  "about",
+  "after",
+  "does",
+  "from",
+  "have",
+  "this",
+  "what",
+  "when",
+  "where",
+  "which",
+  "with",
+  "would",
+  "your",
+]);
+
+function meaningfulTokens(s: string): string[] {
+  return tokenize(s).filter((token) => !QA_MATCH_STOPWORDS.has(token));
+}
+
 function buildTsQuery(q: string): string {
   // websearch_to_tsquery accepts plain words separated by spaces
   return q
@@ -217,7 +237,7 @@ serve(async (req) => {
     }
 
     const normPrompt = normalize(prompt);
-    const promptTokens = new Set(tokenize(prompt));
+    const promptTokens = new Set(meaningfulTokens(prompt));
 
     let answer: string | null = null;
     let source: "qa-exact" | "kb" | "qa" | "ai" | "fallback" = "fallback";
@@ -248,10 +268,10 @@ serve(async (req) => {
         let score = 0;
         for (const kw of kws) {
           const k = normalize(String(kw));
-          if (!k) continue;
+          if (!k || QA_MATCH_STOPWORDS.has(k)) continue;
           if (normPrompt.includes(k)) score += 2;
         }
-        for (const t of tokenize(r.question)) {
+        for (const t of meaningfulTokens(r.question)) {
           if (promptTokens.has(t)) score += 1;
         }
         if (score > bestScore) {

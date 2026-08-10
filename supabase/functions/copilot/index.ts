@@ -87,6 +87,8 @@ async function generateAiAnswer(
   memoryContext: string | undefined,
   kbDocs: any[],
   qaRows: any[],
+  configuredSystemPrompt?: string | null,
+  maxTokens?: number | null,
 ): Promise<string | null> {
   const key = Deno.env.get("LOVABLE_API_KEY");
   if (!key) return null;
@@ -99,7 +101,11 @@ async function generateAiAnswer(
     .map((r) => `Q: ${r.question}\nA: ${String(r.answer).slice(0, 400)}`)
     .join("\n\n");
 
-  const system = [
+  const baseInstructions = configuredSystemPrompt && configuredSystemPrompt.trim()
+    ? [configuredSystemPrompt.trim()]
+    : null;
+
+  const system = (baseInstructions ?? [
     "You are the LeadTree challenge strategist. You coach people building a 3-day challenge.",
     "Answer only the specific question asked. Do not explain the whole system.",
     "Maximum 3 short paragraphs. One sentence per paragraph. No exceptions.",
@@ -107,9 +113,10 @@ async function generateAiAnswer(
     "Never use bold markdown. Never use bullet points. Never use dashes for lists.",
     "Never say you don't have an answer. Give your best practical guidance.",
     "If you reference the knowledge base, pick one relevant point only — do not summarise everything.",
+  ]).concat([
     memoryContext ? `Context about this builder:\n${memoryContext}` : "",
     kbContext ? `One relevant excerpt from the LeadTree knowledge base:\n${kbContext}` : "",
-  ].filter(Boolean).join("\n\n");
+  ]).filter(Boolean).join("\n\n");
 
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -120,7 +127,7 @@ async function generateAiAnswer(
       },
       body: JSON.stringify({
         model: "google/gemini-3.6-flash",
-        max_tokens: 200,
+        max_tokens: maxTokens && maxTokens > 0 ? maxTokens : 200,
         messages: [
           { role: "system", content: system },
           { role: "user", content: prompt },
@@ -161,16 +168,22 @@ serve(async (req) => {
 
     // Load fallback message
     let fallback = FALLBACK_DEFAULT;
+    let cfgSystemPrompt: string | null = null;
+    let cfgMaxTokens: number | null = null;
     try {
       const { data: cfg } = await sb
         .from("copilot_config")
-        .select("fallback_message")
+        .select("fallback_message, system_prompt, max_tokens")
         .order("updated_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       if (cfg?.fallback_message && typeof cfg.fallback_message === "string" && cfg.fallback_message.trim()) {
         fallback = cfg.fallback_message;
       }
+      if (cfg?.system_prompt && typeof cfg.system_prompt === "string") {
+        cfgSystemPrompt = cfg.system_prompt;
+      }
+      if (cfg?.max_tokens) cfgMaxTokens = Number(cfg.max_tokens);
     } catch (e) {
       console.error("fallback fetch failed:", e);
     }
@@ -236,7 +249,7 @@ serve(async (req) => {
 
     // 4. AI strategist — generate a real answer instead of repeating the fallback
     if (!answer) {
-      const aiAnswer = await generateAiAnswer(prompt, memoryContext, kbDocs, rows ?? []);
+      const aiAnswer = await generateAiAnswer(prompt, memoryContext, kbDocs, rows ?? [], cfgSystemPrompt, cfgMaxTokens);
       if (aiAnswer) {
         answer = aiAnswer;
         source = "ai";

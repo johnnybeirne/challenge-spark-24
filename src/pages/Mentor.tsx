@@ -14,6 +14,7 @@ import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { toast } from "sonner";
 import { useMentorSuggestedPrompts } from "@/hooks/useMentorSuggestedPrompts";
+import { useCopilotSettings } from "@/hooks/useCopilotSettings";
 
 interface ChatMsg { role: "user" | "assistant"; content: string; typed?: boolean; }
 
@@ -35,6 +36,7 @@ const Mentor = () => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { prompts: mentorPrompts } = useMentorSuggestedPrompts();
+  const { settings: coachSettings } = useCopilotSettings();
   const DEFAULT_SUGGESTED = mentorPrompts.default;
   const DAY_SUGGESTED: Record<number, string[]> = {
     1: mentorPrompts.day1,
@@ -129,9 +131,9 @@ const Mentor = () => {
     <main className="app-page-container min-h-screen py-5 pb-28 lg:py-8 lg:pb-8">
       <section className="mx-auto flex max-w-5xl flex-col space-y-5 sm:space-y-6">
         <header>
-          <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">Ask Johnny AI</h1>
+          <h1 className="mt-3 text-3xl font-black text-foreground sm:text-4xl">{coachSettings.page_heading}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Get practical, beginner-friendly help designing, launching, and running your challenge.
+            {coachSettings.page_subheading}
           </p>
         </header>
 

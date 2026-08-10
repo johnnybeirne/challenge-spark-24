@@ -396,7 +396,10 @@ export type Database = {
           created_at: string
           fallback_message: string
           id: string
+          max_tokens: number
           next_qa_date: string | null
+          page_heading: string
+          page_subheading: string
           starter_questions: Json
           system_prompt: string
           updated_at: string
@@ -406,7 +409,10 @@ export type Database = {
           created_at?: string
           fallback_message?: string
           id?: string
+          max_tokens?: number
           next_qa_date?: string | null
+          page_heading?: string
+          page_subheading?: string
           starter_questions?: Json
           system_prompt?: string
           updated_at?: string
@@ -416,7 +422,10 @@ export type Database = {
           created_at?: string
           fallback_message?: string
           id?: string
+          max_tokens?: number
           next_qa_date?: string | null
+          page_heading?: string
+          page_subheading?: string
           starter_questions?: Json
           system_prompt?: string
           updated_at?: string

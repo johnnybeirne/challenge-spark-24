@@ -230,12 +230,13 @@ serve(async (req) => {
       }
     }
 
-    // 2. Knowledge-base retrieval — LeadTree frameworks are the primary intelligence layer
-    const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
-    if (!answer && kbDocs.length > 0) {
-      answer = formatKbAnswer(kbDocs);
-      source = "kb";
-    }
+    // 2. Knowledge-base retrieval — disabled while KB documents are rewritten
+    const kbDocs: any[] = [];
+    // const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
+    // if (!answer && kbDocs.length > 0) {
+    //   answer = formatKbAnswer(kbDocs);
+    //   source = "kb";
+    // }
 
     // 3. Keyword-scored QA fallback
     if (!answer) {

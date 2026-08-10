@@ -34,7 +34,7 @@ const TAG_LABELS: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
+  const { hasAccess, pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
   const { content: membership } = usePremiumMembershipContent();
 
   const navigate = useNavigate();

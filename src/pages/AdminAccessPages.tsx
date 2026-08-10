@@ -130,6 +130,10 @@ const AdminAccessPages = () => {
         description="Edit the welcome content for Training, Community, and Events. Each page keeps its own text. Use {{first_name}} anywhere to greet the participant by name."
       />
 
+      <PremiumMembershipEditor />
+
+
+
       <Tabs defaultValue={sorted[0]?.page_key ?? "training"}>
         <TabsList>
           {sorted.map((p) => (

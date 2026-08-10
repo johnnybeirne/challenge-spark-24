@@ -30,7 +30,7 @@ const PAGE_TITLE: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal, daysLeftInCycle } = useAccessStatus();
+  const { pointsTotal } = useAccessStatus();
   const { content: membership } = usePremiumMembershipContent();
   const { pointsThreshold } = useAccessSettings();
 
@@ -118,7 +118,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                   </div>
                   <span className="text-sm text-[var(--text-muted)]">{pointsThreshold}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{daysLeftInCycle} days left</p>
+                
               </div>
 
               <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">

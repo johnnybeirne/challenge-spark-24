@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { getCycle, getPreviousCycle, CYCLE_DAYS } from "@/lib/accessCycle";
 
 export const REQUIRED_MONTHLY_INVITES = 5;
@@ -27,6 +28,7 @@ export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
   const { isAdmin, loading: roleLoading } = useUserRole();
+  const { pointsThreshold, loading: settingsLoading } = useAccessSettings();
   // "Owner" maps to the admin role in this system; admins are exempt from the access gate.
   const isExempt = isAdmin;
 
@@ -94,14 +96,14 @@ export const useAccessStatus = (): AccessStatus => {
   // Grace runs for the first 24 hours of the participant's own new cycle.
   const gracePeriodEndsAt = new Date(cycle.startsAt.getTime() + 24 * 60 * 60 * 1000);
 
-  const hasAccess = isExempt || isPremium || pointsTotal >= REQUIRED_MONTHLY_POINTS;
-  const pointsNeeded = Math.max(0, REQUIRED_MONTHLY_POINTS - pointsTotal);
+  const hasAccess = isExempt || isPremium || pointsTotal >= pointsThreshold;
+  const pointsNeeded = Math.max(0, pointsThreshold - pointsTotal);
 
   const gracePeriod =
     !isExempt &&
     !isPremium &&
     prevStatus === "locked_out" &&
-    pointsTotal < REQUIRED_MONTHLY_POINTS &&
+    pointsTotal < pointsThreshold &&
     now.getTime() < gracePeriodEndsAt.getTime();
 
   return {
@@ -113,7 +115,7 @@ export const useAccessStatus = (): AccessStatus => {
     gracePeriodEndsAt,
     cycleEndsAt: cycle.endsAt,
     daysLeftInCycle: cycle.daysLeft,
-    loading: loading || roleLoading,
+    loading: loading || roleLoading || settingsLoading,
     refresh: load,
   };
 };

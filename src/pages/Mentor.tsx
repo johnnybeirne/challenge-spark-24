@@ -11,7 +11,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useUserStage } from "@/hooks/useUserStage";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import TypingDots from "@/components/TypingDots";
-import johnnyAvatar from "@/assets/johnny-beirne.png";
+import leadtreeAiIcon from "@/assets/logo-tree.png.asset.json";
 import { toast } from "sonner";
 import { useMentorSuggestedPrompts } from "@/hooks/useMentorSuggestedPrompts";
 import { useCopilotSettings } from "@/hooks/useCopilotSettings";

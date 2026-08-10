@@ -167,7 +167,7 @@ const Mentor = () => {
                         <button
                           type="button"
                           onClick={() => textareaRef.current?.focus()}
-                          className="mt-2 inline-flex cursor-pointer items-center rounded-full border border-border bg-muted px-3 py-1 text-xs italic text-muted-foreground hover:bg-muted/80"
+                          className="mt-2 inline-flex cursor-pointer items-center rounded-full border-0 bg-[#1D9E75] px-3 py-1 text-xs font-medium text-white hover:bg-[#168A63]"
                         >
                           Ask me anything below.
                         </button>

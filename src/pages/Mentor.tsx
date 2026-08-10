@@ -200,7 +200,7 @@ const Mentor = () => {
         <div className="flex gap-2">
           <DictatedTextarea
             ref={textareaRef}
-            placeholder="Ask Johnny AI anything…"
+            placeholder="Ask LeadTree AI anything…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

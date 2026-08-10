@@ -28,7 +28,7 @@ const ENTRIES: Entry[] = [
   { group: "Challenge", label: "Referrals", path: "/referrals", description: "Invite builders" },
   { group: "Challenge", label: "Leaderboard", path: "/leaderboard" },
   { group: "Challenge", label: "Community", path: "/community" },
-  { group: "Tools", label: "AI Mentor", path: "/mentor", keywords: "coach chat" },
+  { group: "Tools", label: "LeadTree AI", path: "/mentor", keywords: "coach chat" },
   { group: "Tools", label: "Prompt Library", path: "/prompt-library", keywords: "prompts" },
   { group: "Tools", label: "Calendar", path: "/calendar" },
   { group: "Tools", label: "Bonus Vault", path: "/bonus-vault", keywords: "rewards" },

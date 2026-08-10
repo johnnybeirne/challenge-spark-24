@@ -22,12 +22,71 @@ import {
   withPositions,
 } from "@/hooks/useAccessPage";
 import { ACCESS_ICON_OPTIONS, getAccessIcon } from "@/lib/accessPageIcons";
+import { usePremiumMembershipContent } from "@/hooks/usePremiumMembershipContent";
 
 const ORDER: AccessPageKey[] = ["training", "community", "events"];
+
+const PremiumMembershipEditor = () => {
+  const { content, setContent, loading } = usePremiumMembershipContent();
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("premium_membership_content")
+        .upsert({
+          ...(content.id ? { id: content.id } : {}),
+          heading: content.heading,
+          description: content.description,
+          asterisk_note: content.asterisk_note,
+        });
+      if (error) throw error;
+      toast.success("Saved");
+    } catch {
+      toast.error("Could not save. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <EditorCard
+      title="Premium Membership Content"
+      description="The membership block shown on the Training, Community and Events pages."
+    >
+      <EditableField
+        label="Membership heading"
+        value={content.heading}
+        onChange={(v) => setContent((c) => ({ ...c, heading: v }))}
+      />
+      <EditableField
+        label="Membership description"
+        value={content.description}
+        onChange={(v) => setContent((c) => ({ ...c, description: v }))}
+        multiline
+        rows={3}
+      />
+      <EditableField
+        label="Asterisk note"
+        value={content.asterisk_note}
+        onChange={(v) => setContent((c) => ({ ...c, asterisk_note: v }))}
+        multiline
+        rows={3}
+      />
+      <div className="flex justify-end">
+        <Button onClick={save} disabled={saving || loading}>
+          {saving ? "Saving..." : "Save"}
+        </Button>
+      </div>
+    </EditorCard>
+  );
+};
 
 const AdminAccessPages = () => {
   const { pages, setPages, loading } = useAllAccessPages();
   const [saving, setSaving] = useState(false);
+
 
   const patch = (key: AccessPageKey, changes: Partial<AccessPageContent>) =>
     setPages((prev) => prev.map((p) => (p.page_key === key ? { ...p, ...changes } : p)));

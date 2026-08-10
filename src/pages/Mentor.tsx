@@ -14,6 +14,7 @@ import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { toast } from "sonner";
 import { useMentorSuggestedPrompts } from "@/hooks/useMentorSuggestedPrompts";
+import { useCopilotSettings } from "@/hooks/useCopilotSettings";
 
 interface ChatMsg { role: "user" | "assistant"; content: string; typed?: boolean; }
 

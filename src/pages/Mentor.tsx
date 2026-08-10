@@ -32,6 +32,7 @@ const Mentor = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [typedCount, setTypedCount] = useState<Record<number, number>>({});
+  const [askedPrompts, setAskedPrompts] = useState<Set<string>>(new Set());
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 

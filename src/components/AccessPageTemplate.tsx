@@ -71,29 +71,27 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
     <div className="app-page-container py-6 pb-24 lg:py-8 animate-fade-in">
       <div className="mx-auto w-full max-w-3xl space-y-8">
         <header
-          className="space-y-4 border-l-4 border-l-[#534AB7] border-[0.5px] border-[var(--border)] bg-[var(--surface-2)] rounded-[12px] py-5 px-6"
+          className="border-l-4 border-l-[#534AB7] border-[0.5px] border-[var(--border)] bg-[var(--surface-2)] rounded-[12px] py-5 px-6"
         >
-          <span className="inline-block rounded-[20px] bg-[#EEEDFE] px-[10px] py-[3px] text-[10px] font-semibold uppercase text-[#534AB7]">
-            ⭐ LeadTree Premium
-          </span>
           <h1 className="text-[var(--h1-size)] font-bold text-[var(--text-primary)]">
             {membership.heading}
           </h1>
-          <div className="flex flex-wrap gap-2">
-            {TAG_ORDER.map((key) => {
-              const active = key === pageKey;
-              return (
-                <span
-                  key={key}
-                  className={`rounded-[20px] px-[12px] py-[4px] text-[11px] font-semibold ${
-                    active ? "bg-[#1D9E75] text-white" : "bg-[#534AB7] text-white"
-                  }`}
-                >
-                  {TAG_LABELS[key]}
-                </span>
-              );
-            })}
-          </div>
+          <p
+            className="text-[var(--body-size)] leading-[1.6] text-[var(--text-secondary)]"
+            style={{ marginTop: "6px" }}
+          >
+            {membership.description}
+          </p>
+          <div
+            className="w-full"
+            style={{ height: "0.5px", backgroundColor: "var(--border)", margin: "14px 0" }}
+          />
+          <p className="text-[12px] text-[var(--text-muted)]">
+            You are in <span className="mx-1">›</span>
+            <span className="text-[14px] font-semibold text-[var(--text-primary)]">
+              {PAGE_TITLE[pageKey]}
+            </span>
+          </p>
         </header>
 
         {/* SECTION 1 — Get access for free */}

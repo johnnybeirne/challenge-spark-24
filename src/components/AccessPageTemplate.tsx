@@ -122,7 +122,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               </div>
 
               <p
-                className="text-center text-[12px] font-medium text-[#534AB7]"
+                className="text-center text-[20px] font-medium text-[#534AB7]"
                 style={{ marginBottom: "8px" }}
               >
                 Your invite link for sharing

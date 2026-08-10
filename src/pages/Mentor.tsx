@@ -160,12 +160,15 @@ const Mentor = () => {
                       <ReactMarkdown>{visible || "\u200B"}</ReactMarkdown>
                     </div>
                     {fullyTyped && (
-                      <button
-                        onClick={() => copy(m.content)}
-                        className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
-                      >
-                        <Copy className="h-3 w-3" /> Copy
-                      </button>
+                      <>
+                        <p className="mt-2 text-xs italic text-muted-foreground">Ask me anything below.</p>
+                        <button
+                          onClick={() => copy(m.content)}
+                          className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
+                        >
+                          <Copy className="h-3 w-3" /> Copy
+                        </button>
+                      </>
                     )}
                   </div>
                 )}

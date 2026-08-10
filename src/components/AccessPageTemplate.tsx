@@ -76,8 +76,8 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           <span className="inline-block rounded-[20px] bg-[#EEEDFE] px-[10px] py-[3px] text-[10px] font-semibold uppercase text-[#534AB7]">
             ⭐ LeadTree Premium
           </span>
-          <h1 className="text-[28px] font-bold text-[var(--text-primary)]">
-            {PAGE_TITLE[pageKey]}
+          <h1 className="text-[var(--h1-size)] font-bold text-[var(--text-primary)]">
+            {membership.heading}
           </h1>
           <div className="flex flex-wrap gap-2">
             {TAG_ORDER.map((key) => {

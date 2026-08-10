@@ -128,9 +128,10 @@ async function generateAiAnswer(
 
   const system = baseInstructions.concat([
     memoryContext ? `Context about this builder:\n${memoryContext}` : "",
-    kbContext
-      ? `BACKGROUND REFERENCE ONLY — do not repeat or summarise this. Use it only to inform a short original answer:\n${kbContext}`
-      : "",
+    // KB injection disabled while documents are rewritten
+    // kbContext
+    //   ? `BACKGROUND REFERENCE ONLY — do not repeat or summarise this. Use it only to inform a short original answer:\n${kbContext}`
+    //   : "",
     "CRITICAL: Your entire response must be 3 sentences maximum. Stop after 3 sentences. Do not continue.",
   ]).filter(Boolean).join("\n\n");
 
@@ -230,12 +231,13 @@ serve(async (req) => {
       }
     }
 
-    // 2. Knowledge-base retrieval — LeadTree frameworks are the primary intelligence layer
-    const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
-    if (!answer && kbDocs.length > 0) {
-      answer = formatKbAnswer(kbDocs);
-      source = "kb";
-    }
+    // 2. Knowledge-base retrieval — disabled while KB documents are rewritten
+    const kbDocs: any[] = [];
+    // const kbDocs = answer ? [] : await retrieveKb(sb, prompt, stage);
+    // if (!answer && kbDocs.length > 0) {
+    //   answer = formatKbAnswer(kbDocs);
+    //   source = "kb";
+    // }
 
     // 3. Keyword-scored QA fallback
     if (!answer) {

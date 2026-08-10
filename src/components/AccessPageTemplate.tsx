@@ -7,7 +7,7 @@ import { resolveFirstName } from "@/lib/tooltipTokens";
 import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
-import { LeadTreeIcon } from "@/components/LeadTreeIcon";
+
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useAccessSettings } from "@/hooks/useAccessSettings";
@@ -66,7 +66,7 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
     <div className="app-page-container py-6 pb-24 lg:py-8 animate-fade-in">
       <div className="mx-auto w-full max-w-3xl space-y-8">
         <header
-          className="relative border-l-4 border-l-[#534AB7] border-[0.5px] border-[var(--border)] bg-[#F0FAF6] rounded-[12px] py-5 px-6"
+          className="border-l-4 border-l-[#534AB7] border-[0.5px] border-[var(--border)] bg-[#F0FAF6] rounded-[12px] py-5 px-6"
         >
           <h1 className="text-[var(--h1-size)] font-bold text-[var(--text-primary)]">
             {membership.heading}
@@ -87,12 +87,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               {PAGE_TITLE[pageKey]}
             </span>
           </p>
-          <LeadTreeIcon
-            size={72}
-            className="pointer-events-none absolute"
-            style={{ top: "16px", right: "20px", opacity: 0.12, width: "72px", height: "auto" }}
-            aria-hidden="true"
-          />
         </header>
 
         {/* SECTION 1 — Get access for free */}

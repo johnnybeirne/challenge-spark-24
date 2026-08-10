@@ -34,6 +34,14 @@ const Mentor = () => {
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const { prompts: mentorPrompts } = useMentorSuggestedPrompts();
+  const DEFAULT_SUGGESTED = mentorPrompts.default;
+  const DAY_SUGGESTED: Record<number, string[]> = {
+    1: mentorPrompts.day1,
+    2: mentorPrompts.day2,
+    3: mentorPrompts.day3,
+  };
+
   const isChallenger = role === "challenger";
   const currentDay = Math.min(Math.max(state.challenge.currentDay || 1, 1), 3);
   const SUGGESTED = isChallenger ? DAY_SUGGESTED[currentDay] ?? DEFAULT_SUGGESTED : DEFAULT_SUGGESTED;

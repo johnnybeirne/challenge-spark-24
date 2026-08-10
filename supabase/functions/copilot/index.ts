@@ -120,6 +120,7 @@ async function generateAiAnswer(
       },
       body: JSON.stringify({
         model: "google/gemini-3.6-flash",
+        max_tokens: 200,
         messages: [
           { role: "system", content: system },
           { role: "user", content: prompt },

@@ -289,6 +289,7 @@ const App = () => (
                 <Route path="nav-tips" element={<AdminNavTips />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
+                <Route path="mentor-prompts" element={<AdminMentorPrompts />} />
                 <Route path="unlocks" element={<AdminUnlockGates />} />
                 <Route path="builder-prompts" element={<AdminBuilderPrompts />} />
                 <Route path="referral-settings" element={<AdminReferralSettings />} />

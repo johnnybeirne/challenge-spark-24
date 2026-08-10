@@ -128,7 +128,10 @@ async function generateAiAnswer(
 
   const system = baseInstructions.concat([
     memoryContext ? `Context about this builder:\n${memoryContext}` : "",
-    kbContext ? `One relevant excerpt from the LeadTree knowledge base:\n${kbContext}` : "",
+    kbContext
+      ? `BACKGROUND REFERENCE ONLY — do not repeat or summarise this. Use it only to inform a short original answer:\n${kbContext}`
+      : "",
+    "CRITICAL: Your entire response must be 3 sentences maximum. Stop after 3 sentences. Do not continue.",
   ]).filter(Boolean).join("\n\n");
 
   try {

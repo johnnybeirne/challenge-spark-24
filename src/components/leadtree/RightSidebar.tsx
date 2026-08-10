@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trophy, TrendingUp, Gift, ChevronRight, ChevronLeft } from "lucide-react";
+import { Trophy, TrendingUp, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";

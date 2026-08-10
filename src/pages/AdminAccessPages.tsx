@@ -98,6 +98,7 @@ const AdminAccessPages = () => {
         .from("access_pages")
         .update({
           header_text: page.header_text,
+          tagline: page.tagline || null,
           intro_text: page.intro_text,
           referral_heading: page.referral_heading,
           referral_copy: page.referral_copy,
@@ -159,6 +160,12 @@ const AdminAccessPages = () => {
                 helper="Shown as the page heading. {{first_name}} inserts the participant's first name."
                 value={page.header_text}
                 onChange={(v) => patch(page.page_key, { header_text: v })}
+              />
+              <EditableField
+                label="Page tagline"
+                placeholder="e.g. 24/7 access to challenge strategy training"
+                value={page.tagline}
+                onChange={(v) => patch(page.page_key, { tagline: v })}
               />
             </EditorCard>
 

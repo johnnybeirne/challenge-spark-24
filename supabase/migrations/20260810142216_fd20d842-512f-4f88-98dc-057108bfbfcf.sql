@@ -1,0 +1,1 @@
+ALTER TABLE public.access_pages ADD COLUMN IF NOT EXISTS tagline text DEFAULT NULL;

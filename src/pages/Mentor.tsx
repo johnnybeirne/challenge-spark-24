@@ -184,10 +184,13 @@ const Mentor = () => {
         <div className="py-8 text-center">
           <p className="text-sm text-muted-foreground">Try a starter prompt:</p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {SUGGESTED.map((q) => (
+            {SUGGESTED.filter((q) => !askedPrompts.has(q)).map((q) => (
               <button
                 key={q}
-                onClick={() => ask(q)}
+                onClick={() => {
+                  setAskedPrompts((prev) => new Set(prev).add(q));
+                  ask(q);
+                }}
                 className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
               >
                 {q}

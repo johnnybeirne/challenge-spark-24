@@ -108,9 +108,6 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               ? `${firstName}, share and get free access.`
               : `${firstName}, share and keep free access.`}
           </h2>
-          <p className="text-[var(--body-size)] font-normal text-[var(--text-secondary)]">
-            {membership.description}
-          </p>
 
 
 

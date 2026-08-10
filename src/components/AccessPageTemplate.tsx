@@ -81,9 +81,9 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             className="w-full"
             style={{ height: "0.5px", backgroundColor: "var(--border)", margin: "14px 0" }}
           />
-          <p className="text-[12px] text-[var(--text-muted)]">
-            You are in <span className="mx-1">›</span>
-            <span className="text-[14px] font-semibold text-[var(--text-primary)]">
+          <p className="text-[var(--body-size)] text-[var(--text-muted)]">
+            You are in <span className="mx-1 text-[var(--body-size)] text-[var(--text-muted)]">›</span>
+            <span className="text-[var(--body-size)] font-semibold text-[var(--text-primary)]">
               {PAGE_TITLE[pageKey]}
             </span>
           </p>

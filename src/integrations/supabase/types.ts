@@ -24,6 +24,7 @@ export type Database = {
           page_key: string
           referral_copy: string
           referral_heading: string
+          tagline: string | null
           updated_at: string
         }
         Insert: {
@@ -35,6 +36,7 @@ export type Database = {
           page_key: string
           referral_copy?: string
           referral_heading?: string
+          tagline?: string | null
           updated_at?: string
         }
         Update: {
@@ -46,6 +48,7 @@ export type Database = {
           page_key?: string
           referral_copy?: string
           referral_heading?: string
+          tagline?: string | null
           updated_at?: string
         }
         Relationships: []

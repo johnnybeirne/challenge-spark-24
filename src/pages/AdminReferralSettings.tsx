@@ -6,6 +6,7 @@ import Spinner from "@/components/Spinner";
 import { CmsPageHeader, EditorCard, EditableField } from "@/components/cms/cms-ui";
 
 type FeaturedSettings = { id: string; threshold: number };
+type AccessSettingsRow = { id: string; points_threshold: number };
 type InviteBadge = {
   id: string;
   name: string;
@@ -21,10 +22,13 @@ const AdminReferralSettings = () => {
   const [savingFeatured, setSavingFeatured] = useState(false);
   const [badges, setBadges] = useState<InviteBadge[]>([]);
   const [savingBadgeId, setSavingBadgeId] = useState<string | null>(null);
+  const [accessSettings, setAccessSettings] = useState<AccessSettingsRow | null>(null);
+  const [pointsInput, setPointsInput] = useState("500");
+  const [savingPoints, setSavingPoints] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [{ data: fc }, { data: bd }] = await Promise.all([
+      const [{ data: fc }, { data: bd }, { data: as_ }] = await Promise.all([
         (supabase.from("featured_creator_settings") as any)
           .select("id, threshold")
           .limit(1)
@@ -32,7 +36,15 @@ const AdminReferralSettings = () => {
         (supabase.from("invite_badges") as any)
           .select("id, name, threshold, description, sort_order")
           .order("sort_order", { ascending: true }),
+        (supabase.from("access_settings") as any)
+          .select("id, points_threshold")
+          .limit(1)
+          .maybeSingle(),
       ]);
+      if (as_) {
+        setAccessSettings(as_ as AccessSettingsRow);
+        setPointsInput(String((as_ as AccessSettingsRow).points_threshold));
+      }
       if (fc) {
         setFeatured(fc as FeaturedSettings);
         setThresholdInput(String((fc as FeaturedSettings).threshold));
@@ -61,6 +73,28 @@ const AdminReferralSettings = () => {
       toast.error("Could not save. Try again.");
     } finally {
       setSavingFeatured(false);
+    }
+  };
+
+  const savePoints = async () => {
+    setSavingPoints(true);
+    try {
+      const value = parseInt(pointsInput, 10);
+      if (isNaN(value) || value < 1) throw new Error("invalid");
+      const payload = accessSettings?.id
+        ? { id: accessSettings.id, points_threshold: value }
+        : { points_threshold: value };
+      const { data, error } = await (supabase.from("access_settings") as any)
+        .upsert(payload)
+        .select("id, points_threshold")
+        .single();
+      if (error) throw error;
+      setAccessSettings(data as AccessSettingsRow);
+      toast.success("Saved");
+    } catch {
+      toast.error("Could not save. Try again.");
+    } finally {
+      setSavingPoints(false);
     }
   };
 
@@ -96,6 +130,27 @@ const AdminReferralSettings = () => {
         title="Referral settings"
         description="Control the Featured Creator milestone and the invite badge copy participants see."
       />
+
+      <EditorCard
+        title="Free access points threshold"
+        description="Points a participant needs in each 28 day cycle to keep premium access free."
+        action={
+          <Button size="sm" onClick={savePoints} disabled={savingPoints}>
+            {savingPoints ? "Saving..." : "Save"}
+          </Button>
+        }
+      >
+        <EditableField
+          label="Points required per cycle"
+          type="number"
+          value={pointsInput}
+          onChange={setPointsInput}
+        />
+        <p className="text-sm text-muted-foreground">
+          At 50 points per action, that is {Math.ceil((parseInt(pointsInput, 10) || 0) / 50)}{" "}
+          qualifying actions per cycle.
+        </p>
+      </EditorCard>
 
       <EditorCard
         title="Featured Creator milestone"

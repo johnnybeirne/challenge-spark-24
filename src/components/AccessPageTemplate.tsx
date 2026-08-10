@@ -29,7 +29,7 @@ const PAGE_TITLE: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal, pointsNeeded, daysLeftInCycle } = useAccessStatus();
+  const { pointsTotal, daysLeftInCycle } = useAccessStatus();
   const { content: membership } = usePremiumMembershipContent();
   const { pointsThreshold } = useAccessSettings();
 
@@ -110,20 +110,17 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           {referralLink ? (
             <div className="mt-5 space-y-5">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-[var(--text-primary)]">
-                  {pointsTotal} of {pointsThreshold} points this cycle
-                </p>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEEDFE]">
-                  <div
-                    className="h-full rounded-full bg-[#534AB7] transition-all"
-                    style={{ width: `${Math.min((pointsTotal / pointsThreshold) * 100, 100)}%` }}
-                  />
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-[var(--text-primary)]">{pointsTotal}</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#EEEDFE]">
+                    <div
+                      className="h-full rounded-full bg-[#534AB7] transition-all"
+                      style={{ width: `${Math.min((pointsTotal / pointsThreshold) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-[var(--text-muted)]">{pointsThreshold}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {pointsNeeded === 0
-                    ? `You have reached ${pointsThreshold} points this cycle`
-                    : `${pointsNeeded} points to go · ${daysLeftInCycle} days left`}
-                </p>
+                <p className="text-sm text-muted-foreground">{daysLeftInCycle} days left</p>
               </div>
 
               <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">

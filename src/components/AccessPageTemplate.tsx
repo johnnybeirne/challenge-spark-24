@@ -25,12 +25,6 @@ const PAGE_TITLE: Record<AccessPageKey, string> = {
   events: "Live Events",
 };
 
-const TAG_ORDER: AccessPageKey[] = ["training", "community", "events"];
-const TAG_LABELS: Record<AccessPageKey, string> = {
-  training: "Training",
-  community: "Community",
-  events: "Live Events",
-};
 
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();

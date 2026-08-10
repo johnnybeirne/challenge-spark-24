@@ -105,8 +105,8 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
             className="text-[var(--h2-size)] font-bold leading-snug text-[var(--text-primary)]"
           >
             {pointsTotal < pointsThreshold
-              ? `${firstName}, share and get free access.`
-              : `${firstName}, share and keep free access.`}
+              ? `${firstName}, share and get free access*.`
+              : `${firstName}, share and keep free access*.`}
           </h2>
 
 

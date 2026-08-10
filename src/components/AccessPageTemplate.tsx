@@ -121,6 +121,12 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
                 
               </div>
 
+              <p
+                className="text-[11px] font-medium uppercase tracking-[0.06em] text-[var(--text-muted)]"
+                style={{ marginBottom: "6px" }}
+              >
+                Your invite link for sharing
+              </p>
               <div className="flex items-center gap-2 rounded-[10px] border border-[#E5E7EB] bg-[#F7F8FA] px-4 py-3">
                 <code className="flex-1 truncate text-sm text-[#1F2937]">{referralLink}</code>
                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy} aria-label="Copy invite link">

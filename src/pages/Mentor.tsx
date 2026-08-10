@@ -186,7 +186,7 @@ const Mentor = () => {
           })}
           {loading && (
             <div className="flex items-start justify-start gap-3">
-              <img src={leadtreeAiIcon.url} alt="LeadTree AI" className="pulse mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
+              <img src={leadtreeAiIcon.url} alt="LeadTree AI" className="mt-0.5 h-8 w-8 shrink-0 animate-pulse rounded-full object-cover ring-1 ring-border" />
               <div className="rounded-2xl bg-muted px-4 py-2.5"><TypingDots /></div>
             </div>
           )}

@@ -62,6 +62,10 @@ function meaningfulTokens(s: string): string[] {
   return tokenize(s).filter((token) => !QA_MATCH_STOPWORDS.has(token));
 }
 
+function containsWholeKeyword(normalizedPrompt: string, normalizedKeyword: string): boolean {
+  return ` ${normalizedPrompt} `.includes(` ${normalizedKeyword} `);
+}
+
 function buildTsQuery(q: string): string {
   // websearch_to_tsquery accepts plain words separated by spaces
   return q
@@ -269,7 +273,7 @@ serve(async (req) => {
         for (const kw of kws) {
           const k = normalize(String(kw));
           if (!k || QA_MATCH_STOPWORDS.has(k)) continue;
-          if (normPrompt.includes(k)) score += 2;
+          if (containsWholeKeyword(normPrompt, k)) score += 2;
         }
         for (const t of meaningfulTokens(r.question)) {
           if (promptTokens.has(t)) score += 1;

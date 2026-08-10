@@ -36,6 +36,7 @@ const Mentor = () => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { prompts: mentorPrompts } = useMentorSuggestedPrompts();
+  const { settings: coachSettings } = useCopilotSettings();
   const DEFAULT_SUGGESTED = mentorPrompts.default;
   const DAY_SUGGESTED: Record<number, string[]> = {
     1: mentorPrompts.day1,

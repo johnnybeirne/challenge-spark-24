@@ -87,6 +87,7 @@ import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
+import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
 import AccessPageTemplate from "@/components/AccessPageTemplate";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";
@@ -288,6 +289,7 @@ const App = () => (
                 <Route path="nav-tips" element={<AdminNavTips />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
+                <Route path="mentor-prompts" element={<AdminMentorPrompts />} />
                 <Route path="unlocks" element={<AdminUnlockGates />} />
                 <Route path="builder-prompts" element={<AdminBuilderPrompts />} />
                 <Route path="referral-settings" element={<AdminReferralSettings />} />

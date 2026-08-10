@@ -72,6 +72,13 @@ const items: NavItem[] = [
   { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy, external: true },
   { title: "Nav tips", url: "/owner-console/nav-tips", icon: HelpCircle, external: true },
   { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true },
+  {
+    title: "AI Coach prompts",
+    url: "/owner-console/mentor-prompts",
+    icon: Sparkles,
+    external: true,
+    keywords: ["mentor", "coach", "starter", "prompts", "suggested"],
+  },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true },
 ];

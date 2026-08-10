@@ -13,37 +13,13 @@ import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 import TypingDots from "@/components/TypingDots";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import { toast } from "sonner";
+import { useMentorSuggestedPrompts } from "@/hooks/useMentorSuggestedPrompts";
 
 interface ChatMsg { role: "user" | "assistant"; content: string; typed?: boolean; }
 
 
-const DEFAULT_SUGGESTED = [
-  "Help me choose a challenge idea",
-  "Create a 5-day challenge structure",
-  "What mistakes should I avoid?",
-  "Give me challenge name ideas",
-];
 
-const DAY_SUGGESTED: Record<number, string[]> = {
-  1: [
-    "Sharpen my problem statement",
-    "Make my audience more specific",
-    "Reframe my challenge positioning",
-    "What's a strong Day 1 outcome?",
-  ],
-  2: [
-    "Improve my quiz questions",
-    "Make my quiz more engaging",
-    "Map quiz results to next steps",
-    "How do I build Day 2 momentum?",
-  ],
-  3: [
-    "Tighten my launch checklist",
-    "Write a referral invite message",
-    "Boost completion-to-referral conversion",
-    "What should I do after Day 3?",
-  ],
-};
+
 
 const Mentor = () => {
   const { state } = useAppState();
@@ -57,6 +33,14 @@ const Mentor = () => {
   const [typedCount, setTypedCount] = useState<Record<number, number>>({});
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const { prompts: mentorPrompts } = useMentorSuggestedPrompts();
+  const DEFAULT_SUGGESTED = mentorPrompts.default;
+  const DAY_SUGGESTED: Record<number, string[]> = {
+    1: mentorPrompts.day1,
+    2: mentorPrompts.day2,
+    3: mentorPrompts.day3,
+  };
 
   const isChallenger = role === "challenger";
   const currentDay = Math.min(Math.max(state.challenge.currentDay || 1, 1), 3);

@@ -7,6 +7,7 @@ import { resolveFirstName } from "@/lib/tooltipTokens";
 import { getReferralUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
+import { LeadTreeIcon } from "@/components/LeadTreeIcon";
 import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useAccessSettings } from "@/hooks/useAccessSettings";

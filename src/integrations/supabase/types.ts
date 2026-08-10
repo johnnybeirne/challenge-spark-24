@@ -895,6 +895,27 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_suggested_prompts: {
+        Row: {
+          context: string
+          id: string
+          prompts: string[]
+          updated_at: string
+        }
+        Insert: {
+          context: string
+          id?: string
+          prompts?: string[]
+          updated_at?: string
+        }
+        Update: {
+          context?: string
+          id?: string
+          prompts?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       milestone_email_log: {
         Row: {
           created_at: string

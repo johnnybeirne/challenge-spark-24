@@ -150,7 +150,7 @@ const Mentor = () => {
             return (
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex items-start justify-start gap-3"}>
                 {m.role === "assistant" && (
-                  <img src={johnnyAvatar} alt="Johnny" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
+                  <img src={leadtreeAiIcon.url} alt="LeadTree AI" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
                 )}
                 {m.role === "user" ? (
                   <p className="max-w-[85%] rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground">{m.content}</p>
@@ -177,7 +177,7 @@ const Mentor = () => {
           })}
           {loading && (
             <div className="flex items-start justify-start gap-3">
-              <img src={johnnyAvatar} alt="Johnny" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
+              <img src={leadtreeAiIcon.url} alt="LeadTree AI" className="mt-0.5 h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border" />
               <div className="rounded-2xl bg-muted px-4 py-2.5"><TypingDots /></div>
             </div>
           )}

@@ -88,6 +88,7 @@ import AdminNavTips from "@/pages/AdminNavTips";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
 import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
+import AdminAiCoachSettings from "@/pages/AdminAiCoachSettings";
 import AccessPageTemplate from "@/components/AccessPageTemplate";
 import Waitlist from "@/pages/Waitlist";
 import FeatureExtractor from "@/pages/FeatureExtractor";

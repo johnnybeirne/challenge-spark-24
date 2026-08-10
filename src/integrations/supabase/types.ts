@@ -1465,6 +1465,30 @@ export type Database = {
           },
         ]
       }
+      premium_membership_content: {
+        Row: {
+          asterisk_note: string
+          description: string
+          heading: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          asterisk_note?: string
+          description?: string
+          heading?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          asterisk_note?: string
+          description?: string
+          heading?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       premium_page_settings: {
         Row: {
           audience_eyebrow: string | null

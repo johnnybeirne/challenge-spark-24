@@ -377,9 +377,26 @@ export async function waitFor<T>(
 }
 
 
-/** The step's primary "advance the flow" button, if one is on screen. */
+/** Strong, unambiguous advance labels — checked before the looser pattern. */
+const PRIMARY_CTA = /^(continue|next|complete day|finish|complete)/i;
+
+/**
+ * The step's primary "advance the flow" button. Wide, primary-styled buttons
+ * win over incidental prompt pills that happen to contain a CTA word.
+ */
 export function findFormCta(doc: Document): HTMLElement | null {
-  return usableButtons(doc).find((b) => FORM_CTA.test((b.textContent ?? "").trim())) ?? null;
+  const buttons = usableButtons(doc).filter((b) => FORM_CTA.test((b.textContent ?? "").trim()));
+  if (buttons.length === 0) return null;
+  const score = (b: HTMLButtonElement) => {
+    const text = (b.textContent ?? "").trim();
+    let n = 0;
+    if (PRIMARY_CTA.test(text)) n += 4;
+    if (b.className.includes("w-full")) n += 3;
+    if (b.getBoundingClientRect().width > 320) n += 1;
+    if (text.length > 70) n -= 3; // prompt pills and long helper copy
+    return n;
+  };
+  return [...buttons].sort((a, b) => score(b) - score(a))[0] ?? null;
 }
 
 /**

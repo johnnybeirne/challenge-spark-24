@@ -9,6 +9,8 @@ import {
   MonitorPlay,
   Shuffle,
   Check,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

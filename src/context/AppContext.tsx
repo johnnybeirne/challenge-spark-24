@@ -344,38 +344,21 @@ export function checkAndTriggerUnlocks(state: AppState): AppState {
   return updated;
 }
 
-// Fire-and-forget sync of the current 28 day access cycle's points total.
-function syncMonthlyPoints(activity: PointActivityEntry[]) {
+// Fire-and-forget request for the server to recalculate this cycle's points.
+// The total is computed server-side from trusted activity; the client never
+// writes it.
+function syncMonthlyPoints(_activity: PointActivityEntry[]) {
   void (async () => {
     try {
       const { data } = await supabase.auth.getUser();
-      const authUser = data.user;
-      if (!authUser?.id) return;
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("created_at")
-        .eq("user_id", authUser.id)
-        .maybeSingle();
-
-      const signupAt = profile?.created_at ?? authUser.created_at ?? null;
-      const cycle = getCycle(signupAt);
-
-      const pointsTotal = activity
-        .filter((entry) => isInCycle(entry.timestamp, cycle))
-        .reduce((sum, entry) => sum + (entry.points ?? 0), 0);
-
-      await supabase
-        .from("monthly_points_tracking")
-        .upsert(
-          { user_id: authUser.id, month: cycle.key, points_total: pointsTotal },
-          { onConflict: "user_id,month" }
-        );
+      if (!data.user?.id) return;
+      await (supabase.rpc as any)("recompute_monthly_points");
     } catch {
       // non-blocking
     }
   })();
 }
+
 
 
 function awardPoints(state: AppState, id: string, label: string, points: number): AppState {

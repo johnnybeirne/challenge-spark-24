@@ -149,9 +149,6 @@ const RightSidebar = () => {
             </div>
           </div>
           <Progress value={pct} className="mt-4 h-1.5" />
-          <p className="mt-2 text-xs text-[#6B7280]">
-            {nextReward ? `${Math.max(0, threshold - points)} pts to next unlock` : "All rewards unlocked."}
-          </p>
         </div>
 
       </div>

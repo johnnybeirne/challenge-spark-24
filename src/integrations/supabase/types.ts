@@ -2830,6 +2830,7 @@ export type Database = {
         Args: { invite_count: number }
         Returns: string
       }
+      claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
       get_partner_leaderboard: {
         Args: { p_limit?: number }
         Returns: {
@@ -2854,6 +2855,7 @@ export type Database = {
         Args: { p_partner_code: string }
         Returns: undefined
       }
+      recompute_monthly_points: { Args: never; Returns: number }
       redeem_coupon: { Args: { p_code: string }; Returns: Json }
       resolve_partner_by_slug: {
         Args: { p_slug: string }

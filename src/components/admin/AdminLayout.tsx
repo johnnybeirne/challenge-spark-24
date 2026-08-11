@@ -123,6 +123,9 @@ const AdminLayout = () => {
   }
 
 
+  const location = useLocation();
+  const onSimulator = location.pathname === "/admin/simulator";
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -138,6 +141,22 @@ const AdminLayout = () => {
           <footer className="py-6 text-center text-sm text-muted-foreground">
             © {new Date().getFullYear()} LeadTree. All rights reserved.
           </footer>
+
+          {!onSimulator && (
+            <Button
+              asChild
+              size="lg"
+              className={cn(
+                "fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg",
+                "bg-primary text-primary-foreground hover:bg-primary/90"
+              )}
+            >
+              <Link to="/admin/simulator">
+                <Play className="h-4 w-4 fill-current" />
+                Simulator
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </SidebarProvider>

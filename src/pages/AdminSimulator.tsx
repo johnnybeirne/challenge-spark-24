@@ -35,7 +35,6 @@ import {
   randomArchetype,
   autoplayQuizTick,
   autoplayFormAnswerTick,
-  autoplayFormAnswerTick,
   findFormCta,
   findNavTarget,
 } from "@/lib/challengeSimulator";

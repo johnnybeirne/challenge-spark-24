@@ -599,37 +599,19 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                {upsell.heading}
+                Want to go deeper on quiz funnel strategy?
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {upsell.body_text && (
-                <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                  {upsell.body_text}
-                </p>
-              )}
-              <div className="space-y-2">
-                <Button
-                  asChild
-                  size="lg"
-                  className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
-                >
-                  <Link to={upsell.upgrade_url || "/training"}>
-                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{upsell.button_label}</span>
-                  </Link>
-                </Button>
-                {upsell.upgrade_link_label && (
-                  <div className="text-center">
-                    <Link
-                      to={upsell.upgrade_url || "/training"}
-                      className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
-                      style={{ fontSize: "var(--body-size)" }}
-                    >
-                      {upsell.upgrade_link_label} &rarr;
-                    </Link>
-                  </div>
-                )}
-              </div>
+            <CardContent>
+              <Button
+                asChild
+                size="lg"
+                className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
+              >
+                <Link to="/training">
+                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Check Out LeadTree Premium Membership</span>
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         </section>

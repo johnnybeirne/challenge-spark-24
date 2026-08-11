@@ -330,7 +330,7 @@ const AdminSimulator = () => {
     setPlaying(true);
     applyDemoState("quiz", archetype);
     setIndex(0);
-    if (iframeRef.current) iframeRef.current.src = SIMULATOR_SCREENS[0].path;
+    navigateStage(SIMULATOR_SCREENS[0].path);
   };
 
   const reset = () => {

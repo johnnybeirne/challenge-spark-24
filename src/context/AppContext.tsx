@@ -505,14 +505,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const displayState = useMemo(() => {
     if (!qa.active) return state;
     try {
-      if (qa.persona) return applyPersona(state, qa.persona);
-      if (qa.simulatedJoinedAt) return applySimulatedDate(state, qa.simulatedJoinedAt);
+      // A persona sets the progress; an explicit simulated signup date, when
+      // both are set, wins on timing so the clock can be stepped across the
+      // real day windows without inventing a persona per window.
+      let next = qa.persona ? applyPersona(state, qa.persona) : state;
+      if (qa.simulatedJoinedAt) next = applySimulatedDate(next, qa.simulatedJoinedAt);
+      if (qa.demoParticipant && typeof qa.demoDirectReferrals === "number") {
+        // The demo participant is a fresh person, not the signed-in account, so
+        // their referral count is exact rather than a floor over real data.
+        const direct = Math.max(0, qa.demoDirectReferrals);
+        next = {
+          ...next,
+          network: { ...next.network, direct },
+          referrals: { ...next.referrals, count: direct },
+        };
+      }
+      return next;
     } catch (err) {
       // QA overlay must never break the app — log and fall through to real state.
       console.error("[QA] overlay failed, falling back to real state", err);
     }
     return state;
-  }, [state, qa.active, qa.persona, qa.simulatedJoinedAt]);
+  }, [
+    state,
+    qa.active,
+    qa.persona,
+    qa.simulatedJoinedAt,
+    qa.demoParticipant,
+    qa.demoDirectReferrals,
+  ]);
 
   // Hydrate state from Supabase when user authenticates
   useEffect(() => {

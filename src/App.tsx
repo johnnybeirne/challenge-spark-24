@@ -310,6 +310,11 @@ const App = () => (
                 <Route index element={<RequirementsChecklist />} />
               </Route>
 
+              {/* QA challenge runner — admin only */}
+              <Route path="/admin/qa-run" element={<AdminLayout />}>
+                <Route index element={<AdminQaRun />} />
+              </Route>
+
               {/* Internal audit — admin protected via AdminLayout */}
               <Route path="/user-features" element={<Navigate to="/owner-console/overview?tab=audit" replace />} />
 

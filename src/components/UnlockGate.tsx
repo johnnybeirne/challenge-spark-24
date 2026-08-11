@@ -131,9 +131,9 @@ export function UnlockGate({ gateKey, teaser, signupAt, dayIndex, children }: Pr
                   variant="outline"
                   size="sm"
                   onClick={() => navigate("/challenger-dashboard")}
-                  className="gap-1.5"
+                  className="gap-1.5 text-black hover:text-black"
                 >
-                  <LayoutDashboard className="h-4 w-4" />
+                  <LayoutDashboard className="h-4 w-4 text-[#1D9E75]" />
                   {config.dashboard_label}
                 </Button>
               </div>

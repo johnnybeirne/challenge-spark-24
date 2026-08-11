@@ -137,7 +137,18 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           <ConsumerNav />
         </div>
         <QaModePanel />
-
+        {showSimulatorLaunch && (
+          <Button
+            asChild
+            size="lg"
+            className="fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Link to="/admin/simulator">
+              <Play className="h-4 w-4 fill-current" />
+              Simulator
+            </Link>
+          </Button>
+        )}
       </div>
     );
   }

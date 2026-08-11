@@ -316,6 +316,11 @@ const App = () => (
                 <Route index element={<AdminQaRun />} />
               </Route>
 
+              {/* Screen-by-screen challenge simulator — admin only */}
+              <Route path="/admin/simulator" element={<AdminLayout />}>
+                <Route index element={<AdminSimulator />} />
+              </Route>
+
               {/* Internal audit — admin protected via AdminLayout */}
               <Route path="/user-features" element={<Navigate to="/owner-console/overview?tab=audit" replace />} />
 

@@ -2862,6 +2862,7 @@ export type Database = {
       }
       award_referral_day_credit: { Args: { p_day: number }; Returns: Json }
       award_referral_quiz_credit: { Args: never; Returns: Json }
+      backfill_day_completion_points: { Args: never; Returns: number }
       calculate_waitlist_tier: {
         Args: { invite_count: number }
         Returns: string

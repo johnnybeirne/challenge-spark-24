@@ -603,25 +603,32 @@ const Day2Screen1 = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                {upsell.body_text}
-              </p>
+              {upsell.body_text && (
+                <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
+                  {upsell.body_text}
+                </p>
+              )}
               <div className="space-y-2">
-                <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5 bg-[#534AB7] hover:bg-[#534AB7]/90 text-white">
-                  <Link to="/referrals">
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
+                >
+                  <Link to={upsell.upgrade_url || "/training"}>
                     <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{upsell.button_label}</span>
-                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>{upsell.button_sublabel}</span>
                   </Link>
                 </Button>
-                <div className="text-center">
-                  <Link
-                    to={upsell.upgrade_url || "/upgrade"}
-                    className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
-                    style={{ fontSize: "var(--body-size)" }}
-                  >
-                    {upsell.upgrade_link_label} &rarr;
-                  </Link>
-                </div>
+                {upsell.upgrade_link_label && (
+                  <div className="text-center">
+                    <Link
+                      to={upsell.upgrade_url || "/training"}
+                      className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+                      style={{ fontSize: "var(--body-size)" }}
+                    >
+                      {upsell.upgrade_link_label} &rarr;
+                    </Link>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

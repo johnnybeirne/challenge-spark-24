@@ -467,11 +467,10 @@ const Dashboard = () => {
           ) : state.challenge?.startedAt ? (
             <div className="flex flex-col items-center gap-1 pt-2">
               <p className="inline-flex items-center gap-1.5 text-[18px] text-muted-foreground">
-                <Lock className="h-4 w-4" />
-                Your Day 1 Challenge Promise is locked.
+                Your Day 1 Challenge Promise is saved in your dashboard.
               </p>
               <p className="text-[18px] text-muted-foreground text-center max-w-xl">
-                To change your answers, <Link to="/premium" className="underline hover:text-foreground">upgrade to Lifetime Challenge Access</Link>.
+                <Link to="/dashboard" className="underline hover:text-foreground">Go to your dashboard</Link> to review or update it.
               </p>
             </div>
           ) : null}
@@ -788,11 +787,10 @@ const Dashboard = () => {
         ) : state.challenge?.startedAt ? (
           <div className="flex flex-col items-center gap-1 pt-2">
             <p className="inline-flex items-center gap-1.5 text-[18px] text-muted-foreground">
-              <Lock className="h-4 w-4" />
-              Your Day 1 Challenge Promise is locked.
+              Your Day 1 Challenge Promise is saved in your dashboard.
             </p>
             <p className="text-[18px] text-muted-foreground text-center max-w-xl">
-              To change your answers, <Link to="/premium" className="underline hover:text-foreground">upgrade to Lifetime Challenge Access</Link>.
+              <Link to="/dashboard" className="underline hover:text-foreground">Go to your dashboard</Link> to review or update it.
             </p>
           </div>
         ) : null}

@@ -130,6 +130,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <SimulatorBridge />
             <AttributionCapture />
             <TypographyLoader />
             {/* QA preview status pill is rendered by QaModePanel — no separate badge needed */}

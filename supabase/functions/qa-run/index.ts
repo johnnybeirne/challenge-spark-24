@@ -304,13 +304,13 @@ Deno.serve(async (req) => {
     // Mirrors recompute_monthly_points(): (day completions + invites + referral
     // day credits) * 50, keyed to the participant's rolling access cycle.
     const dayKeys = Object.keys((finalProgress?.day_completed_at as Record<string, string>) ?? {});
-    const countedByDbFunction = dayKeys.filter((k) => ["1", "2", "3"].includes(k)).length;
+    const countedByDbFunction = dayKeys.filter((k) => ["day1", "day2", "day3"].includes(k)).length;
     assert(
       "points_day_keys",
       "Day completion stamps are countable for points",
       countedByDbFunction === dayKeys.length && dayKeys.length === 3,
-      "All three day stamps use keys the points function counts",
-      `App writes keys [${dayKeys.join(", ")}] but recompute_monthly_points only counts '1','2','3' — day completions score zero points`
+      `All three day stamps use keys the points function counts = ${countedByDbFunction * POINTS_PER_EVENT} points`,
+      `App writes keys [${dayKeys.join(", ")}] but recompute_monthly_points counts 'day1','day2','day3'`
     );
 
     const { data: cycleKey } = await admin.rpc("access_cycle_key", {

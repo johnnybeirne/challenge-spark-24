@@ -37,6 +37,13 @@ import {
   anchorForWindow,
   autoplayFormAnswerTick,
   findFormCta,
+  findFormField,
+  findFormChoices,
+  preferredChoice,
+  scriptedAnswerFor,
+  typeIntoField,
+  formStepSignature,
+  waitFor,
   findNavTarget,
 } from "@/lib/challengeSimulator";
 import {
@@ -77,6 +84,11 @@ const AdminSimulator = () => {
   const planRef = useRef<number[]>([]);
   const speedRef = useRef(speed);
   speedRef.current = speed;
+  const playingRef = useRef(playing);
+  playingRef.current = playing;
+  // Consecutive ticks where the Day 1 form made no visible progress.
+  const stallRef = useRef(0);
+  const goToRef = useRef<((next: number) => void) | null>(null);
 
   // Window length comes from the real gate settings, so the simulator steps the
   // clock across the same boundaries a participant experiences.
@@ -194,6 +206,8 @@ const AdminSimulator = () => {
   );
 
 
+  goToRef.current = goTo;
+
   /* ── fake cursor: move to a control, press it, then fire the real click ── */
   const wait = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
 
@@ -231,6 +245,8 @@ const AdminSimulator = () => {
     if (!running || !playing) return;
     if (screen?.kind !== "quiz" && screen?.kind !== "form") return;
     let cancelled = false;
+    const isCancelled = () => cancelled || !playingRef.current;
+
     const tick = window.setInterval(async () => {
       if (cancelled || busyRef.current) return;
       const frame = iframeRef.current;
@@ -257,19 +273,55 @@ const AdminSimulator = () => {
         applyDemoState(SIMULATOR_SCREENS[index + 1]?.id ?? screen.id, targetArchetype);
         return;
       }
-      if (autoplayFormAnswerTick(doc)) {
-        setQuizStep((s) => s + 1);
-        return;
-      }
-      // Flow buttons get the visible cursor treatment.
-      const cta = findFormCta(doc);
-      if (cta) {
-        busyRef.current = true;
-        try {
-          await clickWithCursor(cta);
-        } finally {
-          busyRef.current = false;
+
+      const s = speedRef.current || 1;
+      const before = formStepSignature(doc);
+      busyRef.current = true;
+      try {
+        // 1. Choice steps — the cursor visibly picks the scripted option(s).
+        const choice = preferredChoice(findFormChoices(doc));
+        if (choice) {
+          await clickWithCursor(choice);
+          setQuizStep((n) => n + 1);
+          return;
         }
+
+        // 2. Free text steps — type the scripted answer so viewers see it land.
+        const field = findFormField(doc);
+        if (field) {
+          const value = scriptedAnswerFor(field);
+          const typed = await typeIntoField(field, value, {
+            charDelayMs: Math.max(6, 34 / s),
+            isCancelled,
+          });
+          if (!typed) return; // paused mid typing, or the field unmounted
+          // Do not advance until the app has registered the answer (its CTA enables).
+          await waitFor(() => findFormCta(doc), 2500 / s);
+          setQuizStep((n) => n + 1);
+          return;
+        }
+
+        // 3. Nothing to answer — press the step's real advance control.
+        const cta = findFormCta(doc);
+        if (!cta) {
+          // Intro typing or an AI call is still running; poll instead of freezing.
+          stallRef.current += 1;
+          return;
+        }
+        await clickWithCursor(cta);
+        // Wait for the next question to actually mount before the next step.
+        const moved = await waitFor(
+          () => (formStepSignature(doc) !== before ? true : null),
+          6000 / s,
+        );
+        stallRef.current = moved ? 0 : stallRef.current + 1;
+        if (!moved && stallRef.current > 6) {
+          // Never hang the demo: skip to the next walkthrough screen.
+          stallRef.current = 0;
+          goToRef.current?.(index + 1);
+        }
+      } finally {
+        if (!cancelled) busyRef.current = false;
       }
     }, Math.max(80, 260 / speedRef.current));
 
@@ -279,6 +331,7 @@ const AdminSimulator = () => {
       window.clearInterval(tick);
     };
   }, [running, playing, screen?.kind, screen?.path, index, applyDemoState, targetArchetype, clickWithCursor]);
+
 
   /* ── mount the stage: the iframe only exists after running flips true ── */
   useEffect(() => {

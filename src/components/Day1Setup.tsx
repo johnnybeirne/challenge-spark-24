@@ -469,6 +469,7 @@ const TypedSequence = ({
   }, [idx, resetKey]);
 
 
+  console.log("[TS-DEBUG]", JSON.stringify({resetKey, idx, shown, len: plain.length}));
   const isMakingNotes = !skipMakingNotes && idx === 0 && showDots && shown.length === 0;
 
   return (

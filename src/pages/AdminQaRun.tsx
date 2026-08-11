@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, XCircle, Info, Play, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import SEO from "@/components/SEO";
+import { SEO } from "@/components/SEO";
 
 type Status = "pass" | "fail" | "info";
 
@@ -67,7 +67,7 @@ export default function AdminQaRun() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 p-6">
-      <SEO title="QA challenge runner" description="Owner-only end to end challenge test runner." noindex />
+      <SEO title="QA challenge runner" description="Owner-only end to end challenge test runner." noIndex />
 
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">QA challenge runner</h1>

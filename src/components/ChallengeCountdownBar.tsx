@@ -117,12 +117,12 @@ const ChallengeCountdownBar = ({ className }: Props) => {
   return (
     <div
       className={cn(
-        "relative inline-flex w-max items-center whitespace-nowrap rounded-full border border-[#E5E7EB] bg-white/60 backdrop-blur-md px-3 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] sm:px-[4%] sm:py-2.5 md:px-[5%] md:py-3",
+        "relative inline-flex w-max items-center whitespace-nowrap rounded-full border border-[#E5E7EB] bg-white px-3 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] sm:px-4 sm:py-2.5 md:px-5 md:py-3",
         isDragging ? "cursor-grabbing" : "cursor-grab",
         className,
       )}
       style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
         touchAction: "none",
         userSelect: "none",
       }}
@@ -132,7 +132,6 @@ const ChallengeCountdownBar = ({ className }: Props) => {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      onPointerLeave={handlePointerUp}
     >
       <button
         type="button"

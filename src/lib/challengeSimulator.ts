@@ -91,7 +91,8 @@ export interface SimulatorScreen {
   name: string;
   note: string;
   path: string;
-  kind: "quiz" | "page";
+  /** "quiz" = lead-flow quiz autoplay, "form" = Day 1 step-through autoplay. */
+  kind: "quiz" | "form" | "page";
   /** Persona preset used to fake progress on the demo participant only. */
   persona?: PersonaId;
 }
@@ -104,7 +105,8 @@ export const SIMULATOR_SCREENS: SimulatorScreen[] = [
   { id: "results", name: "Result and archetype", note: "Score, band and teaser", path: "/results", kind: "page" },
   { id: "join", name: "Join the challenge", note: "Signup and account creation", path: "/challenge/join", kind: "page" },
   { id: "dashboard", name: "Challenge dashboard", note: "First view after joining", path: "/challenger-dashboard", kind: "page", persona: persona("fresh") },
-  { id: "day1", name: "Day 1", note: "Open from signup", path: "/challenge/day-1", kind: "page", persona: persona("fresh") },
+  { id: "day1", name: "Day 1", note: "Auto-played step by step", path: "/challenge/day-1", kind: "form", persona: persona("fresh") },
+
   { id: "day2", name: "Day 2", note: "Clock moved forward one window", path: "/challenge/day/2", kind: "page", persona: persona("done_day_1") },
   { id: "day3", name: "Day 3", note: "Clock moved forward two windows", path: "/challenge/day/3", kind: "page", persona: persona("done_day_2") },
   { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2") },
@@ -119,3 +121,100 @@ export const SPEEDS = [
 
 /** Base dwell per walkthrough screen, in ms, before speed is applied. */
 export const BASE_DWELL_MS = 6000;
+
+/* ───── Shared auto-answer driver ─────
+ * One mechanism, two surfaces: the lead-flow quiz and the Day 1 step-through.
+ * Everything is derived from the rendered DOM of the real screens, so no
+ * question, option or field is duplicated here.
+ */
+
+const isVisible = (el: HTMLElement) =>
+  !!el.offsetParent && !el.hidden && el.getClientRects().length > 0;
+
+const usableButtons = (doc: Document) =>
+  Array.from(doc.querySelectorAll<HTMLButtonElement>("button")).filter(
+    (b) => !b.disabled && isVisible(b),
+  );
+
+/** Answer buttons on the lead-flow quiz (large bordered option cards). */
+const quizOptionButtons = (doc: Document) =>
+  Array.from(doc.querySelectorAll<HTMLButtonElement>("button")).filter(
+    (b) => b.className.includes("rounded-2xl") && b.className.includes("border-2"),
+  );
+
+/**
+ * Play one tick of the lead-flow quiz. Returns the question index it answered,
+ * or null when nothing was actionable this tick.
+ */
+export function autoplayQuizTick(doc: Document, plan: number[]): number | null {
+  const answerButtons = quizOptionButtons(doc);
+  if (answerButtons.length >= 2) {
+    if (answerButtons.every((b) => b.disabled)) return null; // mid-transition
+    const dots = Array.from(doc.querySelectorAll<HTMLElement>("div.h-1\\.5"));
+    const current = Math.max(0, dots.findIndex((d) => d.className.includes("w-8")));
+    const choice = plan[current] ?? 0;
+    answerButtons[choice]?.click();
+    return current;
+  }
+  // Still on the landing intro — press the quiz CTA.
+  const cta = usableButtons(doc).find((b) => /quiz|start|begin|diagnos/i.test(b.textContent ?? ""));
+  cta?.click();
+  return null;
+}
+
+/** Turn a field's own placeholder ("e.g. Independent coaches.") into a demo value. */
+const demoValueFor = (field: HTMLInputElement | HTMLTextAreaElement): string => {
+  const raw = (field.placeholder || "").trim();
+  const cleaned = raw
+    .replace(/^e\.?g\.?:?\s*/i, "")
+    .replace(/\s*\.\.\.$/, "")
+    .replace(/[.\s]+$/, "")
+    .trim();
+  return cleaned || "Independent coaches who want more qualified leads";
+};
+
+/** Write into a React-controlled field so its onChange fires. */
+const setFieldValue = (field: HTMLInputElement | HTMLTextAreaElement, value: string) => {
+  const proto = field instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+  setter?.call(field, value);
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+  field.dispatchEvent(new Event("change", { bubbles: true }));
+};
+
+const FORM_CTA = /continue|next|complete|finish|generate|create|save|let'?s|got it|show me|unlock/i;
+
+/**
+ * Play one tick of a step-through screen such as Day 1: pick a choice, fill a
+ * free-text field, or press the step's primary button. Returns true when it
+ * acted, so the caller can pace itself the same way the quiz does.
+ */
+export function autoplayFormTick(doc: Document): boolean {
+  // 1. Choice steps — radio-style option cards.
+  const choices = Array.from(
+    doc.querySelectorAll<HTMLButtonElement>('button[role="radio"], button[role="checkbox"]'),
+  ).filter((b) => !b.disabled && isVisible(b));
+  const unpicked = choices.filter((b) => b.getAttribute("aria-checked") !== "true");
+  if (unpicked.length > 0) {
+    unpicked[0].click();
+    return true;
+  }
+
+  // 2. Free-text steps — fill each empty visible field with a demo value.
+  const fields = Array.from(
+    doc.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("textarea, input[type='text']"),
+  ).filter((f) => !f.disabled && !f.readOnly && isVisible(f));
+  const empty = fields.find((f) => !f.value.trim());
+  if (empty) {
+    setFieldValue(empty, demoValueFor(empty));
+    return true;
+  }
+
+  // 3. Advance the step.
+  const cta = usableButtons(doc).find((b) => FORM_CTA.test((b.textContent ?? "").trim()));
+  if (cta) {
+    cta.click();
+    return true;
+  }
+  return false;
+}

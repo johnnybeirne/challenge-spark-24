@@ -127,17 +127,21 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
   const windowStartsAt = dayWindow?.startsAt ?? null;
 
   // Persist an invite-earned unlock so it survives a later referral reversal.
+  // The server re-validates the invite count before recording the grant.
   // The scheduled window is never persisted: it opens and closes on its own.
   useEffect(() => {
     if (!user?.id || !config?.enabled || granted || !invitesMet) return;
     (async () => {
-      await supabase
-        .from("unlock_grants")
-        .insert({ user_id: user.id, gate_key: gateKey, source: "invites" });
-      setGranted(true);
-      setGrantSource("invites");
+      const { data } = await (supabase.rpc as any)("claim_invite_unlock", {
+        p_gate_key: gateKey,
+      });
+      if (data === true) {
+        setGranted(true);
+        setGrantSource("invites");
+      }
     })();
   }, [user?.id, config?.enabled, granted, invitesMet, gateKey]);
+
 
   const gateOff = !config || !config.enabled;
   const unlocked = gateOff || granted || invitesMet || inFreeWindow;

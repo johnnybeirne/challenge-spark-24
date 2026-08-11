@@ -155,7 +155,7 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
         setGrantSource("invites");
       }
     })();
-  }, [user?.id, config?.enabled, granted, invitesMet, gateKey]);
+  }, [demo, user?.id, config?.enabled, granted, invitesMet, gateKey]);
 
 
   const gateOff = !config || !config.enabled;

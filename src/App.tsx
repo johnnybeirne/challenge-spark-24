@@ -318,7 +318,7 @@ const App = () => (
               </Route>
 
               {/* Screen-by-screen challenge simulator — admin only */}
-              <Route path="/admin/simulator" element={<AdminLayout />}>
+              <Route path="/admin/simulator" element={<AdminLayout bare />}>
                 <Route index element={<AdminSimulator />} />
               </Route>
 

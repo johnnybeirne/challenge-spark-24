@@ -46,7 +46,13 @@ const ChallengeCountdownBar = ({ className }: Props) => {
   }, []);
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 1_000);
+    // Only re-render when the displayed minute actually changes.
+    const id = window.setInterval(() => {
+      setNow((prev) => {
+        const next = Date.now();
+        return Math.floor(next / 60_000) === Math.floor(prev / 60_000) ? prev : next;
+      });
+    }, 5_000);
     return () => window.clearInterval(id);
   }, []);
 

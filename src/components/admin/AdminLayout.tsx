@@ -124,7 +124,7 @@ const AdminLayout = ({ bare = false }: { bare?: boolean }) => {
 
   if (bare) {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-background text-foreground">
+      <div className="h-screen w-screen overflow-auto bg-background text-foreground">
         <Outlet />
       </div>
     );

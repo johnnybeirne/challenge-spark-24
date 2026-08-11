@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { Outlet, Link, Navigate, useLocation } from "react-router-dom";
+import { Outlet, Link, Navigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
-import { Shield, Play } from "lucide-react";
+import { Shield } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { cn } from "@/lib/utils";
 
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 600;

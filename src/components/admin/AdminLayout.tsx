@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 600;
 
-const AdminLayout = () => {
+const AdminLayout = ({ bare = false }: { bare?: boolean }) => {
   const { user, loading } = useAuth();
   const userId = user?.id ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
@@ -121,6 +121,14 @@ const AdminLayout = () => {
     );
   }
 
+
+  if (bare) {
+    return (
+      <div className="h-screen w-screen overflow-auto bg-background text-foreground">
+        <Outlet />
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>

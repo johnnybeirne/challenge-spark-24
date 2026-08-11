@@ -202,7 +202,7 @@ const AdminSimulator = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-4">
+    <div className="min-h-full p-4 md:p-6 space-y-4">
       <header className="space-y-1">
         <div className="flex items-center gap-2">
           <MonitorPlay className="h-5 w-5 text-primary" />

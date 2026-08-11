@@ -66,12 +66,17 @@ const AdminSimulator = () => {
   const [index, setIndex] = useState(0);
   const [quizStep, setQuizStep] = useState(0);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false });
+  const [pressed, setPressed] = useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const busyRef = useRef(false);
   const savedQaRef = useRef<QaPreviewState | null>(null);
   const planRef = useRef<number[]>([]);
   const speedRef = useRef(speed);
   speedRef.current = speed;
+
 
   const screen = SIMULATOR_SCREENS[index];
   const targetInfo = archetypes.find((a) => a.id === targetArchetype) ?? null;

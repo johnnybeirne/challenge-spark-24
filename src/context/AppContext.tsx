@@ -505,8 +505,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const displayState = useMemo(() => {
     if (!qa.active) return state;
     try {
-      if (qa.persona) return applyPersona(state, qa.persona);
-      if (qa.simulatedJoinedAt) return applySimulatedDate(state, qa.simulatedJoinedAt);
+      // A persona sets the progress; an explicit simulated signup date, when
+      // both are set, wins on timing so the clock can be stepped across the
+      // real day windows without inventing a persona per window.
+      let next = qa.persona ? applyPersona(state, qa.persona) : state;
+      if (qa.simulatedJoinedAt) next = applySimulatedDate(next, qa.simulatedJoinedAt);
+      return next;
     } catch (err) {
       // QA overlay must never break the app — log and fall through to real state.
       console.error("[QA] overlay failed, falling back to real state", err);

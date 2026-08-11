@@ -102,6 +102,8 @@ export interface SimulatorScreen {
    * settings at run time, never hardcoded.
    */
   windowIndex?: number;
+  /** Direct referrals the demo participant has on this screen. */
+  directReferrals?: number;
 }
 
 const personaExists = (id: PersonaId) => PERSONAS.some((p) => p.id === id);
@@ -119,7 +121,7 @@ export const SIMULATOR_SCREENS: SimulatorScreen[] = [
   { id: "day2", name: "Day 2", note: "Open day in its live window", path: "/challenge/day/2", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
   { id: "day2Locked", name: "Day 2 locked", note: "Day 2 rolls past as Day 3 opens", path: "/challenge/day/2", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
   { id: "day3", name: "Day 3", note: "Open day in its live window", path: "/challenge/day/3", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
-  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
+  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2"), windowIndex: 3, directReferrals: 1 },
   { id: "unlocks", name: "Unlocks", note: "What the participant has opened", path: "/unlocks", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
 ];
 

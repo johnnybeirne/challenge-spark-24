@@ -73,6 +73,28 @@ const AdminSimulator = () => {
   const speedRef = useRef(speed);
   speedRef.current = speed;
 
+  // Window length comes from the real gate settings, so the simulator steps the
+  // clock across the same boundaries a participant experiences.
+  const [windowHours, setWindowHours] = useState<number>(DEFAULT_WINDOW_HOURS);
+  const windowHoursRef = useRef(windowHours);
+  windowHoursRef.current = windowHours;
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("unlock_gates")
+        .select("key, window_hours")
+        .in("key", ["day1", "day2", "day3"]);
+      const hours = (data ?? [])
+        .map((r: any) => Number(r.window_hours))
+        .find((h) => Number.isFinite(h) && h > 0);
+      if (!cancelled && hours) setWindowHours(hours);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const screen = SIMULATOR_SCREENS[index];
   const targetInfo = archetypes.find((a) => a.id === targetArchetype) ?? null;
@@ -82,8 +104,9 @@ const AdminSimulator = () => {
     (screenId: string, archetype: QaArchetype | null) => {
       const base = getQaState();
       const target = SIMULATOR_SCREENS.find((s) => s.id === screenId);
-      const hours = DAY_OFFSET_HOURS[screenId] ?? 0;
-      const joinedAt = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+      // Move the demo signup anchor so "now" sits inside this screen's window.
+      // The real gate then decides which days are open and which have locked.
+      const joinedAt = anchorForWindow(target?.windowIndex ?? 1, windowHoursRef.current);
       setQaState({
         ...base,
         active: true,
@@ -103,6 +126,7 @@ const AdminSimulator = () => {
     },
     [],
   );
+
 
   const restoreQaState = useCallback(() => {
     if (savedQaRef.current) setQaState(savedQaRef.current);

@@ -95,6 +95,13 @@ export interface SimulatorScreen {
   kind: "quiz" | "form" | "page";
   /** Persona preset used to fake progress on the demo participant only. */
   persona?: PersonaId;
+  /**
+   * Which signup-anchored window the demo clock sits in for this screen.
+   * 1 = Day 1 is live, 2 = Day 2 is live (so Day 1 has rolled past and the real
+   * gate locks it), 3 = Day 3 is live. The window length is read from the gate
+   * settings at run time, never hardcoded.
+   */
+  windowIndex?: number;
 }
 
 const personaExists = (id: PersonaId) => PERSONAS.some((p) => p.id === id);
@@ -104,14 +111,28 @@ export const SIMULATOR_SCREENS: SimulatorScreen[] = [
   { id: "quiz", name: "Lead flow quiz", note: "Auto-played question by question", path: "/assessment", kind: "quiz" },
   { id: "results", name: "Result and archetype", note: "Score, band and teaser", path: "/results", kind: "page" },
   { id: "join", name: "Join the challenge", note: "Signup and account creation", path: "/challenge/join", kind: "page" },
-  { id: "dashboard", name: "Challenge dashboard", note: "First view after joining", path: "/challenger-dashboard", kind: "page", persona: persona("fresh") },
-  { id: "day1", name: "Day 1", note: "Auto-played step by step", path: "/challenge/day-1", kind: "form", persona: persona("fresh") },
+  { id: "dashboard", name: "Challenge dashboard", note: "First view after joining", path: "/challenger-dashboard", kind: "page", persona: persona("fresh"), windowIndex: 1 },
+  { id: "day1", name: "Day 1", note: "Auto-played step by step, live window", path: "/challenge/day-1", kind: "form", persona: persona("fresh"), windowIndex: 1 },
 
-  { id: "day2", name: "Day 2", note: "Clock moved forward one window", path: "/challenge/day/2", kind: "page", persona: persona("done_day_1") },
-  { id: "day3", name: "Day 3", note: "Clock moved forward two windows", path: "/challenge/day/3", kind: "page", persona: persona("done_day_2") },
-  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2") },
-  { id: "unlocks", name: "Unlocks", note: "What the participant has opened", path: "/unlocks", kind: "page", persona: persona("done_day_2") },
+  { id: "rollover", name: "Day 1 window closes", note: "Clock rolls into Day 2, day nav re-locks", path: "/challenger-dashboard", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
+  { id: "day1Locked", name: "Day 1 locked", note: "Real pay or invite gate on a past day", path: "/challenge/day-1", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
+  { id: "day2", name: "Day 2", note: "Open day in its live window", path: "/challenge/day/2", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
+  { id: "day2Locked", name: "Day 2 locked", note: "Day 2 rolls past as Day 3 opens", path: "/challenge/day/2", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
+  { id: "day3", name: "Day 3", note: "Open day in its live window", path: "/challenge/day/3", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
+  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
+  { id: "unlocks", name: "Unlocks", note: "What the participant has opened", path: "/unlocks", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
 ];
+
+/**
+ * Signup anchor that puts "now" in the middle of the given window, so the real
+ * schedule makes that day live and every earlier day past.
+ */
+export function anchorForWindow(windowIndex: number, windowHours: number): string {
+  const idx = Math.max(1, windowIndex || 1);
+  const hoursAgo = (idx - 1) * windowHours + windowHours / 2;
+  return new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString();
+}
+
 
 export const SPEEDS = [
   { label: "Slow", value: 0.5 },

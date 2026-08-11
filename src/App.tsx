@@ -75,6 +75,7 @@ import Unsubscribe from "@/pages/Unsubscribe";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
 import AdminQaRun from "@/pages/AdminQaRun";
+import AdminSimulator from "@/pages/AdminSimulator";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";

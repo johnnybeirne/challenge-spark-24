@@ -33,6 +33,8 @@ import {
   buildAnswerPlan,
   getArchetypeInfo,
   randomArchetype,
+  autoplayQuizTick,
+  autoplayFormTick,
 } from "@/lib/challengeSimulator";
 import {
   getQaState,
@@ -117,55 +119,50 @@ const AdminSimulator = () => {
       const next = SIMULATOR_SCREENS[clamped];
       applyDemoState(next.id, archetype);
       setIndex(clamped);
+      setQuizStep(0);
       if (iframeRef.current) iframeRef.current.src = next.path;
     },
     [applyDemoState, targetArchetype],
   );
 
-  /* ── quiz autoplay driver ── */
+  /* ── autoplay driver (shared by the quiz and the Day 1 step-through) ── */
   useEffect(() => {
-    if (!running || !playing || screen?.kind !== "quiz") return;
+    if (!running || !playing) return;
+    if (screen?.kind !== "quiz" && screen?.kind !== "form") return;
     let cancelled = false;
     const tick = window.setInterval(() => {
       if (cancelled) return;
       const frame = iframeRef.current;
       const doc = frame?.contentDocument;
       if (!doc) return;
-
-      // Quiz finished — the app navigates itself to the result screen.
       const path = frame?.contentWindow?.location?.pathname ?? "";
-      if (path.startsWith("/results")) {
-        setIndex((i) => (SIMULATOR_SCREENS[i]?.kind === "quiz" ? i + 1 : i));
-        applyDemoState("results", targetArchetype);
+
+      if (screen.kind === "quiz") {
+        // Quiz finished — the app navigates itself to the result screen.
+        if (path.startsWith("/results")) {
+          setIndex((i) => (SIMULATOR_SCREENS[i]?.kind === "quiz" ? i + 1 : i));
+          applyDemoState("results", targetArchetype);
+          return;
+        }
+        const answered = autoplayQuizTick(doc, planRef.current);
+        if (answered !== null) setQuizStep(answered + 1);
         return;
       }
 
-      const answerButtons = Array.from(doc.querySelectorAll<HTMLButtonElement>("button")).filter(
-        (b) => b.className.includes("rounded-2xl") && b.className.includes("border-2"),
-      );
-
-      if (answerButtons.length >= 2) {
-        if (answerButtons.every((b) => b.disabled)) return; // mid-transition
-        const dots = Array.from(doc.querySelectorAll<HTMLElement>("div.h-1\\.5"));
-        const current = Math.max(0, dots.findIndex((d) => d.className.includes("w-8")));
-        const choice = planRef.current[current] ?? 0;
-        setQuizStep(current + 1);
-        answerButtons[choice]?.click();
+      // Day 1 step-through — it finishes by navigating to the dashboard.
+      if (!path.startsWith(screen.path)) {
+        setIndex((i) => (SIMULATOR_SCREENS[i]?.kind === "form" ? i + 1 : i));
+        applyDemoState(SIMULATOR_SCREENS[index + 1]?.id ?? screen.id, targetArchetype);
         return;
       }
-
-      // Still on the landing intro — press the quiz CTA.
-      const cta = Array.from(doc.querySelectorAll<HTMLButtonElement>("button")).find((b) =>
-        /quiz|start|begin|diagnos/i.test(b.textContent ?? ""),
-      );
-      cta?.click();
+      if (autoplayFormTick(doc)) setQuizStep((s) => s + 1);
     }, Math.max(80, 260 / speedRef.current));
 
     return () => {
       cancelled = true;
       window.clearInterval(tick);
     };
-  }, [running, playing, screen?.kind, applyDemoState, targetArchetype]);
+  }, [running, playing, screen?.kind, screen?.path, index, applyDemoState, targetArchetype]);
 
   /* ── mount the stage: the iframe only exists after running flips true ── */
   useEffect(() => {
@@ -178,13 +175,15 @@ const AdminSimulator = () => {
     }
   }, [running, index]);
 
-  /* ── walkthrough auto-advance ── */
+  /* ── walkthrough auto-advance (auto-played screens drive themselves) ── */
   useEffect(() => {
-    if (!running || !playing || screen?.kind === "quiz") return;
+    if (!running || !playing) return;
+    if (screen?.kind === "quiz" || screen?.kind === "form") return;
     if (index >= SIMULATOR_SCREENS.length - 1) return;
     const id = window.setTimeout(() => goTo(index + 1), BASE_DWELL_MS / speed);
     return () => window.clearTimeout(id);
   }, [running, playing, index, screen?.kind, speed, goTo]);
+
 
   /* ── controls ── */
   const start = () => {

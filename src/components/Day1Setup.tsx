@@ -433,43 +433,59 @@ const TypedSequence = ({
   }, [resetKey]);
 
   useEffect(() => {
+    // All timers created by this run are tracked so a re-run (or unmount) can
+    // clear every one of them. Leaving a stale interval alive used to double
+    // type the same message and stall the sequence before onComplete fired.
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const clearAll = () => {
+      timers.forEach(clearTimeout);
+      if (interval) clearInterval(interval);
+    };
+
     if (idx >= plain.length) {
-      if (!doneRef.current) {
-        doneRef.current = true;
-        const last = plain[plain.length - 1] ?? "";
-        const finalPause = last.length > 60 ? 1300 : last.length > 30 ? 1000 : 800;
-        const t = setTimeout(() => onComplete?.(), finalPause);
-        return () => clearTimeout(t);
-      }
-      return;
+      if (doneRef.current) return;
+      doneRef.current = true;
+      const last = plain[plain.length - 1] ?? "";
+      const finalPause = last.length > 60 ? 1300 : last.length > 30 ? 1000 : 800;
+      timers.push(setTimeout(() => onComplete?.(), finalPause));
+      return clearAll;
     }
+
     const full = plain[idx];
     setShowDots(true);
     setCurrent("");
-    const dotsTimer = setTimeout(() => {
-      setShowDots(false);
-      let i = 0;
-      const interval = setInterval(() => {
-        i++;
-        setCurrent(full.slice(0, i));
-        if (i >= full.length) {
-          clearInterval(interval);
-          const betweenPause = full.length > 60 ? 1100 : full.length > 30 ? 850 : 650;
-          setTimeout(() => {
-            setShown((prev) => [...prev, idx]);
-            setCurrent("");
-            setIdx((prevIdx) => prevIdx + 1);
-          }, betweenPause);
-        }
-      }, 22);
-      return () => clearInterval(interval);
-    }, idx === 0 ? (skipMakingNotes ? 200 : 2000) : 750);
-    return () => clearTimeout(dotsTimer);
+    timers.push(
+      setTimeout(
+        () => {
+          setShowDots(false);
+          let i = 0;
+          interval = setInterval(() => {
+            i++;
+            setCurrent(full.slice(0, i));
+            if (i >= full.length) {
+              if (interval) clearInterval(interval);
+              const betweenPause = full.length > 60 ? 1100 : full.length > 30 ? 850 : 650;
+              timers.push(
+                setTimeout(() => {
+                  setShown((prev) => (prev.includes(idx) ? prev : [...prev, idx]));
+                  setCurrent("");
+                  setIdx((prevIdx) => (prevIdx > idx ? prevIdx : idx + 1));
+                }, betweenPause),
+              );
+            }
+          }, 22);
+        },
+        idx === 0 ? (skipMakingNotes ? 200 : 2000) : 750,
+      ),
+    );
+    return clearAll;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, resetKey]);
 
 
   const isMakingNotes = !skipMakingNotes && idx === 0 && showDots && shown.length === 0;
+
 
   return (
     <div className="flex items-start gap-3">

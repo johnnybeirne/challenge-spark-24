@@ -102,6 +102,13 @@ const items: NavItem[] = [
     external: true,
     keywords: ["qa", "test", "end to end", "runner", "demo", "smoke"],
   },
+  {
+    title: "Challenge simulator",
+    url: "/admin/simulator",
+    icon: MonitorPlay,
+    external: true,
+    keywords: ["simulator", "walkthrough", "presentation", "demo", "preview", "screens", "play"],
+  },
 ];
 
 const siteItems: NavItem[] = [

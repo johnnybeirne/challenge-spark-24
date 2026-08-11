@@ -48,9 +48,6 @@ import {
 
 const DEMO_CHARACTER = "marcus";
 
-
-const DEMO_CHARACTER = "marcus";
-
 const AdminSimulator = () => {
   const navigate = useNavigate();
   const { questions } = useQuizQuestions();

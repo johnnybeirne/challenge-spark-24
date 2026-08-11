@@ -46,8 +46,8 @@ import {
   type QaPreviewState,
 } from "@/lib/qaPreview";
 
-/** Hours to backdate the demo participant's signup so a given day is live. */
-const DAY_OFFSET_HOURS: Record<string, number> = { day1: 0, day2: 26, day3: 50, invites: 50, unlocks: 50 };
+const DEMO_CHARACTER = "marcus";
+
 
 const DEMO_CHARACTER = "marcus";
 

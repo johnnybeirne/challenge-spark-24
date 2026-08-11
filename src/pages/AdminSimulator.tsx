@@ -310,12 +310,12 @@ const AdminSimulator = () => {
         }
       }
       if (!cancelled) goTo(index + 1);
-    }, BASE_DWELL_MS / speed);
+    }, (screen?.dwellMs ?? BASE_DWELL_MS) / speed);
     return () => {
       cancelled = true;
       window.clearTimeout(id);
     };
-  }, [running, playing, index, screen?.kind, speed, goTo, clickWithCursor]);
+  }, [running, playing, index, screen?.kind, screen?.dwellMs, speed, goTo, clickWithCursor]);
 
 
 

@@ -104,6 +104,8 @@ export interface SimulatorScreen {
   windowIndex?: number;
   /** Direct referrals the demo participant has on this screen. */
   directReferrals?: number;
+  /** Dwell time for this screen in ms, before speed is applied. Defaults to BASE_DWELL_MS. */
+  dwellMs?: number;
 }
 
 const personaExists = (id: PersonaId) => PERSONAS.some((p) => p.id === id);
@@ -111,17 +113,17 @@ const persona = (id: PersonaId): PersonaId | undefined => (personaExists(id) ? i
 
 export const SIMULATOR_SCREENS: SimulatorScreen[] = [
   { id: "quiz", name: "Lead flow quiz", note: "Auto-played question by question", path: "/assessment", kind: "quiz" },
-  { id: "results", name: "Result and archetype", note: "Score, band and teaser", path: "/results", kind: "page" },
-  { id: "join", name: "Join the challenge", note: "Signup and account creation", path: "/challenge/join", kind: "page" },
-  { id: "dashboard", name: "Challenge dashboard", note: "First view after joining", path: "/challenger-dashboard", kind: "page", persona: persona("fresh"), windowIndex: 1 },
+  { id: "results", name: "Result and archetype", note: "Score, band and teaser", path: "/results", kind: "page", dwellMs: 20000 },
+  { id: "join", name: "Join the challenge", note: "Signup and account creation", path: "/challenge/join", kind: "page", dwellMs: 9000 },
+  { id: "dashboard", name: "Challenge dashboard", note: "First view after joining", path: "/challenger-dashboard", kind: "page", persona: persona("fresh"), windowIndex: 1, dwellMs: 12000 },
   { id: "day1", name: "Day 1", note: "Auto-played step by step, live window", path: "/challenge/day-1", kind: "form", persona: persona("fresh"), windowIndex: 1 },
 
   { id: "rollover", name: "Day 1 window closes", note: "Clock rolls into Day 2, day nav re-locks", path: "/challenger-dashboard", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
-  { id: "day1Locked", name: "Day 1 locked", note: "Real pay or invite gate on a past day", path: "/challenge/day-1", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
+  { id: "day1Locked", name: "Day 1 locked", note: "Real pay or invite gate on a past day", path: "/challenge/day-1", kind: "page", persona: persona("done_day_1"), windowIndex: 2, dwellMs: 12000 },
   { id: "day2", name: "Day 2", note: "Open day in its live window", path: "/challenge/day/2", kind: "page", persona: persona("done_day_1"), windowIndex: 2 },
   { id: "day2Locked", name: "Day 2 locked", note: "Day 2 rolls past as Day 3 opens", path: "/challenge/day/2", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
   { id: "day3", name: "Day 3", note: "Open day in its live window", path: "/challenge/day/3", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
-  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2"), windowIndex: 3, directReferrals: 1 },
+  { id: "invites", name: "Invite friends", note: "Points and invite links", path: "/invites", kind: "page", persona: persona("done_day_2"), windowIndex: 3, directReferrals: 1, dwellMs: 10000 },
   { id: "unlocks", name: "Unlocks", note: "What the participant has opened", path: "/unlocks", kind: "page", persona: persona("done_day_2"), windowIndex: 3 },
 ];
 

@@ -120,11 +120,23 @@ export function UnlockGate({ gateKey, teaser, signupAt, dayIndex, children }: Pr
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <Lock className="h-4 w-4 text-primary" />
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h2 className="text-lg font-bold text-foreground">{config.title}</h2>
               {config.body && (
                 <p className="mt-1 text-sm text-muted-foreground">{config.body}</p>
               )}
+              <div className="mt-4 flex flex-col items-start gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground">{config.dashboard_note}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/challenger-dashboard")}
+                  className="gap-1.5"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  {config.dashboard_label}
+                </Button>
+              </div>
             </div>
           </div>
 

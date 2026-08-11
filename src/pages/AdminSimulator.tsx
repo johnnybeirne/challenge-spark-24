@@ -164,6 +164,17 @@ const AdminSimulator = () => {
     };
   }, [running, playing, screen?.kind, applyDemoState, targetArchetype]);
 
+  /* ── mount the stage: the iframe only exists after running flips true ── */
+  useEffect(() => {
+    if (!running) return;
+    const frame = iframeRef.current;
+    if (!frame) return;
+    const current = frame.getAttribute("src");
+    if (!current || current === "about:blank") {
+      frame.src = SIMULATOR_SCREENS[index]?.path ?? SIMULATOR_SCREENS[0].path;
+    }
+  }, [running, index]);
+
   /* ── walkthrough auto-advance ── */
   useEffect(() => {
     if (!running || !playing || screen?.kind === "quiz") return;

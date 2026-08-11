@@ -1,6 +1,8 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { toast } from "sonner";
+import { Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
 
@@ -20,6 +22,7 @@ import { trackEvent } from "@/lib/analytics";
 import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useUserRole } from "@/hooks/useUserRole";
+import { isPreviewHost } from "@/lib/utils";
 import AccessGraceBanner from "./access/AccessGraceBanner";
 import AccessLockedScreen from "./access/AccessLockedScreen";
 

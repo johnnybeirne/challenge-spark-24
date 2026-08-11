@@ -277,6 +277,9 @@ const AdminSimulator = () => {
     setIndex(0);
     setQuizStep(0);
     setTargetArchetype(null);
+    setCursor({ x: 0, y: 0, visible: false });
+    setPressed(false);
+    busyRef.current = false;
     if (teardown) restoreQaState();
     if (iframeRef.current) iframeRef.current.src = "about:blank";
   };

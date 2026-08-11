@@ -238,9 +238,21 @@ export function autoplayFormTick(doc: Document): boolean {
  * of silently swapping the stage.
  */
 export function findNavTarget(doc: Document, nextPath: string, nextName = ""): HTMLElement | null {
+  // Nav chrome often sits inside fixed containers, where offsetParent is null,
+  // so measure boxes instead. Skip the QA/preview chrome the demo shell adds.
+  const onScreen = (el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 8 && r.height > 8;
+  };
   const clickable = Array.from(
     doc.querySelectorAll<HTMLElement>("a[href], button, [role='button'], [role='link']"),
-  ).filter((el) => isVisible(el) && !(el as HTMLButtonElement).disabled);
+  ).filter(
+    (el) =>
+      onScreen(el) &&
+      !(el as HTMLButtonElement).disabled &&
+      !/exit preview|qa mode|focus mode|take the tour/i.test((el.textContent ?? "").trim()),
+  );
+
 
   // 1. A real link to the next screen.
   const byHref = clickable.find((el) => {

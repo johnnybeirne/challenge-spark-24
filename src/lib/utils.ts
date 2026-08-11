@@ -34,3 +34,13 @@ export function getCompletionDayName(referenceDate: number | Date = Date.now()):
   const base = typeof referenceDate === "number" ? referenceDate : referenceDate.getTime();
   return new Date(base + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { weekday: "long" });
 }
+
+/**
+ * True when the app is running in the Lovable preview environment or local dev.
+ * Used to relax admin-only UI gates so owners can preview tools without signing in.
+ */
+export function isPreviewHost(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return host.startsWith("id-preview--") || host === "localhost" || host === "127.0.0.1";
+}

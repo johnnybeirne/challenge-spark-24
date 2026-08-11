@@ -1,6 +1,8 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { toast } from "sonner";
+import { Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import ConsumerNav from "./ConsumerNav";
 import PromoterNav from "./PromoterNav";
 
@@ -20,6 +22,7 @@ import { trackEvent } from "@/lib/analytics";
 import { FocusModeProvider, useFocusMode } from "@/context/FocusModeContext";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useUserRole } from "@/hooks/useUserRole";
+import { isPreviewHost } from "@/lib/utils";
 import AccessGraceBanner from "./access/AccessGraceBanner";
 import AccessLockedScreen from "./access/AccessLockedScreen";
 
@@ -87,6 +90,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium" && !isAdmin;
   const showLockedScreen = accessGateApplies && !access.loading && !access.hasAccess && !access.gracePeriod;
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
+  const showSimulatorLaunch = pathname !== "/admin/simulator" && (isAdmin || isPreviewHost());
 
   if (showLockedScreen) {
     return <AccessLockedScreen pointsTotal={access.pointsTotal} pointsNeeded={access.pointsNeeded} onRefresh={() => void access.refresh()} />;
@@ -133,7 +137,18 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           <ConsumerNav />
         </div>
         <QaModePanel />
-
+        {showSimulatorLaunch && (
+          <Button
+            asChild
+            size="lg"
+            className="fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Link to="/admin/simulator">
+              <Play className="h-4 w-4 fill-current" />
+              Simulator
+            </Link>
+          </Button>
+        )}
       </div>
     );
   }
@@ -156,6 +171,18 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
       </div>
       {showCopilotChat && <AiCopilotChat />}
       <QaModePanel />
+      {showSimulatorLaunch && (
+        <Button
+          asChild
+          size="lg"
+          className="fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <Link to="/admin/simulator">
+            <Play className="h-4 w-4 fill-current" />
+            Simulator
+          </Link>
+        </Button>
+      )}
     </div>
   );
 };

@@ -47,6 +47,18 @@ export interface QaPreviewState {
   character?: string | null;
   /** Archetype override for dashboard preview. */
   archetypeOverride?: QaArchetype | null;
+  /**
+   * Simulator only. When true the previewed journey belongs to a throwaway demo
+   * participant, so per-user gate inputs (permanent unlock grants, direct
+   * referrals) are read from the fields below instead of the signed-in account.
+   * The gate's decision rule is untouched — only whose data it reads.
+   */
+  demoParticipant?: boolean;
+  /** Gate keys the demo participant holds a permanent unlock grant for. */
+  demoGrants?: string[] | null;
+  /** Direct referrals the demo participant has, exactly (not a floor). */
+  demoDirectReferrals?: number | null;
+
 }
 
 const KEY = "leadioPreviewState";

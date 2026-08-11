@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useQaPreview } from "@/hooks/useQaPreview";
 import { DEFAULT_WINDOW_HOURS, getDayWindow } from "@/lib/daySchedule";
 
 export interface UnlockGateConfig {

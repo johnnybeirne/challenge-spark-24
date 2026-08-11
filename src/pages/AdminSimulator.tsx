@@ -46,6 +46,10 @@ import {
   type QaArchetype,
   type QaPreviewState,
 } from "@/lib/qaPreview";
+import { DEFAULT_WINDOW_HOURS } from "@/lib/daySchedule";
+import { supabase } from "@/integrations/supabase/client";
+
+
 
 const DEMO_CHARACTER = "marcus";
 

@@ -95,6 +95,13 @@ const items: NavItem[] = [
   },
   { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true },
   { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true },
+  {
+    title: "QA challenge runner",
+    url: "/admin/qa-run",
+    icon: ClipboardCheck,
+    external: true,
+    keywords: ["qa", "test", "end to end", "runner", "demo", "smoke"],
+  },
 ];
 
 const siteItems: NavItem[] = [

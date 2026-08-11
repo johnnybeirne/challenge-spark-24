@@ -60,6 +60,7 @@ const AdminSimulator = () => {
   const [playing, setPlaying] = useState(false);
   const [index, setIndex] = useState(0);
   const [quizStep, setQuizStep] = useState(0);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const savedQaRef = useRef<QaPreviewState | null>(null);

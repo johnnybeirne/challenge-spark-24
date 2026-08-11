@@ -75,6 +75,7 @@ import Unsubscribe from "@/pages/Unsubscribe";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
 import AdminQaRun from "@/pages/AdminQaRun";
+import AdminSimulator from "@/pages/AdminSimulator";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
@@ -314,6 +315,11 @@ const App = () => (
               {/* QA challenge runner — admin only */}
               <Route path="/admin/qa-run" element={<AdminLayout />}>
                 <Route index element={<AdminQaRun />} />
+              </Route>
+
+              {/* Screen-by-screen challenge simulator — admin only */}
+              <Route path="/admin/simulator" element={<AdminLayout />}>
+                <Route index element={<AdminSimulator />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

@@ -187,6 +187,67 @@ export function autoplayQuizTick(doc: Document, plan: number[]): number | null {
   return null;
 }
 
+/* ───── Day 1 scripted answers ─────
+ * A fixed set of fictitious but sensible answers for the real Day 1 questions,
+ * so an audience watches the demo participant fill the form in front of them.
+ * Matched against each field's own placeholder / label text, so the script
+ * survives copy edits on the Day 1 screen.
+ */
+export interface Day1ScriptEntry {
+  /** Matches the field's placeholder or nearby question text. */
+  match: RegExp;
+  value: string;
+}
+
+export const DAY1_SCRIPT: Day1ScriptEntry[] = [
+  // Step 1 — who you serve
+  {
+    match: /independent coaches|new parents|who (do you|specifically)|audience/i,
+    value: "Independent business coaches who sell one to one packages",
+  },
+  // Step 10 — superpower
+  {
+    match: /superpower|complex ideas|simple and actionable/i,
+    value: "I turn a messy offer into one clear sentence people instantly understand",
+  },
+  // Step 2 — most painful problem
+  {
+    match: /painful problem|frustration|obstacle|stuck/i,
+    value: "They cannot explain what they do, so good prospects go quiet after the first call",
+  },
+  // Step 3 — process
+  {
+    match: /process|steps|framework|walk (them|they) through|pinpoint|daily action/i,
+    value: "I walk them through a three step clarity framework, one focused step each day",
+  },
+  // Step 9 — outcome
+  {
+    match: /walk away|transformation|by the end of|result they/i,
+    value: "A one line pitch they are proud to say out loud and three booked conversations",
+  },
+];
+
+/** Multi select preferences (Day 1 expert type) — first match wins, in order. */
+export const DAY1_CHOICE_PREFERENCES: RegExp[] = [/coach/i, /consultant/i, /course/i];
+
+/** Text near a field that helps identify which question it belongs to. */
+const fieldContext = (field: HTMLElement): string => {
+  const holder = field.closest("div")?.parentElement ?? field.parentElement;
+  return [
+    (field as HTMLInputElement).placeholder ?? "",
+    (field.getAttribute("aria-label") ?? ""),
+    (holder?.textContent ?? "").slice(0, 400),
+  ].join(" ");
+};
+
+/** The scripted answer for a field, falling back to its own placeholder. */
+export function scriptedAnswerFor(field: HTMLInputElement | HTMLTextAreaElement): string {
+  const context = fieldContext(field);
+  const hit = DAY1_SCRIPT.find((entry) => entry.match.test(context));
+  if (hit) return hit.value;
+  return demoValueFor(field);
+}
+
 /** Turn a field's own placeholder ("e.g. Independent coaches.") into a demo value. */
 const demoValueFor = (field: HTMLInputElement | HTMLTextAreaElement): string => {
   const raw = (field.placeholder || "").trim();
@@ -200,42 +261,121 @@ const demoValueFor = (field: HTMLInputElement | HTMLTextAreaElement): string => 
 
 /** Write into a React-controlled field so its onChange fires. */
 const setFieldValue = (field: HTMLInputElement | HTMLTextAreaElement, value: string) => {
-  const proto = field instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+  const win = field.ownerDocument.defaultView ?? window;
+  const proto =
+    field instanceof (win as any).HTMLTextAreaElement || field.tagName === "TEXTAREA"
+      ? (win as any).HTMLTextAreaElement.prototype
+      : (win as any).HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
-  setter?.call(field, value);
-  field.dispatchEvent(new Event("input", { bubbles: true }));
-  field.dispatchEvent(new Event("change", { bubbles: true }));
+  if (setter) setter.call(field, value);
+  else field.value = value;
+  field.dispatchEvent(new (win as any).Event("input", { bubbles: true }));
 };
+
+/**
+ * Type a value into a React-controlled field one character at a time so the
+ * audience watches it appear. Resolves early when `isCancelled` flips (pause).
+ */
+export async function typeIntoField(
+  field: HTMLInputElement | HTMLTextAreaElement,
+  value: string,
+  opts: { charDelayMs?: number; isCancelled?: () => boolean } = {},
+): Promise<boolean> {
+  const delay = Math.max(4, opts.charDelayMs ?? 32);
+  const isCancelled = opts.isCancelled ?? (() => false);
+  try {
+    field.focus();
+  } catch { /* detached */ }
+  for (let i = 1; i <= value.length; i++) {
+    if (isCancelled()) return false;
+    if (!field.isConnected) return false;
+    setFieldValue(field, value.slice(0, i));
+    await new Promise((r) => setTimeout(r, delay));
+  }
+  if (!field.isConnected) return false;
+  const win = field.ownerDocument.defaultView ?? window;
+  field.dispatchEvent(new (win as any).Event("change", { bubbles: true }));
+  return field.value.trim().length > 0;
+}
 
 const FORM_CTA = /continue|next|complete|finish|generate|create|save|let'?s|got it|show me|unlock/i;
 
-/**
- * Answer the current step without advancing it: pick a choice, or fill a free
- * text field. Returns true when it acted. Answers stay fast and cursor-free —
- * the visible cursor is reserved for flow buttons.
- */
-export function autoplayFormAnswerTick(doc: Document): boolean {
-  // 1. Choice steps — radio-style option cards.
-  const choices = Array.from(
-    doc.querySelectorAll<HTMLButtonElement>('button[role="radio"], button[role="checkbox"]'),
-  ).filter((b) => !b.disabled && isVisible(b));
-  const unpicked = choices.filter((b) => b.getAttribute("aria-checked") !== "true");
-  if (unpicked.length > 0) {
-    unpicked[0].click();
-    return true;
-  }
-
-  // 2. Free-text steps — fill each empty visible field with a demo value.
+/** Visible, empty, editable free text field on the current step, if any. */
+export function findFormField(
+  doc: Document,
+): HTMLInputElement | HTMLTextAreaElement | null {
   const fields = Array.from(
     doc.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("textarea, input[type='text']"),
   ).filter((f) => !f.disabled && !f.readOnly && isVisible(f));
-  const empty = fields.find((f) => !f.value.trim());
+  return fields.find((f) => !f.value.trim()) ?? null;
+}
+
+/** Unpicked option cards (single or multi select) on the current step. */
+export function findFormChoices(doc: Document): HTMLButtonElement[] {
+  return Array.from(
+    doc.querySelectorAll<HTMLButtonElement>('button[role="radio"], button[role="checkbox"]'),
+  ).filter(
+    (b) => !b.disabled && isVisible(b) && b.getAttribute("aria-checked") !== "true",
+  );
+}
+
+/** The scripted choice to click next, preferring the script's option order. */
+export function preferredChoice(choices: HTMLButtonElement[]): HTMLButtonElement | null {
+  if (choices.length === 0) return null;
+  for (const pref of DAY1_CHOICE_PREFERENCES) {
+    const hit = choices.find((c) => pref.test((c.textContent ?? "").trim()));
+    if (hit) return hit;
+  }
+  return choices[0];
+}
+
+/**
+ * Answer the current step without advancing it: pick a choice, or fill a free
+ * text field instantly. Kept for non-visible use (fallback path).
+ */
+export function autoplayFormAnswerTick(doc: Document): boolean {
+  const choice = preferredChoice(findFormChoices(doc));
+  if (choice) {
+    choice.click();
+    return true;
+  }
+  const empty = findFormField(doc);
   if (empty) {
-    setFieldValue(empty, demoValueFor(empty));
+    setFieldValue(empty, scriptedAnswerFor(empty));
     return true;
   }
   return false;
 }
+
+/** A cheap fingerprint of the current step, used to detect real progress. */
+export function formStepSignature(doc: Document): string {
+  const heading = (doc.querySelector("h1")?.textContent ?? "").trim();
+  const field = Array.from(
+    doc.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("textarea, input[type='text']"),
+  ).filter((f) => isVisible(f));
+  const choices = findFormChoices(doc).length;
+  return [
+    heading,
+    field.map((f) => `${f.placeholder}:${f.value.length}`).join("|"),
+    `c${choices}`,
+  ].join("~");
+}
+
+/** Wait until `check` returns a value, or give up after `timeoutMs`. */
+export async function waitFor<T>(
+  check: () => T | null | undefined,
+  timeoutMs = 6000,
+  pollMs = 120,
+): Promise<T | null> {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const value = check();
+    if (value) return value;
+    if (Date.now() > deadline) return null;
+    await new Promise((r) => setTimeout(r, pollMs));
+  }
+}
+
 
 /** The step's primary "advance the flow" button, if one is on screen. */
 export function findFormCta(doc: Document): HTMLElement | null {

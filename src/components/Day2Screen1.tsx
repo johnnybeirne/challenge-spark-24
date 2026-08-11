@@ -11,7 +11,6 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
-import { usePremiumUpsellSettings } from "@/hooks/usePremiumUpsellSettings";
 import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;
@@ -210,7 +209,6 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
-  const { settings: upsell } = usePremiumUpsellSettings();
   const { t: tDay2 } = useSiteContent("day2");
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's

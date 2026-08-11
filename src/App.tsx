@@ -74,6 +74,7 @@ import AdminMilestoneEmails from "@/pages/AdminMilestoneEmails";
 import Unsubscribe from "@/pages/Unsubscribe";
 import FeatureOverviewPage from "@/pages/FeatureOverviewPage";
 import AdminOverview from "@/pages/AdminOverview";
+import AdminQaRun from "@/pages/AdminQaRun";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
@@ -308,6 +309,11 @@ const App = () => (
               {/* Requirements checklist — admin only */}
               <Route path="/requirements-checklist" element={<AdminLayout />}>
                 <Route index element={<RequirementsChecklist />} />
+              </Route>
+
+              {/* QA challenge runner — admin only */}
+              <Route path="/admin/qa-run" element={<AdminLayout />}>
+                <Route index element={<AdminQaRun />} />
               </Route>
 
               {/* Internal audit — admin protected via AdminLayout */}

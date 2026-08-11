@@ -11,7 +11,6 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
 import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
-import { usePremiumUpsellSettings } from "@/hooks/usePremiumUpsellSettings";
 import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;
@@ -210,7 +209,6 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
 
 const Day2Screen1 = () => {
   const { state, setState, authUser } = useAppState();
-  const { settings: upsell } = usePremiumUpsellSettings();
   const { t: tDay2 } = useSiteContent("day2");
   const qa = useQaPreview();
   // QA bypass: only when explicitly enabled via the QA panel's
@@ -599,30 +597,19 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                {upsell.heading}
+                Want to go deeper on quiz funnel strategy?
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                {upsell.body_text}
-              </p>
-              <div className="space-y-2">
-                <Button asChild size="lg" className="w-full h-auto py-3 flex-col gap-0.5 bg-[#534AB7] hover:bg-[#534AB7]/90 text-white">
-                  <Link to="/referrals">
-                    <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{upsell.button_label}</span>
-                    <span className="font-medium opacity-90" style={{ fontSize: "var(--body-size)" }}>{upsell.button_sublabel}</span>
-                  </Link>
-                </Button>
-                <div className="text-center">
-                  <Link
-                    to={upsell.upgrade_url || "/upgrade"}
-                    className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
-                    style={{ fontSize: "var(--body-size)" }}
-                  >
-                    {upsell.upgrade_link_label} &rarr;
-                  </Link>
-                </div>
-              </div>
+            <CardContent>
+              <Button
+                asChild
+                size="lg"
+                className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
+              >
+                <Link to="/training">
+                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Check Out LeadTree Premium Membership</span>
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         </section>

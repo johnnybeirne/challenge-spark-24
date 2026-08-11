@@ -15,14 +15,13 @@ export interface PremiumUpsellSettings {
 
 export const PREMIUM_UPSELL_DEFAULTS: PremiumUpsellSettings = {
   heading: "Want to go deeper on quiz funnel strategy?",
-  body_text:
-    "The full course is $497. Invite three friends and it is yours free, or upgrade now and skip the invites.",
+  body_text: "",
   price: 497,
   invite_count: 3,
-  button_label: "Invite 3 friends, unlock free",
-  button_sublabel: "Worth $497",
-  upgrade_link_label: "or upgrade now for $497",
-  upgrade_url: "",
+  button_label: "Check Out LeadTree Premium Membership",
+  button_sublabel: "",
+  upgrade_link_label: "",
+  upgrade_url: "/training",
 };
 
 export function usePremiumUpsellSettings() {

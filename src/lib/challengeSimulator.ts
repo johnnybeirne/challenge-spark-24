@@ -185,11 +185,11 @@ const setFieldValue = (field: HTMLInputElement | HTMLTextAreaElement, value: str
 const FORM_CTA = /continue|next|complete|finish|generate|create|save|let'?s|got it|show me|unlock/i;
 
 /**
- * Play one tick of a step-through screen such as Day 1: pick a choice, fill a
- * free-text field, or press the step's primary button. Returns true when it
- * acted, so the caller can pace itself the same way the quiz does.
+ * Answer the current step without advancing it: pick a choice, or fill a free
+ * text field. Returns true when it acted. Answers stay fast and cursor-free —
+ * the visible cursor is reserved for flow buttons.
  */
-export function autoplayFormTick(doc: Document): boolean {
+export function autoplayFormAnswerTick(doc: Document): boolean {
   // 1. Choice steps — radio-style option cards.
   const choices = Array.from(
     doc.querySelectorAll<HTMLButtonElement>('button[role="radio"], button[role="checkbox"]'),
@@ -209,12 +209,69 @@ export function autoplayFormTick(doc: Document): boolean {
     setFieldValue(empty, demoValueFor(empty));
     return true;
   }
+  return false;
+}
 
-  // 3. Advance the step.
-  const cta = usableButtons(doc).find((b) => FORM_CTA.test((b.textContent ?? "").trim()));
+/** The step's primary "advance the flow" button, if one is on screen. */
+export function findFormCta(doc: Document): HTMLElement | null {
+  return usableButtons(doc).find((b) => FORM_CTA.test((b.textContent ?? "").trim())) ?? null;
+}
+
+/**
+ * Play one tick of a step-through screen such as Day 1: pick a choice, fill a
+ * free-text field, or press the step's primary button. Returns true when it
+ * acted, so the caller can pace itself the same way the quiz does.
+ */
+export function autoplayFormTick(doc: Document): boolean {
+  if (autoplayFormAnswerTick(doc)) return true;
+  const cta = findFormCta(doc);
   if (cta) {
     cta.click();
     return true;
   }
   return false;
 }
+
+/**
+ * The nav item, menu entry or CTA on the current screen that leads to
+ * `nextPath`. Used so the walkthrough visibly clicks its way forward instead
+ * of silently swapping the stage.
+ */
+export function findNavTarget(doc: Document, nextPath: string, nextName = ""): HTMLElement | null {
+  // Nav chrome often sits inside fixed containers, where offsetParent is null,
+  // so measure boxes instead. Skip the QA/preview chrome the demo shell adds.
+  const onScreen = (el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 8 && r.height > 8;
+  };
+  const clickable = Array.from(
+    doc.querySelectorAll<HTMLElement>("a[href], button, [role='button'], [role='link']"),
+  ).filter(
+    (el) =>
+      onScreen(el) &&
+      !(el as HTMLButtonElement).disabled &&
+      !/exit preview|qa mode|focus mode|take the tour/i.test((el.textContent ?? "").trim()),
+  );
+
+
+  // 1. A real link to the next screen.
+  const byHref = clickable.find((el) => {
+    const href = el.getAttribute("href");
+    return !!href && (href === nextPath || href.startsWith(`${nextPath}?`) || href.startsWith(`${nextPath}/`));
+  });
+  if (byHref) return byHref;
+
+  // 2. A control whose label matches the next screen's name.
+  const words = nextName.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 2);
+  if (words.length) {
+    const byLabel = clickable.find((el) => {
+      const text = (el.textContent ?? "").trim().toLowerCase();
+      return text.length > 0 && text.length < 60 && words.every((w) => text.includes(w));
+    });
+    if (byLabel) return byLabel;
+  }
+
+  // 3. Any primary flow button on the screen.
+  return clickable.find((el) => FORM_CTA.test((el.textContent ?? "").trim())) ?? null;
+}
+

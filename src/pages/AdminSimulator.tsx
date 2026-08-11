@@ -462,16 +462,51 @@ const AdminSimulator = () => {
           {running && <span>{playing ? "Playing" : "Paused"}</span>}
         </div>
         {running ? (
-          <iframe
-            key="simulator-stage"
-            ref={iframeRef}
-            title="Challenge simulator stage"
-            className={cn(
-              "w-full animate-fade-in bg-background",
-              compact ? "min-h-0 flex-1" : "h-[70vh]",
+          <div
+            ref={stageRef}
+            className={cn("relative", compact ? "flex min-h-0 flex-1 flex-col" : "")}
+          >
+            <iframe
+              key="simulator-stage"
+              ref={iframeRef}
+              title="Challenge simulator stage"
+              className={cn(
+                "w-full animate-fade-in bg-background",
+                compact ? "min-h-0 flex-1" : "h-[70vh]",
+              )}
+            />
+
+            {/* Presentation cursor — overlay only, never takes pointer input */}
+            {cursor.visible && playing && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-0 top-0 z-20"
+                style={{
+                  transform: `translate3d(${cursor.x}px, ${cursor.y}px, 0)`,
+                  transition: `transform ${Math.max(140, 420 / speed)}ms cubic-bezier(0.22, 0.61, 0.36, 1)`,
+                }}
+              >
+                <span
+                  className="absolute -left-5 -top-5 block h-10 w-10 rounded-full border-2 border-primary/70 bg-primary/20 transition-all duration-200"
+                  style={{ opacity: pressed ? 1 : 0, transform: pressed ? "scale(1)" : "scale(0.4)" }}
+                />
+                <svg
+                  viewBox="0 0 24 24"
+                  className="relative block h-6 w-6 drop-shadow-md transition-transform duration-150"
+                  style={{ transform: pressed ? "scale(0.8)" : "scale(1)" }}
+                >
+                  <path
+                    d="M5 3l13 8-5.5 1.2L15 19l-2.6 1.1-2.6-6.6L5 17V3z"
+                    className="fill-background stroke-foreground"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
             )}
-          />
+          </div>
         ) : (
+
           <div className="flex h-[70vh] flex-col items-center justify-center gap-3 text-center">
             <MonitorPlay className="h-10 w-10 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">

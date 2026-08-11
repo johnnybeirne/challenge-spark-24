@@ -34,6 +34,7 @@ import {
   getArchetypeInfo,
   randomArchetype,
   autoplayQuizTick,
+  anchorForWindow,
   autoplayFormAnswerTick,
   findFormCta,
   findNavTarget,

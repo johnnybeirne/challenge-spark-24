@@ -190,19 +190,6 @@ export function UnlockGate({ gateKey, teaser, signupAt, dayIndex, children }: Pr
               </div>
             )}
           </div>
-
-          <div className="mt-6 flex flex-col items-start gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-muted-foreground">{config.dashboard_note}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/challenger-dashboard")}
-              className="gap-1.5"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              {config.dashboard_label}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

@@ -122,6 +122,11 @@ const AdminSimulator = () => {
         character: DEMO_CHARACTER,
         simulatedJoinedAt: joinedAt,
         archetypeOverride: archetype,
+        // A throwaway demo participant: no bought or earned unlocks, and their
+        // own referral count, so the real gate decides on their data alone.
+        demoParticipant: true,
+        demoGrants: [],
+        demoDirectReferrals: target?.directReferrals ?? 0,
         flags: {
           ...base.flags,
           assessmentCompleted: screenId !== "quiz",

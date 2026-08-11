@@ -150,7 +150,37 @@ const AdminSimulator = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ── navigation ── */
+  /* ── navigation ──
+     The stage iframe is loaded ONCE. Every later screen change is an in-app SPA
+     navigation inside the iframe (postMessage → SimulatorBridge → navigate), because
+     a fresh document request on the preview host is intercepted by the auth bridge
+     and fails inside the nested frame. */
+  const navigateStage = useCallback((path: string) => {
+    const frame = iframeRef.current;
+    if (!frame) return;
+    const current = frame.getAttribute("src");
+    if (!current || current === "about:blank") {
+      frame.src = path; // first (and only) document load
+      return;
+    }
+    const win = frame.contentWindow;
+    if (!win) return;
+    win.postMessage({ type: "SIM_NAVIGATE", path }, window.location.origin);
+    // Fallback for the rare case the bridge has not mounted yet: same-origin
+    // history push + popstate so React Router still picks the route up.
+    window.setTimeout(() => {
+      try {
+        const w = iframeRef.current?.contentWindow;
+        if (!w) return;
+        if (w.location.pathname === path.split("?")[0]) return;
+        w.history.pushState({}, "", path);
+        w.dispatchEvent(new PopStateEvent("popstate"));
+      } catch {
+        /* cross-origin or torn down */
+      }
+    }, 400);
+  }, []);
+
   const goTo = useCallback(
     (nextIndex: number, archetype = targetArchetype) => {
       const clamped = Math.max(0, Math.min(SIMULATOR_SCREENS.length - 1, nextIndex));
@@ -158,10 +188,11 @@ const AdminSimulator = () => {
       applyDemoState(next.id, archetype);
       setIndex(clamped);
       setQuizStep(0);
-      if (iframeRef.current) iframeRef.current.src = next.path;
+      navigateStage(next.path);
     },
-    [applyDemoState, targetArchetype],
+    [applyDemoState, targetArchetype, navigateStage],
   );
+
 
   /* ── fake cursor: move to a control, press it, then fire the real click ── */
   const wait = (ms: number) => new Promise((r) => window.setTimeout(r, ms));

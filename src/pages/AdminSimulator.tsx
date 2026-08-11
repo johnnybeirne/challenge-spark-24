@@ -212,49 +212,55 @@ const AdminSimulator = () => {
     goTo(index + delta);
   };
 
+  const compact = running && !detailsOpen;
+
   return (
-    <div className="min-h-full p-4 md:p-6 space-y-4">
-      <header className="space-y-1">
-        <div className="flex items-center gap-2">
-          <MonitorPlay className="h-5 w-5 text-primary" />
-          <h1 className="text-xl font-semibold">Challenge simulator</h1>
-          <Badge variant="secondary">Demo participant</Badge>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Plays the real participant screens in order for a throwaway demo participant. Nothing here writes
-          progress or changes real participant data.
-        </p>
-      </header>
-
-      <Card className="p-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs">Target archetype</Label>
-            <Select
-              value={archetypeChoice}
-              onValueChange={(v) => setArchetypeChoice(v as QaArchetype | "random")}
-              disabled={running}
-            >
-              <SelectTrigger className="w-[260px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="random">
-                  <span className="flex items-center gap-2">
-                    <Shuffle className="h-3.5 w-3.5" /> Random
-                  </span>
-                </SelectItem>
-                {archetypes.map((a) => (
-                  <SelectItem key={a.id} value={a.id}>
-                    {a.title} ({a.minScore}-{a.maxScore} of {questions.length})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <div className={cn("flex min-h-full flex-col p-4 md:p-6", compact ? "gap-2" : "space-y-4")}>
+      {!compact && (
+        <header className="space-y-1">
+          <div className="flex items-center gap-2">
+            <MonitorPlay className="h-5 w-5 text-primary" />
+            <h1 className="text-xl font-semibold">Challenge simulator</h1>
+            <Badge variant="secondary">Demo participant</Badge>
           </div>
+          <p className="text-sm text-muted-foreground">
+            Plays the real participant screens in order for a throwaway demo participant. Nothing here writes
+            progress or changes real participant data.
+          </p>
+        </header>
+      )}
 
-          <div className="space-y-1.5">
-            <Label className="text-xs">Speed</Label>
+      <Card className={cn(compact ? "px-3 py-2" : "p-4")}>
+        <div className={cn("flex flex-wrap items-end gap-4", compact && "items-center gap-2")}>
+          {!compact && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">Target archetype</Label>
+              <Select
+                value={archetypeChoice}
+                onValueChange={(v) => setArchetypeChoice(v as QaArchetype | "random")}
+                disabled={running}
+              >
+                <SelectTrigger className="w-[260px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="random">
+                    <span className="flex items-center gap-2">
+                      <Shuffle className="h-3.5 w-3.5" /> Random
+                    </span>
+                  </SelectItem>
+                  {archetypes.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>
+                      {a.title} ({a.minScore}-{a.maxScore} of {questions.length})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          <div className={cn(compact ? "flex items-center gap-1" : "space-y-1.5")}>
+            {!compact && <Label className="text-xs">Speed</Label>}
             <div className="flex gap-1">
               {SPEEDS.map((s) => (
                 <Button
@@ -270,12 +276,26 @@ const AdminSimulator = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pb-1.5">
-            <Switch id="teardown" checked={teardown} onCheckedChange={setTeardown} />
-            <Label htmlFor="teardown" className="text-xs">
-              Tear down demo state at the end
-            </Label>
-          </div>
+          {!compact && (
+            <div className="flex items-center gap-2 pb-1.5">
+              <Switch id="teardown" checked={teardown} onCheckedChange={setTeardown} />
+              <Label htmlFor="teardown" className="text-xs">
+                Tear down demo state at the end
+              </Label>
+            </div>
+          )}
+
+          {compact && (
+            <span className="text-xs text-muted-foreground">
+              Screen {index + 1} of {SIMULATOR_SCREENS.length} —{" "}
+              <span className="font-medium text-foreground">{screen?.name}</span>
+              {screen?.kind === "quiz" && (
+                <span className="ml-2">
+                  Question {Math.min(quizStep, questions.length)} of {questions.length}
+                </span>
+              )}
+            </span>
+          )}
 
           <div className="ml-auto flex items-center gap-2">
             {!running ? (
@@ -294,6 +314,15 @@ const AdminSimulator = () => {
                 <Button variant="outline" size="icon" onClick={() => manual(1)} aria-label="Next screen">
                   <ChevronRight className="h-4 w-4" />
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDetailsOpen((d) => !d)}
+                  className="gap-2"
+                >
+                  {detailsOpen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {detailsOpen ? "Hide controls" : "Show controls"}
+                </Button>
                 <Button variant="ghost" onClick={reset} className="gap-2">
                   <RotateCcw className="h-4 w-4" /> Reset
                 </Button>
@@ -302,7 +331,7 @@ const AdminSimulator = () => {
           </div>
         </div>
 
-        {running && (
+        {running && !compact && (
           <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <span>
               Screen {index + 1} of {SIMULATOR_SCREENS.length} — <span className="text-foreground font-medium">{screen?.name}</span>
@@ -318,40 +347,42 @@ const AdminSimulator = () => {
       </Card>
 
       {/* Step rail */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {SIMULATOR_SCREENS.map((s, i) => {
-          const active = running && i === index;
-          const done = running && i < index;
-          return (
-            <button
-              key={s.id}
-              type="button"
-              disabled={!running}
-              onClick={() => manual(i - index)}
-              className={cn(
-                "min-w-[150px] shrink-0 rounded-xl border p-3 text-left transition-all duration-300",
-                active
-                  ? "border-primary bg-primary/10 shadow-sm"
-                  : done
-                    ? "border-border bg-muted/40"
-                    : "border-border bg-card",
-                !running && "opacity-60",
-              )}
-            >
-              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
-                {done ? <Check className="h-3 w-3 text-primary" /> : <span>{i + 1}</span>}
-                <span>{s.kind === "quiz" ? "Quiz" : "Screen"}</span>
-              </div>
-              <div className="text-sm font-medium">{s.name}</div>
-              <div className="text-[11px] text-muted-foreground">{s.note}</div>
-            </button>
-          );
-        })}
-      </div>
+      {!compact && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {SIMULATOR_SCREENS.map((s, i) => {
+            const active = running && i === index;
+            const done = running && i < index;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                disabled={!running}
+                onClick={() => manual(i - index)}
+                className={cn(
+                  "min-w-[150px] shrink-0 rounded-xl border p-3 text-left transition-all duration-300",
+                  active
+                    ? "border-primary bg-primary/10 shadow-sm"
+                    : done
+                      ? "border-border bg-muted/40"
+                      : "border-border bg-card",
+                  !running && "opacity-60",
+                )}
+              >
+                <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                  {done ? <Check className="h-3 w-3 text-primary" /> : <span>{i + 1}</span>}
+                  <span>{s.kind === "quiz" ? "Quiz" : "Screen"}</span>
+                </div>
+                <div className="text-sm font-medium">{s.name}</div>
+                <div className="text-[11px] text-muted-foreground">{s.note}</div>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Stage */}
-      <Card className="overflow-hidden">
-        <div className="flex items-center justify-between border-b bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+      <Card className={cn("overflow-hidden", compact && "flex min-h-0 flex-1 flex-col")}>
+        <div className="flex items-center justify-between border-b bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
           <span className="font-mono">{running ? screen?.path : "idle"}</span>
           {running && <span>{playing ? "Playing" : "Paused"}</span>}
         </div>
@@ -360,7 +391,10 @@ const AdminSimulator = () => {
             key="simulator-stage"
             ref={iframeRef}
             title="Challenge simulator stage"
-            className="h-[70vh] w-full animate-fade-in bg-background"
+            className={cn(
+              "w-full animate-fade-in bg-background",
+              compact ? "min-h-0 flex-1" : "h-[70vh]",
+            )}
           />
         ) : (
           <div className="flex h-[70vh] flex-col items-center justify-center gap-3 text-center">
@@ -371,6 +405,7 @@ const AdminSimulator = () => {
           </div>
         )}
       </Card>
+
 
       <p className="text-xs text-muted-foreground">
         Separate from the QA end to end runner. Use{" "}

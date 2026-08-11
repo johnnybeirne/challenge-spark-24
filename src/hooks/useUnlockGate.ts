@@ -81,12 +81,21 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
   const { signupAt, dayIndex } = options;
   const { state } = useAppState();
   const { user } = useAuth();
+  const qa = useQaPreview();
   const [config, setConfig] = useState<UnlockGateConfig | null>(null);
   const [granted, setGranted] = useState(false);
   const [grantSource, setGrantSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const invites = state.network?.direct ?? 0;
+
+  // Simulator only: the previewed journey belongs to a throwaway demo
+  // participant, so the per-user input (their permanent grants) comes from the
+  // preview overlay rather than the signed-in account. The rule below is
+  // unchanged — grant, invites or live window.
+  const demo = !!qa.active && !!qa.demoParticipant;
+  const demoGrants = qa.demoGrants ?? [];
+  const demoGranted = demo && demoGrants.includes(gateKey);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -97,7 +106,10 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
       .maybeSingle();
     setConfig(data ? ({ ...UNLOCK_GATE_DEFAULTS, ...(data as any) }) : null);
 
-    if (user?.id) {
+    if (demo) {
+      setGranted(demoGranted);
+      setGrantSource(demoGranted ? "demo" : null);
+    } else if (user?.id) {
       const { data: grant } = await supabase
         .from("unlock_grants")
         .select("id, source")
@@ -111,7 +123,7 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
       setGrantSource(null);
     }
     setLoading(false);
-  }, [gateKey, user?.id]);
+  }, [gateKey, user?.id, demo, demoGranted]);
 
   useEffect(() => {
     load();
@@ -129,8 +141,10 @@ export function useUnlockGate(gateKey: string, options: UnlockGateOptions = {}) 
   // Persist an invite-earned unlock so it survives a later referral reversal.
   // The server re-validates the invite count before recording the grant.
   // The scheduled window is never persisted: it opens and closes on its own.
+  // Never runs for a demo participant: the simulator must not write real data.
   useEffect(() => {
-    if (!user?.id || !config?.enabled || granted || !invitesMet) return;
+    if (demo || !user?.id || !config?.enabled || granted || !invitesMet) return;
+
     (async () => {
       const { data } = await (supabase.rpc as any)("claim_invite_unlock", {
         p_gate_key: gateKey,

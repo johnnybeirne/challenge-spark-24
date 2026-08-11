@@ -12,6 +12,7 @@ import { AppProvider } from "@/context/AppContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
+import SimulatorBridge from "@/components/SimulatorBridge";
 import ExperienceShell from "@/components/ExperienceShell";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import Landing from "@/pages/Landing";
@@ -130,6 +131,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <SimulatorBridge />
             <AttributionCapture />
             <TypographyLoader />
             {/* QA preview status pill is rendered by QaModePanel — no separate badge needed */}

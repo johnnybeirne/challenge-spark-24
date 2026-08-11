@@ -2867,6 +2867,15 @@ export type Database = {
         Returns: string
       }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
+      get_my_referred_people: {
+        Args: never
+        Returns: {
+          created_at: string
+          first_name: string
+          name: string
+          surname: string
+        }[]
+      }
       get_partner_leaderboard: {
         Args: { p_limit?: number }
         Returns: {

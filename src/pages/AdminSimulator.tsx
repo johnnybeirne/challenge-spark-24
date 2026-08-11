@@ -125,13 +125,45 @@ const AdminSimulator = () => {
     [applyDemoState, targetArchetype],
   );
 
+  /* ── fake cursor: move to a control, press it, then fire the real click ── */
+  const wait = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
+
+  const clickWithCursor = useCallback(async (el: HTMLElement) => {
+    const frame = iframeRef.current;
+    const stage = stageRef.current;
+    if (!frame || !stage) {
+      el.click();
+      return;
+    }
+    const s = speedRef.current || 1;
+    try {
+      el.scrollIntoView({ block: "center" });
+    } catch { /* older engines */ }
+    await wait(120 / s);
+
+    const r = el.getBoundingClientRect();
+    const f = frame.getBoundingClientRect();
+    const st = stage.getBoundingClientRect();
+    setCursor({
+      x: f.left - st.left + r.left + r.width / 2,
+      y: f.top - st.top + r.top + r.height / 2,
+      visible: true,
+    });
+    await wait(Math.max(140, 420 / s)); // travel
+    setPressed(true);
+    await wait(Math.max(90, 200 / s)); // press
+    el.click();
+    await wait(Math.max(80, 180 / s)); // ripple settle
+    setPressed(false);
+  }, []);
+
   /* ── autoplay driver (shared by the quiz and the Day 1 step-through) ── */
   useEffect(() => {
     if (!running || !playing) return;
     if (screen?.kind !== "quiz" && screen?.kind !== "form") return;
     let cancelled = false;
-    const tick = window.setInterval(() => {
-      if (cancelled) return;
+    const tick = window.setInterval(async () => {
+      if (cancelled || busyRef.current) return;
       const frame = iframeRef.current;
       const doc = frame?.contentDocument;
       if (!doc) return;
@@ -144,6 +176,7 @@ const AdminSimulator = () => {
           applyDemoState("results", targetArchetype);
           return;
         }
+        // Answers stay cursor-free and fast.
         const answered = autoplayQuizTick(doc, planRef.current);
         if (answered !== null) setQuizStep(answered + 1);
         return;
@@ -155,14 +188,28 @@ const AdminSimulator = () => {
         applyDemoState(SIMULATOR_SCREENS[index + 1]?.id ?? screen.id, targetArchetype);
         return;
       }
-      if (autoplayFormTick(doc)) setQuizStep((s) => s + 1);
+      if (autoplayFormAnswerTick(doc)) {
+        setQuizStep((s) => s + 1);
+        return;
+      }
+      // Flow buttons get the visible cursor treatment.
+      const cta = findFormCta(doc);
+      if (cta) {
+        busyRef.current = true;
+        try {
+          await clickWithCursor(cta);
+        } finally {
+          busyRef.current = false;
+        }
+      }
     }, Math.max(80, 260 / speedRef.current));
 
     return () => {
       cancelled = true;
+      busyRef.current = false;
       window.clearInterval(tick);
     };
-  }, [running, playing, screen?.kind, screen?.path, index, applyDemoState, targetArchetype]);
+  }, [running, playing, screen?.kind, screen?.path, index, applyDemoState, targetArchetype, clickWithCursor]);
 
   /* ── mount the stage: the iframe only exists after running flips true ── */
   useEffect(() => {
@@ -180,9 +227,27 @@ const AdminSimulator = () => {
     if (!running || !playing) return;
     if (screen?.kind === "quiz" || screen?.kind === "form") return;
     if (index >= SIMULATOR_SCREENS.length - 1) return;
-    const id = window.setTimeout(() => goTo(index + 1), BASE_DWELL_MS / speed);
-    return () => window.clearTimeout(id);
-  }, [running, playing, index, screen?.kind, speed, goTo]);
+    let cancelled = false;
+    const id = window.setTimeout(async () => {
+      const next = SIMULATOR_SCREENS[index + 1];
+      const doc = iframeRef.current?.contentDocument;
+      const target = doc ? findNavTarget(doc, next.path, next.name) : null;
+      if (target) {
+        busyRef.current = true;
+        try {
+          await clickWithCursor(target);
+        } finally {
+          busyRef.current = false;
+        }
+      }
+      if (!cancelled) goTo(index + 1);
+    }, BASE_DWELL_MS / speed);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(id);
+    };
+  }, [running, playing, index, screen?.kind, speed, goTo, clickWithCursor]);
+
 
 
   /* ── controls ── */

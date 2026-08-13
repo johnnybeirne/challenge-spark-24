@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { getCycle, getPreviousCycle, CYCLE_DAYS } from "@/lib/accessCycle";
@@ -12,6 +13,10 @@ export { CYCLE_DAYS };
 
 export interface AccessStatus {
   hasAccess: boolean;
+  /** true when access comes from a current paid plan */
+  isSubscribed: boolean;
+  /** payment is retrying — access continues, show a billing reminder */
+  isPastDue: boolean;
   pointsTotal: number;
   pointsNeeded: number;
   inviteCount: number;
@@ -23,6 +28,7 @@ export interface AccessStatus {
   loading: boolean;
   refresh: () => Promise<void>;
 }
+
 
 export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();

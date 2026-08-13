@@ -108,11 +108,13 @@ export const useAccessStatus = (): AccessStatus => {
   // chance to earn points yet. They always have access until that cycle ends.
   const isFirstCycle = cycle.index === 0;
 
-  const hasAccess = isExempt || isPremium || isFirstCycle || pointsTotal >= pointsThreshold;
+  const hasAccess =
+    isExempt || isSubscribed || isPremium || isFirstCycle || pointsTotal >= pointsThreshold;
   const pointsNeeded = Math.max(0, pointsThreshold - pointsTotal);
 
   const gracePeriod =
     !isExempt &&
+    !isSubscribed &&
     !isPremium &&
     !isFirstCycle &&
     prevStatus === "locked_out" &&
@@ -121,6 +123,8 @@ export const useAccessStatus = (): AccessStatus => {
 
   return {
     hasAccess,
+    isSubscribed,
+    isPastDue,
     pointsTotal,
     pointsNeeded,
     inviteCount,
@@ -128,9 +132,12 @@ export const useAccessStatus = (): AccessStatus => {
     gracePeriodEndsAt,
     cycleEndsAt: cycle.endsAt,
     daysLeftInCycle: cycle.daysLeft,
-    loading: loading || roleLoading || settingsLoading,
-    refresh: load,
+    loading: loading || roleLoading || settingsLoading || subLoading,
+    refresh: async () => {
+      await Promise.all([load(), refreshSub()]);
+    },
   };
+
 };
 
 

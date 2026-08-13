@@ -116,6 +116,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import AttributionCapture from "@/components/AttributionCapture";
 import TypographyLoader from "@/components/TypographyLoader";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";
+import FreePreviewBadge from "@/components/FreePreviewBadge";
 
 if (typeof window !== "undefined") initFreePreviewFromUrl();
 

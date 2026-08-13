@@ -105,12 +105,17 @@ const AttributionCapture = () => {
 
         // 3) clean the URL so ?ref= isn't re-shared or indexed. Preserve
         //    any other query params + the current path/hash.
-        try {
-          params.delete("ref");
-          const rest = params.toString();
-          const cleaned = pathname + (rest ? `?${rest}` : "") + (window.location.hash || "");
-          navigate(cleaned, { replace: true });
-        } catch {}
+        //    Waitlist routes read ?ref= directly (referrer credit on join and
+        //    the thanks page lookup), so never strip it there.
+        const keepsRefInUrl = pathname.startsWith("/waitlist");
+        if (!keepsRefInUrl) {
+          try {
+            params.delete("ref");
+            const rest = params.toString();
+            const cleaned = pathname + (rest ? `?${rest}` : "") + (window.location.hash || "");
+            navigate(cleaned, { replace: true });
+          } catch {}
+        }
       }
       return;
     }

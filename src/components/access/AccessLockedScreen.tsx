@@ -1,9 +1,10 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { getReferralUrl } from "@/lib/utils";
 import { resolveFirstName } from "@/lib/tooltipTokens";
 import ReferralLinkField from "@/components/ReferralLinkField";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { MEMBERSHIP_PRICE_ID, MEMBERSHIP_PRICE_LABEL } from "@/lib/membership";
 
 export const AccessLockedScreen = ({
   pointsTotal,
@@ -14,12 +15,13 @@ export const AccessLockedScreen = ({
   pointsNeeded: number;
   onRefresh: () => void;
 }) => {
-  const navigate = useNavigate();
   const { state, authUser } = useAppState();
   const inviteRef = useRef<HTMLDivElement | null>(null);
+  const { openCheckout, checkoutElement } = useStripeCheckout();
 
   const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser }) || "Hi";
   const url = getReferralUrl("/", state.user?.inviteCode);
+
 
   return (
     <div className="min-h-screen w-full overflow-y-auto bg-[#F7F8FA] px-5 py-12">

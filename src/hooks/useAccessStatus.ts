@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { getCycle, getPreviousCycle, CYCLE_DAYS } from "@/lib/accessCycle";
@@ -12,6 +13,10 @@ export { CYCLE_DAYS };
 
 export interface AccessStatus {
   hasAccess: boolean;
+  /** true when access comes from a current paid plan */
+  isSubscribed: boolean;
+  /** payment is retrying — access continues, show a billing reminder */
+  isPastDue: boolean;
   pointsTotal: number;
   pointsNeeded: number;
   inviteCount: number;
@@ -24,9 +29,12 @@ export interface AccessStatus {
   refresh: () => Promise<void>;
 }
 
+
 export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const { isSubscribed, isPastDue, loading: subLoading, refresh: refreshSub } = useSubscription();
+
   const { isAdmin, loading: roleLoading } = useUserRole();
   const { pointsThreshold, loading: settingsLoading } = useAccessSettings();
   // "Owner" maps to the admin role in this system; admins are exempt from the access gate.
@@ -100,11 +108,13 @@ export const useAccessStatus = (): AccessStatus => {
   // chance to earn points yet. They always have access until that cycle ends.
   const isFirstCycle = cycle.index === 0;
 
-  const hasAccess = isExempt || isPremium || isFirstCycle || pointsTotal >= pointsThreshold;
+  const hasAccess =
+    isExempt || isSubscribed || isPremium || isFirstCycle || pointsTotal >= pointsThreshold;
   const pointsNeeded = Math.max(0, pointsThreshold - pointsTotal);
 
   const gracePeriod =
     !isExempt &&
+    !isSubscribed &&
     !isPremium &&
     !isFirstCycle &&
     prevStatus === "locked_out" &&
@@ -113,6 +123,8 @@ export const useAccessStatus = (): AccessStatus => {
 
   return {
     hasAccess,
+    isSubscribed,
+    isPastDue,
     pointsTotal,
     pointsNeeded,
     inviteCount,
@@ -120,9 +132,12 @@ export const useAccessStatus = (): AccessStatus => {
     gracePeriodEndsAt,
     cycleEndsAt: cycle.endsAt,
     daysLeftInCycle: cycle.daysLeft,
-    loading: loading || roleLoading || settingsLoading,
-    refresh: load,
+    loading: loading || roleLoading || settingsLoading || subLoading,
+    refresh: async () => {
+      await Promise.all([load(), refreshSub()]);
+    },
   };
+
 };
 
 

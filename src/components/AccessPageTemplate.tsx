@@ -12,6 +12,9 @@ import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { usePremiumMembershipContent } from "@/hooks/usePremiumMembershipContent";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { MEMBERSHIP_PRICE_ID, MEMBERSHIP_PRICE_LABEL } from "@/lib/membership";
+
 
 
 
@@ -30,7 +33,9 @@ const PAGE_TITLE: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal } = useAccessStatus();
+  const { pointsTotal, isSubscribed } = useAccessStatus();
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
   const { content: membership } = usePremiumMembershipContent();
   const { pointsThreshold } = useAccessSettings();
 
@@ -154,15 +159,25 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               <div className="space-y-3">
                 <p className="font-semibold">Upgrade instead</p>
                 <p className="text-sm text-muted-foreground">
-                  Skip the points target and get instant access
+                  {isSubscribed
+                    ? "Your membership is active, so this area stays open."
+                    : "Skip the points target and get instant access"}
                 </p>
                 <Button
-                  onClick={() => navigate("/premium")}
+                  disabled={isSubscribed}
+                  onClick={() =>
+                    openCheckout({
+                      priceId: MEMBERSHIP_PRICE_ID,
+                      userId: authUser?.id,
+                      customerEmail: authUser?.email ?? undefined,
+                    })
+                  }
                   className="w-full gap-2 bg-[#534AB7] font-medium text-white hover:bg-[#534AB7]/90"
                 >
-                  Upgrade for $97/month
+                  {isSubscribed ? "Membership active" : `Subscribe for ${MEMBERSHIP_PRICE_LABEL}`}
                 </Button>
               </div>
+
             </div>
           ) : (
             <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
@@ -184,8 +199,11 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           </p>
 
         </section>
+
+        {checkoutElement}
       </div>
     </div>
+
   );
 };
 

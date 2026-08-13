@@ -407,12 +407,24 @@ Deno.serve(async (req) => {
     const event = await verifyWebhook(req, env);
     switch (event.type) {
       case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded":
         await handleCheckoutCompleted(event.data.object, env);
+        break;
+      case "checkout.session.async_payment_failed":
+        console.warn("Delayed payment failed for session:", event.data.object?.id);
+        break;
+      case "customer.subscription.created":
+      case "customer.subscription.updated":
+        await handleSubscriptionChange(event.data.object, env);
+        break;
+      case "customer.subscription.deleted":
+        await handleSubscriptionDeleted(event.data.object, env);
         break;
       case "charge.refunded":
       case "charge.dispute.closed":
         await handleRefund(event.data.object, env);
         break;
+
       default:
         console.log("Unhandled event:", event.type);
     }

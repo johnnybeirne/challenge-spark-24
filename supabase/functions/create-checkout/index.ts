@@ -88,9 +88,13 @@ Deno.serve(async (req) => {
       ? await resolveOrCreateCustomer(stripe, { email: customerEmail, userId })
       : undefined;
 
+    // Recurring prices must open a subscription session; one-time prices stay
+    // on the existing payment flow.
+    const isRecurring = !!stripePrice.recurring;
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
-      mode: "payment",
+      mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded_page",
       return_url: returnUrl,
       ...(customerId && { customer: customerId }),
@@ -100,7 +104,18 @@ Deno.serve(async (req) => {
         ...(promotionCode && { partner_code: promotionCode }),
         ...(gateKey && /^[a-zA-Z0-9_-]{1,60}$/.test(gateKey) && { gate_key: gateKey }),
       },
+      // userId must live on the subscription too — webhooks for renewals and
+      // cancellations only carry the subscription object.
+      ...(isRecurring && {
+        subscription_data: {
+          metadata: {
+            ...(userId && { userId }),
+            ...(promotionCode && { partner_code: promotionCode }),
+          },
+        },
+      }),
     });
+
 
     return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

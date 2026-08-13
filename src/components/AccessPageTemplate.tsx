@@ -12,6 +12,9 @@ import { useAccessPage, type AccessPageKey } from "@/hooks/useAccessPage";
 import { useAccessStatus } from "@/hooks/useAccessStatus";
 import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { usePremiumMembershipContent } from "@/hooks/usePremiumMembershipContent";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { MEMBERSHIP_PRICE_ID, MEMBERSHIP_PRICE_LABEL } from "@/lib/membership";
+
 
 
 

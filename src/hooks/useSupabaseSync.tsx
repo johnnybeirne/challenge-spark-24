@@ -282,6 +282,20 @@ export async function migrateLocalToSupabase(userId: string): Promise<Partial<Ap
           { onConflict: "user_id" }
         );
       } catch {}
+
+      // Credit the inviter for an anonymous-then-signup quiz completion.
+      // The referral code was captured at first touch and is now persisted on
+      // the profile (by the handle_new_user trigger), so award_referral_quiz_credit
+      // can resolve it server-side via auth.uid(). The RPC is idempotent
+      // (ON CONFLICT DO NOTHING on referral_quiz_credits.referred_user_id), so a
+      // user who was already credited while logged in is never double-counted,
+      // and a user with no referrer simply returns early. Never let this block
+      // sign-up or the rest of the migration.
+      try {
+        await (supabase.rpc as any)("award_referral_quiz_credit");
+      } catch (err) {
+        console.warn("award_referral_quiz_credit failed during migration", err);
+      }
     }
 
     clearLocalStorage();

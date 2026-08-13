@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   Focus,
@@ -7,7 +8,6 @@ import {
   Sparkles,
   Trophy,
   Search,
-  Bell,
   Minimize2,
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -16,6 +16,8 @@ import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import NavInfoPopover from "./NavInfoPopover";
+import GlobalSearch from "@/components/GlobalSearch";
+import NotificationsBell from "@/components/NotificationsBell";
 
 const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },

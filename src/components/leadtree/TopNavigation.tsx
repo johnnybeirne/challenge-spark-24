@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   Focus,
@@ -7,7 +8,6 @@ import {
   Sparkles,
   Trophy,
   Search,
-  Bell,
   Minimize2,
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -16,6 +16,8 @@ import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 import NavInfoPopover from "./NavInfoPopover";
+import GlobalSearch from "@/components/GlobalSearch";
+import NotificationsBell from "@/components/NotificationsBell";
 
 const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },
@@ -41,6 +43,20 @@ const TopNavigation = () => {
   const firstName = resolveFirstName({ stateUserName: name, authUser });
   const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
   const { pathname } = useLocation();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl + K opens the jump-to search.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((o) => !o);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
 
   const withTip = (tip: string, children: React.ReactNode) => {
     if (!tip) return <>{children}</>;
@@ -121,17 +137,16 @@ const TopNavigation = () => {
 
         <div className="ml-auto flex items-center gap-2">
           <button
+            type="button"
             aria-label="Search"
+            title="Search (Ctrl/Cmd + K)"
+            onClick={() => setSearchOpen(true)}
             className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]"
           >
             <Search className="h-4 w-4" />
           </button>
-          <button
-            aria-label="Notifications"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]"
-          >
-            <Bell className="h-4 w-4" />
-          </button>
+          <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+          <NotificationsBell className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]" />
           <Link
             to="/profile"
             aria-label="Profile"

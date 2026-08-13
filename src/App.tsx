@@ -116,6 +116,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import AttributionCapture from "@/components/AttributionCapture";
 import TypographyLoader from "@/components/TypographyLoader";
 import { initFreePreviewFromUrl } from "@/lib/previewTier";
+import FreePreviewBadge from "@/components/FreePreviewBadge";
 
 if (typeof window !== "undefined") initFreePreviewFromUrl();
 
@@ -134,7 +135,8 @@ const App = () => (
             <SimulatorBridge />
             <AttributionCapture />
             <TypographyLoader />
-            {/* QA preview status pill is rendered by QaModePanel — no separate badge needed */}
+            {/* Free/Paid preview tier badge (separate system from the QA preview panel) */}
+            <FreePreviewBadge />
 
             
             <ExperienceShell>

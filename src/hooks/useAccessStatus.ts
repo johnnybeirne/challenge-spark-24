@@ -96,12 +96,17 @@ export const useAccessStatus = (): AccessStatus => {
   // Grace runs for the first 24 hours of the participant's own new cycle.
   const gracePeriodEndsAt = new Date(cycle.startsAt.getTime() + 24 * 60 * 60 * 1000);
 
-  const hasAccess = isExempt || isPremium || pointsTotal >= pointsThreshold;
+  // A brand new participant is inside their FIRST 28 day cycle and has had no
+  // chance to earn points yet. They always have access until that cycle ends.
+  const isFirstCycle = cycle.index === 0;
+
+  const hasAccess = isExempt || isPremium || isFirstCycle || pointsTotal >= pointsThreshold;
   const pointsNeeded = Math.max(0, pointsThreshold - pointsTotal);
 
   const gracePeriod =
     !isExempt &&
     !isPremium &&
+    !isFirstCycle &&
     prevStatus === "locked_out" &&
     pointsTotal < pointsThreshold &&
     now.getTime() < gracePeriodEndsAt.getTime();

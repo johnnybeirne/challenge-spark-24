@@ -1489,6 +1489,39 @@ export type Database = {
           },
         ]
       }
+      payment_webhook_events: {
+        Row: {
+          created_at: string
+          environment: string
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payouts: {
         Row: {
           created_at: string

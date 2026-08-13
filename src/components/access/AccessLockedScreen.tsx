@@ -58,10 +58,16 @@ export const AccessLockedScreen = ({
 
         <button
           type="button"
-          onClick={() => navigate("/premium")}
+          onClick={() =>
+            openCheckout({
+              priceId: MEMBERSHIP_PRICE_ID,
+              userId: authUser?.id,
+              customerEmail: authUser?.email ?? undefined,
+            })
+          }
           className="mt-8 w-full rounded-xl bg-[#534AB7] px-5 py-4 text-base font-semibold text-white"
         >
-          Upgrade for $97/month
+          Subscribe for {MEMBERSHIP_PRICE_LABEL}
         </button>
 
         <button
@@ -81,8 +87,11 @@ export const AccessLockedScreen = ({
             I have already earned 500 points this cycle — check again
           </button>
         </div>
+
+        {checkoutElement}
       </div>
     </div>
+
   );
 };
 

@@ -199,8 +199,11 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
           </p>
 
         </section>
+
+        {checkoutElement}
       </div>
     </div>
+
   );
 };
 

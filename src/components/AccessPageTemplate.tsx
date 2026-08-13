@@ -33,7 +33,9 @@ const PAGE_TITLE: Record<AccessPageKey, string> = {
 const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
   const { state, authUser } = useAppState();
   const { loading } = useAccessPage(pageKey);
-  const { pointsTotal } = useAccessStatus();
+  const { pointsTotal, isSubscribed } = useAccessStatus();
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
   const { content: membership } = usePremiumMembershipContent();
   const { pointsThreshold } = useAccessSettings();
 

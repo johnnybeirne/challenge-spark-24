@@ -121,17 +121,16 @@ const TopNavigation = () => {
 
         <div className="ml-auto flex items-center gap-2">
           <button
+            type="button"
             aria-label="Search"
+            title="Search (Ctrl/Cmd + K)"
+            onClick={() => setSearchOpen(true)}
             className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]"
           >
             <Search className="h-4 w-4" />
           </button>
-          <button
-            aria-label="Notifications"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]"
-          >
-            <Bell className="h-4 w-4" />
-          </button>
+          <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+          <NotificationsBell className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]" />
           <Link
             to="/profile"
             aria-label="Profile"

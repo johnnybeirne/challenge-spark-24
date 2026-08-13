@@ -128,7 +128,8 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
         <div
           className={[
-            "fixed bottom-4 left-0 right-0 z-20 flex justify-center pointer-events-none transition-[left,right] duration-[400ms] ease-in-out",
+            // Sits above the mobile bottom tab bar on small screens.
+            "fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] lg:bottom-4 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-[left,right] duration-[400ms] ease-in-out",
             focusMode ? "lg:left-0 lg:right-0" : leftCollapsed ? "lg:left-[48px] lg:right-[48px]" : "lg:left-[260px] lg:right-[360px]",
           ].join(" ")}
         >

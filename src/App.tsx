@@ -134,7 +134,8 @@ const App = () => (
             <SimulatorBridge />
             <AttributionCapture />
             <TypographyLoader />
-            {/* QA preview status pill is rendered by QaModePanel — no separate badge needed */}
+            {/* Free/Paid preview tier badge (separate system from the QA preview panel) */}
+            <FreePreviewBadge />
 
             
             <ExperienceShell>

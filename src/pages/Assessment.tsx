@@ -182,16 +182,39 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           }),
         }));
 
-        // Mark assessment completion timestamp on ai_user_context (best-effort)
-        // and award the inviter 50 pts for their referred friend completing the quiz.
+        // Persist the full result to ai_user_context immediately (awaited, with one
+        // retry) so it never depends on the debounced refreshAiContext snapshot.
+        // Also award the inviter 50 pts for their referred friend completing the quiz.
         (async () => {
           try {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-              await (supabase.from("ai_user_context") as any).upsert(
-                { user_id: user.id, assessment_completed_at: new Date().toISOString() },
-                { onConflict: "user_id" },
-              );
+              const payload = {
+                user_id: user.id,
+                assessment: { ...result, mode: resolvedMode ?? "challenge" },
+                assessment_completed_at: new Date().toISOString(),
+              };
+
+              const writeOnce = async () => {
+                const { error } = await (supabase.from("ai_user_context") as any).upsert(
+                  payload,
+                  { onConflict: "user_id" },
+                );
+                if (error) throw error;
+              };
+
+              try {
+                await writeOnce();
+              } catch (firstErr) {
+                console.warn("assessment save failed, retrying", firstErr);
+                try {
+                  await writeOnce();
+                } catch (secondErr) {
+                  console.error("assessment save failed after retry", secondErr);
+                  toast.error("We had trouble saving your result — please check your connection.");
+                }
+              }
+
               // Idempotent on the server (one credit per referred user).
               try {
                 await (supabase.rpc as any)("award_referral_quiz_credit");
@@ -200,9 +223,11 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
               }
             }
           } catch (e) {
-            console.warn("assessment_completed_at write failed", e);
+            console.warn("assessment save path failed", e);
+            toast.error("We had trouble saving your result — please check your connection.");
           }
         })();
+
 
 
         setTimeout(() => {

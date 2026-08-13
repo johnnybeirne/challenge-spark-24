@@ -86,8 +86,11 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
 
   const access = useAccessStatus();
   const { isAdmin } = useUserRole();
-  // Admin/owner users are exempt from the monthly-invite access gate entirely.
-  const accessGateApplies = authenticated && !isOwnerConsoleRoute && !isAuthEntryRoute && pathname !== "/premium" && !isAdmin;
+  // Admin/owner users are exempt from the access gate entirely. The gate now
+  // covers the paid areas only — the challenge dashboard stays free.
+  const accessGateApplies =
+    authenticated && isGatedPath(pathname) && !isOwnerConsoleRoute && !isAuthEntryRoute && !isAdmin;
+
   const showLockedScreen = accessGateApplies && !access.loading && !access.hasAccess && !access.gracePeriod;
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
   const isEmbedded = typeof window !== "undefined" && window.self !== window.top;

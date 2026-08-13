@@ -43,6 +43,20 @@ const TopNavigation = () => {
   const firstName = resolveFirstName({ stateUserName: name, authUser });
   const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
   const { pathname } = useLocation();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl + K opens the jump-to search.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((o) => !o);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
 
   const withTip = (tip: string, children: React.ReactNode) => {
     if (!tip) return <>{children}</>;

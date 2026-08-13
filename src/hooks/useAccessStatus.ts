@@ -33,6 +33,8 @@ export interface AccessStatus {
 export const useAccessStatus = (): AccessStatus => {
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const { isSubscribed, isPastDue, loading: subLoading, refresh: refreshSub } = useSubscription();
+
   const { isAdmin, loading: roleLoading } = useUserRole();
   const { pointsThreshold, loading: settingsLoading } = useAccessSettings();
   // "Owner" maps to the admin role in this system; admins are exempt from the access gate.

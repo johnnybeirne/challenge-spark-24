@@ -391,6 +391,52 @@ async function handleRefund(charge: any, env: StripeEnv) {
     .in("status", ["pending", "approved"]);
 }
 
+// Renewals and failed renewal payments arrive as invoice events. The
+// subscription object itself is updated by customer.subscription.updated, so
+// here we only need to keep status in step for the dunning case.
+async function handleInvoicePaymentFailed(invoice: any, env: StripeEnv) {
+  const subscriptionId = invoice.subscription ?? invoice.parent?.subscription_details?.subscription;
+  if (!subscriptionId) return;
+  await getSupabase()
+    .from("subscriptions")
+    .update({ status: "past_due", updated_at: new Date().toISOString() })
+    .eq("stripe_subscription_id", subscriptionId)
+    .eq("environment", env)
+    .in("status", ["active", "trialing"]);
+}
+
+async function routeEvent(event: { type: string; data: { object: any } }, env: StripeEnv) {
+  switch (event.type) {
+    case "checkout.session.completed":
+    case "checkout.session.async_payment_succeeded":
+      await handleCheckoutCompleted(event.data.object, env);
+      break;
+    case "checkout.session.async_payment_failed":
+      console.warn("Delayed payment failed for session:", event.data.object?.id);
+      break;
+    case "customer.subscription.created":
+    case "customer.subscription.updated":
+      await handleSubscriptionChange(event.data.object, env);
+      break;
+    case "customer.subscription.deleted":
+      await handleSubscriptionDeleted(event.data.object, env);
+      break;
+    case "invoice.paid":
+      // Subscription state is already carried by customer.subscription.updated.
+      console.log("Invoice paid:", event.data.object?.id);
+      break;
+    case "invoice.payment_failed":
+      await handleInvoicePaymentFailed(event.data.object, env);
+      break;
+    case "charge.refunded":
+    case "charge.dispute.closed":
+      await handleRefund(event.data.object, env);
+      break;
+    default:
+      console.log("Unhandled event:", event.type);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -403,37 +449,60 @@ Deno.serve(async (req) => {
     });
   }
   const env: StripeEnv = rawEnv;
-  try {
-    const event = await verifyWebhook(req, env);
-    switch (event.type) {
-      case "checkout.session.completed":
-      case "checkout.session.async_payment_succeeded":
-        await handleCheckoutCompleted(event.data.object, env);
-        break;
-      case "checkout.session.async_payment_failed":
-        console.warn("Delayed payment failed for session:", event.data.object?.id);
-        break;
-      case "customer.subscription.created":
-      case "customer.subscription.updated":
-        await handleSubscriptionChange(event.data.object, env);
-        break;
-      case "customer.subscription.deleted":
-        await handleSubscriptionDeleted(event.data.object, env);
-        break;
-      case "charge.refunded":
-      case "charge.dispute.closed":
-        await handleRefund(event.data.object, env);
-        break;
 
-      default:
-        console.log("Unhandled event:", event.type);
+  // Signature failures are never retryable — reject with 400 and stop.
+  let event: { id: string; type: string; data: { object: any } };
+  try {
+    event = await verifyWebhook(req, env);
+  } catch (e) {
+    console.error("Webhook signature verification failed:", e);
+    return new Response("Invalid signature", { status: 400 });
+  }
+
+  const sb = getSupabase();
+
+  // Idempotency: the unique (event_id, environment) index makes the insert fail
+  // for any redelivery, so side effects run exactly once per event.
+  const { error: claimError } = await sb
+    .from("payment_webhook_events")
+    .insert({ event_id: event.id, event_type: event.type, environment: env });
+
+  if (claimError) {
+    if (claimError.code === "23505") {
+      console.log("Duplicate event ignored:", event.id, event.type);
+      return new Response(JSON.stringify({ received: true, duplicate: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
+    // Could not record the event — ask Stripe to retry rather than risk
+    // processing it twice later.
+    console.error("Failed to record webhook event:", claimError);
+    return new Response("Could not record event", { status: 500 });
+  }
+
+  try {
+    await routeEvent(event, env);
+    await sb
+      .from("payment_webhook_events")
+      .update({ status: "processed" })
+      .eq("event_id", event.id)
+      .eq("environment", env);
+
     return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("Webhook error:", e);
-    return new Response("Webhook error", { status: 400 });
+    console.error("Webhook handler error:", event.type, e);
+    // Release the claim so Stripe's retry can process the event cleanly.
+    await sb
+      .from("payment_webhook_events")
+      .delete()
+      .eq("event_id", event.id)
+      .eq("environment", env);
+
+    return new Response("Webhook handler error", { status: 500 });
   }
 });
+

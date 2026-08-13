@@ -25,6 +25,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { isPreviewHost } from "@/lib/utils";
 import AccessGraceBanner from "./access/AccessGraceBanner";
 import AccessLockedScreen from "./access/AccessLockedScreen";
+import { isGatedPath } from "@/lib/membership";
+
 
 const SIGNUP_TOAST_KEY = "challengeos_signup_toast_shown";
 

@@ -154,15 +154,25 @@ const AccessPageTemplate = ({ pageKey }: { pageKey: AccessPageKey }) => {
               <div className="space-y-3">
                 <p className="font-semibold">Upgrade instead</p>
                 <p className="text-sm text-muted-foreground">
-                  Skip the points target and get instant access
+                  {isSubscribed
+                    ? "Your membership is active, so this area stays open."
+                    : "Skip the points target and get instant access"}
                 </p>
                 <Button
-                  onClick={() => navigate("/premium")}
+                  disabled={isSubscribed}
+                  onClick={() =>
+                    openCheckout({
+                      priceId: MEMBERSHIP_PRICE_ID,
+                      userId: authUser?.id,
+                      customerEmail: authUser?.email ?? undefined,
+                    })
+                  }
                   className="w-full gap-2 bg-[#534AB7] font-medium text-white hover:bg-[#534AB7]/90"
                 >
-                  Upgrade for $97/month
+                  {isSubscribed ? "Membership active" : `Subscribe for ${MEMBERSHIP_PRICE_LABEL}`}
                 </Button>
               </div>
+
             </div>
           ) : (
             <p className="mt-5 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">

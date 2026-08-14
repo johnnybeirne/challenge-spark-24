@@ -35,6 +35,7 @@ import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
 import Profile from "@/pages/Profile";
+import NotificationsPage from "@/pages/Notifications";
 
 
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
@@ -211,6 +212,7 @@ const App = () => (
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+                <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}

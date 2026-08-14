@@ -133,8 +133,8 @@ const items: NavItem[] = [
 ];
 
 const siteItems: NavItem[] = [
-  { title: "Landing page", url: "/", icon: Home, external: true },
-  { title: "Waitlist thanks (preview)", url: "/waitlist/thanks?preview=1", icon: Eye, external: true },
+  { title: "Landing page", url: "/", icon: Home, external: true, keywords: ["home", "landing", "public site"] },
+  { title: "Waitlist thanks (preview)", url: "/waitlist/thanks?preview=1", icon: Eye, external: true, keywords: ["waitlist", "thanks", "confirmation"] },
   {
     title: "Course Sales Page",
     url: "/owner-console/premium-page",

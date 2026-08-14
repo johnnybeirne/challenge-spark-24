@@ -10,7 +10,8 @@ import {
   Search,
   Minimize2,
   User as UserIcon,
-  Settings,
+  Pencil,
+  Bell,
   LogOut,
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -176,11 +177,15 @@ const TopNavigation = () => {
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => navigate("/profile")}>
                 <UserIcon className="mr-2 h-4 w-4" />
-                Profile
+                View profile
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/profile")}>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <Bell className="mr-2 h-4 w-4" />
+                Notifications
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

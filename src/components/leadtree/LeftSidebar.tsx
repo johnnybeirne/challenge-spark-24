@@ -3,7 +3,6 @@ import {
   Users,
   Gift,
   BookOpen,
-  LifeBuoy,
   LogOut,
   Check,
   Lock,

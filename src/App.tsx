@@ -88,6 +88,7 @@ import AdminReferralSettings from "@/pages/AdminReferralSettings";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
+import AdminUserTour from "@/pages/AdminUserTour";
 import AdminNavInfoPopovers from "@/pages/AdminNavInfoPopovers";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
@@ -295,6 +296,7 @@ const App = () => (
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
+                <Route path="user-tour" element={<AdminUserTour />} />
                 <Route path="nav-info-popovers" element={<AdminNavInfoPopovers />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />

@@ -48,7 +48,7 @@ export function useNavTour() {
     if (typeof window === "undefined") return;
     const tourKeys = [...tips]
       .filter((t) => t.in_tour)
-      .sort((a, b) => a.sort_order - b.sort_order)
+      .sort((a, b) => a.sort_order - b.sort_order || a.key.localeCompare(b.key))
       .map((t) => t.key);
     const steps = buildSteps(tourKeys, byKey, labelByKey).filter((s) =>
       document.querySelector(s.element),

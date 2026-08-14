@@ -71,8 +71,15 @@ const items: NavItem[] = [
   },
   { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy, external: true, keywords: ["rewards", "points", "ladder", "tiers", "prizes", "redeem"] },
   {
-    title: "User Tour",
+    title: "Hover Tips",
     url: "/owner-console/nav-tips",
+    icon: HelpCircle,
+    external: true,
+    keywords: ["hover", "tooltip", "tooltips", "nav tips", "hints", "sidebar tips"],
+  },
+  {
+    title: "User Tour Walkthrough",
+    url: "/owner-console/user-tour",
     icon: HelpCircle,
     external: true,
     keywords: [
@@ -84,10 +91,7 @@ const items: NavItem[] = [
       "onboarding",
       "first run",
       "welcome",
-      "tooltip",
-      "tooltips",
-      "nav tips",
-      "hints",
+      "steps",
       "driver",
       "popover",
       "intro",

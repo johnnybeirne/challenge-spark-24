@@ -153,13 +153,48 @@ const TopNavigation = () => {
           </button>
           <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
           <NotificationsBell className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#6B7280] hover:bg-[#F7F8FA]" />
-          <Link
-            to="/profile"
-            aria-label="Profile"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white"
-          >
-            {initial}
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                aria-label="Profile and settings"
+                className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ring-2 ring-primary/30 transition hover:ring-primary"
+              >
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={name || "Your profile photo"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center bg-primary text-sm font-semibold text-white">
+                    {initials}
+                  </span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <UserIcon className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={async () => {
+                  await signOut();
+                  navigate("/");
+                  toast.success("Signed out");
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

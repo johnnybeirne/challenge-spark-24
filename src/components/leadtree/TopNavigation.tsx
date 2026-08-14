@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Focus,
   GraduationCap,
@@ -9,14 +9,27 @@ import {
   Trophy,
   Search,
   Minimize2,
+  User as UserIcon,
+  Settings,
+  LogOut,
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
+import { useAuth } from "@/hooks/useAuth";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
+import { getInitials } from "@/lib/formatName";
 import GlobalSearch from "@/components/GlobalSearch";
 import NotificationsBell from "@/components/NotificationsBell";
+import { toast } from "sonner";
 
 const centerLinks = [
   { to: "/training",    label: "Training",    icon: GraduationCap, key: "top_training" },

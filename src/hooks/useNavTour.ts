@@ -8,29 +8,26 @@ import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const TOUR_STORAGE_KEY = "leadtree_nav_tour_completed_v1";
 
-const TOUR_KEYS = [
-  "focus_mode",
-  "top_training",
-  "top_community",
-  "top_events",
-  "top_ai_coach",
-  "top_leaderboard",
-];
-
-function buildSteps(byKey: (k: string) => string, labelByKey: (k: string) => string) {
-  return TOUR_KEYS.map((k) => {
-    const tip = byKey(k);
-    if (!tip) return null;
-    return {
-      element: `[data-tour="${k}"]`,
-      popover: {
-        title: labelByKey(k) || k,
-        description: tip,
-        side: "bottom" as const,
-        align: "center" as const,
-      },
-    };
-  }).filter(Boolean) as { element: string; popover: any }[];
+function buildSteps(
+  tourKeys: string[],
+  byKey: (k: string) => string,
+  labelByKey: (k: string) => string,
+) {
+  return tourKeys
+    .map((k) => {
+      const tip = byKey(k);
+      if (!tip) return null;
+      return {
+        element: `[data-tour="${k}"]`,
+        popover: {
+          title: labelByKey(k) || k,
+          description: tip,
+          side: "bottom" as const,
+          align: "center" as const,
+        },
+      };
+    })
+    .filter(Boolean) as { element: string; popover: any }[];
 }
 
 export function useNavTour() {

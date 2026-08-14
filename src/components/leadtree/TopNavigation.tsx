@@ -43,12 +43,15 @@ const TopNavigation = () => {
   const { state, authUser } = useAppState();
   const { focusMode, toggleFocusMode } = useFocusMode();
   const { byKey } = useNavTips();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   const name = state.user?.name || "";
-  const initial = name.trim().charAt(0).toUpperCase() || "U";
   const firstName = resolveFirstName({ stateUserName: name, authUser });
   const tip = (k: string) => applyTooltipTokens(byKey(k), firstName);
   const { pathname } = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const avatarUrl = state.user?.avatarUrl || null;
+  const initials = getInitials(name) || "U";
 
   // Cmd/Ctrl + K opens the jump-to search.
   useEffect(() => {

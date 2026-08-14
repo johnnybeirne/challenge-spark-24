@@ -4,6 +4,7 @@ import "driver.js/dist/driver.css";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useNavTips } from "@/hooks/useNavTips";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const TOUR_STORAGE_KEY = "leadtree_nav_tour_completed_v1";
 
@@ -33,11 +34,18 @@ function buildSteps(byKey: (k: string) => string, labelByKey: (k: string) => str
 }
 
 export function useNavTour() {
-  const { authUser } = useAppState();
-  const { tips, byKey, loaded } = useNavTips();
+  const { authUser, state } = useAppState();
+  const { tips, byKey: rawByKey, loaded } = useNavTips();
   const startedRef = useRef(false);
 
-  const labelByKey = (k: string) => tips.find((t) => t.key === k)?.label ?? "";
+  const firstName = resolveFirstName({
+    stateUserName: state?.user?.name,
+    authUser,
+  });
+  const byKey = (k: string) => applyTooltipTokens(rawByKey(k), firstName);
+  const labelByKey = (k: string) =>
+    applyTooltipTokens(tips.find((t) => t.key === k)?.label ?? "", firstName);
+
 
   const start = () => {
     if (typeof window === "undefined") return;

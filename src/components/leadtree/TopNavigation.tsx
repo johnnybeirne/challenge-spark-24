@@ -15,7 +15,6 @@ import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { useNavTips } from "@/hooks/useNavTips";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
-import NavInfoPopover from "./NavInfoPopover";
 import GlobalSearch from "@/components/GlobalSearch";
 import NotificationsBell from "@/components/NotificationsBell";
 
@@ -26,13 +25,6 @@ const centerLinks = [
   { to: "/mentor",      label: "LeadTree AI", icon: Sparkles,      key: "top_ai_coach" },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy,        key: "top_leaderboard" },
 ];
-
-const INFO_SECTIONS: Record<string, string | undefined> = {
-  top_training: "training",
-  top_community: "community",
-  top_events: "events",
-};
-
 
 const TopNavigation = () => {
   const { state, authUser } = useAppState();
@@ -104,9 +96,8 @@ const TopNavigation = () => {
           )}
           {centerLinks.map(({ to, label, icon: Icon, key }) => {
             const isActive = pathname === to;
-            const infoSection = INFO_SECTIONS[key];
             return (
-              <span key={to} className="inline-flex items-center gap-1">
+              <span key={to} className="inline-flex items-center">
                 {withTip(
                   tip(key),
                   <NavLink
@@ -128,7 +119,6 @@ const TopNavigation = () => {
                     </span>
                   </NavLink>,
                 )}
-                {infoSection && <NavInfoPopover section={infoSection} />}
               </span>
             );
           })}

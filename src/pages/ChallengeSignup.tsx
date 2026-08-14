@@ -39,10 +39,18 @@ const ChallengeSignup = () => {
       defaultRedirect={defaultRedirect}
       renderSuccessActions={({ firstName, goToRedirect }) =>
         cameFromAssessment ? (
-          <>
-            <AddToCalendar firstNameOverride={firstName || ""} className="h-12" />
-            <Button className="h-12 text-white" onClick={goToRedirect}>Continue</Button>
-          </>
+          <div className="flex w-full flex-col items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <AddToCalendar
+                firstNameOverride={firstName || ""}
+                className="h-12 bg-[#22C55E] text-white hover:bg-[#16A34A]"
+              />
+              <Button className="h-12 bg-[#F97316] text-white hover:bg-[#EA580C]" onClick={goToRedirect}>Continue</Button>
+            </div>
+            <p className="text-center text-sm text-muted-foreground">
+              Adds a 1 hour block to your calendar each day for the next 3 days.
+            </p>
+          </div>
         ) : (
           <Button className="h-12" onClick={goToRedirect}>Go to your dashboard</Button>
         )

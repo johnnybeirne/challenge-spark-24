@@ -114,8 +114,8 @@ const items: NavItem[] = [
     external: true,
     keywords: ["system prompt", "mentor", "copilot", "max tokens", "heading", "fallback"],
   },
-  { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true },
-  { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true },
+  { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true, keywords: ["features", "extract", "audit"] },
+  { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true, keywords: ["checklist", "requirements", "launch"] },
   {
     title: "QA challenge runner",
     url: "/admin/qa-run",

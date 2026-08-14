@@ -99,7 +99,7 @@ const items: NavItem[] = [
     external: true,
     keywords: ["what is this", "training", "community", "events", "popover", "info"],
   },
-  { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true },
+  { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true, keywords: ["training", "community", "events", "tagline", "headings", "access"] },
   {
     title: "LeadTree AI prompts",
     url: "/owner-console/mentor-prompts",

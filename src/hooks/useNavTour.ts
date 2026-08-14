@@ -4,6 +4,7 @@ import "driver.js/dist/driver.css";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useNavTips } from "@/hooks/useNavTips";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const TOUR_STORAGE_KEY = "leadtree_nav_tour_completed_v1";
 
@@ -16,7 +17,11 @@ const TOUR_KEYS = [
   "top_leaderboard",
 ];
 
-function buildSteps(byKey: (k: string) => string, labelByKey: (k: string) => string) {
+function buildSteps(
+  byKey: (k: string) => string,
+  labelByKey: (k: string) => string,
+  firstName: string,
+) {
   return TOUR_KEYS.map((k) => {
     const tip = byKey(k);
     if (!tip) return null;
@@ -24,7 +29,7 @@ function buildSteps(byKey: (k: string) => string, labelByKey: (k: string) => str
       element: `[data-tour="${k}"]`,
       popover: {
         title: labelByKey(k) || k,
-        description: tip,
+        description: applyTooltipTokens(tip, firstName),
         side: "bottom" as const,
         align: "center" as const,
       },
@@ -33,7 +38,7 @@ function buildSteps(byKey: (k: string) => string, labelByKey: (k: string) => str
 }
 
 export function useNavTour() {
-  const { authUser } = useAppState();
+  const { state, authUser, hydrated } = useAppState();
   const { tips, byKey, loaded } = useNavTips();
   const startedRef = useRef(false);
 
@@ -41,7 +46,10 @@ export function useNavTour() {
 
   const start = () => {
     if (typeof window === "undefined") return;
-    const steps = buildSteps(byKey, labelByKey).filter((s) =>
+    // Same resolution the hover tooltips use (TopNavigation/LeftSidebar `tip()`),
+    // read fresh at call time so it reflects the latest loaded profile.
+    const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
+    const steps = buildSteps(byKey, labelByKey, firstName).filter((s) =>
       document.querySelector(s.element),
     );
     if (steps.length === 0) return;
@@ -82,6 +90,12 @@ export function useNavTour() {
     // Only run for authenticated users
     if (!authUser?.id) return;
 
+    // Wait for the participant profile to finish hydrating so state.user.name
+    // (and therefore the first-name token) is actually in scope before steps
+    // are built — otherwise resolveFirstName returns "" and the strip-fallback
+    // fires even for a named user.
+    if (!hydrated) return;
+
     let cancelled = false;
     (async () => {
       // Local check first
@@ -112,7 +126,7 @@ export function useNavTour() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loaded, authUser?.id]);
+  }, [loaded, hydrated, authUser?.id]);
 
   return { start };
 }

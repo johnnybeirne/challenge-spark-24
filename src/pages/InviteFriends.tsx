@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Copy, Check, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { getReferralUrl } from "@/lib/utils";
 import { useReferralStats } from "@/hooks/useReferralStats";
-import { useAccessStatus } from "@/hooks/useAccessStatus";
-import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { useReferredPeople } from "@/hooks/useReferredPeople";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
 import Spinner from "@/components/Spinner";
+import { PointsHeaderCard } from "@/components/PointsHeaderCard";
 
 const GREEN = "#1D9E75";
 const BLUE = "#378ADD";
@@ -18,39 +17,6 @@ const PURPLE_DEEP = "#26215C";
 const GREEN_TINT = "#E1F5EE";
 const GREEN_LABEL = "#0F6E56";
 const GREEN_DEEP = "#04342C";
-
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-/** Counts up from 0 to target on mount, about 900ms, ease-out. */
-const useCountUp = (target: number, ready: boolean) => {
-  const [value, setValue] = useState(0);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (!ready || done) return;
-    if (prefersReducedMotion() || target <= 0) {
-      setValue(target);
-      setDone(true);
-      return;
-    }
-    setDone(true);
-    const duration = 900;
-    const start = performance.now();
-    let frame = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(target * eased));
-      if (t < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [ready, target, done]);
-
-  return value;
-};
 
 const formatJoined = (iso: string) => {
   const d = new Date(iso);
@@ -64,10 +30,8 @@ const formatJoined = (iso: string) => {
 
 const InviteFriends = () => {
   const { state } = useAppState();
-  const { pointsTotal, loading: accessLoading } = useAccessStatus();
-  const { pointsThreshold } = useAccessSettings();
   const { badges, loading } = useReferralStats();
-  const { people, count, loading: peopleLoading } = useReferredPeople();
+  const { people, loading: peopleLoading } = useReferredPeople();
 
   const [copied, setCopied] = useState<"quiz" | "challenge" | null>(null);
 
@@ -76,15 +40,7 @@ const InviteFriends = () => {
   const quizLink = getReferralUrl("/assess", inviteCode);
   const challengeLink = getReferralUrl("/", inviteCode);
 
-  const ready = !loading && !accessLoading && !peopleLoading;
-  const animatedPoints = useCountUp(pointsTotal, ready);
-  const animatedPeople = useCountUp(count, ready);
-
-  const threshold = pointsThreshold || 500;
-  const progressPct = Math.max(
-    0,
-    Math.min(100, threshold > 0 ? (pointsTotal / threshold) * 100 : 0)
-  );
+  const ready = !loading && !peopleLoading;
 
   const earnedCount = badges.filter((b) => b.earned).length;
 
@@ -119,45 +75,8 @@ const InviteFriends = () => {
         </p>
       </header>
 
-      {/* 2. Hero stat tiles */}
-      <section className="grid grid-cols-2 gap-4">
-        <div
-          className="rounded-xl p-5"
-          style={{ backgroundColor: PURPLE_TINT }}
-        >
-          <p className="text-xs font-semibold tracking-wide" style={{ color: PURPLE }}>
-            Points earned
-          </p>
-          <p className="mt-1 text-4xl font-bold" style={{ color: PURPLE_DEEP }}>
-            {animatedPoints}
-          </p>
-        </div>
-        <div className="rounded-xl p-5" style={{ backgroundColor: GREEN_TINT }}>
-          <p className="text-xs font-semibold tracking-wide" style={{ color: GREEN_LABEL }}>
-            People you've invited
-          </p>
-          <p className="mt-1 text-4xl font-bold" style={{ color: GREEN_DEEP }}>
-            {animatedPeople}
-          </p>
-        </div>
-      </section>
-
-      {/* 3. Points progress bar */}
-      <section className="space-y-2">
-        <div
-          className="h-2.5 w-full overflow-hidden rounded-full"
-          style={{ backgroundColor: PURPLE_TINT }}
-        >
-          <div
-            className="h-full rounded-full transition-all"
-            style={{ width: `${progressPct}%`, backgroundColor: PURPLE }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>0</span>
-          <span>{threshold}</span>
-        </div>
-      </section>
+      {/* 2-5. Shared points progress header (points, tier, invites, milestones, threshold) */}
+      <PointsHeaderCard />
 
       {/* 4. People you have invited */}
       <section className="space-y-3">

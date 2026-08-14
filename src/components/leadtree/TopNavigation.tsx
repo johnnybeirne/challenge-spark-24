@@ -10,7 +10,6 @@ import {
   Search,
   Minimize2,
   User as UserIcon,
-  Pencil,
   Bell,
   LogOut,
 } from "lucide-react";

@@ -4,6 +4,7 @@ import "driver.js/dist/driver.css";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useNavTips } from "@/hooks/useNavTips";
+import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const TOUR_STORAGE_KEY = "leadtree_nav_tour_completed_v1";
 

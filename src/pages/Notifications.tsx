@@ -1,10 +1,15 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Sparkles, Trophy, Copy } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { markAllRead, markRead } from "@/lib/notifications";
+import { useAppState } from "@/context/AppContext";
+import { getNextReward, pointRewards } from "@/lib/points";
+import { getReferralUrl, cn } from "@/lib/utils";
+import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const formatWhen = (iso: string) => {
   const d = new Date(iso);

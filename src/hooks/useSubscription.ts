@@ -64,22 +64,30 @@ export const useSubscription = (): SubscriptionState => {
   }, [load]);
 
   // Keep the UI in step with webhook writes without a page refresh.
+  const loadRef = useRef(load);
+  loadRef.current = load;
+
   useEffect(() => {
     if (!user?.id) return;
+    // Unique topic per hook instance: two components mounting the same topic
+    // name makes supabase-js reuse (and re-subscribe to) one channel, which
+    // throws "cannot add postgres_changes callbacks after subscribe()".
+    const topic = `subscriptions-${user.id}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`subscriptions-${user.id}`)
+      .channel(topic)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${user.id}` },
         () => {
-          void load();
+          void loadRef.current();
         },
       )
       .subscribe();
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [user?.id, load]);
+  }, [user?.id]);
+
 
   return {
     subscription,

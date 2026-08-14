@@ -60,7 +60,9 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const { questions } = useQuizQuestions();
   const TOTAL_QUESTIONS = questions.length;
 
-  const [started, setStarted] = useState(false);
+  // Arriving from a landing CTA (?start=1) begins the quiz immediately so the
+  // visitor does not have to press "Start the quiz" a second time.
+  const [started, setStarted] = useState(() => searchParams.get("start") === "1");
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<string | null>(null);

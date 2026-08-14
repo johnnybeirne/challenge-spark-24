@@ -240,12 +240,6 @@ const LeftSidebar = () => {
               <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
             </button>
             {withTip(
-              tip("nav_support"),
-              <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-                <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
-              </a>,
-            )}
-            {withTip(
               tip("nav_logout"),
               <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
                 <LogOut className="h-4 w-4" strokeWidth={1.75} /> Logout

@@ -1054,42 +1054,6 @@ export type Database = {
         }
         Relationships: []
       }
-      nav_info_popovers: {
-        Row: {
-          body: string
-          created_at: string
-          enabled: boolean
-          id: string
-          label: string
-          section: string
-          sort_order: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          body?: string
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          label: string
-          section: string
-          sort_order?: number
-          title?: string
-          updated_at?: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          label?: string
-          section?: string
-          sort_order?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       nav_tips: {
         Row: {
           created_at: string

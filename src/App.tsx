@@ -35,6 +35,7 @@ import PromptLibrary from "@/pages/PromptLibrary";
 import ResourcesPage from "@/pages/Resources";
 import Mentor from "@/pages/Mentor";
 import Profile from "@/pages/Profile";
+import NotificationsPage from "@/pages/Notifications";
 
 
 import BlueprintLanding from "@/pages/blueprint/BlueprintLanding";
@@ -88,7 +89,7 @@ import AdminReferralSettings from "@/pages/AdminReferralSettings";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
-import AdminNavInfoPopovers from "@/pages/AdminNavInfoPopovers";
+import AdminUserTour from "@/pages/AdminUserTour";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
 import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
@@ -211,6 +212,7 @@ const App = () => (
                 <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
                 <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+                <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
@@ -295,7 +297,7 @@ const App = () => (
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
-                <Route path="nav-info-popovers" element={<AdminNavInfoPopovers />} />
+                <Route path="user-tour" element={<AdminUserTour />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="mentor-prompts" element={<AdminMentorPrompts />} />

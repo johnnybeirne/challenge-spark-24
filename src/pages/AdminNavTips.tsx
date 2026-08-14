@@ -9,6 +9,7 @@ import {
 } from "@/components/cms/cms-ui";
 import { invalidateNavTips, NavTip } from "@/hooks/useNavTips";
 
+/** Hover Tips — hover-only tooltips (records with in_tour = false). */
 const AdminNavTips = () => {
   const [rows, setRows] = useState<NavTip[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +20,18 @@ const AdminNavTips = () => {
       const { data } = await supabase
         .from("nav_tips")
         .select("*")
+        .eq("in_tour", false)
         .order("sort_order");
-      if (data) setRows(data as NavTip[]);
+      if (data) {
+        const seen = new Set<string>();
+        setRows(
+          (data as NavTip[]).filter((r) => {
+            if (seen.has(r.key)) return false;
+            seen.add(r.key);
+            return true;
+          }),
+        );
+      }
       setLoading(false);
     })();
   }, []);
@@ -32,14 +43,11 @@ const AdminNavTips = () => {
     setSaving(true);
     try {
       for (const r of rows) {
-        const { error } = await supabase
-          .from("nav_tips")
-          .update({ tip: r.tip })
-          .eq("id", r.id);
+        const { error } = await supabase.from("nav_tips").update({ tip: r.tip }).eq("id", r.id);
         if (error) throw error;
       }
       invalidateNavTips();
-      toast.success("Nav tips saved");
+      toast.success("Hover tips saved");
     } catch (e: any) {
       toast.error("Could not save: " + (e?.message ?? "unknown error"));
     } finally {
@@ -47,45 +55,23 @@ const AdminNavTips = () => {
     }
   };
 
-  const tourItems = rows.filter((r) => r.in_tour);
-  const otherItems = rows.filter((r) => !r.in_tour);
-
   return (
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
-        title="Nav Tips"
-        description="Edit the tip text for every navigation item. This copy powers both the hover tooltips and the first-run walkthrough — edit once and both surfaces update."
+        title="Hover Tips"
+        description="The tooltips a participant sees when they hover a nav or sidebar item. These never appear in the first-run walkthrough. Leave a tip blank to hide it."
       />
 
       <EditorCard
-        title="Top bar — included in the walkthrough"
-        description="Shown as hover tooltips and as guided-tour popovers on a participant's first visit. Leave blank to hide."
+        title="Hover-only tooltips"
+        description="Shown on hover only. Leave blank to hide the tooltip."
       >
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : rows.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No hover tips yet.</p>
         ) : (
-          tourItems.map((r) => (
-            <EditableField
-              key={r.id}
-              label={r.label}
-              helper={`Key: ${r.key}`}
-              multiline
-              rows={2}
-              value={r.tip}
-              onChange={(v) => update(r.key, v)}
-            />
-          ))
-        )}
-      </EditorCard>
-
-      <EditorCard
-        title="Sidebar items — hover tooltips only"
-        description="Shown as tooltips when a participant hovers on the item. Leave blank to hide the tooltip."
-      >
-        {loading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
-        ) : (
-          otherItems.map((r) => (
+          rows.map((r) => (
             <EditableField
               key={r.id}
               label={r.label}

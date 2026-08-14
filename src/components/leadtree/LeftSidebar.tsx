@@ -3,8 +3,6 @@ import {
   Users,
   Gift,
   BookOpen,
-  Settings,
-  LifeBuoy,
   LogOut,
   Check,
   Lock,
@@ -22,9 +20,9 @@ import { useNavTour } from "@/hooks/useNavTour";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
-  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites" },
-  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards" },
-  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources" },
+  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites",   tourKey: "tour_invites" },
+  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards",   tourKey: "tour_rewards" },
+  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources", tourKey: "tour_resources" },
 ];
 
 const withTip = (tip: string, children: React.ReactNode) => {
@@ -147,6 +145,7 @@ const LeftSidebar = () => {
               const row = (
                 <li
                   key={d}
+                  data-tour={`tour_day_${d}`}
                   className={[
                     "relative rounded-[10px] pb-3 pl-6 pt-2 last:pb-0",
                     isActiveDay ? "border border-black bg-primary/10" : isCurrent ? "bg-primary/10" : "",
@@ -204,7 +203,7 @@ const LeftSidebar = () => {
             Build Momentum
           </p>
           <nav className="space-y-1">
-            {momentumLinks.map(({ to, label, icon: Icon, key }) => {
+            {momentumLinks.map(({ to, label, icon: Icon, key, tourKey }) => {
               const active = pathname.startsWith(to);
               return (
                 <span key={to} className="contents">
@@ -212,7 +211,7 @@ const LeftSidebar = () => {
                     tip(key),
                     <NavLink
                       to={to}
-                      data-tour={key}
+                      data-tour={tourKey}
                       className={[
                         "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
                         active
@@ -232,12 +231,6 @@ const LeftSidebar = () => {
 
         <div className="-mx-6 border-t border-[#E5E7EB] px-4 py-4">
           <nav className="space-y-0.5">
-            {withTip(
-              tip("nav_settings"),
-              <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-                <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
-              </Link>,
-            )}
             <button
               type="button"
               onClick={() => startTour()}
@@ -245,12 +238,6 @@ const LeftSidebar = () => {
             >
               <PlayCircle className="h-4 w-4" strokeWidth={1.75} /> Take the tour
             </button>
-            {withTip(
-              tip("nav_support"),
-              <a href="mailto:support@leadtree.io" data-tour="nav_support" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-                <LifeBuoy className="h-4 w-4" strokeWidth={1.75} /> Support
-              </a>,
-            )}
             {withTip(
               tip("nav_logout"),
               <Link to="/" data-tour="nav_logout" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">

@@ -8,48 +8,49 @@ import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const TOUR_STORAGE_KEY = "leadtree_nav_tour_completed_v1";
 
-const TOUR_KEYS = [
-  "focus_mode",
-  "top_training",
-  "top_community",
-  "top_events",
-  "top_ai_coach",
-  "top_leaderboard",
-];
-
 function buildSteps(
+  tourKeys: string[],
   byKey: (k: string) => string,
   labelByKey: (k: string) => string,
-  firstName: string,
 ) {
-  return TOUR_KEYS.map((k) => {
-    const tip = byKey(k);
-    if (!tip) return null;
-    return {
-      element: `[data-tour="${k}"]`,
-      popover: {
-        title: labelByKey(k) || k,
-        description: applyTooltipTokens(tip, firstName),
-        side: "bottom" as const,
-        align: "center" as const,
-      },
-    };
-  }).filter(Boolean) as { element: string; popover: any }[];
+  return tourKeys
+    .map((k) => {
+      const tip = byKey(k);
+      if (!tip) return null;
+      return {
+        element: `[data-tour="${k}"]`,
+        popover: {
+          title: labelByKey(k) || k,
+          description: tip,
+          side: "bottom" as const,
+          align: "center" as const,
+        },
+      };
+    })
+    .filter(Boolean) as { element: string; popover: any }[];
 }
 
 export function useNavTour() {
-  const { state, authUser, hydrated } = useAppState();
-  const { tips, byKey, loaded } = useNavTips();
+  const { authUser, state, hydrated } = useAppState();
+  const { tips, byKey: rawByKey, loaded } = useNavTips();
   const startedRef = useRef(false);
 
-  const labelByKey = (k: string) => tips.find((t) => t.key === k)?.label ?? "";
+  const firstName = resolveFirstName({
+    stateUserName: state?.user?.name,
+    authUser,
+  });
+  const byKey = (k: string) => applyTooltipTokens(rawByKey(k), firstName);
+  const labelByKey = (k: string) =>
+    applyTooltipTokens(tips.find((t) => t.key === k)?.label ?? "", firstName);
+
 
   const start = () => {
     if (typeof window === "undefined") return;
-    // Same resolution the hover tooltips use (TopNavigation/LeftSidebar `tip()`),
-    // read fresh at call time so it reflects the latest loaded profile.
-    const firstName = resolveFirstName({ stateUserName: state.user?.name, authUser });
-    const steps = buildSteps(byKey, labelByKey, firstName).filter((s) =>
+    const tourKeys = [...tips]
+      .filter((t) => t.in_tour)
+      .sort((a, b) => a.sort_order - b.sort_order || a.key.localeCompare(b.key))
+      .map((t) => t.key);
+    const steps = buildSteps(tourKeys, byKey, labelByKey).filter((s) =>
       document.querySelector(s.element),
     );
     if (steps.length === 0) return;

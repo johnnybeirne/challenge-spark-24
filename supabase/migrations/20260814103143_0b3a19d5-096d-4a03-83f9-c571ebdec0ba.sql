@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS public.nav_info_popovers;

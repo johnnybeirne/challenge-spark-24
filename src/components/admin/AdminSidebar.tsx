@@ -26,19 +26,19 @@ type NavItem = {
 };
 
 const items: NavItem[] = [
-  { title: "View as user", url: "/owner-console/view-as-user", icon: Eye, external: true },
-  { title: "User quiz preview", url: "/quiz-preview", icon: ListChecks, external: true },
-  { title: "Quiz preview tips", url: "/owner-console/quiz-preview-tips", icon: HelpCircle, external: true },
-  { title: "Product overview", url: "/owner-console/overview", icon: FileText, external: true },
-  { title: "Registrants", url: "/owner-console/bios", icon: IdCard, external: true },
-  { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake, external: true },
-  { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true, external: true },
-  { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit, external: true },
-  { title: "Powered By Page", url: "/owner-console/powered-by-editor", icon: Globe, external: true },
-  { title: "Resource library", url: "/owner-console/resources", icon: BookOpen, external: true },
-  { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3, external: true },
-  { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail, external: true },
-  { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail, external: true },
+  { title: "View as user", url: "/owner-console/view-as-user", icon: Eye, external: true, keywords: ["impersonate", "preview", "participant", "as user"] },
+  { title: "User quiz preview", url: "/quiz-preview", icon: ListChecks, external: true, keywords: ["quiz", "preview", "diagnostic", "assessment"] },
+  { title: "Quiz preview tips", url: "/owner-console/quiz-preview-tips", icon: HelpCircle, external: true, keywords: ["quiz", "tips", "tooltip", "help"] },
+  { title: "Product overview", url: "/owner-console/overview", icon: FileText, external: true, keywords: ["overview", "docs", "summary"] },
+  { title: "Registrants", url: "/owner-console/bios", icon: IdCard, external: true, keywords: ["users", "participants", "signups", "bios", "members", "referral link"] },
+  { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake, external: true, keywords: ["partners", "affiliates", "jv"] },
+  { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true, external: true, keywords: ["home", "dashboard", "admin"] },
+  { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit, external: true, keywords: ["landing page", "copy", "headline", "quiz page", "content"] },
+  { title: "Powered By Page", url: "/owner-console/powered-by-editor", icon: Globe, external: true, keywords: ["powered by", "branding", "footer"] },
+  { title: "Resource library", url: "/owner-console/resources", icon: BookOpen, external: true, keywords: ["downloads", "files", "library", "resources"] },
+  { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3, external: true, keywords: ["stats", "metrics", "events", "tracking"] },
+  { title: "Waitlist email", url: "/owner-console/waitlist-email", icon: Mail, external: true, keywords: ["email", "waitlist", "template"] },
+  { title: "Newsletter", url: "/owner-console/newsletter", icon: Mail, external: true, keywords: ["email", "broadcast", "newsletter"] },
   {
     title: "Milestone emails",
     url: "/owner-console/milestone-emails",
@@ -46,14 +46,14 @@ const items: NavItem[] = [
     external: true,
     keywords: ["email", "day 1", "day 2", "day 3", "complete"],
   },
-  { title: "Promoters", url: "/owner-console/promoters", icon: Users, external: true },
-  { title: "Activity feed", url: "/owner-console/activity", icon: Activity, external: true },
-  { title: "Training system", url: "/owner-console/training", icon: GraduationCap, external: true },
-  { title: "Day 1 step editor", url: "/owner-console/day1-steps", icon: MessagesSquare, external: true },
-  { title: "Day 2 button labels", url: "/owner-console/day2-buttons", icon: MessagesSquare, external: true },
-  { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true },
-  { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true },
-  { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true },
+  { title: "Promoters", url: "/owner-console/promoters", icon: Users, external: true, keywords: ["referrers", "leaderboard", "top inviters"] },
+  { title: "Activity feed", url: "/owner-console/activity", icon: Activity, external: true, keywords: ["feed", "events", "log", "activity"] },
+  { title: "Training system", url: "/owner-console/training", icon: GraduationCap, external: true, keywords: ["training", "lessons", "course", "modules"] },
+  { title: "Day 1 step editor", url: "/owner-console/day1-steps", icon: MessagesSquare, external: true, keywords: ["day 1", "questions", "steps", "setup", "chat"] },
+  { title: "Day 2 button labels", url: "/owner-console/day2-buttons", icon: MessagesSquare, external: true, keywords: ["day 2", "buttons", "labels", "cta"] },
+  { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true, keywords: ["quiz", "questions", "diagnostic", "scoring", "lead gen"] },
+  { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },
+  { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true, keywords: ["results", "advisor", "ai", "prompts"] },
   {
     title: "Typography",
     url: "/owner-console/typography",
@@ -61,7 +61,7 @@ const items: NavItem[] = [
     external: true,
     keywords: ["font", "size", "heading", "text"],
   },
-  { title: "Coupons", url: "/owner-console/coupons", icon: Tag, external: true },
+  { title: "Coupons", url: "/owner-console/coupons", icon: Tag, external: true, keywords: ["discount", "promo code", "voucher", "coupon"] },
   {
     title: "Premium upsell",
     url: "/owner-console/premium-upsell",
@@ -69,8 +69,29 @@ const items: NavItem[] = [
     external: true,
     keywords: ["upsell", "invite", "upgrade", "day 2"],
   },
-  { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy, external: true },
-  { title: "Nav tips", url: "/owner-console/nav-tips", icon: HelpCircle, external: true },
+  { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy, external: true, keywords: ["rewards", "points", "ladder", "tiers", "prizes", "redeem"] },
+  {
+    title: "Product tour & nav tips",
+    url: "/owner-console/nav-tips",
+    icon: HelpCircle,
+    external: true,
+    keywords: [
+      "product tour",
+      "tour",
+      "walkthrough",
+      "guided tour",
+      "onboarding",
+      "first run",
+      "welcome",
+      "tooltip",
+      "tooltips",
+      "nav tips",
+      "hints",
+      "driver",
+      "popover",
+      "intro",
+    ],
+  },
   {
     title: "Nav info popovers",
     url: "/owner-console/nav-info-popovers",
@@ -78,7 +99,7 @@ const items: NavItem[] = [
     external: true,
     keywords: ["what is this", "training", "community", "events", "popover", "info"],
   },
-  { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true },
+  { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true, keywords: ["training", "community", "events", "tagline", "headings", "access"] },
   {
     title: "LeadTree AI prompts",
     url: "/owner-console/mentor-prompts",
@@ -93,8 +114,8 @@ const items: NavItem[] = [
     external: true,
     keywords: ["system prompt", "mentor", "copilot", "max tokens", "heading", "fallback"],
   },
-  { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true },
-  { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true },
+  { title: "Feature extractor", url: "/feature-extractor", icon: Sparkles, external: true, keywords: ["features", "extract", "audit"] },
+  { title: "Requirements checklist", url: "/requirements-checklist", icon: ClipboardCheck, external: true, keywords: ["checklist", "requirements", "launch"] },
   {
     title: "QA challenge runner",
     url: "/admin/qa-run",
@@ -112,8 +133,8 @@ const items: NavItem[] = [
 ];
 
 const siteItems: NavItem[] = [
-  { title: "Landing page", url: "/", icon: Home, external: true },
-  { title: "Waitlist thanks (preview)", url: "/waitlist/thanks?preview=1", icon: Eye, external: true },
+  { title: "Landing page", url: "/", icon: Home, external: true, keywords: ["home", "landing", "public site"] },
+  { title: "Waitlist thanks (preview)", url: "/waitlist/thanks?preview=1", icon: Eye, external: true, keywords: ["waitlist", "thanks", "confirmation"] },
   {
     title: "Course Sales Page",
     url: "/owner-console/premium-page",
@@ -121,8 +142,8 @@ const siteItems: NavItem[] = [
     external: true,
     keywords: ["premium page", "course", "sales", "enrol", "pricing", "497"],
   },
-  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit },
-  { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit },
+  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit, keywords: ["unlock", "gate", "day 2", "day 3", "locked"] },
+  { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit, keywords: ["prompts", "builder", "ai", "day prompts"] },
   {
     title: "Referral settings",
     url: "/owner-console/referral-settings",
@@ -143,10 +164,13 @@ const siteItems: NavItem[] = [
 ];
 
 const matches = (item: NavItem, query: string) => {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  if (item.title.toLowerCase().includes(q)) return true;
-  return (item.keywords ?? []).some((k) => k.toLowerCase().includes(q));
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? [])]
+    .join(" ")
+    .toLowerCase();
+  // every word typed must appear somewhere, so "tour tips" and "product tour" both match
+  return q.split(/\s+/).every((word) => haystack.includes(word));
 };
 
 export function AdminSidebar() {

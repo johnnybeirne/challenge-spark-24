@@ -61,7 +61,7 @@ const items: NavItem[] = [
     external: true,
     keywords: ["font", "size", "heading", "text"],
   },
-  { title: "Coupons", url: "/owner-console/coupons", icon: Tag, external: true },
+  { title: "Coupons", url: "/owner-console/coupons", icon: Tag, external: true, keywords: ["discount", "promo code", "voucher", "coupon"] },
   {
     title: "Premium upsell",
     url: "/owner-console/premium-upsell",

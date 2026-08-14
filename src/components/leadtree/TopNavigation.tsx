@@ -177,13 +177,9 @@ const TopNavigation = () => {
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => navigate("/profile")}>
                 <UserIcon className="mr-2 h-4 w-4" />
-                View profile
+                Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/profile")}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit profile
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/profile")}>
+              <DropdownMenuItem onClick={() => navigate("/notifications")}>
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>

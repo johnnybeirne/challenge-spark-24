@@ -75,8 +75,8 @@ const items: NavItem[] = [
     url: "/owner-console/nav-tips",
     icon: HelpCircle,
     external: true,
-    keywords: ["user tour", "product tour", "nav tips"],
     keywords: [
+      "user tour",
       "product tour",
       "tour",
       "walkthrough",

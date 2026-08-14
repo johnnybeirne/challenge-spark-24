@@ -142,8 +142,8 @@ const siteItems: NavItem[] = [
     external: true,
     keywords: ["premium page", "course", "sales", "enrol", "pricing", "497"],
   },
-  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit },
-  { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit },
+  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit, keywords: ["unlock", "gate", "day 2", "day 3", "locked"] },
+  { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit, keywords: ["prompts", "builder", "ai", "day prompts"] },
   {
     title: "Referral settings",
     url: "/owner-console/referral-settings",
@@ -164,10 +164,13 @@ const siteItems: NavItem[] = [
 ];
 
 const matches = (item: NavItem, query: string) => {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  if (item.title.toLowerCase().includes(q)) return true;
-  return (item.keywords ?? []).some((k) => k.toLowerCase().includes(q));
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? [])]
+    .join(" ")
+    .toLowerCase();
+  // every word typed must appear somewhere, so "tour tips" and "product tour" both match
+  return q.split(/\s+/).every((word) => haystack.includes(word));
 };
 
 export function AdminSidebar() {

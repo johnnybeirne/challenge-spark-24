@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { defaultMemory, mergeMemory } from "@/lib/personalisation";
 import aiAvatar from "@/assets/ai-avatar.png";
-import { LeadTreeIcon } from "@/components/LeadTreeIcon";
+
 
 const REF_SESSION_KEY = "challengeos_ref";
 const PARTNER_REF_KEY = "challengeos_partner_ref";

@@ -71,10 +71,11 @@ const items: NavItem[] = [
   },
   { title: "Rewards ladder", url: "/owner-console/rewards-ladder", icon: Trophy, external: true, keywords: ["rewards", "points", "ladder", "tiers", "prizes", "redeem"] },
   {
-    title: "Product tour & nav tips",
+    title: "User Tour",
     url: "/owner-console/nav-tips",
     icon: HelpCircle,
     external: true,
+    keywords: ["user tour", "product tour", "nav tips"],
     keywords: [
       "product tour",
       "tour",

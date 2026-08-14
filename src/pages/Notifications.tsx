@@ -1,10 +1,15 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Sparkles, Trophy, Copy } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { markAllRead, markRead } from "@/lib/notifications";
+import { useAppState } from "@/context/AppContext";
+import { getNextReward, pointRewards } from "@/lib/points";
+import { getReferralUrl, cn } from "@/lib/utils";
+import { ReferralLinkField } from "@/components/ReferralLinkField";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const formatWhen = (iso: string) => {
   const d = new Date(iso);
@@ -15,6 +20,84 @@ const formatWhen = (iso: string) => {
   const h = Math.round(m / 60);
   if (h < 24) return `${h}h ago`;
   return d.toLocaleString();
+};
+
+const PointsReminder = () => {
+  const { state } = useAppState();
+  const [copied, setCopied] = useState(false);
+  const points = state.points?.total ?? 0;
+  const nextReward = getNextReward(points);
+  const allUnlocked = !nextReward && pointRewards.length > 0;
+
+  const inviteCode = state.user?.inviteCode ?? "";
+  const referralLink = getReferralUrl("/", inviteCode);
+
+  const copyLink = async () => {
+    if (!referralLink) return;
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      toast.success("Link copied");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  return (
+    <section className="mb-6 rounded-2xl border border-border bg-gradient-to-br from-primary/5 to-background p-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-xs text-muted-foreground">Your points</p>
+            <p className="text-2xl font-bold leading-none text-foreground">
+              {points}
+              <span className="ml-1 text-sm font-medium text-muted-foreground">pts</span>
+            </p>
+          </div>
+        </div>
+        <div className="ml-auto min-w-0">
+          {allUnlocked ? (
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-emerald-600">
+              <Trophy className="h-4 w-4" />
+              <span className="text-sm font-semibold">All rewards unlocked</span>
+            </div>
+          ) : nextReward ? (
+            <div className="text-right">
+              <p className="text-sm font-semibold text-foreground">
+                {nextReward.points - points} points to go
+              </p>
+              <p className="text-xs text-muted-foreground">
+                to reach {nextReward.title}
+              </p>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {referralLink && (
+        <div className="mt-4">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
+            Invite friends to earn more points
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReferralLinkField url={referralLink} onCopied={() => setCopied(true)} />
+            <Button
+              size="sm"
+              className="h-9 shrink-0 bg-primary font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white"
+              onClick={copyLink}
+            >
+              {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
 };
 
 const Notifications = () => {
@@ -30,6 +113,7 @@ const Notifications = () => {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
+      <PointsReminder />
       <header className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Notifications</h1>

@@ -22,9 +22,9 @@ import { useNavTour } from "@/hooks/useNavTour";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
-  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites" },
-  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards" },
-  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources" },
+  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites",   tourKey: "tour_invites" },
+  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards",   tourKey: "tour_rewards" },
+  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources", tourKey: "tour_resources" },
 ];
 
 const withTip = (tip: string, children: React.ReactNode) => {

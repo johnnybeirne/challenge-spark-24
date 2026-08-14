@@ -3,7 +3,6 @@ import {
   Users,
   Gift,
   BookOpen,
-  Settings,
   LifeBuoy,
   LogOut,
   Check,
@@ -233,12 +232,6 @@ const LeftSidebar = () => {
 
         <div className="-mx-6 border-t border-[#E5E7EB] px-4 py-4">
           <nav className="space-y-0.5">
-            {withTip(
-              tip("nav_settings"),
-              <Link to="/profile" data-tour="nav_settings" className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-[#1F2937] hover:bg-[#F7F8FA]">
-                <Settings className="h-4 w-4" strokeWidth={1.75} /> Settings
-              </Link>,
-            )}
             <button
               type="button"
               onClick={() => startTour()}

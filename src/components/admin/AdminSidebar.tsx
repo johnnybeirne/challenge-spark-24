@@ -97,13 +97,6 @@ const items: NavItem[] = [
       "intro",
     ],
   },
-  {
-    title: "Nav info popovers",
-    url: "/owner-console/nav-info-popovers",
-    icon: HelpCircle,
-    external: true,
-    keywords: ["what is this", "training", "community", "events", "popover", "info"],
-  },
   { title: "Access pages", url: "/owner-console/access-pages", icon: FileEdit, external: true, keywords: ["training", "community", "events", "tagline", "headings", "access"] },
   {
     title: "LeadTree AI prompts",

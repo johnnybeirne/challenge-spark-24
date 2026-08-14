@@ -89,7 +89,6 @@ import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
 import AdminUserTour from "@/pages/AdminUserTour";
-import AdminNavInfoPopovers from "@/pages/AdminNavInfoPopovers";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
 import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
@@ -297,7 +296,6 @@ const App = () => (
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
                 <Route path="user-tour" element={<AdminUserTour />} />
-                <Route path="nav-info-popovers" element={<AdminNavInfoPopovers />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="mentor-prompts" element={<AdminMentorPrompts />} />

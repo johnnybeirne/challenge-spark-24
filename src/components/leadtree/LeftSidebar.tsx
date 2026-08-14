@@ -147,6 +147,7 @@ const LeftSidebar = () => {
               const row = (
                 <li
                   key={d}
+                  data-tour={`tour_day_${d}`}
                   className={[
                     "relative rounded-[10px] pb-3 pl-6 pt-2 last:pb-0",
                     isActiveDay ? "border border-black bg-primary/10" : isCurrent ? "bg-primary/10" : "",

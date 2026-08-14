@@ -19,7 +19,13 @@ async function load() {
     .select("*")
     .order("sort_order");
   if (data) {
-    cache = data as NavTip[];
+    // one row per key: keep the first (lowest position) record
+    const seen = new Set<string>();
+    cache = (data as NavTip[]).filter((r) => {
+      if (seen.has(r.key)) return false;
+      seen.add(r.key);
+      return true;
+    });
     listeners.forEach((l) => l(cache!));
   }
 }

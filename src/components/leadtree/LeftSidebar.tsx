@@ -22,9 +22,9 @@ import { useNavTour } from "@/hooks/useNavTour";
 import { applyTooltipTokens, resolveFirstName } from "@/lib/tooltipTokens";
 
 const momentumLinks = [
-  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites" },
-  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards" },
-  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources" },
+  { to: "/invites",   label: "Invites",   icon: Users,    key: "nav_invites",   tourKey: "tour_invites" },
+  { to: "/rewards",   label: "Rewards",   icon: Gift,     key: "nav_rewards",   tourKey: "tour_rewards" },
+  { to: "/resources", label: "Resources", icon: BookOpen, key: "nav_resources", tourKey: "tour_resources" },
 ];
 
 const withTip = (tip: string, children: React.ReactNode) => {
@@ -205,7 +205,7 @@ const LeftSidebar = () => {
             Build Momentum
           </p>
           <nav className="space-y-1">
-            {momentumLinks.map(({ to, label, icon: Icon, key }) => {
+            {momentumLinks.map(({ to, label, icon: Icon, key, tourKey }) => {
               const active = pathname.startsWith(to);
               return (
                 <span key={to} className="contents">
@@ -213,7 +213,7 @@ const LeftSidebar = () => {
                     tip(key),
                     <NavLink
                       to={to}
-                      data-tour={key}
+                      data-tour={tourKey}
                       className={[
                         "flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm transition-colors",
                         active

@@ -24,9 +24,10 @@ const DashboardAssetsSection = () => {
         <p className="mt-1 text-sm text-muted-foreground">
           {t(
             "assets.intro",
-            "Everything you build in the challenge lands here, ready to download."
+            "Everything you build in the challenge lands here, ready to use."
           )}
         </p>
+
 
         <div className="mt-5 space-y-3">
           <div className="rounded-xl border border-border bg-background px-4 py-3">

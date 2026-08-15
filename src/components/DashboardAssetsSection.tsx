@@ -15,6 +15,26 @@ const DashboardAssetsSection = () => {
 
   const rawQuiz = state.challenge?.aiOutputs?.day2_s2_quiz;
 
+  // Day 1 Challenge Promise. Stored at ai_outputs.day1_promise. Newer rows
+  // hold a JSON string shaped { summary, promise }; older seeded rows hold a
+  // plain sentence string. Show only the promise sentence, or nothing.
+  const resolvePromise = (): string => {
+    const raw = state.challenge?.aiOutputs?.day1_promise;
+    if (!raw || typeof raw !== "string") return "";
+    const trimmed = raw.trim();
+    if (!trimmed) return "";
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === "object" && typeof parsed.promise === "string") {
+        return parsed.promise.trim();
+      }
+    } catch {
+      // not JSON — treat as a plain sentence string
+    }
+    return trimmed;
+  };
+  const promiseSentence = resolvePromise();
+
   return (
     <Card id="your-assets" className="scroll-mt-24 border-border bg-card shadow-sm">
       <CardContent className="p-5 sm:p-6">

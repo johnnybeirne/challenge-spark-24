@@ -276,7 +276,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string; andStop?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {

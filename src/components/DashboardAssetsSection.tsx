@@ -69,6 +69,8 @@ const DashboardAssetsSection = () => {
 
   const promiseSentence = resolvePromise();
 
+  const [openItem, setOpenItem] = useState<string>("");
+
   return (
     <Card id="your-assets" className="scroll-mt-24 border-border bg-card shadow-sm">
       <CardContent className="p-5 sm:p-6">
@@ -83,7 +85,13 @@ const DashboardAssetsSection = () => {
         </p>
 
 
-        <Accordion type="single" collapsible className="mt-5 w-full">
+        <Accordion
+          type="single"
+          collapsible
+          value={openItem}
+          onValueChange={setOpenItem}
+          className="mt-5 w-full"
+        >
           {(() => {
             // Assets in sequence. The badge is derived from position within the
             // day, so numbering restarts at Asset 1 for each new day.

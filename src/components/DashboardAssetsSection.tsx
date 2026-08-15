@@ -71,6 +71,20 @@ const DashboardAssetsSection = () => {
             </a>
           </div>
 
+          {promiseSentence && (
+            <div className="rounded-xl border border-border bg-background px-4 py-3">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                {t("assets.promise_badge", "Day 1")}
+              </p>
+              <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">
+                {t("assets.promise_title", "Your Challenge Promise")}
+              </p>
+              <p className="mt-1 text-sm leading-snug text-foreground">
+                {promiseSentence}
+              </p>
+            </div>
+          )}
+
           <div className="rounded-xl border border-border bg-background px-4 py-3">
             <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
               {t("assets.asset2_badge", "Asset 2")}

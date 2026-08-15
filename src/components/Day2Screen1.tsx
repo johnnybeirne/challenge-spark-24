@@ -224,29 +224,6 @@ const Day2Screen1 = () => {
     metaName.split(" ")[0] ||
     "";
 
-  // Archetype derived from the user's quiz result (if completed). Same mapping
-  // as DashboardArchetypeStrip - Pioneer / Architect / Authority.
-  const archetype = useMemo(() => {
-    const assessment = state.assessment as
-      | { diagnosticScore?: number; diagnosticLevel?: "low" | "mid" | "high" }
-      | null
-      | undefined;
-    if (!assessment) return "";
-    const score = assessment.diagnosticScore;
-    let tier: "low" | "mid" | "high" | null =
-      assessment.diagnosticLevel === "low" ||
-      assessment.diagnosticLevel === "mid" ||
-      assessment.diagnosticLevel === "high"
-        ? assessment.diagnosticLevel
-        : null;
-    if (!tier && typeof score === "number") {
-      const pct = Math.round((score / 9) * 100);
-      tier = pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
-    }
-    if (!tier) return "";
-    return tier === "high" ? "Authority" : tier === "mid" ? "Architect" : "Pioneer";
-  }, [state.assessment]);
-
   const { clientAvatar, problem, challengeOutcome, challengePromise, superpower } = useMemo(
     () => readDay1Values(state.challenge.aiOutputs),
     [state.challenge.aiOutputs],
@@ -361,7 +338,6 @@ const Day2Screen1 = () => {
             moment: "cards",
             inputs: {
               firstName,
-              archetype,
               audience: clientAvatar,
               superpower,
               problem,
@@ -383,7 +359,7 @@ const Day2Screen1 = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [firstName, archetype, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
+  }, [firstName, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
 
   const bodies = aiBodies ?? fallbackBodies;
 

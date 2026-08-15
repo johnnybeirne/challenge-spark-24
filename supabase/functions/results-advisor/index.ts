@@ -1,5 +1,5 @@
 // Results Advisor — answers a quiz taker's question on the Results page using
-// the knowledge base, tailors framing to their archetype, and gently steers
+// the knowledge base and gently steers
 // them toward the 3-Day Challenge.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 

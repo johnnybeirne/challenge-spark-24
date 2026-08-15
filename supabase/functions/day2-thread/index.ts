@@ -80,7 +80,6 @@ function fallback(reason: string, extra: Record<string, unknown> = {}): Response
 
 interface Day1Inputs {
   firstName?: string;
-  archetype?: string;
   audience?: string;
   superpower?: string;
   problem?: string;
@@ -106,7 +105,6 @@ function builderProfile(inputs: Day1Inputs) {
   const expertPhrase = sanitise(inputs.expertTypePhrase, 200) || formatExpertTypes(rawExpert);
   return {
     firstName: sanitise(inputs.firstName, 40),
-    archetype: sanitise(inputs.archetype, 40),
     audience: sanitise(inputs.audience),
     superpower: sanitise(inputs.superpower),
     problem: sanitise(inputs.problem),

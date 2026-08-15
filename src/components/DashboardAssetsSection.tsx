@@ -46,7 +46,7 @@ const DashboardAssetsSection = () => {
       .replace(/\.$/, "")
       .trim();
 
-  const resolvePromise = (): { fromState: string; toState: string } | { text: string } | null => {
+  const resolvePromise = (): { fromState: string; toState: string; soState?: string } | { text: string } | null => {
     const outputs = (state.challenge?.aiOutputs ?? {}) as Record<string, unknown>;
 
     const raw = outputs.day1_promise;
@@ -54,7 +54,8 @@ const DashboardAssetsSection = () => {
     if (parsed && typeof parsed === "object") {
       const f = typeof parsed.fromState === "string" ? noDash(parsed.fromState) : "";
       const tS = typeof parsed.toState === "string" ? noDash(parsed.toState) : "";
-      if (f && tS) return { fromState: f, toState: tS };
+      const sT = typeof parsed.soThat === "string" ? noDash(parsed.soThat) : "";
+      if (f && tS) return { fromState: f, toState: tS, soState: sT || undefined };
     }
 
     // Older stored promises: a single plain string, shown as stored.
@@ -78,10 +79,13 @@ const DashboardAssetsSection = () => {
     const pain = clean(setup.problem || memory.problem || "").toLowerCase();
     const result = clean(setup.outcome || memory.desiredOutcome || "").toLowerCase();
     const method = clean(setup.how || memory.method || "").toLowerCase();
+    const superpower = clean(setup.superpower || memory.superpower || "").toLowerCase();
     if (pain && result) {
+      const soState = superpower ? noDash(superpower) : (result ? noDash(`they ${result}`) : undefined);
       return {
         fromState: noDash(pain),
         toState: noDash(method ? `${result} with ${method}` : result),
+        soState,
       };
     }
 
@@ -154,6 +158,12 @@ const DashboardAssetsSection = () => {
                         <span className="font-bold text-foreground">"{promiseValue.fromState}"</span>
                         <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">To</span>
                         <span className="font-bold text-foreground">"{promiseValue.toState}"</span>
+                        {promiseValue.soState && (
+                          <>
+                            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">So that</span>
+                            <span className="font-bold text-foreground">"{promiseValue.soState}"</span>
+                          </>
+                        )}
                       </div>
                     ) : (
                       promiseValue.text

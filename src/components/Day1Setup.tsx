@@ -906,7 +906,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
   // mid-typing if the cache updates later in the same visit.
   const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
-  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string } | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string; soThat?: string } | null>(null);
 
   useEffect(() => {
     if (step !== 3) return;
@@ -927,6 +927,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             promise: parsed.promise,
             fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
             toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
+            soThat: typeof parsed.soThat === "string" ? parsed.soThat : undefined,
           });
           return;
         }
@@ -999,6 +1000,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       const promise = (data as any).promise;
       const fromState = (data as any).fromState;
       const toState = (data as any).toState;
+      const soThat = (data as any).soThat;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -1011,6 +1013,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               promise: promise.trim(),
               ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
               ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
+              ...(typeof soThat === "string" && soThat.trim() ? { soThat: soThat.trim() } : {}),
             }),
 
             day1_promise_key: cacheKey,
@@ -2271,11 +2274,15 @@ const Day1Setup = ({ onComplete }: Props) => {
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
+          const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
           const fromState = noDash(step7Promise?.fromState || fallbackFrom);
           const toState = noDash(step7Promise?.toState || fallbackTo);
-          const promise = fromState && toState
-            ? `from "${fromState}" to "${toState}"`
-            : (step7Promise?.promise || null);
+          const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
+          const promise = fromState && toState && soThat
+            ? `from "${fromState}" to "${toState}" so that "${soThat}"`
+            : fromState && toState
+              ? `from "${fromState}" to "${toState}"`
+              : (step7Promise?.promise || null);
 
 
           // Highlight helper for the static reveal — renders the user-derived
@@ -2373,6 +2380,12 @@ const Day1Setup = ({ onComplete }: Props) => {
                                 <span className="block font-bold text-foreground">"{fromState}"</span>
                                 <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">To</span>
                                 <span className="block font-bold text-foreground">"{toState}"</span>
+                                {soThat && (
+                                  <>
+                                    <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">So that</span>
+                                    <span className="block font-bold text-foreground">"{soThat}"</span>
+                                  </>
+                                )}
                               </>
                             ) : (
                               <p className="leading-snug">{promise}</p>

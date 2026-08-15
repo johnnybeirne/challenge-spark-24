@@ -149,7 +149,8 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
     "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
     "3. toState: the audience's future state after the transformation, written in the builder's own words, reflecting the outcome and how the builder helps. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "4. promise: the two states joined as a single plain sentence in this exact shape: from [fromState] to [toState]. Nothing before the word from and nothing after the toState.",
+    "4. soThat: the ultimate benefit the audience gets from the transformation, written in the builder's own words and reflecting their superpower. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "5. promise: the three parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat]. Nothing before the word from and nothing after the soThat.",
     "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
   ].filter(Boolean).join("\n");
 
@@ -185,12 +186,16 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
                 type: "string",
                 description: "The audience's future state after the transformation, in the builder's own words. No quotes, no dashes.",
               },
+              soThat: {
+                type: "string",
+                description: "The ultimate benefit the audience gets from the transformation, in the builder's own words and reflecting their superpower. No quotes, no dashes.",
+              },
               promise: {
                 type: "string",
-                description: "The two states joined as: from [fromState] to [toState].",
+                description: "The three parts joined as: from [fromState] to [toState] so that [soThat].",
               },
             },
-            required: ["summary", "fromState", "toState", "promise"],
+            required: ["summary", "fromState", "toState", "soThat", "promise"],
             additionalProperties: false,
 
           },
@@ -215,7 +220,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {
@@ -237,13 +242,14 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     : [];
   const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
   const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
+  const soThat = typeof parsed.soThat === "string" ? tidy(parsed.soThat) : "";
 
-  if (summary.length < 2 || !fromState || !toState) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState || !soThat) return fallback("incomplete-tool-output");
 
-  const promise = `from "${fromState}" to "${toState}"`;
+  const promise = `from "${fromState}" to "${toState}" so that "${soThat}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise, fromState, toState }),
+    JSON.stringify({ summary, promise, fromState, toState, soThat }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }

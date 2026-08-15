@@ -122,19 +122,11 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 }
 
 // --- Knowledge base retrieval ------------------------------------------------
-// Pulls a few short reference docs to guide HOW the promise is phrased.
-// Never surfaced verbatim: the prompt treats it as private craft guidance.
-function buildTsQuery(q: string): string {
-  return q
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 10)
-    .join(" ");
-}
+// Targeted single document load. Only the promise writing reference is read,
+// and only for promise generation. It is method guidance, never output text.
+const PROMISE_REFERENCE_SLUG = "promise-writing-reference";
 
-async function fetchPromiseKb(query: string): Promise<string> {
+async function fetchPromiseReference(): Promise<string> {
   try {
     const url = Deno.env.get("SUPABASE_URL");
     const key = Deno.env.get("SUPABASE_ANON_KEY");
@@ -142,41 +134,21 @@ async function fetchPromiseKb(query: string): Promise<string> {
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
     const sb = createClient(url, key);
 
-    const seen = new Map<string, { title: string; content: string }>();
-
-    // 1) Craft docs explicitly about promises / transformation.
-    const { data: tagged } = await sb
+    const { data, error } = await sb
       .from("kb_documents")
-      .select("slug,title,content")
+      .select("content")
+      .eq("slug", PROMISE_REFERENCE_SLUG)
       .eq("is_active", true)
-      .overlaps("tags", ["promise", "transformation", "outcome", "positioning", "offer"])
-      .limit(3);
-    for (const d of tagged ?? []) seen.set(d.slug, d);
+      .maybeSingle();
 
-    // 2) Docs matching the participant's own language.
-    const tsq = buildTsQuery(query);
-    if (tsq) {
-      const { data: hits } = await sb
-        .from("kb_documents")
-        .select("slug,title,content")
-        .eq("is_active", true)
-        .in("stage", ["challenge", "all"])
-        .textSearch("search_tsv", tsq, { type: "websearch", config: "english" })
-        .limit(3);
-      for (const d of hits ?? []) if (!seen.has(d.slug)) seen.set(d.slug, d);
-    }
-
-    const docs = [...seen.values()].slice(0, 4);
-    if (docs.length === 0) return "";
-
-    return docs
-      .map((d) => `### ${d.title}\n${(d.content || "").slice(0, 900)}`)
-      .join("\n\n");
+    if (error || !data?.content) return "";
+    return String(data.content).slice(0, 6000);
   } catch (e) {
-    console.error("kb retrieval failed", e);
+    console.error("promise reference load failed", e);
     return "";
   }
 }
+
 
 async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const audience = sanitise(inputs.audience);

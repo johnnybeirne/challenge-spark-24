@@ -15,6 +15,26 @@ const DashboardAssetsSection = () => {
 
   const rawQuiz = state.challenge?.aiOutputs?.day2_s2_quiz;
 
+  // Day 1 Challenge Promise. Stored at ai_outputs.day1_promise. Newer rows
+  // hold a JSON string shaped { summary, promise }; older seeded rows hold a
+  // plain sentence string. Show only the promise sentence, or nothing.
+  const resolvePromise = (): string => {
+    const raw = state.challenge?.aiOutputs?.day1_promise;
+    if (!raw || typeof raw !== "string") return "";
+    const trimmed = raw.trim();
+    if (!trimmed) return "";
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === "object" && typeof parsed.promise === "string") {
+        return parsed.promise.trim();
+      }
+    } catch {
+      // not JSON — treat as a plain sentence string
+    }
+    return trimmed;
+  };
+  const promiseSentence = resolvePromise();
+
   return (
     <Card id="your-assets" className="scroll-mt-24 border-border bg-card shadow-sm">
       <CardContent className="p-5 sm:p-6">
@@ -50,6 +70,20 @@ const DashboardAssetsSection = () => {
               {t("assets.asset1_cta", "View your roadmap")} &rarr;
             </a>
           </div>
+
+          {promiseSentence && (
+            <div className="rounded-xl border border-border bg-background px-4 py-3">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                {t("assets.promise_badge", "Day 1")}
+              </p>
+              <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">
+                {t("assets.promise_title", "Your Challenge Promise")}
+              </p>
+              <p className="mt-1 text-sm leading-snug text-foreground">
+                {promiseSentence}
+              </p>
+            </div>
+          )}
 
           <div className="rounded-xl border border-border bg-background px-4 py-3">
             <p className="text-[11px] font-bold uppercase tracking-wider text-primary">

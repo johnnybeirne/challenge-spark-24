@@ -86,14 +86,21 @@ const DashboardRoadmapSection = () => {
         "roadmap.pillar3_title",
         "Create a referral loop so your challenge grows through the people doing it."
       ),
-      copy: fill(
-        t(
-          "roadmap.pillar3_copy",
-          "Every person who finishes gets a simple reason to bring someone like them along. Your challenge then grows through {audience} sharing it, rather than you chasing new names."
-        )
-      ),
+      locked: !day3Done,
+      copy: day3Done
+        ? fill(
+            t(
+              "roadmap.pillar3_copy",
+              "Every person who finishes gets a simple reason to bring someone like them along. Your challenge then grows through {audience} sharing it, rather than you chasing new names."
+            )
+          )
+        : t(
+            "roadmap.pillar3_locked_copy",
+            "This pillar opens when you complete Day 3."
+          ),
     },
   ];
+
 
   return (
     <Card id="your-roadmap" className="scroll-mt-24 border-border bg-card shadow-sm">

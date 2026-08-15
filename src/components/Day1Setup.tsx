@@ -2276,16 +2276,27 @@ const Day1Setup = ({ onComplete }: Props) => {
             s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
           const withStopEnding = (s: string) =>
             !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
+          // The four parts always describe the audience in the third person.
+          const thirdPerson = (s: string) =>
+            !s
+              ? ""
+              : s
+                  .replace(/\byourselves\b/gi, "themselves")
+                  .replace(/\byourself\b/gi, "themselves")
+                  .replace(/\byour\b/gi, "their")
+                  .replace(/\byou are\b/gi, "they are")
+                  .replace(/\byou\b/gi, "they");
           const fallbackFrom = pain ? noDash(pain) : "";
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
           const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
           const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
-          const fromState = noDash(step7Promise?.fromState || fallbackFrom);
-          const toState = noDash(step7Promise?.toState || fallbackTo);
-          const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
-          const andStop = withStopEnding(noDash(step7Promise?.andStop || fallbackAndStop));
+          const fromState = thirdPerson(noDash(step7Promise?.fromState || fallbackFrom));
+          const toState = thirdPerson(noDash(step7Promise?.toState || fallbackTo));
+          const soThat = thirdPerson(noDash(step7Promise?.soThat || fallbackSoThat));
+          const andStop = withStopEnding(thirdPerson(noDash(step7Promise?.andStop || fallbackAndStop)));
+
           const promise = fromState && toState && soThat && andStop
             ? `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`
             : fromState && toState
@@ -2385,21 +2396,22 @@ const Day1Setup = ({ onComplete }: Props) => {
                             {fromState && toState ? (
                               <div className="space-y-4">
                                 {[
-                                  { label: "From", value: fromState },
-                                  { label: "To", value: toState },
-                                  ...(soThat ? [{ label: "So that", value: soThat }] : []),
-                                  ...(andStop ? [{ label: "And stop", value: andStop }] : []),
+                                  { label: "FROM", value: fromState, bold: true },
+                                  { label: "TO", value: toState, bold: true },
+                                  ...(soThat ? [{ label: "SO THAT", value: soThat, bold: true }] : []),
+                                  ...(andStop ? [{ label: "AND STOP", value: andStop, bold: false }] : []),
                                 ].map((part) => (
                                   <div key={part.label}>
                                     <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
                                       {part.label}
                                     </p>
-                                    <p className="mt-1 leading-snug text-foreground">
+                                    <p className={`mt-1 leading-snug text-foreground ${part.bold ? "font-bold" : "font-normal"}`}>
                                       &ldquo;{part.value}&rdquo;
                                     </p>
                                   </div>
                                 ))}
                               </div>
+
                             ) : (
                               <p className="leading-snug">{promise}</p>
                             )}

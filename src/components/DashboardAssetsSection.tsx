@@ -160,19 +160,25 @@ const DashboardAssetsSection = () => {
                 title: t("assets.promise_title", "Your Challenge Promise"),
                 body: (
                   <div className="mt-1 text-sm leading-snug text-foreground">
+                    <p className="mb-3 text-sm text-muted-foreground">
+                      {t(
+                        "assets.promise_heading",
+                        "This is the promise your challenge makes to the people who take your challenge."
+                      )}
+                    </p>
                     {"fromState" in promiseValue ? (
                       <div className="space-y-3">
                         {[
-                          { label: "From", value: promiseValue.fromState },
-                          { label: "To", value: promiseValue.toState },
-                          ...(promiseValue.soState ? [{ label: "So that", value: promiseValue.soState }] : []),
-                          ...(promiseValue.andStop ? [{ label: "And stop", value: promiseValue.andStop }] : []),
+                          { label: "FROM", value: promiseValue.fromState, bold: true },
+                          { label: "TO", value: promiseValue.toState, bold: true },
+                          ...(promiseValue.soState ? [{ label: "SO THAT", value: promiseValue.soState, bold: true }] : []),
+                          ...(promiseValue.andStop ? [{ label: "AND STOP", value: promiseValue.andStop, bold: false }] : []),
                         ].map((part) => (
                           <div key={part.label}>
                             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                               {part.label}
                             </p>
-                            <p className="mt-0.5 text-base leading-snug text-foreground">
+                            <p className={`mt-0.5 text-base leading-snug text-foreground ${part.bold ? "font-bold" : "font-normal"}`}>
                               &ldquo;{part.value}&rdquo;
                             </p>
                           </div>
@@ -182,6 +188,7 @@ const DashboardAssetsSection = () => {
                       promiseValue.text
                     )}
                   </div>
+
 
                 ),
               });

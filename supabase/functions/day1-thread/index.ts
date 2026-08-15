@@ -203,6 +203,8 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     "5. andStop: the pain that ends for the audience, ending with either the words 'from happening' or the words 'from continuing', whichever fits. Example shape only: quiet weeks from continuing. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
     "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop]. Nothing before the word from and nothing after the andStop.",
     "All four parts describe the audience, never the builder. All four parts are always required and the and stop part is never omitted.",
+    "Write fromState, toState, soThat and andStop in the third person, describing the audience as 'they' and 'their'. Never address the audience as 'you' or 'your' in those four parts.",
+
     "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
   ].filter(Boolean).join("\n");
 

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowUp, ArrowUpCircle } from "lucide-react";
+import { ArrowUp, ArrowUpCircle, Lock } from "lucide-react";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";

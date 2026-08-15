@@ -45,7 +45,7 @@ const useCountUp = (target: number, ready: boolean) => {
 };
 
 const MILESTONES = [
-  { label: "Signed up", points: 50 },
+  { label: "You signed up", points: 50 },
   { label: "Day 1 complete", points: 100 },
   { label: "Day 2 complete", points: 150 },
   { label: "Day 3 complete", points: 200 },

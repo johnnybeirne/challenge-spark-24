@@ -2383,18 +2383,24 @@ const Day1Setup = ({ onComplete }: Props) => {
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                           <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
                             {fromState && toState ? (
-                              <>
-                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">From</span>
-                                <span className="block font-bold text-foreground">"{fromState}"</span>
-                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">To</span>
-                                <span className="block font-bold text-foreground">"{toState}"</span>
+                              <p className="leading-snug">
+                                <span className="font-normal">from </span>
+                                <span className="font-bold text-foreground">"{fromState}"</span>
+                                <span className="font-normal"> to </span>
+                                <span className="font-bold text-foreground">"{toState}"</span>
                                 {soThat && (
                                   <>
-                                    <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">So that</span>
-                                    <span className="block font-bold text-foreground">"{soThat}"</span>
+                                    <span className="font-normal"> so that </span>
+                                    <span className="font-bold text-foreground">"{soThat}"</span>
                                   </>
                                 )}
-                              </>
+                                {andStop && (
+                                  <>
+                                    <span className="font-normal"> and stop </span>
+                                    <span className="font-normal text-foreground">"{andStop}"</span>
+                                  </>
+                                )}
+                              </p>
                             ) : (
                               <p className="leading-snug">{promise}</p>
                             )}

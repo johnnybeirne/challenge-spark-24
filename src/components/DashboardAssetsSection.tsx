@@ -110,6 +110,7 @@ const DashboardAssetsSection = () => {
                   </p>
                   <a
                     href="#your-roadmap"
+                    onClick={() => setOpenItem("")}
                     className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
                   >
                     {t("assets.asset1_cta", "View your roadmap")} &rarr;

@@ -299,13 +299,20 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
   const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
   const soThat = typeof parsed.soThat === "string" ? tidy(parsed.soThat) : "";
+  let andStop = typeof parsed.andStop === "string" ? tidy(parsed.andStop) : "";
+  // The and stop part always closes with one of the two allowed endings.
+  if (andStop && !/\bfrom (happening|continuing)$/i.test(andStop)) {
+    andStop = `${andStop} from continuing`;
+  }
 
-  if (summary.length < 2 || !fromState || !toState || !soThat) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState || !soThat || !andStop) {
+    return fallback("incomplete-tool-output");
+  }
 
-  const promise = `from "${fromState}" to "${toState}" so that "${soThat}"`;
+  const promise = `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise, fromState, toState, soThat }),
+    JSON.stringify({ summary, promise, fromState, toState, soThat, andStop }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }

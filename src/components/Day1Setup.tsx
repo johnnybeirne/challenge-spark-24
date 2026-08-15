@@ -2383,27 +2383,27 @@ const Day1Setup = ({ onComplete }: Props) => {
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                           <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
                             {fromState && toState ? (
-                              <p className="leading-snug">
-                                <span className="font-normal">from </span>
-                                <span className="font-bold text-foreground">"{fromState}"</span>
-                                <span className="font-normal"> to </span>
-                                <span className="font-bold text-foreground">"{toState}"</span>
-                                {soThat && (
-                                  <>
-                                    <span className="font-normal"> so that </span>
-                                    <span className="font-bold text-foreground">"{soThat}"</span>
-                                  </>
-                                )}
-                                {andStop && (
-                                  <>
-                                    <span className="font-normal"> and stop </span>
-                                    <span className="font-normal text-foreground">"{andStop}"</span>
-                                  </>
-                                )}
-                              </p>
+                              <div className="space-y-4">
+                                {[
+                                  { label: "From", value: fromState },
+                                  { label: "To", value: toState },
+                                  ...(soThat ? [{ label: "So that", value: soThat }] : []),
+                                  ...(andStop ? [{ label: "And stop", value: andStop }] : []),
+                                ].map((part) => (
+                                  <div key={part.label}>
+                                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
+                                      {part.label}
+                                    </p>
+                                    <p className="mt-1 font-bold leading-snug text-foreground">
+                                      &ldquo;{part.value}&rdquo;
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
                             ) : (
                               <p className="leading-snug">{promise}</p>
                             )}
+
                           </div>
 
                         </div>

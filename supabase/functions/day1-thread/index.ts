@@ -164,35 +164,45 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("missing-inputs");
   }
 
-  const kb = await fetchPromiseKb([audience, problem, outcome, how].join(" "));
+  const reference = await fetchPromiseReference();
 
+  const echoGuard = reference
+    ? [
+        "PRIVATE METHOD REFERENCE. The material below teaches you HOW to construct a four part transformation promise.",
+        "It is method guidance you learn from. It is never text you repeat.",
+        "You must build this promise fresh, from this specific participant's own answers.",
+        "Never copy, quote, or lightly reword any example, phrase or line from the reference.",
+        "Every example field in the reference is a pattern to learn from, not content to reuse.",
+        "Never mention the reference and never hint that it exists.",
+        "The participant's own audience, problem, outcome and method are the source of the actual words.",
+        "",
+        reference,
+        "",
+        "END OF PRIVATE METHOD REFERENCE.",
+        "",
+      ].join("\n")
+    : null;
 
   const userPrompt = [
-    kb
-      ? [
-          "Private craft guidance from the internal knowledge base. Use it only to judge how a strong transformation promise is shaped.",
-          "Never quote it, never copy its phrasing, never mention that it exists. The words in the promise must come from the builder's answers.",
-          kb,
-          "End of craft guidance.",
-          "",
-        ].join("\n")
-      : null,
+    echoGuard,
     firstName ? `Builder's first name: ${firstName}` : null,
 
     `Audience (their words): ${audience}`,
-    superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
-    trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,
+    superpower ? `Builder's superpower, what they do better than anyone (their words): ${superpower}` : null,
+    trigger ? `Trigger moment, what makes the 3 days the right time (their words): ${trigger}` : null,
     `Problem the audience is stuck on (their words): ${problem}`,
-    `Process — how the builder takes them through it (their words): ${how}`,
-    `Outcome — what they walk away with after Day 3 (their words): ${outcome}`,
+    `Process, how the builder takes them through it (their words): ${how}`,
+    `Outcome, what they walk away with after Day 3 (their words): ${outcome}`,
     challengeTypeLabel ? `Challenge shape: ${challengeTypeLabel}` : null,
     "",
     "Use the compose_challenge_promise tool to return:",
     "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
     "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
     "3. toState: the audience's future state after the transformation, written in the builder's own words, reflecting the outcome and how the builder helps. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "4. soThat: the ultimate benefit the audience gets from the transformation, written in the builder's own words and reflecting their superpower. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "5. promise: the three parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat]. Nothing before the word from and nothing after the soThat.",
+    "4. soThat: the deeper payoff the audience gets from the transformation, one level below the surface result, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "5. andStop: the pain that ends for the audience, ending with either the words 'from happening' or the words 'from continuing', whichever fits. Example shape only: quiet weeks from continuing. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop]. Nothing before the word from and nothing after the andStop.",
+    "All four parts describe the audience, never the builder. All four parts are always required and the and stop part is never omitted.",
     "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
   ].filter(Boolean).join("\n");
 

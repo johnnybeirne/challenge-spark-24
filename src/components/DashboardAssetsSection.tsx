@@ -112,14 +112,23 @@ const DashboardAssetsSection = () => {
     const method = clean(setup.how || memory.method || "").toLowerCase();
     const superpower = clean(setup.superpower || memory.superpower || "").toLowerCase();
     if (pain && result) {
-      const soState = superpower ? noDash(superpower) : (result ? noDash(`they ${result}`) : undefined);
+      // Only fold the method into the TO line when it reads as a short phrase,
+      // not when the owner wrote a full sentence about what they do.
+      const methodUsable =
+        method && method.split(/\s+/).length <= 6 && !/^(i|we)\b/i.test(method);
+      const soState = superpower
+        ? thirdPerson(noDash(superpower))
+        : result
+          ? thirdPerson(noDash(`they ${result}`))
+          : undefined;
       return {
-        fromState: noDash(pain),
-        toState: noDash(method ? `${result} with ${method}` : result),
+        fromState: thirdPerson(noDash(pain)),
+        toState: thirdPerson(noDash(methodUsable ? `${result} with ${method}` : result)),
         soState,
-        andStop: withStopEnding(noDash(pain)),
+        andStop: withStopEnding(thirdPerson(noDash(pain))),
       };
     }
+
 
     return null;
   };

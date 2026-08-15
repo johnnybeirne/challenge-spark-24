@@ -161,18 +161,24 @@ const DashboardAssetsSection = () => {
                 body: (
                   <div className="mt-1 text-sm leading-snug text-foreground">
                     {"fromState" in promiseValue ? (
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">From</span>
+                      <p className="leading-snug">
+                        <span className="font-normal">from </span>
                         <span className="font-bold text-foreground">"{promiseValue.fromState}"</span>
-                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">To</span>
+                        <span className="font-normal"> to </span>
                         <span className="font-bold text-foreground">"{promiseValue.toState}"</span>
                         {promiseValue.soState && (
                           <>
-                            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">So that</span>
+                            <span className="font-normal"> so that </span>
                             <span className="font-bold text-foreground">"{promiseValue.soState}"</span>
                           </>
                         )}
-                      </div>
+                        {promiseValue.andStop && (
+                          <>
+                            <span className="font-normal"> and stop </span>
+                            <span className="font-normal text-foreground">"{promiseValue.andStop}"</span>
+                          </>
+                        )}
+                      </p>
                     ) : (
                       promiseValue.text
                     )}

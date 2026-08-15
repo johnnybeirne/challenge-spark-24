@@ -3,6 +3,13 @@ import { ArrowUp, ArrowUpCircle } from "lucide-react";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+
 
 /**
  * Standalone "Your Roadmap" section on the challenge dashboard.

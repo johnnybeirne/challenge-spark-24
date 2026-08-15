@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
+import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { Card, CardContent } from "@/components/ui/card";
 
 /**

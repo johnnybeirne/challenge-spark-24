@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
-import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
+import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;

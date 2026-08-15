@@ -1,37 +1,88 @@
+import { useMemo } from "react";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAppState } from "@/context/AppContext";
 
 /**
  * Standalone "Your Roadmap" section on the challenge dashboard.
- * No archetype content of any kind. All participant facing copy is
- * owner editable via site_content (page "dashboard", section "roadmap").
+ * Three fixed pillars (labels and titles are owner editable and identical for
+ * every participant). Only the description under each pillar is personalised,
+ * by filling owner editable sentence templates with this participant's own
+ * Day 1 answers. Tidy values come from user_memory (state.memory) and fall back
+ * to the Day 1 wizard draft held in challenge.aiOutputs.
+ * No archetype content of any kind.
  */
+
+const clean = (v: unknown): string =>
+  typeof v === "string" ? v.trim().replace(/[.!?]+$/, "") : "";
+
+const lower = (v: string) => (v && v === v.toUpperCase() ? v : v.charAt(0).toLowerCase() + v.slice(1));
+
 const DashboardRoadmapSection = () => {
   const { t } = useSiteContent("dashboard");
+  const { state } = useAppState();
 
-  const days = [
+  const answers = useMemo(() => {
+    let draft: Record<string, unknown> = {};
+    try {
+      const raw = state.challenge?.aiOutputs?.day1Setup;
+      if (typeof raw === "string" && raw.trim().startsWith("{")) draft = JSON.parse(raw);
+      else if (raw && typeof raw === "object") draft = raw as Record<string, unknown>;
+    } catch {
+      draft = {};
+    }
+    const m = state.memory as unknown as Record<string, unknown> | undefined;
+    return {
+      audience: clean(m?.audience) || clean(draft.audience),
+      problem: clean(m?.problem) || clean(draft.problem),
+      method: clean(m?.method) || clean(draft.how),
+    };
+  }, [state.memory, state.challenge?.aiOutputs]);
+
+  const fill = (template: string) => {
+    const audience = lower(answers.audience || t("roadmap.fallback_audience", "your audience"));
+    const problem = lower(answers.problem || t("roadmap.fallback_problem", "the problem you solve"));
+    const method = lower(answers.method || t("roadmap.fallback_method", "the way you solve it"));
+    return template
+      .replace(/\{audience\}/g, audience)
+      .replace(/\{problem\}/g, problem)
+      .replace(/\{method\}/g, method)
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  const pillars = [
     {
-      label: t("roadmap.day1_label", "Day 1"),
-      title: t("roadmap.day1_title", "Set your foundation"),
-      copy: t(
-        "roadmap.day1_copy",
-        "Name your audience, their problem and your superpower, then shape your challenge title."
+      label: t("roadmap.pillar1_label", "Pillar 1"),
+      title: t("roadmap.pillar1_title", "Create your challenge."),
+      copy: fill(
+        t(
+          "roadmap.pillar1_copy",
+          "Your challenge is built for {audience}. It takes the problem you keep seeing, {problem}, and turns {method} into a guided sequence they can follow."
+        )
       ),
     },
     {
-      label: t("roadmap.day2_label", "Day 2"),
-      title: t("roadmap.day2_title", "Build your quiz"),
-      copy: t(
-        "roadmap.day2_copy",
-        "Turn your foundation into a working quiz and download it as a Word doc or Google Doc."
+      label: t("roadmap.pillar2_label", "Pillar 2"),
+      title: t("roadmap.pillar2_title", "Create a quiz that leads into your challenge."),
+      copy: fill(
+        t(
+          "roadmap.pillar2_copy",
+          "Your quiz shows {audience} where they stand with {problem}. Their answers lead them straight into your challenge, so the invitation feels obvious."
+        )
       ),
     },
     {
-      label: t("roadmap.day3_label", "Day 3"),
-      title: t("roadmap.day3_title", "Launch and share"),
-      copy: t(
-        "roadmap.day3_copy",
-        "Put your quiz live, share your link and start collecting leads."
+      label: t("roadmap.pillar3_label", "Pillar 3"),
+      title: t(
+        "roadmap.pillar3_title",
+        "Create a referral loop so your challenge grows through the people doing it."
+      ),
+      copy: fill(
+        t(
+          "roadmap.pillar3_copy",
+          "Every person who finishes gets a simple reason to bring someone like them along. Your challenge then grows through {audience} sharing it, rather than you chasing new names."
+        )
       ),
     },
   ];
@@ -43,17 +94,17 @@ const DashboardRoadmapSection = () => {
           {t("roadmap.heading", "Your Roadmap")}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t("roadmap.intro", "Here is what you build across the three days, in sequence.")}
+          {t("roadmap.intro", "Here are the three pillars you build, in sequence.")}
         </p>
 
         <div className="mt-5 space-y-3">
-          {days.map((d) => (
-            <div key={d.label} className="rounded-xl border border-border bg-background px-4 py-3">
+          {pillars.map((p) => (
+            <div key={p.label} className="rounded-xl border border-border bg-background px-4 py-3">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                {d.label}
+                {p.label}
               </p>
-              <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">{d.title}</p>
-              <p className="mt-1 text-sm leading-snug text-muted-foreground">{d.copy}</p>
+              <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">{p.title}</p>
+              <p className="mt-1 text-sm leading-snug text-muted-foreground">{p.copy}</p>
             </div>
           ))}
         </div>

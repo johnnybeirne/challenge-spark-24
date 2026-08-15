@@ -522,7 +522,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     ...state,
     user: finalUser,
     memory: isEmptyPersona
-      ? { name: "", audienceType: "", challengeType: "", topic: "", desiredOutcome: "", challengeName: "", challengeTitleOverride: "" }
+      ? { name: "", audienceType: "", challengeType: "", topic: "", desiredOutcome: "", challengeName: "", challengeTitleOverride: "", audience: "", problem: "", method: "" }
       : finalMemory,
     assessment,
 

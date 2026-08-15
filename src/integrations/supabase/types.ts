@@ -2596,6 +2596,7 @@ export type Database = {
       }
       user_memory: {
         Row: {
+          audience: string
           audience_type: string
           challenge_name: string
           challenge_title_override: string
@@ -2603,12 +2604,15 @@ export type Database = {
           created_at: string
           desired_outcome: string
           id: string
+          method: string
           name: string
+          problem: string
           topic: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          audience?: string
           audience_type?: string
           challenge_name?: string
           challenge_title_override?: string
@@ -2616,12 +2620,15 @@ export type Database = {
           created_at?: string
           desired_outcome?: string
           id?: string
+          method?: string
           name?: string
+          problem?: string
           topic?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          audience?: string
           audience_type?: string
           challenge_name?: string
           challenge_title_override?: string
@@ -2629,7 +2636,9 @@ export type Database = {
           created_at?: string
           desired_outcome?: string
           id?: string
+          method?: string
           name?: string
+          problem?: string
           topic?: string
           updated_at?: string
           user_id?: string

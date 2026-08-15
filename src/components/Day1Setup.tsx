@@ -1234,6 +1234,10 @@ const Day1Setup = ({ onComplete }: Props) => {
         challengeType: normalizeChallengeType(challengeType),
         desiredOutcome: outcome || topicHint || how,
         topic: topicHint || problem,
+        // Tidy columns so personalisation reads structured values, not the JSON draft.
+        audience: audience.trim(),
+        problem: problem.trim(),
+        method: how.trim(),
       }),
       challenge: {
         ...prev.challenge,

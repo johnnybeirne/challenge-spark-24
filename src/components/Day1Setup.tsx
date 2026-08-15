@@ -1000,6 +1000,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       const promise = (data as any).promise;
       const fromState = (data as any).fromState;
       const toState = (data as any).toState;
+      const soThat = (data as any).soThat;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -1012,6 +1013,7 @@ const Day1Setup = ({ onComplete }: Props) => {
               promise: promise.trim(),
               ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
               ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
+              ...(typeof soThat === "string" && soThat.trim() ? { soThat: soThat.trim() } : {}),
             }),
 
             day1_promise_key: cacheKey,

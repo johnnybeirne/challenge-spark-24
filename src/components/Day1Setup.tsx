@@ -997,6 +997,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (error || !data || (data as any).fallback) return;
       const summary = (data as any).summary;
       const promise = (data as any).promise;
+      const fromState = (data as any).fromState;
+      const toState = (data as any).toState;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -1004,7 +1006,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           ...prev.challenge,
           aiOutputs: {
             ...prev.challenge.aiOutputs,
-            day1_promise: JSON.stringify({ summary, promise: promise.trim() }),
+            day1_promise: JSON.stringify({
+              summary,
+              promise: promise.trim(),
+              ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
+              ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
+            }),
+
             day1_promise_key: cacheKey,
           },
         },

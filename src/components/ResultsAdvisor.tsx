@@ -43,7 +43,7 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoi
   const ask = async (question: string): Promise<string> => {
     try {
       const { data, error } = await supabase.functions.invoke("results-advisor", {
-        body: { question, archetypeTier, archetypeLabel },
+        body: { question },
       });
       if (error) throw error;
       const answer = (data as any)?.answer;

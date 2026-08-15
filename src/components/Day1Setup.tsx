@@ -906,7 +906,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
   // mid-typing if the cache updates later in the same visit.
   const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
-  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string } | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string } | null>(null);
 
   useEffect(() => {
     if (step !== 3) return;
@@ -922,9 +922,15 @@ const Day1Setup = ({ onComplete }: Props) => {
       try {
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.summary) && typeof parsed.promise === "string") {
-          setStep7Promise({ summary: parsed.summary, promise: parsed.promise });
+          setStep7Promise({
+            summary: parsed.summary,
+            promise: parsed.promise,
+            fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
+            toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
+          });
           return;
         }
+
       } catch {
         /* fall through to null */
       }
@@ -991,6 +997,8 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (error || !data || (data as any).fallback) return;
       const summary = (data as any).summary;
       const promise = (data as any).promise;
+      const fromState = (data as any).fromState;
+      const toState = (data as any).toState;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -998,7 +1006,13 @@ const Day1Setup = ({ onComplete }: Props) => {
           ...prev.challenge,
           aiOutputs: {
             ...prev.challenge.aiOutputs,
-            day1_promise: JSON.stringify({ summary, promise: promise.trim() }),
+            day1_promise: JSON.stringify({
+              summary,
+              promise: promise.trim(),
+              ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
+              ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
+            }),
+
             day1_promise_key: cacheKey,
           },
         },
@@ -2248,13 +2262,21 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          // If the AI composed a Challenge Promise, prefer its wording (it uses
-          // the user's literal words and reads natural). Otherwise fall back to
-          // the template stitch.
-          const templatePromise = who && pain && result && methodPhrase
-            ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
-            : null;
-          const promise = step7Promise?.promise || templatePromise;
+          // The promise is always a from/to transformation statement built from
+          // the participant's own answers. The AI returns the two states
+          // separately; if it did not run, we assemble them locally.
+          const noDash = (s: string) =>
+            s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
+          const fallbackFrom = pain ? noDash(pain) : "";
+          const fallbackTo = result
+            ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
+            : "";
+          const fromState = noDash(step7Promise?.fromState || fallbackFrom);
+          const toState = noDash(step7Promise?.toState || fallbackTo);
+          const promise = fromState && toState
+            ? `from "${fromState}" to "${toState}"`
+            : (step7Promise?.promise || null);
+
 
           // Highlight helper for the static reveal — renders the user-derived
           // value in bold brand accent inside the surrounding sentence.
@@ -2344,9 +2366,17 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] font-semibold leading-snug text-foreground">
-                            Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
+                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
+                            {fromState && toState ? (
+                              <>
+                                from <span className="font-bold">"{fromState}"</span> to{" "}
+                                <span className="font-bold">"{toState}"</span>
+                              </>
+                            ) : (
+                              promise
+                            )}
                           </p>
+
                         </div>
                       </div>
                     )}

@@ -35,54 +35,62 @@ const DashboardAssetsSection = () => {
   const clean = (s: string) =>
     s.trim().replace(/^they(['’]ll| will)?\s+/i, "").replace(/\.$/, "").trim();
 
-  const resolvePromise = (): string => {
+  // The promise is a from/to transformation statement. Newer promises store
+  // the two states separately so display controls the quotes and bolding.
+  // Older promises are a single plain string and render as they are.
+  const noDash = (s: string) =>
+    s
+      .replace(/[\u2010-\u2015\u2212-]+/g, " ")
+      .replace(/["'`]/g, "")
+      .replace(/\s+/g, " ")
+      .replace(/\.$/, "")
+      .trim();
+
+  const resolvePromise = (): { fromState: string; toState: string } | { text: string } | null => {
     const outputs = (state.challenge?.aiOutputs ?? {}) as Record<string, unknown>;
 
-    // A valid promise must always read as a "from ... to ..." sentence.
-    const isFromTo = (s: string) => /\bfrom\b[\s\S]*\bto\b/i.test(s);
-
-    // 1. Participant edit, then polished, then stored promise.
-    const candidates: string[] = [];
-
-    const edited = outputs.day1_promise_user_edit;
-    if (typeof edited === "string" && edited.trim()) candidates.push(edited.trim());
-
-    const polished = outputs.day1_promise_polished;
-    if (typeof polished === "string" && polished.trim()) candidates.push(polished.trim());
-
     const raw = outputs.day1_promise;
-    if (typeof raw === "string" && raw.trim()) {
-      const parsed = parse(raw);
-      if (parsed && typeof parsed === "object" && typeof parsed.promise === "string") {
-        candidates.push(parsed.promise.trim());
-      } else {
-        candidates.push(raw.trim());
-      }
+    const parsed = typeof raw === "string" ? parse(raw) : parse(raw);
+    if (parsed && typeof parsed === "object") {
+      const f = typeof parsed.fromState === "string" ? noDash(parsed.fromState) : "";
+      const tS = typeof parsed.toState === "string" ? noDash(parsed.toState) : "";
+      if (f && tS) return { fromState: f, toState: tS };
     }
 
+    // Older stored promises: a single plain string, shown as stored.
+    const candidates: string[] = [];
+    const edited = outputs.day1_promise_user_edit;
+    if (typeof edited === "string" && edited.trim()) candidates.push(edited.trim());
+    const polished = outputs.day1_promise_polished;
+    if (typeof polished === "string" && polished.trim()) candidates.push(polished.trim());
+    if (parsed && typeof parsed === "object" && typeof parsed.promise === "string" && parsed.promise.trim()) {
+      candidates.push(parsed.promise.trim());
+    } else if (typeof raw === "string" && raw.trim() && !parsed) {
+      candidates.push(raw.trim());
+    }
+    const isFromTo = (s: string) => /\bfrom\b[\s\S]*\bto\b/i.test(s);
     const stored = candidates.find((c) => isFromTo(c));
-    if (stored) return stored;
+    if (stored) return { text: stored };
 
-    // 2. Fall back to the Day 1 answers already saved on the record and
-    //    assemble the "from ... to ..." sentence ourselves.
+    // Assemble the two states from the Day 1 answers already saved.
     const setup = parse(outputs.day1Setup) ?? parse(outputs.day1Step) ?? {};
     const memory: any = state.memory || {};
-    const who = clean(setup.audience || memory.audience || "");
     const pain = clean(setup.problem || memory.problem || "").toLowerCase();
     const result = clean(setup.outcome || memory.desiredOutcome || "").toLowerCase();
     const method = clean(setup.how || memory.method || "").toLowerCase();
-    if (who && pain && result) {
-      return method
-        ? `Help ${who} move from "${pain}" to ${result} through ${method}.`
-        : `Help ${who} move from "${pain}" to ${result}.`;
+    if (pain && result) {
+      return {
+        fromState: noDash(pain),
+        toState: noDash(method ? `${result} with ${method}` : result),
+      };
     }
 
-    // 3. Nothing assembles into a from/to sentence, so show nothing.
-    return "";
+    return null;
   };
 
 
-  const promiseSentence = resolvePromise();
+  const promiseValue = resolvePromise();
+
 
   const [openItem, setOpenItem] = useState<string>("");
 
@@ -134,17 +142,25 @@ const DashboardAssetsSection = () => {
               ),
             });
 
-            if (promiseSentence) {
+            if (promiseValue) {
               entries.push({
                 day: 1,
                 title: t("assets.promise_title", "Your Challenge Promise"),
                 body: (
                   <p className="mt-1 text-sm leading-snug text-foreground">
-                    {promiseSentence}
+                    {"fromState" in promiseValue ? (
+                      <>
+                        from <span className="font-bold">"{promiseValue.fromState}"</span> to{" "}
+                        <span className="font-bold">"{promiseValue.toState}"</span>
+                      </>
+                    ) : (
+                      promiseValue.text
+                    )}
                   </p>
                 ),
               });
             }
+
 
             entries.push({
               day: 2,

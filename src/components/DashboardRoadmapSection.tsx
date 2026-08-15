@@ -98,17 +98,30 @@ const DashboardRoadmapSection = () => {
           {t("roadmap.intro", "Here are the three pillars you build, in sequence.")}
         </p>
 
-        <div className="mt-5 space-y-3">
-          {pillars.map((p) => (
-            <div key={p.label} className="rounded-xl border border-border bg-background px-4 py-3">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                {p.label}
-              </p>
-              <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">{p.title}</p>
-              <p className="mt-1 text-sm leading-snug text-muted-foreground">{p.copy}</p>
-            </div>
+        <Accordion type="single" collapsible className="mt-5 w-full">
+          {pillars.map((p, i) => (
+            <AccordionItem
+              key={p.label}
+              value={`pillar-${i + 1}`}
+              className="rounded-xl border border-border bg-background px-4 mb-3 data-[state=open]:border-primary"
+            >
+              <AccordionTrigger className="text-left hover:no-underline">
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                    {p.label}
+                  </span>
+                  <span className="text-lg font-bold leading-tight text-foreground">
+                    {p.title}
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">{p.copy}</p>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
+
 
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
           <a

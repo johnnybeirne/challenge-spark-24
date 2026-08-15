@@ -2269,21 +2269,25 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          // The promise is always a from/to transformation statement built from
-          // the participant's own answers. The AI returns the two states
+          // The promise is always a four part transformation statement built
+          // from the participant's own answers. The AI returns the four parts
           // separately; if it did not run, we assemble them locally.
           const noDash = (s: string) =>
             s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
+          const withStopEnding = (s: string) =>
+            !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
           const fallbackFrom = pain ? noDash(pain) : "";
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
           const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
+          const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
           const fromState = noDash(step7Promise?.fromState || fallbackFrom);
           const toState = noDash(step7Promise?.toState || fallbackTo);
           const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
-          const promise = fromState && toState && soThat
-            ? `from "${fromState}" to "${toState}" so that "${soThat}"`
+          const andStop = withStopEnding(noDash(step7Promise?.andStop || fallbackAndStop));
+          const promise = fromState && toState && soThat && andStop
+            ? `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`
             : fromState && toState
               ? `from "${fromState}" to "${toState}"`
               : (step7Promise?.promise || null);

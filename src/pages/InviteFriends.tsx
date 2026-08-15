@@ -9,6 +9,7 @@ import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { useReferredPeople } from "@/hooks/useReferredPeople";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
 import Spinner from "@/components/Spinner";
+import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
 
 const GREEN = "#1D9E75";
 const BLUE = "#378ADD";

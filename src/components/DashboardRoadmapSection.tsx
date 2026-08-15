@@ -62,7 +62,7 @@ const DashboardRoadmapSection = () => {
   const day3Done =
     !!state.challenge?.completed ||
     (state.challenge?.currentDay ?? 1) > 3 ||
-    (state.completedDays ?? []).includes(3);
+    (state.points?.completedDays ?? []).includes(3);
 
   const pillars = [
 

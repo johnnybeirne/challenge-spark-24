@@ -158,6 +158,12 @@ const DashboardAssetsSection = () => {
                         <span className="font-bold text-foreground">"{promiseValue.fromState}"</span>
                         <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">To</span>
                         <span className="font-bold text-foreground">"{promiseValue.toState}"</span>
+                        {promiseValue.soState && (
+                          <>
+                            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">So that</span>
+                            <span className="font-bold text-foreground">"{promiseValue.soState}"</span>
+                          </>
+                        )}
                       </div>
                     ) : (
                       promiseValue.text

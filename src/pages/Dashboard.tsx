@@ -31,6 +31,8 @@ import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
 import StreakIndicator from "@/components/StreakIndicator";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
+import DashboardAssetsSection from "@/components/DashboardAssetsSection";
+import DashboardRoadmapSection from "@/components/DashboardRoadmapSection";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
@@ -599,6 +601,12 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        <DashboardAssetsSection />
+
+        <DashboardRoadmapSection />
+
+
 
         <section className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center shadow-md sm:p-6">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-black uppercase tracking-wide sm:text-lg" onClick={() => navigate(`/challenge/day-${ctaDay}`)}>

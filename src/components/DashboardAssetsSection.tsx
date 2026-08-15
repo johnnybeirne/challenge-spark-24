@@ -28,26 +28,63 @@ const DashboardAssetsSection = () => {
           )}
         </p>
 
-        <div className="mt-5">
-          {rawQuiz ? (
-            <QuizDownloadAssets rawQuiz={rawQuiz} />
-          ) : (
-            <div className="rounded-xl border border-dashed border-border bg-background px-4 py-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                {t(
-                  "assets.empty",
-                  "Your first asset appears after you build your quiz on Day 2."
-                )}
-              </p>
-              <Link
-                to="/challenge/day-2"
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
-              >
-                {t("assets.cta", "Build your quiz")} &rarr;
-              </Link>
-            </div>
-          )}
+        <div className="mt-5 space-y-3">
+          <div className="rounded-xl border border-border bg-background px-4 py-3">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+              {t("assets.asset1_badge", "Asset 1")}
+            </p>
+            <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">
+              {t("assets.asset1_title", "Your Roadmap")}
+            </p>
+            <p className="mt-1 text-sm leading-snug text-muted-foreground">
+              {t(
+                "assets.asset1_copy",
+                "Your roadmap is your first asset and it was created on Day 1. It holds the three pillars your challenge is built on."
+              )}
+            </p>
+            <a
+              href="#your-roadmap"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              {t("assets.asset1_cta", "View your roadmap")} &rarr;
+            </a>
+          </div>
+
+          <div className="rounded-xl border border-border bg-background px-4 py-3">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+              {t("assets.asset2_badge", "Asset 2")}
+            </p>
+            <p className="mt-1 text-[var(--body-size)] font-bold text-foreground">
+              {t("assets.asset2_title", "Your Quiz")}
+            </p>
+            {rawQuiz ? (
+              <>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                  {t("assets.asset2_ready_copy", "Your quiz is built and ready to download.")}
+                </p>
+                <div className="mt-3">
+                  <QuizDownloadAssets rawQuiz={rawQuiz} />
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                  {t(
+                    "assets.asset2_pending_copy",
+                    "Your quiz is the next asset that joins your roadmap. You build it on Day 2."
+                  )}
+                </p>
+                <Link
+                  to="/challenge/day-2"
+                  className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+                >
+                  {t("assets.asset2_pending_cta", "Build your quiz")} &rarr;
+                </Link>
+              </>
+            )}
+          </div>
         </div>
+
       </CardContent>
     </Card>
   );

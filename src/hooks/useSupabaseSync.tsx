@@ -100,6 +100,9 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
             desiredOutcome: memory.desired_outcome || "",
             challengeName: memory.challenge_name || "",
             challengeTitleOverride: (memory as { challenge_title_override?: string }).challenge_title_override || "",
+            audience: (memory as { audience?: string }).audience || "",
+            problem: (memory as { problem?: string }).problem || "",
+            method: (memory as { method?: string }).method || "",
           }
         : { ...defaultMemory, name: profile.name || "" },
       network: {

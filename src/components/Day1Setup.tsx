@@ -928,6 +928,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
             toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
             soThat: typeof parsed.soThat === "string" ? parsed.soThat : undefined,
+            andStop: typeof parsed.andStop === "string" ? parsed.andStop : undefined,
           });
           return;
         }
@@ -1001,6 +1002,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       const fromState = (data as any).fromState;
       const toState = (data as any).toState;
       const soThat = (data as any).soThat;
+      const andStop = (data as any).andStop;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -1014,7 +1016,9 @@ const Day1Setup = ({ onComplete }: Props) => {
               ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
               ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
               ...(typeof soThat === "string" && soThat.trim() ? { soThat: soThat.trim() } : {}),
+              ...(typeof andStop === "string" && andStop.trim() ? { andStop: andStop.trim() } : {}),
             }),
+
 
             day1_promise_key: cacheKey,
           },

@@ -2262,13 +2262,21 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          // If the AI composed a Challenge Promise, prefer its wording (it uses
-          // the user's literal words and reads natural). Otherwise fall back to
-          // the template stitch.
-          const templatePromise = who && pain && result && methodPhrase
-            ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
-            : null;
-          const promise = step7Promise?.promise || templatePromise;
+          // The promise is always a from/to transformation statement built from
+          // the participant's own answers. The AI returns the two states
+          // separately; if it did not run, we assemble them locally.
+          const noDash = (s: string) =>
+            s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
+          const fallbackFrom = pain ? noDash(pain) : "";
+          const fallbackTo = result
+            ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
+            : "";
+          const fromState = noDash(step7Promise?.fromState || fallbackFrom);
+          const toState = noDash(step7Promise?.toState || fallbackTo);
+          const promise = fromState && toState
+            ? `from "${fromState}" to "${toState}"`
+            : (step7Promise?.promise || null);
+
 
           // Highlight helper for the static reveal — renders the user-derived
           // value in bold brand accent inside the surrounding sentence.

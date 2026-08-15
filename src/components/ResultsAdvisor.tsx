@@ -3,17 +3,17 @@ import { supabase } from "@/integrations/supabase/client";
 import LearningAssistant from "@/components/LearningAssistant";
 
 type Tier = "low" | "mid" | "high";
-type Label = "Pioneer" | "Architect" | "Authority";
 
 type Props = {
+  // Tier is used only to select the owner-editable suggested prompts.
+  // It is never shown to the participant and never sent to the advisor.
   archetypeTier: Tier;
-  archetypeLabel: Label;
   heading?: string;
   subline?: string;
   onJoinCtaClick?: () => void;
 };
 
-const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoinCtaClick }: Props) => {
+const ResultsAdvisor = ({ archetypeTier, heading, subline, onJoinCtaClick }: Props) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const ResultsAdvisor = ({ archetypeTier, archetypeLabel, heading, subline, onJoi
         </div>
       )}
       <LearningAssistant
-        topic={`${archetypeLabel} advisor`}
+        topic="Results advisor"
         prompts={prompts}
         ask={ask}
         autoOpen={false}

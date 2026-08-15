@@ -2410,16 +2410,16 @@ const Day1Setup = ({ onComplete }: Props) => {
                             {fromState && toState ? (
                               <div className="space-y-4">
                                 {[
-                                  { label: "FROM", value: fromState, bold: true },
-                                  { label: "TO", value: toState, bold: true },
-                                  ...(soThat ? [{ label: "SO THAT", value: soThat, bold: true }] : []),
-                                  ...(andStop ? [{ label: "AND STOP", value: andStop, bold: false }] : []),
+                                  { label: "FROM", value: fromState },
+                                  { label: "TO", value: toState },
+                                  ...(soThat ? [{ label: "SO THAT", value: soThat }] : []),
+                                  ...(andStop ? [{ label: "AND STOP", value: andStop }] : []),
                                 ].map((part) => (
                                   <div key={part.label}>
                                     <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
                                       {part.label}
                                     </p>
-                                    <p className={`mt-1 leading-snug text-foreground ${part.bold ? "font-bold" : "font-normal"}`}>
+                                    <p className="mt-1 font-normal leading-snug text-foreground">
                                       &ldquo;{part.value}&rdquo;
                                     </p>
                                   </div>

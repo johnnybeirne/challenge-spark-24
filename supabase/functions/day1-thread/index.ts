@@ -186,12 +186,16 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
                 type: "string",
                 description: "The audience's future state after the transformation, in the builder's own words. No quotes, no dashes.",
               },
+              soThat: {
+                type: "string",
+                description: "The ultimate benefit the audience gets from the transformation, in the builder's own words and reflecting their superpower. No quotes, no dashes.",
+              },
               promise: {
                 type: "string",
-                description: "The two states joined as: from [fromState] to [toState].",
+                description: "The three parts joined as: from [fromState] to [toState] so that [soThat].",
               },
             },
-            required: ["summary", "fromState", "toState", "promise"],
+            required: ["summary", "fromState", "toState", "soThat", "promise"],
             additionalProperties: false,
 
           },

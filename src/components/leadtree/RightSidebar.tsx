@@ -51,8 +51,11 @@ const RightSidebar = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const points = state.points?.total ?? 0;
   const direct = state.network?.direct ?? 0;
+  // Every invite is worth 50 points, so the two figures must never disagree.
+  const POINTS_PER_INVITE = 50;
+  const points = Math.max(state.points?.total ?? 0, direct * POINTS_PER_INVITE);
+
   const nextReward = getNextReward(points);
   const threshold = nextReward?.points ?? points;
   const prevThreshold = (() => {

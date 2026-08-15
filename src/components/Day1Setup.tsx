@@ -922,9 +922,15 @@ const Day1Setup = ({ onComplete }: Props) => {
       try {
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.summary) && typeof parsed.promise === "string") {
-          setStep7Promise({ summary: parsed.summary, promise: parsed.promise });
+          setStep7Promise({
+            summary: parsed.summary,
+            promise: parsed.promise,
+            fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
+            toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
+          });
           return;
         }
+
       } catch {
         /* fall through to null */
       }

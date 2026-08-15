@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowUp, ArrowUpCircle } from "lucide-react";
+import { ArrowUp, ArrowUpCircle, Lock } from "lucide-react";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppState } from "@/context/AppContext";
@@ -59,7 +59,13 @@ const DashboardRoadmapSection = () => {
       .trim();
   };
 
+  const day3Done =
+    !!state.challenge?.completed ||
+    (state.challenge?.currentDay ?? 1) > 3 ||
+    (state.points?.completedDays ?? []).includes(3);
+
   const pillars = [
+
     {
       label: t("roadmap.pillar1_label", "Pillar 1"),
       title: t("roadmap.pillar1_title", "Create your challenge."),
@@ -86,14 +92,21 @@ const DashboardRoadmapSection = () => {
         "roadmap.pillar3_title",
         "Create a referral loop so your challenge grows through the people doing it."
       ),
-      copy: fill(
-        t(
-          "roadmap.pillar3_copy",
-          "Every person who finishes gets a simple reason to bring someone like them along. Your challenge then grows through {audience} sharing it, rather than you chasing new names."
-        )
-      ),
+      locked: !day3Done,
+      copy: day3Done
+        ? fill(
+            t(
+              "roadmap.pillar3_copy",
+              "Every person who finishes gets a simple reason to bring someone like them along. Your challenge then grows through {audience} sharing it, rather than you chasing new names."
+            )
+          )
+        : t(
+            "roadmap.pillar3_locked_copy",
+            "This pillar opens when you complete Day 3."
+          ),
     },
   ];
+
 
   return (
     <Card id="your-roadmap" className="scroll-mt-24 border-border bg-card shadow-sm">
@@ -114,14 +127,25 @@ const DashboardRoadmapSection = () => {
             >
               <AccordionTrigger className="text-left hover:no-underline">
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
                     {p.label}
+                    {(p as { locked?: boolean }).locked && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <Lock className="h-3 w-3" />
+                        Locked
+                      </span>
+                    )}
                   </span>
-                  <span className="text-lg font-bold leading-tight text-foreground">
+                  <span
+                    className={`text-lg font-bold leading-tight ${
+                      (p as { locked?: boolean }).locked ? "text-muted-foreground" : "text-foreground"
+                    }`}
+                  >
                     {p.title}
                   </span>
                 </span>
               </AccordionTrigger>
+
               <AccordionContent>
                 <p className="mt-1 text-sm leading-snug text-muted-foreground">{p.copy}</p>
               </AccordionContent>

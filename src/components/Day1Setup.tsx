@@ -2366,16 +2366,18 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
+                          <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
                             {fromState && toState ? (
                               <>
-                                from <span className="font-bold">"{fromState}"</span> to{" "}
-                                <span className="font-bold">"{toState}"</span>
+                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">From</span>
+                                <span className="block font-bold text-foreground">"{fromState}"</span>
+                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">To</span>
+                                <span className="block font-bold text-foreground">"{toState}"</span>
                               </>
                             ) : (
-                              promise
+                              <p className="leading-snug">{promise}</p>
                             )}
-                          </p>
+                          </div>
 
                         </div>
                       </div>

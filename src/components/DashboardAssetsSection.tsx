@@ -147,16 +147,18 @@ const DashboardAssetsSection = () => {
                 day: 1,
                 title: t("assets.promise_title", "Your Challenge Promise"),
                 body: (
-                  <p className="mt-1 text-sm leading-snug text-foreground">
+                  <div className="mt-1 text-sm leading-snug text-foreground">
                     {"fromState" in promiseValue ? (
-                      <>
-                        from <span className="font-bold">"{promiseValue.fromState}"</span> to{" "}
-                        <span className="font-bold">"{promiseValue.toState}"</span>
-                      </>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">From</span>
+                        <span className="font-bold text-foreground">"{promiseValue.fromState}"</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">To</span>
+                        <span className="font-bold text-foreground">"{promiseValue.toState}"</span>
+                      </div>
                     ) : (
                       promiseValue.text
                     )}
-                  </p>
+                  </div>
                 ),
               });
             }

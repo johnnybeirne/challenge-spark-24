@@ -146,9 +146,13 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     challengeTypeLabel ? `Challenge shape: ${challengeTypeLabel}` : null,
     "",
     "Use the compose_challenge_promise tool to return:",
-    "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Do not use em dashes. Address the builder as 'you'.",
-    "2. promise: ONE sentence in this EXACT shape and nothing more: 'Help [audience] move from [pain] to [outcome] through [process].' Rules: exactly four slots (audience, pain, outcome, process). Use only the connectors 'move from', 'to', 'through' — one of each. Do NOT append any secondary clause after the outcome or after the process (no 'without ...', no 'that ...', no extra 'through ...'). The outcome slot must be a single phrase — no stacked modifiers. Use the builder's own words in each slot. Hard ceiling of 35 words — if it would exceed 35 words, tighten the slot wording to fit. No em dashes anywhere. End with a single full stop.",
+    "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
+    "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
+    "3. toState: the audience's future state after the transformation, written in the builder's own words, reflecting the outcome and how the builder helps. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "4. promise: the two states joined as a single plain sentence in this exact shape: from [fromState] to [toState]. Nothing before the word from and nothing after the toState.",
+    "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
   ].filter(Boolean).join("\n");
+
 
   const resp = await callGateway({
     model: MODEL,

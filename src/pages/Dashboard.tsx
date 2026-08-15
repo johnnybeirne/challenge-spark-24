@@ -468,15 +468,6 @@ const Dashboard = () => {
                 If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
               </p>
             </div>
-          ) : state.challenge?.startedAt ? (
-            <div className="flex flex-col items-center gap-1 pt-2">
-              <p className="inline-flex items-center gap-1.5 text-[18px] text-muted-foreground">
-                Your Day 1 Challenge Promise is saved in your dashboard.
-              </p>
-              <p className="text-[18px] text-muted-foreground text-center max-w-xl">
-                <Link to="/dashboard" className="underline hover:text-foreground">Go to your dashboard</Link> to review or update it.
-              </p>
-            </div>
           ) : null}
         </section>
 

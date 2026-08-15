@@ -509,7 +509,7 @@ const Day2Screen1 = () => {
                     </p>
                     <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                       Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.{" "}
-                      <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
+                      <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
                         Go to Your Assets &rarr;
                       </Link>
                     </p>
@@ -558,7 +558,7 @@ const Day2Screen1 = () => {
               </div>
               <p className="mb-3 text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
                 Download your quiz right here, or grab it any time from Your Assets on your dashboard.{" "}
-                <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
+                <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
                   Go to Your Assets &rarr;
                 </Link>
               </p>

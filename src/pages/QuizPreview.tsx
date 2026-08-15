@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Day2QuizGenerating from "@/components/Day2QuizGenerating";
 import Day2QuizPlayable from "@/components/Day2QuizPlayable";
 import { useAppState } from "@/context/AppContext";
+import UnlockGate from "@/components/UnlockGate";
 
 /**
  * Standalone quiz preview window.
@@ -14,7 +15,7 @@ import { useAppState } from "@/context/AppContext";
  * playable Step 2 quiz. Closing the window returns the user to wherever
  * they were in the main app.
  */
-const QuizPreview = () => {
+const QuizPreviewInner = () => {
   const { setState } = useAppState();
   const [phase, setPhase] = useState<"generating" | "playable">("generating");
 
@@ -67,6 +68,22 @@ const QuizPreview = () => {
 
 
   return <Day2QuizPlayable onClose={handleClose} />;
+};
+
+/**
+ * Building the quiz is Day 2 work, so this standalone window sits behind the
+ * same Day 2 unlock gate as the Day 2 page itself.
+ */
+const QuizPreview = () => {
+  const { state } = useAppState();
+
+  return (
+    <div className="min-h-screen bg-background p-4">
+      <UnlockGate gateKey="day2" dayIndex={2} signupAt={state.challenge.startedAt}>
+        <QuizPreviewInner />
+      </UnlockGate>
+    </div>
+  );
 };
 
 export default QuizPreview;

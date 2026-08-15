@@ -35,8 +35,8 @@ const DashboardAssetsSection = () => {
   const clean = (s: string) =>
     s.trim().replace(/^they(['’]ll| will)?\s+/i, "").replace(/\.$/, "").trim();
 
-  // The promise is a from/to transformation statement. Newer promises store
-  // the two states separately so display controls the quotes and bolding.
+  // The promise is a four part transformation statement. Newer promises store
+  // the parts separately so display controls the quotes and weight.
   // Older promises are a single plain string and render as they are.
   const noDash = (s: string) =>
     s
@@ -46,7 +46,13 @@ const DashboardAssetsSection = () => {
       .replace(/\.$/, "")
       .trim();
 
-  const resolvePromise = (): { fromState: string; toState: string; soState?: string } | { text: string } | null => {
+  const withStopEnding = (s: string) =>
+    !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
+
+  const resolvePromise = ():
+    | { fromState: string; toState: string; soState?: string; andStop?: string }
+    | { text: string }
+    | null => {
     const outputs = (state.challenge?.aiOutputs ?? {}) as Record<string, unknown>;
 
     const raw = outputs.day1_promise;
@@ -55,7 +61,8 @@ const DashboardAssetsSection = () => {
       const f = typeof parsed.fromState === "string" ? noDash(parsed.fromState) : "";
       const tS = typeof parsed.toState === "string" ? noDash(parsed.toState) : "";
       const sT = typeof parsed.soThat === "string" ? noDash(parsed.soThat) : "";
-      if (f && tS) return { fromState: f, toState: tS, soState: sT || undefined };
+      const aS = typeof parsed.andStop === "string" ? withStopEnding(noDash(parsed.andStop)) : "";
+      if (f && tS) return { fromState: f, toState: tS, soState: sT || undefined, andStop: aS || undefined };
     }
 
     // Older stored promises: a single plain string, shown as stored.
@@ -73,7 +80,7 @@ const DashboardAssetsSection = () => {
     const stored = candidates.find((c) => isFromTo(c));
     if (stored) return { text: stored };
 
-    // Assemble the two states from the Day 1 answers already saved.
+    // Assemble the parts from the Day 1 answers already saved.
     const setup = parse(outputs.day1Setup) ?? parse(outputs.day1Step) ?? {};
     const memory: any = state.memory || {};
     const pain = clean(setup.problem || memory.problem || "").toLowerCase();
@@ -86,6 +93,7 @@ const DashboardAssetsSection = () => {
         fromState: noDash(pain),
         toState: noDash(method ? `${result} with ${method}` : result),
         soState,
+        andStop: withStopEnding(noDash(pain)),
       };
     }
 

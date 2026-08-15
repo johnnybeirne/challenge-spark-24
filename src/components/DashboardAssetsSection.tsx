@@ -161,28 +161,28 @@ const DashboardAssetsSection = () => {
                 body: (
                   <div className="mt-1 text-sm leading-snug text-foreground">
                     {"fromState" in promiseValue ? (
-                      <p className="leading-snug">
-                        <span className="font-normal">from </span>
-                        <span className="font-bold text-foreground">"{promiseValue.fromState}"</span>
-                        <span className="font-normal"> to </span>
-                        <span className="font-bold text-foreground">"{promiseValue.toState}"</span>
-                        {promiseValue.soState && (
-                          <>
-                            <span className="font-normal"> so that </span>
-                            <span className="font-bold text-foreground">"{promiseValue.soState}"</span>
-                          </>
-                        )}
-                        {promiseValue.andStop && (
-                          <>
-                            <span className="font-normal"> and stop </span>
-                            <span className="font-normal text-foreground">"{promiseValue.andStop}"</span>
-                          </>
-                        )}
-                      </p>
+                      <div className="space-y-3">
+                        {[
+                          { label: "From", value: promiseValue.fromState },
+                          { label: "To", value: promiseValue.toState },
+                          ...(promiseValue.soState ? [{ label: "So that", value: promiseValue.soState }] : []),
+                          ...(promiseValue.andStop ? [{ label: "And stop", value: promiseValue.andStop }] : []),
+                        ].map((part) => (
+                          <div key={part.label}>
+                            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
+                              {part.label}
+                            </p>
+                            <p className="mt-0.5 text-base font-bold leading-snug text-foreground">
+                              &ldquo;{part.value}&rdquo;
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     ) : (
                       promiseValue.text
                     )}
                   </div>
+
                 ),
               });
             }

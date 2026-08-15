@@ -3,6 +3,12 @@ import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 /**
  * Standalone "Your Assets" section on the challenge dashboard.

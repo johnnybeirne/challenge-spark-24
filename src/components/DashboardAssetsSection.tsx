@@ -15,24 +15,50 @@ const DashboardAssetsSection = () => {
 
   const rawQuiz = state.challenge?.aiOutputs?.day2_s2_quiz;
 
-  // Day 1 Challenge Promise. Stored at ai_outputs.day1_promise. Newer rows
-  // hold a JSON string shaped { summary, promise }; older seeded rows hold a
-  // plain sentence string. Show only the promise sentence, or nothing.
+  const parse = (raw: unknown): any => {
+    if (!raw) return null;
+    if (typeof raw === "object") return raw;
+    if (typeof raw === "string") {
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+    return null;
+  };
+
+  const clean = (s: string) =>
+    s.trim().replace(/^they(['’]ll| will)?\s+/i, "").replace(/\.$/, "").trim();
+
   const resolvePromise = (): string => {
-    const raw = state.challenge?.aiOutputs?.day1_promise;
-    if (!raw || typeof raw !== "string") return "";
-    const trimmed = raw.trim();
-    if (!trimmed) return "";
-    try {
-      const parsed = JSON.parse(trimmed);
+    const outputs = (state.challenge?.aiOutputs ?? {}) as Record<string, unknown>;
+
+    // 1. Participant edit, then polished, then stored promise.
+    const edited = outputs.day1_promise_user_edit;
+    if (typeof edited === "string" && edited.trim()) return edited.trim();
+
+    const polished = outputs.day1_promise_polished;
+    if (typeof polished === "string" && polished.trim()) return polished.trim();
+
+    const raw = outputs.day1_promise;
+    if (typeof raw === "string" && raw.trim()) {
+      const parsed = parse(raw);
       if (parsed && typeof parsed === "object" && typeof parsed.promise === "string") {
         return parsed.promise.trim();
       }
-    } catch {
-      // not JSON — treat as a plain sentence string
+      return raw.trim();
     }
-    return trimmed;
+
+    // 2. Fall back to the Day 1 answers already saved on the record.
+    const setup = parse(outputs.day1Setup) ?? parse(outputs.day1Step) ?? {};
+    const memory: any = state.memory || {};
+    const who = clean(setup.audience || memory.audience || "");
+    const pain = clean(setup.problem || memory.problem || "").toLowerCase();
+    const result = clean(setup.outcome || memory.desiredOutcome || "").toLowerCase();
+    const method = clean(setup.how || memory.method || "").toLowerCase();
+    if (!who || !pain || !result) return "";
+    return method
+      ? `Help ${who} move from "${pain}" to ${result} through ${method}.`
+      : `Help ${who} move from "${pain}" to ${result}.`;
   };
+
   const promiseSentence = resolvePromise();
 
   return (

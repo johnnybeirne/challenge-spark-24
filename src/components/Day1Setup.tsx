@@ -2380,6 +2380,12 @@ const Day1Setup = ({ onComplete }: Props) => {
                                 <span className="block font-bold text-foreground">"{fromState}"</span>
                                 <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">To</span>
                                 <span className="block font-bold text-foreground">"{toState}"</span>
+                                {soThat && (
+                                  <>
+                                    <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">So that</span>
+                                    <span className="block font-bold text-foreground">"{soThat}"</span>
+                                  </>
+                                )}
                               </>
                             ) : (
                               <p className="leading-snug">{promise}</p>

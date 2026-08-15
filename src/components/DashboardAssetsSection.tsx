@@ -81,12 +81,13 @@ const DashboardAssetsSection = () => {
     const raw = outputs.day1_promise;
     const parsed = typeof raw === "string" ? parse(raw) : parse(raw);
     if (parsed && typeof parsed === "object") {
-      const f = typeof parsed.fromState === "string" ? noDash(parsed.fromState) : "";
-      const tS = typeof parsed.toState === "string" ? noDash(parsed.toState) : "";
-      const sT = typeof parsed.soThat === "string" ? noDash(parsed.soThat) : "";
-      const aS = typeof parsed.andStop === "string" ? withStopEnding(noDash(parsed.andStop)) : "";
+      const f = typeof parsed.fromState === "string" ? thirdPerson(noDash(parsed.fromState)) : "";
+      const tS = typeof parsed.toState === "string" ? thirdPerson(noDash(parsed.toState)) : "";
+      const sT = typeof parsed.soThat === "string" ? thirdPerson(noDash(parsed.soThat)) : "";
+      const aS = typeof parsed.andStop === "string" ? withStopEnding(thirdPerson(noDash(parsed.andStop))) : "";
       if (f && tS) return { fromState: f, toState: tS, soState: sT || undefined, andStop: aS || undefined };
     }
+
 
     // Older stored promises: a single plain string, shown as stored.
     const candidates: string[] = [];

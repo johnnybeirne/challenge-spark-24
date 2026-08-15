@@ -29,9 +29,7 @@ import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
-import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
-import LeadGenStrengthCard from "@/components/LeadGenStrengthCard";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
@@ -412,8 +410,6 @@ const Dashboard = () => {
 
 
 
-          {/* LEAD GEN STRENGTH — hero + tabbed dashboard (Profile / Assets / Roadmap) */}
-          <LeadGenStrengthCard />
 
           {/* Primary CTA — big orange Day 1 button */}
           <div className="flex justify-center pt-2">
@@ -549,8 +545,6 @@ const Dashboard = () => {
             </>
           );
         })()}
-        <AssessmentResultCard />
-        <LeadGenStrengthCard />
         <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">

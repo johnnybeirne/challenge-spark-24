@@ -1,5 +1,5 @@
 // Results Advisor — answers a quiz taker's question on the Results page using
-// the knowledge base, tailors framing to their archetype, and gently steers
+// the knowledge base and gently steers
 // them toward the 3-Day Challenge.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -45,11 +45,8 @@ const SYSTEM_PROMPT = `You are the Leadio Results Advisor, answering a quiz take
 
 Rules:
 - Answer using only the provided knowledge base context. Do not invent facts that are not supported by the context.
-- If the context is thin, still give the best practical answer you can. Do not hedge or say the context does not cover it. Draw on the knowledge base and the archetype framing to be genuinely useful.
-- Tailor the framing to their archetype label (Pioneer, Architect, or Authority) so the advice is pitched at their stage.
-  - Pioneer: early, still figuring out attention and offer. Speak to clarity, first traction, avoiding overwhelm.
-  - Architect: has some traction, needs structure and repeatable flow. Speak to systems, sequencing, tightening the machine.
-  - Authority: established, needs leverage and compounding. Speak to positioning, referrals, scaling what already works.
+- If the context is thin, still give the best practical answer you can. Do not hedge or say the context does not cover it. Draw on the knowledge base to be genuinely useful.
+- Never label the person, never name or imply a result type, and never describe what stage they are at. Answer the question they asked.
 - Structure: two short parts. First, one or two short sentences of real, standalone, actionable advice that directly answers the question. The advice must be useful on its own, even if the person never joins anything. Then, one natural sentence that softly offers the 3-Day Challenge as one option. Vary the wording of the pivot naturally each time so it does not read robotically, but always refer to it as the 3-Day Challenge. Keep the challenge low-pressure, an option, not the only answer.
 - Total length: three to five short sentences. Never exceed five sentences.
 - Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless truly natural. Do not use long dashes or em dashes. Use commas or periods instead. Never use the word "once" in any sense. Use "when" or "after" instead. Do not call the product a platform.
@@ -61,8 +58,6 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const question: string = String(body.question || "").trim().slice(0, 1000);
-    const archetypeTier: string = String(body.archetypeTier || "low");
-    const archetypeLabel: string = String(body.archetypeLabel || "Pioneer");
 
     if (!question) {
       return new Response(JSON.stringify({ error: "question is required" }), {
@@ -105,10 +100,7 @@ Deno.serve(async (req) => {
 
     const context = buildContext(docs);
 
-    const userMsg = `Archetype tier: ${archetypeTier}
-Archetype label: ${archetypeLabel}
-
-Their question:
+    const userMsg = `Their question:
 ${question}
 
 Knowledge base context:

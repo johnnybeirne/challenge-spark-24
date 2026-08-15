@@ -80,7 +80,6 @@ function fallback(reason: string, extra: Record<string, unknown> = {}): Response
 
 interface Day1Inputs {
   firstName?: string;
-  archetype?: string;
   audience?: string;
   superpower?: string;
   problem?: string;
@@ -106,7 +105,6 @@ function builderProfile(inputs: Day1Inputs) {
   const expertPhrase = sanitise(inputs.expertTypePhrase, 200) || formatExpertTypes(rawExpert);
   return {
     firstName: sanitise(inputs.firstName, 40),
-    archetype: sanitise(inputs.archetype, 40),
     audience: sanitise(inputs.audience),
     superpower: sanitise(inputs.superpower),
     problem: sanitise(inputs.problem),
@@ -521,16 +519,12 @@ function fallbackCards(p: ReturnType<typeof builderProfile>) {
   const out = p.outcome || "the result they want";
   const promise = p.promise || "your challenge";
   const fn = p.firstName || "";
-  const arc = p.archetype || "";
   const open = fn ? `${fn}, ` : "";
   const mid = fn ? `Here is the thing, ${fn} — ` : "";
-  const arcPhrase1 = arc ? ` As an ${arc}, you already think this way.` : "";
-  const arcPhrase2 = arc ? ` That is ${arc} territory.` : "";
-  const arcPhrase3 = arc ? ` This is where an ${arc} like you wins.` : "";
   return {
-    card1: `${open}three days is a lot to ask of someone who has never met you.\n\nA two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.${arcPhrase1}\n\n${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
-    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened.\n\nYours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.${arcPhrase2}\n\nThey do not have to imagine what you can do; they get to feel it.`,
-    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers.\n\nThree days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.${arcPhrase3}`,
+    card1: `${open}three days is a lot to ask of someone who has never met you.\n\nA two-minute quiz earns that commitment by showing ${aud} exactly where they stand on ${prob}, in their own results.\n\n${mid}the moment that problem feels real and personal, ${promise} stops being a pitch and becomes the obvious next step.`,
+    card2: `${open}most quiz funnels end with a score and a results page, then hand everything else over to an email sequence that quietly stops getting opened.\n\nYours is different — the result flows straight into the challenge, where ${sp} is used in real time to solve the exact problem the quiz just surfaced for ${aud}.\n\nThey do not have to imagine what you can do; they get to feel it.`,
+    card3: `${open}everyone who joins through the quiz already believes they have a problem worth solving — they told you so with their answers.\n\nThree days of showing up and guiding ${aud} toward ${out} turns that quiet belief into trust, and ${fn ? `${fn}, ` : ""}trust is what turns a quiz taker into a buyer.`,
   };
 }
 
@@ -543,7 +537,6 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
     "",
     "Builder's Day 1 context (reference these as ideas — make each paragraph specific to this person, but do NOT quote the values word for word):",
     p.firstName ? `- first name: ${p.firstName}` : `- first name: (not provided)`,
-    p.archetype ? `- quiz archetype: ${p.archetype} (this is the result THIS builder got from the same quiz you are teaching them to build — Pioneer = early-stage builder, Architect = mid-stage connector, Authority = established expert)` : `- quiz archetype: (not provided)`,
     `- clientAvatar: ${p.audience || "(not provided)"}`,
     `- superpower: ${p.superpower || "(not provided)"}`,
     `- problem: ${p.problem || "(not provided)"}`,
@@ -559,9 +552,6 @@ async function handleCards(inputs: Day1Inputs): Promise<Response> {
     p.firstName
       ? `IMPORTANT: Address the builder directly by first name. Each card MUST include the first name "${p.firstName}" at least once and at most twice, woven in naturally (e.g. as a direct address at the start, or mid-sentence like "Here is the thing, ${p.firstName} —"). Never start two cards with the same opening phrase. Do not overuse the name.`
       : "Write in second person ('you'). Do not invent a name.",
-    p.archetype
-      ? `IMPORTANT: Reference their quiz archetype "${p.archetype}" naturally in AT LEAST ONE of the three cards (ideally two), e.g. "as you are a ${p.archetype}, you already know…" or "this is exactly where you, as a ${p.archetype}, win". Always use the phrasing "as you are a ${p.archetype}" or "you, as a ${p.archetype}" — never "as an ${p.archetype}" or "as a ${p.archetype}" without "you are". Treat it as a flattering identity mirror, not a label being explained. Never define the archetype in-line.`
-      : "Do not invent an archetype if none is provided.",
     "",
     "Card 1 must convey: the challenge asks a lot of someone who has never met you, the quiz earns that commitment by showing them where they stand in two minutes, making the problem feel real and the challenge the obvious next step.",
     "Card 2 must convey: most quiz funnels end at the result and rely on email to convert, this quiz leads directly into the challenge where the expert's superpower solves the exact problem the quiz surfaced.",

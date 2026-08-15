@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";

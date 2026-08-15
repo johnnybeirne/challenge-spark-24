@@ -190,6 +190,16 @@ const DashboardAssetsSection = () => {
           })()}
         </Accordion>
 
+        <div className="mt-4 flex items-center justify-end border-t border-border pt-3">
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-foreground"
+          >
+            Back to top
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
 
       </CardContent>
     </Card>

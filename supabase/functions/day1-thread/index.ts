@@ -215,7 +215,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {
@@ -223,18 +223,31 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("tool-args-parse-failed");
   }
 
+  // Strip any dash characters the model may still emit, plus stray quotes.
+  const tidy = (s: string) =>
+    s
+      .replace(/[\u2010-\u2015\u2212-]+/g, " ")
+      .replace(/["'`]/g, "")
+      .replace(/\s+/g, " ")
+      .replace(/\.$/, "")
+      .trim();
+
   const summary = Array.isArray(parsed.summary)
     ? parsed.summary.filter((s) => typeof s === "string" && s.trim().length > 0).slice(0, 4)
     : [];
-  const promise = typeof parsed.promise === "string" ? parsed.promise.trim() : "";
+  const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
+  const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
 
-  if (summary.length < 2 || !promise) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState) return fallback("incomplete-tool-output");
+
+  const promise = `from "${fromState}" to "${toState}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise }),
+    JSON.stringify({ summary, promise, fromState, toState }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {

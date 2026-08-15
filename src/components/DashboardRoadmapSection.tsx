@@ -109,6 +109,24 @@ const DashboardRoadmapSection = () => {
             </div>
           ))}
         </div>
+
+        <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+          <a
+            href="#your-assets"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+          >
+            <ArrowUpCircle className="h-4 w-4" />
+            Back to your assets
+          </a>
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-foreground"
+          >
+            Back to top
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
       </CardContent>
     </Card>
   );

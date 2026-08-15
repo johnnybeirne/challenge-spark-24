@@ -38,34 +38,49 @@ const DashboardAssetsSection = () => {
   const resolvePromise = (): string => {
     const outputs = (state.challenge?.aiOutputs ?? {}) as Record<string, unknown>;
 
+    // A valid promise must always read as a "from ... to ..." sentence.
+    const isFromTo = (s: string) => /\bfrom\b[\s\S]*\bto\b/i.test(s);
+
     // 1. Participant edit, then polished, then stored promise.
+    const candidates: string[] = [];
+
     const edited = outputs.day1_promise_user_edit;
-    if (typeof edited === "string" && edited.trim()) return edited.trim();
+    if (typeof edited === "string" && edited.trim()) candidates.push(edited.trim());
 
     const polished = outputs.day1_promise_polished;
-    if (typeof polished === "string" && polished.trim()) return polished.trim();
+    if (typeof polished === "string" && polished.trim()) candidates.push(polished.trim());
 
     const raw = outputs.day1_promise;
     if (typeof raw === "string" && raw.trim()) {
       const parsed = parse(raw);
       if (parsed && typeof parsed === "object" && typeof parsed.promise === "string") {
-        return parsed.promise.trim();
+        candidates.push(parsed.promise.trim());
+      } else {
+        candidates.push(raw.trim());
       }
-      return raw.trim();
     }
 
-    // 2. Fall back to the Day 1 answers already saved on the record.
+    const stored = candidates.find((c) => isFromTo(c));
+    if (stored) return stored;
+
+    // 2. Fall back to the Day 1 answers already saved on the record and
+    //    assemble the "from ... to ..." sentence ourselves.
     const setup = parse(outputs.day1Setup) ?? parse(outputs.day1Step) ?? {};
     const memory: any = state.memory || {};
     const who = clean(setup.audience || memory.audience || "");
     const pain = clean(setup.problem || memory.problem || "").toLowerCase();
     const result = clean(setup.outcome || memory.desiredOutcome || "").toLowerCase();
     const method = clean(setup.how || memory.method || "").toLowerCase();
-    if (!who || !pain || !result) return "";
-    return method
-      ? `Help ${who} move from "${pain}" to ${result} through ${method}.`
-      : `Help ${who} move from "${pain}" to ${result}.`;
+    if (who && pain && result) {
+      return method
+        ? `Help ${who} move from "${pain}" to ${result} through ${method}.`
+        : `Help ${who} move from "${pain}" to ${result}.`;
+    }
+
+    // 3. Nothing assembles into a from/to sentence, so show nothing.
+    return "";
   };
+
 
   const promiseSentence = resolvePromise();
 

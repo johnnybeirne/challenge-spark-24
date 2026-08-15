@@ -2285,13 +2285,27 @@ const Day1Setup = ({ onComplete }: Props) => {
                   .replace(/\byourself\b/gi, "themselves")
                   .replace(/\byour\b/gi, "their")
                   .replace(/\byou are\b/gi, "they are")
-                  .replace(/\byou\b/gi, "they");
+                  .replace(/\byou\b/gi, "they")
+                  .replace(/\bI am\b/g, "they are")
+                  .replace(/\bi am\b/gi, "they are")
+                  .replace(/\bI\b/g, "they")
+                  .replace(/(^|\s)i(\s)/g, "$1they$2")
+                  .replace(/\bmy\b/gi, "their")
+                  .replace(/\bmine\b/gi, "theirs")
+                  .replace(/\bwe are\b/gi, "they are")
+                  .replace(/\bwe\b/gi, "they")
+                  .replace(/\bour\b/gi, "their")
+                  .replace(/\s+/g, " ")
+                  .trim();
           const fallbackFrom = pain ? noDash(pain) : "";
+          const methodUsable =
+            methodPhrase && methodPhrase.split(/\s+/).length <= 6 && !/^(i|we)\b/i.test(methodPhrase);
           const fallbackTo = result
-            ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
+            ? noDash(methodUsable ? `${result} with ${methodPhrase}` : result)
             : "";
           const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
           const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
+
           const fromState = thirdPerson(noDash(step7Promise?.fromState || fallbackFrom));
           const toState = thirdPerson(noDash(step7Promise?.toState || fallbackTo));
           const soThat = thirdPerson(noDash(step7Promise?.soThat || fallbackSoThat));

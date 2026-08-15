@@ -127,14 +127,25 @@ const DashboardRoadmapSection = () => {
             >
               <AccordionTrigger className="text-left hover:no-underline">
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
                     {p.label}
+                    {(p as { locked?: boolean }).locked && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <Lock className="h-3 w-3" />
+                        Locked
+                      </span>
+                    )}
                   </span>
-                  <span className="text-lg font-bold leading-tight text-foreground">
+                  <span
+                    className={`text-lg font-bold leading-tight ${
+                      (p as { locked?: boolean }).locked ? "text-muted-foreground" : "text-foreground"
+                    }`}
+                  >
                     {p.title}
                   </span>
                 </span>
               </AccordionTrigger>
+
               <AccordionContent>
                 <p className="mt-1 text-sm leading-snug text-muted-foreground">{p.copy}</p>
               </AccordionContent>

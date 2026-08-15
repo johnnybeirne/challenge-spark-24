@@ -31,7 +31,7 @@ const DashboardRoadmapSection = () => {
     } catch {
       draft = {};
     }
-    const m = state.memory as Record<string, unknown> | undefined;
+    const m = state.memory as unknown as Record<string, unknown> | undefined;
     return {
       audience: clean(m?.audience) || clean(draft.audience),
       problem: clean(m?.problem) || clean(draft.problem),

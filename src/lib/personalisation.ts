@@ -10,6 +10,10 @@ export interface UserMemory {
   challengeName: string;
   /** AI-polished or user-edited topic that overrides the heuristic in useChallengeIdentity. */
   challengeTitleOverride: string;
+  /** Day 1 wizard answers, kept in tidy columns: who they serve, the problem, their method. */
+  audience: string;
+  problem: string;
+  method: string;
 }
 
 export const defaultMemory: UserMemory = {
@@ -20,6 +24,9 @@ export const defaultMemory: UserMemory = {
   desiredOutcome: "",
   challengeName: "",
   challengeTitleOverride: "",
+  audience: "",
+  problem: "",
+  method: "",
 };
 
 export const normalizeChallengeType = (value?: string): MemoryChallengeType => {

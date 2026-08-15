@@ -220,7 +220,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {
@@ -242,13 +242,14 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     : [];
   const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
   const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
+  const soThat = typeof parsed.soThat === "string" ? tidy(parsed.soThat) : "";
 
-  if (summary.length < 2 || !fromState || !toState) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState || !soThat) return fallback("incomplete-tool-output");
 
-  const promise = `from "${fromState}" to "${toState}"`;
+  const promise = `from "${fromState}" to "${toState}" so that "${soThat}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise, fromState, toState }),
+    JSON.stringify({ summary, promise, fromState, toState, soThat }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }

@@ -927,6 +927,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             promise: parsed.promise,
             fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
             toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
+            soThat: typeof parsed.soThat === "string" ? parsed.soThat : undefined,
           });
           return;
         }

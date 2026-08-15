@@ -2276,16 +2276,27 @@ const Day1Setup = ({ onComplete }: Props) => {
             s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
           const withStopEnding = (s: string) =>
             !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
+          // The four parts always describe the audience in the third person.
+          const thirdPerson = (s: string) =>
+            !s
+              ? ""
+              : s
+                  .replace(/\byourselves\b/gi, "themselves")
+                  .replace(/\byourself\b/gi, "themselves")
+                  .replace(/\byour\b/gi, "their")
+                  .replace(/\byou are\b/gi, "they are")
+                  .replace(/\byou\b/gi, "they");
           const fallbackFrom = pain ? noDash(pain) : "";
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
           const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
           const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
-          const fromState = noDash(step7Promise?.fromState || fallbackFrom);
-          const toState = noDash(step7Promise?.toState || fallbackTo);
-          const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
-          const andStop = withStopEnding(noDash(step7Promise?.andStop || fallbackAndStop));
+          const fromState = thirdPerson(noDash(step7Promise?.fromState || fallbackFrom));
+          const toState = thirdPerson(noDash(step7Promise?.toState || fallbackTo));
+          const soThat = thirdPerson(noDash(step7Promise?.soThat || fallbackSoThat));
+          const andStop = withStopEnding(thirdPerson(noDash(step7Promise?.andStop || fallbackAndStop)));
+
           const promise = fromState && toState && soThat && andStop
             ? `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`
             : fromState && toState

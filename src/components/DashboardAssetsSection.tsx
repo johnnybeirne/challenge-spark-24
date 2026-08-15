@@ -172,7 +172,7 @@ const DashboardAssetsSection = () => {
                             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                               {part.label}
                             </p>
-                            <p className="mt-0.5 text-base font-bold leading-snug text-foreground">
+                            <p className="mt-0.5 text-base leading-snug text-foreground">
                               &ldquo;{part.value}&rdquo;
                             </p>
                           </div>

@@ -2394,7 +2394,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                                     <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
                                       {part.label}
                                     </p>
-                                    <p className="mt-1 font-bold leading-snug text-foreground">
+                                    <p className="mt-1 leading-snug text-foreground">
                                       &ldquo;{part.value}&rdquo;
                                     </p>
                                   </div>

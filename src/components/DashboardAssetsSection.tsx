@@ -3,6 +3,12 @@ import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 /**
  * Standalone "Your Assets" section on the challenge dashboard.
@@ -75,7 +81,7 @@ const DashboardAssetsSection = () => {
         </p>
 
 
-        <div className="mt-5 space-y-3">
+        <Accordion type="single" collapsible className="mt-5 w-full">
           {(() => {
             // Assets in sequence. The badge is derived from position within the
             // day, so numbering restarts at Asset 1 for each new day.
@@ -149,23 +155,29 @@ const DashboardAssetsSection = () => {
             return entries.map((entry, i) => {
               perDay[entry.day] = (perDay[entry.day] ?? 0) + 1;
               const badge = `Day ${entry.day} · Asset ${perDay[entry.day]}`;
+              const value = `asset-${entry.day}-${perDay[entry.day]}`;
               return (
-                <div
-                  key={`${entry.day}-${i}`}
-                  className="rounded-xl border border-border bg-background px-4 py-3"
+                <AccordionItem
+                  key={value}
+                  value={value}
+                  className="rounded-xl border border-border bg-background px-4 mb-3 data-[state=open]:border-primary"
                 >
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                    {badge}
-                  </p>
-                  <p className="mt-1 text-lg font-bold leading-tight text-foreground">
-                    {entry.title}
-                  </p>
-                  {entry.body}
-                </div>
+                  <AccordionTrigger className="text-left hover:no-underline">
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                        {badge}
+                      </span>
+                      <span className="text-lg font-bold leading-tight text-foreground">
+                        {entry.title}
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>{entry.body}</AccordionContent>
+                </AccordionItem>
               );
             });
           })()}
-        </div>
+        </Accordion>
 
 
       </CardContent>

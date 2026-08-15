@@ -46,8 +46,31 @@ const DashboardAssetsSection = () => {
       .replace(/\.$/, "")
       .trim();
 
+  // Every part describes the audience in the third person.
+  const thirdPerson = (s: string) =>
+    !s
+      ? ""
+      : s
+          .replace(/\byourselves\b/gi, "themselves")
+          .replace(/\byourself\b/gi, "themselves")
+          .replace(/\byour\b/gi, "their")
+          .replace(/\byou are\b/gi, "they are")
+          .replace(/\byou\b/gi, "they")
+          .replace(/\bI am\b/g, "they are")
+          .replace(/\bi am\b/gi, "they are")
+          .replace(/\bI\b/g, "they")
+          .replace(/(^|\s)i(\s)/g, "$1they$2")
+          .replace(/\bmy\b/gi, "their")
+          .replace(/\bmine\b/gi, "theirs")
+          .replace(/\bwe are\b/gi, "they are")
+          .replace(/\bwe\b/gi, "they")
+          .replace(/\bour\b/gi, "their")
+          .replace(/\s+/g, " ")
+          .trim();
+
   const withStopEnding = (s: string) =>
     !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
+
 
   const resolvePromise = ():
     | { fromState: string; toState: string; soState?: string; andStop?: string }

@@ -2274,11 +2274,15 @@ const Day1Setup = ({ onComplete }: Props) => {
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
+          const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
           const fromState = noDash(step7Promise?.fromState || fallbackFrom);
           const toState = noDash(step7Promise?.toState || fallbackTo);
-          const promise = fromState && toState
-            ? `from "${fromState}" to "${toState}"`
-            : (step7Promise?.promise || null);
+          const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
+          const promise = fromState && toState && soThat
+            ? `from "${fromState}" to "${toState}" so that "${soThat}"`
+            : fromState && toState
+              ? `from "${fromState}" to "${toState}"`
+              : (step7Promise?.promise || null);
 
 
           // Highlight helper for the static reveal — renders the user-derived

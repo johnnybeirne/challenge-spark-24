@@ -59,7 +59,13 @@ const DashboardRoadmapSection = () => {
       .trim();
   };
 
+  const day3Done =
+    !!state.challenge?.completed ||
+    (state.challenge?.currentDay ?? 1) > 3 ||
+    (state.completedDays ?? []).includes(3);
+
   const pillars = [
+
     {
       label: t("roadmap.pillar1_label", "Pillar 1"),
       title: t("roadmap.pillar1_title", "Create your challenge."),

@@ -906,7 +906,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
   // mid-typing if the cache updates later in the same visit.
   const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
-  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string } | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string; soThat?: string } | null>(null);
 
   useEffect(() => {
     if (step !== 3) return;

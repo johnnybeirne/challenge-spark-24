@@ -408,6 +408,12 @@ const Dashboard = () => {
 
           </section>
 
+          <DashboardAssetsSection />
+
+          <DashboardRoadmapSection />
+
+
+
 
 
 

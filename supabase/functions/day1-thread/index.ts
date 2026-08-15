@@ -177,13 +177,22 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
                 minItems: 3,
                 maxItems: 4,
               },
+              fromState: {
+                type: "string",
+                description: "The audience's current state with the problem, in the builder's own words. No quotes, no dashes.",
+              },
+              toState: {
+                type: "string",
+                description: "The audience's future state after the transformation, in the builder's own words. No quotes, no dashes.",
+              },
               promise: {
                 type: "string",
-                description: "One-sentence Challenge Promise using the builder's own words.",
+                description: "The two states joined as: from [fromState] to [toState].",
               },
             },
-            required: ["summary", "promise"],
+            required: ["summary", "fromState", "toState", "promise"],
             additionalProperties: false,
+
           },
         },
       },

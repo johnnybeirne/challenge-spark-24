@@ -9,6 +9,7 @@ import { useAccessSettings } from "@/hooks/useAccessSettings";
 import { useReferredPeople } from "@/hooks/useReferredPeople";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
 import Spinner from "@/components/Spinner";
+import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
 
 const GREEN = "#1D9E75";
 const BLUE = "#378ADD";
@@ -109,55 +110,8 @@ const InviteFriends = () => {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8 space-y-8">
-      {/* 1. Header */}
-      <header className="space-y-1">
-        <h1 className="text-[var(--h1-size)] font-bold leading-tight text-foreground">
-          {firstName ? `${firstName}, here are your invites` : "Here are your invites"}
-        </h1>
-        <p className="text-[var(--body-size)] text-muted-foreground">
-          Invite people to join the challenge and keep your access free every 28 days.
-        </p>
-      </header>
+      <InvitesRewardsHeader />
 
-      {/* 2. Hero stat tiles */}
-      <section className="grid grid-cols-2 gap-4">
-        <div
-          className="rounded-xl p-5"
-          style={{ backgroundColor: PURPLE_TINT }}
-        >
-          <p className="text-xs font-semibold tracking-wide" style={{ color: PURPLE }}>
-            Points earned
-          </p>
-          <p className="mt-1 text-4xl font-bold" style={{ color: PURPLE_DEEP }}>
-            {animatedPoints}
-          </p>
-        </div>
-        <div className="rounded-xl p-5" style={{ backgroundColor: GREEN_TINT }}>
-          <p className="text-xs font-semibold tracking-wide" style={{ color: GREEN_LABEL }}>
-            People you've invited
-          </p>
-          <p className="mt-1 text-4xl font-bold" style={{ color: GREEN_DEEP }}>
-            {animatedPeople}
-          </p>
-        </div>
-      </section>
-
-      {/* 3. Points progress bar */}
-      <section className="space-y-2">
-        <div
-          className="h-2.5 w-full overflow-hidden rounded-full"
-          style={{ backgroundColor: PURPLE_TINT }}
-        >
-          <div
-            className="h-full rounded-full transition-all"
-            style={{ width: `${progressPct}%`, backgroundColor: PURPLE }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>0</span>
-          <span>{threshold}</span>
-        </div>
-      </section>
 
       {/* 4. People you have invited */}
       <section className="space-y-3">

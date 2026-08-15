@@ -142,17 +142,25 @@ const DashboardAssetsSection = () => {
               ),
             });
 
-            if (promiseSentence) {
+            if (promiseValue) {
               entries.push({
                 day: 1,
                 title: t("assets.promise_title", "Your Challenge Promise"),
                 body: (
                   <p className="mt-1 text-sm leading-snug text-foreground">
-                    {promiseSentence}
+                    {"fromState" in promiseValue ? (
+                      <>
+                        from <span className="font-bold">"{promiseValue.fromState}"</span> to{" "}
+                        <span className="font-bold">"{promiseValue.toState}"</span>
+                      </>
+                    ) : (
+                      promiseValue.text
+                    )}
                   </p>
                 ),
               });
             }
+
 
             entries.push({
               day: 2,

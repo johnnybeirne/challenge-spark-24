@@ -60,7 +60,9 @@ type Props = {
 /** Shared header for /invites and /rewards: title, stat tiles, points ladder. */
 const InvitesRewardsHeader = ({ tierLabel, subtitle }: Props) => {
   const { state } = useAppState();
-  const { pointsTotal, loading: accessLoading } = useAccessStatus();
+  const { loading: accessLoading } = useAccessStatus();
+  // Same source as the Momentum panel so both always agree.
+  const pointsTotal = state.points?.total ?? 0;
   const { pointsThreshold } = useAccessSettings();
   const { count, loading: peopleLoading } = useReferredPeople();
 

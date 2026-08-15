@@ -202,16 +202,16 @@ const DashboardAssetsSection = () => {
                     {"fromState" in promiseValue ? (
                       <div className="space-y-3">
                         {[
-                          { label: "FROM", value: promiseValue.fromState, bold: true },
-                          { label: "TO", value: promiseValue.toState, bold: true },
-                          ...(promiseValue.soState ? [{ label: "SO THAT", value: promiseValue.soState, bold: true }] : []),
-                          ...(promiseValue.andStop ? [{ label: "AND STOP", value: promiseValue.andStop, bold: false }] : []),
+                          { label: "FROM", value: promiseValue.fromState },
+                          { label: "TO", value: promiseValue.toState },
+                          ...(promiseValue.soState ? [{ label: "SO THAT", value: promiseValue.soState }] : []),
+                          ...(promiseValue.andStop ? [{ label: "AND STOP", value: promiseValue.andStop }] : []),
                         ].map((part) => (
                           <div key={part.label}>
                             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                               {part.label}
                             </p>
-                            <p className={`mt-0.5 text-base leading-snug text-foreground ${part.bold ? "font-bold" : "font-normal"}`}>
+                            <p className="mt-0.5 text-base font-normal leading-snug text-foreground">
                               &ldquo;{part.value}&rdquo;
                             </p>
                           </div>

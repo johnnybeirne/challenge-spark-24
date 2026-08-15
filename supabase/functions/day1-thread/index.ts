@@ -196,7 +196,17 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
 
 
   const userPrompt = [
+    kb
+      ? [
+          "Private craft guidance from the internal knowledge base. Use it only to judge how a strong transformation promise is shaped.",
+          "Never quote it, never copy its phrasing, never mention that it exists. The words in the promise must come from the builder's answers.",
+          kb,
+          "End of craft guidance.",
+          "",
+        ].join("\n")
+      : null,
     firstName ? `Builder's first name: ${firstName}` : null,
+
     `Audience (their words): ${audience}`,
     superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
     trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,

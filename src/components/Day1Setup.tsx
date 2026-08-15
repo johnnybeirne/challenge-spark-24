@@ -906,7 +906,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
   // mid-typing if the cache updates later in the same visit.
   const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
-  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string; soThat?: string } | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string; soThat?: string; andStop?: string } | null>(null);
 
   useEffect(() => {
     if (step !== 3) return;
@@ -928,6 +928,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
             toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
             soThat: typeof parsed.soThat === "string" ? parsed.soThat : undefined,
+            andStop: typeof parsed.andStop === "string" ? parsed.andStop : undefined,
           });
           return;
         }
@@ -1001,6 +1002,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       const fromState = (data as any).fromState;
       const toState = (data as any).toState;
       const soThat = (data as any).soThat;
+      const andStop = (data as any).andStop;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -1014,7 +1016,9 @@ const Day1Setup = ({ onComplete }: Props) => {
               ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
               ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
               ...(typeof soThat === "string" && soThat.trim() ? { soThat: soThat.trim() } : {}),
+              ...(typeof andStop === "string" && andStop.trim() ? { andStop: andStop.trim() } : {}),
             }),
+
 
             day1_promise_key: cacheKey,
           },
@@ -2265,21 +2269,25 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          // The promise is always a from/to transformation statement built from
-          // the participant's own answers. The AI returns the two states
+          // The promise is always a four part transformation statement built
+          // from the participant's own answers. The AI returns the four parts
           // separately; if it did not run, we assemble them locally.
           const noDash = (s: string) =>
             s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
+          const withStopEnding = (s: string) =>
+            !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
           const fallbackFrom = pain ? noDash(pain) : "";
           const fallbackTo = result
             ? noDash(methodPhrase ? `${result} with ${methodPhrase}` : result)
             : "";
           const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
+          const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
           const fromState = noDash(step7Promise?.fromState || fallbackFrom);
           const toState = noDash(step7Promise?.toState || fallbackTo);
           const soThat = noDash(step7Promise?.soThat || fallbackSoThat);
-          const promise = fromState && toState && soThat
-            ? `from "${fromState}" to "${toState}" so that "${soThat}"`
+          const andStop = withStopEnding(noDash(step7Promise?.andStop || fallbackAndStop));
+          const promise = fromState && toState && soThat && andStop
+            ? `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`
             : fromState && toState
               ? `from "${fromState}" to "${toState}"`
               : (step7Promise?.promise || null);
@@ -2375,18 +2383,24 @@ const Day1Setup = ({ onComplete }: Props) => {
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
                           <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
                             {fromState && toState ? (
-                              <>
-                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">From</span>
-                                <span className="block font-bold text-foreground">"{fromState}"</span>
-                                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">To</span>
-                                <span className="block font-bold text-foreground">"{toState}"</span>
+                              <p className="leading-snug">
+                                <span className="font-normal">from </span>
+                                <span className="font-bold text-foreground">"{fromState}"</span>
+                                <span className="font-normal"> to </span>
+                                <span className="font-bold text-foreground">"{toState}"</span>
                                 {soThat && (
                                   <>
-                                    <span className="block text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">So that</span>
-                                    <span className="block font-bold text-foreground">"{soThat}"</span>
+                                    <span className="font-normal"> so that </span>
+                                    <span className="font-bold text-foreground">"{soThat}"</span>
                                   </>
                                 )}
-                              </>
+                                {andStop && (
+                                  <>
+                                    <span className="font-normal"> and stop </span>
+                                    <span className="font-normal text-foreground">"{andStop}"</span>
+                                  </>
+                                )}
+                              </p>
                             ) : (
                               <p className="leading-snug">{promise}</p>
                             )}

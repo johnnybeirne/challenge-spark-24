@@ -122,19 +122,11 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 }
 
 // --- Knowledge base retrieval ------------------------------------------------
-// Pulls a few short reference docs to guide HOW the promise is phrased.
-// Never surfaced verbatim: the prompt treats it as private craft guidance.
-function buildTsQuery(q: string): string {
-  return q
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 10)
-    .join(" ");
-}
+// Targeted single document load. Only the promise writing reference is read,
+// and only for promise generation. It is method guidance, never output text.
+const PROMISE_REFERENCE_SLUG = "promise-writing-reference";
 
-async function fetchPromiseKb(query: string): Promise<string> {
+async function fetchPromiseReference(): Promise<string> {
   try {
     const url = Deno.env.get("SUPABASE_URL");
     const key = Deno.env.get("SUPABASE_ANON_KEY");
@@ -142,41 +134,21 @@ async function fetchPromiseKb(query: string): Promise<string> {
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
     const sb = createClient(url, key);
 
-    const seen = new Map<string, { title: string; content: string }>();
-
-    // 1) Craft docs explicitly about promises / transformation.
-    const { data: tagged } = await sb
+    const { data, error } = await sb
       .from("kb_documents")
-      .select("slug,title,content")
+      .select("content")
+      .eq("slug", PROMISE_REFERENCE_SLUG)
       .eq("is_active", true)
-      .overlaps("tags", ["promise", "transformation", "outcome", "positioning", "offer"])
-      .limit(3);
-    for (const d of tagged ?? []) seen.set(d.slug, d);
+      .maybeSingle();
 
-    // 2) Docs matching the participant's own language.
-    const tsq = buildTsQuery(query);
-    if (tsq) {
-      const { data: hits } = await sb
-        .from("kb_documents")
-        .select("slug,title,content")
-        .eq("is_active", true)
-        .in("stage", ["challenge", "all"])
-        .textSearch("search_tsv", tsq, { type: "websearch", config: "english" })
-        .limit(3);
-      for (const d of hits ?? []) if (!seen.has(d.slug)) seen.set(d.slug, d);
-    }
-
-    const docs = [...seen.values()].slice(0, 4);
-    if (docs.length === 0) return "";
-
-    return docs
-      .map((d) => `### ${d.title}\n${(d.content || "").slice(0, 900)}`)
-      .join("\n\n");
+    if (error || !data?.content) return "";
+    return String(data.content).slice(0, 6000);
   } catch (e) {
-    console.error("kb retrieval failed", e);
+    console.error("promise reference load failed", e);
     return "";
   }
 }
+
 
 async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const audience = sanitise(inputs.audience);
@@ -192,35 +164,45 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("missing-inputs");
   }
 
-  const kb = await fetchPromiseKb([audience, problem, outcome, how].join(" "));
+  const reference = await fetchPromiseReference();
 
+  const echoGuard = reference
+    ? [
+        "PRIVATE METHOD REFERENCE. The material below teaches you HOW to construct a four part transformation promise.",
+        "It is method guidance you learn from. It is never text you repeat.",
+        "You must build this promise fresh, from this specific participant's own answers.",
+        "Never copy, quote, or lightly reword any example, phrase or line from the reference.",
+        "Every example field in the reference is a pattern to learn from, not content to reuse.",
+        "Never mention the reference and never hint that it exists.",
+        "The participant's own audience, problem, outcome and method are the source of the actual words.",
+        "",
+        reference,
+        "",
+        "END OF PRIVATE METHOD REFERENCE.",
+        "",
+      ].join("\n")
+    : null;
 
   const userPrompt = [
-    kb
-      ? [
-          "Private craft guidance from the internal knowledge base. Use it only to judge how a strong transformation promise is shaped.",
-          "Never quote it, never copy its phrasing, never mention that it exists. The words in the promise must come from the builder's answers.",
-          kb,
-          "End of craft guidance.",
-          "",
-        ].join("\n")
-      : null,
+    echoGuard,
     firstName ? `Builder's first name: ${firstName}` : null,
 
     `Audience (their words): ${audience}`,
-    superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
-    trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,
+    superpower ? `Builder's superpower, what they do better than anyone (their words): ${superpower}` : null,
+    trigger ? `Trigger moment, what makes the 3 days the right time (their words): ${trigger}` : null,
     `Problem the audience is stuck on (their words): ${problem}`,
-    `Process — how the builder takes them through it (their words): ${how}`,
-    `Outcome — what they walk away with after Day 3 (their words): ${outcome}`,
+    `Process, how the builder takes them through it (their words): ${how}`,
+    `Outcome, what they walk away with after Day 3 (their words): ${outcome}`,
     challengeTypeLabel ? `Challenge shape: ${challengeTypeLabel}` : null,
     "",
     "Use the compose_challenge_promise tool to return:",
     "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
     "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
     "3. toState: the audience's future state after the transformation, written in the builder's own words, reflecting the outcome and how the builder helps. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "4. soThat: the ultimate benefit the audience gets from the transformation, written in the builder's own words and reflecting their superpower. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "5. promise: the three parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat]. Nothing before the word from and nothing after the soThat.",
+    "4. soThat: the deeper payoff the audience gets from the transformation, one level below the surface result, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "5. andStop: the pain that ends for the audience, ending with either the words 'from happening' or the words 'from continuing', whichever fits. Example shape only: quiet weeks from continuing. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+    "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop]. Nothing before the word from and nothing after the andStop.",
+    "All four parts describe the audience, never the builder. All four parts are always required and the and stop part is never omitted.",
     "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
   ].filter(Boolean).join("\n");
 
@@ -258,14 +240,18 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
               },
               soThat: {
                 type: "string",
-                description: "The ultimate benefit the audience gets from the transformation, in the builder's own words and reflecting their superpower. No quotes, no dashes.",
+                description: "The deeper payoff the audience gets, one level below the surface result, in the builder's own words. No quotes, no dashes.",
+              },
+              andStop: {
+                type: "string",
+                description: "The pain that ends for the audience, ending with 'from happening' or 'from continuing'. No quotes, no dashes.",
               },
               promise: {
                 type: "string",
-                description: "The three parts joined as: from [fromState] to [toState] so that [soThat].",
+                description: "The four parts joined as: from [fromState] to [toState] so that [soThat] and stop [andStop].",
               },
             },
-            required: ["summary", "fromState", "toState", "soThat", "promise"],
+            required: ["summary", "fromState", "toState", "soThat", "andStop", "promise"],
             additionalProperties: false,
 
           },
@@ -290,7 +276,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string; andStop?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {
@@ -313,13 +299,20 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
   const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
   const soThat = typeof parsed.soThat === "string" ? tidy(parsed.soThat) : "";
+  let andStop = typeof parsed.andStop === "string" ? tidy(parsed.andStop) : "";
+  // The and stop part always closes with one of the two allowed endings.
+  if (andStop && !/\bfrom (happening|continuing)$/i.test(andStop)) {
+    andStop = `${andStop} from continuing`;
+  }
 
-  if (summary.length < 2 || !fromState || !toState || !soThat) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState || !soThat || !andStop) {
+    return fallback("incomplete-tool-output");
+  }
 
-  const promise = `from "${fromState}" to "${toState}" so that "${soThat}"`;
+  const promise = `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise, fromState, toState, soThat }),
+    JSON.stringify({ summary, promise, fromState, toState, soThat, andStop }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }

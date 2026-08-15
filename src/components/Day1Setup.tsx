@@ -2366,9 +2366,17 @@ const Day1Setup = ({ onComplete }: Props) => {
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
                           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] font-semibold leading-snug text-foreground">
-                            Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
+                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
+                            {fromState && toState ? (
+                              <>
+                                from <span className="font-bold">"{fromState}"</span> to{" "}
+                                <span className="font-bold">"{toState}"</span>
+                              </>
+                            ) : (
+                              promise
+                            )}
                           </p>
+
                         </div>
                       </div>
                     )}

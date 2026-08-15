@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
@@ -67,6 +69,8 @@ const DashboardAssetsSection = () => {
 
   const promiseSentence = resolvePromise();
 
+  const [openItem, setOpenItem] = useState<string>("");
+
   return (
     <Card id="your-assets" className="scroll-mt-24 border-border bg-card shadow-sm">
       <CardContent className="p-5 sm:p-6">
@@ -81,7 +85,13 @@ const DashboardAssetsSection = () => {
         </p>
 
 
-        <Accordion type="single" collapsible className="mt-5 w-full">
+        <Accordion
+          type="single"
+          collapsible
+          value={openItem}
+          onValueChange={setOpenItem}
+          className="mt-5 w-full"
+        >
           {(() => {
             // Assets in sequence. The badge is derived from position within the
             // day, so numbering restarts at Asset 1 for each new day.
@@ -100,6 +110,7 @@ const DashboardAssetsSection = () => {
                   </p>
                   <a
                     href="#your-roadmap"
+                    onClick={() => setOpenItem("")}
                     className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
                   >
                     {t("assets.asset1_cta", "View your roadmap")} &rarr;
@@ -179,6 +190,16 @@ const DashboardAssetsSection = () => {
           })()}
         </Accordion>
 
+        <div className="mt-4 flex items-center justify-end border-t border-border pt-3">
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-foreground"
+          >
+            Back to top
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
 
       </CardContent>
     </Card>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay } from "lucide-react";
+import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -120,6 +120,13 @@ const items: NavItem[] = [
     icon: ClipboardCheck,
     external: true,
     keywords: ["qa", "test", "end to end", "runner", "demo", "smoke"],
+  },
+  {
+    title: "Private guest passes",
+    url: "/owner-console/guest-passes",
+    icon: KeyRound,
+    external: true,
+    keywords: ["guest", "secret", "private", "invite", "look around", "pass", "access link"],
   },
   {
     title: "Challenge simulator",

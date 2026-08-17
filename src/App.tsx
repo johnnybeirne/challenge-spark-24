@@ -89,6 +89,8 @@ import AdminReferralSettings from "@/pages/AdminReferralSettings";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
+import AdminGuestPasses from "@/pages/AdminGuestPasses";
+import GuestPass from "@/pages/GuestPass";
 import AdminUserTour from "@/pages/AdminUserTour";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
@@ -196,6 +198,7 @@ const App = () => (
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
                 {/* Referral invite entry — stores code then funnels into assessment */}
+                <Route path="/pass/:token" element={<GuestPass />} />
                 <Route path="/invite/:referralCode" element={<InviteEntry />} />
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
@@ -297,6 +300,7 @@ const App = () => (
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
+                <Route path="guest-passes" element={<AdminGuestPasses />} />
                 <Route path="user-tour" element={<AdminUserTour />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />

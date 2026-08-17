@@ -769,6 +769,48 @@ export type Database = {
         }
         Relationships: []
       }
+      guest_passes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          label: string
+          last_used_at: string | null
+          max_uses: number
+          note: string
+          revoked: boolean
+          token: string
+          uses: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          max_uses?: number
+          note?: string
+          revoked?: boolean
+          token: string
+          uses?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          max_uses?: number
+          note?: string
+          revoked?: boolean
+          token?: string
+          uses?: number
+        }
+        Relationships: []
+      }
       invite_badges: {
         Row: {
           description: string
@@ -2961,6 +3003,7 @@ export type Database = {
       }
       recompute_monthly_points: { Args: never; Returns: number }
       redeem_coupon: { Args: { p_code: string }; Returns: Json }
+      redeem_guest_pass: { Args: { _token: string }; Returns: Json }
       resolve_partner_by_slug: {
         Args: { p_slug: string }
         Returns: {

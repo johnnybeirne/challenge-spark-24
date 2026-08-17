@@ -27,8 +27,7 @@ const makeToken = () => {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 };
 
-const baseUrl = () =>
-  typeof window !== "undefined" ? window.location.origin : "https://leadtree.johnnybeirne.com";
+const baseUrl = () => "https://leadtree.johnnybeirne.com";
 
 const AdminGuestPasses = () => {
   const [passes, setPasses] = useState<GuestPass[]>([]);

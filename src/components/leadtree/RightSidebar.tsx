@@ -126,7 +126,6 @@ const RightSidebar = () => {
                 <li key={c.name + i} className="flex items-center gap-3">
                   <span className="w-4 text-xs font-semibold text-[#6B7280] tabular-nums">{i + 1}</span>
                   <span className="flex-1 truncate text-sm font-medium text-[#1F2937]">{c.name}</span>
-                  <span className="text-xs text-[#6B7280] tabular-nums">{c.pts}</span>
                 </li>
               ))}
             </ol>

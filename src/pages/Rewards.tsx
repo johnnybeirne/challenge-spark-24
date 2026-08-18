@@ -166,7 +166,7 @@ export default function Rewards() {
       </main>
 
       {/* Sticky full-suite footer */}
-      <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur">
+      <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur mt-6 rounded-xl">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-bold">Can't wait?</p>

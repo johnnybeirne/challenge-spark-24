@@ -222,6 +222,8 @@ export interface RewardsConfig {
     fullSuitePriceId: string;
     inviteHeading?: string;
     inviteBody?: string;
+    /** Bumped when the canonical rung set changes, so stored copies refresh. */
+    rungsVersion?: number;
     rungs: LadderRung[];
   };
 }
@@ -333,6 +335,8 @@ export interface SiteConfig {
 }
 
 /* ───── Defaults ───── */
+
+export const LADDER_RUNGS_VERSION = 2;
 
 export const defaultSiteConfig: SiteConfig = {
   landing: {
@@ -541,17 +545,16 @@ export const defaultSiteConfig: SiteConfig = {
       fullSuitePriceId: "reward_full_suite",
       inviteHeading: "Your invite link",
       inviteBody: "Share this — every friend who joins moves you up the ladder.",
+      rungsVersion: LADDER_RUNGS_VERSION,
       rungs: [
-        { points: 100, name: "Launch Checklist",                 retailValue: 47,  buyPrice: 27, priceId: "reward_100", doubleUnlock: false , position: 1 },
-        { points: 200, name: "AI Prompt Pack",                   retailValue: 97,  buyPrice: 37, priceId: "reward_200", doubleUnlock: false , position: 2 },
-        { points: 300, name: "Referral Templates + JV Bonus",    retailValue: 147, buyPrice: 47, priceId: "reward_300", doubleUnlock: true  , position: 3 },
-        { points: 400, name: "Advanced Challenge Training",      retailValue: 147, buyPrice: 67, priceId: "reward_400", doubleUnlock: false , position: 4 },
-        { points: 500, name: "Community Feature Spot + JV Bonus",retailValue: 197, buyPrice: 77, priceId: "reward_500", doubleUnlock: true  , position: 5 },
-        { points: 600, name: "Strategy Call Application",        retailValue: 297, buyPrice: 87, priceId: "reward_600", doubleUnlock: false , position: 6 },
-        { points: 700, name: "Done-for-you Funnel + JV Bonus",   retailValue: 297, buyPrice: 87, priceId: "reward_700", doubleUnlock: true  , position: 7 },
-        { points: 800, name: "Lifetime Challenge Access",        retailValue: 497, buyPrice: 87, priceId: "reward_800", doubleUnlock: false , position: 8 },
-        { points: 900, name: "Partner Spotlight + JV Bonus",     retailValue: 397, buyPrice: 87, priceId: "reward_900", doubleUnlock: true  , position: 9 },
-        { points: 1000,name: "Strategic Partner Kit",            retailValue: 0,   buyPrice: 0,  priceId: "reward_1000",doubleUnlock: false, isDestination: true , position: 10 },
+        { points: 100,  name: "Launch Checklist",                  buyPrice: 97,  priceId: "reward_100",  doubleUnlock: false, position: 1 },
+        { points: 300,  name: "Referral Templates + JV Bonus",     buyPrice: 97,  priceId: "reward_300",  doubleUnlock: true,  position: 2 },
+        { points: 500,  name: "Community Feature Spot + JV Bonus", buyPrice: 497, priceId: "reward_500",  doubleUnlock: true,  position: 3 },
+        { points: 600,  name: "Strategy Call Application",         buyPrice: 997, priceId: "reward_600",  doubleUnlock: false, position: 4 },
+        { points: 700,  name: "Done-for-you Funnel + JV Bonus",    buyPrice: 997, priceId: "reward_700",  doubleUnlock: true,  position: 5 },
+        { points: 800,  name: "Lifetime Challenge Access",         buyPrice: 997, priceId: "reward_800",  doubleUnlock: false, position: 6 },
+        { points: 900,  name: "Partner Spotlight + JV Bonus",      buyPrice: 997, priceId: "reward_900",  doubleUnlock: true,  position: 7 },
+        { points: 1000, name: "Strategic Partner",                 buyPrice: 997, priceId: "reward_1000", doubleUnlock: false, position: 8 },
       ],
     },
 
@@ -661,7 +664,19 @@ function loadConfig(): SiteConfig {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return deepMerge(defaultSiteConfig, parsed);
+      const merged = deepMerge(defaultSiteConfig, parsed);
+      // Refresh the stored rung set when the canonical ladder changes.
+      if (merged.rewards?.ladder?.rungsVersion !== LADDER_RUNGS_VERSION) {
+        merged.rewards = {
+          ...merged.rewards,
+          ladder: {
+            ...merged.rewards.ladder,
+            rungsVersion: LADDER_RUNGS_VERSION,
+            rungs: defaultSiteConfig.rewards.ladder.rungs.map((r) => ({ ...r })),
+          },
+        };
+      }
+      return merged;
     }
   } catch {}
   return { ...defaultSiteConfig };

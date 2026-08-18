@@ -74,7 +74,7 @@ export default function Rewards() {
       </header>
 
       {/* Ladder */}
-      <main className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6">
+      <main className="flex-1 px-4 py-6 sm:px-6">
         <div className="mx-auto max-w-3xl space-y-3">
           <InvitesRewardsHeader tierLabel={userTier.name} subtitle="Earn points by inviting people and completing each challenge day." />
           <LadderInviteBlock />

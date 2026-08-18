@@ -103,6 +103,9 @@ Deno.serve(async (req) => {
         ...(userId && { userId }),
         ...(promotionCode && { partner_code: promotionCode }),
         ...(gateKey && /^[a-zA-Z0-9_-]{1,60}$/.test(gateKey) && { gate_key: gateKey }),
+        // Lookup key of the purchased price, so fulfilment can record the real
+        // price_id instead of inferring one.
+        price_lookup_key: priceId,
       },
       // userId must live on the subscription too — webhooks for renewals and
       // cancellations only carry the subscription object.

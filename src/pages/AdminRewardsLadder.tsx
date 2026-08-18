@@ -202,6 +202,12 @@ const AdminRewardsLadder = () => {
                   value={rung.priceId}
                   onChange={(v) => updateRung(i, { priceId: v })}
                 />
+                <EditableField
+                  label="Unlock gate key"
+                  helper="Key granted when this rung is bought (e.g. reward_gate_100)."
+                  value={rung.gateKey ?? ""}
+                  onChange={(v) => updateRung(i, { gateKey: v })}
+                />
               </div>
               <div className="mt-2">
                 <ToggleField
@@ -227,6 +233,7 @@ const AdminRewardsLadder = () => {
                 
                 buyPrice: 0,
                 priceId: "",
+                gateKey: "",
                 doubleUnlock: false,
                 position: ladder.rungs.length + 1,
               },

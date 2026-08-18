@@ -201,6 +201,8 @@ export interface LadderRung {
   retailValue?: number;
   buyPrice: number;
   priceId: string;
+  /** Unlock gate key written to `unlock_grants` when this rung is bought. */
+  gateKey: string;
   doubleUnlock: boolean;
   isDestination?: boolean;
   /** Canonical display order — ladder + admin both sort ascending on this. */
@@ -336,7 +338,7 @@ export interface SiteConfig {
 
 /* ───── Defaults ───── */
 
-export const LADDER_RUNGS_VERSION = 3;
+export const LADDER_RUNGS_VERSION = 4;
 
 export const defaultSiteConfig: SiteConfig = {
   landing: {
@@ -547,14 +549,14 @@ export const defaultSiteConfig: SiteConfig = {
       inviteBody: "Share this — every friend who joins moves you up the ladder.",
       rungsVersion: LADDER_RUNGS_VERSION,
       rungs: [
-        { points: 100,  name: "Launch Checklist",                  buyPrice: 97,  priceId: "reward_100",  doubleUnlock: false, position: 1 },
-        { points: 300,  name: "Referral Templates + JV Bonus",     buyPrice: 97,  priceId: "reward_300",  doubleUnlock: true,  position: 2 },
-        { points: 500,  name: "Community Feature Spot + JV Bonus", buyPrice: 497, priceId: "reward_500",  doubleUnlock: true,  position: 3 },
-        { points: 600,  name: "Strategy Call Application",         buyPrice: 997, priceId: "reward_600",  doubleUnlock: false, position: 4 },
-        { points: 700,  name: "Done-for-you Funnel + JV Bonus",    buyPrice: 997, priceId: "reward_700",  doubleUnlock: true,  position: 5 },
-        { points: 800,  name: "Lifetime Challenge Access",         buyPrice: 997, priceId: "reward_800",  doubleUnlock: false, position: 6 },
-        { points: 900,  name: "Partner Spotlight + JV Bonus",      buyPrice: 997, priceId: "reward_900",  doubleUnlock: true,  position: 7 },
-        { points: 1000, name: "Strategic Partner",                 buyPrice: 997, priceId: "reward_1000", doubleUnlock: false, position: 8 },
+        { points: 100,  name: "Launch Checklist",                  buyPrice: 97,  priceId: "reward_100", gateKey: "reward_gate_100",  doubleUnlock: false, position: 1 },
+        { points: 300,  name: "Referral Templates + JV Bonus",     buyPrice: 97,  priceId: "reward_300", gateKey: "reward_gate_300",  doubleUnlock: true,  position: 2 },
+        { points: 500,  name: "Community Feature Spot + JV Bonus", buyPrice: 497, priceId: "reward_500", gateKey: "reward_gate_500",  doubleUnlock: true,  position: 3 },
+        { points: 600,  name: "Strategy Call Application",         buyPrice: 997, priceId: "reward_600", gateKey: "reward_gate_600",  doubleUnlock: false, position: 4 },
+        { points: 700,  name: "Done-for-you Funnel + JV Bonus",    buyPrice: 997, priceId: "reward_700", gateKey: "reward_gate_700",  doubleUnlock: true,  position: 5 },
+        { points: 800,  name: "Lifetime Challenge Access",         buyPrice: 997, priceId: "reward_800", gateKey: "reward_gate_800",  doubleUnlock: false, position: 6 },
+        { points: 900,  name: "Partner Spotlight + JV Bonus",      buyPrice: 997, priceId: "reward_900", gateKey: "reward_gate_900",  doubleUnlock: true,  position: 7 },
+        { points: 1000, name: "Strategic Partner",                 buyPrice: 997, priceId: "reward_1000", gateKey: "reward_gate_1000", doubleUnlock: false, position: 8 },
       ],
     },
 

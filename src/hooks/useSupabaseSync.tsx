@@ -161,22 +161,16 @@ export async function saveChallengeProgress(
   } catch {}
 }
 
-/** Save a new unlock to Supabase */
+/**
+ * Claim an unlock. The server re-checks the criteria (invites, day completion,
+ * launch URL) before recording it, so the client cannot grant itself unlocks.
+ */
 export async function saveUnlock(
-  userId: string,
+  _userId: string,
   unlock: { id: string; name: string; value: number; reason: string }
 ) {
   try {
-    await (supabase.from("unlocks") as any).upsert(
-      {
-        user_id: userId,
-        unlock_id: unlock.id,
-        name: unlock.name,
-        value: unlock.value,
-        reason: unlock.reason,
-      },
-      { onConflict: "user_id,unlock_id" }
-    );
+    await (supabase.rpc as any)("claim_unlock", { p_unlock_id: unlock.id });
   } catch {}
 }
 

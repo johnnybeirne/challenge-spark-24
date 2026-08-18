@@ -222,6 +222,8 @@ export interface RewardsConfig {
     fullSuitePriceId: string;
     inviteHeading?: string;
     inviteBody?: string;
+    /** Bumped when the canonical rung set changes, so stored copies refresh. */
+    rungsVersion?: number;
     rungs: LadderRung[];
   };
 }

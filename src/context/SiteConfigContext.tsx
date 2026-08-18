@@ -664,7 +664,19 @@ function loadConfig(): SiteConfig {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return deepMerge(defaultSiteConfig, parsed);
+      const merged = deepMerge(defaultSiteConfig, parsed);
+      // Refresh the stored rung set when the canonical ladder changes.
+      if (merged.rewards?.ladder?.rungsVersion !== LADDER_RUNGS_VERSION) {
+        merged.rewards = {
+          ...merged.rewards,
+          ladder: {
+            ...merged.rewards.ladder,
+            rungsVersion: LADDER_RUNGS_VERSION,
+            rungs: defaultSiteConfig.rewards.ladder.rungs.map((r) => ({ ...r })),
+          },
+        };
+      }
+      return merged;
     }
   } catch {}
   return { ...defaultSiteConfig };

@@ -123,7 +123,7 @@ export default function Rewards() {
                   {/* EARN */}
                   <div className="rounded-lg border bg-background/60 p-3">
                     <p className="text-sm font-semibold">
-                      {reached ? "Unlocked" : `Earn free at ${rung.points} pts`}
+                      {reached ? "Unlocked" : `Access at ${rung.points} pts`}
                     </p>
                     <Progress value={pct} className="mt-2 h-1.5" />
                     <p className="mt-1.5 text-xs text-muted-foreground">

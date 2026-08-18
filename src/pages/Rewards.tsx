@@ -47,7 +47,7 @@ export default function Rewards() {
   };
 
   return (
-    <div className="flex h-[100svh] flex-col bg-gradient-to-b from-background to-muted/40">
+    <div className="flex min-h-full flex-col bg-gradient-to-b from-background to-muted/40">
       <SEO
         title="Rewards Ladder"
         description="Earn rewards with points, or buy any reward outright."
@@ -74,7 +74,7 @@ export default function Rewards() {
       </header>
 
       {/* Ladder */}
-      <main className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6">
+      <main className="flex-1 px-4 py-6 sm:px-6">
         <div className="mx-auto max-w-3xl space-y-3">
           <InvitesRewardsHeader tierLabel={userTier.name} subtitle="Earn points by inviting people and completing each challenge day." />
           <LadderInviteBlock />
@@ -166,7 +166,7 @@ export default function Rewards() {
       </main>
 
       {/* Sticky full-suite footer */}
-      <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur">
+      <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur mt-6 rounded-xl">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-bold">Can't wait?</p>

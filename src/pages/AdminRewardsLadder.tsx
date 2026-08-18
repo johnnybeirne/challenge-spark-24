@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
+import { supabase } from "@/integrations/supabase/client";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
 import {
   CmsPageHeader,
   EditorCard,
@@ -10,6 +12,7 @@ import {
   ToggleField,
   StickyActionBar,
 } from "@/components/cms/cms-ui";
+
 
 const normalise = (rungs: LadderRung[]): LadderRung[] =>
   rungs

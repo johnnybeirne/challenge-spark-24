@@ -227,6 +227,19 @@ const CmsRewards = () => {
                   }
                 />
                 <EditableField
+                  label="Unlock gate key"
+                  helper="Key written when this rung is bought (e.g. reward_gate_100)."
+                  value={rung.gateKey ?? ""}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], gateKey: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+
+                <EditableField
                   label="Retail value (USD)"
                   type="number"
                   value={String(rung.retailValue)}

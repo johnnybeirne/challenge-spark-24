@@ -44,7 +44,7 @@ const CheckoutReturn = () => {
         const rung = rungsRef.current.find(
           (r) => r.priceId === priceId || `unlock_${r.gateKey}` === priceId,
         );
-        if (rung) {
+        if (rung?.gateKey) {
           const { data: grant } = await supabase
             .from("unlock_grants")
             .select("id")

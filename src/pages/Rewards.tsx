@@ -47,7 +47,7 @@ export default function Rewards() {
   };
 
   return (
-    <div className="flex h-[100svh] flex-col bg-gradient-to-b from-background to-muted/40">
+    <div className="flex min-h-full flex-col bg-gradient-to-b from-background to-muted/40">
       <SEO
         title="Rewards Ladder"
         description="Earn rewards with points, or buy any reward outright."

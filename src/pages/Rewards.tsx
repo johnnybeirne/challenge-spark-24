@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
 import { getPointTier, pointRules } from "@/lib/points";
@@ -22,7 +22,7 @@ export function sortRungs(rungs: LadderRung[]): LadderRung[] {
 export default function Rewards() {
   const { state } = useAppState();
   const { config } = useSiteConfig();
-  const { openCheckout, checkoutElement } = useStripeCheckout();
+  const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
 
   const userPoints = state.points?.total ?? 0;
   const userTier = getPointTier(userPoints);
@@ -57,16 +57,63 @@ export default function Rewards() {
     };
   }, [gateKeys.join("|")]);
 
-  const handleBuy = (priceId: string, gateKey?: string) => {
+  // Inline rung checkout accordion: at most one rung's checkout open at a time.
+  // hostKey = which rung card currently mounts the iframe; openRungKey = which is
+  // expanded. They decouple so the panel can animate closed before unmounting.
+  const [hostKey, setHostKey] = useState<string | null>(null);
+  const [openRungKey, setOpenRungKey] = useState<string | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
+
+  const rungKey = (rung: LadderRung) => rung.priceId || String(rung.position);
+
+  const openRungCheckout = (rung: LadderRung) => {
+    const key = rungKey(rung);
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    // Mount the panel collapsed, then expand on the next frame so it animates open.
+    setHostKey(key);
+    setOpenRungKey(null);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => setOpenRungKey(key));
+    // Same session/metadata as before — only the mount location changes.
     openCheckout({
-      priceId,
-      ...(gateKey && { gateKey }),
+      priceId: rung.priceId,
+      ...(rung.gateKey && { gateKey: rung.gateKey }),
       quantity: 1,
       customerEmail: state.user?.email,
       userId: state.user?.id || "",
       returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     });
   };
+
+  const closeRungCheckout = () => {
+    setOpenRungKey(null); // collapse
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(() => {
+      setHostKey(null); // unmount after the collapse transition
+      closeCheckout(); // clear the checkout session/options
+      closeTimerRef.current = null;
+    }, 320);
+  };
+
+  const handleBuyClick = (rung: LadderRung) => {
+    const key = rungKey(rung);
+    if (openRungKey === key) {
+      closeRungCheckout();
+      return;
+    }
+    openRungCheckout(rung);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
 
   return (
     <div className="flex min-h-full flex-col bg-gradient-to-b from-background to-muted/40">
@@ -166,10 +213,14 @@ export default function Rewards() {
                         <Button
                           size="sm"
                           className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
-                          onClick={() => handleBuy(rung.priceId, rung.gateKey)}
+                          onClick={() => handleBuyClick(rung)}
                           disabled={reached}
                         >
-                          {reached ? "Already unlocked" : `Buy it now — $${rung.buyPrice}`}
+                          {reached
+                            ? "Already unlocked"
+                            : openRungKey === rungKey(rung)
+                              ? `Close — $${rung.buyPrice}`
+                              : `Buy it now — $${rung.buyPrice}`}
                         </Button>
                         <p className="mt-1.5 text-center text-xs text-muted-foreground">
                           Skip the wait — get it instantly.
@@ -182,14 +233,41 @@ export default function Rewards() {
                     )}
                   </div>
                 </div>
+
+                {/* Inline checkout accordion — only the hosting rung mounts it,
+                    expanding directly beneath its Buy button. One open at a time. */}
+                {hostKey === rungKey(rung) && (
+                  <div
+                    className={cn(
+                      "grid overflow-hidden transition-all duration-300 ease-in-out",
+                      openRungKey === rungKey(rung)
+                        ? "mt-3 grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0",
+                    )}
+                  >
+                    <div className="min-h-0 overflow-hidden rounded-lg border bg-background/60 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          Secure checkout — {rung.name}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={closeRungCheckout}
+                          className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                        >
+                          Close
+                        </button>
+                      </div>
+                      <div className="overflow-x-hidden">{checkoutElement}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
           <LadderInviteBlock className="mt-3" />
         </div>
       </main>
-
-      {checkoutElement}
     </div>
   );
 }

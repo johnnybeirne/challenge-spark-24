@@ -275,8 +275,21 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   // Reward-ladder rung purchase: unlocks EXACTLY that one rung. Never premium,
   // never lower rungs. Matched before the premium fallback.
   if (gateKey && /^reward_gate_/.test(gateKey)) {
-    if (userId) {
-      await sb.from("purchases").upsert(
+    console.log("[reward-rung] metadata received:", JSON.stringify({
+      sessionId,
+      gateKey,
+      priceLookupKey,
+      userId: userId ?? null,
+      amount,
+      currency,
+      env,
+      metadataKeys: Object.keys(session.metadata ?? {}),
+    }));
+
+    if (!userId) {
+      console.error("[reward-rung] no userId in session metadata — cannot grant", sessionId);
+    } else {
+      const { error: purchaseError } = await sb.from("purchases").upsert(
         {
           user_id: userId,
           stripe_session_id: sessionId,
@@ -292,17 +305,30 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
         },
         { onConflict: "stripe_session_id" },
       );
+      if (purchaseError) {
+        console.error("[reward-rung] purchase upsert failed:", JSON.stringify(purchaseError));
+      } else {
+        console.log("[reward-rung] purchase recorded for", userId, priceLookupKey ?? gateKey);
+      }
 
-      await sb
+      const { data: grantRow, error: grantError } = await sb
         .from("unlock_grants")
         .upsert(
           { user_id: userId, gate_key: gateKey, source: "purchase" },
           { onConflict: "user_id,gate_key" },
-        );
+        )
+        .select("id, gate_key, user_id")
+        .maybeSingle();
+      if (grantError) {
+        console.error("[reward-rung] unlock_grants upsert failed:", JSON.stringify(grantError));
+      } else {
+        console.log("[reward-rung] grant written:", JSON.stringify(grantRow));
+      }
     }
     if (customerEmail) await sendConfirmationEmail(customerEmail);
     return;
   }
+
 
   if (gateKey) {
     if (userId) {

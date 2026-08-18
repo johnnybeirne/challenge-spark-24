@@ -308,21 +308,6 @@ const Leaderboard = () => {
                     <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
                       The Promoters Leaderboard is on the way
                     </h2>
-                    <p className="text-sm sm:text-base text-muted-foreground max-w-md leading-relaxed mb-8">
-                      We are building a dedicated space to celebrate the partners and promoters driving signups across the network. Soon you will see who is topping the charts and how you stack up.
-                    </p>
-                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                      <a
-                        href="/earn"
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-[#534AB7] px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#4A429F] transition-colors w-full sm:w-auto"
-                      >
-                        <Users className="h-4 w-4" />
-                        Start inviting to climb the ranks
-                      </a>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-8">
-                      Want to be a promoter when this launches? Reach out to the team.
-                    </p>
                   </div>
                 </div>
               </CardContent>

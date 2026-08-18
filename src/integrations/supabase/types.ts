@@ -2964,6 +2964,7 @@ export type Database = {
         Returns: string
       }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
+      claim_unlock: { Args: { p_unlock_id: string }; Returns: boolean }
       get_my_referred_people: {
         Args: never
         Returns: {

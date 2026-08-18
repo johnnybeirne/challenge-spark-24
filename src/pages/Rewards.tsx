@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
 import { getPointTier, pointRules } from "@/lib/points";
@@ -10,6 +10,7 @@ import { Sparkles, Lock, Check, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
+import { supabase } from "@/integrations/supabase/client";
 
 /** Ladder order is driven by one shared `position` field, sorted ascending. */
 export function sortRungs(rungs: LadderRung[]): LadderRung[] {
@@ -32,9 +33,34 @@ export default function Rewards() {
   const pointsPerDay =
     pointRules.find((rule) => rule.id === "complete_day_1")?.points ?? 50;
 
-  const handleBuy = (priceId: string) => {
+  // Paid rungs are fulfilled server-side into `unlock_grants` by gate key.
+  const [purchasedKeys, setPurchasedKeys] = useState<Set<string>>(new Set());
+  const gateKeys = useMemo(
+    () => ordered.map((r) => r.gateKey).filter(Boolean) as string[],
+    [ordered],
+  );
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      if (!gateKeys.length) return;
+      const { data } = await supabase
+        .from("unlock_grants")
+        .select("gate_key")
+        .in("gate_key", gateKeys);
+      if (!active) return;
+      setPurchasedKeys(new Set((data ?? []).map((r) => r.gate_key as string)));
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [gateKeys.join("|")]);
+
+  const handleBuy = (priceId: string, gateKey?: string) => {
     openCheckout({
       priceId,
+      ...(gateKey && { gateKey }),
       quantity: 1,
       customerEmail: state.user?.email,
       userId: state.user?.id || "",
@@ -86,7 +112,9 @@ export default function Rewards() {
             </p>
           </div>
           {ordered.map((rung) => {
-            const reached = userPoints >= rung.points;
+            const earned = userPoints >= rung.points;
+            const bought = !!rung.gateKey && purchasedKeys.has(rung.gateKey);
+            const reached = earned || bought;
             const away = Math.max(0, rung.points - userPoints);
             const pct = Math.min(100, Math.round((userPoints / Math.max(rung.points, 1)) * 100));
             const isGold = rung.doubleUnlock;
@@ -127,7 +155,7 @@ export default function Rewards() {
                     </p>
                     <Progress value={pct} className="mt-2 h-1.5" />
                     <p className="mt-1.5 text-xs text-muted-foreground">
-                      {reached ? "Yours." : `${away} more to go`}
+                      {bought ? "Yours — purchased." : reached ? "Yours." : `${away} more to go`}
                     </p>
                   </div>
 
@@ -138,7 +166,7 @@ export default function Rewards() {
                         <Button
                           size="sm"
                           className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
-                          onClick={() => handleBuy(rung.priceId)}
+                          onClick={() => handleBuy(rung.priceId, rung.gateKey)}
                           disabled={reached}
                         >
                           {reached ? "Already unlocked" : `Buy it now — $${rung.buyPrice}`}

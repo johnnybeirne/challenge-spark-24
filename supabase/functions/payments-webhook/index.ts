@@ -240,7 +240,7 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
 }
 
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
-  const userId = session.metadata?.userId;
+  const userId = session.metadata?.userId ?? session.client_reference_id;
   const partnerCode = session.metadata?.partner_code as string | undefined;
   const couponCode = (session.metadata?.coupon_code as string | undefined) ?? null;
   const customerId = session.customer as string | undefined;
@@ -288,43 +288,45 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
     if (!userId) {
       console.error("[reward-rung] no userId in session metadata — cannot grant", sessionId);
-    } else {
-      const { error: purchaseError } = await sb.from("purchases").upsert(
-        {
-          user_id: userId,
-          stripe_session_id: sessionId,
-          stripe_payment_intent_id: session.payment_intent ?? null,
-          stripe_customer_id: customerId ?? null,
-          amount_cents: amount,
-          currency,
-          price_id: priceLookupKey ?? `unlock_${gateKey}`,
-          partner_code: partnerCode ?? null,
-          coupon_code: couponCode,
-          status: "paid",
-          environment: env,
-        },
-        { onConflict: "stripe_session_id" },
-      );
-      if (purchaseError) {
-        console.error("[reward-rung] purchase upsert failed:", JSON.stringify(purchaseError));
-      } else {
-        console.log("[reward-rung] purchase recorded for", userId, priceLookupKey ?? gateKey);
-      }
-
-      const { data: grantRow, error: grantError } = await sb
-        .from("unlock_grants")
-        .upsert(
-          { user_id: userId, gate_key: gateKey, source: "purchase" },
-          { onConflict: "user_id,gate_key" },
-        )
-        .select("id, gate_key, user_id")
-        .maybeSingle();
-      if (grantError) {
-        console.error("[reward-rung] unlock_grants upsert failed:", JSON.stringify(grantError));
-      } else {
-        console.log("[reward-rung] grant written:", JSON.stringify(grantRow));
-      }
+      throw new Error(`[reward-rung] missing userId for ${sessionId}`);
     }
+
+    const { data: purchaseRow, error: purchaseError } = await sb.from("purchases").upsert(
+      {
+        user_id: userId,
+        stripe_session_id: sessionId,
+        stripe_payment_intent_id: session.payment_intent ?? null,
+        stripe_customer_id: customerId ?? null,
+        amount_cents: amount,
+        currency,
+        price_id: priceLookupKey ?? `unlock_${gateKey}`,
+        partner_code: partnerCode ?? null,
+        coupon_code: couponCode,
+        status: "paid",
+        environment: env,
+      },
+      { onConflict: "stripe_session_id" },
+    ).select("id, stripe_session_id").single();
+    if (purchaseError) {
+      console.error("[reward-rung] purchase upsert failed:", JSON.stringify(purchaseError));
+      throw new Error(`[reward-rung] purchase write failed for ${sessionId}`);
+    }
+    console.log("[reward-rung] purchase recorded:", JSON.stringify(purchaseRow));
+
+    const { data: grantRow, error: grantError } = await sb
+      .from("unlock_grants")
+      .upsert(
+        { user_id: userId, gate_key: gateKey, source: "purchase" },
+        { onConflict: "user_id,gate_key" },
+      )
+      .select("id, gate_key, user_id, source")
+      .single();
+    if (grantError) {
+      console.error("[reward-rung] unlock_grants upsert failed:", JSON.stringify(grantError));
+      throw new Error(`[reward-rung] grant write failed for ${sessionId}`);
+    }
+    console.log("[reward-rung] grant written:", JSON.stringify(grantRow));
+
     if (customerEmail) await sendConfirmationEmail(customerEmail);
     return;
   }

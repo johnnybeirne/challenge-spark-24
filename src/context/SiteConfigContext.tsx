@@ -336,6 +336,8 @@ export interface SiteConfig {
 
 /* ───── Defaults ───── */
 
+export const LADDER_RUNGS_VERSION = 2;
+
 export const defaultSiteConfig: SiteConfig = {
   landing: {
     heroHeadline: "Build an app that generates leads while you sleep",

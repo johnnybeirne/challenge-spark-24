@@ -336,7 +336,7 @@ export interface SiteConfig {
 
 /* ───── Defaults ───── */
 
-export const LADDER_RUNGS_VERSION = 2;
+export const LADDER_RUNGS_VERSION = 3;
 
 export const defaultSiteConfig: SiteConfig = {
   landing: {

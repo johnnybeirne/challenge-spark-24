@@ -294,52 +294,37 @@ const Leaderboard = () => {
           </TabsContent>
 
           <TabsContent value="promoters">
-            <Card>
+            <Card className="overflow-hidden border-0 shadow-none">
               <CardContent className="p-0">
-                {promoterEntries.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-8">No promoters yet</p>
-                )}
-                {promoterEntries.map((entry: any, i: number) => {
-                  const rank = i + 1;
-                  const badge = getRankBadge(rank);
-
-                  return (
-                    <button
-                      type="button"
-                      key={entry.partner_code}
-                      onClick={() => openBio(entry)}
-                      className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
-                        i < promoterEntries.length - 1 ? "border-b border-border" : ""
-                      } ${entry.isUser ? "bg-primary/5" : ""}`}
-                    >
-                      <span className="text-xs font-bold text-muted-foreground w-6 text-right">
-                        {badge ? (
-                          <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
-                        ) : rank}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
-                        {entry.avatar_url ? (
-                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          (entry.name || "?").slice(0, 2).toUpperCase()
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
-                            {entry.name} {entry.isUser && "(You)"}
-                          </p>
-                          {entry.is_founding_partner && (
-                            <Badge className="text-xs bg-primary/10 text-primary">Founding</Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {entry.signups} attributed signup{entry.signups !== 1 ? "s" : ""}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
+                <div className="relative overflow-hidden rounded-xl">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#534AB7]/10 via-[#534AB7]/5 to-transparent" />
+                  <div className="relative px-6 py-16 sm:px-10 sm:py-24 flex flex-col items-center text-center">
+                    <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#534AB7] text-white shadow-lg mb-6">
+                      <Crown className="h-8 w-8" />
+                    </div>
+                    <span className="inline-flex items-center rounded-full border border-[#534AB7]/30 bg-[#534AB7]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#534AB7] mb-5">
+                      Coming Soon
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
+                      The Promoters Leaderboard is on the way
+                    </h2>
+                    <p className="text-sm sm:text-base text-muted-foreground max-w-md leading-relaxed mb-8">
+                      We are building a dedicated space to celebrate the partners and promoters driving signups across the network. Soon you will see who is topping the charts and how you stack up.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                      <a
+                        href="/earn"
+                        className="inline-flex items-center justify-center gap-2 rounded-full bg-[#534AB7] px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#4A429F] transition-colors w-full sm:w-auto"
+                      >
+                        <Users className="h-4 w-4" />
+                        Start inviting to climb the ranks
+                      </a>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-8">
+                      Want to be a promoter when this launches? Reach out to the team.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

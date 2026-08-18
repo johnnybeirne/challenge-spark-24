@@ -25,13 +25,9 @@ export default function Rewards() {
 
   const userPoints = state.points?.total ?? 0;
   const userTier = getPointTier(userPoints);
-  const { rungs, fullSuitePrice, fullSuitePriceId } = config.rewards.ladder;
+  const { rungs } = config.rewards.ladder;
 
   const ordered = useMemo(() => sortRungs(rungs), [rungs]);
-  const totalRetail = useMemo(
-    () => ordered.reduce((sum, r) => sum + (r.buyPrice || 0), 0),
-    [ordered],
-  );
 
   const pointsPerDay =
     pointRules.find((rule) => rule.id === "complete_day_1")?.points ?? 50;

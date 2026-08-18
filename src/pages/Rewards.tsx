@@ -25,13 +25,9 @@ export default function Rewards() {
 
   const userPoints = state.points?.total ?? 0;
   const userTier = getPointTier(userPoints);
-  const { rungs, fullSuitePrice, fullSuitePriceId } = config.rewards.ladder;
+  const { rungs } = config.rewards.ladder;
 
   const ordered = useMemo(() => sortRungs(rungs), [rungs]);
-  const totalRetail = useMemo(
-    () => ordered.reduce((sum, r) => sum + (r.buyPrice || 0), 0),
-    [ordered],
-  );
 
   const pointsPerDay =
     pointRules.find((rule) => rule.id === "complete_day_1")?.points ?? 50;
@@ -164,27 +160,6 @@ export default function Rewards() {
           <LadderInviteBlock className="mt-3" />
         </div>
       </main>
-
-      {/* Sticky full-suite footer */}
-      <footer className="border-t bg-background/95 px-6 py-3 backdrop-blur mt-6 rounded-xl">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-bold">Can't wait?</p>
-            <p className="text-xs text-muted-foreground">
-              Every reward unlocked instantly.{" "}
-              {totalRetail > 0 && <span className="line-through">${totalRetail} value</span>}{" "}
-              <span className="font-semibold text-foreground">${fullSuitePrice}</span>
-            </p>
-          </div>
-          <Button
-            size="lg"
-            className="font-bold text-white transition-transform duration-150 hover:scale-105 hover:brightness-90 hover:text-white"
-            onClick={() => handleBuy(fullSuitePriceId)}
-          >
-            Buy everything — ${fullSuitePrice}
-          </Button>
-        </div>
-      </footer>
 
       {checkoutElement}
     </div>

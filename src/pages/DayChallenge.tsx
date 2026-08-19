@@ -540,18 +540,22 @@ const DayChallengeInner = () => {
       <TaskCompleteAnim show={showTaskAnim} />
       {isReadOnly && (
         <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-[var(--body-size)] text-muted-foreground">
-          <span className="font-semibold text-foreground">Day {dayNum} is complete.</span>{" "}
-          Your answers are saved.
+          <span className="font-semibold text-foreground">
+            {dayNum === 3 ? d3("ui.complete_banner") : `Day ${dayNum} is complete.`}
+          </span>{" "}
+          {dayNum === 3 ? d3("ui.complete_banner_body") : "Your answers are saved."}
         </div>
       )}
       <StepHeader
         dayNum={dayNum}
+        eyebrow={dayNum === 3 ? d3("header.eyebrow") : undefined}
         heading={config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}
         subheading={config.intro}
         secondary={config.nudge && !isReadOnly ? (
           <span className="text-primary font-medium italic">{config.nudge}</span>
         ) : undefined}
       />
+
 
 
 

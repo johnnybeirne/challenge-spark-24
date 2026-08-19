@@ -433,7 +433,7 @@ const Day2Screen1 = () => {
             )}
           </p>
           <p className="italic text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-            {tDay2("ui.intro", "You're building this for {audience}.").replaceAll("{audience}", audience)}
+            {tDay2("ui.intro", "You're building this for {audience}.").split("{audience}").join(audience)}
           </p>
 
         </header>

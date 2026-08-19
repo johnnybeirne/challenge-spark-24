@@ -469,7 +469,7 @@ const Day2Screen1 = () => {
             style={{ fontSize: "var(--body-size)" }}
           >
             <Eye className="h-4 w-4" />
-            Take the quiz for this challenge again
+            {tDay2("buttons.retake_quiz", "Take the quiz for this challenge again")}
             <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
@@ -490,12 +490,12 @@ const Day2Screen1 = () => {
                 {quizGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating your quiz...
+                    {tDay2("buttons.generate_busy", "Generating your quiz...")}
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    Generate your quiz now
+                    {tDay2("buttons.generate_unlocked", "Generate your quiz now")}
                     <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
                   </>
                 )}
@@ -541,7 +541,7 @@ const Day2Screen1 = () => {
                 style={{ fontSize: "var(--body-size)" }}
               >
                 <Lock className="h-4 w-4" />
-                Mark 1, 2 & 3 as read to generate your quiz
+                {tDay2("buttons.generate_locked", "Mark 1, 2 & 3 as read to generate your quiz")}
               </button>
             </div>
           )}
@@ -583,7 +583,7 @@ const Day2Screen1 = () => {
                 className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
               >
                 <Link to="/training">
-                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Check Out LeadTree Premium Membership</span>
+                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{tDay2("buttons.upsell", "Check Out Premium Membership")}</span>
                 </Link>
               </Button>
             </CardContent>

@@ -204,6 +204,10 @@ export interface LadderRung {
   /** Unlock gate key written to `unlock_grants` when this rung is bought. */
   gateKey: string;
   doubleUnlock: boolean;
+  /** Owner-written reward page title. Falls back to the rung name. */
+  pageTitle?: string;
+  /** Owner-written reward page body (HTML allowed: links, embeds, downloads). */
+  pageBody?: string;
   isDestination?: boolean;
   /** Canonical display order — ladder + admin both sort ascending on this. */
   position: number;

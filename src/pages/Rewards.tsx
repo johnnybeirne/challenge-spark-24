@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
 import { getPointTier, pointRules } from "@/lib/points";
@@ -25,6 +26,7 @@ export default function Rewards() {
   const { state } = useAppState();
   const { config } = useSiteConfig();
   const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
+  const navigate = useNavigate();
 
   const userPoints = state.points?.total ?? 0;
   const userTier = getPointTier(userPoints);
@@ -217,19 +219,25 @@ export default function Rewards() {
 
                   {/* BUY */}
                   <div className="rounded-lg border bg-background/60 p-3">
-                    {rung.buyPrice > 0 ? (
+                    {reached ? (
+                      <Button
+                        size="sm"
+                        className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white"
+                        onClick={() => navigate(`/rewards/${rung.gateKey}`)}
+                        disabled={!rung.gateKey}
+                      >
+                        Unlocked — Open
+                      </Button>
+                    ) : rung.buyPrice > 0 ? (
                       <>
                         <Button
                           size="sm"
                           className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
                           onClick={() => handleBuyClick(rung)}
-                          disabled={reached}
                         >
-                          {reached
-                            ? "Already unlocked"
-                            : openRungKey === rungKey(rung)
-                              ? `Close — $${rung.buyPrice}`
-                              : `Buy it now — $${rung.buyPrice}`}
+                          {openRungKey === rungKey(rung)
+                            ? `Close — $${rung.buyPrice}`
+                            : `Buy it now — $${rung.buyPrice}`}
                         </Button>
                         <p className="mt-1.5 text-center text-xs text-muted-foreground">
                           Skip the wait — get it instantly.

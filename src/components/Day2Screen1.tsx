@@ -551,7 +551,7 @@ const Day2Screen1 = () => {
                 type="button"
                 onClick={triggerLockHint}
                 aria-disabled="true"
-                title="Mark all three sections as read to unlock"
+                title={tDay2("hint.locked_tooltip", "Mark all three sections as read to unlock")}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
                 style={{ fontSize: "var(--body-size)" }}
               >

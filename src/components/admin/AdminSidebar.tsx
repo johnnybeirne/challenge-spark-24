@@ -136,6 +136,13 @@ const items: NavItem[] = [
     external: true,
     keywords: ["simulator", "walkthrough", "presentation", "demo", "preview", "screens", "play"],
   },
+  {
+    title: "Menu Search Tags",
+    url: "/owner-console/menu-tags",
+    icon: Tag,
+    external: true,
+    keywords: ["find pages", "search", "tags", "keywords", "menu", "navigation"],
+  },
 ];
 
 const siteItems: NavItem[] = [

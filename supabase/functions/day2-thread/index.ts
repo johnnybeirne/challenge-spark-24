@@ -547,7 +547,7 @@ function applyTokens(text: string, p: ReturnType<typeof builderProfile>): string
 
 async function ownerCardFallbacks(p: ReturnType<typeof builderProfile>) {
   const rows = await restGet(
-    "site_content?select=key,value&page=eq.day2&section=eq.cards&key=like=*body_fallback",
+    "site_content?select=key,value&page=eq.day2&section=eq.cards&key=like.*body_fallback",
   );
   const byKey = new Map<string, string>(rows.map((r: any) => [r.key, r.value ?? ""]));
   return {

@@ -104,7 +104,7 @@ const DayChallengeInner = () => {
   const { state, setState } = useAppState();
   const dayNum = Number(day) || 1;
   const dayContent = useDayContent();
-  const cmsCfg = dayContent[`day${dayNum}` as "day2" | "day3"] || dayContent.day2;
+  const cmsCfg = dayContent.day2;
   const baseConfig = dayConfig[dayNum] || dayConfig[1];
   // Day 3 copy is owner-editable in site_content("day3") and never reads the
   // legacy localStorage store.

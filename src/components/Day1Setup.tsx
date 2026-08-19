@@ -43,6 +43,9 @@ import {
   type Day1TagKey,
 } from "@/lib/day1StepMessages";
 import { pickExamplesForUser, useStepExamples } from "@/lib/day1StepExamples";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { DAY1_PAGE, day1Fallback, fillTokens, toLines } from "@/lib/day1Content";
+
 
 const JohnnyAvatar = () => (
   <img

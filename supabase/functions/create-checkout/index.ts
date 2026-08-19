@@ -81,9 +81,20 @@ Deno.serve(async (req) => {
       : { data: { user: null } };
     const resolvedUserId = authData.user?.id ?? userId;
 
+    // Diagnostic: shows exactly what the client sent for every session, so a
+    // lost gate key can be traced to the button rather than guessed at.
+    console.log("[create-checkout] request:", JSON.stringify({
+      priceId,
+      gateKey: gateKey ?? null,
+      bodyUserId: userId ?? null,
+      resolvedUserId: resolvedUserId ?? null,
+      environment,
+    }));
+
     if (gateKey && /^reward_gate_/.test(gateKey) && !resolvedUserId) {
       throw new Error("Sign in before purchasing a reward");
     }
+
 
     const stripe = createStripeClient(environment);
 

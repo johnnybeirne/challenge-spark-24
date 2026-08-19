@@ -58,8 +58,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1Steps from "@/pages/AdminDay1Steps";
-import AdminDay2ButtonCopy from "@/pages/AdminDay2ButtonCopy";
-import AdminDay2Content from "@/pages/AdminDay2Content";
+import AdminDay2 from "@/pages/AdminDay2";
 
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
 import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";

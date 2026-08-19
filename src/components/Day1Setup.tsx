@@ -695,6 +695,15 @@ const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
 
+  // Owner-editable Day 1 copy. One shared source with /owner-console/day1.
+  const { t: siteText } = useSiteContent(DAY1_PAGE);
+  const d1 = (id: string): string => {
+    const v = siteText(id, "");
+    return v !== "" ? v : day1Fallback(id);
+  };
+
+
+
   // Source of truth: state.challenge.aiOutputs.day1Setup (DB-synced).
   // localStorage is kept ONLY as a pre-auth fallback so anonymous users can
   // resume mid-flow. Anything we write here is also pushed into aiOutputs.

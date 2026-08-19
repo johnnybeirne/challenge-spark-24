@@ -589,8 +589,9 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                Want to go deeper on quiz funnel strategy?
+                {tDay2("ui.upsell_title", "Want to go deeper on quiz funnel strategy?")}
               </CardTitle>
+
             </CardHeader>
             <CardContent>
               <Button

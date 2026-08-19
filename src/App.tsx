@@ -59,6 +59,8 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1Steps from "@/pages/AdminDay1Steps";
 import AdminDay2ButtonCopy from "@/pages/AdminDay2ButtonCopy";
+import AdminDay2Content from "@/pages/AdminDay2Content";
+
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
 import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";
 import AdminBios from "@/pages/AdminBios";
@@ -285,6 +287,8 @@ const App = () => (
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="day1-steps" element={<AdminDay1Steps />} />
                 <Route path="day2-button-copy" element={<AdminDay2ButtonCopy />} />
+                <Route path="day2-content" element={<AdminDay2Content />} />
+
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />

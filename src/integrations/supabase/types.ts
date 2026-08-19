@@ -664,6 +664,27 @@ export type Database = {
         }
         Relationships: []
       }
+      day2_ai_config: {
+        Row: {
+          cards_prompt: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          cards_prompt?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          cards_prompt?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       day2_button_labels: {
         Row: {
           id: string

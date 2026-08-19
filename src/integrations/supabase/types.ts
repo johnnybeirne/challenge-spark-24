@@ -610,6 +610,33 @@ export type Database = {
           },
         ]
       }
+      day1_ai_config: {
+        Row: {
+          created_at: string
+          id: string
+          promise_prompt: string
+          reaction_prompt: string
+          updated_at: string
+          voice_prompt: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          promise_prompt?: string
+          reaction_prompt?: string
+          updated_at?: string
+          voice_prompt?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          promise_prompt?: string
+          reaction_prompt?: string
+          updated_at?: string
+          voice_prompt?: string
+        }
+        Relationships: []
+      }
       day1_step_examples: {
         Row: {
           audience_role: string

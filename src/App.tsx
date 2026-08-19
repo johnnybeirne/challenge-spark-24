@@ -57,7 +57,7 @@ import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
-import AdminDay1Steps from "@/pages/AdminDay1Steps";
+import AdminDay1 from "@/pages/AdminDay1";
 import AdminDay2 from "@/pages/AdminDay2";
 
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
@@ -284,7 +284,8 @@ const App = () => (
                 <Route path="milestone-emails" element={<AdminMilestoneEmails />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
-                <Route path="day1-steps" element={<AdminDay1Steps />} />
+                <Route path="day1" element={<AdminDay1 />} />
+                <Route path="day1-steps" element={<Navigate to="/owner-console/day1" replace />} />
                 <Route path="day2" element={<AdminDay2 />} />
                 <Route path="day2-button-copy" element={<Navigate to="/owner-console/day2" replace />} />
                 <Route path="day2-content" element={<Navigate to="/owner-console/day2" replace />} />

@@ -456,6 +456,12 @@ const Day2Screen1 = () => {
                   isLoading={cardsLoading && !aiBodies}
                   isRead={readCards.has(idx)}
                   alreadyTyped={typedCards.has(idx)}
+                  senderName={tDay2("cards.sender_name", "Johnny B AI")}
+                  statusThinking={tDay2("cards.sender_status_thinking", "Thinking…")}
+                  statusDone={tDay2("cards.sender_status_done", "Message")}
+                  markReadLabel={tDay2("cards.mark_read", "Mark as read to continue")}
+                  markedReadLabel={tDay2("cards.marked_read", "Marked as read")}
+
                   onTypingComplete={() => setTypedCards((prev) => {
                     if (prev.has(idx)) return prev;
                     const next = new Set(prev);

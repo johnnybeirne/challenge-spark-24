@@ -16,15 +16,14 @@ import {
 } from "@/components/cms/cms-ui";
 
 /**
- * Day 2 Content editor.
+ * Day 2 — one full editor.
  *
- * One shared source per string:
- *  - copy  -> site_content rows on page "day2" (sections "cards", "hint", "ui"),
- *             read by the Challenger through useSiteContent("day2")
- *  - prompt -> day2_ai_config.cards_prompt, read at runtime by the
- *             day2-thread edge function (same pattern as the advisor prompt)
+ * Sections follow the order the participant sees them:
+ * Header, Card content, Screen text, Buttons, AI card-body prompt.
  *
- * This page does NOT touch the Day 2 Buttons editor (section "buttons").
+ * Sources are unchanged:
+ *  - copy   -> site_content rows on page "day2" (sections header / cards / hint / ui / buttons)
+ *  - prompt -> day2_ai_config.cards_prompt, read at runtime by day2-thread
  */
 
 const PAGE = "day2";
@@ -39,6 +38,20 @@ type Field = {
   multiline?: boolean;
   rows?: number;
 };
+
+const HEADER_FIELDS: Field[] = [
+  { section: "header", key: "title", label: "Page title", helper: "Big heading at the top of the Day 2 screen.", fallback: "Build your quiz" },
+  {
+    section: "header",
+    key: "subtitle",
+    label: "Page subtitle",
+    helper: "Line under the title.",
+    fallback: "Your quiz starts the conversation. Your challenge builds the trust that converts.",
+    multiline: true,
+    rows: 2,
+  },
+  { section: "ui", key: "intro", label: "Italic context line", helper: "Italic line under the subtitle. Use {audience} for the participant's audience.", fallback: "You're building this for {audience}." },
+];
 
 const CARD_FIELDS: Field[][] = [1, 2, 3].map((n) => [
   {
@@ -60,8 +73,7 @@ const CARD_FIELDS: Field[][] = [1, 2, 3].map((n) => [
   },
 ]);
 
-const UI_FIELDS: Field[] = [
-  { section: "ui", key: "intro", label: "Page intro line", helper: "Italic line under the page subtitle. Use {audience} for the participant's audience.", fallback: "You're building this for {audience}." },
+const SCREEN_FIELDS: Field[] = [
   { section: "cards", key: "mark_read", label: "Mark as read button", helper: "Button at the bottom of an open card.", fallback: "Mark as read to continue" },
   { section: "cards", key: "marked_read", label: "Marked as read confirmation", helper: "Shown after a card has been marked as read.", fallback: "Marked as read" },
   { section: "cards", key: "sender_name", label: "Card message sender name", helper: "Name shown beside the avatar inside each card.", fallback: "Johnny B AI" },
@@ -77,11 +89,24 @@ const UI_FIELDS: Field[] = [
   { section: "ui", key: "upsell_title", label: "Upsell card heading", helper: "Heading above the membership button.", fallback: "Want to go deeper on quiz funnel strategy?" },
 ];
 
-const ALL_FIELDS: Field[] = [...CARD_FIELDS.flat(), ...UI_FIELDS];
+const BUTTON_FIELDS: Field[] = [
+  { section: "buttons", key: "retake_quiz", label: "Retake quiz button", helper: "Green button under the teaching cards. Opens the quiz in a new tab.", fallback: "Take the quiz for this challenge again" },
+  { section: "buttons", key: "generate_locked", label: "Generate quiz — locked state", helper: "Greyed-out button shown before all three sections are marked as read.", fallback: "Mark 1, 2 & 3 as read to generate your quiz" },
+  { section: "buttons", key: "generate_unlocked", label: "Generate quiz — unlocked state", helper: "The live button that opens the quiz builder in a new tab.", fallback: "Generate your quiz now" },
+  { section: "buttons", key: "generate_busy", label: "Generating (busy) label", helper: "Shown on the same button while the quiz is being generated.", fallback: "Generating your quiz..." },
+  { section: "buttons", key: "upsell", label: "Premium upsell button", helper: "Bottom card button. Opens the training / membership page.", fallback: "Check Out Premium Membership" },
+];
+
+const ALL_FIELDS: Field[] = [
+  ...HEADER_FIELDS,
+  ...CARD_FIELDS.flat(),
+  ...SCREEN_FIELDS,
+  ...BUTTON_FIELDS,
+];
 
 const fieldId = (f: Field): string => `${f.section}.${f.key}`;
 
-const AdminDay2Content = () => {
+const AdminDay2 = () => {
   const [rows, setRows] = useState<SiteContentRow[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});
   const [prompt, setPrompt] = useState("");
@@ -172,7 +197,7 @@ const AdminDay2Content = () => {
       const refreshed = await fetchPageContent(PAGE);
       setRows(refreshed);
       invalidatePage(PAGE);
-      toast.success("Day 2 content saved");
+      toast.success("Day 2 saved");
     } catch {
       toast.error("Could not save. Admin access required.");
     } finally {
@@ -204,34 +229,48 @@ const AdminDay2Content = () => {
   return (
     <div className="mx-auto max-w-3xl p-4 sm:p-6">
       <CmsPageHeader
-        title="Day 2 Content"
-        description="The teaching content a participant sees on Day 2: the three reveal cards, the on-page text, and the prompt that writes the card bodies. Button labels live in the separate Day 2 Buttons section."
+        title="Day 2"
+        description="Everything a participant reads on the Day 2 build-your-quiz screen, in the order they see it: header, cards, screen text, buttons, and the prompt that writes the card bodies."
       />
 
       {loading ? (
         <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
       ) : (
         <div className="mt-6 space-y-6">
+          <EditorCard
+            title="Header"
+            description="Title, subtitle and the italic context line at the top of the screen."
+            action={previewAction}
+          >
+            {HEADER_FIELDS.map(renderField)}
+          </EditorCard>
+
           {CARD_FIELDS.map((group, i) => (
             <EditorCard
               key={i}
-              title={`Card ${i + 1}`}
+              title={`Card content — card ${i + 1}`}
               description="Title and the body used if the AI cannot write one."
-              action={i === 0 ? previewAction : undefined}
             >
               {group.map(renderField)}
             </EditorCard>
           ))}
 
           <EditorCard
-            title="On-page text"
-            description="Every other participant-facing string on the Day 2 teaching screen."
+            title="Screen text"
+            description="Mark-as-read labels, hints, notes and other on-screen strings."
           >
-            {UI_FIELDS.map(renderField)}
+            {SCREEN_FIELDS.map(renderField)}
           </EditorCard>
 
           <EditorCard
-            title="AI body prompt"
+            title="Buttons"
+            description="Each field names the button it controls."
+          >
+            {BUTTON_FIELDS.map(renderField)}
+          </EditorCard>
+
+          <EditorCard
+            title="AI card-body prompt"
             description="Controls how the three card bodies are written. Keep the rule of one sentence per paragraph with a blank line between every sentence."
           >
             <EditableField
@@ -251,4 +290,4 @@ const AdminDay2Content = () => {
   );
 };
 
-export default AdminDay2Content;
+export default AdminDay2;

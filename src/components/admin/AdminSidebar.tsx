@@ -51,7 +51,7 @@ const items: NavItem[] = [
   { title: "Activity feed", url: "/owner-console/activity", icon: Activity, external: true, keywords: ["feed", "events", "log", "activity"] },
   { title: "Training system", url: "/owner-console/training", icon: GraduationCap, external: true, keywords: ["training", "lessons", "course", "modules"] },
   { title: "Day 1 step editor", url: "/owner-console/day1-steps", icon: MessagesSquare, external: true, keywords: ["day 1", "questions", "steps", "setup", "chat"] },
-  { title: "Day 2 button labels", url: "/owner-console/day2-buttons", icon: MessagesSquare, external: true, keywords: ["day 2", "buttons", "labels", "cta"] },
+  { title: "Day 2 Buttons", url: "/owner-console/day2-button-copy", icon: MessagesSquare, external: true, keywords: ["day 2 buttons", "generate quiz", "retake quiz", "upsell", "labels", "cta"] },
   { title: "Locked day messages", url: "/owner-console/unlocks", icon: Lock, external: true, keywords: ["unlock", "gate", "day 2", "day 3", "locked", "free window", "passed", "invite", "buy", "message"] },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true, keywords: ["quiz", "questions", "diagnostic", "scoring", "lead gen"] },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },

@@ -256,17 +256,22 @@ const DayChallengeInner = () => {
     if (dayNum === 1 && key === "define_app") trackEvent("memory_updated", { source: "day1_define_app" });
   };
 
+  // Day 3 toast copy is owner-editable; other days keep their existing wording.
+  const toastCopy = (id: string, standard: string) => (dayNum === 3 ? d3(id) : standard);
+
   const notifyDashboardUpdated = (key: string) => {
     const value = getOutput(key);
     if (!value || !value.trim()) return;
     window.dispatchEvent(new CustomEvent("dashboard-flash"));
-    toast.success("Your dashboard is updated", {
-      description: `Day ${dayNum} answer saved`,
+    toast.success(toastCopy("toasts.saved_title", "Your dashboard is updated"), {
+      description: dayNum === 3
+        ? fillTokens(d3("toasts.saved_description"), { day: dayNum })
+        : `Day ${dayNum} answer saved`,
       position: "top-left",
       duration: 3500,
       className: "lg:!ml-[280px]",
       action: {
-        label: "Dashboard",
+        label: toastCopy("toasts.saved_action", "Dashboard"),
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
@@ -286,7 +291,7 @@ const DayChallengeInner = () => {
     const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
-    toast.success("Thanks for spreading the word!");
+    toast.success(toastCopy("toasts.shared", "Thanks for spreading the word!"));
   };
 
   const handleInvite = () => {
@@ -294,8 +299,9 @@ const DayChallengeInner = () => {
     const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum, type: "invite" });
-    toast.success("Invite sent — one step closer to Builder Circle.");
+    toast.success(toastCopy("toasts.invited", "Invite sent — one step closer to Builder Circle."));
   };
+
 
   const unlockCommunity = () => {
     setState((prev) => ({

@@ -110,6 +110,27 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_page_tags: {
+        Row: {
+          label: string
+          page_key: string
+          tags: string
+          updated_at: string
+        }
+        Insert: {
+          label?: string
+          page_key: string
+          tags?: string
+          updated_at?: string
+        }
+        Update: {
+          label?: string
+          page_key?: string
+          tags?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_user_context: {
         Row: {
           assessment: Json | null

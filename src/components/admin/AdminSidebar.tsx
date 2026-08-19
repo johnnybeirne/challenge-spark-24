@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAdminPageTags, tagsByKey } from "@/hooks/useAdminPageTags";
 
 type NavItem = {
   title: string;
@@ -136,6 +137,13 @@ const items: NavItem[] = [
     external: true,
     keywords: ["simulator", "walkthrough", "presentation", "demo", "preview", "screens", "play"],
   },
+  {
+    title: "Menu Search Tags",
+    url: "/owner-console/menu-tags",
+    icon: Tag,
+    external: true,
+    keywords: ["find pages", "search", "tags", "keywords", "menu", "navigation"],
+  },
 ];
 
 const siteItems: NavItem[] = [
@@ -168,10 +176,10 @@ const siteItems: NavItem[] = [
   },
 ];
 
-const matches = (item: NavItem, query: string) => {
+const matches = (item: NavItem, query: string, tags: string) => {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? [])]
+  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? []), tags]
     .join(" ")
     .toLowerCase();
   // every word typed must appear somewhere, so "tour tips" and "product tour" both match
@@ -184,6 +192,8 @@ export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const { rows: tagRows } = useAdminPageTags();
+  const tagMap = useMemo(() => tagsByKey(tagRows), [tagRows]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -191,11 +201,18 @@ export function AdminSidebar() {
     navigate("/challenge/join", { replace: true });
   };
 
-  const filteredAdmin = useMemo(() => items.filter((i) => matches(i, query)), [query]);
-  const filteredSite = useMemo(() => siteItems.filter((i) => matches(i, query)), [query]);
+  const filteredAdmin = useMemo(
+    () => items.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [query, tagMap],
+  );
+  const filteredSite = useMemo(
+    () => siteItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [query, tagMap],
+  );
   const showLogout = !query || "log out".includes(query.toLowerCase());
   const noResults =
     Boolean(query) && filteredAdmin.length === 0 && filteredSite.length === 0 && !showLogout;
+
 
   const renderLink = (item: NavItem, active?: boolean) => (
     <SidebarMenuItem key={item.url}>
@@ -259,7 +276,7 @@ export function AdminSidebar() {
         )}
 
         {noResults && (
-          <p className="px-4 py-3 text-xs text-muted-foreground">No settings found.</p>
+          <p className="px-4 py-3 text-xs text-muted-foreground">No pages match.</p>
         )}
 
         {filteredAdmin.length > 0 && (

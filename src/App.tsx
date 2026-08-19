@@ -243,6 +243,7 @@ const App = () => (
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
                 <Route path="/bonus-vault" element={<Navigate to="/earn" replace />} />
                 <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
+                <Route path="/rewards/:gateKey" element={<AuthGuard><RewardUnlocked /></AuthGuard>} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />

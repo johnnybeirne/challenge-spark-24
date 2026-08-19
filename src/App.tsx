@@ -58,6 +58,7 @@ import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1 from "@/pages/AdminDay1";
+import AdminDay3 from "@/pages/AdminDay3";
 import AdminDay2 from "@/pages/AdminDay2";
 
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
@@ -289,6 +290,8 @@ const App = () => (
                 <Route path="day2" element={<AdminDay2 />} />
                 <Route path="day2-button-copy" element={<Navigate to="/owner-console/day2" replace />} />
                 <Route path="day2-content" element={<Navigate to="/owner-console/day2" replace />} />
+                <Route path="day3" element={<AdminDay3 />} />
+                <Route path="day3-content" element={<Navigate to="/owner-console/day3" replace />} />
 
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

@@ -52,6 +52,7 @@ const items: NavItem[] = [
   { title: "Training system", url: "/owner-console/training", icon: GraduationCap, external: true, keywords: ["training", "lessons", "course", "modules"] },
   { title: "Day 1", url: "/owner-console/day1", icon: MessagesSquare, external: true, keywords: ["day 1", "day one", "promise", "steps", "audience", "challenge type", "ai prompt"] },
   { title: "Day 2", url: "/owner-console/day2", icon: MessagesSquare, external: true, keywords: ["day 2", "day two", "header", "build your quiz", "buttons", "cards", "reveal cards", "generate quiz", "retake quiz", "ai prompt", "upsell", "bodies", "quiz marketing", "labels", "cta", "day 2 content", "day 2 buttons"] },
+  { title: "Day 3", url: "/owner-console/day3", icon: MessagesSquare, external: true, keywords: ["day 3", "day three", "celebration", "builder circle", "launch", "live url", "tasks"] },
 
   { title: "Locked day messages", url: "/owner-console/unlocks", icon: Lock, external: true, keywords: ["unlock", "gate", "day 2", "day 3", "locked", "free window", "passed", "invite", "buy", "message"] },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true, keywords: ["quiz", "questions", "diagnostic", "scoring", "lead gen"] },

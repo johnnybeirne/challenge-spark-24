@@ -684,7 +684,7 @@ const FoundationStep = ({
         onClick={onNext}
         className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
       >
-        Continue
+        {d1("buttons.continue")}
         <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </div>
@@ -752,7 +752,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       };
     });
     trackEvent("day1_reset" as any, {});
-    toast.success("Day 1 reset — let's start again.");
+    toast.success(d1("toasts.reset"));
     try { window.location.reload(); } catch {}
   };
 
@@ -894,13 +894,13 @@ const Day1Setup = ({ onComplete }: Props) => {
   // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).
   const profileSaved = (label: string) => {
     window.dispatchEvent(new CustomEvent("dashboard-flash"));
-    toast.success("Your dashboard is updated", {
+    toast.success(d1("toasts.saved_title"), {
       description: label,
       position: "top-left",
       duration: 3500,
       className: "lg:!ml-[280px]",
       action: {
-        label: "Dashboard",
+        label: d1("toasts.saved_action"),
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
@@ -1046,7 +1046,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!audience.trim()) return;
       const raw = audience.trim();
       persistFoundation({ audience: raw });
-      profileSaved("Who you serve");
+      profileSaved(d1("toasts.saved_audience"));
       setStep11Phase(
         Array.isArray(saved?.expertType) && saved.expertType.length > 0 ? "choose" : "intro",
       );
@@ -1064,7 +1064,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      profileSaved("The problem you're solving");
+      profileSaved(d1("toasts.saved_problem"));
       // Hold briefly while Johnny "reads" the answer. Race the AI call against
       // a 2.2s timeout so a slow/failed model never blocks the flow.
       setNavLoading("problem");
@@ -1093,7 +1093,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
-      profileSaved("How you create the result");
+      profileSaved(d1("toasts.saved_process"));
       setStep9Phase(saved?.outcome ? "input" : "intro");
       setStep(9);
     }
@@ -1106,10 +1106,10 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { desiredOutcome: outcome.trim() }),
     }));
-    profileSaved("The outcome you'll deliver");
+    profileSaved(d1("toasts.saved_outcome"));
     pushNotification({
-      title: "Dashboard updated",
-      message: "Your dashboard now reflects your latest challenge answers.",
+      title: d1("toasts.notification_title"),
+      message: d1("toasts.notification_body"),
       href: "/challenger-dashboard",
       dedupeKey: "day1_outcome_saved",
     });
@@ -1132,7 +1132,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { audienceType: v }),
     }));
-    profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
+    profileSaved(d1(v === "b2b" ? "toasts.saved_audience_b2b" : "toasts.saved_audience_b2c"));
     // Next: describe who you serve more specifically (open text).
     setStep(1);
   };
@@ -1148,7 +1148,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       setChallengeType("custom");
       persistFoundation({ challengeType: "custom" } as Partial<SetupData>);
     }
-    profileSaved("Your superpower");
+    profileSaved(d1("toasts.saved_superpower"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1179,7 +1179,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (expertType.length === 0) return;
     persistFoundation({ expertType } as Partial<SetupData>);
     void persistExpertTypeToProfile(expertType);
-    profileSaved("Your expert types");
+    profileSaved(d1("toasts.saved_expert"));
     setStep10Phase(saved?.superpower ? "input" : "intro");
     setStep(10);
   };
@@ -1194,7 +1194,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: description,
       }),
     }));
-    profileSaved(`Challenge type: ${description}`);
+    profileSaved(fillTokens(d1("toasts.saved_challenge_type"), { label: description }));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
 
@@ -1211,7 +1211,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: next,
       }),
     }));
-    profileSaved("Your goal");
+    profileSaved(d1("toasts.saved_goal"));
   };
   const handleStep5ResultNext = () => {
     const text = step5Result.trim();
@@ -1225,7 +1225,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: text,
       }),
     }));
-    profileSaved("Result saved");
+    profileSaved(d1("toasts.saved_result"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1236,7 +1236,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Trigger moment saved");
+    profileSaved(d1("toasts.saved_trigger"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1294,10 +1294,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
-    profileSaved("Challenge direction confirmed");
+    profileSaved(d1("toasts.saved_direction"));
     pushNotification({
-      title: "Dashboard updated",
-      message: "Your dashboard now reflects your latest challenge answers.",
+      title: d1("toasts.notification_title"),
+      message: d1("toasts.notification_body"),
       href: "/challenger-dashboard",
       dedupeKey: "day1_assessment_saved",
     });
@@ -1410,26 +1410,26 @@ const Day1Setup = ({ onComplete }: Props) => {
     const onSteps = (...steps: number[]) => steps.includes(currentStep);
     const skipSet = new Set<string>(skip);
     if (onSteps(11, 10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
-      rows.push({ label: "You work with:", echo: "audience" });
+      rows.push({ label: d1("ui.recap_audience"), echo: "audience" });
     }
     if (onSteps(10, 5, 2, 3, 9, 7) && expertTypePhrase && !skipSet.has("expertType")) {
       const article = /^[aeiou]/i.test(expertTypePhrase) ? "an" : "a";
-      rows.push({ label: `You are ${article}:`, echo: "expertType" });
+      rows.push({ label: fillTokens(d1("ui.recap_expert"), { article }), echo: "expertType" });
     }
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
-      rows.push({ label: "Your superpower:", echo: "superpower" });
+      rows.push({ label: d1("ui.recap_superpower"), echo: "superpower" });
     }
     if (onSteps(3, 9, 7) && challengeType && challengeType !== "custom" && !skipSet.has("challengeType")) {
-      rows.push({ label: "Your goal:", echo: "challengeType" });
+      rows.push({ label: d1("ui.recap_goal"), echo: "challengeType" });
     }
     if (onSteps(3, 9, 7) && problem.trim() && !skipSet.has("problem")) {
-      rows.push({ label: "The problem:", echo: "problem" });
+      rows.push({ label: d1("ui.recap_problem"), echo: "problem" });
     }
     if (onSteps(9, 7) && how.trim() && !skipSet.has("how")) {
-      rows.push({ label: "Your process:", echo: "how" });
+      rows.push({ label: d1("ui.recap_process"), echo: "how" });
     }
     if (onSteps(7) && outcome.trim() && !skipSet.has("outcome")) {
-      rows.push({ label: "The result:", echo: "outcome" });
+      rows.push({ label: d1("ui.recap_outcome"), echo: "outcome" });
     }
     return rows;
   };
@@ -1489,7 +1489,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {showProgress && (
           <h1 className="text-3xl sm:text-4xl font-black leading-tight text-foreground">
-            {`Day 1 - Step ${stepNumber} of ${TOTAL_STEPS}`}
+            {fillTokens(d1("header.step_label"), { step: stepNumber, total: TOTAL_STEPS })}
           </h1>
         )}
 
@@ -1525,7 +1525,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             className="mb-6 inline-flex items-center gap-2 text-[var(--body-size)] text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {d1("buttons.back")}
           </button>
         )}
 
@@ -1616,7 +1616,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!audience.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1680,7 +1680,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={expertType.length === 0}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1739,7 +1739,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!superpower.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1839,11 +1839,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                       {navLoading === "problem" ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Thinking…
+                          {d1("buttons.thinking")}
                         </>
                       ) : (
                         <>
-                          Continue
+                          {d1("buttons.continue")}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </>
                       )}
@@ -1960,7 +1960,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!how.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -2061,11 +2061,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                       {navLoading === "outcome" ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Crafting your promise…
+                          {d1("buttons.crafting")}
                         </>
                       ) : (
                         <>
-                          Continue
+                          {d1("buttons.continue")}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </>
                       )}
@@ -2196,7 +2196,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
                 {superpower.trim() && (
                   <p className="text-xs text-muted-foreground leading-snug">
-                    Note: I am saving these to your Dashboard
+                    {d1("ui.saving_note")}
                   </p>
                 )}
 
@@ -2417,15 +2417,15 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
-                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
+                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{d1("ui.promise_heading")}</p>
                           <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
                             {fromState && toState ? (
                               <div className="space-y-4">
                                 {[
-                                  { label: "FROM", value: fromState },
-                                  { label: "TO", value: toState },
-                                  ...(soThat ? [{ label: "SO THAT", value: soThat }] : []),
-                                  ...(andStop ? [{ label: "AND STOP", value: andStop }] : []),
+                                  { label: d1("ui.promise_from"), value: fromState },
+                                  { label: d1("ui.promise_to"), value: toState },
+                                  ...(soThat ? [{ label: d1("ui.promise_so_that"), value: soThat }] : []),
+                                  ...(andStop ? [{ label: d1("ui.promise_and_stop"), value: andStop }] : []),
                                 ].map((part) => (
                                   <div key={part.label}>
                                     <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
@@ -2453,7 +2453,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       onClick={handleSaveAssessment}
                       className="w-full h-14 text-[var(--body-size)] font-semibold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                     >
-                      Continue Building Your Challenge
+                      {d1("buttons.continue_building")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
 
@@ -2463,36 +2463,34 @@ const Day1Setup = ({ onComplete }: Props) => {
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
                               <RotateCcw className="h-3 w-3" />
-                              Start Day 1 again
+                              {d1("buttons.restart")}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-destructive">WARNING. Are you sure?</AlertDialogTitle>
+                              <AlertDialogTitle className="text-destructive">{d1("ui.reset_dialog_title")}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                This clears your Day 1 answers, AI outputs, and progress so you can
-                                start the questions from scratch. Your referrals, points, and other
-                                progress are kept.
+                                {d1("ui.reset_dialog_body")}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{d1("buttons.restart_cancel")}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={handleResetDay1}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               >
-                                Start Day 1 again
+                                {d1("buttons.restart")}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
                         <p className="text-[11px] text-muted-foreground text-center max-w-sm">
-                          If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+                          {d1("ui.reset_note")}
                         </p>
                       </div>
                     ) : (
                       <p className="pt-2 text-[11px] text-muted-foreground text-center max-w-sm mx-auto">
-                        Your Challenge Promise is now locked. To change your answers, upgrade to Lifetime Challenge Access.
+                        {d1("ui.locked_note")}
                       </p>
                     )}
                   </RevealControls>
@@ -2508,7 +2506,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-5 animate-fade-in">
 
             {/* Snapshot */}
-            <h2 className="text-[var(--h1-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">Your Starting Point</h2>
+            <h2 className="text-[var(--h1-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">{d1("ui.starting_point_heading")}</h2>
             <div className="rounded-xl border border-border bg-card/60 p-4 text-[var(--body-size)] space-y-2">
 
               <p className="font-semibold text-foreground">
@@ -2523,9 +2521,9 @@ const Day1Setup = ({ onComplete }: Props) => {
               </p>
               {(problem || audience || how) && (
                 <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {problem && <p><span className="font-semibold text-foreground">Problem:</span> {problem}</p>}
-                  {audience && <p><span className="font-semibold text-foreground">For:</span> {audience}</p>}
-                  {how && <p><span className="font-semibold text-foreground">How:</span> {how}</p>}
+                  {problem && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_problem")}</span> {problem}</p>}
+                  {audience && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_for")}</span> {audience}</p>}
+                  {how && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_how")}</span> {how}</p>}
                 </div>
               )}
             </div>
@@ -2545,10 +2543,10 @@ const Day1Setup = ({ onComplete }: Props) => {
                 className="w-full h-14 text-[var(--body-size)] font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 <CheckCircle2 className="h-5 w-5 mr-2" />
-                Complete Day 1 &amp; Unlock Day 2
+                {d1("buttons.complete_day1")}
               </Button>
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                You can get help from Johnny AI anytime.
+                {d1("ui.assistant_note")}
               </p>
             </RevealControls>
           </div>

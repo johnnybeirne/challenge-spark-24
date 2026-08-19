@@ -611,16 +611,11 @@ const DayChallengeInner = () => {
           <DayVideoModal dayNum={3} />
           <DayCopilot
             dayNum={3}
-            eyebrow="Day 3 · AI-guided training"
-            focus="Design the challenge experience, momentum systems, and referral flow."
-            focusSubtitle="Lock in the daily cadence, the unlock moments, and the reasons people invite others in."
+            eyebrow={d3("copilot.eyebrow")}
+            focus={d3("copilot.focus")}
+            focusSubtitle={d3("copilot.subtitle")}
             outputKeyPrefix="day3_copilot"
-            starters={[
-              "Map a 3-day momentum arc that keeps people moving.",
-              "Suggest 3 unlocks I can tie to participant referrals.",
-              "Write a Day 3 invite message my audience will actually send.",
-              "What's the smallest viable launch I can ship this week?",
-            ]}
+            starters={toLines(d3("copilot.starters"))}
           />
         </div>
       )}
@@ -662,7 +657,7 @@ const DayChallengeInner = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
-        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : "Action tasks"}</p>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : dayNum === 3 ? d3("ui.tasks_label") : "Action tasks"}</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">
@@ -719,24 +714,32 @@ const DayChallengeInner = () => {
       {dayNum === 3 && !isReadOnly && (
         <Card className="mt-4">
           <CardContent className="p-5">
-            <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Tool Note</p>
-              <p className="text-[var(--body-size)] text-foreground leading-relaxed">This challenge was built using Lovable.</p>
-              <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">
-                To build your own version, you’ll use the same approach. A Pro account gives you more credits and flexibility.
-              </p>
-            </div>
+            {(d3("ui.tool_note_body") || d3("ui.tool_note_secondary")) && (
+              <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
+                {d3("ui.tool_note_label") && (
+                  <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">{d3("ui.tool_note_label")}</p>
+                )}
+                {d3("ui.tool_note_body") && (
+                  <p className="text-[var(--body-size)] text-foreground leading-relaxed">{d3("ui.tool_note_body")}</p>
+                )}
+                {d3("ui.tool_note_secondary") && (
+                  <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">
+                    {d3("ui.tool_note_secondary")}
+                  </p>
+                )}
+              </div>
+            )}
             <label className="text-[var(--body-size)] font-medium text-foreground block mb-2">
-              Paste your live URL
+              {d3("ui.live_url_label")}
             </label>
             <Input
               type="url"
-              placeholder="https://your-app.com"
+              placeholder={d3("ui.live_url_placeholder")}
               value={state.challenge.launchUrl || ""}
               onChange={(e) => setLaunchUrl(e.target.value)}
             />
             {state.challenge.launchUrl && !isValidUrl(state.challenge.launchUrl) && (
-              <p className="text-xs text-destructive mt-1">Please enter a valid URL starting with https://</p>
+              <p className="text-xs text-destructive mt-1">{d3("ui.live_url_error")}</p>
             )}
           </CardContent>
         </Card>
@@ -745,7 +748,7 @@ const DayChallengeInner = () => {
       {dayNum === 3 && isReadOnly && state.challenge.launchUrl && (
         <Card className="mt-4">
           <CardContent className="p-5">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Your live URL</p>
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">{d3("ui.live_url_saved_label")}</p>
             <a href={state.challenge.launchUrl} target="_blank" rel="noreferrer" className="text-[var(--body-size)] text-primary underline break-all">
               {state.challenge.launchUrl}
             </a>
@@ -757,11 +760,13 @@ const DayChallengeInner = () => {
         <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
           <CardContent className="p-5">
             <p className="mb-4 text-[var(--body-size)] font-semibold leading-relaxed text-foreground">
-              {config.completion.replace(".", `, ${firstName}.`)}
+              {dayNum === 3
+                ? fillTokens(config.completion, { name: firstName ? `, ${firstName}` : "" })
+                : config.completion.replace(".", `, ${firstName}.`)}
             </p>
             <Button className="w-full gap-2 text-white" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
+              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : d3("buttons.complete")}
             </Button>
           </CardContent>
         </Card>
@@ -770,7 +775,7 @@ const DayChallengeInner = () => {
 
       <div className="mt-6">
         <CrossPromoSpotlight
-          title="Other apps in progress"
+          title={dayNum === 3 ? d3("ui.cross_promo_title") : "Other apps in progress"}
           subtitle=""
           position={`day-${dayNum}`}
         />

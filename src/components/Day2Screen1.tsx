@@ -370,10 +370,11 @@ const Day2Screen1 = () => {
   const bodies = aiBodies ?? fallbackBodies;
 
   const cardCopy = [
-    { title: "The quiz earns the right to ask for 3 days.", body: bodies.card1 },
-    { title: "Most quizzes stop at the result. Yours does not.", body: bodies.card2 },
-    { title: "Three days builds more trust than three months of emails.", body: bodies.card3 },
+    { title: tDay2("cards.1.title", "The quiz earns the right to ask for 3 days."), body: bodies.card1 },
+    { title: tDay2("cards.2.title", "Most quizzes stop at the result. Yours does not."), body: bodies.card2 },
+    { title: tDay2("cards.3.title", "Three days builds more trust than three months of emails."), body: bodies.card3 },
   ];
+
 
   const handleToggleCard = (idx: number) => {
     // Lock rule: card N requires card N-1 already marked as read.

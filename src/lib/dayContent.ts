@@ -24,7 +24,6 @@ export interface DayContentConfig {
 
 export interface DayContent {
   day2: DayContentConfig;
-  day3: DayContentConfig;
 }
 
 export const STORAGE_KEY = "leadio_day_content";
@@ -50,22 +49,6 @@ export const defaultDayContent: DayContent = {
       },
     ],
   },
-  day3: {
-    title: "Day 3: Build Your AI-Powered Challenge",
-    intro: "Today you’ll turn your idea and quiz into a simple challenge.",
-    lesson:
-      "Your first version does not need to be complex. It only needs a clear promise, a quiz entry point, a simple result or diagnosis, 3 short challenge steps, and a reason for people to invite others.",
-    reinforcement: "Build the smallest useful version first.",
-    nudge: "",
-    completion: "You built a working challenge. That puts you ahead of most.",
-    tasks: [
-      { key: "landing_page", label: "Create your challenge landing page", hasTextarea: false, inputType: "checkbox", placeholder: "", helper: "" },
-      { key: "lead_magnet_quiz", label: "Add your lead magnet quiz", hasTextarea: false, inputType: "checkbox", placeholder: "", helper: "" },
-      { key: "result_page", label: "Add your result page", hasTextarea: false, inputType: "checkbox", placeholder: "", helper: "" },
-      { key: "day_content", label: "Create Day 1, Day 2, Day 3 content", hasTextarea: false, inputType: "checkbox", placeholder: "", helper: "" },
-      { key: "invite_step", label: "Add a simple invite step", hasTextarea: false, inputType: "checkbox", placeholder: "", helper: "" },
-    ],
-  },
 };
 
 function mergeDay(base: DayContentConfig, partial: any): DayContentConfig {
@@ -86,7 +69,6 @@ export function loadDayContent(): DayContent {
     const parsed = JSON.parse(raw);
     return {
       day2: mergeDay(defaultDayContent.day2, parsed.day2),
-      day3: mergeDay(defaultDayContent.day3, parsed.day3),
     };
   } catch {
     return defaultDayContent;

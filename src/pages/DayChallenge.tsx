@@ -38,6 +38,8 @@ import UpgradeCards from "@/components/UpgradeCards";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { DAY3_PAGE, DAY3_TASK_KEYS, day3Fallback, fillTokens, toLines } from "@/lib/day3Content";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 const diagnosticQuestions = [
@@ -102,9 +104,31 @@ const DayChallengeInner = () => {
   const { state, setState } = useAppState();
   const dayNum = Number(day) || 1;
   const dayContent = useDayContent();
-  const cmsCfg = dayContent[`day${dayNum}` as "day2" | "day3"] || dayContent.day2;
+  const cmsCfg = dayContent.day2;
   const baseConfig = dayConfig[dayNum] || dayConfig[1];
-  const config = {
+  // Day 3 copy is owner-editable in site_content("day3") and never reads the
+  // legacy localStorage store.
+  const { t: day3Text } = useSiteContent(DAY3_PAGE);
+  const d3 = (id: string) => {
+    const v = day3Text(id, "");
+    return v !== "" ? v : day3Fallback(id);
+  };
+  const config = dayNum === 3
+    ? {
+        ...baseConfig,
+        title: d3("header.title"),
+        intro: d3("header.subtitle"),
+        lesson: d3("training.lesson"),
+        reinforcement: d3("training.reinforcement"),
+        nudge: d3("header.context"),
+        completion: d3("ui.completion_note"),
+        tasks: DAY3_TASK_KEYS.map((key) => ({
+          key,
+          label: d3(`tasks.${key}`),
+          hasTextarea: false,
+        })),
+      }
+    : {
     ...baseConfig,
     title: cmsCfg.title || baseConfig.title,
     intro: cmsCfg.intro || baseConfig.intro,
@@ -123,6 +147,7 @@ const DayChallengeInner = () => {
         }))
       : baseConfig.tasks),
   };
+
   const memory = state.memory;
   const challengeType = challengeTypeLabel(memory.challengeType);
   const audience = audienceLabel(memory.audienceType);
@@ -231,17 +256,22 @@ const DayChallengeInner = () => {
     if (dayNum === 1 && key === "define_app") trackEvent("memory_updated", { source: "day1_define_app" });
   };
 
+  // Day 3 toast copy is owner-editable; other days keep their existing wording.
+  const toastCopy = (id: string, standard: string) => (dayNum === 3 ? d3(id) : standard);
+
   const notifyDashboardUpdated = (key: string) => {
     const value = getOutput(key);
     if (!value || !value.trim()) return;
     window.dispatchEvent(new CustomEvent("dashboard-flash"));
-    toast.success("Your dashboard is updated", {
-      description: `Day ${dayNum} answer saved`,
+    toast.success(toastCopy("toasts.saved_title", "Your dashboard is updated"), {
+      description: dayNum === 3
+        ? fillTokens(d3("toasts.saved_description"), { day: dayNum })
+        : `Day ${dayNum} answer saved`,
       position: "top-left",
       duration: 3500,
       className: "lg:!ml-[280px]",
       action: {
-        label: "Dashboard",
+        label: toastCopy("toasts.saved_action", "Dashboard"),
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
@@ -261,7 +291,7 @@ const DayChallengeInner = () => {
     const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum });
-    toast.success("Thanks for spreading the word!");
+    toast.success(toastCopy("toasts.shared", "Thanks for spreading the word!"));
   };
 
   const handleInvite = () => {
@@ -269,8 +299,9 @@ const DayChallengeInner = () => {
     const referralLink = getCanonicalUrl(`/assess${inviteCode ? `?ref=${inviteCode}` : ""}`);
     shareOrCopy({ text: memoryShareText(memory), url: referralLink });
     trackEvent("share_clicked", { day: dayNum, type: "invite" });
-    toast.success("Invite sent — one step closer to Builder Circle.");
+    toast.success(toastCopy("toasts.invited", "Invite sent — one step closer to Builder Circle."));
   };
+
 
   const unlockCommunity = () => {
     setState((prev) => ({
@@ -278,7 +309,7 @@ const DayChallengeInner = () => {
       community: { ...prev.community, unlocked: true, unlockedAt: new Date().toISOString(), entryReason: "invited_3" },
     }));
     trackEvent("community_unlocked");
-    toast.success("Builder Circle unlocked! 🎉");
+    toast.success(toastCopy("toasts.circle_unlocked", "Builder Circle unlocked! 🎉"));
     navigate("/community");
   };
 
@@ -431,20 +462,20 @@ const DayChallengeInner = () => {
             <Rocket className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-[var(--h1-size)] font-bold text-foreground mb-3">
-            You launched something real, {firstName}.
+            {fillTokens(d3("celebration.title"), { name: firstName })}
           </h1>
           <p className="text-muted-foreground text-[var(--body-size)]">
-            That puts you ahead of most.
+            {d3("celebration.subtitle")}
           </p>
         </div>
 
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
             <p className="text-[var(--body-size)] font-semibold text-foreground leading-relaxed">
-              Your challenge is now live.
+              {d3("celebration.live_title")}
             </p>
             <p className="text-[var(--body-size)] text-muted-foreground mt-1 leading-relaxed">
-              It runs continuously and grows as people go through it and invite others.
+              {d3("celebration.live_body")}
             </p>
           </CardContent>
         </Card>
@@ -455,26 +486,26 @@ const DayChallengeInner = () => {
               <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
                 <Users className="w-5 h-5 text-accent-foreground" />
               </div>
-              <h2 className="text-[var(--h2-size)] font-bold text-foreground">Builder Circle</h2>
+              <h2 className="text-[var(--h2-size)] font-bold text-foreground">{d3("celebration.circle_title")}</h2>
             </div>
             <p className="text-[var(--body-size)] text-foreground font-medium mb-1">
-              You've built something real. Now get it seen.
+              {d3("celebration.circle_lead")}
             </p>
             <p className="text-[var(--body-size)] text-muted-foreground mb-5">
-              Join a network where builders promote each other.
+              {d3("celebration.circle_body")}
             </p>
 
             <div className="space-y-3 mb-5">
               <Button variant="outline" className="w-full gap-2" onClick={handleShare}>
-                <Share2 className="w-4 h-4" /> Share your launch
+                <Share2 className="w-4 h-4" /> {d3("buttons.share_launch")}
               </Button>
               <Button variant="outline" className="w-full gap-2" onClick={handleInvite}>
-                <UserPlus className="w-4 h-4" /> Invite a builder
+                <UserPlus className="w-4 h-4" /> {d3("buttons.invite_builder")}
               </Button>
             </div>
 
             <div className="text-xs text-muted-foreground mb-4">
-              {state.network.direct} / 3 direct referrals
+              {fillTokens(d3("celebration.circle_progress"), { count: state.network.direct, target: 3 })}
             </div>
 
             <Button
@@ -484,11 +515,11 @@ const DayChallengeInner = () => {
               onClick={unlockCommunity}
             >
               <Users className="w-4 h-4" />
-              Unlock Builder Circle
+              {d3("buttons.unlock_circle")}
             </Button>
             {!communityEligible && (
               <p className="text-xs text-muted-foreground text-center mt-2">
-                Submit your live URL and invite 3 builders to unlock.
+                {d3("celebration.circle_helper")}
               </p>
             )}
           </CardContent>
@@ -497,8 +528,9 @@ const DayChallengeInner = () => {
         <UpgradeCards />
 
         <Button variant="ghost" className="mt-2" onClick={() => navigate("/challenger-dashboard")}>
-          Back to Dashboard
+          {d3("buttons.back_to_dashboard")}
         </Button>
+
       </div>
     );
   }
@@ -508,18 +540,22 @@ const DayChallengeInner = () => {
       <TaskCompleteAnim show={showTaskAnim} />
       {isReadOnly && (
         <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-2.5 text-[var(--body-size)] text-muted-foreground">
-          <span className="font-semibold text-foreground">Day {dayNum} is complete.</span>{" "}
-          Your answers are saved.
+          <span className="font-semibold text-foreground">
+            {dayNum === 3 ? d3("ui.complete_banner") : `Day ${dayNum} is complete.`}
+          </span>{" "}
+          {dayNum === 3 ? d3("ui.complete_banner_body") : "Your answers are saved."}
         </div>
       )}
       <StepHeader
         dayNum={dayNum}
+        eyebrow={dayNum === 3 ? d3("header.eyebrow") : undefined}
         heading={config.title.replace(/^Day\s*\d+\s*[:\-–]\s*/i, "")}
         subheading={config.intro}
         secondary={config.nudge && !isReadOnly ? (
           <span className="text-primary font-medium italic">{config.nudge}</span>
         ) : undefined}
       />
+
 
 
 
@@ -575,16 +611,11 @@ const DayChallengeInner = () => {
           <DayVideoModal dayNum={3} />
           <DayCopilot
             dayNum={3}
-            eyebrow="Day 3 · AI-guided training"
-            focus="Design the challenge experience, momentum systems, and referral flow."
-            focusSubtitle="Lock in the daily cadence, the unlock moments, and the reasons people invite others in."
+            eyebrow={d3("copilot.eyebrow")}
+            focus={d3("copilot.focus")}
+            focusSubtitle={d3("copilot.subtitle")}
             outputKeyPrefix="day3_copilot"
-            starters={[
-              "Map a 3-day momentum arc that keeps people moving.",
-              "Suggest 3 unlocks I can tie to participant referrals.",
-              "Write a Day 3 invite message my audience will actually send.",
-              "What's the smallest viable launch I can ship this week?",
-            ]}
+            starters={toLines(d3("copilot.starters"))}
           />
         </div>
       )}
@@ -626,7 +657,7 @@ const DayChallengeInner = () => {
       {dayNum === 2 && <Day2InviteNudge onContinue={() => {}} />}
 
       <div className="space-y-4">
-        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : "Action tasks"}</p>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">{dayNum === 1 ? "Your Build Tasks" : dayNum === 3 ? d3("ui.tasks_label") : "Action tasks"}</p>
         {config.tasks.map((task, i) => (
           <Card key={task.key}>
             <CardContent className="p-5">
@@ -683,24 +714,32 @@ const DayChallengeInner = () => {
       {dayNum === 3 && !isReadOnly && (
         <Card className="mt-4">
           <CardContent className="p-5">
-            <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Tool Note</p>
-              <p className="text-[var(--body-size)] text-foreground leading-relaxed">This challenge was built using Lovable.</p>
-              <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">
-                To build your own version, you’ll use the same approach. A Pro account gives you more credits and flexibility.
-              </p>
-            </div>
+            {(d3("ui.tool_note_body") || d3("ui.tool_note_secondary")) && (
+              <div className="mb-5 rounded-lg border border-border bg-muted/30 p-4">
+                {d3("ui.tool_note_label") && (
+                  <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">{d3("ui.tool_note_label")}</p>
+                )}
+                {d3("ui.tool_note_body") && (
+                  <p className="text-[var(--body-size)] text-foreground leading-relaxed">{d3("ui.tool_note_body")}</p>
+                )}
+                {d3("ui.tool_note_secondary") && (
+                  <p className="mt-2 text-[var(--body-size)] text-muted-foreground leading-relaxed">
+                    {d3("ui.tool_note_secondary")}
+                  </p>
+                )}
+              </div>
+            )}
             <label className="text-[var(--body-size)] font-medium text-foreground block mb-2">
-              Paste your live URL
+              {d3("ui.live_url_label")}
             </label>
             <Input
               type="url"
-              placeholder="https://your-app.com"
+              placeholder={d3("ui.live_url_placeholder")}
               value={state.challenge.launchUrl || ""}
               onChange={(e) => setLaunchUrl(e.target.value)}
             />
             {state.challenge.launchUrl && !isValidUrl(state.challenge.launchUrl) && (
-              <p className="text-xs text-destructive mt-1">Please enter a valid URL starting with https://</p>
+              <p className="text-xs text-destructive mt-1">{d3("ui.live_url_error")}</p>
             )}
           </CardContent>
         </Card>
@@ -709,7 +748,7 @@ const DayChallengeInner = () => {
       {dayNum === 3 && isReadOnly && state.challenge.launchUrl && (
         <Card className="mt-4">
           <CardContent className="p-5">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Your live URL</p>
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">{d3("ui.live_url_saved_label")}</p>
             <a href={state.challenge.launchUrl} target="_blank" rel="noreferrer" className="text-[var(--body-size)] text-primary underline break-all">
               {state.challenge.launchUrl}
             </a>
@@ -721,11 +760,13 @@ const DayChallengeInner = () => {
         <Card className="mt-6 border-primary/30 bg-primary/5 animate-fade-in">
           <CardContent className="p-5">
             <p className="mb-4 text-[var(--body-size)] font-semibold leading-relaxed text-foreground">
-              {config.completion.replace(".", `, ${firstName}.`)}
+              {dayNum === 3
+                ? fillTokens(config.completion, { name: firstName ? `, ${firstName}` : "" })
+                : config.completion.replace(".", `, ${firstName}.`)}
             </p>
             <Button className="w-full gap-2 text-white" size="lg" onClick={completeDay}>
               <CheckCircle className="w-4 h-4" />
-              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : "Start Building Your Challenge"}
+              {dayNum === 1 ? "Complete Day 1" : dayNum === 2 ? "Continue to Day 3" : d3("buttons.complete")}
             </Button>
           </CardContent>
         </Card>
@@ -734,7 +775,7 @@ const DayChallengeInner = () => {
 
       <div className="mt-6">
         <CrossPromoSpotlight
-          title="Other apps in progress"
+          title={dayNum === 3 ? d3("ui.cross_promo_title") : "Other apps in progress"}
           subtitle=""
           position={`day-${dayNum}`}
         />

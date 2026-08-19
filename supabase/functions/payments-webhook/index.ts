@@ -363,8 +363,40 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   }
 
 
+  // Premium upgrade. This branch is explicit: only the premium price grants
+  // premium. Anything else without a recognised gate key is recorded as a
+  // purchase and logged as unfulfilled, never upgraded.
+  const PREMIUM_PRICE_KEY = "leadio_premium_lifetime_usd";
+  if (priceLookupKey && priceLookupKey !== PREMIUM_PRICE_KEY) {
+    console.error(
+      "[unfulfilled] paid session with no gate key and a non premium price:",
+      JSON.stringify({ sessionId, priceLookupKey, userId: userId ?? null }),
+    );
+    if (userId) {
+      await sb.from("purchases").upsert(
+        {
+          user_id: userId,
+          stripe_session_id: sessionId,
+          stripe_payment_intent_id: session.payment_intent ?? null,
+          stripe_customer_id: customerId ?? null,
+          amount_cents: amount,
+          currency,
+          price_id: priceLookupKey,
+          partner_code: partnerCode ?? null,
+          coupon_code: couponCode,
+          status: "paid",
+          environment: env,
+        },
+        { onConflict: "stripe_session_id" },
+      );
+    }
+    if (customerEmail) await sendConfirmationEmail(customerEmail);
+    return;
+  }
+
   // 1. Insert purchase record (idempotent on stripe_session_id)
   if (userId) {
+
     const { data: purchaseRow } = await sb.from("purchases").upsert(
       {
         user_id: userId,

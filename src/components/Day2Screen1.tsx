@@ -167,13 +167,13 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           <div className="flex items-center gap-2">
             <img
               src={johnnyAvatar}
-              alt="Johnny B AI"
+              alt={senderName}
               className="h-8 w-8 rounded-full object-cover border border-border"
             />
             <div className="flex flex-col leading-tight">
-              <span className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>Johnny B AI</span>
+              <span className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>{senderName}</span>
               <span className="uppercase tracking-wide text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                {typingDone ? "Message" : "Thinking…"}
+                {typingDone ? statusDone : statusThinking}
               </span>
             </div>
           </div>
@@ -199,14 +199,15 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           {!isLoading && typingDone && (
             isRead ? (
               <p className="inline-flex items-center gap-1.5 font-semibold text-primary" style={{ fontSize: "var(--body-size)" }}>
-                <Check className="h-3.5 w-3.5" /> Marked as read
+                <Check className="h-3.5 w-3.5" /> {markedReadLabel}
               </p>
             ) : (
               <Button type="button" size="sm" variant="outline" onClick={onMarkRead} style={{ fontSize: "var(--body-size)" }}>
-                Mark as read to continue
+                {markReadLabel}
               </Button>
             )
           )}
+
         </CardContent>
       )}
     </Card>

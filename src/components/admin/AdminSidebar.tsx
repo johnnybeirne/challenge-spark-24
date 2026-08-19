@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay, KeyRound } from "lucide-react";
+import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay, KeyRound, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {

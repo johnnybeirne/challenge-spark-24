@@ -462,20 +462,20 @@ const DayChallengeInner = () => {
             <Rocket className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-[var(--h1-size)] font-bold text-foreground mb-3">
-            You launched something real, {firstName}.
+            {fillTokens(d3("celebration.title"), { name: firstName })}
           </h1>
           <p className="text-muted-foreground text-[var(--body-size)]">
-            That puts you ahead of most.
+            {d3("celebration.subtitle")}
           </p>
         </div>
 
         <Card className="border-primary/30 bg-primary/5 mb-6">
           <CardContent className="p-5">
             <p className="text-[var(--body-size)] font-semibold text-foreground leading-relaxed">
-              Your challenge is now live.
+              {d3("celebration.live_title")}
             </p>
             <p className="text-[var(--body-size)] text-muted-foreground mt-1 leading-relaxed">
-              It runs continuously and grows as people go through it and invite others.
+              {d3("celebration.live_body")}
             </p>
           </CardContent>
         </Card>
@@ -486,26 +486,26 @@ const DayChallengeInner = () => {
               <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
                 <Users className="w-5 h-5 text-accent-foreground" />
               </div>
-              <h2 className="text-[var(--h2-size)] font-bold text-foreground">Builder Circle</h2>
+              <h2 className="text-[var(--h2-size)] font-bold text-foreground">{d3("celebration.circle_title")}</h2>
             </div>
             <p className="text-[var(--body-size)] text-foreground font-medium mb-1">
-              You've built something real. Now get it seen.
+              {d3("celebration.circle_lead")}
             </p>
             <p className="text-[var(--body-size)] text-muted-foreground mb-5">
-              Join a network where builders promote each other.
+              {d3("celebration.circle_body")}
             </p>
 
             <div className="space-y-3 mb-5">
               <Button variant="outline" className="w-full gap-2" onClick={handleShare}>
-                <Share2 className="w-4 h-4" /> Share your launch
+                <Share2 className="w-4 h-4" /> {d3("buttons.share_launch")}
               </Button>
               <Button variant="outline" className="w-full gap-2" onClick={handleInvite}>
-                <UserPlus className="w-4 h-4" /> Invite a builder
+                <UserPlus className="w-4 h-4" /> {d3("buttons.invite_builder")}
               </Button>
             </div>
 
             <div className="text-xs text-muted-foreground mb-4">
-              {state.network.direct} / 3 direct referrals
+              {fillTokens(d3("celebration.circle_progress"), { count: state.network.direct, target: 3 })}
             </div>
 
             <Button
@@ -515,11 +515,11 @@ const DayChallengeInner = () => {
               onClick={unlockCommunity}
             >
               <Users className="w-4 h-4" />
-              Unlock Builder Circle
+              {d3("buttons.unlock_circle")}
             </Button>
             {!communityEligible && (
               <p className="text-xs text-muted-foreground text-center mt-2">
-                Submit your live URL and invite 3 builders to unlock.
+                {d3("celebration.circle_helper")}
               </p>
             )}
           </CardContent>
@@ -528,8 +528,9 @@ const DayChallengeInner = () => {
         <UpgradeCards />
 
         <Button variant="ghost" className="mt-2" onClick={() => navigate("/challenger-dashboard")}>
-          Back to Dashboard
+          {d3("buttons.back_to_dashboard")}
         </Button>
+
       </div>
     );
   }

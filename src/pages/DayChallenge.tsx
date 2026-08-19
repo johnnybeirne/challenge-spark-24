@@ -104,7 +104,29 @@ const DayChallengeInner = () => {
   const dayContent = useDayContent();
   const cmsCfg = dayContent[`day${dayNum}` as "day2" | "day3"] || dayContent.day2;
   const baseConfig = dayConfig[dayNum] || dayConfig[1];
-  const config = {
+  // Day 3 copy is owner-editable in site_content("day3") and never reads the
+  // legacy localStorage store.
+  const { t: day3Text } = useSiteContent(DAY3_PAGE);
+  const d3 = (id: string) => {
+    const v = day3Text(id, "");
+    return v !== "" ? v : day3Fallback(id);
+  };
+  const config = dayNum === 3
+    ? {
+        ...baseConfig,
+        title: d3("header.title"),
+        intro: d3("header.subtitle"),
+        lesson: d3("training.lesson"),
+        reinforcement: d3("training.reinforcement"),
+        nudge: d3("header.context"),
+        completion: d3("ui.completion_note"),
+        tasks: DAY3_TASK_KEYS.map((key) => ({
+          key,
+          label: d3(`tasks.${key}`),
+          hasTextarea: false,
+        })),
+      }
+    : {
     ...baseConfig,
     title: cmsCfg.title || baseConfig.title,
     intro: cmsCfg.intro || baseConfig.intro,
@@ -123,6 +145,7 @@ const DayChallengeInner = () => {
         }))
       : baseConfig.tasks),
   };
+
   const memory = state.memory;
   const challengeType = challengeTypeLabel(memory.challengeType);
   const audience = audienceLabel(memory.audienceType);

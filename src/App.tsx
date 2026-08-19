@@ -285,8 +285,9 @@ const App = () => (
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="day1-steps" element={<AdminDay1Steps />} />
-                <Route path="day2-button-copy" element={<AdminDay2ButtonCopy />} />
-                <Route path="day2-content" element={<AdminDay2Content />} />
+                <Route path="day2" element={<AdminDay2 />} />
+                <Route path="day2-button-copy" element={<Navigate to="/owner-console/day2" replace />} />
+                <Route path="day2-content" element={<Navigate to="/owner-console/day2" replace />} />
 
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

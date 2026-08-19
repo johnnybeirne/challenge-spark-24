@@ -26,6 +26,7 @@ export default function Rewards() {
   const { state } = useAppState();
   const { config } = useSiteConfig();
   const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
+  const navigate = useNavigate();
 
   const userPoints = state.points?.total ?? 0;
   const userTier = getPointTier(userPoints);

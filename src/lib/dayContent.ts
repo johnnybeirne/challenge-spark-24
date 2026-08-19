@@ -23,7 +23,6 @@ export interface DayContentConfig {
 }
 
 export interface DayContent {
-  day1: DayContentConfig;
   day2: DayContentConfig;
   day3: DayContentConfig;
 }
@@ -32,21 +31,6 @@ export const STORAGE_KEY = "leadio_day_content";
 const CHANGE_EVENT = "leadio:day-content-changed";
 
 export const defaultDayContent: DayContent = {
-  day1: {
-    title: "Day 1: Define Your Challenge",
-    intro: "Today you’ll define the challenge you want to create.",
-    lesson:
-      "By the end of this step, you should know who your challenge is for, what problem it helps solve, what simple outcome people should get, and why people would want to share it.",
-    reinforcement: "Keep it clear and practical. You are learning by doing.",
-    nudge: "",
-    completion: "Your challenge is defined. Keep the momentum going.",
-    tasks: [
-      { key: "define_app", label: "Who is your challenge for?", hasTextarea: true, inputType: "input", placeholder: "Coaches, consultants, or experts who want more qualified leads", helper: "" },
-      { key: "problem", label: "What problem are they struggling with?", hasTextarea: true, inputType: "input", placeholder: "Their growth depends on constant content or outreach", helper: "" },
-      { key: "result", label: "What result should they get from your challenge?", hasTextarea: true, inputType: "input", placeholder: "A simple system to generate leads more consistently", helper: "" },
-      { key: "share_reason", label: "Why would someone invite a friend to this challenge?", hasTextarea: true, inputType: "input", placeholder: "It helps them spot what’s missing and improve faster", helper: "" },
-    ],
-  },
   day2: {
     title: "Day 2: Build Your Lead Magnet Quiz",
     intro: "Today you’ll create the quiz that acts as the entry point to your challenge.",
@@ -101,7 +85,6 @@ export function loadDayContent(): DayContent {
     if (!raw) return defaultDayContent;
     const parsed = JSON.parse(raw);
     return {
-      day1: mergeDay(defaultDayContent.day1, parsed.day1),
       day2: mergeDay(defaultDayContent.day2, parsed.day2),
       day3: mergeDay(defaultDayContent.day3, parsed.day3),
     };

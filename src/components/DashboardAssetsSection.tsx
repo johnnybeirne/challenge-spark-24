@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useSiteConfig } from "@/context/SiteConfigContext";
+import { supabase } from "@/integrations/supabase/client";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -20,6 +22,39 @@ import {
 const DashboardAssetsSection = () => {
   const { state } = useAppState();
   const { t } = useSiteContent("dashboard");
+  const { config } = useSiteConfig();
+
+  // Rewards the participant holds: bought rewards land in unlock_grants,
+  // earned rewards are derived from their points against the ladder.
+  const rungs = config?.rewards?.ladder?.rungs ?? [];
+  const userPoints = state.points?.total ?? 0;
+  const [boughtGates, setBoughtGates] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { data } = await supabase
+        .from("unlock_grants")
+        .select("gate_key")
+        .like("gate_key", "reward_gate_%");
+      if (!active) return;
+      setBoughtGates(new Set((data ?? []).map((r) => r.gate_key as string)));
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const heldRewards = [...rungs]
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+    .map((rung) => {
+      const bought = !!rung.gateKey && boughtGates.has(rung.gateKey);
+      const earned = userPoints >= rung.points;
+      return { rung, bought, earned };
+    })
+    .filter((r) => r.bought || r.earned);
+
 
   const rawQuiz = state.challenge?.aiOutputs?.day2_s2_quiz;
 

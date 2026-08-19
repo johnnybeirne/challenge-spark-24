@@ -433,8 +433,9 @@ const Day2Screen1 = () => {
             )}
           </p>
           <p className="italic text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-            You're building this for {audience}.
+            {tDay2("ui.intro", "You're building this for {audience}.").replaceAll("{audience}", audience)}
           </p>
+
         </header>
 
         {/* ZONE 2 - TEACHING CONTENT */}

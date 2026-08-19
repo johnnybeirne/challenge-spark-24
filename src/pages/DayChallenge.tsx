@@ -309,7 +309,7 @@ const DayChallengeInner = () => {
       community: { ...prev.community, unlocked: true, unlockedAt: new Date().toISOString(), entryReason: "invited_3" },
     }));
     trackEvent("community_unlocked");
-    toast.success("Builder Circle unlocked! 🎉");
+    toast.success(toastCopy("toasts.circle_unlocked", "Builder Circle unlocked! 🎉"));
     navigate("/community");
   };
 

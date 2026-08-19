@@ -206,7 +206,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("missing-inputs");
   }
 
-  const reference = await fetchPromiseReference();
+  const [reference, cfg] = await Promise.all([fetchPromiseReference(), loadAiConfig()]);
 
   const echoGuard = reference
     ? [
@@ -225,6 +225,21 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
       ].join("\n")
     : null;
 
+  // Owner-editable composer instructions. The four part output shape is locked
+  // by the tool schema below, so an edit here can never change the shape.
+  const promiseInstructions =
+    cfg.promise_prompt.trim() ||
+    [
+      "Use the compose_challenge_promise tool to return:",
+      "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
+      "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
+      "3. toState: the audience's future state after the transformation, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+      "4. soThat: the deeper payoff the audience gets, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+      "5. andStop: the pain that ends for the audience, ending with 'from happening' or 'from continuing'. No quotation marks, no full stop, no dashes of any kind.",
+      "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop].",
+      "All four parts describe the audience, never the builder, in the third person. All four parts are always required.",
+    ].join("\n");
+
   const userPrompt = [
     echoGuard,
     firstName ? `Builder's first name: ${firstName}` : null,
@@ -237,26 +252,17 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     `Outcome, what they walk away with after Day 3 (their words): ${outcome}`,
     challengeTypeLabel ? `Challenge shape: ${challengeTypeLabel}` : null,
     "",
-    "Use the compose_challenge_promise tool to return:",
-    "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
-    "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
-    "3. toState: the audience's future state after the transformation, written in the builder's own words, reflecting the outcome and how the builder helps. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "4. soThat: the deeper payoff the audience gets from the transformation, one level below the surface result, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "5. andStop: the pain that ends for the audience, ending with either the words 'from happening' or the words 'from continuing', whichever fits. Example shape only: quiet weeks from continuing. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
-    "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop]. Nothing before the word from and nothing after the andStop.",
-    "All four parts describe the audience, never the builder. All four parts are always required and the and stop part is never omitted.",
-    "Write fromState, toState, soThat and andStop in the third person, describing the audience as 'they' and 'their'. Never address the audience as 'you' or 'your' in those four parts.",
-
-    "Hard rules: never use a hyphen, an en dash or an em dash anywhere in your output. Never use the word 'once'. No jargon, no buzzwords, no marketing speak. Plain, warm, human language written for this specific participant, using the answers they gave.",
+    promiseInstructions,
   ].filter(Boolean).join("\n");
 
 
   const resp = await callGateway({
     model: MODEL,
     messages: [
-      { role: "system", content: JOHNNY_VOICE },
+      { role: "system", content: cfg.voice_prompt.trim() || DEFAULT_VOICE },
       { role: "user", content: userPrompt },
     ],
+
     temperature: 0.6,
     tools: [
       {

@@ -55,12 +55,18 @@ interface RevealCardProps {
   isLoading?: boolean;
   isRead: boolean;
   alreadyTyped: boolean;
+  senderName: string;
+  statusThinking: string;
+  statusDone: string;
+  markReadLabel: string;
+  markedReadLabel: string;
   onTypingComplete: () => void;
   onToggle: () => void;
   onMarkRead: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, alreadyTyped, onTypingComplete, onToggle, onMarkRead }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, alreadyTyped, senderName, statusThinking, statusDone, markReadLabel, markedReadLabel, onTypingComplete, onToggle, onMarkRead }: RevealCardProps) => {
+
   const [typed, setTyped] = useState<string>(alreadyTyped ? body : "");
   const [typingDone, setTypingDone] = useState<boolean>(alreadyTyped);
   const completeRef = useRef(onTypingComplete);

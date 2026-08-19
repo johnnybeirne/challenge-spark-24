@@ -198,7 +198,7 @@ const DashboardAssetsSection = () => {
           {(() => {
             // Assets in sequence. The badge is derived from position within the
             // day, so numbering restarts at Asset 1 for each new day.
-            const entries: { day: number; title: string; body: JSX.Element }[] = [];
+            const entries: { day: number; title: string; badge?: string; body: JSX.Element }[] = [];
 
             entries.push({
               day: 1,

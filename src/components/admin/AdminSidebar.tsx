@@ -149,6 +149,7 @@ const siteItems: NavItem[] = [
     keywords: ["premium page", "course", "sales", "enrol", "pricing", "497"],
   },
   { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit, keywords: ["unlock", "gate", "day 2", "day 3", "locked"] },
+  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit, keywords: ["unlock", "gate", "day 2", "day 3", "locked"] },
   { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit, keywords: ["prompts", "builder", "ai", "day prompts"] },
   {
     title: "Referral settings",

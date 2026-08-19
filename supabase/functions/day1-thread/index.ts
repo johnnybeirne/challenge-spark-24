@@ -21,10 +21,44 @@ const corsHeaders = {
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-3-flash-preview";
 
-// Johnny's voice — kept consistent across both moments.
-const JOHNNY_VOICE = `You are Johnny Beirne, an Irish business coach guiding a builder through designing their 3-day challenge.
+// Owner-editable prompts live in public.day1_ai_config (read at runtime, the
+// same way day2-thread reads day2_ai_config). The constants below are only a
+// last-resort guard if that row cannot be read.
+const DEFAULT_VOICE = `You are Johnny Beirne, an Irish business coach guiding a builder through designing their 3-day challenge.
 Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless natural.
 Never invent facts about the user, their audience, or their challenge. Use only what they told you.`;
+
+interface Day1AiConfig {
+  voice_prompt: string;
+  reaction_prompt: string;
+  promise_prompt: string;
+}
+
+async function loadAiConfig(): Promise<Day1AiConfig> {
+  const empty = { voice_prompt: "", reaction_prompt: "", promise_prompt: "" };
+  try {
+    const url = Deno.env.get("SUPABASE_URL");
+    const key = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !key) return empty;
+    const resp = await fetch(
+      `${url}/rest/v1/day1_ai_config?select=voice_prompt,reaction_prompt,promise_prompt&order=updated_at.desc&limit=1`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+    );
+    if (!resp.ok) return empty;
+    const rows = await resp.json();
+    const row = Array.isArray(rows) ? rows[0] : null;
+    if (!row) return empty;
+    return {
+      voice_prompt: typeof row.voice_prompt === "string" ? row.voice_prompt : "",
+      reaction_prompt: typeof row.reaction_prompt === "string" ? row.reaction_prompt : "",
+      promise_prompt: typeof row.promise_prompt === "string" ? row.promise_prompt : "",
+    };
+  } catch (e) {
+    console.error("day1_ai_config load failed", e);
+    return empty;
+  }
+}
+
 
 interface ProblemInputs {
   firstName?: string;
@@ -80,25 +114,33 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 
   if (!problem) return fallback("missing-problem");
 
+  const cfg = await loadAiConfig();
+  const reactionInstructions =
+    cfg.reaction_prompt.trim() ||
+    [
+      "Write ONE short reaction sentence (max 25 words) that:",
+      "- quotes or closely paraphrases their exact pain language so they feel heard",
+      "- acknowledges what makes it hard, without giving advice, solutions, or asking a question",
+      "- sounds like Johnny said it out loud, not written copy",
+      "",
+      "Plain text only. No quotation marks around the whole reply. Do not start with the builder's name.",
+    ].join("\n");
+
   const userPrompt = [
     firstName ? `Builder's first name: ${firstName}` : null,
     audience ? `Their audience: ${audience}` : null,
     `The specific problem this audience faces, in the builder's own words:\n"""${problem}"""`,
     "",
-    "Write ONE short reaction sentence (max 25 words) that:",
-    "- quotes or closely paraphrases their exact pain language so they feel heard",
-    "- acknowledges what makes it hard — without giving advice, solutions, or asking a question",
-    "- sounds like Johnny said it out loud, not written copy",
-    "",
-    "Plain text only. No quotation marks around the whole reply. Do not start with the builder's name.",
+    reactionInstructions,
   ].filter(Boolean).join("\n");
 
   const resp = await callGateway({
     model: MODEL,
     messages: [
-      { role: "system", content: JOHNNY_VOICE },
+      { role: "system", content: cfg.voice_prompt.trim() || DEFAULT_VOICE },
       { role: "user", content: userPrompt },
     ],
+
     temperature: 0.7,
   });
 

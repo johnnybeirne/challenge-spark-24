@@ -44,6 +44,7 @@ import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
 import BlueprintInsight from "@/pages/blueprint/BlueprintInsight";
 import BlueprintBridge from "@/pages/blueprint/BlueprintBridge";
 import RewardDetail from "@/pages/RewardDetail";
+import RewardUnlocked from "@/pages/RewardUnlocked";
 import Rewards from "@/pages/Rewards";
 
 import Partners from "@/pages/Partners";

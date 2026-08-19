@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 /** Ladder order is driven by one shared `position` field, sorted ascending. */
 export function sortRungs(rungs: LadderRung[]): LadderRung[] {

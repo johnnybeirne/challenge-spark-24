@@ -93,6 +93,7 @@ import AdminNavTips from "@/pages/AdminNavTips";
 import AdminGuestPasses from "@/pages/AdminGuestPasses";
 import GuestPass from "@/pages/GuestPass";
 import AdminUserTour from "@/pages/AdminUserTour";
+import AdminMenuTags from "@/pages/AdminMenuTags";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
 import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
@@ -304,6 +305,7 @@ const App = () => (
                 <Route path="nav-tips" element={<AdminNavTips />} />
                 <Route path="guest-passes" element={<AdminGuestPasses />} />
                 <Route path="user-tour" element={<AdminUserTour />} />
+                <Route path="menu-tags" element={<AdminMenuTags />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="mentor-prompts" element={<AdminMentorPrompts />} />

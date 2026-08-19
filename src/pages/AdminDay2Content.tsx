@@ -79,7 +79,7 @@ const UI_FIELDS: Field[] = [
 
 const ALL_FIELDS: Field[] = [...CARD_FIELDS.flat(), ...UI_FIELDS];
 
-const fieldId = (f: Field) => `${f.section}.${f.key}`;
+const fieldId = (f: Field): string => `${f.section}.${f.key}`;
 
 const AdminDay2Content = () => {
   const [rows, setRows] = useState<SiteContentRow[]>([]);
@@ -124,7 +124,7 @@ const AdminDay2Content = () => {
   }, []);
 
   const rowIndex = useMemo(
-    () => new Map(rows.map((r) => [`${r.section}.${r.key}`, r] as const)),
+    () => new Map<string, SiteContentRow>(rows.map((r) => [`${r.section}.${r.key}`, r])),
     [rows],
   );
 

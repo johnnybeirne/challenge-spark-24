@@ -519,14 +519,15 @@ const Day2Screen1 = () => {
                   <Download className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden="true" />
                   <div className="space-y-1">
                     <p className="font-bold text-foreground" style={{ fontSize: "var(--body-size)" }}>
-                      Your quiz downloads will land in Your Assets
+                      {tDay2("ui.assets_note_title", "Your quiz downloads will land in Your Assets")}
                     </p>
                     <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                      Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.{" "}
+                      {tDay2("ui.assets_note_body", "Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.")}{" "}
                       <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
-                        Go to Your Assets &rarr;
+                        {tDay2("ui.assets_link", "Go to Your Assets")} &rarr;
                       </Link>
                     </p>
+
                   </div>
                 </div>
               </div>

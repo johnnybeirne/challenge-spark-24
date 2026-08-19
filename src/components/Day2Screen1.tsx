@@ -540,7 +540,7 @@ const Day2Screen1 = () => {
                   className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 font-semibold shadow-xl animate-fade-in"
                   style={{ fontSize: "var(--body-size)" }}
                 >
-                  Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.
+                  {tDay2("hint.locked", 'Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.')}
                   <span
                     aria-hidden="true"
                     className="absolute left-1/2 -translate-x-1/2 top-full -mt-px h-3 w-3 rotate-45 bg-foreground"

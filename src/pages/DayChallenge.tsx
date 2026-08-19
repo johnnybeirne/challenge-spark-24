@@ -38,6 +38,8 @@ import UpgradeCards from "@/components/UpgradeCards";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { useDayContent } from "@/hooks/useDayContent";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { DAY3_PAGE, DAY3_TASK_KEYS, day3Fallback, fillTokens, toLines } from "@/lib/day3Content";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
 
 const diagnosticQuestions = [

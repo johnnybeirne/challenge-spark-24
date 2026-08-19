@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
 import { getPointTier, pointRules } from "@/lib/points";

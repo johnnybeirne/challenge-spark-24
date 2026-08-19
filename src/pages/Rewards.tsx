@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
 import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 /** Ladder order is driven by one shared `position` field, sorted ascending. */
 export function sortRungs(rungs: LadderRung[]): LadderRung[] {
@@ -69,6 +71,12 @@ export default function Rewards() {
 
   const openRungCheckout = (rung: LadderRung) => {
     const key = rungKey(rung);
+    // A rung without its own gate key cannot be fulfilled as a reward, so it
+    // must never open checkout: that path is what sold a rung as premium.
+    if (!rung.gateKey) {
+      toast.error("This reward is not ready to buy yet. Please try again shortly.");
+      return;
+    }
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
@@ -81,13 +89,14 @@ export default function Rewards() {
     // Same session/metadata as before — only the mount location changes.
     openCheckout({
       priceId: rung.priceId,
-      ...(rung.gateKey && { gateKey: rung.gateKey }),
+      gateKey: rung.gateKey,
       quantity: 1,
       customerEmail: state.user?.email,
       userId: state.user?.id || "",
       returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     });
   };
+
 
   const closeRungCheckout = () => {
     setOpenRungKey(null); // collapse

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useSiteConfig } from "@/context/SiteConfigContext";
+import { supabase } from "@/integrations/supabase/client";
 import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -20,6 +22,39 @@ import {
 const DashboardAssetsSection = () => {
   const { state } = useAppState();
   const { t } = useSiteContent("dashboard");
+  const { config } = useSiteConfig();
+
+  // Rewards the participant holds: bought rewards land in unlock_grants,
+  // earned rewards are derived from their points against the ladder.
+  const rungs = config?.rewards?.ladder?.rungs ?? [];
+  const userPoints = state.points?.total ?? 0;
+  const [boughtGates, setBoughtGates] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { data } = await supabase
+        .from("unlock_grants")
+        .select("gate_key")
+        .like("gate_key", "reward_gate_%");
+      if (!active) return;
+      setBoughtGates(new Set((data ?? []).map((r) => r.gate_key as string)));
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const heldRewards = [...rungs]
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+    .map((rung) => {
+      const bought = !!rung.gateKey && boughtGates.has(rung.gateKey);
+      const earned = userPoints >= rung.points;
+      return { rung, bought, earned };
+    })
+    .filter((r) => r.bought || r.earned);
+
 
   const rawQuiz = state.challenge?.aiOutputs?.day2_s2_quiz;
 
@@ -163,7 +198,7 @@ const DashboardAssetsSection = () => {
           {(() => {
             // Assets in sequence. The badge is derived from position within the
             // day, so numbering restarts at Asset 1 for each new day.
-            const entries: { day: number; title: string; body: JSX.Element }[] = [];
+            const entries: { day: number; title: string; badge?: string; body: JSX.Element }[] = [];
 
             entries.push({
               day: 1,
@@ -258,11 +293,62 @@ const DashboardAssetsSection = () => {
               ),
             });
 
+            entries.push({
+              day: 0,
+              badge: t("assets.rewards_badge", "Rewards"),
+              title: t("assets.rewards_title", "Your Rewards"),
+              body: heldRewards.length ? (
+                <div className="mt-1 space-y-3">
+                  <p className="text-sm leading-snug text-muted-foreground">
+                    {t(
+                      "assets.rewards_copy",
+                      "These rewards are unlocked on your account and ready to open."
+                    )}
+                  </p>
+                  <ul className="space-y-2">
+                    {heldRewards.map(({ rung, bought }) => (
+                      <li
+                        key={rung.gateKey || rung.position}
+                        className="rounded-lg border border-border bg-card p-3"
+                      >
+                        <p className="text-sm font-bold text-foreground">{rung.name}</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {bought ? "Yours, purchased." : "Yours, unlocked with points."}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="/rewards"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+                  >
+                    {t("assets.rewards_cta", "Open your rewards")} &rarr;
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                    {t(
+                      "assets.rewards_empty_copy",
+                      "Nothing unlocked yet. Rewards appear here as you earn points or buy one outright."
+                    )}
+                  </p>
+                  <Link
+                    to="/rewards"
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+                  >
+                    {t("assets.rewards_empty_cta", "See the rewards ladder")} &rarr;
+                  </Link>
+                </>
+              ),
+            });
+
             const perDay: Record<number, number> = {};
 
             return entries.map((entry, i) => {
               perDay[entry.day] = (perDay[entry.day] ?? 0) + 1;
-              const badge = `Day ${entry.day} · Asset ${perDay[entry.day]}`;
+              const badge = entry.badge ?? `Day ${entry.day} · Asset ${perDay[entry.day]}`;
+
               const value = `asset-${entry.day}-${perDay[entry.day]}`;
               return (
                 <AccordionItem

@@ -56,8 +56,12 @@ const CheckoutReturn = () => {
             setOutcome({ kind: "reward", name: rung.name });
             return;
           }
-        } else {
+        } else if (priceId === "leadio_premium_lifetime_usd") {
           setOutcome({ kind: "premium" });
+          return;
+        } else {
+          // Neither a known reward nor the premium price: never assert premium.
+          setOutcome({ kind: "delayed" });
           return;
         }
       }
@@ -69,6 +73,7 @@ const CheckoutReturn = () => {
       }
       setTimeout(check, 1500);
     };
+
 
     check();
     return () => {

@@ -568,15 +568,16 @@ const Day2Screen1 = () => {
                   <Check className="h-3.5 w-3.5" />
                 </span>
                 <p className="font-black text-foreground" style={{ fontSize: "var(--body-size)" }}>
-                  Your quiz assets are ready
+                  {tDay2("ui.quiz_ready_title", "Your quiz assets are ready")}
                 </p>
               </div>
               <p className="mb-3 text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                Download your quiz right here, or grab it any time from Your Assets on your dashboard.{" "}
+                {tDay2("ui.quiz_ready_body", "Download your quiz right here, or grab it any time from Your Assets on your dashboard.")}{" "}
                 <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
-                  Go to Your Assets &rarr;
+                  {tDay2("ui.assets_link", "Go to Your Assets")} &rarr;
                 </Link>
               </p>
+
               <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs.day2_s2_quiz} />
             </div>
           )}

@@ -285,6 +285,8 @@ const App = () => (
                 <Route path="training" element={<AdminTraining />} />
                 <Route path="day1-steps" element={<AdminDay1Steps />} />
                 <Route path="day2-button-copy" element={<AdminDay2ButtonCopy />} />
+                <Route path="day2-content" element={<AdminDay2Content />} />
+
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />

@@ -276,7 +276,7 @@ export function AdminSidebar() {
         )}
 
         {noResults && (
-          <p className="px-4 py-3 text-xs text-muted-foreground">No settings found.</p>
+          <p className="px-4 py-3 text-xs text-muted-foreground">No pages match.</p>
         )}
 
         {filteredAdmin.length > 0 && (

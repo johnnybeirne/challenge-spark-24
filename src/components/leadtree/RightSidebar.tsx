@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAppState } from "@/context/AppContext";
 import { useFocusMode } from "@/context/FocusModeContext";
 import { Progress } from "@/components/ui/progress";
-import { getNextReward, pointRewards } from "@/lib/points";
+import { usePointsProgress } from "@/hooks/usePointsProgress";
 
 const cardCls =
   "rounded-[16px] bg-white p-7 shadow-[0_4px_12px_rgba(0,0,0,0.05)]";
@@ -52,19 +52,8 @@ const RightSidebar = () => {
   }, []);
 
   const direct = state.network?.direct ?? 0;
-  // Every invite is worth 50 points, so the two figures must never disagree.
-  const POINTS_PER_INVITE = 50;
-  const points = Math.max(state.points?.total ?? 0, direct * POINTS_PER_INVITE);
-
-  const nextReward = getNextReward(points);
-  const threshold = nextReward?.points ?? points;
-  const prevThreshold = (() => {
-    const earned = pointRewards.map((r) => r.points).filter((c) => c <= points);
-    return earned.length ? earned[earned.length - 1] : 0;
-  })();
-  const pct = nextReward
-    ? Math.min(100, Math.max(0, ((points - prevThreshold) / Math.max(1, threshold - prevThreshold)) * 100))
-    : 100;
+  // Same source as the invites page header card, so the two always agree.
+  const { pointsTotal: points, progressPct: pct } = usePointsProgress();
 
   const hidden = focusMode;
 

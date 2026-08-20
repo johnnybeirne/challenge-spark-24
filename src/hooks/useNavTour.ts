@@ -31,7 +31,7 @@ function buildSteps(
 }
 
 export function useNavTour() {
-  const { authUser, state } = useAppState();
+  const { authUser, state, hydrated } = useAppState();
   const { tips, byKey: rawByKey, loaded } = useNavTips();
   const startedRef = useRef(false);
 
@@ -91,6 +91,12 @@ export function useNavTour() {
     // Only run for authenticated users
     if (!authUser?.id) return;
 
+    // Wait for the participant profile to finish hydrating so state.user.name
+    // (and therefore the first-name token) is actually in scope before steps
+    // are built — otherwise resolveFirstName returns "" and the strip-fallback
+    // fires even for a named user.
+    if (!hydrated) return;
+
     let cancelled = false;
     (async () => {
       // Local check first
@@ -121,7 +127,7 @@ export function useNavTour() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loaded, authUser?.id]);
+  }, [loaded, hydrated, authUser?.id]);
 
   return { start };
 }

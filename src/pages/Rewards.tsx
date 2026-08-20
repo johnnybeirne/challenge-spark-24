@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
-import { getPointTier, pointRules } from "@/lib/points";
+import { pointRules } from "@/lib/points";
+import { usePointsProgress } from "@/hooks/usePointsProgress";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -10,7 +11,7 @@ import { SEO } from "@/components/SEO";
 import { Sparkles, Lock, Check, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LadderInviteBlock } from "@/components/LadderInviteBlock";
-import InvitesRewardsHeader from "@/components/InvitesRewardsHeader";
+import { PointsHeaderCard } from "@/components/PointsHeaderCard";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -28,8 +29,9 @@ export default function Rewards() {
   const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
   const navigate = useNavigate();
 
-  const userPoints = state.points?.total ?? 0;
-  const userTier = getPointTier(userPoints);
+  // Same source as the invites page header card and the sidebar Momentum
+  // card, so all three surfaces always agree on the participant's points.
+  const { pointsTotal: userPoints, tierName: userTierName } = usePointsProgress();
   const { rungs } = config.rewards.ladder;
 
   const ordered = useMemo(() => sortRungs(rungs), [rungs]);
@@ -148,7 +150,9 @@ export default function Rewards() {
               <span className="font-bold text-primary">{userPoints}</span>
               <span className="text-muted-foreground"> pts</span>
             </div>
-            <span className="text-xs font-medium text-muted-foreground">{userTier.name}</span>
+            {userTierName && (
+              <span className="text-xs font-medium text-muted-foreground">{userTierName}</span>
+            )}
           </div>
         </div>
       </header>
@@ -156,7 +160,7 @@ export default function Rewards() {
       {/* Ladder */}
       <main className="flex-1 px-4 py-6 sm:px-6">
         <div className="mx-auto max-w-3xl space-y-3">
-          <InvitesRewardsHeader tierLabel={userTier.name} subtitle="Earn points by inviting people and completing each challenge day." />
+          <PointsHeaderCard />
           <LadderInviteBlock />
           <div className="flex items-start gap-3 rounded-xl border bg-muted/40 p-4">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

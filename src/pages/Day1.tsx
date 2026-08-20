@@ -5,6 +5,7 @@ import { useAppState } from "@/context/AppContext";
 import UnlockGate from "@/components/UnlockGate";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
+import AIAdvisorPanel from "@/components/AIAdvisorPanel";
 
 const Day1 = () => {
   const navigate = useNavigate();
@@ -41,6 +42,9 @@ const Day1 = () => {
   return (
     <UnlockGate gateKey="day1" dayIndex={1} signupAt={state.challenge.startedAt}>
       <div className="min-h-screen bg-background">
+        <div className="mx-auto w-full max-w-2xl px-4 pt-6">
+          <AIAdvisorPanel context="day1" />
+        </div>
         <Day1Setup onComplete={handleComplete} />
       </div>
     </UnlockGate>

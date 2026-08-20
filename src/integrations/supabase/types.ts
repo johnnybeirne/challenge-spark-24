@@ -110,6 +110,27 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_page_tags: {
+        Row: {
+          label: string
+          page_key: string
+          tags: string
+          updated_at: string
+        }
+        Insert: {
+          label?: string
+          page_key: string
+          tags?: string
+          updated_at?: string
+        }
+        Update: {
+          label?: string
+          page_key?: string
+          tags?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_user_context: {
         Row: {
           assessment: Json | null
@@ -589,6 +610,33 @@ export type Database = {
           },
         ]
       }
+      day1_ai_config: {
+        Row: {
+          created_at: string
+          id: string
+          promise_prompt: string
+          reaction_prompt: string
+          updated_at: string
+          voice_prompt: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          promise_prompt?: string
+          reaction_prompt?: string
+          updated_at?: string
+          voice_prompt?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          promise_prompt?: string
+          reaction_prompt?: string
+          updated_at?: string
+          voice_prompt?: string
+        }
+        Relationships: []
+      }
       day1_step_examples: {
         Row: {
           audience_role: string
@@ -640,6 +688,27 @@ export type Database = {
           message?: string
           updated_at?: string
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      day2_ai_config: {
+        Row: {
+          cards_prompt: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          cards_prompt?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          cards_prompt?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -766,6 +835,48 @@ export type Database = {
           id?: string
           max_founders?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      guest_passes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          label: string
+          last_used_at: string | null
+          max_uses: number
+          note: string
+          revoked: boolean
+          token: string
+          uses: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          max_uses?: number
+          note?: string
+          revoked?: boolean
+          token: string
+          uses?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          max_uses?: number
+          note?: string
+          revoked?: boolean
+          token?: string
+          uses?: number
         }
         Relationships: []
       }
@@ -2596,6 +2707,7 @@ export type Database = {
       }
       user_memory: {
         Row: {
+          audience: string
           audience_type: string
           challenge_name: string
           challenge_title_override: string
@@ -2603,12 +2715,15 @@ export type Database = {
           created_at: string
           desired_outcome: string
           id: string
+          method: string
           name: string
+          problem: string
           topic: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          audience?: string
           audience_type?: string
           challenge_name?: string
           challenge_title_override?: string
@@ -2616,12 +2731,15 @@ export type Database = {
           created_at?: string
           desired_outcome?: string
           id?: string
+          method?: string
           name?: string
+          problem?: string
           topic?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          audience?: string
           audience_type?: string
           challenge_name?: string
           challenge_title_override?: string
@@ -2629,7 +2747,9 @@ export type Database = {
           created_at?: string
           desired_outcome?: string
           id?: string
+          method?: string
           name?: string
+          problem?: string
           topic?: string
           updated_at?: string
           user_id?: string
@@ -2913,6 +3033,7 @@ export type Database = {
         Returns: string
       }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
+      claim_unlock: { Args: { p_unlock_id: string }; Returns: boolean }
       get_my_referred_people: {
         Args: never
         Returns: {
@@ -2952,6 +3073,7 @@ export type Database = {
       }
       recompute_monthly_points: { Args: never; Returns: number }
       redeem_coupon: { Args: { p_code: string }; Returns: Json }
+      redeem_guest_pass: { Args: { _token: string }; Returns: Json }
       resolve_partner_by_slug: {
         Args: { p_slug: string }
         Returns: {

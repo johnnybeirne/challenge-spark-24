@@ -44,6 +44,7 @@ import BlueprintLesson from "@/pages/blueprint/BlueprintLesson";
 import BlueprintInsight from "@/pages/blueprint/BlueprintInsight";
 import BlueprintBridge from "@/pages/blueprint/BlueprintBridge";
 import RewardDetail from "@/pages/RewardDetail";
+import RewardUnlocked from "@/pages/RewardUnlocked";
 import Rewards from "@/pages/Rewards";
 
 import Partners from "@/pages/Partners";
@@ -56,8 +57,10 @@ import AdminHub from "@/pages/AdminHub";
 import AdminPromoters from "@/pages/AdminPromoters";
 import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
-import AdminDay1Steps from "@/pages/AdminDay1Steps";
-import AdminDay2Buttons from "@/pages/AdminDay2Buttons";
+import AdminDay1 from "@/pages/AdminDay1";
+import AdminDay3 from "@/pages/AdminDay3";
+import AdminDay2 from "@/pages/AdminDay2";
+
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
 import AdminViewAsUser, { AdminViewAsUserAutoLaunch } from "@/pages/AdminViewAsUser";
 import AdminBios from "@/pages/AdminBios";
@@ -89,7 +92,10 @@ import AdminReferralSettings from "@/pages/AdminReferralSettings";
 import AdminUnlockGates from "@/pages/AdminUnlockGates";
 import AdminBuilderPrompts from "@/pages/AdminBuilderPrompts";
 import AdminNavTips from "@/pages/AdminNavTips";
+import AdminGuestPasses from "@/pages/AdminGuestPasses";
+import GuestPass from "@/pages/GuestPass";
 import AdminUserTour from "@/pages/AdminUserTour";
+import AdminMenuTags from "@/pages/AdminMenuTags";
 import AdminRewardsLadder from "@/pages/AdminRewardsLadder";
 import AdminAccessPages from "@/pages/AdminAccessPages";
 import AdminMentorPrompts from "@/pages/AdminMentorPrompts";
@@ -196,6 +202,7 @@ const App = () => (
                 {/* Partner-branded landing */}
                 <Route path="/p/:partnerCode" element={<PartnerSales />} />
                 {/* Referral invite entry — stores code then funnels into assessment */}
+                <Route path="/pass/:token" element={<GuestPass />} />
                 <Route path="/invite/:referralCode" element={<InviteEntry />} />
                 {/* Premium course sales pages (JV partner variant supports coupon via partner code) */}
                 <Route path="/premium/:partnerCode" element={<PartnerSales />} />
@@ -240,6 +247,7 @@ const App = () => (
                 <Route path="/leaderboard" element={<AuthGuard><Leaderboard /></AuthGuard>} />
                 <Route path="/bonus-vault" element={<Navigate to="/earn" replace />} />
                 <Route path="/rewards" element={<AuthGuard><Rewards /></AuthGuard>} />
+                <Route path="/rewards/:gateKey" element={<AuthGuard><RewardUnlocked /></AuthGuard>} />
                 <Route path="/reward/:id" element={<AuthGuard><RewardDetail /></AuthGuard>} />
                 <Route path="/mentor" element={<AuthGuard><Mentor /></AuthGuard>} />
                 <Route path="/prompt-library" element={<AuthGuard><PromptLibrary /></AuthGuard>} />
@@ -277,8 +285,14 @@ const App = () => (
                 <Route path="milestone-emails" element={<AdminMilestoneEmails />} />
                 <Route path="activity" element={<AdminActivityFeed />} />
                 <Route path="training" element={<AdminTraining />} />
-                <Route path="day1-steps" element={<AdminDay1Steps />} />
-                <Route path="day2-buttons" element={<AdminDay2Buttons />} />
+                <Route path="day1" element={<AdminDay1 />} />
+                <Route path="day1-steps" element={<Navigate to="/owner-console/day1" replace />} />
+                <Route path="day2" element={<AdminDay2 />} />
+                <Route path="day2-button-copy" element={<Navigate to="/owner-console/day2" replace />} />
+                <Route path="day2-content" element={<Navigate to="/owner-console/day2" replace />} />
+                <Route path="day3" element={<AdminDay3 />} />
+                <Route path="day3-content" element={<Navigate to="/owner-console/day3" replace />} />
+
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />
                 <Route path="test-accounts" element={<Navigate to="/owner-console/view-as-user" replace />} />
@@ -297,7 +311,9 @@ const App = () => (
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
                 <Route path="nav-tips" element={<AdminNavTips />} />
+                <Route path="guest-passes" element={<AdminGuestPasses />} />
                 <Route path="user-tour" element={<AdminUserTour />} />
+                <Route path="menu-tags" element={<AdminMenuTags />} />
                 <Route path="rewards-ladder" element={<AdminRewardsLadder />} />
                 <Route path="access-pages" element={<AdminAccessPages />} />
                 <Route path="mentor-prompts" element={<AdminMentorPrompts />} />

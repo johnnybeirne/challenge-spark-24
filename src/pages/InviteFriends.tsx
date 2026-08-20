@@ -137,7 +137,7 @@ const InviteFriends = () => {
             type="button"
             onClick={() => copy("quiz", quizLink)}
             className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-[var(--body-size)] font-semibold"
-            style={{ backgroundColor: GREEN, color: "#04342C" }}
+            style={{ backgroundColor: GREEN, color: "#ffffff" }}
           >
             {copied === "quiz" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             Copy quiz link
@@ -156,7 +156,7 @@ const InviteFriends = () => {
             type="button"
             onClick={() => copy("challenge", challengeLink)}
             className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-[var(--body-size)] font-semibold"
-            style={{ backgroundColor: BLUE, color: "#0A2540" }}
+            style={{ backgroundColor: BLUE, color: "#ffffff" }}
           >
             {copied === "challenge" ? (
               <Check className="h-4 w-4" />

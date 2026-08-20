@@ -1,3 +1,4 @@
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 
 const corsHeaders = {
@@ -66,6 +67,35 @@ Deno.serve(async (req) => {
     if (!returnUrl) throw new Error("Missing returnUrl");
     if (environment !== "sandbox" && environment !== "live") throw new Error("Invalid environment");
 
+    // Use the verified auth identity when available. The app-state user can lag
+    // behind the authenticated session, which previously produced rung sessions
+    // without a userId and made server-side fulfilment impossible.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const authClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    const { data: authData } = token
+      ? await authClient.auth.getUser(token)
+      : { data: { user: null } };
+    const resolvedUserId = authData.user?.id ?? userId;
+
+    // Diagnostic: shows exactly what the client sent for every session, so a
+    // lost gate key can be traced to the button rather than guessed at.
+    console.log("[create-checkout] request:", JSON.stringify({
+      priceId,
+      gateKey: gateKey ?? null,
+      bodyUserId: userId ?? null,
+      resolvedUserId: resolvedUserId ?? null,
+      environment,
+    }));
+
+    if (gateKey && /^reward_gate_/.test(gateKey) && !resolvedUserId) {
+      throw new Error("Sign in before purchasing a reward");
+    }
+
+
     const stripe = createStripeClient(environment);
 
     const prices = await stripe.prices.list({ lookup_keys: [priceId] });
@@ -84,8 +114,8 @@ Deno.serve(async (req) => {
       if (promos.data.length) discountId = promos.data[0].id;
     }
 
-    const customerId = (customerEmail || userId)
-      ? await resolveOrCreateCustomer(stripe, { email: customerEmail, userId })
+    const customerId = (customerEmail || resolvedUserId)
+      ? await resolveOrCreateCustomer(stripe, { email: customerEmail, userId: resolvedUserId })
       : undefined;
 
     // Recurring prices must open a subscription session; one-time prices stay
@@ -98,18 +128,22 @@ Deno.serve(async (req) => {
       ui_mode: "embedded_page",
       return_url: returnUrl,
       ...(customerId && { customer: customerId }),
+      ...(resolvedUserId && { client_reference_id: resolvedUserId }),
       ...(discountId && { discounts: [{ promotion_code: discountId }] }),
       metadata: {
-        ...(userId && { userId }),
+        ...(resolvedUserId && { userId: resolvedUserId }),
         ...(promotionCode && { partner_code: promotionCode }),
         ...(gateKey && /^[a-zA-Z0-9_-]{1,60}$/.test(gateKey) && { gate_key: gateKey }),
+        // Lookup key of the purchased price, so fulfilment can record the real
+        // price_id instead of inferring one.
+        price_lookup_key: priceId,
       },
       // userId must live on the subscription too — webhooks for renewals and
       // cancellations only carry the subscription object.
       ...(isRecurring && {
         subscription_data: {
           metadata: {
-            ...(userId && { userId }),
+            ...(resolvedUserId && { userId: resolvedUserId }),
             ...(promotionCode && { partner_code: promotionCode }),
           },
         },

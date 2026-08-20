@@ -29,10 +29,10 @@ import { trackEvent } from "@/lib/analytics";
 import { uploadProfilePhoto } from "@/lib/profilePhoto";
 import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
 import { useUserStage } from "@/hooks/useUserStage";
-import AssessmentResultCard from "@/components/AssessmentResultCard";
 import StreakIndicator from "@/components/StreakIndicator";
-import LeadGenStrengthCard from "@/components/LeadGenStrengthCard";
 import DashboardArchetypeStrip from "@/components/DashboardArchetypeStrip";
+import DashboardAssetsSection from "@/components/DashboardAssetsSection";
+import DashboardRoadmapSection from "@/components/DashboardRoadmapSection";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useIsChallengerShell } from "@/hooks/useIsChallengerShell";
 import { useChallengeIdentity } from "@/hooks/useChallengeIdentity";
@@ -408,12 +408,16 @@ const Dashboard = () => {
 
           </section>
 
+          <DashboardAssetsSection />
+
+          <DashboardRoadmapSection />
 
 
 
 
-          {/* LEAD GEN STRENGTH — hero + tabbed dashboard (Profile / Assets / Roadmap) */}
-          <LeadGenStrengthCard />
+
+
+
 
           {/* Primary CTA — big orange Day 1 button */}
           <div className="flex justify-center pt-2">
@@ -462,15 +466,6 @@ const Dashboard = () => {
               </AlertDialog>
               <p className="text-[11px] text-muted-foreground text-center max-w-sm">
                 If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
-              </p>
-            </div>
-          ) : state.challenge?.startedAt ? (
-            <div className="flex flex-col items-center gap-1 pt-2">
-              <p className="inline-flex items-center gap-1.5 text-[18px] text-muted-foreground">
-                Your Day 1 Challenge Promise is saved in your dashboard.
-              </p>
-              <p className="text-[18px] text-muted-foreground text-center max-w-xl">
-                <Link to="/dashboard" className="underline hover:text-foreground">Go to your dashboard</Link> to review or update it.
               </p>
             </div>
           ) : null}
@@ -549,8 +544,6 @@ const Dashboard = () => {
             </>
           );
         })()}
-        <AssessmentResultCard />
-        <LeadGenStrengthCard />
         <StreakIndicator />
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5 sm:p-6">
@@ -605,6 +598,12 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        <DashboardAssetsSection />
+
+        <DashboardRoadmapSection />
+
+
 
         <section className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center shadow-md sm:p-6">
           <Button size="lg" className="h-14 w-full max-w-md gap-2 text-base font-black uppercase tracking-wide sm:text-lg" onClick={() => navigate(`/challenge/day-${ctaDay}`)}>
@@ -782,15 +781,6 @@ const Dashboard = () => {
             </AlertDialog>
             <p className="text-[11px] text-muted-foreground text-center max-w-sm">
               If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
-            </p>
-          </div>
-        ) : state.challenge?.startedAt ? (
-          <div className="flex flex-col items-center gap-1 pt-2">
-            <p className="inline-flex items-center gap-1.5 text-[18px] text-muted-foreground">
-              Your Day 1 Challenge Promise is saved in your dashboard.
-            </p>
-            <p className="text-[18px] text-muted-foreground text-center max-w-xl">
-              <Link to="/dashboard" className="underline hover:text-foreground">Go to your dashboard</Link> to review or update it.
             </p>
           </div>
         ) : null}

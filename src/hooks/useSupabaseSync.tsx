@@ -100,6 +100,9 @@ export async function loadFromSupabase(userId: string): Promise<Partial<AppState
             desiredOutcome: memory.desired_outcome || "",
             challengeName: memory.challenge_name || "",
             challengeTitleOverride: (memory as { challenge_title_override?: string }).challenge_title_override || "",
+            audience: (memory as { audience?: string }).audience || "",
+            problem: (memory as { problem?: string }).problem || "",
+            method: (memory as { method?: string }).method || "",
           }
         : { ...defaultMemory, name: profile.name || "" },
       network: {
@@ -158,22 +161,16 @@ export async function saveChallengeProgress(
   } catch {}
 }
 
-/** Save a new unlock to Supabase */
+/**
+ * Claim an unlock. The server re-checks the criteria (invites, day completion,
+ * launch URL) before recording it, so the client cannot grant itself unlocks.
+ */
 export async function saveUnlock(
-  userId: string,
+  _userId: string,
   unlock: { id: string; name: string; value: number; reason: string }
 ) {
   try {
-    await (supabase.from("unlocks") as any).upsert(
-      {
-        user_id: userId,
-        unlock_id: unlock.id,
-        name: unlock.name,
-        value: unlock.value,
-        reason: unlock.reason,
-      },
-      { onConflict: "user_id,unlock_id" }
-    );
+    await (supabase.rpc as any)("claim_unlock", { p_unlock_id: unlock.id });
   } catch {}
 }
 
@@ -189,6 +186,9 @@ export async function saveMemory(userId: string, memory: UserMemory) {
         desired_outcome: memory.desiredOutcome,
         challenge_name: memory.challengeName,
         challenge_title_override: memory.challengeTitleOverride,
+        audience: memory.audience ?? "",
+        problem: memory.problem ?? "",
+        method: memory.method ?? "",
       },
       { onConflict: "user_id" }
     );

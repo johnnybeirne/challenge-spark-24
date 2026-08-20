@@ -4,6 +4,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import VideoPlaceholder from "@/components/VideoPlaceholder";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { DAY1_PAGE, day1Fallback } from "@/lib/day1Content";
+import { DAY3_PAGE, day3Fallback } from "@/lib/day3Content";
 
 interface DayVideoModalProps {
   dayNum: 1 | 2 | 3;
@@ -27,6 +30,28 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
   const [open, setOpen] = useState(false);
   const [dontShow, setDontShow] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  // Day 1 title and subtitle are owner-editable in /owner-console/day1.
+  const { t: siteText } = useSiteContent(DAY1_PAGE);
+  // Day 3 title and subtitle are owner-editable in /owner-console/day3.
+  const { t: day3Text } = useSiteContent(DAY3_PAGE);
+  const day3Copy = (id: string) => {
+    const v = day3Text(id, "");
+    return v !== "" ? v : day3Fallback(id);
+  };
+  const day1Copy = (id: string) => {
+    const v = siteText(id, "");
+    return v !== "" ? v : day1Fallback(id);
+  };
+  const title = dayNum === 1
+    ? day1Copy("video.title")
+    : dayNum === 3
+      ? day3Copy("video.title")
+      : TITLES[dayNum];
+  const subtitle = dayNum === 1
+    ? day1Copy("video.subtitle")
+    : dayNum === 3
+      ? day3Copy("video.subtitle")
+      : SUBTITLES[dayNum];
 
   useEffect(() => {
     let cancelled = false;
@@ -91,8 +116,8 @@ export default function DayVideoModal({ dayNum }: DayVideoModalProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{TITLES[dayNum]}</DialogTitle>
-          <p className="text-sm text-muted-foreground">{SUBTITLES[dayNum]}</p>
+          <DialogTitle>{title}</DialogTitle>
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
         </DialogHeader>
         <VideoPlaceholder />
         <div className="flex items-center gap-2 pt-2">

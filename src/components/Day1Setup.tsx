@@ -43,6 +43,9 @@ import {
   type Day1TagKey,
 } from "@/lib/day1StepMessages";
 import { pickExamplesForUser, useStepExamples } from "@/lib/day1StepExamples";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { DAY1_PAGE, day1Fallback, fillTokens, toLines } from "@/lib/day1Content";
+
 
 const JohnnyAvatar = () => (
   <img
@@ -639,58 +642,18 @@ const BUILDER_STARTERS = [
   "Give me 3 ways to make the result feel tangible by Day 3.",
 ];
 
-const FoundationStep = ({
-  title,
-  helper,
-  value,
-  setValue,
-  placeholder,
-  onNext,
-}: {
-  n?: 1 | 2 | 3;
-  title: string;
-  helper: string;
-  value: string;
-  setValue: (v: string) => void;
-  placeholder: string;
-  onNext: () => void;
-}) => {
-  const length = value.trim().length;
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="space-y-2">
-        <h1 className="text-[var(--h1-size)] md:text-[var(--h1-size)] font-bold tracking-tight">{title}</h1>
-      </div>
-
-
-      <div className="space-y-2">
-        <DictatedTextarea
-          autoFocus
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-          className="min-h-[70px] text-[var(--body-size)]"
-        />
-        {length > 0 && (
-          <p className="text-xs text-muted-foreground">{length} characters</p>
-        )}
-      </div>
-
-      <Button
-        size="lg"
-        onClick={onNext}
-        className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
-      >
-        Continue
-        <ArrowRight className="ml-2 h-5 w-5" />
-      </Button>
-    </div>
-  );
-};
-
 const Day1Setup = ({ onComplete }: Props) => {
   const { state, setState, authUser } = useAppState();
   const navigate = useNavigate();
+
+  // Owner-editable Day 1 copy. One shared source with /owner-console/day1.
+  const { t: siteText } = useSiteContent(DAY1_PAGE);
+  const d1 = (id: string): string => {
+    const v = siteText(id, "");
+    return v !== "" ? v : day1Fallback(id);
+  };
+
+
 
   // Source of truth: state.challenge.aiOutputs.day1Setup (DB-synced).
   // localStorage is kept ONLY as a pre-auth fallback so anonymous users can
@@ -740,7 +703,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       };
     });
     trackEvent("day1_reset" as any, {});
-    toast.success("Day 1 reset — let's start again.");
+    toast.success(d1("toasts.reset"));
     try { window.location.reload(); } catch {}
   };
 
@@ -882,13 +845,13 @@ const Day1Setup = ({ onComplete }: Props) => {
   // user's dashboard (memory auto-syncs to user_memory via useSupabaseSync).
   const profileSaved = (label: string) => {
     window.dispatchEvent(new CustomEvent("dashboard-flash"));
-    toast.success("Your dashboard is updated", {
+    toast.success(d1("toasts.saved_title"), {
       description: label,
       position: "top-left",
       duration: 3500,
       className: "lg:!ml-[280px]",
       action: {
-        label: "Dashboard",
+        label: d1("toasts.saved_action"),
         onClick: () => navigate("/challenger-dashboard"),
       },
     });
@@ -906,7 +869,7 @@ const Day1Setup = ({ onComplete }: Props) => {
   // Snapshot AI outputs at step entry so the TypedSequence doesn't restart
   // mid-typing if the cache updates later in the same visit.
   const [step3Reaction, setStep3Reaction] = useState<string | null>(null);
-  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string } | null>(null);
+  const [step7Promise, setStep7Promise] = useState<{ summary: string[]; promise: string; fromState?: string; toState?: string; soThat?: string; andStop?: string } | null>(null);
 
   useEffect(() => {
     if (step !== 3) return;
@@ -922,9 +885,17 @@ const Day1Setup = ({ onComplete }: Props) => {
       try {
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.summary) && typeof parsed.promise === "string") {
-          setStep7Promise({ summary: parsed.summary, promise: parsed.promise });
+          setStep7Promise({
+            summary: parsed.summary,
+            promise: parsed.promise,
+            fromState: typeof parsed.fromState === "string" ? parsed.fromState : undefined,
+            toState: typeof parsed.toState === "string" ? parsed.toState : undefined,
+            soThat: typeof parsed.soThat === "string" ? parsed.soThat : undefined,
+            andStop: typeof parsed.andStop === "string" ? parsed.andStop : undefined,
+          });
           return;
         }
+
       } catch {
         /* fall through to null */
       }
@@ -991,6 +962,10 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (error || !data || (data as any).fallback) return;
       const summary = (data as any).summary;
       const promise = (data as any).promise;
+      const fromState = (data as any).fromState;
+      const toState = (data as any).toState;
+      const soThat = (data as any).soThat;
+      const andStop = (data as any).andStop;
       if (!Array.isArray(summary) || typeof promise !== "string" || !promise.trim()) return;
       setState((prev) => ({
         ...prev,
@@ -998,7 +973,16 @@ const Day1Setup = ({ onComplete }: Props) => {
           ...prev.challenge,
           aiOutputs: {
             ...prev.challenge.aiOutputs,
-            day1_promise: JSON.stringify({ summary, promise: promise.trim() }),
+            day1_promise: JSON.stringify({
+              summary,
+              promise: promise.trim(),
+              ...(typeof fromState === "string" && fromState.trim() ? { fromState: fromState.trim() } : {}),
+              ...(typeof toState === "string" && toState.trim() ? { toState: toState.trim() } : {}),
+              ...(typeof soThat === "string" && soThat.trim() ? { soThat: soThat.trim() } : {}),
+              ...(typeof andStop === "string" && andStop.trim() ? { andStop: andStop.trim() } : {}),
+            }),
+
+
             day1_promise_key: cacheKey,
           },
         },
@@ -1013,7 +997,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       if (!audience.trim()) return;
       const raw = audience.trim();
       persistFoundation({ audience: raw });
-      profileSaved("Who you serve");
+      profileSaved(d1("toasts.saved_audience"));
       setStep11Phase(
         Array.isArray(saved?.expertType) && saved.expertType.length > 0 ? "choose" : "intro",
       );
@@ -1031,7 +1015,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     } else if (current === 2) {
       if (!problem.trim()) return;
       persistFoundation({ problem: problem.trim() });
-      profileSaved("The problem you're solving");
+      profileSaved(d1("toasts.saved_problem"));
       // Hold briefly while Johnny "reads" the answer. Race the AI call against
       // a 2.2s timeout so a slow/failed model never blocks the flow.
       setNavLoading("problem");
@@ -1060,7 +1044,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         },
       }));
       trackEvent("memory_created", { source: "day1_foundation" });
-      profileSaved("How you create the result");
+      profileSaved(d1("toasts.saved_process"));
       setStep9Phase(saved?.outcome ? "input" : "intro");
       setStep(9);
     }
@@ -1073,10 +1057,10 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { desiredOutcome: outcome.trim() }),
     }));
-    profileSaved("The outcome you'll deliver");
+    profileSaved(d1("toasts.saved_outcome"));
     pushNotification({
-      title: "Dashboard updated",
-      message: "Your dashboard now reflects your latest challenge answers.",
+      title: d1("toasts.notification_title"),
+      message: d1("toasts.notification_body"),
       href: "/challenger-dashboard",
       dedupeKey: "day1_outcome_saved",
     });
@@ -1099,7 +1083,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { audienceType: v }),
     }));
-    profileSaved(v === "b2b" ? "Audience: businesses" : "Audience: consumers");
+    profileSaved(d1(v === "b2b" ? "toasts.saved_audience_b2b" : "toasts.saved_audience_b2c"));
     // Next: describe who you serve more specifically (open text).
     setStep(1);
   };
@@ -1115,7 +1099,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       setChallengeType("custom");
       persistFoundation({ challengeType: "custom" } as Partial<SetupData>);
     }
-    profileSaved("Your superpower");
+    profileSaved(d1("toasts.saved_superpower"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1146,7 +1130,7 @@ const Day1Setup = ({ onComplete }: Props) => {
     if (expertType.length === 0) return;
     persistFoundation({ expertType } as Partial<SetupData>);
     void persistExpertTypeToProfile(expertType);
-    profileSaved("Your expert types");
+    profileSaved(d1("toasts.saved_expert"));
     setStep10Phase(saved?.superpower ? "input" : "intro");
     setStep(10);
   };
@@ -1161,7 +1145,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: description,
       }),
     }));
-    profileSaved(`Challenge type: ${description}`);
+    profileSaved(fillTokens(d1("toasts.saved_challenge_type"), { label: description }));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
 
@@ -1178,7 +1162,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: next,
       }),
     }));
-    profileSaved("Your goal");
+    profileSaved(d1("toasts.saved_goal"));
   };
   const handleStep5ResultNext = () => {
     const text = step5Result.trim();
@@ -1192,7 +1176,7 @@ const Day1Setup = ({ onComplete }: Props) => {
         desiredOutcome: text,
       }),
     }));
-    profileSaved("Result saved");
+    profileSaved(d1("toasts.saved_result"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1203,7 +1187,7 @@ const Day1Setup = ({ onComplete }: Props) => {
       ...prev,
       memory: mergeMemory(prev.memory, { topic: topicHint.trim() }),
     }));
-    profileSaved("Trigger moment saved");
+    profileSaved(d1("toasts.saved_trigger"));
     setStep2Phase(saved?.problem ? "input" : "intro");
     setStep(2);
   };
@@ -1234,6 +1218,10 @@ const Day1Setup = ({ onComplete }: Props) => {
         challengeType: normalizeChallengeType(challengeType),
         desiredOutcome: outcome || topicHint || how,
         topic: topicHint || problem,
+        // Tidy columns so personalisation reads structured values, not the JSON draft.
+        audience: audience.trim(),
+        problem: problem.trim(),
+        method: how.trim(),
       }),
       challenge: {
         ...prev.challenge,
@@ -1257,10 +1245,10 @@ const Day1Setup = ({ onComplete }: Props) => {
 
     trackEvent("onboarding_invite_completed", { audienceType, challengeType });
     trackEvent("memory_created", { source: "day1_assessment" });
-    profileSaved("Challenge direction confirmed");
+    profileSaved(d1("toasts.saved_direction"));
     pushNotification({
-      title: "Dashboard updated",
-      message: "Your dashboard now reflects your latest challenge answers.",
+      title: d1("toasts.notification_title"),
+      message: d1("toasts.notification_body"),
       href: "/challenger-dashboard",
       dedupeKey: "day1_assessment_saved",
     });
@@ -1373,26 +1361,26 @@ const Day1Setup = ({ onComplete }: Props) => {
     const onSteps = (...steps: number[]) => steps.includes(currentStep);
     const skipSet = new Set<string>(skip);
     if (onSteps(11, 10, 5, 2, 3, 9, 7) && audience.trim() && !skipSet.has("audience")) {
-      rows.push({ label: "You work with:", echo: "audience" });
+      rows.push({ label: d1("ui.recap_audience"), echo: "audience" });
     }
     if (onSteps(10, 5, 2, 3, 9, 7) && expertTypePhrase && !skipSet.has("expertType")) {
       const article = /^[aeiou]/i.test(expertTypePhrase) ? "an" : "a";
-      rows.push({ label: `You are ${article}:`, echo: "expertType" });
+      rows.push({ label: fillTokens(d1("ui.recap_expert"), { article }), echo: "expertType" });
     }
     if (onSteps(5, 2, 3, 9, 7) && superpower.trim() && !skipSet.has("superpower")) {
-      rows.push({ label: "Your superpower:", echo: "superpower" });
+      rows.push({ label: d1("ui.recap_superpower"), echo: "superpower" });
     }
     if (onSteps(3, 9, 7) && challengeType && challengeType !== "custom" && !skipSet.has("challengeType")) {
-      rows.push({ label: "Your goal:", echo: "challengeType" });
+      rows.push({ label: d1("ui.recap_goal"), echo: "challengeType" });
     }
     if (onSteps(3, 9, 7) && problem.trim() && !skipSet.has("problem")) {
-      rows.push({ label: "The problem:", echo: "problem" });
+      rows.push({ label: d1("ui.recap_problem"), echo: "problem" });
     }
     if (onSteps(9, 7) && how.trim() && !skipSet.has("how")) {
-      rows.push({ label: "Your process:", echo: "how" });
+      rows.push({ label: d1("ui.recap_process"), echo: "how" });
     }
     if (onSteps(7) && outcome.trim() && !skipSet.has("outcome")) {
-      rows.push({ label: "The result:", echo: "outcome" });
+      rows.push({ label: d1("ui.recap_outcome"), echo: "outcome" });
     }
     return rows;
   };
@@ -1452,7 +1440,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {showProgress && (
           <h1 className="text-3xl sm:text-4xl font-black leading-tight text-foreground">
-            {`Day 1 - Step ${stepNumber} of ${TOTAL_STEPS}`}
+            {fillTokens(d1("header.step_label"), { step: stepNumber, total: TOTAL_STEPS })}
           </h1>
         )}
 
@@ -1488,7 +1476,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             className="mb-6 inline-flex items-center gap-2 text-[var(--body-size)] text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {d1("buttons.back")}
           </button>
         )}
 
@@ -1511,16 +1499,16 @@ const Day1Setup = ({ onComplete }: Props) => {
 
           const step1AudienceTypeDisplay =
             audienceType === "b2b"
-              ? "Businesses / professionals"
+              ? d1("options.audience_b2b_short")
               : audienceType === "b2c"
-                ? "Individuals / consumers"
+                ? d1("options.audience_b2c_short")
                 : "";
 
           return (
             <div className="space-y-6 animate-fade-in">
               {step1AudienceTypeDisplay && (
                 <div className="rounded-xl border border-border/60 bg-muted/40 px-4 py-3 text-[var(--body-size)] md:text-[var(--body-size)] leading-snug text-foreground/80">
-                  <span>You serve: </span>
+                  <span>{d1("ui.serve_prefix")}</span>
                   <span className="font-medium text-primary">{step1AudienceTypeDisplay}</span>
                 </div>
               )}
@@ -1545,11 +1533,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={audience}
                         onChange={(e) => setAudience(e.target.value)}
-                        placeholder={
-                          audienceType === "b2b"
-                            ? "e.g. Independent coaches."
-                            : "e.g. New parents in their 30s."
-                        }
+                        placeholder={d1(
+                          audienceType === "b2c"
+                            ? "fields.audience_placeholder_b2c"
+                            : "fields.audience_placeholder_b2b",
+                        )}
                         rows={3}
                         className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
@@ -1557,20 +1545,15 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        {audienceType === "b2c" ? (
-                          <>
-                            <li>New parents in their 30s</li>
-                            <li>Women returning to work after a career break</li>
-                            <li>First-time homebuyers</li>
-                          </>
-                        ) : (
-                          <>
-                            <li>Independent coaches</li>
-                            <li>Service-based agency owners</li>
-                            <li>Early-stage SaaS founders</li>
-                          </>
-
-                        )}
+                        {toLines(
+                          d1(
+                            audienceType === "b2c"
+                              ? "fields.audience_examples_b2c"
+                              : "fields.audience_examples_b2b",
+                          ),
+                        ).map((ex) => (
+                          <li key={ex}>{ex}</li>
+                        ))}
                       </ul>
                     </div>
                     <Button
@@ -1579,7 +1562,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!audience.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1610,7 +1593,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                   <RecapCard rows={recapRowsBefore(11)} echoMap={echoMap} />
                   <StaticAi messages={[step11Message]} echoMap={echoMap} />
                   <RevealControls className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {EXPERT_TYPE_OPTIONS.map((opt) => {
+                    {toLines(d1("options.expert_types")).map((opt) => {
                       const selected = expertType.includes(opt);
                       return (
                         <button
@@ -1643,7 +1626,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={expertType.length === 0}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1657,7 +1640,7 @@ const Day1Setup = ({ onComplete }: Props) => {
 
         {step === 10 && (() => {
           const audienceTrim10 = audience.trim().replace(/\.$/, "");
-          const step10Message: Msg = [`Great${fn}, what's your superpower when it comes to helping them?`];
+          const step10Message: Msg = [fillTokens(d1("ui.superpower_question"), { name: fn })];
 
           return (
             <div className="space-y-6 animate-fade-in">
@@ -1683,7 +1666,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={superpower}
                         onChange={(e) => setSuperpower(e.target.value)}
-                        placeholder="e.g. I make complex ideas feel simple and actionable, so people finally take the step they've been avoiding."
+                        placeholder={d1("fields.superpower_placeholder")}
                         rows={3}
                         className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
@@ -1691,9 +1674,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>Turning messy ideas into a clear step-by-step plan people can actually follow.</li>
-                        <li>Spotting the one bottleneck that's quietly holding someone's business back.</li>
-                        <li>Helping nervous beginners take action without overthinking it.</li>
+                        {toLines(d1("fields.superpower_examples")).map((ex) => (
+                          <li key={ex}>{ex}</li>
+                        ))}
                       </ul>
                     </div>
                     <Button
@@ -1702,7 +1685,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!superpower.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1733,8 +1716,7 @@ const Day1Setup = ({ onComplete }: Props) => {
             "reach-milestone": `e.g. ${subject} keep falling short of a goal that genuinely matters to them.`,
           };
           const problemPlaceholder =
-            problemHintByChallenge[challengeType] ??
-            `e.g. The specific frustration or obstacle holding ${subject} back right now.`;
+            problemHintByChallenge[challengeType] ?? d1("fields.problem_placeholder");
 
           // Step 5 (this step) — single freeform painful-problem question.
           // Question text + contextual example hints are admin-editable.
@@ -1780,7 +1762,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                         autoFocus
                         value={problem}
                         onChange={(e) => setProblem(e.target.value)}
-                        placeholder="Describe the single most painful problem they have right now…"
+                        placeholder={d1("fields.problem_placeholder")}
                         rows={3}
                         className="min-h-[70px] text-[var(--body-size)] p-4 pb-12 leading-relaxed"
                         onKeyDown={(e) => {
@@ -1802,11 +1784,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                       {navLoading === "problem" ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Thinking…
+                          {d1("buttons.thinking")}
                         </>
                       ) : (
                         <>
-                          Continue
+                          {d1("buttons.continue")}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </>
                       )}
@@ -1840,11 +1822,10 @@ const Day1Setup = ({ onComplete }: Props) => {
             "reach-milestone": `e.g. I break the goal into 3 daily targets and coach ${subject3} through one focus area each day.`,
           };
           const processPlaceholder =
-            processHintByChallenge[challengeType] ??
-            `e.g. Describe the steps or framework you take ${subject3} through to create the result.`;
+            processHintByChallenge[challengeType] ?? d1("fields.process_placeholder");
 
           const subjectField3: EchoField | null = whoLower3 ? "topic" : audienceLower3 ? "audience" : null;
-          const step3Ack = `That's clear${fn}.`;
+          const step3Ack = fillTokens(d1("ui.ack_process"), { name: fn });
           const step3Question = renderTemplate(
             "step-6",
             subjectField3 || painLower
@@ -1912,9 +1893,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>I start with a quick audit, then walk them through a simple 3-step framework.</li>
-                        <li>I give them one focused daily action and review their progress each day.</li>
-                        <li>I hand them a fill-in-the-blank template and coach them to adapt it to their situation.</li>
+                        {toLines(d1("fields.process_examples")).map((ex) => (
+                          <li key={ex}>{ex}</li>
+                        ))}
                       </ul>
                     </div>
                     <Button
@@ -1923,7 +1904,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       disabled={!how.trim()}
                       className="w-full h-12 text-[var(--body-size)] font-semibold text-white"
                     >
-                      Continue
+                      {d1("buttons.continue")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </RevealControls>
@@ -1956,11 +1937,10 @@ const Day1Setup = ({ onComplete }: Props) => {
             "reach-milestone": `e.g. ${subject9} will make real, measurable progress toward a goal that genuinely matters to them.`,
           };
           const outcomePlaceholder =
-            outcomeHintByChallenge[challengeType] ??
-            `e.g. The transformation ${subject9} will experience by the end of the 3 days.`;
+            outcomeHintByChallenge[challengeType] ?? d1("fields.outcome_placeholder");
 
           const subjectField9: EchoField | null = whoLower9 ? "topic" : audienceLower9 ? "audience" : null;
-          const step9Ack = `Got it${fn ? `${fn}` : ""}.`;
+          const step9Ack = fillTokens(d1("ui.ack_outcome"), { name: fn });
           const step9Question = renderTemplate(
             "step-7",
             subjectField9 || painLower9
@@ -2010,9 +1990,9 @@ const Day1Setup = ({ onComplete }: Props) => {
                         }}
                       />
                       <ul className="text-xs text-muted-foreground leading-snug list-disc pl-5 space-y-0.5">
-                        <li>A one-line pitch they're confident saying out loud to any prospect.</li>
-                        <li>A simple lead-gen system bringing in 3–5 qualified conversations a week.</li>
-                        <li>Their first paying client booked and onboarded by the end of Day 3.</li>
+                        {toLines(d1("fields.outcome_examples")).map((ex) => (
+                          <li key={ex}>{ex}</li>
+                        ))}
                       </ul>
                     </div>
                     <Button
@@ -2024,11 +2004,11 @@ const Day1Setup = ({ onComplete }: Props) => {
                       {navLoading === "outcome" ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Crafting your promise…
+                          {d1("buttons.crafting")}
                         </>
                       ) : (
                         <>
-                          Continue
+                          {d1("buttons.continue")}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </>
                       )}
@@ -2067,14 +2047,14 @@ const Day1Setup = ({ onComplete }: Props) => {
                     {
                       value: "b2b" as const,
                       emoji: "🏢",
-                      label: "Business & Professionals",
-                      description: "Help businesses, teams, or experts get a result.",
+                      label: d1("options.audience_b2b_label"),
+                      description: d1("options.audience_b2b_description"),
                     },
                     {
                       value: "b2c" as const,
                       emoji: "👥",
-                      label: "Individuals & Consumers",
-                      description: "Help people improve an area of their life.",
+                      label: d1("options.audience_b2c_label"),
+                      description: d1("options.audience_b2c_description"),
                     },
                   ].map((opt) => {
                     const selected = audienceType === opt.value;
@@ -2159,7 +2139,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                 <StaticAi messages={step5Messages} echoMap={echoMap} />
                 {superpower.trim() && (
                   <p className="text-xs text-muted-foreground leading-snug">
-                    Note: I am saving these to your Dashboard
+                    {d1("ui.saving_note")}
                   </p>
                 )}
 
@@ -2188,10 +2168,14 @@ const Day1Setup = ({ onComplete }: Props) => {
                           {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
                         </span>
                         <span className="flex flex-col gap-1">
-                          <span className="text-[var(--body-size)] font-semibold leading-tight">{opt.title}</span>
-                          <span className="text-[var(--body-size)] text-muted-foreground leading-snug">{opt.description}</span>
+                          <span className="text-[var(--body-size)] font-semibold leading-tight">
+                            {d1(`options.challenge_${opt.value.replace(/-/g, "_")}_title`)}
+                          </span>
+                          <span className="text-[var(--body-size)] text-muted-foreground leading-snug">
+                            {d1(`options.challenge_${opt.value.replace(/-/g, "_")}_description`)}
+                          </span>
                           <span className="text-xs text-muted-foreground leading-snug mt-0.5">
-                            Examples: {opt.examples.join(", ")}
+                            Examples: {d1(`options.challenge_${opt.value.replace(/-/g, "_")}_examples`)}
                           </span>
                         </span>
                       </button>
@@ -2244,13 +2228,54 @@ const Day1Setup = ({ onComplete }: Props) => {
               ? (methodMap[challengeType] ?? "a clear, day-by-day structure")
               : "";
 
-          // If the AI composed a Challenge Promise, prefer its wording (it uses
-          // the user's literal words and reads natural). Otherwise fall back to
-          // the template stitch.
-          const templatePromise = who && pain && result && methodPhrase
-            ? `Help ${who} move from ${pain} to ${result} by ${methodPhrase}.`
-            : null;
-          const promise = step7Promise?.promise || templatePromise;
+          // The promise is always a four part transformation statement built
+          // from the participant's own answers. The AI returns the four parts
+          // separately; if it did not run, we assemble them locally.
+          const noDash = (s: string) =>
+            s.replace(/[\u2010-\u2015\u2212-]+/g, " ").replace(/\s+/g, " ").replace(/\.$/, "").trim();
+          const withStopEnding = (s: string) =>
+            !s ? "" : /\bfrom (happening|continuing)$/i.test(s) ? s : `${s} from continuing`;
+          // The four parts always describe the audience in the third person.
+          const thirdPerson = (s: string) =>
+            !s
+              ? ""
+              : s
+                  .replace(/\byourselves\b/gi, "themselves")
+                  .replace(/\byourself\b/gi, "themselves")
+                  .replace(/\byour\b/gi, "their")
+                  .replace(/\byou are\b/gi, "they are")
+                  .replace(/\byou\b/gi, "they")
+                  .replace(/\bI am\b/g, "they are")
+                  .replace(/\bi am\b/gi, "they are")
+                  .replace(/\bI\b/g, "they")
+                  .replace(/(^|\s)i(\s)/g, "$1they$2")
+                  .replace(/\bmy\b/gi, "their")
+                  .replace(/\bmine\b/gi, "theirs")
+                  .replace(/\bwe are\b/gi, "they are")
+                  .replace(/\bwe\b/gi, "they")
+                  .replace(/\bour\b/gi, "their")
+                  .replace(/\s+/g, " ")
+                  .trim();
+          const fallbackFrom = pain ? noDash(pain) : "";
+          const methodUsable =
+            methodPhrase && methodPhrase.split(/\s+/).length <= 6 && !/^(i|we)\b/i.test(methodPhrase);
+          const fallbackTo = result
+            ? noDash(methodUsable ? `${result} with ${methodPhrase}` : result)
+            : "";
+          const fallbackSoThat = superpower ? noDash(superpower.trim().toLowerCase()) : (result ? noDash(`they ${result}`) : "");
+          const fallbackAndStop = pain ? withStopEnding(noDash(pain)) : "";
+
+          const fromState = thirdPerson(noDash(step7Promise?.fromState || fallbackFrom));
+          const toState = thirdPerson(noDash(step7Promise?.toState || fallbackTo));
+          const soThat = thirdPerson(noDash(step7Promise?.soThat || fallbackSoThat));
+          const andStop = withStopEnding(thirdPerson(noDash(step7Promise?.andStop || fallbackAndStop)));
+
+          const promise = fromState && toState && soThat && andStop
+            ? `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`
+            : fromState && toState
+              ? `from "${fromState}" to "${toState}"`
+              : (step7Promise?.promise || null);
+
 
           // Highlight helper for the static reveal — renders the user-derived
           // value in bold brand accent inside the surrounding sentence.
@@ -2264,24 +2289,37 @@ const Day1Setup = ({ onComplete }: Props) => {
             "step-8",
             `${Fn ? `${Fn}based` : "Based"} on everything you just told me, here's what your challenge looks like.`,
           );
-          const closing = `That's what makes this challenge valuable — a clear path from where they are today to the exact result you've described.`;
+          const closing = d1("ui.summary_closing");
 
+          // Owner-editable sentence templates. {value} marks the participant's
+          // own words so the static reveal can highlight just that fragment.
+          const splitOnValue = (tpl: string, value: string): React.ReactNode => {
+            const [before, ...rest] = tpl.split("{value}");
+            if (rest.length === 0) return <>{fillTokens(tpl, { value })}</>;
+            return (
+              <>
+                {before}
+                {hl(value)}
+                {rest.join("{value}")}
+              </>
+            );
+          };
           const guideLine = howClean
-            ? `You'll guide them by ${howClean}.`
+            ? fillTokens(d1("ui.summary_guide_by"), { value: howClean })
             : methodPhrase
-              ? `You'll guide them through ${methodPhrase} to help them achieve that result.`
+              ? fillTokens(d1("ui.summary_guide_through"), { value: methodPhrase })
               : null;
           const guideNode: React.ReactNode = howClean
-            ? <>You'll guide them by {hl(howClean)}.</>
+            ? splitOnValue(d1("ui.summary_guide_by"), howClean)
             : methodPhrase
-              ? <>You'll guide them through {hl(methodPhrase)} to help them achieve that result.</>
+              ? splitOnValue(d1("ui.summary_guide_through"), methodPhrase)
               : null;
 
           const templateSummary: string[] = [
             intro,
-            who ? `You're building this challenge for ${who}.` : null,
-            pain ? `Right now, they're stuck because ${pain}.` : null,
-            result ? `By the end of Day 3, they'll have ${result}.` : null,
+            who ? fillTokens(d1("ui.summary_who"), { value: who }) : null,
+            pain ? fillTokens(d1("ui.summary_problem"), { value: pain }) : null,
+            result ? fillTokens(d1("ui.summary_result"), { value: result }) : null,
             guideLine,
             closing,
           ].filter((line): line is string => Boolean(line));
@@ -2299,9 +2337,9 @@ const Day1Setup = ({ onComplete }: Props) => {
             ? step7Promise.summary.map((s, i) => <span key={i}>{s}</span>)
             : ([
                 <>{intro}</>,
-                who ? <>You're building this challenge for {hl(who)}.</> : null,
-                pain ? <>Right now, they're stuck because {hl(pain)}.</> : null,
-                result ? <>By the end of Day 3, they'll have {hl(result)}.</> : null,
+                who ? splitOnValue(d1("ui.summary_who"), who) : null,
+                pain ? splitOnValue(d1("ui.summary_problem"), pain) : null,
+                result ? splitOnValue(d1("ui.summary_result"), result) : null,
                 guideNode,
                 <>{closing}</>,
               ].filter(Boolean) as React.ReactNode[]);
@@ -2339,10 +2377,33 @@ const Day1Setup = ({ onComplete }: Props) => {
                       <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:p-8 shadow-lg ml-0 md:ml-10">
                         <Quote className="absolute top-4 right-4 h-10 w-10 text-primary/15" />
                         <div className="space-y-3">
-                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Challenge Promise</p>
-                          <p className="text-[var(--h2-size)] md:text-[var(--h1-size)] font-semibold leading-snug text-foreground">
-                            Help {hl(who)} move from {hl(pain)} to {hl(result)} by {hl(methodPhrase)}.
-                          </p>
+                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{d1("ui.promise_heading")}</p>
+                          <div className="space-y-2 text-[var(--h2-size)] md:text-[var(--h1-size)] leading-snug text-foreground">
+                            {fromState && toState ? (
+                              <div className="space-y-4">
+                                {[
+                                  { label: d1("ui.promise_from"), value: fromState },
+                                  { label: d1("ui.promise_to"), value: toState },
+                                  ...(soThat ? [{ label: d1("ui.promise_so_that"), value: soThat }] : []),
+                                  ...(andStop ? [{ label: d1("ui.promise_and_stop"), value: andStop }] : []),
+                                ].map((part) => (
+                                  <div key={part.label}>
+                                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
+                                      {part.label}
+                                    </p>
+                                    <p className="mt-1 font-normal leading-snug text-foreground">
+                                      &ldquo;{part.value}&rdquo;
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+
+                            ) : (
+                              <p className="leading-snug">{promise}</p>
+                            )}
+
+                          </div>
+
                         </div>
                       </div>
                     )}
@@ -2352,7 +2413,7 @@ const Day1Setup = ({ onComplete }: Props) => {
                       onClick={handleSaveAssessment}
                       className="w-full h-14 text-[var(--body-size)] font-semibold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                     >
-                      Continue Building Your Challenge
+                      {d1("buttons.continue_building")}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
 
@@ -2362,36 +2423,34 @@ const Day1Setup = ({ onComplete }: Props) => {
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
                               <RotateCcw className="h-3 w-3" />
-                              Start Day 1 again
+                              {d1("buttons.restart")}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-destructive">WARNING. Are you sure?</AlertDialogTitle>
+                              <AlertDialogTitle className="text-destructive">{d1("ui.reset_dialog_title")}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                This clears your Day 1 answers, AI outputs, and progress so you can
-                                start the questions from scratch. Your referrals, points, and other
-                                progress are kept.
+                                {d1("ui.reset_dialog_body")}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{d1("buttons.restart_cancel")}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={handleResetDay1}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               >
-                                Start Day 1 again
+                                {d1("buttons.restart")}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
                         <p className="text-[11px] text-muted-foreground text-center max-w-sm">
-                          If you need to start over, you can reset Day 1 within 24 hours of starting. Use this only if you want to change your answers.
+                          {d1("ui.reset_note")}
                         </p>
                       </div>
                     ) : (
                       <p className="pt-2 text-[11px] text-muted-foreground text-center max-w-sm mx-auto">
-                        Your Challenge Promise is now locked. To change your answers, upgrade to Lifetime Challenge Access.
+                        {d1("ui.locked_note")}
                       </p>
                     )}
                   </RevealControls>
@@ -2407,7 +2466,7 @@ const Day1Setup = ({ onComplete }: Props) => {
           <div className="space-y-5 animate-fade-in">
 
             {/* Snapshot */}
-            <h2 className="text-[var(--h1-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">Your Starting Point</h2>
+            <h2 className="text-[var(--h1-size)] sm:text-[var(--h1-size)] font-bold tracking-tight text-foreground">{d1("ui.starting_point_heading")}</h2>
             <div className="rounded-xl border border-border bg-card/60 p-4 text-[var(--body-size)] space-y-2">
 
               <p className="font-semibold text-foreground">
@@ -2422,9 +2481,9 @@ const Day1Setup = ({ onComplete }: Props) => {
               </p>
               {(problem || audience || how) && (
                 <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {problem && <p><span className="font-semibold text-foreground">Problem:</span> {problem}</p>}
-                  {audience && <p><span className="font-semibold text-foreground">For:</span> {audience}</p>}
-                  {how && <p><span className="font-semibold text-foreground">How:</span> {how}</p>}
+                  {problem && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_problem")}</span> {problem}</p>}
+                  {audience && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_for")}</span> {audience}</p>}
+                  {how && <p><span className="font-semibold text-foreground">{d1("ui.starting_point_how")}</span> {how}</p>}
                 </div>
               )}
             </div>
@@ -2444,10 +2503,10 @@ const Day1Setup = ({ onComplete }: Props) => {
                 className="w-full h-14 text-[var(--body-size)] font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 <CheckCircle2 className="h-5 w-5 mr-2" />
-                Complete Day 1 &amp; Unlock Day 2
+                {d1("buttons.complete_day1")}
               </Button>
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                You can get help from Johnny AI anytime.
+                {d1("ui.assistant_note")}
               </p>
             </RevealControls>
           </div>

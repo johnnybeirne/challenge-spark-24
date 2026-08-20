@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay } from "lucide-react";
+import { LayoutDashboard, BarChart3, Users, Activity, Shield, FileText, GraduationCap, Eye, MessageCircle, FileEdit, Home, ListChecks, Tag, LogOut, Mail, Handshake, BookOpen, IdCard, MessagesSquare, Globe, HelpCircle, Sparkles, ClipboardCheck, Type, Trophy, Search, X, MonitorPlay, KeyRound, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAdminPageTags, tagsByKey } from "@/hooks/useAdminPageTags";
 
 type NavItem = {
   title: string;
@@ -49,8 +50,11 @@ const items: NavItem[] = [
   { title: "Promoters", url: "/owner-console/promoters", icon: Users, external: true, keywords: ["referrers", "leaderboard", "top inviters"] },
   { title: "Activity feed", url: "/owner-console/activity", icon: Activity, external: true, keywords: ["feed", "events", "log", "activity"] },
   { title: "Training system", url: "/owner-console/training", icon: GraduationCap, external: true, keywords: ["training", "lessons", "course", "modules"] },
-  { title: "Day 1 step editor", url: "/owner-console/day1-steps", icon: MessagesSquare, external: true, keywords: ["day 1", "questions", "steps", "setup", "chat"] },
-  { title: "Day 2 button labels", url: "/owner-console/day2-buttons", icon: MessagesSquare, external: true, keywords: ["day 2", "buttons", "labels", "cta"] },
+  { title: "Day 1", url: "/owner-console/day1", icon: MessagesSquare, external: true, keywords: ["day 1", "day one", "promise", "steps", "audience", "challenge type", "ai prompt"] },
+  { title: "Day 2", url: "/owner-console/day2", icon: MessagesSquare, external: true, keywords: ["day 2", "day two", "header", "build your quiz", "buttons", "cards", "reveal cards", "generate quiz", "retake quiz", "ai prompt", "upsell", "bodies", "quiz marketing", "labels", "cta", "day 2 content", "day 2 buttons"] },
+  { title: "Day 3", url: "/owner-console/day3", icon: MessagesSquare, external: true, keywords: ["day 3", "day three", "celebration", "builder circle", "launch", "live url", "tasks"] },
+
+  { title: "Locked day messages", url: "/owner-console/unlocks", icon: Lock, external: true, keywords: ["unlock", "gate", "day 2", "day 3", "locked", "free window", "passed", "invite", "buy", "message"] },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true, keywords: ["quiz", "questions", "diagnostic", "scoring", "lead gen"] },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true, keywords: ["results", "advisor", "ai", "prompts"] },
@@ -122,11 +126,25 @@ const items: NavItem[] = [
     keywords: ["qa", "test", "end to end", "runner", "demo", "smoke"],
   },
   {
+    title: "Private guest passes",
+    url: "/owner-console/guest-passes",
+    icon: KeyRound,
+    external: true,
+    keywords: ["guest", "secret", "private", "invite", "look around", "pass", "access link"],
+  },
+  {
     title: "Challenge simulator",
     url: "/admin/simulator",
     icon: MonitorPlay,
     external: true,
     keywords: ["simulator", "walkthrough", "presentation", "demo", "preview", "screens", "play"],
+  },
+  {
+    title: "Menu Search Tags",
+    url: "/owner-console/menu-tags",
+    icon: Tag,
+    external: true,
+    keywords: ["find pages", "search", "tags", "keywords", "menu", "navigation"],
   },
 ];
 
@@ -140,7 +158,6 @@ const siteItems: NavItem[] = [
     external: true,
     keywords: ["premium page", "course", "sales", "enrol", "pricing", "497"],
   },
-  { title: "Unlocks", url: "/owner-console/unlocks", icon: FileEdit, keywords: ["unlock", "gate", "day 2", "day 3", "locked"] },
   { title: "Builder Prompts", url: "/owner-console/builder-prompts", icon: FileEdit, keywords: ["prompts", "builder", "ai", "day prompts"] },
   {
     title: "Referral settings",
@@ -161,10 +178,10 @@ const siteItems: NavItem[] = [
   },
 ];
 
-const matches = (item: NavItem, query: string) => {
+const matches = (item: NavItem, query: string, tags: string) => {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? [])]
+  const haystack = [item.title, item.url.replace(/[-/]/g, " "), ...(item.keywords ?? []), tags]
     .join(" ")
     .toLowerCase();
   // every word typed must appear somewhere, so "tour tips" and "product tour" both match
@@ -177,6 +194,8 @@ export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const { rows: tagRows } = useAdminPageTags();
+  const tagMap = useMemo(() => tagsByKey(tagRows), [tagRows]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -184,11 +203,18 @@ export function AdminSidebar() {
     navigate("/challenge/join", { replace: true });
   };
 
-  const filteredAdmin = useMemo(() => items.filter((i) => matches(i, query)), [query]);
-  const filteredSite = useMemo(() => siteItems.filter((i) => matches(i, query)), [query]);
+  const filteredAdmin = useMemo(
+    () => items.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [query, tagMap],
+  );
+  const filteredSite = useMemo(
+    () => siteItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [query, tagMap],
+  );
   const showLogout = !query || "log out".includes(query.toLowerCase());
   const noResults =
     Boolean(query) && filteredAdmin.length === 0 && filteredSite.length === 0 && !showLogout;
+
 
   const renderLink = (item: NavItem, active?: boolean) => (
     <SidebarMenuItem key={item.url}>
@@ -252,7 +278,7 @@ export function AdminSidebar() {
         )}
 
         {noResults && (
-          <p className="px-4 py-3 text-xs text-muted-foreground">No settings found.</p>
+          <p className="px-4 py-3 text-xs text-muted-foreground">No pages match.</p>
         )}
 
         {filteredAdmin.length > 0 && (

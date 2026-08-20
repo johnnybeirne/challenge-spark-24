@@ -82,14 +82,6 @@ type DiagnosticRow = {
   messages: string[];
 };
 
-// Display-only tier labels mapped from percentage. Does NOT change scoring or DB tier thresholds.
-const getTierLabel = (percent: number): string => {
-  if (percent <= 20) return "Starter";
-  if (percent <= 40) return "Builder";
-  if (percent <= 60) return "Growth Partner";
-  if (percent <= 80) return "Featured Creator";
-  return "Strategic Partner";
-};
 
 const Results = () => {
   const navigate = useNavigate();
@@ -461,12 +453,9 @@ const Results = () => {
 
         {sequenceComplete && (
           <section className="mb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
-            {/* ARCHETYPE ADVISOR — preview of challenge guidance for takers still deciding */}
+            {/* ADVISOR — preview of challenge guidance for takers still deciding */}
           <ResultsAdvisor
             archetypeTier={urgencyTier}
-            archetypeLabel={
-              urgencyTier === "high" ? "Authority" : urgencyTier === "mid" ? "Architect" : "Pioneer"
-            }
             heading="See what the 3-Day Challenge can do for you"
             onJoinCtaClick={cta.onClick}
           />

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
+import { supabase } from "@/integrations/supabase/client";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
 import {
   CmsPageHeader,
   EditorCard,
@@ -10,6 +12,7 @@ import {
   ToggleField,
   StickyActionBar,
 } from "@/components/cms/cms-ui";
+
 
 const normalise = (rungs: LadderRung[]): LadderRung[] =>
   rungs
@@ -45,6 +48,29 @@ const AdminRewardsLadder = () => {
     toast.success("Rewards ladder updated");
   };
 
+  const [syncing, setSyncing] = useState(false);
+  const [syncSummary, setSyncSummary] = useState<
+    { lookupKey: string; name: string; amount: number; status: string; priceId: string }[] | null
+  >(null);
+
+  const syncPrices = async () => {
+    setSyncing(true);
+    setSyncSummary(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("sync-reward-prices", {
+        body: { environment: getStripeEnvironment() },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setSyncSummary(data.results ?? []);
+      toast.success(`Stripe sync complete: ${data.created} created, ${data.existing} already existed`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <CmsPageHeader
@@ -52,13 +78,39 @@ const AdminRewardsLadder = () => {
         description="Each rung offers two paths: earn it free at a points threshold, or buy it outright. The order below is the exact order participants see."
       />
 
-      <div>
+      <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" asChild>
           <a href="/rewards" target="_blank" rel="noopener noreferrer">
             <ExternalLink className="mr-1.5 h-3.5 w-3.5" /> Preview live page
           </a>
         </Button>
+        <Button variant="outline" size="sm" onClick={syncPrices} disabled={syncing}>
+          {syncing ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+          Sync reward prices to Stripe ({getStripeEnvironment()})
+        </Button>
       </div>
+
+      {syncSummary && (
+        <EditorCard
+          title="Stripe sync summary"
+          description="Result of the last price provisioning run."
+        >
+          <div className="space-y-1 text-sm">
+            {syncSummary.map((r) => (
+              <div key={r.lookupKey} className="flex items-center justify-between gap-3 border-b py-1 last:border-b-0">
+                <span className="font-mono text-xs">{r.lookupKey}</span>
+                <span className="flex-1 truncate">{r.name}</span>
+                <span className="text-muted-foreground">${(r.amount / 100).toFixed(0)}</span>
+                <span className={r.status === "created" ? "font-semibold text-emerald-600" : "text-muted-foreground"}>
+                  {r.status === "created" ? "Created" : "Already existed"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </EditorCard>
+      )}
+
+
 
       <EditorCard title="Buy everything bundle" description="Shown in the pinned bottom bar.">
         <div className="grid gap-3 sm:grid-cols-2">
@@ -150,6 +202,12 @@ const AdminRewardsLadder = () => {
                   value={rung.priceId}
                   onChange={(v) => updateRung(i, { priceId: v })}
                 />
+                <EditableField
+                  label="Unlock gate key"
+                  helper="Key granted when this rung is bought (e.g. reward_gate_100)."
+                  value={rung.gateKey ?? ""}
+                  onChange={(v) => updateRung(i, { gateKey: v })}
+                />
               </div>
               <div className="mt-2">
                 <ToggleField
@@ -175,6 +233,7 @@ const AdminRewardsLadder = () => {
                 
                 buyPrice: 0,
                 priceId: "",
+                gateKey: "",
                 doubleUnlock: false,
                 position: ladder.rungs.length + 1,
               },

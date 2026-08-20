@@ -99,11 +99,11 @@ export const PERSONAS: PersonaDefinition[] = [
   },
   {
     id: "launched_no_referrals",
-    label: "Day 3 launched (0 referrals)",
-    description: "All tasks done, URL submitted. Builder Circle still locked.",
+    label: "Day 3 launched (5 referrals)",
+    description: "All tasks done, URL submitted, 5 people invited.",
     elapsedHours: 60,
     dayProgress: { 1: 1, 2: 1, 3: 1 },
-    directReferrals: 0,
+    directReferrals: 5,
     launched: true,
   },
   {
@@ -456,6 +456,20 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     }
   });
 
+  // Referral points — 50 per direct referral, mirrors the live points rules.
+  for (let i = 0; i < persona.directReferrals; i++) {
+    const actionId = `persona_referral_${i + 1}`;
+    if (awardedActions.includes(actionId)) continue;
+    awardedActions.push(actionId);
+    total += 50;
+    activity.push({
+      id: actionId,
+      label: "You earned 50 points for a referral who joined",
+      points: 50,
+      timestamp: new Date(Date.now() - (i + 1) * 60 * 60 * 1000).toISOString(),
+    });
+  }
+
   const tier = getPointTier(total).name;
   const unlockedRewards = getUnlockedRewards(total).map((r) => r.title);
 
@@ -508,7 +522,7 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
     ...state,
     user: finalUser,
     memory: isEmptyPersona
-      ? { name: "", audienceType: "", challengeType: "", topic: "", desiredOutcome: "", challengeName: "", challengeTitleOverride: "" }
+      ? { name: "", audienceType: "", challengeType: "", topic: "", desiredOutcome: "", challengeName: "", challengeTitleOverride: "", audience: "", problem: "", method: "" }
       : finalMemory,
     assessment,
 

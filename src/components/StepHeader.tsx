@@ -14,6 +14,8 @@ interface StepHeaderProps {
   subheading?: ReactNode;
   /** Secondary supporting line (rendered under subheading). Optional. */
   secondary?: ReactNode;
+  /** Override the eyebrow text entirely (owner-editable copy). */
+  eyebrow?: string;
   /** Right-side slot next to the eyebrow (e.g. segmented progress dots). */
   eyebrowAside?: ReactNode;
   className?: string;
@@ -31,11 +33,14 @@ const StepHeader = ({
   heading,
   subheading,
   secondary,
+  eyebrow,
   eyebrowAside,
   className,
 }: StepHeaderProps) => {
   const hasStep = typeof stepNumber === "number" && typeof totalSteps === "number";
-  const eyebrowText = hasStep
+  const eyebrowText = eyebrow && eyebrow.trim() !== ""
+    ? eyebrow
+    : hasStep
     ? `Day ${dayNum} · Step ${stepNumber} of ${totalSteps}`
     : `Day ${dayNum}`;
 

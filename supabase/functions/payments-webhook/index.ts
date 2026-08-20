@@ -240,7 +240,7 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
 }
 
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
-  const userId = session.metadata?.userId;
+  const userId = session.metadata?.userId ?? session.client_reference_id;
   const partnerCode = session.metadata?.partner_code as string | undefined;
   const couponCode = (session.metadata?.coupon_code as string | undefined) ?? null;
   const customerId = session.customer as string | undefined;
@@ -270,6 +270,68 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   // Unlock-gate purchase: grants access to one gated area only — it is NOT a
   // premium upgrade, so it never touches profiles.is_premium.
   const gateKey = session.metadata?.gate_key as string | undefined;
+  const priceLookupKey = session.metadata?.price_lookup_key as string | undefined;
+
+  // Reward-ladder rung purchase: unlocks EXACTLY that one rung. Never premium,
+  // never lower rungs. Matched before the premium fallback.
+  if (gateKey && /^reward_gate_/.test(gateKey)) {
+    console.log("[reward-rung] metadata received:", JSON.stringify({
+      sessionId,
+      gateKey,
+      priceLookupKey,
+      userId: userId ?? null,
+      amount,
+      currency,
+      env,
+      metadataKeys: Object.keys(session.metadata ?? {}),
+    }));
+
+    if (!userId) {
+      console.error("[reward-rung] no userId in session metadata — cannot grant", sessionId);
+      throw new Error(`[reward-rung] missing userId for ${sessionId}`);
+    }
+
+    const { data: purchaseRow, error: purchaseError } = await sb.from("purchases").upsert(
+      {
+        user_id: userId,
+        stripe_session_id: sessionId,
+        stripe_payment_intent_id: session.payment_intent ?? null,
+        stripe_customer_id: customerId ?? null,
+        amount_cents: amount,
+        currency,
+        price_id: priceLookupKey ?? `unlock_${gateKey}`,
+        partner_code: partnerCode ?? null,
+        coupon_code: couponCode,
+        status: "paid",
+        environment: env,
+      },
+      { onConflict: "stripe_session_id" },
+    ).select("id, stripe_session_id").single();
+    if (purchaseError) {
+      console.error("[reward-rung] purchase upsert failed:", JSON.stringify(purchaseError));
+      throw new Error(`[reward-rung] purchase write failed for ${sessionId}`);
+    }
+    console.log("[reward-rung] purchase recorded:", JSON.stringify(purchaseRow));
+
+    const { data: grantRow, error: grantError } = await sb
+      .from("unlock_grants")
+      .upsert(
+        { user_id: userId, gate_key: gateKey, source: "purchase" },
+        { onConflict: "user_id,gate_key" },
+      )
+      .select("id, gate_key, user_id, source")
+      .single();
+    if (grantError) {
+      console.error("[reward-rung] unlock_grants upsert failed:", JSON.stringify(grantError));
+      throw new Error(`[reward-rung] grant write failed for ${sessionId}`);
+    }
+    console.log("[reward-rung] grant written:", JSON.stringify(grantRow));
+
+    if (customerEmail) await sendConfirmationEmail(customerEmail);
+    return;
+  }
+
+
   if (gateKey) {
     if (userId) {
       await sb.from("purchases").upsert(
@@ -301,8 +363,40 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   }
 
 
+  // Premium upgrade. This branch is explicit: only the premium price grants
+  // premium. Anything else without a recognised gate key is recorded as a
+  // purchase and logged as unfulfilled, never upgraded.
+  const PREMIUM_PRICE_KEY = "leadio_premium_lifetime_usd";
+  if (priceLookupKey && priceLookupKey !== PREMIUM_PRICE_KEY) {
+    console.error(
+      "[unfulfilled] paid session with no gate key and a non premium price:",
+      JSON.stringify({ sessionId, priceLookupKey, userId: userId ?? null }),
+    );
+    if (userId) {
+      await sb.from("purchases").upsert(
+        {
+          user_id: userId,
+          stripe_session_id: sessionId,
+          stripe_payment_intent_id: session.payment_intent ?? null,
+          stripe_customer_id: customerId ?? null,
+          amount_cents: amount,
+          currency,
+          price_id: priceLookupKey,
+          partner_code: partnerCode ?? null,
+          coupon_code: couponCode,
+          status: "paid",
+          environment: env,
+        },
+        { onConflict: "stripe_session_id" },
+      );
+    }
+    if (customerEmail) await sendConfirmationEmail(customerEmail);
+    return;
+  }
+
   // 1. Insert purchase record (idempotent on stripe_session_id)
   if (userId) {
+
     const { data: purchaseRow } = await sb.from("purchases").upsert(
       {
         user_id: userId,

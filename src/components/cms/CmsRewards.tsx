@@ -227,6 +227,19 @@ const CmsRewards = () => {
                   }
                 />
                 <EditableField
+                  label="Unlock gate key"
+                  helper="Key written when this rung is bought (e.g. reward_gate_100)."
+                  value={rung.gateKey ?? ""}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], gateKey: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+
+                <EditableField
                   label="Retail value (USD)"
                   type="number"
                   value={String(rung.retailValue)}
@@ -251,6 +264,43 @@ const CmsRewards = () => {
                   }
                 />
               </div>
+              <div className="mt-3 space-y-3 rounded-md border border-dashed p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Reward page content
+                </p>
+                {!(rung.pageBody ?? "").trim() && (
+                  <p className="text-xs text-muted-foreground">
+                    Nothing here yet. Add the content a participant sees after they
+                    unlock or buy this reward.
+                  </p>
+                )}
+                <EditableField
+                  label="Reward page title"
+                  helper="Leave blank to use the reward name."
+                  value={rung.pageTitle ?? ""}
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], pageTitle: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+                <EditableField
+                  label="Reward page body"
+                  helper="What they purchased: instructions, links, embeds, download links. HTML is allowed."
+                  value={rung.pageBody ?? ""}
+                  multiline
+                  onChange={(v) =>
+                    setDraft((prev) => {
+                      const rungs = [...prev.ladder.rungs];
+                      rungs[i] = { ...rungs[i], pageBody: v };
+                      return { ...prev, ladder: { ...prev.ladder, rungs } };
+                    })
+                  }
+                />
+              </div>
+
               <div className="mt-2">
                 <ToggleField
                   label="Double unlock (gold/amber styling)"

@@ -21,10 +21,44 @@ const corsHeaders = {
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-3-flash-preview";
 
-// Johnny's voice — kept consistent across both moments.
-const JOHNNY_VOICE = `You are Johnny Beirne, an Irish business coach guiding a builder through designing their 3-day challenge.
+// Owner-editable prompts live in public.day1_ai_config (read at runtime, the
+// same way day2-thread reads day2_ai_config). The constants below are only a
+// last-resort guard if that row cannot be read.
+const DEFAULT_VOICE = `You are Johnny Beirne, an Irish business coach guiding a builder through designing their 3-day challenge.
 Voice: warm, direct, plain-spoken. No corporate speak. No emojis. No exclamation marks unless natural.
 Never invent facts about the user, their audience, or their challenge. Use only what they told you.`;
+
+interface Day1AiConfig {
+  voice_prompt: string;
+  reaction_prompt: string;
+  promise_prompt: string;
+}
+
+async function loadAiConfig(): Promise<Day1AiConfig> {
+  const empty = { voice_prompt: "", reaction_prompt: "", promise_prompt: "" };
+  try {
+    const url = Deno.env.get("SUPABASE_URL");
+    const key = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !key) return empty;
+    const resp = await fetch(
+      `${url}/rest/v1/day1_ai_config?select=voice_prompt,reaction_prompt,promise_prompt&order=updated_at.desc&limit=1`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+    );
+    if (!resp.ok) return empty;
+    const rows = await resp.json();
+    const row = Array.isArray(rows) ? rows[0] : null;
+    if (!row) return empty;
+    return {
+      voice_prompt: typeof row.voice_prompt === "string" ? row.voice_prompt : "",
+      reaction_prompt: typeof row.reaction_prompt === "string" ? row.reaction_prompt : "",
+      promise_prompt: typeof row.promise_prompt === "string" ? row.promise_prompt : "",
+    };
+  } catch (e) {
+    console.error("day1_ai_config load failed", e);
+    return empty;
+  }
+}
+
 
 interface ProblemInputs {
   firstName?: string;
@@ -80,25 +114,33 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
 
   if (!problem) return fallback("missing-problem");
 
+  const cfg = await loadAiConfig();
+  const reactionInstructions =
+    cfg.reaction_prompt.trim() ||
+    [
+      "Write ONE short reaction sentence (max 25 words) that:",
+      "- quotes or closely paraphrases their exact pain language so they feel heard",
+      "- acknowledges what makes it hard, without giving advice, solutions, or asking a question",
+      "- sounds like Johnny said it out loud, not written copy",
+      "",
+      "Plain text only. No quotation marks around the whole reply. Do not start with the builder's name.",
+    ].join("\n");
+
   const userPrompt = [
     firstName ? `Builder's first name: ${firstName}` : null,
     audience ? `Their audience: ${audience}` : null,
     `The specific problem this audience faces, in the builder's own words:\n"""${problem}"""`,
     "",
-    "Write ONE short reaction sentence (max 25 words) that:",
-    "- quotes or closely paraphrases their exact pain language so they feel heard",
-    "- acknowledges what makes it hard — without giving advice, solutions, or asking a question",
-    "- sounds like Johnny said it out loud, not written copy",
-    "",
-    "Plain text only. No quotation marks around the whole reply. Do not start with the builder's name.",
+    reactionInstructions,
   ].filter(Boolean).join("\n");
 
   const resp = await callGateway({
     model: MODEL,
     messages: [
-      { role: "system", content: JOHNNY_VOICE },
+      { role: "system", content: cfg.voice_prompt.trim() || DEFAULT_VOICE },
       { role: "user", content: userPrompt },
     ],
+
     temperature: 0.7,
   });
 
@@ -121,6 +163,35 @@ async function handleProblemReaction(inputs: ProblemInputs): Promise<Response> {
   );
 }
 
+// --- Knowledge base retrieval ------------------------------------------------
+// Targeted single document load. Only the promise writing reference is read,
+// and only for promise generation. It is method guidance, never output text.
+const PROMISE_REFERENCE_SLUG = "promise-writing-reference";
+
+async function fetchPromiseReference(): Promise<string> {
+  try {
+    const url = Deno.env.get("SUPABASE_URL");
+    const key = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !key) return "";
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+    const sb = createClient(url, key);
+
+    const { data, error } = await sb
+      .from("kb_documents")
+      .select("content")
+      .eq("slug", PROMISE_REFERENCE_SLUG)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error || !data?.content) return "";
+    return String(data.content).slice(0, 6000);
+  } catch (e) {
+    console.error("promise reference load failed", e);
+    return "";
+  }
+}
+
+
 async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const audience = sanitise(inputs.audience);
   const trigger = sanitise(inputs.topicHint);
@@ -135,27 +206,63 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("missing-inputs");
   }
 
+  const [reference, cfg] = await Promise.all([fetchPromiseReference(), loadAiConfig()]);
+
+  const echoGuard = reference
+    ? [
+        "PRIVATE METHOD REFERENCE. The material below teaches you HOW to construct a four part transformation promise.",
+        "It is method guidance you learn from. It is never text you repeat.",
+        "You must build this promise fresh, from this specific participant's own answers.",
+        "Never copy, quote, or lightly reword any example, phrase or line from the reference.",
+        "Every example field in the reference is a pattern to learn from, not content to reuse.",
+        "Never mention the reference and never hint that it exists.",
+        "The participant's own audience, problem, outcome and method are the source of the actual words.",
+        "",
+        reference,
+        "",
+        "END OF PRIVATE METHOD REFERENCE.",
+        "",
+      ].join("\n")
+    : null;
+
+  // Owner-editable composer instructions. The four part output shape is locked
+  // by the tool schema below, so an edit here can never change the shape.
+  const promiseInstructions =
+    cfg.promise_prompt.trim() ||
+    [
+      "Use the compose_challenge_promise tool to return:",
+      "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Address the builder as 'you'.",
+      "2. fromState: the audience's current state with the problem, written in the builder's own words. A short phrase of 4 to 14 words. No quotation marks, no full stop, no dashes of any kind.",
+      "3. toState: the audience's future state after the transformation, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+      "4. soThat: the deeper payoff the audience gets, written in the builder's own words. A short phrase of 4 to 16 words. No quotation marks, no full stop, no dashes of any kind.",
+      "5. andStop: the pain that ends for the audience, ending with 'from happening' or 'from continuing'. No quotation marks, no full stop, no dashes of any kind.",
+      "6. promise: the four parts joined as a single plain sentence in this exact shape: from [fromState] to [toState] so that [soThat] and stop [andStop].",
+      "All four parts describe the audience, never the builder, in the third person. All four parts are always required.",
+    ].join("\n");
+
   const userPrompt = [
+    echoGuard,
     firstName ? `Builder's first name: ${firstName}` : null,
+
     `Audience (their words): ${audience}`,
-    superpower ? `Builder's superpower — what they do better than anyone (their words): ${superpower}` : null,
-    trigger ? `Trigger moment — what makes the 3 days the right time (their words): ${trigger}` : null,
+    superpower ? `Builder's superpower, what they do better than anyone (their words): ${superpower}` : null,
+    trigger ? `Trigger moment, what makes the 3 days the right time (their words): ${trigger}` : null,
     `Problem the audience is stuck on (their words): ${problem}`,
-    `Process — how the builder takes them through it (their words): ${how}`,
-    `Outcome — what they walk away with after Day 3 (their words): ${outcome}`,
+    `Process, how the builder takes them through it (their words): ${how}`,
+    `Outcome, what they walk away with after Day 3 (their words): ${outcome}`,
     challengeTypeLabel ? `Challenge shape: ${challengeTypeLabel}` : null,
     "",
-    "Use the compose_challenge_promise tool to return:",
-    "1. summary: 3 to 4 short sentences in Johnny's voice that reflect what the builder told you back. Use their literal words for the audience, problem, process, and outcome. Do not paraphrase the nouns. Do not use em dashes. Address the builder as 'you'.",
-    "2. promise: ONE sentence in this EXACT shape and nothing more: 'Help [audience] move from [pain] to [outcome] through [process].' Rules: exactly four slots (audience, pain, outcome, process). Use only the connectors 'move from', 'to', 'through' — one of each. Do NOT append any secondary clause after the outcome or after the process (no 'without ...', no 'that ...', no extra 'through ...'). The outcome slot must be a single phrase — no stacked modifiers. Use the builder's own words in each slot. Hard ceiling of 35 words — if it would exceed 35 words, tighten the slot wording to fit. No em dashes anywhere. End with a single full stop.",
+    promiseInstructions,
   ].filter(Boolean).join("\n");
+
 
   const resp = await callGateway({
     model: MODEL,
     messages: [
-      { role: "system", content: JOHNNY_VOICE },
+      { role: "system", content: cfg.voice_prompt.trim() || DEFAULT_VOICE },
       { role: "user", content: userPrompt },
     ],
+
     temperature: 0.6,
     tools: [
       {
@@ -173,13 +280,30 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
                 minItems: 3,
                 maxItems: 4,
               },
+              fromState: {
+                type: "string",
+                description: "The audience's current state with the problem, in the builder's own words. No quotes, no dashes.",
+              },
+              toState: {
+                type: "string",
+                description: "The audience's future state after the transformation, in the builder's own words. No quotes, no dashes.",
+              },
+              soThat: {
+                type: "string",
+                description: "The deeper payoff the audience gets, one level below the surface result, in the builder's own words. No quotes, no dashes.",
+              },
+              andStop: {
+                type: "string",
+                description: "The pain that ends for the audience, ending with 'from happening' or 'from continuing'. No quotes, no dashes.",
+              },
               promise: {
                 type: "string",
-                description: "One-sentence Challenge Promise using the builder's own words.",
+                description: "The four parts joined as: from [fromState] to [toState] so that [soThat] and stop [andStop].",
               },
             },
-            required: ["summary", "promise"],
+            required: ["summary", "fromState", "toState", "soThat", "andStop", "promise"],
             additionalProperties: false,
+
           },
         },
       },
@@ -202,7 +326,7 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
   const argsStr = toolCall?.function?.arguments;
   if (!argsStr) return fallback("no-tool-call");
 
-  let parsed: { summary?: string[]; promise?: string };
+  let parsed: { summary?: string[]; promise?: string; fromState?: string; toState?: string; soThat?: string; andStop?: string };
   try {
     parsed = JSON.parse(argsStr);
   } catch (e) {
@@ -210,18 +334,39 @@ async function handlePromise(inputs: PromiseInputs): Promise<Response> {
     return fallback("tool-args-parse-failed");
   }
 
+  // Strip any dash characters the model may still emit, plus stray quotes.
+  const tidy = (s: string) =>
+    s
+      .replace(/[\u2010-\u2015\u2212-]+/g, " ")
+      .replace(/["'`]/g, "")
+      .replace(/\s+/g, " ")
+      .replace(/\.$/, "")
+      .trim();
+
   const summary = Array.isArray(parsed.summary)
     ? parsed.summary.filter((s) => typeof s === "string" && s.trim().length > 0).slice(0, 4)
     : [];
-  const promise = typeof parsed.promise === "string" ? parsed.promise.trim() : "";
+  const fromState = typeof parsed.fromState === "string" ? tidy(parsed.fromState) : "";
+  const toState = typeof parsed.toState === "string" ? tidy(parsed.toState) : "";
+  const soThat = typeof parsed.soThat === "string" ? tidy(parsed.soThat) : "";
+  let andStop = typeof parsed.andStop === "string" ? tidy(parsed.andStop) : "";
+  // The and stop part always closes with one of the two allowed endings.
+  if (andStop && !/\bfrom (happening|continuing)$/i.test(andStop)) {
+    andStop = `${andStop} from continuing`;
+  }
 
-  if (summary.length < 2 || !promise) return fallback("incomplete-tool-output");
+  if (summary.length < 2 || !fromState || !toState || !soThat || !andStop) {
+    return fallback("incomplete-tool-output");
+  }
+
+  const promise = `from "${fromState}" to "${toState}" so that "${soThat}" and stop "${andStop}"`;
 
   return new Response(
-    JSON.stringify({ summary, promise }),
+    JSON.stringify({ summary, promise, fromState, toState, soThat, andStop }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useQaPreview } from "@/hooks/useQaPreview";
 import johnnyAvatar from "@/assets/johnny-beirne.png";
 import Day2QuizModal from "@/components/Day2QuizModal";
-import { QuizDownloadAssets } from "@/components/LeadGenStrengthCard";
+import { QuizDownloadAssets } from "@/components/QuizDownloadAssets";
 import { useSiteContent } from "@/hooks/useSiteContent";
 
 const DAY2_STEP_NUMBER = 1;
@@ -55,12 +55,18 @@ interface RevealCardProps {
   isLoading?: boolean;
   isRead: boolean;
   alreadyTyped: boolean;
+  senderName: string;
+  statusThinking: string;
+  statusDone: string;
+  markReadLabel: string;
+  markedReadLabel: string;
   onTypingComplete: () => void;
   onToggle: () => void;
   onMarkRead: () => void;
 }
 
-const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, alreadyTyped, onTypingComplete, onToggle, onMarkRead }: RevealCardProps) => {
+const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, alreadyTyped, senderName, statusThinking, statusDone, markReadLabel, markedReadLabel, onTypingComplete, onToggle, onMarkRead }: RevealCardProps) => {
+
   const [typed, setTyped] = useState<string>(alreadyTyped ? body : "");
   const [typingDone, setTypingDone] = useState<boolean>(alreadyTyped);
   const completeRef = useRef(onTypingComplete);
@@ -161,13 +167,13 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           <div className="flex items-center gap-2">
             <img
               src={johnnyAvatar}
-              alt="Johnny B AI"
+              alt={senderName}
               className="h-8 w-8 rounded-full object-cover border border-border"
             />
             <div className="flex flex-col leading-tight">
-              <span className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>Johnny B AI</span>
+              <span className="font-semibold text-foreground" style={{ fontSize: "var(--body-size)" }}>{senderName}</span>
               <span className="uppercase tracking-wide text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                {typingDone ? "Message" : "Thinking…"}
+                {typingDone ? statusDone : statusThinking}
               </span>
             </div>
           </div>
@@ -193,14 +199,15 @@ const RevealCard = ({ index, title, body, isOpen, isLocked, isLoading, isRead, a
           {!isLoading && typingDone && (
             isRead ? (
               <p className="inline-flex items-center gap-1.5 font-semibold text-primary" style={{ fontSize: "var(--body-size)" }}>
-                <Check className="h-3.5 w-3.5" /> Marked as read
+                <Check className="h-3.5 w-3.5" /> {markedReadLabel}
               </p>
             ) : (
               <Button type="button" size="sm" variant="outline" onClick={onMarkRead} style={{ fontSize: "var(--body-size)" }}>
-                Mark as read to continue
+                {markReadLabel}
               </Button>
             )
           )}
+
         </CardContent>
       )}
     </Card>
@@ -223,29 +230,6 @@ const Day2Screen1 = () => {
     state.user?.name?.split(" ")[0] ||
     metaName.split(" ")[0] ||
     "";
-
-  // Archetype derived from the user's quiz result (if completed). Same mapping
-  // as DashboardArchetypeStrip - Pioneer / Architect / Authority.
-  const archetype = useMemo(() => {
-    const assessment = state.assessment as
-      | { diagnosticScore?: number; diagnosticLevel?: "low" | "mid" | "high" }
-      | null
-      | undefined;
-    if (!assessment) return "";
-    const score = assessment.diagnosticScore;
-    let tier: "low" | "mid" | "high" | null =
-      assessment.diagnosticLevel === "low" ||
-      assessment.diagnosticLevel === "mid" ||
-      assessment.diagnosticLevel === "high"
-        ? assessment.diagnosticLevel
-        : null;
-    if (!tier && typeof score === "number") {
-      const pct = Math.round((score / 9) * 100);
-      tier = pct >= 67 ? "high" : pct >= 34 ? "mid" : "low";
-    }
-    if (!tier) return "";
-    return tier === "high" ? "Authority" : tier === "mid" ? "Architect" : "Pioneer";
-  }, [state.assessment]);
 
   const { clientAvatar, problem, challengeOutcome, challengePromise, superpower } = useMemo(
     () => readDay1Values(state.challenge.aiOutputs),
@@ -288,17 +272,16 @@ const Day2Screen1 = () => {
     }, 1200);
   };
 
+  // Owner-editable fallbacks: site_content page "day2", section "cards".
   const fallbackBodies = useMemo(
     () => ({
-      card1:
-        "Your challenge asks a lot of someone who has never met you.\n\nYour quiz earns that commitment.\n\nIn two minutes it shows your audience exactly where they stand, makes the problem feel real, and makes your challenge the obvious next step.\n\nYou are not pitching.\n\nYou are launching a diagnostic that makes people ask to join.",
-      card2:
-        "Most quiz funnels end at the result and spend weeks in email trying to convert.\n\nYours is different.\n\nThe result page is the entrance to your challenge, not the exit from your funnel.\n\nWhen your audience sees their result they are not getting generic tips.\n\nThey are being invited into three days where your expertise solves the exact problem the quiz just surfaced.",
-      card3:
-        "Everyone who joins your challenge through the quiz already believes they have a problem worth solving.\n\nYour job over three days is to prove you are the person to help them solve it.\n\nYou guide them, show up for them, and move them toward the result in real time.\n\nBy Day 3 they have experienced your expertise first hand.\n\nThat is what turns a quiz taker into a buyer.",
+      card1: tDay2("cards.1.body_fallback", ""),
+      card2: tDay2("cards.2.body_fallback", ""),
+      card3: tDay2("cards.3.body_fallback", ""),
     }),
-    [],
+    [tDay2],
   );
+
 
   const [aiBodies, setAiBodies] = useState<{ card1: string; card2: string; card3: string } | null>(null);
   const [cardsLoading, setCardsLoading] = useState(true);
@@ -361,7 +344,6 @@ const Day2Screen1 = () => {
             moment: "cards",
             inputs: {
               firstName,
-              archetype,
               audience: clientAvatar,
               superpower,
               problem,
@@ -383,15 +365,16 @@ const Day2Screen1 = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [firstName, archetype, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
+  }, [firstName, clientAvatar, superpower, problem, challengeOutcome, challengePromise]);
 
   const bodies = aiBodies ?? fallbackBodies;
 
   const cardCopy = [
-    { title: "The quiz earns the right to ask for 3 days.", body: bodies.card1 },
-    { title: "Most quizzes stop at the result. Yours does not.", body: bodies.card2 },
-    { title: "Three days builds more trust than three months of emails.", body: bodies.card3 },
+    { title: tDay2("cards.1.title", "The quiz earns the right to ask for 3 days."), body: bodies.card1 },
+    { title: tDay2("cards.2.title", "Most quizzes stop at the result. Yours does not."), body: bodies.card2 },
+    { title: tDay2("cards.3.title", "Three days builds more trust than three months of emails."), body: bodies.card3 },
   ];
+
 
   const handleToggleCard = (idx: number) => {
     // Lock rule: card N requires card N-1 already marked as read.
@@ -450,8 +433,9 @@ const Day2Screen1 = () => {
             )}
           </p>
           <p className="italic text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-            You're building this for {audience}.
+            {tDay2("ui.intro", "You're building this for {audience}.").split("{audience}").join(audience)}
           </p>
+
         </header>
 
         {/* ZONE 2 - TEACHING CONTENT */}
@@ -472,6 +456,12 @@ const Day2Screen1 = () => {
                   isLoading={cardsLoading && !aiBodies}
                   isRead={readCards.has(idx)}
                   alreadyTyped={typedCards.has(idx)}
+                  senderName={tDay2("cards.sender_name", "Johnny B AI")}
+                  statusThinking={tDay2("cards.sender_status_thinking", "Thinking…")}
+                  statusDone={tDay2("cards.sender_status_done", "Message")}
+                  markReadLabel={tDay2("cards.mark_read", "Mark as read to continue")}
+                  markedReadLabel={tDay2("cards.marked_read", "Marked as read")}
+
                   onTypingComplete={() => setTypedCards((prev) => {
                     if (prev.has(idx)) return prev;
                     const next = new Set(prev);
@@ -493,7 +483,7 @@ const Day2Screen1 = () => {
             style={{ fontSize: "var(--body-size)" }}
           >
             <Eye className="h-4 w-4" />
-            Take the quiz for this challenge again
+            {tDay2("buttons.retake_quiz", "Take the quiz for this challenge again")}
             <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
@@ -514,12 +504,12 @@ const Day2Screen1 = () => {
                 {quizGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating your quiz...
+                    {tDay2("buttons.generate_busy", "Generating your quiz...")}
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    Generate your quiz now
+                    {tDay2("buttons.generate_unlocked", "Generate your quiz now")}
                     <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
                   </>
                 )}
@@ -529,14 +519,15 @@ const Day2Screen1 = () => {
                   <Download className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden="true" />
                   <div className="space-y-1">
                     <p className="font-bold text-foreground" style={{ fontSize: "var(--body-size)" }}>
-                      Your quiz downloads will land in Your Assets
+                      {tDay2("ui.assets_note_title", "Your quiz downloads will land in Your Assets")}
                     </p>
                     <p className="text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                      Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.{" "}
-                      <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
-                        Go to Your Assets &rarr;
+                      {tDay2("ui.assets_note_body", "Opens in a new tab. When your quiz is ready, your Word doc and Google Doc will be waiting on your dashboard.")}{" "}
+                      <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
+                        {tDay2("ui.assets_link", "Go to Your Assets")} &rarr;
                       </Link>
                     </p>
+
                   </div>
                 </div>
               </div>
@@ -549,7 +540,7 @@ const Day2Screen1 = () => {
                   className="absolute left-1/2 -translate-x-1/2 -top-3 -translate-y-full z-10 w-[min(20rem,90%)] rounded-xl bg-foreground text-background px-4 py-3 font-semibold shadow-xl animate-fade-in"
                   style={{ fontSize: "var(--body-size)" }}
                 >
-                  Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.
+                  {tDay2("hint.locked", 'Read each section above and tap "Mark as read" on 1, 2 and 3 to unlock.')}
                   <span
                     aria-hidden="true"
                     className="absolute left-1/2 -translate-x-1/2 top-full -mt-px h-3 w-3 rotate-45 bg-foreground"
@@ -560,12 +551,12 @@ const Day2Screen1 = () => {
                 type="button"
                 onClick={triggerLockHint}
                 aria-disabled="true"
-                title="Mark all three sections as read to unlock"
+                title={tDay2("hint.locked_tooltip", "Mark all three sections as read to unlock")}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-muted px-6 py-3 text-center font-semibold text-muted-foreground shadow-sm cursor-not-allowed opacity-60"
                 style={{ fontSize: "var(--body-size)" }}
               >
                 <Lock className="h-4 w-4" />
-                Mark 1, 2 & 3 as read to generate your quiz
+                {tDay2("buttons.generate_locked", "Mark 1, 2 & 3 as read to generate your quiz")}
               </button>
             </div>
           )}
@@ -577,15 +568,16 @@ const Day2Screen1 = () => {
                   <Check className="h-3.5 w-3.5" />
                 </span>
                 <p className="font-black text-foreground" style={{ fontSize: "var(--body-size)" }}>
-                  Your quiz assets are ready
+                  {tDay2("ui.quiz_ready_title", "Your quiz assets are ready")}
                 </p>
               </div>
               <p className="mb-3 text-muted-foreground" style={{ fontSize: "var(--body-size)" }}>
-                Download your quiz right here, or grab it any time from Your Assets on your dashboard.{" "}
-                <Link to="/challenger-dashboard" className="font-semibold text-primary hover:underline">
-                  Go to Your Assets &rarr;
+                {tDay2("ui.quiz_ready_body", "Download your quiz right here, or grab it any time from Your Assets on your dashboard.")}{" "}
+                <Link to="/challenger-dashboard#your-assets" className="font-semibold text-primary hover:underline">
+                  {tDay2("ui.assets_link", "Go to Your Assets")} &rarr;
                 </Link>
               </p>
+
               <QuizDownloadAssets rawQuiz={state.challenge.aiOutputs.day2_s2_quiz} />
             </div>
           )}
@@ -597,8 +589,9 @@ const Day2Screen1 = () => {
           <Card>
             <CardHeader>
               <CardTitle style={{ fontSize: "var(--h3-size)" }}>
-                Want to go deeper on quiz funnel strategy?
+                {tDay2("ui.upsell_title", "Want to go deeper on quiz funnel strategy?")}
               </CardTitle>
+
             </CardHeader>
             <CardContent>
               <Button
@@ -607,7 +600,7 @@ const Day2Screen1 = () => {
                 className="w-full h-auto py-3 rounded-full bg-[#534AB7] hover:bg-[#534AB7]/90 text-white"
               >
                 <Link to="/training">
-                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>Check Out LeadTree Premium Membership</span>
+                  <span className="font-bold" style={{ fontSize: "var(--body-size)" }}>{tDay2("buttons.upsell", "Check Out Premium Membership")}</span>
                 </Link>
               </Button>
             </CardContent>

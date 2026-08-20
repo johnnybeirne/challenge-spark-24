@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Loader2 } from "lucide-react";
 import { useAppState } from "@/context/AppContext";
 import { supabase } from "@/integrations/supabase/client";
-import { questions, getDiagnosticResult } from "@/lib/assessmentData";
+import { questions } from "@/lib/assessmentData";
+import { useDiagnosticTier } from "@/hooks/useDiagnosticTier";
 
 interface Insight {
   title: string;
@@ -59,7 +60,10 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
   const firstName = (state.user?.name || state.memory?.name || "").split(" ")[0] || "";
   const score = Number(assessment?.diagnosticScore ?? 0);
   const pct = Math.round((score / questions.length) * 100);
-  const tierTitle = getDiagnosticResult(score).title;
+  // Same live source Results.tsx's headline reads, so this panel can never
+  // show a tier that contradicts what the user already saw on Results.
+  const { data: diagnosticTier, loading: tierLoading } = useDiagnosticTier(score, questions.length);
+  const tierTitle = diagnosticTier?.title ?? "";
 
   const [insights, setInsights] = useState<Insight[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -67,6 +71,9 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
 
   useEffect(() => {
     if (!assessment || !assessment.answers) return;
+    // Wait for the live tier lookup so the AI call is never seeded with a
+    // stale/empty title while diagnosticTier is still resolving.
+    if (tierLoading) return;
     const key = cacheKey(authUser?.id, score);
 
     const cached = readCached(key);
@@ -117,7 +124,7 @@ export default function AIAdvisorPanel({ context = "results" }: { context?: "res
 
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser?.id, score, assessment?.completedAt]);
+  }, [authUser?.id, score, assessment?.completedAt, tierLoading]);
 
   if (!assessment || !assessment.answers) return null;
 

@@ -1,11 +1,19 @@
 // AI Advisor Panel — generates 3 personalised, actionable insights for the
 // user based on their assessment answers. Returns plain JSON for easy
 // rendering on the client.
+import { createClient } from "npm:@supabase/supabase-js@2";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 
 const SYSTEM_PROMPT = `You are the Leadio AI Advisor — a senior lead-generation strategist.
 
@@ -35,6 +43,21 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Any signed-in participant may call this (it's not admin-only), but it
+    // must be a real caller — this is a paid AI call with no other cost
+    // control, so an anonymous request is rejected before touching the model.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims?.sub) return json({ error: "Unauthorized" }, 401);
+
     const body = await req.json();
     const firstName: string = String(body.firstName || "there").slice(0, 40);
     const score: number = Number(body.score) || 0;

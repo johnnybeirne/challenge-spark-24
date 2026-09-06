@@ -3032,6 +3032,7 @@ export type Database = {
         Args: { invite_count: number }
         Returns: string
       }
+      check_guest_pass: { Args: { _token: string }; Returns: Json }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
       claim_unlock: { Args: { p_unlock_id: string }; Returns: boolean }
       get_my_referred_people: {

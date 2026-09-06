@@ -28,6 +28,7 @@ import DayChallenge from "@/pages/DayChallenge";
 import QuizPreview from "@/pages/QuizPreview";
 import PipelineScorecardLanding from "@/pages/PipelineScorecardLanding";
 import PipelineScorecardQuiz from "@/pages/PipelineScorecardQuiz";
+import PipelineScorecardResult from "@/pages/PipelineScorecardResult";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";

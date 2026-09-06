@@ -55,10 +55,13 @@ type Props = {
   /** Optional tier / rank label shown beside the points number. */
   tierLabel?: string;
   subtitle?: string;
+  /** Override the H1. Receives the first name (may be empty). */
+  title?: (firstName: string) => string;
 };
 
+
 /** Shared header for /invites and /rewards: title, stat tiles, points ladder. */
-const InvitesRewardsHeader = ({ tierLabel, subtitle }: Props) => {
+const InvitesRewardsHeader = ({ tierLabel, subtitle, title }: Props) => {
   const { state } = useAppState();
   const { loading: accessLoading } = useAccessStatus();
   // Same source as the Momentum panel so both always agree.
@@ -78,7 +81,12 @@ const InvitesRewardsHeader = ({ tierLabel, subtitle }: Props) => {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-[var(--h1-size)] font-bold leading-tight text-foreground">
-          {firstName ? `${firstName}, here are your invites` : "Here are your invites"}
+          {title
+            ? title(firstName)
+            : firstName
+              ? `${firstName}, here are your invites`
+              : "Here are your invites"}
+
         </h1>
         <p className="text-[var(--body-size)] text-muted-foreground">
           {subtitle ?? "Invite people to join the challenge and keep your access free every 28 days."}

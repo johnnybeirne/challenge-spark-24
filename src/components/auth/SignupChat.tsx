@@ -228,9 +228,18 @@ const SignupChat = ({
     if (partnerRef) {
       (supabase.rpc as any)("process_partner_referral", { p_partner_code: partnerRef }).then(() => {});
     }
+    // A guest pass is only counted as used when an account is actually created.
+    try {
+      const guestToken = sessionStorage.getItem("leadtree_guest_pass");
+      if (guestToken) {
+        await (supabase.rpc as any)("redeem_guest_pass", { _token: guestToken });
+        sessionStorage.removeItem("leadtree_guest_pass");
+      }
+    } catch {}
     trackEvent("signup_completed", { product });
     toast.success("You're in.");
     setSignupComplete(true);
+
   };
 
 

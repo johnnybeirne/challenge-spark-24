@@ -271,6 +271,7 @@ const App = () => (
               {/* Pipeline scorecard — standalone, chrome-free landing */}
               <Route path="/pipeline-scorecard" element={<PipelineScorecardLanding />} />
               <Route path="/pipeline-scorecard/quiz" element={<PipelineScorecardQuiz />} />
+              <Route path="/pipeline-scorecard/result" element={<PipelineScorecardResult />} />
               <Route path="/powered-by" element={<PoweredBy />} />
               <Route path="/logo-animation" element={<LogoAnimationPreview />} />
 

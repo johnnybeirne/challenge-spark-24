@@ -335,15 +335,16 @@ const PipelineScorecardResult = () => {
     return () => window.clearTimeout(timer);
   }, [visibleCount]);
 
-  // When a card's count-up finishes, reveal the next card (or show the bridge).
+  // When a card's count-up finishes, reveal the next card (or the advisor teaser).
   const handleCountDone = (i: number) => {
     setCountingIndex(-1);
     if (i < CATEGORIES.length - 1) {
       setVisibleCount((c) => c + 1);
     } else {
-      setShowBridge(true);
+      setShowAdvisor(true);
     }
   };
+
 
   return (
     <>

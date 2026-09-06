@@ -275,7 +275,9 @@ const PipelineScorecardResult = () => {
   // showBridge: whether the bridge CTA section has faded in.
   const [visibleCount, setVisibleCount] = useState(0);
   const [countingIndex, setCountingIndex] = useState(-1);
+  const [showAdvisor, setShowAdvisor] = useState(false);
   const [showBridge, setShowBridge] = useState(false);
+
 
   useEffect(() => {
     const prev = document.title;

@@ -261,9 +261,8 @@ const PipelineScorecardResult = () => {
                         </div>
                         <div className="shrink-0 text-right">
                           <span className={`text-3xl font-black leading-none ${accent.text}`}>
-                            {cat.score}
+                            {pct}%
                           </span>
-                          <span className="text-base font-bold text-muted-foreground">/15</span>
                         </div>
                       </div>
 
@@ -271,9 +270,9 @@ const PipelineScorecardResult = () => {
                       <div
                         className="mt-4 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
                         role="meter"
-                        aria-valuenow={cat.score}
+                        aria-valuenow={pct}
                         aria-valuemin={0}
-                        aria-valuemax={15}
+                        aria-valuemax={100}
                         aria-label={`${cat.label} score`}
                       >
                         <div

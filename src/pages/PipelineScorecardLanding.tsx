@@ -50,7 +50,7 @@ const PipelineScorecardLanding = () => {
                 <Button
                   className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20 sm:w-auto"
                   onClick={() => {
-                    window.location.href = "/pipeline-scorecard?start=1";
+                    window.location.href = "/pipeline-scorecard/quiz";
                   }}
                 >
                   {t("hero.cta_label", "Start the scorecard")}

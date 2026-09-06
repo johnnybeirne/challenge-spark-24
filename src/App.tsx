@@ -27,6 +27,7 @@ import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import QuizPreview from "@/pages/QuizPreview";
 import PipelineScorecardLanding from "@/pages/PipelineScorecardLanding";
+import PipelineScorecardQuiz from "@/pages/PipelineScorecardQuiz";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
@@ -268,6 +269,7 @@ const App = () => (
               <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
               {/* Pipeline scorecard — standalone, chrome-free landing */}
               <Route path="/pipeline-scorecard" element={<PipelineScorecardLanding />} />
+              <Route path="/pipeline-scorecard/quiz" element={<PipelineScorecardQuiz />} />
               <Route path="/powered-by" element={<PoweredBy />} />
               <Route path="/logo-animation" element={<LogoAnimationPreview />} />
 

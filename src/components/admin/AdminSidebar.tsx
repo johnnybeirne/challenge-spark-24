@@ -35,6 +35,7 @@ const items: NavItem[] = [
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake, external: true, keywords: ["partners", "affiliates", "jv"] },
   { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true, external: true, keywords: ["home", "dashboard", "admin"] },
   { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit, external: true, keywords: ["landing page", "copy", "headline", "quiz page", "content"] },
+  { title: "Pipeline Scorecard", url: "/owner-console/pipeline-scorecard", icon: FileEdit, external: true, keywords: ["pipeline", "scorecard", "landing page", "result", "bridge", "copy", "headline", "assessment"] },
   { title: "Powered By Page", url: "/owner-console/powered-by-editor", icon: Globe, external: true, keywords: ["powered by", "branding", "footer"] },
   { title: "Resource library", url: "/owner-console/resources", icon: BookOpen, external: true, keywords: ["downloads", "files", "library", "resources"] },
   { title: "Analytics", url: "/owner-console/analytics", icon: BarChart3, external: true, keywords: ["stats", "metrics", "events", "tracking"] },

@@ -55,7 +55,10 @@ type Props = {
   /** Optional tier / rank label shown beside the points number. */
   tierLabel?: string;
   subtitle?: string;
+  /** Override the H1. Receives the first name (may be empty). */
+  title?: (firstName: string) => string;
 };
+
 
 /** Shared header for /invites and /rewards: title, stat tiles, points ladder. */
 const InvitesRewardsHeader = ({ tierLabel, subtitle }: Props) => {

@@ -119,12 +119,20 @@ const ScorecardAdvisorTeaser = ({ categories, overallTier, onStreamComplete }: P
   // Tailored teaser: weakest category named as the priority, strongest acknowledged.
   const paragraphs = useMemo<string[]>(() => {
     if (!weakest || !strongest) return [];
-    const sentences = [
-      `Looking across your three scores, ${weakest.label} is the one holding the rest back, so that is where I would start.`,
-      `Your ${weakest.label} answers put you at ${weakest.tierName}, ${weakest.tierSubtitle}, and that is where leads are quietly leaking.`,
-      `The good news is ${strongest.label} is already your strongest area, so you are not starting from zero.`,
-      `Fix the ${weakest.label.toLowerCase()} gap first and the rest of your pipeline starts compounding instead of leaking.`,
-    ];
+    const tied = weakest.score === strongest.score;
+    const sentences = tied
+      ? [
+          `Your three areas are running level, so nothing single is dragging you down right now.`,
+          `${weakest.label} still sets the ceiling for the other two, so treat it as the one to keep sharp.`,
+          `You are reading as ${weakest.tierName}, ${weakest.tierSubtitle}, across the board.`,
+          `The next gain comes from deepening what already works rather than starting something new.`,
+        ]
+      : [
+          `Looking across your three scores, ${weakest.label} is the one holding the rest back, so that is where I would start.`,
+          `Your ${weakest.label} answers put you at ${weakest.tierName}, ${weakest.tierSubtitle}, and that is the gap costing you most.`,
+          `The good news is ${strongest.label} is already your strongest area, so you are not starting from zero.`,
+          `Fix ${weakest.label} first and the rest of your pipeline starts compounding instead of leaking.`,
+        ];
     return sentences;
   }, [weakest, strongest]);
 

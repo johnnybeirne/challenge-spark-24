@@ -290,17 +290,24 @@ const PipelineScorecardResult = () => {
                 })}
               </div>
 
-              {/* CTA — same signup route as the existing quiz result page */}
+              {/* Bridge CTA — copy is owner-editable via site_content("pipeline_scorecard_result");
+                  default destination is the same signup route the existing quiz result page uses */}
               <section className="mt-10 animate-fade-in">
+                <h2 className="mb-4 text-center text-2xl font-black leading-tight tracking-tight text-foreground sm:text-3xl">
+                  {t("bridge.headline", "Ready to build the system your scorecard points to?")}
+                </h2>
                 <Button
-                  onClick={() => navigate("/challenge/join")}
+                  onClick={() => navigate(t("bridge.cta_route", "/challenge/join"))}
                   className="h-[72px] w-full gap-3 rounded-2xl text-[length:var(--h2-size)] font-black tracking-tight !text-white shadow-xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/40"
                 >
-                  Join the 3-Day Challenge
+                  {t("bridge.cta_label", "Join the 3-Day Challenge")}
                   <ArrowRight className="h-6 w-6 text-white" />
                 </Button>
                 <p className="mt-4 text-center text-[var(--body-size)] font-medium text-muted-foreground">
-                  The 3-Day Challenge builds the exact evergreen system your scorecard points to.
+                  {t(
+                    "bridge.body",
+                    "The 3-Day Challenge builds the exact evergreen system your scorecard points to.",
+                  )}
                 </p>
               </section>
             </>

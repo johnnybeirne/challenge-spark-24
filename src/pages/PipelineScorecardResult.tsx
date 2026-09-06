@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import ScorecardAdvisorTeaser from "@/components/ScorecardAdvisorTeaser";
+
 
 type Letter = "A" | "B" | "C";
 
@@ -273,7 +275,9 @@ const PipelineScorecardResult = () => {
   // showBridge: whether the bridge CTA section has faded in.
   const [visibleCount, setVisibleCount] = useState(0);
   const [countingIndex, setCountingIndex] = useState(-1);
+  const [showAdvisor, setShowAdvisor] = useState(false);
   const [showBridge, setShowBridge] = useState(false);
+
 
   useEffect(() => {
     const prev = document.title;
@@ -331,15 +335,16 @@ const PipelineScorecardResult = () => {
     return () => window.clearTimeout(timer);
   }, [visibleCount]);
 
-  // When a card's count-up finishes, reveal the next card (or show the bridge).
+  // When a card's count-up finishes, reveal the next card (or the advisor teaser).
   const handleCountDone = (i: number) => {
     setCountingIndex(-1);
     if (i < CATEGORIES.length - 1) {
       setVisibleCount((c) => c + 1);
     } else {
-      setShowBridge(true);
+      setShowAdvisor(true);
     }
   };
+
 
   return (
     <>
@@ -404,6 +409,28 @@ const PipelineScorecardResult = () => {
                   />
                 ))}
               </div>
+
+              {/* AI advisor teaser — same advisor identity and edge function as the main
+                  quiz result page. Reveals after the third card's count-up; the bridge
+                  below appears only after its streamed response completes. */}
+              {showAdvisor && (
+                <ScorecardAdvisorTeaser
+                  categories={categoryResults.map((c) => ({
+                    label: c.label,
+                    score: c.score,
+                    tier: c.tier,
+                    tierName: c.tierData.name,
+                    tierSubtitle: c.tierData.subtitle,
+                  }))}
+                  overallTier={tierFor(
+                    Math.round(
+                      categoryResults.reduce((s, c) => s + c.score, 0) / categoryResults.length,
+                    ),
+                  )}
+                  onStreamComplete={() => setShowBridge(true)}
+                />
+              )}
+
 
               {/* Bridge CTA — fades in after the final card's count-up.
                   Copy is owner-editable via site_content("pipeline_scorecard_result");

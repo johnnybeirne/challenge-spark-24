@@ -81,7 +81,12 @@ const InvitesRewardsHeader = ({ tierLabel, subtitle, title }: Props) => {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-[var(--h1-size)] font-bold leading-tight text-foreground">
-          {firstName ? `${firstName}, here are your invites` : "Here are your invites"}
+          {title
+            ? title(firstName)
+            : firstName
+              ? `${firstName}, here are your invites`
+              : "Here are your invites"}
+
         </h1>
         <p className="text-[var(--body-size)] text-muted-foreground">
           {subtitle ?? "Invite people to join the challenge and keep your access free every 28 days."}

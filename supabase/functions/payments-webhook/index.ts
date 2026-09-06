@@ -200,6 +200,30 @@ async function unlockAllForUser(userId: string) {
   }
 }
 
+/** Premium membership flag follows the live subscription state. */
+async function setProfilePremium(
+  userId: string,
+  value: boolean,
+  customerId?: string | null,
+) {
+  const sb = getSupabase();
+  const patch: Record<string, unknown> = { is_premium: value };
+  if (value) patch.premium_since = new Date().toISOString();
+  if (customerId) patch.stripe_customer_id = customerId;
+  const { error } = await sb.from("profiles").update(patch).eq("user_id", userId);
+  if (error) console.error("[subscription] profile premium update failed", error);
+
+  if (value) {
+    const { data: existing } = await sb
+      .from("unlocks")
+      .select("unlock_id")
+      .eq("user_id", userId)
+      .eq("unlock_id", "premium_course")
+      .maybeSingle();
+    if (!existing) await unlockAllForUser(userId);
+  }
+}
+
 async function handleSubscriptionChange(subscription: any, env: StripeEnv) {
   const userId = subscription.metadata?.userId;
   if (!userId) {
@@ -229,6 +253,10 @@ async function handleSubscriptionChange(subscription: any, env: StripeEnv) {
     },
     { onConflict: "stripe_subscription_id" },
   );
+
+  // A current plan (including one cancelling at period end) keeps premium on.
+  const active = ["active", "trialing", "past_due"].includes(subscription.status);
+  await setProfilePremium(userId, active, subscription.customer as string | undefined);
 }
 
 async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
@@ -237,7 +265,11 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
     .update({ status: "canceled", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
+
+  const userId = subscription.metadata?.userId;
+  if (userId) await setProfilePremium(userId, false);
 }
+
 
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const userId = session.metadata?.userId ?? session.client_reference_id;

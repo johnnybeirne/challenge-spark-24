@@ -30,9 +30,12 @@ const GuestPass = () => {
         setError(REASONS.not_found);
         return;
       }
-      const { data, error: rpcError } = await supabase.rpc("redeem_guest_pass", {
+      // Read-only check: opening the link (previews, prefetch, refresh) must
+      // not use up the pass. It is consumed after signup completes.
+      const { data, error: rpcError } = await supabase.rpc("check_guest_pass" as never, {
         _token: token,
-      });
+      } as never);
+
       if (cancelled) return;
 
       const result = (data ?? {}) as { valid?: boolean; reason?: string; label?: string };

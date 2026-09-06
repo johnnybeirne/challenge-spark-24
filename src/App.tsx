@@ -26,6 +26,7 @@ import Day1 from "@/pages/Day1";
 import Dashboard from "@/pages/Dashboard";
 import DayChallenge from "@/pages/DayChallenge";
 import QuizPreview from "@/pages/QuizPreview";
+import PipelineScorecardLanding from "@/pages/PipelineScorecardLanding";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
@@ -265,6 +266,8 @@ const App = () => (
 
               {/* Quiz preview — full-screen, no app shell / sidebar / nav */}
               <Route path="/quiz-preview" element={<AuthGuard><QuizPreview /></AuthGuard>} />
+              {/* Pipeline scorecard — standalone, chrome-free landing */}
+              <Route path="/pipeline-scorecard" element={<PipelineScorecardLanding />} />
               <Route path="/powered-by" element={<PoweredBy />} />
               <Route path="/logo-animation" element={<LogoAnimationPreview />} />
 

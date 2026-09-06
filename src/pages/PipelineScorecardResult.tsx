@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -129,12 +129,133 @@ const ACCENT: Record<"low" | "mid" | "high", { text: string; bar: string; ring: 
 };
 
 /**
+ * requestAnimationFrame count-up from 0 to `target`, easing out (cubic).
+ * Matches the pattern already used by src/pages/Results.tsx.
+ */
+const useCountUp = (
+  target: number,
+  play: boolean,
+  duration: number,
+  onDone: (() => void) | undefined,
+): number => {
+  const [val, setVal] = useState(0);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+
+  useEffect(() => {
+    if (!play) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setVal(target);
+      onDoneRef.current?.();
+      return;
+    }
+    const start = performance.now();
+    let frameId = 0;
+    let done = false;
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setVal(Math.round(target * eased));
+      if (progress < 1) {
+        frameId = requestAnimationFrame(tick);
+      } else if (!done) {
+        done = true;
+        onDoneRef.current?.();
+      }
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [play, target, duration]);
+
+  return val;
+};
+
+interface CategoryCardProps {
+  cat: {
+    key: CategoryDef["key"];
+    label: string;
+    score: number;
+    tier: "low" | "mid" | "high";
+    tierData: Tier;
+  };
+  index: number;
+  visible: boolean;
+  play: boolean;
+  onCountDone: () => void;
+}
+
+const FADE_MS = 400;
+const COUNT_MS = 800;
+
+const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardProps) => {
+  const accent = ACCENT[cat.tier];
+  const pct = Math.round((cat.score / 15) * 100);
+  const animated = useCountUp(pct, play, COUNT_MS, onCountDone);
+
+  return (
+    <section
+      key={cat.key}
+      className={`rounded-2xl border border-border bg-card p-6 shadow-sm ring-1 ${accent.ring} transition-all duration-[400ms] ease-out ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[12px]"
+      }`}
+      style={{ transitionDelay: visible ? "0ms" : "0ms" }}
+      aria-hidden={!visible}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+            {cat.label}
+          </p>
+          <h2 className={`mt-1 text-2xl font-black tracking-tight ${accent.text}`}>
+            {cat.tierData.name}
+          </h2>
+          <p className="mt-0.5 text-sm font-semibold text-foreground">
+            {cat.tierData.subtitle}
+          </p>
+        </div>
+        <div className="shrink-0 text-right">
+          <span className={`text-3xl font-black leading-none ${accent.text}`}>
+            {animated}%
+          </span>
+        </div>
+      </div>
+
+      {/* Score bar — width driven by the count-up value */}
+      <div
+        className="mt-4 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
+        role="meter"
+        aria-valuenow={play || !visible ? animated : pct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${cat.label} score`}
+      >
+        <div
+          className={`h-full rounded-full ${accent.bar}`}
+          style={{ width: `${animated}%` }}
+        />
+      </div>
+
+      <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">
+        {cat.tierData.description}
+      </p>
+      {index === 0 ? null : null}
+    </section>
+  );
+};
+
+/**
  * Standalone, chrome-free result page for the Pipeline Leverage Scorecard.
  * Reads the `id` query param, fetches the matching row from
  * pipeline_scorecard_responses, computes three category scores, and shows
  * the tier name, subtitle, and description for each. A single CTA points to
  * the existing 3-Day Challenge signup route (/challenge/join) — the same route
  * the existing quiz's result page uses.
+ *
+ * Reveal sequence: cards appear one at a time (fade + slide up), each followed
+ * by a 0-to-final count-up of its percentage and progress bar; only after the
+ * previous card's count-up finishes does the next begin. The bridge section
+ * fades in after the final card's count-up completes.
  */
 const PipelineScorecardResult = () => {
   const [params] = useSearchParams();
@@ -145,6 +266,14 @@ const PipelineScorecardResult = () => {
   const [loading, setLoading] = useState(true);
   const [row, setRow] = useState<ScorecardRow | null>(null);
   const [notFound, setNotFound] = useState(false);
+
+  // Sequential reveal orchestration.
+  // visibleCount: how many cards are revealed (fading in).
+  // countingIndex: which card is currently running its count-up (-1 = none).
+  // showBridge: whether the bridge CTA section has faded in.
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [countingIndex, setCountingIndex] = useState(-1);
+  const [showBridge, setShowBridge] = useState(false);
 
   useEffect(() => {
     const prev = document.title;
@@ -186,6 +315,31 @@ const PipelineScorecardResult = () => {
     const tier = tierFor(score);
     return { ...cat, score, tier, tierData: TIERS[cat.key][tier] };
   });
+
+  // Kick off the sequence once the row is loaded.
+  useEffect(() => {
+    if (!loading && row && !notFound && visibleCount === 0) {
+      setVisibleCount(1);
+    }
+  }, [loading, row, notFound, visibleCount]);
+
+  // When a new card becomes visible, wait for its fade-in, then start its count-up.
+  useEffect(() => {
+    if (visibleCount === 0) return;
+    const i = visibleCount - 1;
+    const timer = window.setTimeout(() => setCountingIndex(i), FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [visibleCount]);
+
+  // When a card's count-up finishes, reveal the next card (or show the bridge).
+  const handleCountDone = (i: number) => {
+    setCountingIndex(-1);
+    if (i < CATEGORIES.length - 1) {
+      setVisibleCount((c) => c + 1);
+    } else {
+      setShowBridge(true);
+    }
+  };
 
   return (
     <>
@@ -237,61 +391,28 @@ const PipelineScorecardResult = () => {
                 </p>
               </section>
 
-              {/* Category cards */}
+              {/* Category cards — revealed sequentially */}
               <div className="flex flex-col gap-6">
-                {categoryResults.map((cat) => {
-                  const accent = ACCENT[cat.tier];
-                  const pct = Math.round((cat.score / 15) * 100);
-                  return (
-                    <section
-                      key={cat.key}
-                      className={`rounded-2xl border border-border bg-card p-6 shadow-sm ring-1 ${accent.ring} animate-fade-in`}
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-                            {cat.label}
-                          </p>
-                          <h2 className={`mt-1 text-2xl font-black tracking-tight ${accent.text}`}>
-                            {cat.tierData.name}
-                          </h2>
-                          <p className="mt-0.5 text-sm font-semibold text-foreground">
-                            {cat.tierData.subtitle}
-                          </p>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          <span className={`text-3xl font-black leading-none ${accent.text}`}>
-                            {pct}%
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Score bar */}
-                      <div
-                        className="mt-4 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
-                        role="meter"
-                        aria-valuenow={pct}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label={`${cat.label} score`}
-                      >
-                        <div
-                          className={`h-full rounded-full ${accent.bar} transition-[width] duration-700 ease-out`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-
-                      <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">
-                        {cat.tierData.description}
-                      </p>
-                    </section>
-                  );
-                })}
+                {categoryResults.map((cat, index) => (
+                  <CategoryCard
+                    key={cat.key}
+                    cat={cat}
+                    index={index}
+                    visible={index < visibleCount}
+                    play={countingIndex === index}
+                    onCountDone={() => handleCountDone(index)}
+                  />
+                ))}
               </div>
 
-              {/* Bridge CTA — copy is owner-editable via site_content("pipeline_scorecard_result");
-                  default destination is the same signup route the existing quiz result page uses */}
-              <section className="mt-10 animate-fade-in">
+              {/* Bridge CTA — fades in after the final card's count-up.
+                  Copy is owner-editable via site_content("pipeline_scorecard_result");
+                  default destination is the same signup route the existing quiz result page uses. */}
+              <section
+                className={`mt-10 transition-all duration-[600ms] ease-out ${
+                  showBridge ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[12px] pointer-events-none"
+                }`}
+              >
                 <h2 className="mb-4 text-center text-2xl font-black leading-tight tracking-tight text-foreground sm:text-3xl">
                   {t("bridge.headline", "Ready to build the system your scorecard points to?")}
                 </h2>

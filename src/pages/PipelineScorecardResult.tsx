@@ -410,6 +410,28 @@ const PipelineScorecardResult = () => {
                 ))}
               </div>
 
+              {/* AI advisor teaser — same advisor identity and edge function as the main
+                  quiz result page. Reveals after the third card's count-up; the bridge
+                  below appears only after its streamed response completes. */}
+              {showAdvisor && (
+                <ScorecardAdvisorTeaser
+                  categories={categoryResults.map((c) => ({
+                    label: c.label,
+                    score: c.score,
+                    tier: c.tier,
+                    tierName: c.tierData.name,
+                    tierSubtitle: c.tierData.subtitle,
+                  }))}
+                  overallTier={tierFor(
+                    Math.round(
+                      categoryResults.reduce((s, c) => s + c.score, 0) / categoryResults.length,
+                    ),
+                  )}
+                  onStreamComplete={() => setShowBridge(true)}
+                />
+              )}
+
+
               {/* Bridge CTA — fades in after the final card's count-up.
                   Copy is owner-editable via site_content("pipeline_scorecard_result");
                   default destination is the same signup route the existing quiz result page uses. */}

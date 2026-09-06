@@ -121,7 +121,7 @@ const ScorecardAdvisorTeaser = ({ categories, overallTier, onStreamComplete }: P
     if (!weakest || !strongest) return [];
     const sentences = [
       `Looking across your three scores, ${weakest.label} is the one holding the rest back, so that is where I would start.`,
-      `Right now you are reading as ${weakest.tierName}, which means ${weakest.tierSubtitle.replace(/^The\s+/i, "the ").toLowerCase()} pattern is costing you leads you never see.`,
+      `Your ${weakest.label} answers put you at ${weakest.tierName}, ${weakest.tierSubtitle}, and that is where leads are quietly leaking.`,
       `The good news is ${strongest.label} is already your strongest area, so you are not starting from zero.`,
       `Fix the ${weakest.label.toLowerCase()} gap first and the rest of your pipeline starts compounding instead of leaking.`,
     ];

@@ -61,7 +61,7 @@ type Props = {
 
 
 /** Shared header for /invites and /rewards: title, stat tiles, points ladder. */
-const InvitesRewardsHeader = ({ tierLabel, subtitle }: Props) => {
+const InvitesRewardsHeader = ({ tierLabel, subtitle, title }: Props) => {
   const { state } = useAppState();
   const { loading: accessLoading } = useAccessStatus();
   // Same source as the Momentum panel so both always agree.

@@ -84,21 +84,21 @@ const TIERS: Record<CategoryDef["key"], Record<string, Tier>> = {
   conversion: {
     low: {
       name: "Conversion Explorer",
-      subtitle: "The Blind Marketer",
+      subtitle: "The Leaky Bucket",
       description:
-        "You have no attribution clarity and no structured follow-up path. Every lead goes cold because there is no automated bridge from opt-in to your core offer. Your priority is to install a tracked, automated conversion pathway.",
+        "You are flying blind. With no attribution tracking and no clear follow-up path, valuable prospects are dropping out of your world daily. You are spending time and money guessing what works.",
     },
     mid: {
       name: "Conversion Builder",
-      subtitle: "The Leaky Funnel",
+      subtitle: "The Passive Engine",
       description:
-        "You have a loose follow-up process and a vague sense of where leads come from, but you rely on manual chasing and have no built-in referral loop. Leads frequently go cold before they convert.",
+        "You have a functional sales path, but it is entirely passive. You lack the proactive automated conversion bridges and incentivized referral loops required to turn one customer into three.",
     },
     high: {
       name: "Conversion Achiever",
-      subtitle: "The Self-Fueling Pipeline",
+      subtitle: "The High-Velocity Funnel",
       description:
-        "You have total attribution clarity, an automated conversion bridge that moves prospects to your core offer, and a built-in referral loop that turns buyers into new prospects on autopilot.",
+        "Your conversion metrics are world-class. You can trace every single dollar spent back to the exact client-acquisition source, and your built-in referral loops generate zero-cost viral growth.",
     },
   },
 };

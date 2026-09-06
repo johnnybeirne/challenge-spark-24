@@ -300,6 +300,7 @@ const App = () => (
                 <Route path="day2-content" element={<Navigate to="/owner-console/day2" replace />} />
                 <Route path="day3" element={<AdminDay3 />} />
                 <Route path="day3-content" element={<Navigate to="/owner-console/day3" replace />} />
+                <Route path="pipeline-scorecard" element={<AdminPipelineScorecard />} />
 
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

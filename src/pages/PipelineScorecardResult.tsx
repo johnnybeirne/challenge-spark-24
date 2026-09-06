@@ -140,6 +140,7 @@ const PipelineScorecardResult = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const id = params.get("id");
+  const { t } = useSiteContent("pipeline_scorecard_result");
 
   const [loading, setLoading] = useState(true);
   const [row, setRow] = useState<ScorecardRow | null>(null);

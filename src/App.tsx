@@ -28,6 +28,7 @@ import DayChallenge from "@/pages/DayChallenge";
 import QuizPreview from "@/pages/QuizPreview";
 import PipelineScorecardLanding from "@/pages/PipelineScorecardLanding";
 import PipelineScorecardQuiz from "@/pages/PipelineScorecardQuiz";
+import PipelineScorecardResult from "@/pages/PipelineScorecardResult";
 import Unlocks from "@/pages/Unlocks";
 import RedeemPoints from "@/pages/RedeemPoints";
 import EarnRewards from "@/pages/EarnRewards";
@@ -270,6 +271,7 @@ const App = () => (
               {/* Pipeline scorecard — standalone, chrome-free landing */}
               <Route path="/pipeline-scorecard" element={<PipelineScorecardLanding />} />
               <Route path="/pipeline-scorecard/quiz" element={<PipelineScorecardQuiz />} />
+              <Route path="/pipeline-scorecard/result" element={<PipelineScorecardResult />} />
               <Route path="/powered-by" element={<PoweredBy />} />
               <Route path="/logo-animation" element={<LogoAnimationPreview />} />
 

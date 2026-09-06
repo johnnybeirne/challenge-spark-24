@@ -62,6 +62,7 @@ import AdminActivityFeed from "@/pages/AdminActivityFeed";
 import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1 from "@/pages/AdminDay1";
 import AdminDay3 from "@/pages/AdminDay3";
+import AdminPipelineScorecard from "@/pages/AdminPipelineScorecard";
 import AdminDay2 from "@/pages/AdminDay2";
 
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";

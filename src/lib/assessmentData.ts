@@ -259,6 +259,45 @@ export function calculateDiagnosticScore(answers: Record<string, string>): numbe
   }, 0);
 }
 
+/* ───── Category breakdown (additive; does not affect the overall score) ───── */
+
+export type QuizCategory = "system" | "audience" | "conversion";
+
+export const CATEGORY_LABELS: Record<QuizCategory, string> = {
+  system: "System",
+  audience: "Audience",
+  conversion: "Conversion",
+};
+
+/** Question ids grouped by category, mapped by stored question order (q1..q9). */
+export const categoryQuestions: Record<QuizCategory, string[]> = {
+  system: ["q1", "q8", "q9"],
+  audience: ["q2", "q4", "q6"],
+  conversion: ["q3", "q5", "q7"],
+};
+
+/** Scores one question using the same rules as the overall score. */
+function scoreQuestion(id: string, answer: string | undefined): number {
+  if (positiveScoredQuestions.has(id)) return answer === "yes" ? 1 : 0;
+  if (reverseScoredQuestions.has(id)) return answer === "no" ? 1 : 0;
+  return 0;
+}
+
+export function calculateCategoryScores(
+  answers: Record<string, string>,
+): { category: QuizCategory; label: string; raw: number; percent: number }[] {
+  return (Object.keys(categoryQuestions) as QuizCategory[]).map((category) => {
+    const ids = categoryQuestions[category];
+    const raw = ids.reduce((total, id) => total + scoreQuestion(id, answers?.[id]), 0);
+    return {
+      category,
+      label: CATEGORY_LABELS[category],
+      raw,
+      percent: Math.round((raw / ids.length) * 100),
+    };
+  });
+}
+
 export function getDiagnosticResult(score: number) {
   if (score <= 3) {
     return {

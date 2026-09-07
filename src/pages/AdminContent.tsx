@@ -61,16 +61,9 @@ const PAGES: { id: string; label: string; previewUrl: string; description: strin
   { id: "about-me", label: "About Me", previewUrl: "/about-me", description: "Founder bio and photo" },
   { id: "signup", label: "Signup", previewUrl: "/join", description: "Account creation" },
   { id: "results", label: "Results", previewUrl: "/results", description: "Diagnostic results copy" },
-  { id: "dashboard", label: "Dashboard", previewUrl: "/challenger-dashboard", description: "Authenticated dashboard" },
-  // Day 2 copy (header, cards, screen text, buttons, AI prompt) is edited on the
-  // dedicated full-page Day 2 editor at /owner-console/day2 — one place only.
+  // Non-quiz surfaces (dashboard, unlocks, rewards, referrals, JV pages) have
+  // their own dedicated owner console editors and are intentionally not listed here.
 
-
-  { id: "unlocks", label: "Unlocks", previewUrl: "/unlocks", description: "Unlocks page copy" },
-  { id: "rewards", label: "Rewards", previewUrl: "/bonus-vault", description: "Rewards page copy" },
-  { id: "referrals", label: "Referrals", previewUrl: "/referrals", description: "Referrals page copy" },
-  { id: "jv-apply", label: "JV Partner Application", previewUrl: "/jv-apply", description: "Application page copy + confirmation email" },
-  { id: "jv-partners", label: "JV Partners", previewUrl: "/jv-partners", description: "JV Partners landing page copy" },
 ];
 
 // Maps DB section id -> friendly label + "where it appears" hint + iframe anchor.

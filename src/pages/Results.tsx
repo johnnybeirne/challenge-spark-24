@@ -134,8 +134,14 @@ const Results = () => {
     supabase
       .from("diagnostic_responses")
       .select("tier,min_percent,max_percent,title,messages")
-      .then(({ data }) => {
-        if (cancelled || !data) return;
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        // On error or empty result, mark as loaded with no rows so the
+        // fallback copy below kicks in and the CTA/advisor still render.
+        if (error || !data || data.length === 0) {
+          setRows([]);
+          return;
+        }
         const normalised: DiagnosticRow[] = data.map((r) => ({
           tier: r.tier,
           min_percent: r.min_percent,
@@ -144,6 +150,9 @@ const Results = () => {
           messages: Array.isArray(r.messages) ? r.messages.filter((m): m is string => typeof m === "string") : [],
         }));
         setRows(normalised);
+      })
+      .catch(() => {
+        if (!cancelled) setRows([]);
       });
     return () => {
       cancelled = true;

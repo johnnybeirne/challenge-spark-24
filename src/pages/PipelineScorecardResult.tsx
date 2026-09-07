@@ -398,16 +398,15 @@ const PipelineScorecardResult = () => {
                 </p>
               </section>
 
-              {/* Category cards — revealed sequentially */}
+              {/* Category cards — revealed one at a time as the user scrolls */}
               <div className="flex flex-col gap-6">
                 {categoryResults.map((cat, index) => (
                   <CategoryCard
                     key={cat.key}
                     cat={cat}
                     index={index}
-                    visible={index < visibleCount}
-                    play={countingIndex === index}
-                    onCountDone={() => handleCountDone(index)}
+                    isLast={index === CATEGORIES.length - 1}
+                    onLastCountDone={() => setShowAdvisor(true)}
                   />
                 ))}
               </div>

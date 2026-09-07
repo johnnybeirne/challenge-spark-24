@@ -1922,7 +1922,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           direct_referral_count: number
-          email: string | null
+          email: string
           entry_intent: string | null
           expert_type: string[]
           facebook_url: string | null
@@ -1961,7 +1961,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           direct_referral_count?: number
-          email?: string | null
+          email: string
           entry_intent?: string | null
           expert_type?: string[]
           facebook_url?: string | null
@@ -2000,7 +2000,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           direct_referral_count?: number
-          email?: string | null
+          email?: string
           entry_intent?: string | null
           expert_type?: string[]
           facebook_url?: string | null

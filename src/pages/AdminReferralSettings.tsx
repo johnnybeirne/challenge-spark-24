@@ -128,6 +128,7 @@ const AdminReferralSettings = () => {
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
         title="Referral settings"
+        previewHref="/earn"
         description="Control the Featured Creator milestone and the invite badge copy participants see."
       />
 

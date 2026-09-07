@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PreviewButton from "@/components/admin/PreviewButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -159,11 +160,14 @@ const AdminTraining = () => {
 
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold">Training System</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Edit the dashboard intro and Day 1–3 training cards. Changes apply immediately.
-        </p>
+      <header className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Training System</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Edit the dashboard intro and Day 1–3 training cards. Changes apply immediately.
+          </p>
+        </div>
+        <PreviewButton href="/training" />
       </header>
 
       <Tabs value={active} onValueChange={(v) => setActive(v as SectionKey)}>

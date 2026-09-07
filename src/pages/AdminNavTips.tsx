@@ -59,6 +59,7 @@ const AdminNavTips = () => {
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
         title="Hover Tips"
+        previewHref="/challenger-dashboard"
         description="The tooltips a participant sees when they hover a nav or sidebar item. These never appear in the first-run walkthrough. Leave a tip blank to hide it."
       />
 

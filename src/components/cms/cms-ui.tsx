@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import PreviewButton from "@/components/admin/PreviewButton";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Page header — friendly, not "admin-y"
@@ -27,19 +28,27 @@ import { cn } from "@/lib/utils";
 export function CmsPageHeader({
   title,
   description,
+  previewHref,
+  previewLabel,
 }: {
   title: string;
   description?: string;
+  previewHref?: string;
+  previewLabel?: string;
 }) {
   return (
-    <div className="space-y-1">
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-      {description && (
-        <p className="text-sm text-muted-foreground max-w-2xl">{description}</p>
-      )}
+    <div className="flex items-start justify-between gap-4">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        {description && (
+          <p className="text-sm text-muted-foreground max-w-2xl">{description}</p>
+        )}
+      </div>
+      {previewHref && <PreviewButton href={previewHref} label={previewLabel} />}
     </div>
   );
 }
+
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Section card — groups related editable fields like a live page section

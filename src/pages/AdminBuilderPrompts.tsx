@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -117,10 +118,13 @@ const AdminBuilderPrompts = () => {
             Your library of reusable build instructions. Copy one, fill in the blanks, and send it.
           </p>
         </div>
+        <div className="flex items-center gap-2 shrink-0">
+        <PreviewButton href="/prompt-library" />
         <Button onClick={addPrompt} className="gap-2 shrink-0">
           <Plus className="h-4 w-4" />
           Add prompt
         </Button>
+        </div>
       </div>
 
       <div className="relative mt-6">

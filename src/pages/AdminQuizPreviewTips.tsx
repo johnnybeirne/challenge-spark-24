@@ -122,6 +122,7 @@ const AdminQuizPreviewTips = () => {
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
         title="Quiz preview tips"
+        previewHref="/quiz-preview"
         description="Edit the little (?) hover advice shown next to sections of the quiz preview. Leave a field blank to hide its icon."
       />
 

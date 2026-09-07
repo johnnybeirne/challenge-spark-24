@@ -76,6 +76,7 @@ const AdminUserTour = () => {
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
         title="User Tour Walkthrough"
+        previewHref="/challenger-dashboard"
         description="The guided popover steps a participant sees on their first visit. Steps fire in ascending order of the step number you set here. Leave a tip blank to skip that step."
       />
 

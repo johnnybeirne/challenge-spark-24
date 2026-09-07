@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -295,9 +296,12 @@ const AdminResourceLibrary = () => {
             Upload, paste, and manage knowledge the AI Coach uses to guide challenge takers.
           </p>
         </div>
+        <div className="flex items-center gap-2">
+        <PreviewButton href="/mentor" />
         <Button onClick={() => setEditing(emptyDraft())} className="gap-2">
           <Plus className="h-4 w-4" /> New resource
         </Button>
+        </div>
       </div>
 
       {/* Drop zone */}

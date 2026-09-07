@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,7 +120,8 @@ const AdminResultsAdvisorPrompts = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <div>
+      <div className="flex items-start justify-between gap-4">
+        <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-primary" />
           Results advisor starter prompts
@@ -128,6 +130,8 @@ const AdminResultsAdvisorPrompts = () => {
           Edit the suggested questions shown to a quiz taker on the Results page,
           grouped by archetype.
         </p>
+        </div>
+        <PreviewButton href="/results" />
       </div>
 
       {rows.map((row) => {

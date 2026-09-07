@@ -50,6 +50,7 @@ const AdminMentorPrompts = () => {
     <div className="space-y-6">
       <CmsPageHeader
         title="AI Coach prompts"
+        previewHref="/mentor"
         description="Starter questions shown on the AI Coach page, per context."
       />
       {CARDS.map(({ key, title }) => (

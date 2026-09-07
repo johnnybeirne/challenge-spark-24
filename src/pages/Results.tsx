@@ -13,6 +13,15 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
+import ScoreRing from "@/components/ScoreRing";
+
+// Per-category traffic-light banding, driven by each category's own percent.
+// 0-33 red, 34-74 amber, 75-100 green.
+const ringColorFor = (pct: number): string => {
+  if (pct >= 75) return "#10b981"; // green
+  if (pct >= 34) return "#f59e0b"; // amber
+  return "#f43f5e"; // red
+};
 
 
 
@@ -376,27 +385,17 @@ const Results = () => {
             {categoryScores.map((c) => (
               <div
                 key={c.category}
-                className="rounded-2xl border border-foreground/10 bg-card p-5 text-left"
+                className="flex flex-col items-center gap-3 rounded-2xl border border-foreground/10 bg-card p-5 text-center"
               >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {c.label}
-                  </span>
-                  <span className="text-2xl font-black tracking-tight">{c.percent}%</span>
-                </div>
-                <div
-                  className="mt-3 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
-                  role="meter"
-                  aria-valuenow={c.percent}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`${c.label} score`}
-                >
-                  <div
-                    className={`h-full rounded-full ${accent.bar} transition-[width] duration-500 ease-out`}
-                    style={{ width: `${c.percent}%` }}
-                  />
-                </div>
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {c.label}
+                </span>
+                <ScoreRing
+                  pct={c.percent}
+                  color={ringColorFor(c.percent)}
+                  maxSize={200}
+                  ariaLabel={`${c.label} score`}
+                />
               </div>
             ))}
           </div>

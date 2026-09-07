@@ -119,7 +119,7 @@ const ROUTES: RouteRow[] = [
   { route: "/free-training", purpose: "Legacy → redirects to /blueprint", access: "Public", status: "Detected", notes: "Backward-compat redirect" },
   { route: "/upgrade", purpose: "Legacy → redirects to /premium", access: "Authenticated", status: "Detected", notes: "Backward-compat redirect" },
   { route: "/vip", purpose: "Legacy → redirects to /premium", access: "Public", status: "Detected", notes: "Backward-compat redirect" },
-  { route: "/admin", purpose: "Removed — legacy alias for /owner-console", access: "Admin", status: "Removed", notes: "Alias deleted; admin home is /owner-console/analytics" },
+  { route: "/admin", purpose: "Removed — legacy alias for /owner-console", access: "Admin", status: "Needs review", notes: "Alias deleted; admin home is /owner-console/analytics" },
 ];
 
 type Feature = { name: string; status: Status; note?: string };

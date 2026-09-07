@@ -192,7 +192,16 @@ const AdminPipelineScorecard = () => {
     }
   };
 
-  const renderField = (f: ScorecardField) => (
+  const renderField = (f: ScorecardField) =>
+    f.key === "image" ? (
+      <ScorecardImageUploader
+        key={`${f.page}.${scorecardFieldId(f)}`}
+        label="Image"
+        helper="Shown beside the headline on the landing page."
+        value={values[scorecardFieldId(f)] ?? ""}
+        onChange={(v) => setValues((prev) => ({ ...prev, [scorecardFieldId(f)]: v }))}
+      />
+    ) : (
     <EditableField
       key={`${f.page}.${scorecardFieldId(f)}`}
       label={f.label}

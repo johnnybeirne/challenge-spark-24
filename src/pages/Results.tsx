@@ -387,7 +387,7 @@ const Results = () => {
           })()}
 
           {/* CATEGORY BREAKDOWN — additive, does not affect the archetype above */}
-          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+          <div className="mt-12 grid gap-4 sm:grid-cols-3 sm:gap-[50px]">
             {categoryScores.map((c) => (
               <div
                 key={c.category}

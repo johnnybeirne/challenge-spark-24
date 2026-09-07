@@ -35,6 +35,85 @@ import {
 
 const PREVIEW_URL = "/pipeline-scorecard";
 
+const ScorecardImageUploader = ({
+  label,
+  helper,
+  value,
+  onChange,
+}: {
+  label: string;
+  helper?: string;
+  value: string;
+  onChange: (url: string) => void;
+}) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    if (!/^image\/(jpe?g|png|webp|gif)$/i.test(file.type)) {
+      toast.error("Use a JPG, PNG, WEBP or GIF image.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `scorecard/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("site-images")
+        .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+      onChange(data.publicUrl);
+      toast.success("Image uploaded. Save to publish it.");
+    } catch {
+      toast.error("Upload failed. Try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <Label>{label}</Label>
+      {helper && <p className="text-xs text-muted-foreground">{helper}</p>}
+      {value && (
+        <div className="flex flex-col items-start gap-2">
+          <img
+            src={value}
+            alt="Scorecard"
+            className="max-h-48 w-full max-w-sm rounded-lg border object-cover"
+          />
+          <button
+            type="button"
+            className="text-sm text-red-500/80 underline hover:text-red-500"
+            onClick={() => onChange("")}
+          >
+            Remove image
+          </button>
+        </div>
+      )}
+      <label
+        className={`flex items-center gap-3 rounded-md border border-dashed px-4 py-4 text-sm ${
+          uploading ? "pointer-events-none opacity-60" : "cursor-pointer hover:bg-muted/50"
+        }`}
+      >
+        {uploading ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <Camera className="h-5 w-5 text-muted-foreground" />
+        )}
+        <span>{uploading ? "Uploading…" : value ? "Replace image" : "Upload an image"}</span>
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => handleFile(e.target.files?.[0])}
+        />
+      </label>
+    </div>
+  );
+};
+
 const AdminPipelineScorecard = () => {
   const [rows, setRows] = useState<SiteContentRow[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});

@@ -229,7 +229,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
         <div className="mx-auto flex w-full max-w-md flex-wrap items-start justify-center gap-8 sm:gap-10 lg:mx-0">
           {ring("score.system_percent", 76, "score.system_label", "System")}
           {ring("score.audience_percent", 58, "score.audience_label", "Audience")}
-          {ring("score.conversion_percent", 41, "score.conversion_label", "Conversion")}
+          {ring("score.conversion_percent", 28, "score.conversion_label", "Conversion")}
         </div>
         <div>
           <p className="text-sm font-black text-primary">{t("score.eyebrow", "Your result")}</p>

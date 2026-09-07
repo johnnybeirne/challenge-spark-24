@@ -44,7 +44,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
       el.scrollTop = 0;
     }
   }, [locationKey, pathname, hash]);
-  const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname === "/admin" || pathname.startsWith("/admin/");
+  const isOwnerConsoleRoute = pathname === "/owner-console" || pathname.startsWith("/owner-console/") || pathname.startsWith("/admin/");
   const isAuthEntryRoute = pathname === "/challenge/join" || pathname === "/join" || pathname === "/blueprint/join" || pathname === "/blueprint-join" || pathname === "/waitlist" || pathname === "/waitlist/thanks";
   const { focusMode, leftCollapsed, rightCollapsed } = useFocusMode();
   const authenticated = !!authUser || !!state.user;

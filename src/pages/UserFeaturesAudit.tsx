@@ -119,7 +119,7 @@ const ROUTES: RouteRow[] = [
   { route: "/free-training", purpose: "Legacy → redirects to /blueprint", access: "Public", status: "Detected", notes: "Backward-compat redirect" },
   { route: "/upgrade", purpose: "Legacy → redirects to /premium", access: "Authenticated", status: "Detected", notes: "Backward-compat redirect" },
   { route: "/vip", purpose: "Legacy → redirects to /premium", access: "Public", status: "Detected", notes: "Backward-compat redirect" },
-  { route: "/admin", purpose: "Legacy → mounts Owner Console", access: "Admin", status: "Detected", notes: "Backward-compat alias" },
+  { route: "/admin", purpose: "Removed — legacy alias for /owner-console", access: "Admin", status: "Removed", notes: "Alias deleted; admin home is /owner-console/analytics" },
 ];
 
 type Feature = { name: string; status: Status; note?: string };
@@ -592,7 +592,7 @@ const EXPERIENCE_ROUTE_SAMPLES: Record<Exclude<ExperienceType, "unknown">, strin
   challenge: ["/challenger-dashboard", "/dashboard", "/day/1", "/day/2", "/day/3", "/unlocks", "/referrals", "/community", "/calendar"],
   paid: ["/upgrade", "/checkout", "/course", "/course/module/1"],
   partner: ["/promoter", "/partner/performance", "/partners"],
-  admin: ["/admin", "/admin/analytics", "/owner-console", "/owner-console/analytics", "/user-features"],
+  admin: ["/owner-console", "/owner-console/analytics", "/admin/qa-run", "/admin/simulator", "/user-features"],
 };
 
 const ExperienceSeparationSection = () => {

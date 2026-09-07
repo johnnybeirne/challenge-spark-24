@@ -356,13 +356,7 @@ const App = () => (
               {/* Internal audit — admin protected via AdminLayout */}
               <Route path="/user-features" element={<Navigate to="/owner-console/overview?tab=audit" replace />} />
 
-              {/* Legacy admin redirects */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminHub />} />
-                <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="cms" element={<Navigate to="/owner-console/content" replace />} />
-                <Route path="features" element={<Navigate to="/owner-console/overview?tab=features" replace />} />
-              </Route>
+              {/* Legacy /admin alias removed — owner console lives at /owner-console. */}
 
               <Route path="*" element={<NotFound />} />
             </Routes>

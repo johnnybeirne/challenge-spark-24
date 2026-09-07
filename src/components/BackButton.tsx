@@ -20,7 +20,6 @@ const HIDE_ON_EXACT = new Set<string>([
   "/challenge/join",
   "/blueprint/join",
   "/owner-console",
-  "/admin",
   "/let-me-in",
 ]);
 

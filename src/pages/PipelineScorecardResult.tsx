@@ -399,16 +399,19 @@ const PipelineScorecardResult = () => {
                 </p>
               </section>
 
-              {/* Category cards — revealed one at a time as the user scrolls */}
-              <div className="flex flex-col gap-6">
+              {/* Category cards — revealed one at a time as the user scrolls.
+                  Each card sits in its own viewport-height slot so only one is
+                  on screen at a time; scrolling brings the next into view. */}
+              <div className="flex flex-col">
                 {categoryResults.map((cat, index) => (
-                  <CategoryCard
-                    key={cat.key}
-                    cat={cat}
-                    index={index}
-                    isLast={index === CATEGORIES.length - 1}
-                    onLastCountDone={() => setShowAdvisor(true)}
-                  />
+                  <div key={cat.key} className="flex min-h-[68vh] items-center py-6">
+                    <CategoryCard
+                      cat={cat}
+                      index={index}
+                      isLast={index === CATEGORIES.length - 1}
+                      onLastCountDone={() => setShowAdvisor(true)}
+                    />
+                  </div>
                 ))}
               </div>
 

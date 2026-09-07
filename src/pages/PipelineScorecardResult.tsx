@@ -297,12 +297,8 @@ const PipelineScorecardResult = () => {
   const [row, setRow] = useState<ScorecardRow | null>(null);
   const [notFound, setNotFound] = useState(false);
 
-  // Sequential reveal orchestration.
-  // visibleCount: how many cards are revealed (fading in).
-  // countingIndex: which card is currently running its count-up (-1 = none).
-  // showBridge: whether the bridge CTA section has faded in.
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [countingIndex, setCountingIndex] = useState(-1);
+  // Scroll-based reveal: each card reveals itself when it scrolls into view.
+  // The advisor teaser appears after the final card's count-up finishes.
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [showBridge, setShowBridge] = useState(false);
 

@@ -389,10 +389,7 @@ const PipelineScorecardResult = () => {
             <>
               {/* Header */}
               <section className="mb-10 animate-fade-in">
-                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary">
-                  Your Pipeline Leverage Scorecard
-                </p>
-                <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight text-foreground sm:text-4xl">
+                <h1 className="text-3xl font-black leading-tight tracking-tight text-foreground sm:text-4xl">
                   Here is where your pipeline stands today
                 </h1>
                 <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">

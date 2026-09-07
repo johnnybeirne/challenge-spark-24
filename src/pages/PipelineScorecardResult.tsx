@@ -182,26 +182,55 @@ interface CategoryCardProps {
     tierData: Tier;
   };
   index: number;
-  visible: boolean;
-  play: boolean;
-  onCountDone: () => void;
+  isLast: boolean;
+  onLastCountDone: () => void;
 }
 
 const FADE_MS = 400;
 const COUNT_MS = 800;
 
-const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardProps) => {
+/**
+ * Reveals on scroll: each card stays hidden until it scrolls into view, then
+ * fades in and runs its 0-to-final count-up. The first card is in view on load
+ * so it plays immediately; the rest appear one at a time as the user scrolls.
+ */
+const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
+  const ref = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [play, setPlay] = useState(false);
   const accent = ACCENT[cat.tier];
   const pct = Math.round((cat.score / 15) * 100);
-  const animated = useCountUp(pct, play, COUNT_MS, onCountDone);
+  const animated = useCountUp(pct, play, COUNT_MS, isLast ? onLastCountDone : undefined);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setVisible(true);
+      setPlay(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible(true);
+          window.setTimeout(() => setPlay(true), FADE_MS);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section
-      key={cat.key}
+      ref={ref}
       className={`rounded-2xl border border-border bg-card p-6 shadow-sm ring-1 ${accent.ring} transition-all duration-[400ms] ease-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[12px]"
       }`}
-      style={{ transitionDelay: visible ? "0ms" : "0ms" }}
       aria-hidden={!visible}
     >
       <div className="flex items-center justify-between gap-4">
@@ -241,7 +270,6 @@ const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardPr
       <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">
         {cat.tierData.description}
       </p>
-      {index === 0 ? null : null}
     </section>
   );
 };

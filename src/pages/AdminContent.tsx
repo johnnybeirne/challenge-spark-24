@@ -851,6 +851,43 @@ function FieldRow({
   );
 }
 
+// Auto-growing text field: starts at one line (matching a single-line Input) and
+// expands vertically as the content wraps, so sentence-length copy (headlines,
+// sub-headlines, descriptions, body text) is fully visible instead of scrolling
+// horizontally. Genuinely short values (button labels) stay on a single line.
+function AutoGrowInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const resize = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  };
+  useEffect(() => {
+    resize();
+  }, [value]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={1}
+      onInput={resize}
+      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none overflow-hidden leading-relaxed"
+      style={{ minHeight: "2.5rem" }}
+    />
+  );
+}
+
 function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);

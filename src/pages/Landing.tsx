@@ -209,19 +209,13 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
     const pct = Math.max(0, Math.min(100, Number(raw) || fallbackPct));
     const color = bandColor(pct);
     return (
-      <div className="flex flex-col items-center gap-3">
-        <div
-          className="flex size-28 items-center justify-center rounded-full p-3 sm:size-32"
-          style={{ background: `conic-gradient(${color} 0 ${pct}%, hsl(var(--muted)) ${pct}% 100%)` }}
-        >
-          <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
-            <span className="text-2xl font-black leading-none text-foreground sm:text-3xl">{pct}%</span>
-          </div>
-        </div>
-        <span className="max-w-[8rem] text-xs font-black uppercase tracking-wide text-muted-foreground sm:text-sm">
-          {t(labelKey, fallbackLabel)}
-        </span>
-      </div>
+      <ScoreRing
+        pct={pct}
+        color={color}
+        label={t(labelKey, fallbackLabel)}
+        maxSize={200}
+        ariaLabel={`${t(labelKey, fallbackLabel)} score`}
+      />
     );
   };
   return (

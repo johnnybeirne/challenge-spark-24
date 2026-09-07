@@ -53,7 +53,7 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
-  const { t, map } = useSiteContent("landing");
+  const { t, map, loaded } = useSiteContent("landing");
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
@@ -79,15 +79,23 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
       <main className="min-h-screen bg-background pb-24 text-foreground">
-        <div id="hero" style={{ scrollMarginTop: 24 }}><HeroSection t={t} onStart={() => startQuiz("hero")} /></div>
-        <div id="problem" style={{ scrollMarginTop: 24 }}><ProblemSection t={t} map={map} /></div>
-        <div id="reveal" style={{ scrollMarginTop: 24 }}><RevealSection t={t} map={map} /></div>
-        <div id="score" style={{ scrollMarginTop: 24 }}><ScorePreview t={t} map={map} /></div>
-        <div id="benefits" style={{ scrollMarginTop: 24 }}><BenefitsSection t={t} map={map} /></div>
-        <div id="authority" style={{ scrollMarginTop: 24 }}><AuthoritySection t={t} /></div>
-        <div id="faq" style={{ scrollMarginTop: 24 }}><FaqSection t={t} map={map} /></div>
-        <div id="cta" style={{ scrollMarginTop: 24 }}><CTASection t={t} onStart={() => startQuiz("bottom")} /></div>
-        <StickyQuizButton t={t} onStart={() => startQuiz("sticky")} />
+        {!loaded ? (
+          <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true" aria-label="Loading page content">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        ) : (
+          <>
+            <div id="hero" style={{ scrollMarginTop: 24 }}><HeroSection t={t} onStart={() => startQuiz("hero")} /></div>
+            <div id="problem" style={{ scrollMarginTop: 24 }}><ProblemSection t={t} map={map} /></div>
+            <div id="reveal" style={{ scrollMarginTop: 24 }}><RevealSection t={t} map={map} /></div>
+            <div id="score" style={{ scrollMarginTop: 24 }}><ScorePreview t={t} map={map} /></div>
+            <div id="benefits" style={{ scrollMarginTop: 24 }}><BenefitsSection t={t} map={map} /></div>
+            <div id="authority" style={{ scrollMarginTop: 24 }}><AuthoritySection t={t} /></div>
+            <div id="faq" style={{ scrollMarginTop: 24 }}><FaqSection t={t} map={map} /></div>
+            <div id="cta" style={{ scrollMarginTop: 24 }}><CTASection t={t} onStart={() => startQuiz("bottom")} /></div>
+            <StickyQuizButton t={t} onStart={() => startQuiz("sticky")} />
+          </>
+        )}
       </main>
     </>
 

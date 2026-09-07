@@ -282,10 +282,11 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
  * the existing 3-Day Challenge signup route (/challenge/join) — the same route
  * the existing quiz's result page uses.
  *
- * Reveal sequence: cards appear one at a time (fade + slide up), each followed
- * by a 0-to-final count-up of its percentage and progress bar; only after the
- * previous card's count-up finishes does the next begin. The bridge section
- * fades in after the final card's count-up completes.
+ * Reveal sequence: each card stays hidden until it scrolls into view, then
+ * fades in and runs its 0-to-final count-up of its percentage and progress
+ * bar. The first card is in view on load so it plays immediately; the rest
+ * appear one at a time as the user scrolls. The bridge section fades in
+ * after the AI advisor teaser (shown after the final card's count-up) ends.
  */
 const PipelineScorecardResult = () => {
   const [params] = useSearchParams();

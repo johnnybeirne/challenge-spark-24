@@ -211,6 +211,8 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
       setPlay(true);
       return;
     }
+    // Reveal a card only when it scrolls into the upper half of the viewport,
+    // so the three results unlock one at a time as the user scrolls down.
     const io = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -219,7 +221,7 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
           io.disconnect();
         }
       },
-      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0.15, rootMargin: "0px 0px -50% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -400,18 +402,17 @@ const PipelineScorecardResult = () => {
               </section>
 
               {/* Category cards — revealed one at a time as the user scrolls.
-                  Each card sits in its own viewport-height slot so only one is
-                  on screen at a time; scrolling brings the next into view. */}
-              <div className="flex flex-col">
+                  A card only reveals once it scrolls into the upper half of the
+                  viewport, so they unlock one-by-one without forced spacing. */}
+              <div className="flex flex-col gap-6">
                 {categoryResults.map((cat, index) => (
-                  <div key={cat.key} className="flex min-h-[68vh] items-center py-6">
-                    <CategoryCard
-                      cat={cat}
-                      index={index}
-                      isLast={index === CATEGORIES.length - 1}
-                      onLastCountDone={() => setShowAdvisor(true)}
-                    />
-                  </div>
+                  <CategoryCard
+                    key={cat.key}
+                    cat={cat}
+                    index={index}
+                    isLast={index === CATEGORIES.length - 1}
+                    onLastCountDone={() => setShowAdvisor(true)}
+                  />
                 ))}
               </div>
 

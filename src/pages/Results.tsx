@@ -366,6 +366,36 @@ const Results = () => {
               </div>
             );
           })()}
+
+          {/* CATEGORY BREAKDOWN — additive, does not affect the archetype above */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            {categoryScores.map((c) => (
+              <div
+                key={c.category}
+                className="rounded-2xl border border-foreground/10 bg-card p-5 text-left"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    {c.label}
+                  </span>
+                  <span className="text-2xl font-black tracking-tight">{c.percent}%</span>
+                </div>
+                <div
+                  className="mt-3 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
+                  role="meter"
+                  aria-valuenow={c.percent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${c.label} score`}
+                >
+                  <div
+                    className={`h-full rounded-full ${accent.bar} transition-[width] duration-500 ease-out`}
+                    style={{ width: `${c.percent}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* JOHNNY MESSAGE — flowing, no chrome */}

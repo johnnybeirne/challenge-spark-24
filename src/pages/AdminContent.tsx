@@ -834,12 +834,17 @@ function FieldRow({
           rows={3}
           className="text-sm leading-relaxed"
         />
-      ) : (
+      ) : row.value_type === "url" ? (
         <Input
           value={row.value}
           onChange={(e) => onUpdate({ value: e.target.value })}
           className="h-9 text-sm"
-          type={row.value_type === "url" ? "url" : "text"}
+          type="url"
+        />
+      ) : (
+        <AutoGrowInput
+          value={row.value}
+          onChange={(v) => onUpdate({ value: v })}
         />
       )}
     </div>

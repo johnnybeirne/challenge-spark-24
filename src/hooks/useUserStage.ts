@@ -54,7 +54,6 @@ export const useUserStage = (): StageFlags => {
   const suppressPremiumCheck = typeof window !== "undefined" && (
     window.location.pathname === "/owner-console" ||
     window.location.pathname.startsWith("/owner-console/") ||
-    window.location.pathname === "/admin" ||
     window.location.pathname.startsWith("/admin/") ||
     window.location.pathname === "/challenge/join" ||
     window.location.pathname === "/join" ||

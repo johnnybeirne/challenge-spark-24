@@ -46,7 +46,6 @@ export function useUserRole(): UseUserRoleResult {
   const suppressBackgroundRoleQueries = typeof window !== "undefined" && (
     window.location.pathname === "/owner-console" ||
     window.location.pathname.startsWith("/owner-console/") ||
-    window.location.pathname === "/admin" ||
     window.location.pathname.startsWith("/admin/") ||
     window.location.pathname === "/challenge/join" ||
     window.location.pathname === "/join" ||

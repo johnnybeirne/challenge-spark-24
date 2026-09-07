@@ -496,7 +496,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const isOwnerConsoleRoute = typeof window !== "undefined" && (
     window.location.pathname === "/owner-console" ||
     window.location.pathname.startsWith("/owner-console/") ||
-    window.location.pathname === "/admin" ||
     window.location.pathname.startsWith("/admin/")
   );
 

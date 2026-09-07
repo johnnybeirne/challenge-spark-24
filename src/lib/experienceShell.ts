@@ -64,8 +64,9 @@ export function getExperienceConfig(experience: ExperienceType): ExperienceConfi
 export function getExperienceFromPath(pathname: string): ExperienceType {
   const p = (pathname || "/").toLowerCase();
 
-  // Admin (most specific first)
-  if (p === "/admin" || p.startsWith("/admin/") ||
+  // Admin (most specific first). /admin/qa-run and /admin/simulator still exist;
+  // the bare /admin alias was removed, so only the /admin/ prefix is matched.
+  if (p.startsWith("/admin/") ||
       p === "/owner-console" || p.startsWith("/owner-console/") ||
       p === "/user-features" || p.startsWith("/user-features/")) {
     return "admin";

@@ -199,19 +199,37 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 
 const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "score");
-  const pctRaw = t("score.percent", "76").replace(/[^0-9]/g, "");
-  const pct = Math.max(0, Math.min(100, Number(pctRaw) || 76));
+  // Traffic-light band: each ring is coloured by its own percentage value.
+  // 0-33% red, 34-74% amber, 75-100% green.
+  const bandColor = (pct: number) =>
+    pct <= 33 ? "#ef4444" : pct <= 74 ? "#f59e0b" : "#10b981";
+  const ring = (key: string, fallbackPct: number, labelKey: string, fallbackLabel: string) => {
+    const raw = t(key, String(fallbackPct)).replace(/[^0-9]/g, "");
+    const pct = Math.max(0, Math.min(100, Number(raw) || fallbackPct));
+    const color = bandColor(pct);
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <div
+          className="flex size-28 items-center justify-center rounded-full p-3 sm:size-32"
+          style={{ background: `conic-gradient(${color} 0 ${pct}%, hsl(var(--muted)) ${pct}% 100%)` }}
+        >
+          <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
+            <span className="text-2xl font-black leading-none text-foreground sm:text-3xl">{pct}%</span>
+          </div>
+        </div>
+        <span className="max-w-[8rem] text-xs font-black uppercase tracking-wide text-muted-foreground sm:text-sm">
+          {t(labelKey, fallbackLabel)}
+        </span>
+      </div>
+    );
+  };
   return (
     <PageSection className="border-y border-border bg-card/55">
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div
-          className="mx-auto flex size-64 items-center justify-center rounded-full p-6 [animation:donut-fill_1.4s_ease-out_both] lg:mx-0"
-          style={{ background: `conic-gradient(hsl(var(--success)) 0 ${pct}%, hsl(var(--muted)) ${pct}% 100%)` }}
-        >
-          <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
-            <span className="text-5xl font-black leading-none text-foreground">{pct}%</span>
-            <span className="mt-3 max-w-[10rem] text-sm font-black leading-5 text-muted-foreground">{t("score.percent_label", "System readiness")}</span>
-          </div>
+        <div className="mx-auto flex w-full max-w-md flex-wrap items-start justify-center gap-8 sm:gap-10 lg:mx-0">
+          {ring("score.system_percent", 76, "score.system_label", "System")}
+          {ring("score.audience_percent", 58, "score.audience_label", "Audience")}
+          {ring("score.conversion_percent", 41, "score.conversion_label", "Conversion")}
         </div>
         <div>
           <p className="text-sm font-black text-primary">{t("score.eyebrow", "Your result")}</p>

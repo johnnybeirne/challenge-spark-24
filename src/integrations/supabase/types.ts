@@ -3098,6 +3098,28 @@ export type Database = {
           total_score: number
         }[]
       }
+      get_pipeline_scorecard_response: {
+        Args: { p_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          q1: string | null
+          q2: string | null
+          q3: string | null
+          q4: string | null
+          q5: string | null
+          q6: string | null
+          q7: string | null
+          q8: string | null
+          q9: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pipeline_scorecard_responses"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_welcome_auto_send: { Args: never; Returns: boolean }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }

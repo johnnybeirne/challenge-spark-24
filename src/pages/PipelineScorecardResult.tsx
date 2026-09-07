@@ -323,9 +323,7 @@ const PipelineScorecardResult = () => {
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
-        .from("pipeline_scorecard_responses")
-        .select("id, q1, q2, q3, q4, q5, q6, q7, q8, q9")
-        .eq("id", id)
+        .rpc("get_pipeline_scorecard_response", { p_id: id })
         .maybeSingle();
       if (cancelled) return;
       if (error || !data) {

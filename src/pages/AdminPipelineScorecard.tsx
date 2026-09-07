@@ -212,7 +212,8 @@ const AdminPipelineScorecard = () => {
       multiline={f.multiline}
       rows={f.rows}
     />
-  );
+    );
+
 
   const previewAction = (
     <Button variant="outline" size="sm" asChild className="gap-2">

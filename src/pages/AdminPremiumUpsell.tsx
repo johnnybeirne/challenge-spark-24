@@ -91,6 +91,7 @@ const AdminPremiumUpsell = () => {
     <div className="space-y-6 px-6 py-6 max-w-3xl">
       <CmsPageHeader
         title="Premium upsell block"
+        previewHref="/challenge/day/2"
         description="Edit the copy for the premium upsell block shown on Day 2 (and anywhere else it appears)."
       />
 

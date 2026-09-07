@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import PreviewButton from "@/components/admin/PreviewButton";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Page header — friendly, not "admin-y"

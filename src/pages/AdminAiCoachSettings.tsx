@@ -50,6 +50,7 @@ const AdminAiCoachSettings = () => {
     <div className="space-y-6 max-w-3xl">
       <CmsPageHeader
         title="LeadTree AI settings"
+        previewHref="/mentor"
         description="Page copy, system prompt, response length, and fallback message for the LeadTree AI."
       />
 

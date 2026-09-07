@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,11 +69,16 @@ const AdminUnlockGates = () => {
 
   return (
     <div className="mx-auto w-full max-w-3xl p-6">
-      <h1 className="text-2xl font-bold text-foreground">Unlocks</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Every locked area in the app. Set the price, how many invites unlock it free, and
-        the wording participants see.
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Unlocks</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Every locked area in the app. Set the price, how many invites unlock it free, and
+            the wording participants see.
+          </p>
+        </div>
+        <PreviewButton href="/unlocks" />
+      </div>
 
       {rows.length === 0 && (
         <p className="mt-6 text-sm text-muted-foreground">No unlock gates yet.</p>

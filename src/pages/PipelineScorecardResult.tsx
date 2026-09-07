@@ -112,21 +112,24 @@ const tierFor = (score: number): "low" | "mid" | "high" => {
   return "high";
 };
 
-const ACCENT: Record<"low" | "mid" | "high", { text: string; bar: string; ring: string }> = {
+const ACCENT: Record<"low" | "mid" | "high", { text: string; bar: string; ring: string; fill: string }> = {
   low: {
     text: "text-rose-500 dark:text-rose-400",
     bar: "bg-rose-500",
     ring: "ring-rose-500/20",
+    fill: "#f43f5e",
   },
   mid: {
     text: "text-amber-500 dark:text-amber-400",
     bar: "bg-amber-500",
     ring: "ring-amber-500/20",
+    fill: "#f59e0b",
   },
   high: {
     text: "text-emerald-500 dark:text-emerald-400",
     bar: "bg-emerald-500",
     ring: "ring-emerald-500/20",
+    fill: "#10b981",
   },
 };
 

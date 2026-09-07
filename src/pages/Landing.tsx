@@ -53,7 +53,7 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
-  const { t, map } = useSiteContent("landing");
+  const { t, map, loaded } = useSiteContent("landing");
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 

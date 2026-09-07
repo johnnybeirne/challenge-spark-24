@@ -211,6 +211,8 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
       setPlay(true);
       return;
     }
+    // Reveal a card only when it scrolls into the upper half of the viewport,
+    // so the three results unlock one at a time as the user scrolls down.
     const io = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -219,7 +221,7 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
           io.disconnect();
         }
       },
-      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0.15, rootMargin: "0px 0px -50% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();

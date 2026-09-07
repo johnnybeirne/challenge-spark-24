@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import ScorecardAdvisorTeaser from "@/components/ScorecardAdvisorTeaser";
+import ScoreRing from "@/components/ScoreRing";
 
 
 type Letter = "A" | "B" | "C";
@@ -112,21 +113,24 @@ const tierFor = (score: number): "low" | "mid" | "high" => {
   return "high";
 };
 
-const ACCENT: Record<"low" | "mid" | "high", { text: string; bar: string; ring: string }> = {
+const ACCENT: Record<"low" | "mid" | "high", { text: string; bar: string; ring: string; fill: string }> = {
   low: {
     text: "text-rose-500 dark:text-rose-400",
     bar: "bg-rose-500",
     ring: "ring-rose-500/20",
+    fill: "#f43f5e",
   },
   mid: {
     text: "text-amber-500 dark:text-amber-400",
     bar: "bg-amber-500",
     ring: "ring-amber-500/20",
+    fill: "#f59e0b",
   },
   high: {
     text: "text-emerald-500 dark:text-emerald-400",
     bar: "bg-emerald-500",
     ring: "ring-emerald-500/20",
+    fill: "#10b981",
   },
 };
 
@@ -247,26 +251,14 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
             {cat.tierData.subtitle}
           </p>
         </div>
-        <div className="shrink-0 text-right">
-          <span className={`text-3xl font-black leading-none ${accent.text}`}>
-            {animated}%
-          </span>
+        <div className="shrink-0">
+          <ScoreRing
+            pct={play || !visible ? animated : pct}
+            color={accent.fill}
+            maxSize={200}
+            ariaLabel={`${cat.label} score`}
+          />
         </div>
-      </div>
-
-      {/* Score bar — width driven by the count-up value */}
-      <div
-        className="mt-4 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
-        role="meter"
-        aria-valuenow={play || !visible ? animated : pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`${cat.label} score`}
-      >
-        <div
-          className={`h-full rounded-full ${accent.bar}`}
-          style={{ width: `${animated}%` }}
-        />
       </div>
 
       <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, ListChecks } from "lucide-react";
+import { Loader2, ListChecks, ExternalLink } from "lucide-react";
 
 type Row = {
   id: string;
@@ -68,15 +68,23 @@ const AdminLeadGenQuiz = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <ListChecks className="h-6 w-6 text-primary" />
-          Lead Gen Quiz Questions
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Edit the wording of each quiz question and its Yes / No labels. Question order and
-          scoring stay fixed.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <ListChecks className="h-6 w-6 text-primary" />
+            Lead Gen Quiz Questions
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Edit the wording of each quiz question and its Yes / No labels. Question order and
+            scoring stay fixed.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <a href="/assessment" target="_blank" rel="noreferrer">
+            <ExternalLink className="h-4 w-4" />
+            Preview
+          </a>
+        </Button>
       </div>
 
       {rows.map((row) => (

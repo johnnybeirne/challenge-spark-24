@@ -344,30 +344,8 @@ const PipelineScorecardResult = () => {
     return { ...cat, score, tier, tierData: TIERS[cat.key][tier] };
   });
 
-  // Kick off the sequence once the row is loaded.
-  useEffect(() => {
-    if (!loading && row && !notFound && visibleCount === 0) {
-      setVisibleCount(1);
-    }
-  }, [loading, row, notFound, visibleCount]);
 
-  // When a new card becomes visible, wait for its fade-in, then start its count-up.
-  useEffect(() => {
-    if (visibleCount === 0) return;
-    const i = visibleCount - 1;
-    const timer = window.setTimeout(() => setCountingIndex(i), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [visibleCount]);
 
-  // When a card's count-up finishes, reveal the next card (or the advisor teaser).
-  const handleCountDone = (i: number) => {
-    setCountingIndex(-1);
-    if (i < CATEGORIES.length - 1) {
-      setVisibleCount((c) => c + 1);
-    } else {
-      setShowAdvisor(true);
-    }
-  };
 
 
   return (

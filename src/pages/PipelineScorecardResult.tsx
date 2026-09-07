@@ -251,26 +251,14 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
             {cat.tierData.subtitle}
           </p>
         </div>
-        <div className="shrink-0 text-right">
-          <span className={`text-3xl font-black leading-none ${accent.text}`}>
-            {animated}%
-          </span>
+        <div className="shrink-0">
+          <ScoreRing
+            pct={play || !visible ? animated : pct}
+            color={accent.fill}
+            maxSize={200}
+            ariaLabel={`${cat.label} score`}
+          />
         </div>
-      </div>
-
-      {/* Score bar — width driven by the count-up value */}
-      <div
-        className="mt-4 h-2 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
-        role="meter"
-        aria-valuenow={play || !visible ? animated : pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`${cat.label} score`}
-      >
-        <div
-          className={`h-full rounded-full ${accent.bar}`}
-          style={{ width: `${animated}%` }}
-        />
       </div>
 
       <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">

@@ -182,26 +182,55 @@ interface CategoryCardProps {
     tierData: Tier;
   };
   index: number;
-  visible: boolean;
-  play: boolean;
-  onCountDone: () => void;
+  isLast: boolean;
+  onLastCountDone: () => void;
 }
 
 const FADE_MS = 400;
 const COUNT_MS = 800;
 
-const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardProps) => {
+/**
+ * Reveals on scroll: each card stays hidden until it scrolls into view, then
+ * fades in and runs its 0-to-final count-up. The first card is in view on load
+ * so it plays immediately; the rest appear one at a time as the user scrolls.
+ */
+const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
+  const ref = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [play, setPlay] = useState(false);
   const accent = ACCENT[cat.tier];
   const pct = Math.round((cat.score / 15) * 100);
-  const animated = useCountUp(pct, play, COUNT_MS, onCountDone);
+  const animated = useCountUp(pct, play, COUNT_MS, isLast ? onLastCountDone : undefined);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setVisible(true);
+      setPlay(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible(true);
+          window.setTimeout(() => setPlay(true), FADE_MS);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section
-      key={cat.key}
+      ref={ref}
       className={`rounded-2xl border border-border bg-card p-6 shadow-sm ring-1 ${accent.ring} transition-all duration-[400ms] ease-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[12px]"
       }`}
-      style={{ transitionDelay: visible ? "0ms" : "0ms" }}
       aria-hidden={!visible}
     >
       <div className="flex items-center justify-between gap-4">
@@ -241,7 +270,6 @@ const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardPr
       <p className="mt-4 text-[var(--body-size)] leading-7 text-muted-foreground">
         {cat.tierData.description}
       </p>
-      {index === 0 ? null : null}
     </section>
   );
 };
@@ -254,10 +282,11 @@ const CategoryCard = ({ cat, index, visible, play, onCountDone }: CategoryCardPr
  * the existing 3-Day Challenge signup route (/challenge/join) — the same route
  * the existing quiz's result page uses.
  *
- * Reveal sequence: cards appear one at a time (fade + slide up), each followed
- * by a 0-to-final count-up of its percentage and progress bar; only after the
- * previous card's count-up finishes does the next begin. The bridge section
- * fades in after the final card's count-up completes.
+ * Reveal sequence: each card stays hidden until it scrolls into view, then
+ * fades in and runs its 0-to-final count-up of its percentage and progress
+ * bar. The first card is in view on load so it plays immediately; the rest
+ * appear one at a time as the user scrolls. The bridge section fades in
+ * after the AI advisor teaser (shown after the final card's count-up) ends.
  */
 const PipelineScorecardResult = () => {
   const [params] = useSearchParams();
@@ -269,12 +298,8 @@ const PipelineScorecardResult = () => {
   const [row, setRow] = useState<ScorecardRow | null>(null);
   const [notFound, setNotFound] = useState(false);
 
-  // Sequential reveal orchestration.
-  // visibleCount: how many cards are revealed (fading in).
-  // countingIndex: which card is currently running its count-up (-1 = none).
-  // showBridge: whether the bridge CTA section has faded in.
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [countingIndex, setCountingIndex] = useState(-1);
+  // Scroll-based reveal: each card reveals itself when it scrolls into view.
+  // The advisor teaser appears after the final card's count-up finishes.
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [showBridge, setShowBridge] = useState(false);
 
@@ -320,30 +345,8 @@ const PipelineScorecardResult = () => {
     return { ...cat, score, tier, tierData: TIERS[cat.key][tier] };
   });
 
-  // Kick off the sequence once the row is loaded.
-  useEffect(() => {
-    if (!loading && row && !notFound && visibleCount === 0) {
-      setVisibleCount(1);
-    }
-  }, [loading, row, notFound, visibleCount]);
 
-  // When a new card becomes visible, wait for its fade-in, then start its count-up.
-  useEffect(() => {
-    if (visibleCount === 0) return;
-    const i = visibleCount - 1;
-    const timer = window.setTimeout(() => setCountingIndex(i), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [visibleCount]);
 
-  // When a card's count-up finishes, reveal the next card (or the advisor teaser).
-  const handleCountDone = (i: number) => {
-    setCountingIndex(-1);
-    if (i < CATEGORIES.length - 1) {
-      setVisibleCount((c) => c + 1);
-    } else {
-      setShowAdvisor(true);
-    }
-  };
 
 
   return (
@@ -396,17 +399,19 @@ const PipelineScorecardResult = () => {
                 </p>
               </section>
 
-              {/* Category cards — revealed sequentially */}
-              <div className="flex flex-col gap-6">
+              {/* Category cards — revealed one at a time as the user scrolls.
+                  Each card sits in its own viewport-height slot so only one is
+                  on screen at a time; scrolling brings the next into view. */}
+              <div className="flex flex-col">
                 {categoryResults.map((cat, index) => (
-                  <CategoryCard
-                    key={cat.key}
-                    cat={cat}
-                    index={index}
-                    visible={index < visibleCount}
-                    play={countingIndex === index}
-                    onCountDone={() => handleCountDone(index)}
-                  />
+                  <div key={cat.key} className="flex min-h-[68vh] items-center py-6">
+                    <CategoryCard
+                      cat={cat}
+                      index={index}
+                      isLast={index === CATEGORIES.length - 1}
+                      onLastCountDone={() => setShowAdvisor(true)}
+                    />
+                  </div>
                 ))}
               </div>
 

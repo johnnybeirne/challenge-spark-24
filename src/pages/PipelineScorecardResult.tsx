@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import ScorecardAdvisorTeaser from "@/components/ScorecardAdvisorTeaser";
+import ScoreRing from "@/components/ScoreRing";
 
 
 type Letter = "A" | "B" | "C";

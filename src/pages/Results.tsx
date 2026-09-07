@@ -150,9 +150,6 @@ const Results = () => {
           messages: Array.isArray(r.messages) ? r.messages.filter((m): m is string => typeof m === "string") : [],
         }));
         setRows(normalised);
-      })
-      .catch(() => {
-        if (!cancelled) setRows([]);
       });
     return () => {
       cancelled = true;

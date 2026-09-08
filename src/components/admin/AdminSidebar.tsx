@@ -287,10 +287,18 @@ export function AdminSidebar() {
         setDragging(null);
       }}
       className={[
+        "group relative",
         canDrag ? "cursor-grab" : "",
         dragging?.url === item.url ? "opacity-40" : "",
+        canDrag ? "transition-colors hover:bg-sidebar-accent/40 rounded-md" : "",
       ].join(" ")}
     >
+      {canDrag && (
+        <GripVertical
+          aria-hidden
+          className="absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground pointer-events-none"
+        />
+      )}
       <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
         {item.external ? (
           <a href={item.url} target="_blank" rel="noopener noreferrer">

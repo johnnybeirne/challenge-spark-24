@@ -308,47 +308,32 @@ const AdminContent = () => {
       return;
     }
     setSaving(true);
-    let ok = 0;
+    // Optimistic: the local state already holds the edits, so clear the
+    // unsaved markers and confirm immediately; persistence happens below.
+    const savedIds = new Set(dirty.map((r) => r.id));
+    setRows((rs) => rs.map((r) => (savedIds.has(r.id) ? { ...r, _dirty: false } : r)));
+    invalidatePage(activePage);
+    setJustSaved(true);
+    window.setTimeout(() => setJustSaved(false), 1800);
+    toast.success(`Saved ${dirty.length} change${dirty.length === 1 ? "" : "s"}`);
+
     let fail = 0;
     for (const r of dirty) {
-      if (r._new) {
-        const { error } = await supabase.from("site_content").insert({
-          page: r.page,
-          section: r.section,
-          key: r.key,
-          value: r.value,
-          value_type: r.value_type,
-          label: r.label,
-          sort_order: r.sort_order,
-          column_slot: r.column_slot ?? "full",
-        });
-        if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }
-        else ok++;
-      } else {
-        const { error } = await supabase
-          .from("site_content")
-          .update({
-            key: r.key,
-            value: r.value,
-            value_type: r.value_type,
-            label: r.label,
-            sort_order: r.sort_order,
-            column_slot: r.column_slot ?? "full",
-          })
-          .eq("id", r.id);
-        if (error) { fail++; toast.error(`${r.section}.${r.key}: ${error.message}`); }
-        else ok++;
+      const { _dirty, _new, id, ...record } = r;
+      const payload = { ...record, column_slot: record.column_slot ?? "full" };
+      const { error } = _new
+        ? await supabase.from("site_content").insert(payload)
+        : await supabase.from("site_content").update(payload).eq("id", id);
+      if (error) {
+        fail++;
+        toast.error(`${r.section}.${r.key}: ${error.message}`);
+        setRows((rs) => rs.map((row) => (row.id === r.id ? { ...row, _dirty: true } : row)));
       }
     }
     setSaving(false);
-    if (ok) {
-      toast.success(`Saved ${ok} change${ok === 1 ? "" : "s"}`);
-      setJustSaved(true);
-      window.setTimeout(() => setJustSaved(false), 1800);
-    }
-    invalidatePage(activePage);
-    await load(activePage);
     setPreviewNonce((n) => n + 1);
+    // Silently refresh from the database so new rows get real ids.
+    if (fail === 0) void load(activePage);
   };
 
   const dirtyCount = rows.filter((r) => r._dirty).length;

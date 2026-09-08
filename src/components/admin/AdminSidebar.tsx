@@ -356,14 +356,25 @@ export function AdminSidebar() {
 
         {filteredAdmin.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupLabel className="justify-between">
+              <span>Admin</span>
+              {canDrag && Object.keys(order).length > 0 && (
+                <button
+                  type="button"
+                  onClick={resetOrder}
+                  className="text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                >
+                  Reset order
+                </button>
+              )}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredAdmin.map((item) => {
                   const active = item.end
                     ? location.pathname === item.url
                     : location.pathname.startsWith(item.url);
-                  return renderLink(item, active);
+                  return renderLink(item, "admin", active);
                 })}
               </SidebarMenu>
             </SidebarGroupContent>

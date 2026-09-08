@@ -115,6 +115,10 @@ const AdminContent = () => {
     const saved = Number(localStorage.getItem("admin-content-panel-w"));
     return saved && saved > 240 ? saved : 340;
   });
+  const [showPreview, setShowPreview] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("admin-content-preview-on") === "1";
+  });
   const resizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -626,11 +630,22 @@ const AdminContent = () => {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={() => setPreviewNonce((n) => n + 1)}
+                onClick={() => { setShowPreview(true); setPreviewNonce((n) => n + 1); }}
                 title="Reload preview"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
               </Button>
+              {showPreview && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => { setShowPreview(false); try { localStorage.setItem("admin-content-preview-on", "0"); } catch {} }}
+                  title="Hide preview"
+                >
+                  Hide
+                </Button>
+              )}
             </div>
           </div>
           <div className="flex-1 overflow-auto bg-muted/40 p-4 flex justify-center">
@@ -642,13 +657,25 @@ const AdminContent = () => {
                 height: "100%",
               }}
             >
-              <iframe
-                ref={iframeRef}
-                key={previewNonce}
-                src={previewSrc}
-                title="Page preview"
-                className="w-full h-full border-0"
-              />
+              {showPreview ? (
+                <iframe
+                  ref={iframeRef}
+                  key={previewNonce}
+                  src={previewSrc}
+                  title="Page preview"
+                  loading="lazy"
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center p-6">
+                  <p className="text-sm text-muted-foreground">
+                    Preview is paused so the editor opens instantly.
+                  </p>
+                  <Button size="sm" onClick={() => { setShowPreview(true); try { localStorage.setItem("admin-content-preview-on", "1"); } catch {} }}>
+                    Show preview
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

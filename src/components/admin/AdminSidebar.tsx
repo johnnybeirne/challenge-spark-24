@@ -179,6 +179,35 @@ const siteItems: NavItem[] = [
   },
 ];
 
+/** Saved menu order (per browser). Keys are item urls. */
+const ORDER_KEY = "admin_sidebar_order_v1";
+
+const readOrder = (): Record<string, string[]> => {
+  try {
+    const raw = localStorage.getItem(ORDER_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const writeOrder = (next: Record<string, string[]>) => {
+  try {
+    localStorage.setItem(ORDER_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore */
+  }
+};
+
+/** Apply a saved url order to a list, keeping any new/unknown items at the end. */
+const applyOrder = (list: NavItem[], order?: string[]): NavItem[] => {
+  if (!order?.length) return list;
+  const index = new Map(order.map((url, i) => [url, i]));
+  return [...list].sort(
+    (a, b) => (index.get(a.url) ?? 999) - (index.get(b.url) ?? 999),
+  );
+};
+
 const matches = (item: NavItem, query: string, tags: string) => {
   const q = query.trim().toLowerCase();
   if (!q) return true;

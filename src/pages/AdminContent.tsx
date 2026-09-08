@@ -579,9 +579,12 @@ const AdminContent = () => {
             document.body.style.userSelect = "none";
           }}
           onDoubleClick={() => setPanelWidth(340)}
-          className="hidden lg:block w-1.5 shrink-0 cursor-col-resize bg-border hover:bg-primary/50 active:bg-primary transition-colors"
+          className="group hidden lg:flex w-2 shrink-0 cursor-col-resize bg-border hover:bg-primary/40 active:bg-primary transition-colors relative items-center justify-center"
           title="Drag to resize · double-click to reset"
-        />
+        >
+          <span className="absolute inset-y-0 -left-1 -right-1 z-10" aria-hidden />
+          <span className="h-7 w-[3px] rounded-full bg-foreground/15 group-hover:bg-primary group-hover:w-1 transition-all" aria-hidden />
+        </div>
 
         {/* Right: live preview */}
         <div className="hidden lg:flex flex-1 flex-col min-w-0">

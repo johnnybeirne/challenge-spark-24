@@ -117,7 +117,7 @@ const AdminContent = () => {
   });
   const [showPreview, setShowPreview] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
-    return localStorage.getItem("admin-content-preview-on") !== "0";
+    return localStorage.getItem("admin-content-preview-on") === "1";
   });
   const resizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -630,7 +630,7 @@ const AdminContent = () => {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={() => setPreviewNonce((n) => n + 1)}
+                onClick={() => { setShowPreview(true); setPreviewNonce((n) => n + 1); }}
                 title="Reload preview"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -660,7 +660,7 @@ const AdminContent = () => {
                   <p className="text-sm text-muted-foreground">
                     Preview is paused so the editor opens instantly.
                   </p>
-                  <Button size="sm" onClick={() => setShowPreview(true)}>
+                  <Button size="sm" onClick={() => { setShowPreview(true); try { localStorage.setItem("admin-content-preview-on", "1"); } catch {} }}>
                     Show preview
                   </Button>
                 </div>

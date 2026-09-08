@@ -101,6 +101,15 @@ const friendlyLabel = (row: Draft) => {
   return row.key.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
+// Keep the landing editor aligned with fields the current public page renders.
+// Older saved fields remain in the database for history, but should not appear
+// as editable controls when changing them cannot affect the preview.
+const isVisiblePageField = (row: Draft) => {
+  if (row.page !== "landing") return true;
+  if (row.section !== "hero") return true;
+  return ["eyebrow", "headline", "subhead", "cta_label", "image", "image_alt"].includes(row.key);
+};
+
 const AdminContent = () => {
   const [activePage, setActivePage] = useState<string>(PAGES[0].id);
   const [rows, setRows] = useState<Draft[]>([]);
@@ -198,6 +207,7 @@ const AdminContent = () => {
     const g: Record<string, Draft[]> = {};
     for (const r of rows) {
       if (r.section === "_meta") continue; // hide meta rows from the editor
+      if (!isVisiblePageField(r)) continue;
       g[r.section] ??= [];
       g[r.section].push(r);
     }

@@ -58,6 +58,20 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
+  const sectionOrder = useMemo(() => {
+    const fallback = ["hero", "problem", "reveal", "score", "benefits", "authority", "faq", "cta"];
+    try {
+      const saved = JSON.parse(map["_meta.section_order"] ?? "[]");
+      if (!Array.isArray(saved)) return fallback;
+      const supported = saved.filter(
+        (section): section is string => typeof section === "string" && fallback.includes(section),
+      );
+      return [...supported, ...fallback.filter((section) => !supported.includes(section))];
+    } catch {
+      return fallback;
+    }
+  }, [map]);
+
   useEffect(() => {
     if (entryIntent) setEntryIntent(entryIntent);
     trackEvent("landing_viewed", { funnel, variant });
@@ -76,6 +90,17 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     navigate("/assessment?start=1");
   };
 
+  const sections: Record<string, ReactNode> = {
+    hero: <HeroSection t={t} onStart={() => startQuiz("hero")} />,
+    problem: <ProblemSection t={t} map={map} />,
+    reveal: <RevealSection t={t} map={map} />,
+    score: <ScorePreview t={t} map={map} />,
+    benefits: <BenefitsSection t={t} map={map} />,
+    authority: <AuthoritySection t={t} />,
+    faq: <FaqSection t={t} map={map} />,
+    cta: <CTASection t={t} onStart={() => startQuiz("bottom")} />,
+  };
+
   return (
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
@@ -86,14 +111,11 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
           </div>
         ) : (
           <>
-            <div id="hero" style={{ scrollMarginTop: 24 }}><HeroSection t={t} onStart={() => startQuiz("hero")} /></div>
-            <div id="problem" style={{ scrollMarginTop: 24 }}><ProblemSection t={t} map={map} /></div>
-            <div id="reveal" style={{ scrollMarginTop: 24 }}><RevealSection t={t} map={map} /></div>
-            <div id="score" style={{ scrollMarginTop: 24 }}><ScorePreview t={t} map={map} /></div>
-            <div id="benefits" style={{ scrollMarginTop: 24 }}><BenefitsSection t={t} map={map} /></div>
-            <div id="authority" style={{ scrollMarginTop: 24 }}><AuthoritySection t={t} /></div>
-            <div id="faq" style={{ scrollMarginTop: 24 }}><FaqSection t={t} map={map} /></div>
-            <div id="cta" style={{ scrollMarginTop: 24 }}><CTASection t={t} onStart={() => startQuiz("bottom")} /></div>
+            {sectionOrder.map((section) => (
+              <div key={section} id={section} style={{ scrollMarginTop: 24 }}>
+                {sections[section]}
+              </div>
+            ))}
             <StickyQuizButton t={t} onStart={() => startQuiz("sticky")} />
           </>
         )}

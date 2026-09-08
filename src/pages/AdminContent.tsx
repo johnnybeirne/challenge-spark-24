@@ -642,13 +642,25 @@ const AdminContent = () => {
                 height: "100%",
               }}
             >
-              <iframe
-                ref={iframeRef}
-                key={previewNonce}
-                src={previewSrc}
-                title="Page preview"
-                className="w-full h-full border-0"
-              />
+              {showPreview ? (
+                <iframe
+                  ref={iframeRef}
+                  key={previewNonce}
+                  src={previewSrc}
+                  title="Page preview"
+                  loading="lazy"
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center p-6">
+                  <p className="text-sm text-muted-foreground">
+                    Preview is paused so the editor opens instantly.
+                  </p>
+                  <Button size="sm" onClick={() => setShowPreview(true)}>
+                    Show preview
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

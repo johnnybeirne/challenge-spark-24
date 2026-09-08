@@ -386,7 +386,7 @@ export function AdminSidebar() {
             <SidebarGroupLabel>Site</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {filteredSite.map((item) => renderLink(item))}
+                {filteredSite.map((item) => renderLink(item, "site"))}
                 {showLogout && (
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={handleLogout} tooltip="Log out">

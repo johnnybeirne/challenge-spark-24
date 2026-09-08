@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Upload,
   Image as ImageIcon,
+  AlertTriangle,
 } from "lucide-react";
 import { invalidatePage, type SiteContentRow } from "@/hooks/useSiteContent";
 import { Link } from "react-router-dom";
@@ -115,6 +116,23 @@ const AdminContent = () => {
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  // On-screen save confirmation: timestamp + outcome, so the owner can trust
+  // what is live. Persists until the next save replaces it.
+  const [saveResult, setSaveResult] = useState<{
+    ts: string;
+    status: "saving" | "success" | "partial" | "error";
+    count: number;
+    failed: number;
+  } | null>(null);
+
+  const formatTs = (d: Date) =>
+    d.toLocaleString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      day: "2-digit",
+      month: "short",
+    });
 
 
   const load = async (page: string) => {
@@ -316,6 +334,8 @@ const AdminContent = () => {
     setJustSaved(true);
     window.setTimeout(() => setJustSaved(false), 1800);
     toast.success(`Saved ${dirty.length} change${dirty.length === 1 ? "" : "s"}`);
+    // Record the save attempt immediately so the owner sees a timestamp.
+    setSaveResult({ ts: formatTs(new Date()), status: "saving", count: dirty.length, failed: 0 });
 
     let fail = 0;
     for (const r of dirty) {
@@ -332,6 +352,14 @@ const AdminContent = () => {
     }
     setSaving(false);
     setPreviewNonce((n) => n + 1);
+    // Final outcome: success if every write landed, partial if some failed,
+    // error only if nothing persisted at all.
+    setSaveResult((prev) => ({
+      ts: prev?.ts ?? formatTs(new Date()),
+      status: fail === 0 ? "success" : fail === dirty.length ? "error" : "partial",
+      count: dirty.length,
+      failed: fail,
+    }));
     // Silently refresh from the database so new rows get real ids.
     if (fail === 0) void load(activePage);
   };
@@ -488,6 +516,40 @@ const AdminContent = () => {
               </DndContext>
             )}
           </div>
+
+          {/* On-screen save confirmation: timestamp + outcome */}
+          {saveResult && (
+            <div
+              className={`border-t px-4 py-2 flex items-center gap-2 text-xs ${
+                saveResult.status === "success"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : saveResult.status === "partial"
+                  ? "bg-amber-50 text-amber-700"
+                  : saveResult.status === "error"
+                  ? "bg-rose-50 text-rose-700"
+                  : "bg-muted/40 text-muted-foreground"
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              {saveResult.status === "saving" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+              ) : saveResult.status === "success" ? (
+                <Check className="h-3.5 w-3.5 shrink-0" />
+              ) : (
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              )}
+              <span className="font-medium">
+                {saveResult.status === "saving"
+                  ? `Saving ${saveResult.count} change${saveResult.count === 1 ? "" : "s"}...`
+                  : saveResult.status === "success"
+                  ? `Saved ${saveResult.count} change${saveResult.count === 1 ? "" : "s"} at ${saveResult.ts}`
+                  : saveResult.status === "partial"
+                  ? `Partial save at ${saveResult.ts}: ${saveResult.count - saveResult.failed} of ${saveResult.count} succeeded, ${saveResult.failed} failed`
+                  : `Save failed at ${saveResult.ts}`}
+              </span>
+            </div>
+          )}
 
           {/* Save bar */}
           <div className="border-t bg-background px-4 py-3 flex items-center justify-between gap-3">

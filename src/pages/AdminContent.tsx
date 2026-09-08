@@ -115,6 +115,10 @@ const AdminContent = () => {
     const saved = Number(localStorage.getItem("admin-content-panel-w"));
     return saved && saved > 240 ? saved : 340;
   });
+  const [showPreview, setShowPreview] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("admin-content-preview-on") !== "0";
+  });
   const resizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 

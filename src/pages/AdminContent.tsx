@@ -635,6 +635,17 @@ const AdminContent = () => {
               >
                 <RefreshCw className="h-3.5 w-3.5" />
               </Button>
+              {showPreview && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => { setShowPreview(false); try { localStorage.setItem("admin-content-preview-on", "0"); } catch {} }}
+                  title="Hide preview"
+                >
+                  Hide
+                </Button>
+              )}
             </div>
           </div>
           <div className="flex-1 overflow-auto bg-muted/40 p-4 flex justify-center">

@@ -697,7 +697,9 @@ const AdminContent = () => {
               Save
               {dirtyCount > 0 && <Badge variant="secondary" className="ml-2">{dirtyCount}</Badge>}
             </Button>
+            </div>
           </div>
+
         </div>
       </div>
 

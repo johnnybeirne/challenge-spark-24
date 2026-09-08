@@ -12,9 +12,6 @@ import {
   Trash2,
   ExternalLink,
   Check,
-  RefreshCw,
-  Monitor,
-  Smartphone,
   Settings2,
   GripVertical,
   ChevronUp,
@@ -356,7 +353,6 @@ const AdminContent = () => {
 
   const dirtyCount = rows.filter((r) => r._dirty).length;
   const currentPage = PAGES.find((p) => p.id === activePage)!;
-  const previewSrc = `${currentPage.previewUrl}${currentPage.previewUrl.includes("?") ? "&" : "?"}cms=${previewNonce}`;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-muted/20">
@@ -378,7 +374,7 @@ const AdminContent = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Button variant="ghost" size="sm" asChild className="h-8">
               <Link to={currentPage.previewUrl} target="_blank">
-                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Open
+                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Open live page
               </Link>
             </Button>
           </div>

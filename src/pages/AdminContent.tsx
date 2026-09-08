@@ -516,6 +516,40 @@ const AdminContent = () => {
             )}
           </div>
 
+          {/* On-screen save confirmation: timestamp + outcome */}
+          {saveResult && (
+            <div
+              className={`border-t px-4 py-2 flex items-center gap-2 text-xs ${
+                saveResult.status === "success"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : saveResult.status === "partial"
+                  ? "bg-amber-50 text-amber-700"
+                  : saveResult.status === "error"
+                  ? "bg-rose-50 text-rose-700"
+                  : "bg-muted/40 text-muted-foreground"
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              {saveResult.status === "saving" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+              ) : saveResult.status === "success" ? (
+                <Check className="h-3.5 w-3.5 shrink-0" />
+              ) : (
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              )}
+              <span className="font-medium">
+                {saveResult.status === "saving"
+                  ? `Saving ${saveResult.count} change${saveResult.count === 1 ? "" : "s"}...`
+                  : saveResult.status === "success"
+                  ? `Saved ${saveResult.count} change${saveResult.count === 1 ? "" : "s"} at ${saveResult.ts}`
+                  : saveResult.status === "partial"
+                  ? `Partial save at ${saveResult.ts}: ${saveResult.count - saveResult.failed} of ${saveResult.count} succeeded, ${saveResult.failed} failed`
+                  : `Save failed at ${saveResult.ts}`}
+              </span>
+            </div>
+          )}
+
           {/* Save bar */}
           <div className="border-t bg-background px-4 py-3 flex items-center justify-between gap-3">
             <div className="text-xs text-muted-foreground flex items-center gap-1.5 min-w-0">

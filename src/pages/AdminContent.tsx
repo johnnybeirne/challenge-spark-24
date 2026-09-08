@@ -12,9 +12,6 @@ import {
   Trash2,
   ExternalLink,
   Check,
-  RefreshCw,
-  Monitor,
-  Smartphone,
   Settings2,
   GripVertical,
   ChevronUp,
@@ -117,55 +114,8 @@ const AdminContent = () => {
   const [saving, setSaving] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
-  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [panelWidth, setPanelWidth] = useState<number>(() => {
-    if (typeof window === "undefined") return 340;
-    const saved = Number(localStorage.getItem("admin-content-panel-w"));
-    return saved && saved > 240 ? saved : 340;
-  });
-  const [showPreview, setShowPreview] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("admin-content-preview-on") === "1";
-  });
-  const resizing = useRef(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (!resizing.current) return;
-      const next = Math.min(720, Math.max(260, e.clientX));
-      setPanelWidth(next);
-    };
-    const onUp = () => {
-      if (!resizing.current) return;
-      resizing.current = false;
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-      try { localStorage.setItem("admin-content-panel-w", String(panelWidth)); } catch {}
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [panelWidth]);
-
-  // When the selected section changes, scroll the preview iframe to its anchor.
-  // We mutate the iframe's hash directly to avoid a full reload.
-  useEffect(() => {
-    if (!activeSection) return;
-    const meta = sectionMeta(activePage, activeSection);
-    if (!meta) return;
-    const win = iframeRef.current?.contentWindow;
-    if (!win) return;
-    try {
-      win.location.hash = `#${meta.anchor}`;
-    } catch {
-      /* cross-origin or not ready — ignore */
-    }
-  }, [activeSection, activePage, previewNonce]);
 
   const load = async (page: string) => {
     setLoading(true);
@@ -403,7 +353,6 @@ const AdminContent = () => {
 
   const dirtyCount = rows.filter((r) => r._dirty).length;
   const currentPage = PAGES.find((p) => p.id === activePage)!;
-  const previewSrc = `${currentPage.previewUrl}${currentPage.previewUrl.includes("?") ? "&" : "?"}cms=${previewNonce}`;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-muted/20">
@@ -425,20 +374,17 @@ const AdminContent = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Button variant="ghost" size="sm" asChild className="h-8">
               <Link to={currentPage.previewUrl} target="_blank">
-                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Open
+                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Open live page
               </Link>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Split pane: editor | preview */}
+      {/* Editor */}
       <div className="flex-1 flex min-h-0">
-        {/* Left: editor */}
-        <div
-          className="w-full lg:!w-[var(--editor-w)] shrink-0 border-r bg-background flex flex-col"
-          style={{ ["--editor-w" as string]: `${panelWidth}px` }}
-        >
+        <div className="w-full mx-auto max-w-4xl border-x bg-background flex flex-col">
+
           <div className="px-4 py-3 border-b">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
@@ -583,113 +529,8 @@ const AdminContent = () => {
             </Button>
           </div>
         </div>
-
-        {/* Drag handle to resize editor panel */}
-        <div
-          onMouseDown={(e) => {
-            e.preventDefault();
-            resizing.current = true;
-            document.body.style.cursor = "col-resize";
-            document.body.style.userSelect = "none";
-          }}
-          onDoubleClick={() => setPanelWidth(340)}
-          className="group hidden lg:flex w-2 shrink-0 cursor-col-resize bg-border hover:bg-primary/40 active:bg-primary transition-colors relative items-center justify-center"
-          title="Drag to resize · double-click to reset"
-        >
-          <span className="absolute inset-y-0 -left-1 -right-1 z-10" aria-hidden />
-          <span className="h-7 w-[3px] rounded-full bg-foreground/15 group-hover:bg-primary group-hover:w-1 transition-all" aria-hidden />
-        </div>
-
-        {/* Right: live preview */}
-        <div className="hidden lg:flex flex-1 flex-col min-w-0">
-          <div className="px-4 py-2 border-b bg-background flex items-center justify-between gap-2">
-            <div className="text-xs text-muted-foreground truncate flex items-center gap-2">
-              <span>
-                Editing: <span className="font-semibold text-foreground">{currentPage.label}</span>
-                {activeSection && (
-                  <>
-                    {" / "}
-                    <span className="font-semibold text-foreground">
-                      {sectionMeta(activePage, activeSection)?.label ?? sectionTitle(activeSection)}
-                    </span>
-                  </>
-                )}
-              </span>
-              <span className="font-mono opacity-60">{currentPage.previewUrl}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant={device === "desktop" ? "secondary" : "ghost"}
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setDevice("desktop")}
-                title="Desktop"
-              >
-                <Monitor className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                variant={device === "mobile" ? "secondary" : "ghost"}
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setDevice("mobile")}
-                title="Mobile"
-              >
-                <Smartphone className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => { setShowPreview(true); setPreviewNonce((n) => n + 1); }}
-                title="Reload preview"
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-              </Button>
-              {showPreview && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  onClick={() => { setShowPreview(false); try { localStorage.setItem("admin-content-preview-on", "0"); } catch {} }}
-                  title="Hide preview"
-                >
-                  Hide
-                </Button>
-              )}
-            </div>
-          </div>
-          <div className="flex-1 overflow-auto bg-muted/40 p-4 flex justify-center">
-            <div
-              className="bg-background shadow-lg rounded-md overflow-hidden border transition-all"
-              style={{
-                width: device === "mobile" ? 390 : "100%",
-                maxWidth: device === "mobile" ? 390 : 1280,
-                height: "100%",
-              }}
-            >
-              {showPreview ? (
-                <iframe
-                  ref={iframeRef}
-                  key={previewNonce}
-                  src={previewSrc}
-                  title="Page preview"
-                  loading="lazy"
-                  className="w-full h-full border-0"
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center p-6">
-                  <p className="text-sm text-muted-foreground">
-                    Preview is paused so the editor opens instantly.
-                  </p>
-                  <Button size="sm" onClick={() => { setShowPreview(true); try { localStorage.setItem("admin-content-preview-on", "1"); } catch {} }}>
-                    Show preview
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
+
     </div>
   );
 };

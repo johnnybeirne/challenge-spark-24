@@ -115,6 +115,23 @@ const AdminContent = () => {
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  // On-screen save confirmation: timestamp + outcome, so the owner can trust
+  // what is live. Persists until the next save replaces it.
+  const [saveResult, setSaveResult] = useState<{
+    ts: string;
+    status: "saving" | "success" | "partial" | "error";
+    count: number;
+    failed: number;
+  } | null>(null);
+
+  const formatTs = (d: Date) =>
+    d.toLocaleString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      day: "2-digit",
+      month: "short",
+    });
 
 
   const load = async (page: string) => {

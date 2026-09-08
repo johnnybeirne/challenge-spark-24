@@ -257,20 +257,40 @@ export function AdminSidebar() {
   };
 
   const filteredAdmin = useMemo(
-    () => items.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
-    [query, tagMap],
+    () => adminItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [adminItems, query, tagMap],
   );
   const filteredSite = useMemo(
-    () => siteItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
-    [query, tagMap],
+    () => siteList.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [siteList, query, tagMap],
   );
   const showLogout = !query || "log out".includes(query.toLowerCase());
   const noResults =
     Boolean(query) && filteredAdmin.length === 0 && filteredSite.length === 0 && !showLogout;
 
+  // Dragging is only allowed on the full, unfiltered, expanded list.
+  const canDrag = !query && !collapsed;
 
-  const renderLink = (item: NavItem, active?: boolean) => (
-    <SidebarMenuItem key={item.url}>
+  const renderLink = (item: NavItem, group: "admin" | "site", active?: boolean) => (
+    <SidebarMenuItem
+      key={item.url}
+      draggable={canDrag}
+      onDragStart={() => setDragging({ group, url: item.url })}
+      onDragEnd={() => setDragging(null)}
+      onDragOver={(e) => {
+        if (canDrag && dragging?.group === group) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        if (!canDrag || dragging?.group !== group) return;
+        e.preventDefault();
+        reorder(group, dragging.url, item.url);
+        setDragging(null);
+      }}
+      className={[
+        canDrag ? "cursor-grab" : "",
+        dragging?.url === item.url ? "opacity-40" : "",
+      ].join(" ")}
+    >
       <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
         {item.external ? (
           <a href={item.url} target="_blank" rel="noopener noreferrer">

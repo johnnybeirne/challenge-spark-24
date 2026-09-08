@@ -227,6 +227,29 @@ export function AdminSidebar() {
   const { rows: tagRows } = useAdminPageTags();
   const tagMap = useMemo(() => tagsByKey(tagRows), [tagRows]);
 
+  const [order, setOrder] = useState<Record<string, string[]>>(() => readOrder());
+  const [dragging, setDragging] = useState<{ group: "admin" | "site"; url: string } | null>(null);
+
+  const adminItems = useMemo(() => applyOrder(items, order.admin), [order]);
+  const siteList = useMemo(() => applyOrder(siteItems, order.site), [order]);
+
+  const reorder = (group: "admin" | "site", fromUrl: string, toUrl: string) => {
+    if (fromUrl === toUrl) return;
+    const list = (group === "admin" ? adminItems : siteList).map((i) => i.url);
+    const from = list.indexOf(fromUrl);
+    const to = list.indexOf(toUrl);
+    if (from < 0 || to < 0) return;
+    list.splice(to, 0, list.splice(from, 1)[0]);
+    const next = { ...order, [group]: list };
+    setOrder(next);
+    writeOrder(next);
+  };
+
+  const resetOrder = () => {
+    setOrder({});
+    writeOrder({});
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success("Logged out");

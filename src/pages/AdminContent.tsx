@@ -117,55 +117,8 @@ const AdminContent = () => {
   const [saving, setSaving] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const [previewNonce, setPreviewNonce] = useState(0);
-  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [panelWidth, setPanelWidth] = useState<number>(() => {
-    if (typeof window === "undefined") return 340;
-    const saved = Number(localStorage.getItem("admin-content-panel-w"));
-    return saved && saved > 240 ? saved : 340;
-  });
-  const [showPreview, setShowPreview] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("admin-content-preview-on") === "1";
-  });
-  const resizing = useRef(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (!resizing.current) return;
-      const next = Math.min(720, Math.max(260, e.clientX));
-      setPanelWidth(next);
-    };
-    const onUp = () => {
-      if (!resizing.current) return;
-      resizing.current = false;
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-      try { localStorage.setItem("admin-content-panel-w", String(panelWidth)); } catch {}
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [panelWidth]);
-
-  // When the selected section changes, scroll the preview iframe to its anchor.
-  // We mutate the iframe's hash directly to avoid a full reload.
-  useEffect(() => {
-    if (!activeSection) return;
-    const meta = sectionMeta(activePage, activeSection);
-    if (!meta) return;
-    const win = iframeRef.current?.contentWindow;
-    if (!win) return;
-    try {
-      win.location.hash = `#${meta.anchor}`;
-    } catch {
-      /* cross-origin or not ready — ignore */
-    }
-  }, [activeSection, activePage, previewNonce]);
 
   const load = async (page: string) => {
     setLoading(true);

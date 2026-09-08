@@ -179,6 +179,35 @@ const siteItems: NavItem[] = [
   },
 ];
 
+/** Saved menu order (per browser). Keys are item urls. */
+const ORDER_KEY = "admin_sidebar_order_v1";
+
+const readOrder = (): Record<string, string[]> => {
+  try {
+    const raw = localStorage.getItem(ORDER_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const writeOrder = (next: Record<string, string[]>) => {
+  try {
+    localStorage.setItem(ORDER_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore */
+  }
+};
+
+/** Apply a saved url order to a list, keeping any new/unknown items at the end. */
+const applyOrder = (list: NavItem[], order?: string[]): NavItem[] => {
+  if (!order?.length) return list;
+  const index = new Map(order.map((url, i) => [url, i]));
+  return [...list].sort(
+    (a, b) => (index.get(a.url) ?? 999) - (index.get(b.url) ?? 999),
+  );
+};
+
 const matches = (item: NavItem, query: string, tags: string) => {
   const q = query.trim().toLowerCase();
   if (!q) return true;
@@ -198,6 +227,29 @@ export function AdminSidebar() {
   const { rows: tagRows } = useAdminPageTags();
   const tagMap = useMemo(() => tagsByKey(tagRows), [tagRows]);
 
+  const [order, setOrder] = useState<Record<string, string[]>>(() => readOrder());
+  const [dragging, setDragging] = useState<{ group: "admin" | "site"; url: string } | null>(null);
+
+  const adminItems = useMemo(() => applyOrder(items, order.admin), [order]);
+  const siteList = useMemo(() => applyOrder(siteItems, order.site), [order]);
+
+  const reorder = (group: "admin" | "site", fromUrl: string, toUrl: string) => {
+    if (fromUrl === toUrl) return;
+    const list = (group === "admin" ? adminItems : siteList).map((i) => i.url);
+    const from = list.indexOf(fromUrl);
+    const to = list.indexOf(toUrl);
+    if (from < 0 || to < 0) return;
+    list.splice(to, 0, list.splice(from, 1)[0]);
+    const next = { ...order, [group]: list };
+    setOrder(next);
+    writeOrder(next);
+  };
+
+  const resetOrder = () => {
+    setOrder({});
+    writeOrder({});
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success("Logged out");
@@ -205,20 +257,40 @@ export function AdminSidebar() {
   };
 
   const filteredAdmin = useMemo(
-    () => items.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
-    [query, tagMap],
+    () => adminItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [adminItems, query, tagMap],
   );
   const filteredSite = useMemo(
-    () => siteItems.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
-    [query, tagMap],
+    () => siteList.filter((i) => matches(i, query, tagMap[i.url] ?? "")),
+    [siteList, query, tagMap],
   );
   const showLogout = !query || "log out".includes(query.toLowerCase());
   const noResults =
     Boolean(query) && filteredAdmin.length === 0 && filteredSite.length === 0 && !showLogout;
 
+  // Dragging is only allowed on the full, unfiltered, expanded list.
+  const canDrag = !query && !collapsed;
 
-  const renderLink = (item: NavItem, active?: boolean) => (
-    <SidebarMenuItem key={item.url}>
+  const renderLink = (item: NavItem, group: "admin" | "site", active?: boolean) => (
+    <SidebarMenuItem
+      key={item.url}
+      draggable={canDrag}
+      onDragStart={() => setDragging({ group, url: item.url })}
+      onDragEnd={() => setDragging(null)}
+      onDragOver={(e) => {
+        if (canDrag && dragging?.group === group) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        if (!canDrag || dragging?.group !== group) return;
+        e.preventDefault();
+        reorder(group, dragging.url, item.url);
+        setDragging(null);
+      }}
+      className={[
+        canDrag ? "cursor-grab" : "",
+        dragging?.url === item.url ? "opacity-40" : "",
+      ].join(" ")}
+    >
       <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
         {item.external ? (
           <a href={item.url} target="_blank" rel="noopener noreferrer">
@@ -284,14 +356,25 @@ export function AdminSidebar() {
 
         {filteredAdmin.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupLabel className="justify-between">
+              <span>Admin</span>
+              {canDrag && Object.keys(order).length > 0 && (
+                <button
+                  type="button"
+                  onClick={resetOrder}
+                  className="text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                >
+                  Reset order
+                </button>
+              )}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredAdmin.map((item) => {
                   const active = item.end
                     ? location.pathname === item.url
                     : location.pathname.startsWith(item.url);
-                  return renderLink(item, active);
+                  return renderLink(item, "admin", active);
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -303,7 +386,7 @@ export function AdminSidebar() {
             <SidebarGroupLabel>Site</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {filteredSite.map((item) => renderLink(item))}
+                {filteredSite.map((item) => renderLink(item, "site"))}
                 {showLogout && (
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={handleLogout} tooltip="Log out">

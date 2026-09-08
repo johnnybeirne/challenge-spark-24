@@ -364,8 +364,57 @@ const AdminContent = () => {
     if (fail === 0) void load(activePage);
   };
 
+  // ---- Live match check -------------------------------------------------
+  // Compares the editor fields against what is actually stored (and therefore
+  // what the public page renders). Unsaved edits and stale/failed writes both
+  // show up here, with a nudge to refresh the live page.
+  const [liveCheck, setLiveCheck] = useState<{
+    ts: string;
+    checking: boolean;
+    mismatches: { section: string; key: string; reason: "unsaved" | "different" | "missing" }[];
+  } | null>(null);
+
+  const checkLiveMatch = async () => {
+    setLiveCheck({ ts: formatTs(new Date()), checking: true, mismatches: [] });
+    const { data, error } = await supabase
+      .from("site_content")
+      .select("*")
+      .eq("page", activePage);
+    if (error) {
+      setLiveCheck({ ts: formatTs(new Date()), checking: false, mismatches: [] });
+      toast.error("Could not check the live page", { description: error.message });
+      return;
+    }
+    const live = new Map((data ?? []).map((r: SiteContentRow) => [`${r.section}.${r.key}`, r]));
+    const mismatches: { section: string; key: string; reason: "unsaved" | "different" | "missing" }[] = [];
+    for (const r of rows) {
+      if (r.section === "_meta") continue;
+      if (!isVisiblePageField(r)) continue;
+      const key = `${r.section}.${r.key}`;
+      const l = live.get(key);
+      if (!l) {
+        mismatches.push({ section: r.section, key: r.key, reason: r._dirty ? "unsaved" : "missing" });
+        continue;
+      }
+      if ((l.value ?? "") !== (r.value ?? "")) {
+        mismatches.push({ section: r.section, key: r.key, reason: r._dirty ? "unsaved" : "different" });
+      }
+    }
+    setLiveCheck({ ts: formatTs(new Date()), checking: false, mismatches });
+    if (mismatches.length === 0) toast.success("Live page matches the editor");
+  };
+
+  // Auto-check shortly after every completed save.
+  useEffect(() => {
+    if (!saveResult || saveResult.status === "saving") return;
+    const t = window.setTimeout(() => void checkLiveMatch(), 400);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveResult?.ts, saveResult?.status]);
+
   const dirtyCount = rows.filter((r) => r._dirty).length;
   const currentPage = PAGES.find((p) => p.id === activePage)!;
+
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-muted/20">

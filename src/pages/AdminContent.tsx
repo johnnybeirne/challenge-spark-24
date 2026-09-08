@@ -333,6 +333,8 @@ const AdminContent = () => {
     setJustSaved(true);
     window.setTimeout(() => setJustSaved(false), 1800);
     toast.success(`Saved ${dirty.length} change${dirty.length === 1 ? "" : "s"}`);
+    // Record the save attempt immediately so the owner sees a timestamp.
+    setSaveResult({ ts: formatTs(new Date()), status: "saving", count: dirty.length, failed: 0 });
 
     let fail = 0;
     for (const r of dirty) {
@@ -349,6 +351,14 @@ const AdminContent = () => {
     }
     setSaving(false);
     setPreviewNonce((n) => n + 1);
+    // Final outcome: success if every write landed, partial if some failed,
+    // error only if nothing persisted at all.
+    setSaveResult((prev) => ({
+      ts: prev?.ts ?? formatTs(new Date()),
+      status: fail === 0 ? "success" : fail === dirty.length ? "error" : "partial",
+      count: dirty.length,
+      failed: fail,
+    }));
     // Silently refresh from the database so new rows get real ids.
     if (fail === 0) void load(activePage);
   };

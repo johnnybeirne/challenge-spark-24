@@ -944,6 +944,7 @@ function AutoGrowInput({
 function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   const handleFile = async (file: File) => {
     if (!file) return;
@@ -970,7 +971,23 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
 
   return (
     <div className="space-y-2">
-      <div className="flex items-start gap-2">
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const f = e.dataTransfer.files?.[0];
+          if (f && f.type.startsWith("image/")) void handleFile(f);
+        }}
+        onClick={() => inputRef.current?.click()}
+        className={`flex items-center gap-3 rounded-md border border-dashed p-3 cursor-pointer transition-colors ${
+          dragOver ? "border-primary bg-primary/5" : "border-input hover:bg-muted/40"
+        }`}
+      >
         <div className="h-16 w-16 shrink-0 rounded-md border bg-muted/40 overflow-hidden flex items-center justify-center">
           {value ? (
             <img src={value} alt="" className="h-full w-full object-cover" />
@@ -978,32 +995,34 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
             <ImageIcon className="h-5 w-5 text-muted-foreground/60" />
           )}
         </div>
-        <div className="flex-1 space-y-1.5 min-w-0">
-          <Input
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Paste image URL or upload"
-            className="h-8 text-xs"
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <p className="text-xs text-muted-foreground">
+            {uploading
+              ? "Uploading..."
+              : "Drag and drop an image here, or click to choose a file (max 8 MB)"}
+          </p>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void handleFile(f);
+              e.target.value = "";
+            }}
           />
           <div className="flex items-center gap-1.5">
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void handleFile(f);
-                e.target.value = "";
-              }}
-            />
             <Button
               type="button"
               variant="outline"
               size="sm"
               className="h-7 text-xs"
               disabled={uploading}
-              onClick={() => inputRef.current?.click()}
+              onClick={(e) => {
+                e.stopPropagation();
+                inputRef.current?.click();
+              }}
             >
               {uploading ? (
                 <Loader2 className="h-3 w-3 mr-1 animate-spin" />
@@ -1018,9 +1037,12 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
                 variant="ghost"
                 size="sm"
                 className="h-7 text-xs text-muted-foreground hover:text-destructive"
-                onClick={() => onChange("")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange("");
+                }}
               >
-                Clear
+                Remove
               </Button>
             )}
           </div>

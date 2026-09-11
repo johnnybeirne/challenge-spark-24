@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "l
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ScoreRing from "@/components/ScoreRing";
+import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import { useSiteContent, type SiteContentMap } from "@/hooks/useSiteContent";
@@ -91,14 +92,14 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   };
 
   const sections: Record<string, ReactNode> = {
-    hero: <HeroSection t={t} onStart={() => startQuiz("hero")} />,
-    problem: <ProblemSection t={t} map={map} />,
-    reveal: <RevealSection t={t} map={map} />,
-    score: <ScorePreview t={t} map={map} />,
-    benefits: <BenefitsSection t={t} map={map} />,
-    authority: <AuthoritySection t={t} />,
-    faq: <FaqSection t={t} map={map} />,
-    cta: <CTASection t={t} onStart={() => startQuiz("bottom")} />,
+    hero: <Reveal key="hero"><HeroSection t={t} onStart={() => startQuiz("hero")} /></Reveal>,
+    problem: <Reveal key="problem"><ProblemSection t={t} map={map} /></Reveal>,
+    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} /></Reveal>,
+    score: <Reveal key="score"><ScorePreview t={t} map={map} /></Reveal>,
+    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} /></Reveal>,
+    authority: <Reveal key="authority"><AuthoritySection t={t} /></Reveal>,
+    faq: <Reveal key="faq"><FaqSection t={t} map={map} /></Reveal>,
+    cta: <Reveal key="cta"><CTASection t={t} onStart={() => startQuiz("bottom")} /></Reveal>,
   };
 
   return (
@@ -187,11 +188,13 @@ const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
         body={t("problem.body", "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.")}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {items.map((problem) => (
-          <div key={problem} className="rounded-xl border border-border bg-background p-6 shadow-sm transition-transform hover:-translate-y-1">
-            <HelpCircle className="h-6 w-6 text-primary" />
-            <p className="mt-5 font-semibold leading-7 text-foreground">{problem}</p>
-          </div>
+        {items.map((problem, i) => (
+          <Reveal key={problem} delay={i * 0.12}>
+            <div className="h-full rounded-xl border border-border bg-background p-6 shadow-sm transition-transform hover:-translate-y-1">
+              <HelpCircle className="h-6 w-6 text-primary" />
+              <p className="mt-5 font-semibold leading-7 text-foreground">{problem}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </PageSection>
@@ -208,11 +211,13 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
           <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("reveal.title", "Your inconsistency usually has one primary cause")}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {items.map((item) => (
-            <div key={item} className="flex items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
-              <Search className="mt-1 h-5 w-5 shrink-0 text-primary" />
-              <p className="font-semibold leading-7 text-foreground">{item}</p>
-            </div>
+          {items.map((item, i) => (
+            <Reveal key={item} delay={i * 0.12}>
+              <div className="flex h-full items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
+                <Search className="mt-1 h-5 w-5 shrink-0 text-primary" />
+                <p className="font-semibold leading-7 text-foreground">{item}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -252,11 +257,13 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
           <p className="text-sm font-black text-primary">{t("score.eyebrow", "Your result")}</p>
           <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
           <div className="mt-6 space-y-3">
-            {items.map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
-                <p className="font-semibold leading-7 text-foreground">{item}</p>
-              </div>
+            {items.map((item, i) => (
+              <Reveal key={item} delay={i * 0.12}>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+                  <p className="font-semibold leading-7 text-foreground">{item}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -274,11 +281,13 @@ const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
         title={t("benefits.title", "Know what to fix before you spend more effort")}
       />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((benefit) => (
-          <div key={benefit} className="rounded-xl border border-border bg-background p-5 shadow-sm">
-            <CheckCircle2 className="h-5 w-5 text-success" />
-            <p className="mt-4 font-semibold leading-7 text-foreground">{benefit}</p>
-          </div>
+        {items.map((benefit, i) => (
+          <Reveal key={benefit} delay={i * 0.12}>
+            <div className="h-full rounded-xl border border-border bg-background p-5 shadow-sm">
+              <CheckCircle2 className="h-5 w-5 text-success" />
+              <p className="mt-4 font-semibold leading-7 text-foreground">{benefit}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </PageSection>
@@ -333,19 +342,20 @@ const FaqSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
       <SectionHeader eyebrow="FAQ" title={t("faq.title", "Frequently asked questions")} />
       <div className="mx-auto mt-10 max-w-3xl">
         <Accordion type="single" collapsible className="space-y-3">
-          {items.map((item) => (
-            <AccordionItem
-              key={item.i}
-              value={item.i}
-              className="rounded-xl border border-border bg-background px-5 shadow-sm"
-            >
-              <AccordionTrigger className="py-5 text-left text-base font-black text-foreground hover:no-underline sm:text-lg">
-                {item.q}
-              </AccordionTrigger>
-              <AccordionContent className="pb-5 text-base leading-7 text-muted-foreground">
-                {item.a}
-              </AccordionContent>
-            </AccordionItem>
+          {items.map((item, idx) => (
+            <Reveal key={item.i} delay={idx * 0.1}>
+              <AccordionItem
+                value={item.i}
+                className="rounded-xl border border-border bg-background px-5 shadow-sm"
+              >
+                <AccordionTrigger className="py-5 text-left text-base font-black text-foreground hover:no-underline sm:text-lg">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 text-base leading-7 text-muted-foreground">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            </Reveal>
           ))}
         </Accordion>
       </div>

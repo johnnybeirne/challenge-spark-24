@@ -944,6 +944,7 @@ function AutoGrowInput({
 function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   const handleFile = async (file: File) => {
     if (!file) return;

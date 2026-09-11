@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "l
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ScoreRing from "@/components/ScoreRing";
+import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
 import { useSiteContent, type SiteContentMap } from "@/hooks/useSiteContent";
@@ -91,14 +92,14 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   };
 
   const sections: Record<string, ReactNode> = {
-    hero: <HeroSection t={t} onStart={() => startQuiz("hero")} />,
-    problem: <ProblemSection t={t} map={map} />,
-    reveal: <RevealSection t={t} map={map} />,
-    score: <ScorePreview t={t} map={map} />,
-    benefits: <BenefitsSection t={t} map={map} />,
-    authority: <AuthoritySection t={t} />,
-    faq: <FaqSection t={t} map={map} />,
-    cta: <CTASection t={t} onStart={() => startQuiz("bottom")} />,
+    hero: <Reveal key="hero"><HeroSection t={t} onStart={() => startQuiz("hero")} /></Reveal>,
+    problem: <Reveal key="problem"><ProblemSection t={t} map={map} /></Reveal>,
+    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} /></Reveal>,
+    score: <Reveal key="score"><ScorePreview t={t} map={map} /></Reveal>,
+    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} /></Reveal>,
+    authority: <Reveal key="authority"><AuthoritySection t={t} /></Reveal>,
+    faq: <Reveal key="faq"><FaqSection t={t} map={map} /></Reveal>,
+    cta: <Reveal key="cta"><CTASection t={t} onStart={() => startQuiz("bottom")} /></Reveal>,
   };
 
   return (

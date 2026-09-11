@@ -460,7 +460,7 @@ export const defaultSiteConfig: SiteConfig = {
     landingSubheadline: "Answer nine quick questions and get a recommended strategy based on your answers. Instantly",
     landingPrimaryCta: "Start the assessment",
     landingSupportingText: "Takes 90 seconds. No signup required.",
-    landingTrustLine: "Instant personalised result. Built for founders, creators, consultants, and experts.",
+    landingTrustLine: "Instant personalised result. Built for creators, consultants, business owners, and experts.",
     landingPoints: [
       "See your lead system score",
       "Identify the biggest gap",

@@ -189,7 +189,7 @@ export const STEP_FIELD_FIELDS: Day1Field[] = [
     key: "audience_examples_b2b",
     label: "Who you serve — examples (business audience)",
     helper: "One bullet per line, shown under the box.",
-    fallback: "Independent coaches\nService-based agency owners\nEarly-stage SaaS founders",
+    fallback: "Independent coaches\nService-based agency owners\nEarly-stage SaaS teams",
     multiline: true,
     rows: 4,
   },

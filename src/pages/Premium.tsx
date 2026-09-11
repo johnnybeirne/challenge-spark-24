@@ -54,7 +54,7 @@ const MODULES = [
   { eyebrow: "Module 5", title: "Scaling With LeadTree", body: "Partners, JV, affiliates, and paid acquisition layered on a referral-first base." },
 ];
 
-const AUDIENCE = ["Coaches", "Consultants", "Course creators", "Experts", "Community builders", "SaaS founders", "Agencies", "JV partners"];
+const AUDIENCE = ["Coaches", "Consultants", "Course creators", "Experts", "Community builders", "SaaS teams", "Agencies", "JV partners"];
 
 const PROBLEMS = [
   { icon: Flame, title: "Content burnout", body: "Posting endlessly and getting nothing back." },

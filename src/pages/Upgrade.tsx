@@ -45,7 +45,7 @@ const AUDIENCE = [
   "Experts",
   "Consultants",
   "Community builders",
-  "SaaS founders",
+  "SaaS teams",
   "Course creators",
 ];
 

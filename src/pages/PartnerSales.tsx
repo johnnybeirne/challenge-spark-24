@@ -64,7 +64,7 @@ const AUDIENCE = [
   "Course creators",
   "Authors & speakers",
   "Community builders",
-  "SaaS founders",
+  "SaaS teams",
 ];
 
 const FAQS = [
@@ -121,7 +121,7 @@ const PartnerSales = () => {
             <Crown className="h-3.5 w-3.5" /> LeadTree Premium · Lifetime
           </div>
           <h1 className="mt-5 text-4xl font-black leading-tight text-foreground sm:text-6xl">
-            The complete lead engine for coaches, experts &amp; founders.
+            The complete lead engine for coaches, experts &amp; business owners.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
             Diagnose your funnel. Build a trust-based lead loop. Launch a referral system that

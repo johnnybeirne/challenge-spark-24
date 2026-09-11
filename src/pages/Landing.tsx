@@ -290,7 +290,7 @@ const AuthoritySection = ({ t }: { t: T }) => (
     <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 text-center shadow-sm md:p-10">
       <Eye className="mx-auto h-8 w-8 text-primary" />
       <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">{t("authority.title", "Built for people who need leads, not another theory")}</h2>
-      <p className="mt-4 text-lg leading-8 text-muted-foreground">{t("authority.body", "The quiz is designed for founders, creators, consultants, and experts who want to understand what is making their lead flow unpredictable.")}</p>
+      <p className="mt-4 text-lg leading-8 text-muted-foreground">{t("authority.body", "The quiz is designed for creators, consultants, business owners, and experts who want to understand what is making their lead flow unpredictable.")}</p>
     </div>
   </PageSection>
 );

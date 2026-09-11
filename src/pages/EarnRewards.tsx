@@ -50,7 +50,7 @@ const ladder: Rung[] = [
   { points: 400, title: "Private Community Access" },
   { points: 500, title: "Challenge Promotion Spotlight", desc: "We'll help showcase and promote your challenge to the LEADTREE audience and ecosystem.", major: true },
   { points: 600, title: "Partner Bonus Training" },
-  { points: 750, title: "Founder Inner Circle Session" },
+  { points: 750, title: "Inner Circle Session" },
   { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADTREE network.", major: true },
 ];
 

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, MessageCircle, Sparkles } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
+import PreviewButton from "@/components/admin/PreviewButton";
 
 type Row = {
   id: string;

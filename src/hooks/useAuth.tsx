@@ -7,7 +7,8 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithMagicLink: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
+  sendEmailCode: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
+  verifyEmailCode: (email: string, token: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ data: any; error: any }>;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;

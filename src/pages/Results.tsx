@@ -492,6 +492,13 @@ const Results = () => {
         )}
 
         {sequenceComplete && (
+          <section className="mb-10 animate-fade-in" style={{ animationDelay: "200ms" }}>
+            <ResultsReportOptIn />
+          </section>
+        )}
+
+
+        {sequenceComplete && (
           <section className="mb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
             {/* ADVISOR — preview of challenge guidance for takers still deciding */}
           <ResultsAdvisor

@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => { await supabase.auth.signOut(); };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithMagicLink, signUp, signIn, resetPassword, updatePassword, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, sendEmailCode, verifyEmailCode, signUp, signIn, resetPassword, updatePassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );

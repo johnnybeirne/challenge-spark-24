@@ -98,7 +98,12 @@ const ResultsReportOptIn = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder={t("report_optin.name_placeholder", "Jane Murphy")}
             autoComplete="name"
+            aria-invalid={!!nameError}
+            aria-describedby={nameError ? "report-name-error" : undefined}
           />
+          {nameError && (
+            <p id="report-name-error" className="text-[var(--body-size)] text-destructive">{nameError}</p>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="report-email">{t("report_optin.email_label", "Email")}</Label>
@@ -110,8 +115,14 @@ const ResultsReportOptIn = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("report_optin.email_placeholder", "you@example.com")}
             autoComplete="email"
+            aria-invalid={!!emailError}
+            aria-describedby={emailError ? "report-email-error" : undefined}
           />
+          {emailError && (
+            <p id="report-email-error" className="text-[var(--body-size)] text-destructive">{emailError}</p>
+          )}
         </div>
+
 
         {error && <p className="text-[var(--body-size)] text-destructive">{error}</p>}
 

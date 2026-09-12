@@ -60,6 +60,7 @@ const items: NavItem[] = [
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true, keywords: ["results", "advisor", "ai", "prompts"] },
   { title: "Results opt-in card", url: "/owner-console/results-optin-card", icon: Mail, external: true, keywords: ["results", "report", "opt-in", "email", "card", "magic link"] },
+  { title: "Sign-in code email", url: "/owner-console/auth-email", icon: Mail, external: true, keywords: ["auth", "email", "otp", "code", "sign in", "login", "magic link"] },
   {
     title: "Typography",
     url: "/owner-console/typography",

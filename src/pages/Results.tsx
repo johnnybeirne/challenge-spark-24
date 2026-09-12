@@ -14,6 +14,7 @@ import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
 import ScoreRing from "@/components/ScoreRing";
+import ResultsReportOptIn from "@/components/ResultsReportOptIn";
 
 // Per-category traffic-light banding, driven by each category's own percent.
 // 0-33 red, 34-74 amber, 75-100 green.

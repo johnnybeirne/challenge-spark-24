@@ -3152,6 +3152,7 @@ export type Database = {
         }[]
       }
       set_welcome_auto_send: { Args: { p_enabled: boolean }; Returns: boolean }
+      start_challenge_for_current_user: { Args: never; Returns: undefined }
       track_partner_assessment: {
         Args: { p_partner_code: string }
         Returns: undefined

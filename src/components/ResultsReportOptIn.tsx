@@ -22,6 +22,8 @@ const ResultsReportOptIn = () => {
   const { t } = useSiteContent("results");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -29,15 +31,26 @@ const ResultsReportOptIn = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setNameError(null);
+    setEmailError(null);
     const parsed = schema.safeParse({ name, email });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Please check your details");
+      for (const issue of parsed.error.issues) {
+        if (issue.path[0] === "name") setNameError((prev) => prev ?? issue.message);
+        if (issue.path[0] === "email") setEmailError((prev) => prev ?? issue.message);
+      }
       return;
     }
     setSending(true);
+    // Same Supabase auth system as the challenge join flow (one auth.users
+    // account, one profiles row). The report_only markers tell the signup
+    // trigger to skip the challenge progress row, so no clock starts and no
+    // day is unlocked until the person actually joins the challenge.
     const { error: authError } = await signInWithMagicLink(parsed.data.email, {
       name: parsed.data.name,
       first_name: parsed.data.name.split(" ")[0],
+      signup_product: "report",
+      entry_intent: "report",
     });
     setSending(false);
     if (authError) {
@@ -47,6 +60,7 @@ const ResultsReportOptIn = () => {
     trackEvent("results_report_optin" as any, {});
     setSent(true);
   };
+
 
   if (sent) {
     return (

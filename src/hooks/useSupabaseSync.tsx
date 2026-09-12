@@ -142,24 +142,25 @@ export async function saveChallengeProgress(
   challenge: AppState["challenge"]
 ) {
   try {
-    // NOTE: deliberately omit `started_at` here. The DB column defaults to now()
-    // on insert and we never want to overwrite it on subsequent saves — Day 1's
-    // date must stay anchored to when the user actually started the challenge,
-    // not to whenever they last logged in.
-    await (supabase.from("challenge_progress") as any).upsert(
-      {
-        user_id: userId,
+    // NOTE: deliberately omit `started_at` here, and deliberately UPDATE rather
+    // than upsert. The row itself is the signup anchor: it is created by the
+    // signup trigger when someone joins the challenge, or by
+    // start_challenge_for_current_user when a report-only account joins later.
+    // A background save must never create it, or the clock would start for a
+    // report-only account just by visiting a page.
+    await (supabase.from("challenge_progress") as any)
+      .update({
         current_day: challenge.currentDay,
         day_completed_at: challenge.dayCompletedAt ?? {},
         tasks: challenge.tasks,
         ai_outputs: challenge.aiOutputs,
         launch_url: challenge.launchUrl,
         completed: challenge.completed,
-      },
-      { onConflict: "user_id" }
-    );
+      })
+      .eq("user_id", userId);
   } catch {}
 }
+
 
 /**
  * Claim an unlock. The server re-checks the criteria (invites, day completion,

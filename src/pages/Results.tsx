@@ -320,12 +320,6 @@ const Results = () => {
 
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
-  // Unverified, client-side-only preview after someone asks for their report.
-  // Never treated as a session — it just keeps the page personalised until the
-  // emailed code is confirmed.
-  const reportPreview = useReportPreview();
-  const { user: authedUser } = useAuth();
-  const showPreviewIdentity = !!reportPreview && !authedUser;
 
   const cta = (() => {
     if (entryIntent === "premium_course") {

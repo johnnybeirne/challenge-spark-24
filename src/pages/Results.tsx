@@ -104,6 +104,12 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
+  // Unverified, client-side-only preview after someone asks for their report.
+  // Never treated as a session — it just keeps the page personalised until the
+  // emailed code is confirmed.
+  const reportPreview = useReportPreview();
+  const { user: authedUser } = useAuth();
+  const showPreviewIdentity = !!reportPreview && !authedUser;
   const completionDayName = getCompletionDayName();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);

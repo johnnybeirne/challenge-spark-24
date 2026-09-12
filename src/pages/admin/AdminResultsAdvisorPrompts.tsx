@@ -131,7 +131,7 @@ const AdminResultsAdvisorPrompts = () => {
           grouped by archetype.
         </p>
         </div>
-        <PreviewButton href="/results" />
+        <PreviewButton href="/results/high" />
       </div>
 
       {rows.map((row) => {

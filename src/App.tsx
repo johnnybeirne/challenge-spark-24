@@ -88,6 +88,7 @@ import AdminSimulator from "@/pages/AdminSimulator";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
+import AdminResultsOptinCard from "@/pages/admin/AdminResultsOptinCard";
 import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
@@ -316,6 +317,7 @@ const App = () => (
                 <Route path="jv-partners" element={<AdminJvPartners />} />
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
+                <Route path="results-optin-card" element={<AdminResultsOptinCard />} />
                 <Route path="typography" element={<AdminTypography />} />
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />

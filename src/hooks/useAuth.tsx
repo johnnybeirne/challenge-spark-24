@@ -117,12 +117,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signInWithMagicLink = async (email: string, metadata?: Record<string, string>) => {
+  // Emails a 6-digit code (no magic link): omitting emailRedirectTo keeps the
+  // flow token-based. The Supabase email template must include {{ .Token }}.
+  const sendEmailCode = async (email: string, metadata?: Record<string, string>) => {
     try {
       const { error } = await withAuthTimeout(supabase.auth.signInWithOtp({
         email,
-        options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
+        options: { data: metadata, shouldCreateUser: true },
       }));
+      return { error };
+    } catch (error) {
+      return { error: normalizeAuthError(error) };
+    }
+  };
+
+  const verifyEmailCode = async (email: string, token: string) => {
+    try {
+      const { error } = await withAuthTimeout(supabase.auth.verifyOtp({ email, token, type: "email" }));
       return { error };
     } catch (error) {
       return { error: normalizeAuthError(error) };

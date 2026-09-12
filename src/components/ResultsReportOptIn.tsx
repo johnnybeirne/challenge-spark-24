@@ -72,7 +72,7 @@ const ResultsReportOptIn = () => {
         <CheckCircle2 className="mx-auto mb-3 h-7 w-7 text-primary" />
         <h3 className="text-[length:var(--h2-size)] font-semibold text-foreground">{t("report_optin.success_title", "Check your email")}</h3>
         <p className="mt-2 text-[var(--body-size)] text-muted-foreground">
-          {t("report_optin.success_body", "We sent a secure link to {email}. Open it and your report will be waiting in your own area.").replace("{email}", email)}
+          {t("report_optin.success_body", "We sent a 6-digit code to {email}. Enter it in the bar below to keep access to your report.").replace("{email}", email)}
         </p>
       </div>
     );

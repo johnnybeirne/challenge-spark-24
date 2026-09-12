@@ -15,6 +15,10 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
 import ScoreRing from "@/components/ScoreRing";
 import ResultsReportOptIn from "@/components/ResultsReportOptIn";
+import ReportVerifyBanner from "@/components/ReportVerifyBanner";
+import { useReportPreview } from "@/lib/reportPreview";
+import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
+import { useAuth } from "@/hooks/useAuth";
 
 // Per-category traffic-light banding, driven by each category's own percent.
 // 0-33 red, 34-74 amber, 75-100 green.
@@ -100,6 +104,12 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
+  // Unverified, client-side-only preview after someone asks for their report.
+  // Never treated as a session — it just keeps the page personalised until the
+  // emailed code is confirmed.
+  const reportPreview = useReportPreview();
+  const { user: authedUser } = useAuth();
+  const showPreviewIdentity = !!reportPreview && !authedUser;
   const completionDayName = getCompletionDayName();
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);
@@ -310,6 +320,7 @@ const Results = () => {
 
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
+
   const cta = (() => {
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
@@ -323,7 +334,17 @@ const Results = () => {
   return (
     <>
       <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
-      <div className="flex min-h-screen flex-col px-6 pt-16 pb-[74px] max-w-2xl mx-auto sm:px-6 lg:px-8">
+      {showPreviewIdentity && (
+        <div className="fixed right-4 top-4 z-40 flex items-center gap-2 rounded-full border border-border bg-card/90 py-1.5 pl-1.5 pr-4 shadow-sm backdrop-blur">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+            {getInitials(reportPreview!.name)}
+          </span>
+          <span className="text-[var(--body-size)] font-medium text-foreground">
+            {formatFirstNameSurnameInitial(reportPreview!.name) || reportPreview!.name}
+          </span>
+        </div>
+      )}
+      <div className={`flex min-h-screen flex-col px-6 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
         <section className="mb-16 text-center animate-fade-in">
           <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
@@ -510,6 +531,7 @@ const Results = () => {
         )}
       </div>
 
+      {showPreviewIdentity && <ReportVerifyBanner preview={reportPreview!} />}
     </>
   );
 };

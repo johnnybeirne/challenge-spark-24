@@ -7,7 +7,8 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithMagicLink: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
+  sendEmailCode: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
+  verifyEmailCode: (email: string, token: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ data: any; error: any }>;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
@@ -116,12 +117,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signInWithMagicLink = async (email: string, metadata?: Record<string, string>) => {
+  // Emails a 6-digit code (no magic link): omitting emailRedirectTo keeps the
+  // flow token-based. The Supabase email template must include {{ .Token }}.
+  const sendEmailCode = async (email: string, metadata?: Record<string, string>) => {
     try {
       const { error } = await withAuthTimeout(supabase.auth.signInWithOtp({
         email,
-        options: { data: metadata, emailRedirectTo: window.location.origin + "/challenger-dashboard" },
+        options: { data: metadata, shouldCreateUser: true },
       }));
+      return { error };
+    } catch (error) {
+      return { error: normalizeAuthError(error) };
+    }
+  };
+
+  const verifyEmailCode = async (email: string, token: string) => {
+    try {
+      const { error } = await withAuthTimeout(supabase.auth.verifyOtp({ email, token, type: "email" }));
       return { error };
     } catch (error) {
       return { error: normalizeAuthError(error) };
@@ -173,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => { await supabase.auth.signOut(); };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithMagicLink, signUp, signIn, resetPassword, updatePassword, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, sendEmailCode, verifyEmailCode, signUp, signIn, resetPassword, updatePassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,6 +7,7 @@ import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { setReportPreview } from "@/lib/reportPreview";
 
 const schema = z.object({
   name: z.string().trim().min(1, { message: "Please add your name" }).max(80, { message: "Name is too long" }),
@@ -18,7 +19,7 @@ const schema = z.object({
  * sign-in link so the person can read their report inside their own area.
  */
 const ResultsReportOptIn = () => {
-  const { signInWithMagicLink } = useAuth();
+  const { sendEmailCode } = useAuth();
   const { t } = useSiteContent("results");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,7 +47,7 @@ const ResultsReportOptIn = () => {
     // account, one profiles row). The report_only markers tell the signup
     // trigger to skip the challenge progress row, so no clock starts and no
     // day is unlocked until the person actually joins the challenge.
-    const { error: authError } = await signInWithMagicLink(parsed.data.email, {
+    const { error: authError } = await sendEmailCode(parsed.data.email, {
       name: parsed.data.name,
       first_name: parsed.data.name.split(" ")[0],
       signup_product: "report",
@@ -58,6 +59,9 @@ const ResultsReportOptIn = () => {
       return;
     }
     trackEvent("results_report_optin" as any, {});
+    // Client-side preview only — not a session. Lets the results page show a
+    // logged-in-looking view until they enter the code from their email.
+    setReportPreview(parsed.data.name, parsed.data.email);
     setSent(true);
   };
 
@@ -68,7 +72,7 @@ const ResultsReportOptIn = () => {
         <CheckCircle2 className="mx-auto mb-3 h-7 w-7 text-primary" />
         <h3 className="text-[length:var(--h2-size)] font-semibold text-foreground">{t("report_optin.success_title", "Check your email")}</h3>
         <p className="mt-2 text-[var(--body-size)] text-muted-foreground">
-          {t("report_optin.success_body", "We sent a secure link to {email}. Open it and your report will be waiting in your own area.").replace("{email}", email)}
+          {t("report_optin.success_body", "We sent a 6-digit code to {email}. Enter it in the bar below to keep access to your report.").replace("{email}", email)}
         </p>
       </div>
     );

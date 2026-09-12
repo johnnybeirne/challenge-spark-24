@@ -21,6 +21,10 @@ const OPTIN_FIELDS: { key: string; label: string; textarea?: boolean }[] = [
   { key: "sending_label", label: "Button label while sending" },
   { key: "success_title", label: "Success title" },
   { key: "success_body", label: "Success body (use {email} for their email)", textarea: true },
+  { key: "banner_text", label: "Code bar text (use {email} for their email)", textarea: true },
+  { key: "code_label", label: "Code field label" },
+  { key: "verify_label", label: "Code confirm button label" },
+  { key: "code_error", label: "Invalid code message" },
 ];
 
 const AdminResultsOptinCard = () => {

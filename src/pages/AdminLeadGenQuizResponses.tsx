@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, MessageCircle, Sparkles } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
+import PreviewButton from "@/components/admin/PreviewButton";
 
 type Row = {
   id: string;
@@ -182,14 +183,21 @@ const AdminLeadGenQuizResponses = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <MessageCircle className="h-6 w-6 text-primary" />
-          Lead Gen Quiz Responses
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Edit the score ranges, archetype labels, and the chat shown on the Results page.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <MessageCircle className="h-6 w-6 text-primary" />
+            Lead Gen Quiz Responses
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Edit the score ranges, archetype labels, and the chat shown on the Results page.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 shrink-0">
+          <PreviewButton href="/results/high" label="Preview high" />
+          <PreviewButton href="/results/med" label="Preview mid" />
+          <PreviewButton href="/results/low" label="Preview low" />
+        </div>
       </div>
 
       {/* ARCHETYPES */}

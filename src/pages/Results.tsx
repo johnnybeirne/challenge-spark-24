@@ -531,6 +531,7 @@ const Results = () => {
         )}
       </div>
 
+      {showPreviewIdentity && <ReportVerifyBanner preview={reportPreview!} />}
     </>
   );
 };

@@ -58,6 +58,9 @@ const ResultsReportOptIn = () => {
       return;
     }
     trackEvent("results_report_optin" as any, {});
+    // Client-side preview only — not a session. Lets the results page show a
+    // logged-in-looking view until they enter the code from their email.
+    setReportPreview(parsed.data.name, parsed.data.email);
     setSent(true);
   };
 

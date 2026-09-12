@@ -46,7 +46,7 @@ const ResultsReportOptIn = () => {
     // account, one profiles row). The report_only markers tell the signup
     // trigger to skip the challenge progress row, so no clock starts and no
     // day is unlocked until the person actually joins the challenge.
-    const { error: authError } = await signInWithMagicLink(parsed.data.email, {
+    const { error: authError } = await sendEmailCode(parsed.data.email, {
       name: parsed.data.name,
       first_name: parsed.data.name.split(" ")[0],
       signup_product: "report",

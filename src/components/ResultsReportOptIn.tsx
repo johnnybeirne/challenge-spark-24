@@ -7,6 +7,7 @@ import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { setReportPreview } from "@/lib/reportPreview";
 
 const schema = z.object({
   name: z.string().trim().min(1, { message: "Please add your name" }).max(80, { message: "Name is too long" }),

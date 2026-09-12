@@ -236,6 +236,11 @@ const SignupChat = ({
         sessionStorage.removeItem("leadtree_guest_pass");
       }
     } catch {}
+    if (product === "challenge") {
+      // Anchors the signup clock. Idempotent: a brand new challenge account
+      // already has its progress row, a report-only account gets one now.
+      try { await (supabase.rpc as any)("start_challenge_for_current_user"); } catch {}
+    }
     trackEvent("signup_completed", { product });
     toast.success("You're in.");
     setSignupComplete(true);
@@ -258,6 +263,11 @@ const SignupChat = ({
     const { error } = await signIn(loginEmail.trim().toLowerCase(), loginPassword);
     setLoading(false);
     if (error) return toast.error(error.message || "Login failed");
+    if (product === "challenge") {
+      // Existing account (including a report-only one) joining the challenge:
+      // recognise it, anchor the clock, never create a duplicate.
+      try { await (supabase.rpc as any)("start_challenge_for_current_user"); } catch {}
+    }
     navigate(redirectAfterAuth);
   };
 

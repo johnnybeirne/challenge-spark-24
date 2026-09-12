@@ -18,7 +18,7 @@ const schema = z.object({
  * sign-in link so the person can read their report inside their own area.
  */
 const ResultsReportOptIn = () => {
-  const { signInWithMagicLink } = useAuth();
+  const { sendEmailCode } = useAuth();
   const { t } = useSiteContent("results");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

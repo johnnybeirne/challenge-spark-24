@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const schema = z.object({
   name: z.string().trim().min(1, { message: "Please add your name" }).max(80, { message: "Name is too long" }),
@@ -18,6 +19,7 @@ const schema = z.object({
  */
 const ResultsReportOptIn = () => {
   const { signInWithMagicLink } = useAuth();
+  const { t } = useSiteContent("results");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -50,9 +52,9 @@ const ResultsReportOptIn = () => {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 text-center">
         <CheckCircle2 className="mx-auto mb-3 h-7 w-7 text-primary" />
-        <h3 className="text-[length:var(--h2-size)] font-semibold text-foreground">Check your email</h3>
+        <h3 className="text-[length:var(--h2-size)] font-semibold text-foreground">{t("report_optin.success_title", "Check your email")}</h3>
         <p className="mt-2 text-[var(--body-size)] text-muted-foreground">
-          We sent a secure link to {email}. Open it and your report will be waiting in your own area.
+          {t("report_optin.success_body", "We sent a secure link to {email}. Open it and your report will be waiting in your own area.").replace("{email}", email)}
         </p>
       </div>
     );
@@ -64,35 +66,35 @@ const ResultsReportOptIn = () => {
         <Mail className="mt-0.5 h-5 w-5 text-primary" />
         <div>
           <h3 className="text-[length:var(--h2-size)] font-semibold text-foreground">
-            Not ready for the challenge? Get your report instead
+            {t("report_optin.title", "Not ready for the challenge? Get your report instead")}
           </h3>
           <p className="mt-1 text-[var(--body-size)] text-muted-foreground">
-            Add your name and email and we will send you a link to read your full report in your own area.
+            {t("report_optin.body", "Add your name and email and we will send you a link to read your full report in your own area.")}
           </p>
         </div>
       </div>
 
       <form onSubmit={submit} className="space-y-3" noValidate>
         <div className="space-y-1.5">
-          <Label htmlFor="report-name">Your name</Label>
+          <Label htmlFor="report-name">{t("report_optin.name_label", "Your name")}</Label>
           <Input
             id="report-name"
             value={name}
             maxLength={80}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Jane Murphy"
+            placeholder={t("report_optin.name_placeholder", "Jane Murphy")}
             autoComplete="name"
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="report-email">Email</Label>
+          <Label htmlFor="report-email">{t("report_optin.email_label", "Email")}</Label>
           <Input
             id="report-email"
             type="email"
             value={email}
             maxLength={255}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
+            placeholder={t("report_optin.email_placeholder", "you@example.com")}
             autoComplete="email"
           />
         </div>
@@ -102,10 +104,10 @@ const ResultsReportOptIn = () => {
         <Button type="submit" variant="outline" className="h-12 w-full font-semibold" disabled={sending}>
           {sending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" /> Sending your link
+              <Loader2 className="h-4 w-4 animate-spin" /> {t("report_optin.sending_label", "Sending your link")}
             </>
           ) : (
-            "Send me my report"
+            t("report_optin.button_label", "Send me my report")
           )}
         </Button>
       </form>

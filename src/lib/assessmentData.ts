@@ -293,7 +293,7 @@ export function calculateCategoryScores(
       category,
       label: CATEGORY_LABELS[category],
       raw,
-      percent: Math.round((raw / ids.length) * 100),
+      percent: Math.min(92, Math.round((raw / ids.length) * 100)),
     };
   });
 }

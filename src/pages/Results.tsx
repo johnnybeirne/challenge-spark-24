@@ -332,8 +332,11 @@ const Results = () => {
       <div className={`flex min-h-screen flex-col px-6 pt-12 w-[80%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
         <section className="mb-14 text-center animate-fade-in">
-          <p className="mb-7 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
             Your Lead Generation Score
+          </p>
+          <p className="mb-7 text-lg font-semibold text-foreground sm:text-xl">
+            Get a clear set of findings, then a recommended strategy.
           </p>
 
           <div className="relative mx-auto aspect-square w-full max-w-[360px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">

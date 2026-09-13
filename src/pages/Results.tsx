@@ -312,11 +312,15 @@ const Results = () => {
       <div className={`flex min-h-screen flex-col px-6 pt-12 w-[50%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
         <section className="mb-14 text-center animate-fade-in">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-            Your Lead Generation Score
+          <p
+            className={`mb-2 font-semibold uppercase tracking-[0.35em] text-muted-foreground ${
+              headingSizeClass
+            }`}
+          >
+            {tContent("score_header.heading", "Your Lead Generation Score")}
           </p>
-          <p className="mb-7 text-lg font-semibold text-foreground sm:text-xl">
-            Get a clear set of findings, then a recommended strategy.
+          <p className={`mb-7 font-semibold text-foreground ${subheadingSizeClass}`}>
+            {tContent("score_header.subheading", "Get a clear set of findings, then a recommended strategy.")}
           </p>
 
           <ScoreRingCombined

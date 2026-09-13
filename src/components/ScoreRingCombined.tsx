@@ -125,10 +125,13 @@ const ScoreRingCombined = ({
         return (
           <span
             key={seg.label}
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm"
             style={{
               left: `${50 + 42 * Math.sin(rad)}%`,
               top: `${50 - 42 * Math.cos(rad)}%`,
+              borderColor: seg.color,
+              borderWidth: "1.5px",
+              borderStyle: "solid",
             }}
           >
             {seg.label} <span className="text-foreground">{Math.round(seg.pct)}%</span>

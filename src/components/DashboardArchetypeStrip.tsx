@@ -85,7 +85,7 @@ const DashboardArchetypeStrip = () => {
 
   const score = assessment?.diagnosticScore ?? 0;
 
-  const rawPercent = Math.round((score / 9) * 100);
+  const rawPercent = Math.min(92, Math.round((score / 9) * 100));
   const tier: "low" | "mid" | "high" =
     qaTier ??
     (assessment?.diagnosticLevel === "low" ||

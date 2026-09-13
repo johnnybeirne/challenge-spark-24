@@ -139,7 +139,7 @@ const ScoreRingCombined = ({
         );
       })}
 
-      <div className="absolute inset-[9%] rounded-full bg-muted/60 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)]">
+      <div className="absolute inset-[9%] rounded-full bg-background shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)]">
         <svg viewBox="0 0 200 200" className="h-full w-full">
           {segments.map((seg, i) => (
             <circle

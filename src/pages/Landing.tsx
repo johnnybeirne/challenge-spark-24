@@ -244,14 +244,18 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   </section>
 );
 
-const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const ProblemSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "problem");
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "problem")}>
-      <SectionHeader
-        eyebrow={t("problem.eyebrow", "The problem")}
-        title={t("problem.title", "Lead flow should not feel like guesswork")}
-        body={t("problem.body", "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.")}
+      <OrderedHeader
+        rows={rows}
+        section="problem"
+        fallbacks={{
+          eyebrow: "The problem",
+          title: "Lead flow should not feel like guesswork",
+          body: "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.",
+        }}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {items.map((problem, i) => (
@@ -267,15 +271,21 @@ const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   );
 };
 
-const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const RevealSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "reveal");
   return (
     <PageSection style={sectionStyle(t, "reveal")}>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-        <div>
-          <p className="text-sm font-black text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("reveal.title", "Your inconsistency usually has one primary cause")}</h2>
-        </div>
+        <OrderedHeader
+          rows={rows}
+          section="reveal"
+          centered={false}
+          titleClass="text-3xl font-black leading-tight text-foreground sm:text-4xl"
+          fallbacks={{
+            eyebrow: "What the quiz reveals",
+            title: "Your inconsistency usually has one primary cause",
+          }}
+        />
         <div className="grid gap-3 sm:grid-cols-2">
           {items.map((item, i) => (
             <Reveal key={item} delay={i * 0.12}>

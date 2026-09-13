@@ -36,6 +36,10 @@ interface ScoreRingCombinedProps {
   /** Extra centre content under "OUT OF 100" (e.g. the archetype pill on the
    *  results page). Archetypes are never passed in on the landing page. */
   centerExtra?: ReactNode;
+  /** Per-segment nudge applied to each pill's resting position, in percent
+   *  of the ring container. Useful for fine-tuning pill placement per page
+   *  without touching the geometric maths. */
+  pillOffsets?: { dx?: number; dy?: number }[];
   /** Maximum ring size in px on desktop. Defaults to 360. */
   maxSize?: number;
   ariaLabel?: string;

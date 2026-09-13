@@ -56,7 +56,7 @@ const ScoreRingCombined = ({
   maxSize = 360,
   ariaLabel,
 }: ScoreRingCombinedProps) => {
-  const clampedOverall = Math.max(0, Math.min(92, Math.round(overall)));
+  const clampedOverall = Math.max(9, Math.min(92, Math.round(overall)));
   const [displayScore, setDisplayScore] = useState(animated ? 0 : clampedOverall);
   const [swept, setSwept] = useState(!animated);
   const rafRef = useRef<number>();

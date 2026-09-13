@@ -147,7 +147,7 @@ const Results = () => {
   const assessment = state.assessment as unknown as AssessmentResult | null;
   const hasResult = previewTier !== null || (!!assessment && "challengeType" in (assessment as object));
   const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
-  const percentageScore = Math.min(92, Math.round((score / 9) * 100));
+  const percentageScore = Math.max(9, Math.min(92, Math.round((score / 9) * 100)));
   const categoryAnswers = useMemo(
     () =>
       previewTier !== null

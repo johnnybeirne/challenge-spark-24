@@ -25,11 +25,16 @@ interface LandingProps {
   onStart?: (section: string) => void;
 }
 
-const PageSection = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`}>
+const PageSection = ({ children, className = "", style }: { children: ReactNode; className?: string; style?: React.CSSProperties }) => (
+  <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`} style={style}>
     <div className="mx-auto w-full max-w-6xl">{children}</div>
   </section>
 );
+
+const sectionBackground = (t: T, section: string) => {
+  const value = t(`${section}.background_color`).trim();
+  return /^#[0-9a-f]{6}$/i.test(value) ? { backgroundColor: value } : undefined;
+};
 
 const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) => (
   <div className="mx-auto max-w-3xl text-center">
@@ -129,7 +134,10 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
 type T = (sectionDotKey: string, fallback?: string) => string;
 
 const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
-  <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6">
+  <div
+    className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6"
+    style={sectionBackground(t, "sticky")}
+  >
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
       <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
         {t("sticky.tagline", "Ready to find the gap in your lead flow?")}
@@ -143,8 +151,8 @@ const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
 );
 
 const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
-  <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8">
-    <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+  <section className="px-5 py-8 sm:px-6 md:py-12 lg:px-8" style={sectionBackground(t, "hero")}>
+    <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
       <div className="text-center lg:text-left">
         <p className="mx-auto max-w-2xl text-base font-black leading-6 text-primary lg:mx-0">
           {t("hero.eyebrow", "Built for coaches, consultants, and authors who want more leads")}
@@ -181,7 +189,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
 const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "problem");
   return (
-    <PageSection className="border-y border-border bg-card/55">
+    <PageSection className="border-y border-border bg-card/55" style={sectionBackground(t, "problem")}>
       <SectionHeader
         eyebrow={t("problem.eyebrow", "The problem")}
         title={t("problem.title", "Lead flow should not feel like guesswork")}
@@ -204,7 +212,7 @@ const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "reveal");
   return (
-    <PageSection>
+    <PageSection style={sectionBackground(t, "reveal")}>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div>
           <p className="text-sm font-black text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
@@ -246,7 +254,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
     );
   };
   return (
-    <PageSection className="border-y border-border bg-card/55">
+    <PageSection className="border-y border-border bg-card/55" style={sectionBackground(t, "score")}>
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div className="mx-auto flex w-full max-w-md flex-wrap items-start justify-center gap-8 sm:gap-10 lg:mx-0">
           {ring("score.system_percent", 76, "score.system_label", "System")}
@@ -275,7 +283,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
 const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "benefits");
   return (
-    <PageSection className="border-y border-border bg-card/55">
+    <PageSection className="border-y border-border bg-card/55" style={sectionBackground(t, "benefits")}>
       <SectionHeader
         eyebrow={t("benefits.eyebrow", "Why take it")}
         title={t("benefits.title", "Know what to fix before you spend more effort")}
@@ -295,7 +303,7 @@ const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 };
 
 const AuthoritySection = ({ t }: { t: T }) => (
-  <PageSection>
+  <PageSection style={sectionBackground(t, "authority")}>
     <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 text-center shadow-sm md:p-10">
       <Eye className="mx-auto h-8 w-8 text-primary" />
       <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">{t("authority.title", "Built for people who need leads, not another theory")}</h2>
@@ -305,7 +313,7 @@ const AuthoritySection = ({ t }: { t: T }) => (
 );
 
 const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => (
-  <PageSection className="border-t border-border">
+  <PageSection className="border-t border-border" style={sectionBackground(t, "cta")}>
     <div className="mx-auto max-w-3xl text-center">
       <TrendingUp className="mx-auto h-9 w-9 text-primary" />
       <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{t("cta.title", "Find the gap in your lead flow")}</h2>
@@ -338,7 +346,7 @@ const FaqSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   if (items.length === 0) return null;
 
   return (
-    <PageSection className="border-t border-border bg-card/55">
+    <PageSection className="border-t border-border bg-card/55" style={sectionBackground(t, "faq")}>
       <SectionHeader eyebrow="FAQ" title={t("faq.title", "Frequently asked questions")} />
       <div className="mx-auto mt-10 max-w-3xl">
         <Accordion type="single" collapsible className="space-y-3">

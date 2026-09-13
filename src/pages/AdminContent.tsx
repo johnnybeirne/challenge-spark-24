@@ -105,7 +105,7 @@ const friendlyLabel = (row: Draft) => {
 const isVisiblePageField = (row: Draft) => {
   if (row.page !== "landing") return true;
   if (row.section !== "hero") return true;
-  return ["eyebrow", "headline", "subhead", "cta_label", "image", "image_alt"].includes(row.key);
+  return ["eyebrow", "headline", "subhead", "cta_label", "image", "image_alt", "background_color"].includes(row.key);
 };
 
 const AdminContent = () => {
@@ -271,6 +271,28 @@ const AdminContent = () => {
 
   const updateRow = (id: string, patch: Partial<Draft>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch, _dirty: true } : r)));
+
+  const updateSectionBackground = (section: string, value: string) => {
+    const existing = rows.find((r) => r.section === section && r.key === "background_color");
+    if (existing) {
+      updateRow(existing.id, { value });
+      return;
+    }
+    const next: Draft = {
+      id: `new-background-${section}-${Date.now()}`,
+      page: activePage,
+      section,
+      key: "background_color",
+      value,
+      value_type: "color",
+      label: "Background colour",
+      sort_order: -1,
+      column_slot: "full",
+      _dirty: true,
+      _new: true,
+    };
+    setRows((current) => [...current, next]);
+  };
 
   const removeRow = async (row: Draft) => {
     if (row._new) {
@@ -541,8 +563,14 @@ const AdminContent = () => {
                                     Appears in preview as: {meta.hint}
                                   </p>
                                 )}
+                                {activePage === "landing" && (
+                                  <SectionBackgroundControl
+                                    value={items.find((row) => row.key === "background_color")?.value ?? ""}
+                                    onChange={(value) => updateSectionBackground(section, value)}
+                                  />
+                                )}
                                 <SectionFieldsGrid
-                                  items={items}
+                                  items={items.filter((row) => row.key !== "background_color")}
                                   onUpdate={(id, p) => updateRow(id, p)}
                                   onRemove={(row) => removeRow(row)}
                                 />
@@ -771,6 +799,32 @@ function SectionFieldsGrid({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function SectionBackgroundControl({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const selected = /^#[0-9a-f]{6}$/i.test(value) ? value : "#faf9f5";
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-md border bg-background p-3">
+      <div>
+        <p className="text-xs font-medium text-foreground">Background colour</p>
+        <p className="text-xs text-muted-foreground">Choose the colour behind this whole section.</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={selected}
+          onChange={(event) => onChange(event.target.value)}
+          className="h-9 w-11 cursor-pointer rounded-md border border-input bg-background p-1"
+          aria-label="Section background colour"
+        />
+        {value && (
+          <Button type="button" variant="ghost" size="sm" className="h-8" onClick={() => onChange("")}>
+            Reset
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

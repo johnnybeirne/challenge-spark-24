@@ -243,45 +243,49 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 
 const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "score");
-  // Traffic-light band: each ring is coloured by its own percentage value.
-  // 0-33% red, 34-74% amber, 75-100% green.
-  const bandColor = (pct: number) =>
-    pct <= 33 ? "#ef4444" : pct <= 74 ? "#f59e0b" : "#10b981";
-  const ring = (key: string, fallbackPct: number, labelKey: string, fallbackLabel: string) => {
-    const raw = t(key, String(fallbackPct)).replace(/[^0-9]/g, "");
-    const pct = Math.max(0, Math.min(100, Number(raw) || fallbackPct));
-    const color = bandColor(pct);
-    return (
-      <ScoreRing
-        pct={pct}
-        color={color}
-        label={t(labelKey, fallbackLabel)}
-        maxSize={200}
-        ariaLabel={`${t(labelKey, fallbackLabel)} score`}
-      />
-    );
+  const bandColor = (pct: number) => pct <= 33 ? "hsl(var(--destructive))" : pct <= 74 ? "hsl(var(--warning))" : "hsl(var(--success))";
+  const scoreValue = (key: string, fallback: number) => {
+    const raw = t(key, String(fallback)).replace(/[^0-9]/g, "");
+    return Math.max(0, Math.min(100, Number(raw) || fallback));
   };
+  const scores = [
+    { pct: scoreValue("score.system_percent", 76), label: t("score.system_label", "System") },
+    { pct: scoreValue("score.audience_percent", 58), label: t("score.audience_label", "Audience") },
+    { pct: scoreValue("score.conversion_percent", 28), label: t("score.conversion_label", "Conversion") },
+  ];
+  const overall = scoreValue("score.overall_percent", Math.round(scores.reduce((sum, score) => sum + score.pct, 0) / scores.length));
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "score")}>
-      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div className="mx-auto flex w-full max-w-md flex-wrap items-start justify-center gap-8 sm:gap-10 lg:mx-0">
-          {ring("score.system_percent", 76, "score.system_label", "System")}
-          {ring("score.audience_percent", 58, "score.audience_label", "Audience")}
-          {ring("score.conversion_percent", 28, "score.conversion_label", "Conversion")}
-        </div>
-        <div>
-          <p className="text-sm font-black text-primary">{t("score.eyebrow", "Your result")}</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
-          <div className="mt-6 space-y-3">
-            {items.map((item, i) => (
-              <Reveal key={item} delay={i * 0.12}>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
-                  <p className="font-semibold leading-7 text-foreground">{item}</p>
-                </div>
-              </Reveal>
-            ))}
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">{t("score.eyebrow", "Your result")}</p>
+        <div className="relative mx-auto mt-7 aspect-square w-full max-w-[340px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
+          <div className="flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9" style={{ background: "conic-gradient(from -87deg, hsl(var(--destructive)) 0 23%, transparent 23% 26%, hsl(var(--success)) 26% 72%, transparent 72% 75%, hsl(var(--warning)) 75% 97%, transparent 97% 100%)" }}>
+            <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">
+              <span className="text-7xl font-black leading-none text-foreground sm:text-8xl">{overall}</span>
+              <span className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">out of 100</span>
+              <div className="mt-5 h-px w-20 bg-border" />
+              <span className="mt-4 rounded-full bg-success/10 px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-success">{t("score.archetype", "Architect")}</span>
+            </div>
           </div>
+        </div>
+        <h2 className="mt-8 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          {scores.map((score) => (
+            <div key={score.label} className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{score.label}</span>
+              <ScoreRing pct={score.pct} color={bandColor(score.pct)} maxSize={170} ariaLabel={`${score.label} score`} />
+            </div>
+          ))}
+        </div>
+        <div className="mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-2">
+          {items.map((item, i) => (
+            <Reveal key={item} delay={i * 0.12}>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+                <p className="font-semibold leading-7 text-foreground">{item}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </PageSection>

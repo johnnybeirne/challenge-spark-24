@@ -271,16 +271,16 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
             ariaLabel="Illustrative score preview"
           />
         </div>
-        <div className="mx-auto mt-8 grid max-w-5xl gap-4 text-center sm:grid-cols-3">
-          {items.map((item, i) => (
-            <Reveal key={item} delay={i * 0.12}>
-              <div className="flex flex-col items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
-                <p className="font-semibold leading-7 text-foreground">{item}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+      </div>
+      <div className="mx-auto mt-8 grid max-w-5xl gap-6 text-center sm:grid-cols-3">
+        {items.map((item, i) => (
+          <Reveal key={item} delay={i * 0.12}>
+            <div className="flex flex-col items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
+              <p className="font-semibold leading-7 text-foreground">{item}</p>
+            </div>
+          </Reveal>
+        ))}
       </div>
     </PageSection>
   );

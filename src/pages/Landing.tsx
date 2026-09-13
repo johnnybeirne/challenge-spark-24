@@ -253,7 +253,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
     { pct: scoreValue("score.audience_percent", 58), label: t("score.audience_label", "Audience") },
     { pct: scoreValue("score.conversion_percent", 28), label: t("score.conversion_label", "Conversion") },
   ];
-  const overall = scoreValue("score.overall_percent", Math.round(scores.reduce((sum, score) => sum + score.pct, 0) / scores.length));
+  const overall = scoreValue("score.overall_percent", scoreValue("score.percent", Math.round(scores.reduce((sum, score) => sum + score.pct, 0) / scores.length)));
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "score")}>
       <div className="mx-auto max-w-3xl text-center">

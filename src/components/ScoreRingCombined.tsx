@@ -57,6 +57,7 @@ const ScoreRingCombined = ({
   overall,
   animated = false,
   centerExtra,
+  pillOffsets,
   maxSize = 360,
   ariaLabel,
 }: ScoreRingCombinedProps) => {

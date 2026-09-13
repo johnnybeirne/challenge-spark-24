@@ -366,6 +366,10 @@ const App = () => (
 
               {/* Legacy /admin alias removed — owner console lives at /owner-console. */}
 
+              {/* Short alias for the owner console report editor */}
+              <Route path="/users-report-results" element={<Navigate to="/owner-console/users-report-results" replace />} />
+
+
               <Route path="*" element={<NotFound />} />
             </Routes>
             </ExperienceShell>

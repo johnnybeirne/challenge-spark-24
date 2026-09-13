@@ -294,11 +294,11 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
             </div>
           ))}
         </div>
-        <div className="mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-2">
+        <div className="mx-auto mt-8 grid max-w-3xl gap-4 text-center sm:grid-cols-3">
           {items.map((item, i) => (
             <Reveal key={item} delay={i * 0.12}>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
+              <div className="flex flex-col items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-success" />
                 <p className="font-semibold leading-7 text-foreground">{item}</p>
               </div>
             </Reveal>

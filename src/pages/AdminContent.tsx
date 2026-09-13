@@ -272,6 +272,29 @@ const AdminContent = () => {
   const updateRow = (id: string, patch: Partial<Draft>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch, _dirty: true } : r)));
 
+  const SETTING_KEYS = ["background_color", "top_spacing", "bottom_spacing"];
+
+  const moveField = (section: string, id: string, dir: -1 | 1) => {
+    const items = (grouped[section] ?? []).filter((r) => !SETTING_KEYS.includes(r.key));
+    const idx = items.findIndex((r) => r.id === id);
+    const j = idx + dir;
+    if (idx < 0 || j < 0 || j >= items.length) return;
+    const a = items[idx];
+    const b = items[j];
+    const soA = a.sort_order ?? idx;
+    const soB = b.sort_order ?? j;
+    setRows((rs) => {
+      const next = [...rs];
+      const ia = next.findIndex((r) => r.id === a.id);
+      const ib = next.findIndex((r) => r.id === b.id);
+      if (ia < 0 || ib < 0) return rs;
+      next[ia] = { ...next[ia], sort_order: soB, _dirty: true };
+      next[ib] = { ...next[ib], sort_order: soA, _dirty: true };
+      [next[ia], next[ib]] = [next[ib], next[ia]];
+      return next;
+    });
+  };
+
   const updateSectionSetting = (section: string, key: "background_color" | "top_spacing" | "bottom_spacing", value: string) => {
     const existing = rows.find((r) => r.section === section && r.key === key);
     if (existing) {
@@ -581,6 +604,7 @@ const AdminContent = () => {
                                   items={items.filter((row) => !["background_color", "top_spacing", "bottom_spacing"].includes(row.key))}
                                   onUpdate={(id, p) => updateRow(id, p)}
                                   onRemove={(row) => removeRow(row)}
+                                  onMove={(id, dir) => moveField(section, id, dir)}
                                 />
                                 <Button
                                   variant="ghost"
@@ -772,18 +796,28 @@ function SectionFieldsGrid({
   items,
   onUpdate,
   onRemove,
+  onMove,
 }: {
   items: Draft[];
   onUpdate: (id: string, p: Partial<Draft>) => void;
   onRemove: (row: Draft) => void;
+  onMove?: (id: string, dir: -1 | 1) => void;
 }) {
   const hasTwoCol = items.some((r) => r.column_slot === "left" || r.column_slot === "right");
 
   if (!hasTwoCol) {
     return (
       <div className="space-y-3">
-        {items.map((row) => (
-          <FieldRow key={row.id} row={row} onUpdate={(p) => onUpdate(row.id, p)} onRemove={() => onRemove(row)} />
+        {items.map((row, idx) => (
+          <FieldRow
+            key={row.id}
+            row={row}
+            onUpdate={(p) => onUpdate(row.id, p)}
+            onRemove={() => onRemove(row)}
+            onMove={onMove ? (dir) => onMove(row.id, dir) : undefined}
+            isFirst={idx === 0}
+            isLast={idx === items.length - 1}
+          />
         ))}
       </div>
     );
@@ -793,7 +827,7 @@ function SectionFieldsGrid({
   // by emitting in original sequence with a col-span-2 class.
   return (
     <div className="grid grid-cols-2 gap-2">
-      {items.map((row) => {
+      {items.map((row, idx) => {
         const slot = row.column_slot ?? "full";
         const span =
           slot === "full"
@@ -803,7 +837,14 @@ function SectionFieldsGrid({
             : "col-start-2";
         return (
           <div key={row.id} className={span}>
-            <FieldRow row={row} onUpdate={(p) => onUpdate(row.id, p)} onRemove={() => onRemove(row)} />
+            <FieldRow
+              row={row}
+              onUpdate={(p) => onUpdate(row.id, p)}
+              onRemove={() => onRemove(row)}
+              onMove={onMove ? (dir) => onMove(row.id, dir) : undefined}
+              isFirst={idx === 0}
+              isLast={idx === items.length - 1}
+            />
           </div>
         );
       })}
@@ -865,10 +906,16 @@ function FieldRow({
   row,
   onUpdate,
   onRemove,
+  onMove,
+  isFirst,
+  isLast,
 }: {
   row: Draft;
   onUpdate: (p: Partial<Draft>) => void;
   onRemove: () => void;
+  onMove?: (dir: -1 | 1) => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   const slot = row.column_slot ?? "full";
   return (
@@ -889,6 +936,30 @@ function FieldRow({
           )}
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
+          {onMove && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground"
+                aria-label="Move field up"
+                disabled={isFirst}
+                onClick={() => onMove(-1)}
+              >
+                <ChevronUp className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground"
+                aria-label="Move field down"
+                disabled={isLast}
+                onClick={() => onMove(1)}
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </>
+          )}
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">

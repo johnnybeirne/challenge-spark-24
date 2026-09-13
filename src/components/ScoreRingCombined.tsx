@@ -119,7 +119,7 @@ const ScoreRingCombined = ({
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      {/* Pill labels floating just outside each arc — name only, no number */}
+      {/* Pill labels floating just outside each arc — name + percentage */}
       {segments.map((seg, i) => {
         const rad = (pillAngles[i] * Math.PI) / 180;
         return (
@@ -131,7 +131,7 @@ const ScoreRingCombined = ({
               top: `${50 - 42 * Math.cos(rad)}%`,
             }}
           >
-            {seg.label}
+            {seg.label} <span className="text-foreground">{Math.round(seg.pct)}%</span>
           </span>
         );
       })}

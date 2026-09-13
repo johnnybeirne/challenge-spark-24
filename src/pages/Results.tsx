@@ -13,20 +13,13 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
-import ScoreRing from "@/components/ScoreRing";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 import ResultsReportOptIn from "@/components/ResultsReportOptIn";
 import ReportVerifyBanner from "@/components/ReportVerifyBanner";
 import { useReportPreview } from "@/lib/reportPreview";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
 import { useAuth } from "@/hooks/useAuth";
 
-// Per-category traffic-light banding, driven by each category's own percent.
-// 0-33 red, 34-74 amber, 75-100 green.
-const ringColorFor = (pct: number): string => {
-  if (pct >= 75) return "#10b981"; // green
-  if (pct >= 34) return "#f59e0b"; // amber
-  return "#f43f5e"; // red
-};
 
 
 
@@ -131,7 +124,7 @@ const Results = () => {
     () => calculateCategoryScores((assessment?.answers as Record<string, string>) ?? {}),
     [assessment],
   );
-  const [animatedScore, setAnimatedScore] = useState(0);
+  
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
@@ -246,19 +239,6 @@ const Results = () => {
     }
   };
 
-  useEffect(() => {
-    const duration = 1100;
-    const start = performance.now();
-    let frameId: number;
-    const tick = (timestamp: number) => {
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setAnimatedScore(Math.round(percentageScore * eased));
-      if (progress < 1) frameId = requestAnimationFrame(tick);
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [percentageScore]);
 
   if (!hasResult) {
     return (

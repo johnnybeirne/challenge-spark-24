@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import ResultsAdvisor from "@/components/ResultsAdvisor";
-import { getDiagnosticResult, calculateCategoryScores, type AssessmentResult } from "@/lib/assessmentData";
+import { getDiagnosticResult, calculateCategoryScores, buildPreviewAnswers, type AssessmentResult } from "@/lib/assessmentData";
 import TypingDots from "@/components/TypingDots";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
@@ -149,8 +149,13 @@ const Results = () => {
   const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
   const percentageScore = Math.min(92, Math.round((score / 9) * 100));
   const categoryScores = useMemo(
-    () => calculateCategoryScores((assessment?.answers as Record<string, string>) ?? {}),
-    [assessment],
+    () =>
+      calculateCategoryScores(
+        previewTier !== null
+          ? buildPreviewAnswers(previewTier)
+          : ((assessment?.answers as Record<string, string>) ?? {}),
+      ),
+    [assessment, previewTier],
   );
   
 

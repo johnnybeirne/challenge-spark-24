@@ -298,6 +298,39 @@ export function calculateCategoryScores(
   });
 }
 
+/**
+ * Sample answer sets used by the /results/low|med|high previews so the
+ * category ring and the breakdown advice show realistic, band-matching
+ * numbers instead of zeros. Totals match the preview overall scores
+ * (low 2, mid 5, high 8).
+ */
+const previewCorrectCounts: Record<"low" | "mid" | "high", Record<QuizCategory, number>> = {
+  low: { system: 1, audience: 1, conversion: 0 },
+  mid: { system: 2, audience: 2, conversion: 1 },
+  high: { system: 3, audience: 3, conversion: 2 },
+};
+
+/** The answer that earns a point for a given question. */
+function scoringAnswer(id: string): string {
+  return reverseScoredQuestions.has(id) ? "no" : "yes";
+}
+
+/** The answer that earns no point for a given question. */
+function nonScoringAnswer(id: string): string {
+  return reverseScoredQuestions.has(id) ? "yes" : "no";
+}
+
+export function buildPreviewAnswers(tier: "low" | "mid" | "high"): Record<string, string> {
+  const counts = previewCorrectCounts[tier];
+  const answers: Record<string, string> = {};
+  (Object.keys(categoryQuestions) as QuizCategory[]).forEach((category) => {
+    categoryQuestions[category].forEach((id, index) => {
+      answers[id] = index < counts[category] ? scoringAnswer(id) : nonScoringAnswer(id);
+    });
+  });
+  return answers;
+}
+
 export function getDiagnosticResult(score: number) {
   if (score <= 3) {
     return {

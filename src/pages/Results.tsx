@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import ResultsAdvisor from "@/components/ResultsAdvisor";
 import { getDiagnosticResult, calculateCategoryScores, buildPreviewAnswers, categoryQuestions, type AssessmentResult } from "@/lib/assessmentData";

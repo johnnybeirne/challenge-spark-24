@@ -132,7 +132,6 @@ const Results = () => {
     [assessment],
   );
   const [animatedScore, setAnimatedScore] = useState(0);
-  const [animatedBar, setAnimatedBar] = useState(0);
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
@@ -255,7 +254,6 @@ const Results = () => {
       const progress = Math.min((timestamp - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setAnimatedScore(Math.round(percentageScore * eased));
-      setAnimatedBar(percentageScore * eased);
       if (progress < 1) frameId = requestAnimationFrame(tick);
     };
     frameId = requestAnimationFrame(tick);
@@ -272,29 +270,6 @@ const Results = () => {
   }
 
   const paragraphsToRender = paragraphs.slice(0, visibleCount);
-
-  const accent = (() => {
-    const tier = tierData?.tier;
-    if (tier === "high") {
-      return {
-        text: "text-emerald-500",
-        bar: "bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600",
-        glow: "shadow-[0_0_40px_-8px_hsl(152_76%_45%/0.55)]",
-      };
-    }
-    if (tier === "mid") {
-      return {
-        text: "text-blue-500",
-        bar: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
-        glow: "shadow-[0_0_40px_-8px_hsl(217_91%_60%/0.55)]",
-      };
-    }
-    return {
-      text: "text-amber-500",
-      bar: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
-      glow: "shadow-[0_0_40px_-8px_hsl(28_95%_55%/0.55)]",
-    };
-  })();
 
   const urgencyTier: "low" | "mid" | "high" =
     tierData?.tier === "high" || tierData?.tier === "mid" || tierData?.tier === "low"
@@ -320,6 +295,16 @@ const Results = () => {
 
   const joinLabel = tContent("cta.primary", "Join the 3-Day Challenge");
 
+  const archetypeDefaults = {
+    low: { name: "You're a Pioneer", tagline: "You're building the foundation. Let's make it solid." },
+    mid: { name: "You're an Architect", tagline: "You have the pieces. Now let's connect them." },
+    high: { name: "You're an Authority", tagline: "You've built something real. Now let's make it grow." },
+  } as const;
+  const archetypeIntro = tContent("archetypes.intro", "Based on your answers...");
+  const archetypeName = tContent(`archetypes.${urgencyTier}_name`, archetypeDefaults[urgencyTier].name);
+  const archetypeTagline = tContent(`archetypes.${urgencyTier}_tagline`, archetypeDefaults[urgencyTier].tagline);
+  const archetypeLabel = archetypeName.replace(/^you'?re\s+(an?|the)\s+/i, "").trim();
+
 
   const cta = (() => {
     if (entryIntent === "premium_course") {
@@ -344,76 +329,53 @@ const Results = () => {
           </span>
         </div>
       )}
-      <div className={`flex min-h-screen flex-col px-6 pt-16 max-w-2xl mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
+      <div className={`flex min-h-screen flex-col px-6 pt-12 max-w-3xl mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
-        <section className="mb-16 text-center animate-fade-in">
-          <p className="mb-8 text-[11px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+        <section className="mb-14 text-center animate-fade-in">
+          <p className="mb-7 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
             Your Lead Generation Score
           </p>
 
-          <div className="relative">
-            <div className={`text-7xl sm:text-8xl font-black leading-none tracking-tighter ${accent.text}`}>
-              {animatedScore}
+          <div className="relative mx-auto aspect-square w-full max-w-[360px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
+            <div
+              className="relative flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9"
+              style={{
+                background: "conic-gradient(from -87deg, hsl(var(--destructive)) 0 23%, transparent 23% 26%, hsl(var(--success)) 26% 72%, transparent 72% 75%, hsl(var(--warning,38_92%_50%)) 75% 97%, transparent 97% 100%)",
+              }}
+            >
+              <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">
+                <div className="text-7xl font-black leading-none text-foreground sm:text-8xl">
+                  {animatedScore}
+                </div>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  out of 100
+                </p>
+                <div className="mt-5 h-px w-20 bg-border" />
+                <span className="mt-4 rounded-full bg-success/10 px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-success">
+                  {archetypeLabel}
+                </span>
+              </div>
             </div>
-            <p className="mt-2 text-[var(--body-size)] font-medium uppercase tracking-[0.25em] text-muted-foreground">
-              out of 100
+          </div>
+
+          <div className="mt-9">
+            <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
+              {archetypeIntro}
+            </p>
+            <h1 className="mt-3 text-[var(--h1-size)] font-black text-foreground sm:text-[var(--h1-size)]">
+              {archetypeName}
+            </h1>
+            <p className="mt-3 text-[var(--body-size)] text-muted-foreground sm:text-[var(--h2-size)]">
+              {archetypeTagline}
             </p>
           </div>
 
-          <div className="mx-auto mt-10 max-w-md">
-            <div
-              className="h-3 w-full overflow-hidden rounded-full bg-foreground/5 ring-1 ring-foreground/10"
-              role="meter"
-              aria-valuenow={percentageScore}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Diagnostic score"
-            >
-              <div
-                className={`h-full rounded-full ${accent.bar} ${accent.glow} transition-[width] duration-100 ease-out`}
-                style={{ width: `${animatedBar}%` }}
-              />
-            </div>
-          </div>
-
-          {(() => {
-            const archetypeTier: "low" | "mid" | "high" =
-              tierData?.tier === "high" || tierData?.tier === "mid" || tierData?.tier === "low"
-                ? (tierData.tier as "low" | "mid" | "high")
-                : percentageScore >= 67
-                ? "high"
-                : percentageScore >= 34
-                ? "mid"
-                : "low";
-            const defaults = {
-              low: { name: "You're a Pioneer", tagline: "You're building the foundation. Let's make it solid." },
-              mid: { name: "You're an Architect", tagline: "You have the pieces. Now let's connect them." },
-              high: { name: "You're an Authority", tagline: "You've built something real. Now let's make it grow." },
-            } as const;
-            const intro = tContent("archetypes.intro", "Based on your answers...");
-            const name = tContent(`archetypes.${archetypeTier}_name`, defaults[archetypeTier].name);
-            const tagline = tContent(`archetypes.${archetypeTier}_tagline`, defaults[archetypeTier].tagline);
-            return (
-              <div className="mt-10">
-                <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-                  {intro}
-                </p>
-                <h1 className={`mt-3 text-[var(--h1-size)] sm:text-[var(--h1-size)] font-black tracking-tight ${accent.text}`}>
-                  {name}
-                </h1>
-                <p className="mt-3 text-[var(--body-size)] sm:text-[var(--h2-size)] text-muted-foreground">
-                  {tagline}
-                </p>
-              </div>
-            );
-          })()}
-
           {/* CATEGORY BREAKDOWN — additive, does not affect the archetype above */}
-          <div className="mt-12 grid gap-4 sm:grid-cols-3 sm:gap-[50px]">
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {categoryScores.map((c) => (
               <div
                 key={c.category}
-                className="flex flex-col items-center gap-3 rounded-2xl border border-foreground/10 bg-card p-5 text-center"
+                className="flex min-w-0 flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-center shadow-sm"
               >
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {c.label}
@@ -421,7 +383,7 @@ const Results = () => {
                 <ScoreRing
                   pct={c.percent}
                   color={ringColorFor(c.percent)}
-                  maxSize={200}
+                  maxSize={170}
                   ariaLabel={`${c.label} score`}
                 />
               </div>

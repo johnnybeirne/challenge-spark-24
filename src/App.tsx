@@ -89,6 +89,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminResultsOptinCard from "@/pages/admin/AdminResultsOptinCard";
+import AdminResultsPage from "@/pages/admin/AdminResultsPage";
 import AdminAuthEmail from "@/pages/admin/AdminAuthEmail";
 import AdminUsersReportResults from "@/pages/admin/AdminUsersReportResults";
 import MyReport from "@/pages/MyReport";

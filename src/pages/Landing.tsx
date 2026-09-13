@@ -301,9 +301,9 @@ const RevealSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: Site
   );
 };
 
-const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const ScorePreview = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "score");
-  
+
   const scoreValue = (key: string, fallback: number) => {
     const raw = t(key, String(fallback)).replace(/[^0-9]/g, "");
     return Math.max(0, Math.min(100, Number(raw) || fallback));
@@ -317,8 +317,16 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "score")}>
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">{t("score.eyebrow", "Your result")}</p>
-        <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear set of findings, then a recommended strategy.")}</h2>
+        <OrderedHeader
+          rows={rows}
+          section="score"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground"
+          titleClass="text-3xl font-black leading-tight text-foreground sm:text-4xl"
+          fallbacks={{
+            eyebrow: "Your result",
+            title: "Get a clear set of findings, then a recommended strategy.",
+          }}
+        />
         <div className="mt-7">
           <ScoreRingCombined
             overall={overall}
@@ -346,13 +354,17 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   );
 };
 
-const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const BenefitsSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "benefits");
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "benefits")}>
-      <SectionHeader
-        eyebrow={t("benefits.eyebrow", "Why take it")}
-        title={t("benefits.title", "Know what to fix before you spend more effort")}
+      <OrderedHeader
+        rows={rows}
+        section="benefits"
+        fallbacks={{
+          eyebrow: "Why take it",
+          title: "Know what to fix before you spend more effort",
+        }}
       />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((benefit, i) => (

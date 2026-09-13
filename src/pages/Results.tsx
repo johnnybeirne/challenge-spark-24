@@ -429,6 +429,66 @@ const Results = () => {
           </div>
         </section>
 
+        {sequenceComplete && (
+          <section ref={breakdownRef} className="mb-10">
+            {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
+                left-to-right order and colours as the score ring. Advice text
+                varies by score band per category; copy lives in site_content
+                (page "results", section "breakdown"). Columns flip in one at
+                a time once scrolled into view (see flippedCount above). */}
+            <div className="grid gap-4 md:grid-cols-3">
+              {categoryScores.map((cs, i) => {
+                const missing = !categoryHasAnswers[i];
+                const band: "low" | "mid" | "high" =
+                  cs.percent >= 67 ? "high" : cs.percent >= 34 ? "mid" : "low";
+                const color = ["#f43f5e", "#10b981", "#f59e0b"][i];
+                const advice = tContent(
+                  `breakdown.${cs.category}_${band}`,
+                  breakdownDefaults[cs.category][band],
+                );
+                return (
+                  <div
+                    key={cs.category}
+                    className={`h-full rounded-xl border border-border bg-background p-6 shadow-sm ${
+                      i < flippedCount ? "animate-flip-in" : "opacity-0"
+                    }`}
+                    aria-hidden={i >= flippedCount}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-[0.2em]"
+                      style={{ color }}
+                    >
+                      {cs.label}
+                    </p>
+                    {missing ? (
+                      <>
+                        <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
+                          {tContent(
+                            "breakdown.empty_state",
+                            "Not enough answers yet to score this area.",
+                          )}
+                        </p>
+                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                          {advice}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="mt-2 text-3xl font-black leading-none text-foreground">
+                          {cs.percent}%
+                        </p>
+                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                          {advice}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* JOHNNY MESSAGE — flowing, no chrome */}
         <section className="mb-10">
           <div className="flex items-start gap-5 sm:gap-6">

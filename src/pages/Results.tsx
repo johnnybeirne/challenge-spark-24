@@ -309,7 +309,7 @@ const Results = () => {
           </span>
         </div>
       )}
-      <div className={`flex min-h-screen flex-col px-6 pt-12 w-[80%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
+      <div className={`flex min-h-screen flex-col px-6 pt-12 w-[50%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
         <section className="mb-14 text-center animate-fade-in">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">

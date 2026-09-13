@@ -564,16 +564,18 @@ const AdminContent = () => {
                                   </p>
                                 )}
                                 {activePage === "landing" && (
-                                  <SectionBackgroundControl
-                                    value={items.find((row) => row.key === "background_color")?.value ?? ""}
-                                    onChange={(value) => updateSectionSetting(section, "background_color", value)}
-                                  />
-                                  <SectionSpacingControl
-                                    top={items.find((row) => row.key === "top_spacing")?.value ?? ""}
-                                    bottom={items.find((row) => row.key === "bottom_spacing")?.value ?? ""}
-                                    onTopChange={(value) => updateSectionSetting(section, "top_spacing", value)}
-                                    onBottomChange={(value) => updateSectionSetting(section, "bottom_spacing", value)}
-                                  />
+                                  <>
+                                    <SectionBackgroundControl
+                                      value={items.find((row) => row.key === "background_color")?.value ?? ""}
+                                      onChange={(value) => updateSectionSetting(section, "background_color", value)}
+                                    />
+                                    <SectionSpacingControl
+                                      top={items.find((row) => row.key === "top_spacing")?.value ?? ""}
+                                      bottom={items.find((row) => row.key === "bottom_spacing")?.value ?? ""}
+                                      onTopChange={(value) => updateSectionSetting(section, "top_spacing", value)}
+                                      onBottomChange={(value) => updateSectionSetting(section, "bottom_spacing", value)}
+                                    />
+                                  </>
                                 )}
                                 <SectionFieldsGrid
                                   items={items.filter((row) => !["background_color", "top_spacing", "bottom_spacing"].includes(row.key))}

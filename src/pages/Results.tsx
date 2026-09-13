@@ -264,12 +264,11 @@ const Results = () => {
       io.disconnect();
       timers.forEach((t) => window.clearTimeout(t));
     };
-  }, [sequenceComplete]);
-  const revealTimerRef = useRef<number | null>(null);
-  const skipTypingRef = useRef(skipTyping);
-
+  }, []);
+...
+  // The advisor stream waits until all three breakdown cards have flipped in.
   useEffect(() => {
-    if (paragraphs.length === 0) return;
+    if (paragraphs.length === 0 || flippedCount < 3) return;
     setVisibleCount(0);
     setThinking(true);
     setSkipTyping(false);

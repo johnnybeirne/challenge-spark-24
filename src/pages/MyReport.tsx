@@ -38,7 +38,7 @@ const MyReport = () => {
 
     (async () => {
       const [profileRes, progressRes, contextRes, diagnosticRes] = await Promise.all([
-        supabase.from("profiles").select("first_name,display_name").eq("id", user.id).maybeSingle(),
+        supabase.from("profiles").select("first_name,name").eq("id", user.id).maybeSingle(),
         supabase.from("challenge_progress").select("id").eq("user_id", user.id).maybeSingle(),
         (supabase.from("ai_user_context") as any).select("assessment").eq("user_id", user.id).maybeSingle(),
         supabase.from("diagnostic_responses").select("tier,min_percent,max_percent,title,messages"),
@@ -46,8 +46,8 @@ const MyReport = () => {
 
       if (cancelled) return;
 
-      const profile = profileRes.data as { first_name: string | null; display_name: string | null } | null;
-      const name = profile?.first_name || profile?.display_name || state.user?.name || "";
+      const profile = profileRes.data as { first_name: string | null; name: string | null } | null;
+      const name = profile?.first_name || profile?.name || state.user?.name || "";
       setFirstName(String(name).split(" ")[0] ?? "");
       setHasJoined(!!progressRes.data);
 

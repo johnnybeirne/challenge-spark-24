@@ -47,7 +47,7 @@ const SEGMENT_STARTS = [-85, 35, 155];
 // Pill label positions (0deg = straight up, clockwise), aligned with each
 // segment's centre angle, radius as % of the outer box.
 const PILL_ANGLES = [60, 180, 300];
-const PILL_RADIUS = 48;
+const PILL_RADIUS = 42;
 
 const ScoreRingCombined = ({
   segments,

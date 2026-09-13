@@ -44,9 +44,10 @@ const ARC_DEG = 110; // 110deg arc + 10deg gap per segment
 const ARC_LEN = (ARC_DEG / 360) * CIRCUMFERENCE;
 // Segment start angles (SVG degrees, 0 = 3 o'clock, clockwise from top area).
 const SEGMENT_STARTS = [-85, 35, 155];
-// Pill label positions (0deg = straight up, clockwise), radius as % of box.
-const PILL_ANGLES = [-30, 90, 210];
-const PILL_RADIUS = 56;
+// Pill label positions (0deg = straight up, clockwise), aligned with each
+// segment's centre angle, radius as % of the outer box.
+const PILL_ANGLES = [60, 180, 300];
+const PILL_RADIUS = 48;
 
 const ScoreRingCombined = ({
   segments,

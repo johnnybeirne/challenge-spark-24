@@ -148,14 +148,25 @@ const Results = () => {
   const hasResult = previewTier !== null || (!!assessment && "challengeType" in (assessment as object));
   const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
   const percentageScore = Math.min(92, Math.round((score / 9) * 100));
-  const categoryScores = useMemo(
+  const categoryAnswers = useMemo(
     () =>
-      calculateCategoryScores(
-        previewTier !== null
-          ? buildPreviewAnswers(previewTier)
-          : ((assessment?.answers as Record<string, string>) ?? {}),
-      ),
+      previewTier !== null
+        ? buildPreviewAnswers(previewTier)
+        : ((assessment?.answers as Record<string, string>) ?? {}),
     [assessment, previewTier],
+  );
+  const categoryScores = useMemo(
+    () => calculateCategoryScores(categoryAnswers),
+    [categoryAnswers],
+  );
+  // A category counts as "missing" only when none of its questions were
+  // answered — a real 0% score must display as 0%, matching the ring.
+  const categoryHasAnswers = useMemo(
+    () =>
+      categoryScores.map((cs) =>
+        categoryQuestions[cs.category].some((id) => categoryAnswers[id] != null),
+      ),
+    [categoryScores, categoryAnswers],
   );
   
 

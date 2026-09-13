@@ -97,6 +97,14 @@ const Results = () => {
   const qa = useQaPreview();
   const { t: tContent } = useSiteContent("results");
   const { t: tGlobal } = useSiteContent("global");
+  const headingSizeClass =
+    { small: "text-xs", medium: "text-sm sm:text-base", large: "text-base sm:text-xl" }[
+      tContent("score_header.heading_size", "small")
+    ] ?? "text-xs";
+  const subheadingSizeClass =
+    { small: "text-sm sm:text-base", medium: "text-lg sm:text-xl", large: "text-xl sm:text-3xl" }[
+      tContent("score_header.subheading_size", "medium")
+    ] ?? "text-lg sm:text-xl";
   // Unverified, client-side-only preview after someone asks for their report.
   // Never treated as a session — it just keeps the page personalised until the
   // emailed code is confirmed.

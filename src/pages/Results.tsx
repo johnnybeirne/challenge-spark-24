@@ -135,11 +135,12 @@ const Results = () => {
   const qaPreviewActive = qa.active && qa.flags.assessmentCompleted;
   const qaTier = qaArchetypeTier(qa);
   const previewTier = (() => {
-    if (qaTier) return qaTier;
+    // An explicit /results/<tier> URL always wins over any QA archetype override.
     const p = location.pathname.toLowerCase();
     if (p.endsWith("/low")) return "low";
     if (p.endsWith("/med") || p.endsWith("/mid")) return "mid";
     if (p.endsWith("/high")) return "high";
+    if (qaTier) return qaTier;
     if (qaPreviewActive) return "mid";
     return null;
   })();

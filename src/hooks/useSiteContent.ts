@@ -15,7 +15,8 @@ export type SiteContentRow = {
 export type SiteContentMap = Record<string, string>; // "section.key" -> value
 
 const cache = new Map<string, SiteContentMap>();
-const listeners = new Map<string, Set<(m: SiteContentMap) => void>>();
+const rowsCache = new Map<string, SiteContentRow[]>();
+const listeners = new Map<string, Set<(m: SiteContentMap, rows: SiteContentRow[]) => void>>();
 
 export async function fetchPageContent(page: string): Promise<SiteContentRow[]> {
   const { data, error } = await supabase

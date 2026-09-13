@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// BREAKDOWN_FIELDS consumed below in the breakdown editor card.
 import { Link } from "react-router-dom";
 import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -402,6 +401,34 @@ const AdminResultsPage = () => {
                   onChange={(e) => set("advisor_card.name", e.target.value)}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card id="breakdown">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">System, Audience, Conversion breakdown</CardTitle>
+                  <CardDescription>
+                    One advice text per category per score band. Each person's own percentages decide which text shows.
+                  </CardDescription>
+                </div>
+                <Button onClick={saveBreakdown} disabled={saving === "breakdown"}>
+                  {saving === "breakdown" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-5 md:grid-cols-3">
+              {BREAKDOWN_FIELDS.map((f) => (
+                <div key={f.key} className="space-y-1.5">
+                  <Label>{f.label}</Label>
+                  <Textarea
+                    rows={3}
+                    value={values[`breakdown.${f.key}`] ?? ""}
+                    onChange={(e) => set(`breakdown.${f.key}`, e.target.value)}
+                  />
+                </div>
+              ))}
             </CardContent>
           </Card>
 

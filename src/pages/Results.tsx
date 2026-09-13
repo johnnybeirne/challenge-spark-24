@@ -418,7 +418,7 @@ const Results = () => {
       )}
       <div className={`flex min-h-screen flex-col px-6 pt-12 w-[80%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
-        <section className="mb-14 text-center animate-fade-in">
+        <section className="mb-2 rounded-2xl p-8 text-center animate-fade-in bg-muted/40">
           <p
             className={`mb-2 font-semibold uppercase tracking-[0.35em] text-muted-foreground ${
               headingSizeClass

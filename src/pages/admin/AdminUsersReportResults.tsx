@@ -13,13 +13,23 @@ import { invalidatePage } from "@/hooks/useSiteContent";
 const PAGE = "my_report";
 const SECTION = "report";
 
-const FIELDS: { key: string; label: string; textarea?: boolean }[] = [
-  { key: "heading", label: "Page heading" },
-  { key: "intro", label: "Intro line (use {name} for their first name)", textarea: true },
-  { key: "locked_heading", label: "Locked overlay heading" },
-  { key: "locked_body", label: "Locked overlay body", textarea: true },
-  { key: "cta_label", label: "CTA button label" },
-  { key: "joined_heading", label: "Heading after they join the challenge" },
+const FIELDS: { key: string; label: string; textarea?: boolean; placeholder: string }[] = [
+  { key: "heading", label: "Page heading", placeholder: "Your report" },
+  {
+    key: "intro",
+    label: "Intro line (use {name} for their first name)",
+    textarea: true,
+    placeholder: "Here is what your answers point to, {name}.",
+  },
+  { key: "locked_heading", label: "Locked overlay heading", placeholder: "Your full report is waiting" },
+  {
+    key: "locked_body",
+    label: "Locked overlay body",
+    textarea: true,
+    placeholder: "Join the 3-Day Challenge to read the whole thing and put it to work.",
+  },
+  { key: "cta_label", label: "CTA button label", placeholder: "Join the 3-Day Challenge" },
+  { key: "joined_heading", label: "Heading after they join the challenge", placeholder: "Your full report" },
 ];
 
 const AdminUsersReportResults = () => {

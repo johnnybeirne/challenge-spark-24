@@ -906,10 +906,16 @@ function FieldRow({
   row,
   onUpdate,
   onRemove,
+  onMove,
+  isFirst,
+  isLast,
 }: {
   row: Draft;
   onUpdate: (p: Partial<Draft>) => void;
   onRemove: () => void;
+  onMove?: (dir: -1 | 1) => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   const slot = row.column_slot ?? "full";
   return (
@@ -930,6 +936,30 @@ function FieldRow({
           )}
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
+          {onMove && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground"
+                aria-label="Move field up"
+                disabled={isFirst}
+                onClick={() => onMove(-1)}
+              >
+                <ChevronUp className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground"
+                aria-label="Move field down"
+                disabled={isLast}
+                onClick={() => onMove(1)}
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </>
+          )}
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">

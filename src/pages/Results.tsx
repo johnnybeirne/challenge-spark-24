@@ -149,8 +149,13 @@ const Results = () => {
   const score = previewTier !== null ? previewScore : (assessment?.diagnosticScore ?? 0);
   const percentageScore = Math.min(92, Math.round((score / 9) * 100));
   const categoryScores = useMemo(
-    () => calculateCategoryScores((assessment?.answers as Record<string, string>) ?? {}),
-    [assessment],
+    () =>
+      calculateCategoryScores(
+        previewTier !== null
+          ? buildPreviewAnswers(previewTier)
+          : ((assessment?.answers as Record<string, string>) ?? {}),
+      ),
+    [assessment, previewTier],
   );
   
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// BREAKDOWN_FIELDS consumed below in the breakdown editor card.
 import { Link } from "react-router-dom";
 import PreviewButton from "@/components/admin/PreviewButton";
 import { supabase } from "@/integrations/supabase/client";

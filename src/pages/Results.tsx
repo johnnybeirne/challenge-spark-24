@@ -241,7 +241,7 @@ const Results = () => {
   const breakdownRef = useRef<HTMLElement | null>(null);
   const [flippedCount, setFlippedCount] = useState(0);
   useEffect(() => {
-    if (!sequenceComplete) return;
+    if (!hasResult) return;
     const el = breakdownRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -265,12 +265,12 @@ const Results = () => {
       io.disconnect();
       timers.forEach((t) => window.clearTimeout(t));
     };
-  }, [sequenceComplete]);
+  }, [hasResult]);
   const revealTimerRef = useRef<number | null>(null);
   const skipTypingRef = useRef(skipTyping);
-
+  // The advisor stream waits until all three breakdown cards have flipped in.
   useEffect(() => {
-    if (paragraphs.length === 0) return;
+    if (paragraphs.length === 0 || flippedCount < 3) return;
     setVisibleCount(0);
     setThinking(true);
     setSkipTyping(false);
@@ -284,7 +284,7 @@ const Results = () => {
     return () => {
       if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     };
-  }, [paragraphs.length]);
+  }, [paragraphs.length, flippedCount]);
 
   skipTypingRef.current = skipTyping;
 
@@ -430,7 +430,7 @@ const Results = () => {
           </div>
         </section>
 
-        {sequenceComplete && (
+        {(
           <section ref={breakdownRef} className="mb-10">
             {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
                 left-to-right order and colours as the score ring. Advice text

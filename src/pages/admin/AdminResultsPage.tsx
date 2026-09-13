@@ -197,15 +197,26 @@ const AdminResultsPage = () => {
   const saveBreakdown = () =>
     saveRows(
       "breakdown",
-      BREAKDOWN_FIELDS.map((f, i) => ({
-        page: "results",
-        section: "breakdown",
-        key: f.key,
-        value: values?.[`breakdown.${f.key}`] ?? "",
-        value_type: "text",
-        label: f.label,
-        sort_order: i,
-      })),
+      [
+        {
+          page: "results",
+          section: "breakdown",
+          key: "empty_state",
+          value: values?.["breakdown.empty_state"] ?? "",
+          value_type: "text",
+          label: "Message when a score is missing",
+          sort_order: 0,
+        },
+        ...BREAKDOWN_FIELDS.map((f, i) => ({
+          page: "results",
+          section: "breakdown",
+          key: f.key,
+          value: values?.[`breakdown.${f.key}`] ?? "",
+          value_type: "text",
+          label: f.label,
+          sort_order: i + 1,
+        })),
+      ],
       ["results"],
     );
 
@@ -418,7 +429,19 @@ const AdminResultsPage = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="grid gap-5 md:grid-cols-3">
+            <CardContent className="space-y-5">
+              <div className="space-y-1.5">
+                <Label>Message when a score is missing</Label>
+                <Input
+                  value={values["breakdown.empty_state"] ?? ""}
+                  onChange={(e) => set("breakdown.empty_state", e.target.value)}
+                  placeholder="Not enough answers yet to score this area."
+                />
+                <p className="text-xs text-muted-foreground">
+                  Shown in place of the percentage when a category has no answers behind it. The low-band advice still appears underneath.
+                </p>
+              </div>
+              <div className="grid gap-5 md:grid-cols-3">
               {BREAKDOWN_FIELDS.map((f) => (
                 <div key={f.key} className="space-y-1.5">
                   <Label>{f.label}</Label>

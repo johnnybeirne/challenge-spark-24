@@ -57,20 +57,26 @@ const BLOCKS: BlockCard[] = [
   },
   {
     kind: "inline",
+    id: "breakdown",
+    title: "5. System, Audience, Conversion breakdown",
+    description: "The three-column score breakdown. One advice text per category per score band.",
+  },
+  {
+    kind: "inline",
     id: "cta",
-    title: "5. Join button and urgency line",
+    title: "6. Join button and urgency line",
     description: "The button wording and the line of text under it for each score band.",
   },
   {
     kind: "link",
-    title: "6. Report opt-in card",
+    title: "7. Report opt-in card",
     description: "The get your report by email card and its code bar.",
     url: "/owner-console/results-optin-card",
   },
   {
     kind: "inline",
     id: "advisor_section",
-    title: "7. See what the 3-Day Challenge can do for you",
+    title: "8. See what the 3-Day Challenge can do for you",
     description: "The heading of the final advisor section. Its suggested questions have their own screen.",
   },
   {
@@ -97,7 +103,7 @@ const AdminResultsPage = () => {
       .from("site_content")
       .select("section,key,value")
       .eq("page", "results")
-      .in("section", ["score_header", "advisor_card", "cta", "advisor_section"])
+      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section"])
       .then(({ data, error }) => {
         if (error) {
           toast.error("Could not load the results page copy");

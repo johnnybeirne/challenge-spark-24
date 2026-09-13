@@ -378,7 +378,7 @@ const Results = () => {
             </div>
             <div className="flex-1 min-w-0 pt-1">
               <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Johnny B
+                {tContent("advisor_card.name", "Johnny B")}
               </div>
               {/* Reserve the full final height so the layout never shifts as text types in. */}
               <div className={`relative ${!sequenceComplete ? "cursor-pointer" : ""}`} onClick={handleSkip}>

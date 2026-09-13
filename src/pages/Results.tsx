@@ -418,7 +418,7 @@ const Results = () => {
       )}
       <div className={`flex min-h-screen flex-col px-6 pt-12 w-[80%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
-        <section className="mb-14 text-center animate-fade-in">
+        <section className="mb-2 rounded-2xl p-8 text-center animate-fade-in bg-muted/40">
           <p
             className={`mb-2 font-semibold uppercase tracking-[0.35em] text-muted-foreground ${
               headingSizeClass
@@ -464,7 +464,7 @@ const Results = () => {
         </section>
 
         {(
-          <section ref={breakdownRef} className="mb-10">
+          <section ref={breakdownRef} className="mb-2 p-8">
             {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
                 left-to-right order and colours as the score ring. Advice text
                 varies by score band per category; copy lives in site_content
@@ -524,7 +524,7 @@ const Results = () => {
         )}
 
         {/* JOHNNY MESSAGE — flowing, no chrome */}
-        <section className="mb-10">
+        <section className="mb-2 rounded-2xl p-8 bg-muted/40">
           <div className="flex items-start gap-5 sm:gap-6">
             <div className="relative shrink-0">
               <img
@@ -589,7 +589,7 @@ const Results = () => {
         </section>
 
         {sequenceComplete && (
-          <section className="mb-10 space-y-4 pt-4 animate-fade-in">
+          <section className="mb-2 space-y-4 p-8 animate-fade-in">
             <Button
               size="lg"
               onClick={cta.onClick}
@@ -607,14 +607,14 @@ const Results = () => {
         )}
 
         {sequenceComplete && (
-          <section className="mb-10 animate-fade-in" style={{ animationDelay: "200ms" }}>
+          <section className="mb-2 rounded-2xl p-8 animate-fade-in bg-muted/40" style={{ animationDelay: "200ms" }}>
             <ResultsReportOptIn />
           </section>
         )}
 
 
         {sequenceComplete && (
-          <section className="mb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
+          <section className="mb-2 p-8 animate-fade-in" style={{ animationDelay: "400ms" }}>
             {/* ADVISOR — preview of challenge guidance for takers still deciding */}
           <ResultsAdvisor
             archetypeTier={urgencyTier}

@@ -461,6 +461,7 @@ const Results = () => {
                 (page "results", section "breakdown"). */}
             <div className="grid gap-4 md:grid-cols-3">
               {categoryScores.map((cs, i) => {
+                const missing = !Number.isFinite(cs.percent) || cs.percent <= 0;
                 const band: "low" | "mid" | "high" =
                   cs.percent >= 67 ? "high" : cs.percent >= 34 ? "mid" : "low";
                 const color = ["#f43f5e", "#10b981", "#f59e0b"][i];
@@ -479,12 +480,28 @@ const Results = () => {
                     >
                       {cs.label}
                     </p>
-                    <p className="mt-2 text-3xl font-black leading-none text-foreground">
-                      {cs.percent}%
-                    </p>
-                    <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
-                      {advice}
-                    </p>
+                    {missing ? (
+                      <>
+                        <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
+                          {tContent(
+                            "breakdown.empty_state",
+                            "Not enough answers yet to score this area.",
+                          )}
+                        </p>
+                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                          {advice}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="mt-2 text-3xl font-black leading-none text-foreground">
+                          {cs.percent}%
+                        </p>
+                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                          {advice}
+                        </p>
+                      </>
+                    )}
                   </div>
                 );
               })}

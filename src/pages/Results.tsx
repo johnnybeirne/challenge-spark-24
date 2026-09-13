@@ -404,6 +404,7 @@ const Results = () => {
 
   return (
     <>
+      <ScrollDownHint />
       <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
       {showPreviewIdentity && (
         <div className="fixed right-4 top-4 z-40 flex items-center gap-2 rounded-full border border-border bg-card/90 py-1.5 pl-1.5 pr-4 shadow-sm backdrop-blur">

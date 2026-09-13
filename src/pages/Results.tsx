@@ -241,6 +241,7 @@ const Results = () => {
   const breakdownRef = useRef<HTMLElement | null>(null);
   const [flippedCount, setFlippedCount] = useState(0);
   useEffect(() => {
+    if (!hasResult) return;
     const el = breakdownRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

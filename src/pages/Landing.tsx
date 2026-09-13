@@ -52,6 +52,56 @@ const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: strin
   </div>
 );
 
+type HeaderKind = "eyebrow" | "title" | "body";
+
+/**
+ * Renders a section's eyebrow/title/body in the exact order set in the admin
+ * editor (ascending sort_order), so reordering fields in admin is reflected
+ * on the live page.
+ */
+const OrderedHeader = ({
+  rows,
+  section,
+  fallbacks,
+  centered = true,
+  eyebrowClass = "text-sm font-black text-primary",
+  titleClass = "text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl",
+  bodyClass = "text-lg leading-8 text-muted-foreground",
+}: {
+  rows: SiteContentRow[];
+  section: string;
+  fallbacks: { eyebrow?: string; title: string; body?: string };
+  centered?: boolean;
+  eyebrowClass?: string;
+  titleClass?: string;
+  bodyClass?: string;
+}) => {
+  const defaultSort: Record<HeaderKind, number> = { eyebrow: 10, title: 20, body: 30 };
+  const fields: Array<{ kind: HeaderKind; sort: number; text: string }> = [];
+  (Object.keys(fallbacks) as HeaderKind[]).forEach((kind) => {
+    const fb = fallbacks[kind];
+    if (fb === undefined) return;
+    const row = rows.find((r) => r.section === section && r.key === kind);
+    const text = (row?.value ?? fb).trim();
+    if (!text) return;
+    fields.push({ kind, sort: row?.sort_order ?? defaultSort[kind], text });
+  });
+  fields.sort((a, b) => a.sort - b.sort);
+  return (
+    <div className={`${centered ? "mx-auto max-w-3xl text-center " : ""}space-y-4`}>
+      {fields.map((f) =>
+        f.kind === "eyebrow" ? (
+          <p key="eyebrow" className={eyebrowClass}>{f.text}</p>
+        ) : f.kind === "title" ? (
+          <h2 key="title" className={titleClass}>{f.text}</h2>
+        ) : (
+          <p key="body" className={bodyClass}>{f.text}</p>
+        ),
+      )}
+    </div>
+  );
+};
+
 /** Collect ordered values for keys matching `section.item_N` (sorted by N). */
 function collectItems(map: SiteContentMap, section: string): string[] {
   const prefix = `${section}.item_`;

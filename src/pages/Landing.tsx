@@ -276,7 +276,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
               </span>
             );
           })}
-          <div className="flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9" style={{ background: "conic-gradient(from -87deg, #f43f5e 0 23%, transparent 23% 26%, #10b981 26% 72%, transparent 72% 75%, #f59e0b 75% 97%, transparent 97% 100%)" }}>
+          <div className="flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9" style={{ background: "conic-gradient(from -87deg, #f43f5e 0 23%, transparent 23% 26%, #10b981 26% 72%, transparent 72% 75%, #f59e0b 75% 100%)" }}>
             <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">
               <span className="text-7xl font-black leading-none text-foreground sm:text-8xl">{overall}</span>
               <span className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">out of 100</span>

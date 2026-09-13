@@ -12,29 +12,6 @@ import { toast } from "sonner";
 import { Loader2, LayoutList, ChevronRight } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 
-const LINKED_EDITORS: { title: string; description: string; url: string }[] = [
-  {
-    title: "Report opt-in card",
-    description: "The get your report by email card and its code bar.",
-    url: "/owner-console/results-optin-card",
-  },
-  {
-    title: "Lead gen quiz responses",
-    description: "Score bands, titles and the written findings shown on the page.",
-    url: "/owner-console/diagnostic-responses",
-  },
-  {
-    title: "Results advisor prompts",
-    description: "The suggested questions offered by the advisor.",
-    url: "/owner-console/results-advisor-prompts",
-  },
-  {
-    title: "Section blocks (Quiz LP Editor)",
-    description: "Eyebrow, section title and body blocks for the Results page.",
-    url: "/owner-console/content",
-  },
-];
-
 const SIZES = [
   { value: "small", label: "Small" },
   { value: "medium", label: "Medium" },
@@ -48,50 +25,203 @@ const FIELDS = [
   { key: "subheading_size", label: "Subheading size" },
 ];
 
+type LinkCard = { kind: "link"; title: string; description: string; url: string };
+type InlineCard = { kind: "inline"; id: string; title: string; description: string };
+type BlockCard = LinkCard | InlineCard;
+
+// Same top to bottom order as the live results page.
+const BLOCKS: BlockCard[] = [
+  {
+    kind: "inline",
+    id: "score_header",
+    title: "1. Score header",
+    description: "The heading and line of text above the score dial.",
+  },
+  {
+    kind: "link",
+    title: "2. The score dial",
+    description: "The numbers come from the quiz. Edit the score bands and category wording here.",
+    url: "/owner-console/diagnostic-responses",
+  },
+  {
+    kind: "link",
+    title: "3. Based on your answers, You're an ...",
+    description: "The intro line, archetype names and taglines.",
+    url: "/owner-console/diagnostic-responses",
+  },
+  {
+    kind: "inline",
+    id: "advisor_card",
+    title: "4. Advisor card",
+    description: "The name shown above the written message. The message itself is on Lead Gen Quiz Responses.",
+  },
+  {
+    kind: "inline",
+    id: "cta",
+    title: "5. Join button and urgency line",
+    description: "The button wording and the line of text under it for each score band.",
+  },
+  {
+    kind: "link",
+    title: "6. Report opt-in card",
+    description: "The get your report by email card and its code bar.",
+    url: "/owner-console/results-optin-card",
+  },
+  {
+    kind: "inline",
+    id: "advisor_section",
+    title: "7. See what the 3-Day Challenge can do for you",
+    description: "The heading of the final advisor section. Its suggested questions have their own screen.",
+  },
+  {
+    kind: "link",
+    title: "Suggested questions",
+    description: "The questions offered inside the final advisor section.",
+    url: "/owner-console/results-advisor-prompts",
+  },
+  {
+    kind: "link",
+    title: "Section blocks (Quiz LP Editor)",
+    description: "Eyebrow, section title and body blocks for the Results page.",
+    url: "/owner-console/content",
+  },
+];
+
 const AdminResultsPage = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [globals, setGlobals] = useState<Record<string, string> | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
 
   useEffect(() => {
     supabase
       .from("site_content")
-      .select("key,value")
+      .select("section,key,value")
       .eq("page", "results")
-      .eq("section", "score_header")
+      .in("section", ["score_header", "advisor_card", "cta", "advisor_section"])
       .then(({ data, error }) => {
         if (error) {
-          toast.error("Could not load the score header copy");
+          toast.error("Could not load the results page copy");
+          return;
+        }
+        const v: Record<string, string> = {};
+        for (const r of data ?? []) v[`${r.section}.${r.key}`] = r.value;
+        setValues(v);
+      });
+
+    supabase
+      .from("site_content")
+      .select("key,value")
+      .eq("page", "global")
+      .eq("section", "urgency")
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error("Could not load the urgency lines");
           return;
         }
         const v: Record<string, string> = {};
         for (const r of data ?? []) v[r.key] = r.value;
-        setValues(v);
+        setGlobals(v);
       });
   }, []);
 
   const set = (key: string, value: string) => setValues((prev) => ({ ...(prev ?? {}), [key]: value }));
+  const setGlobal = (key: string, value: string) => setGlobals((prev) => ({ ...(prev ?? {}), [key]: value }));
 
-  const save = async () => {
-    if (!values) return;
-    setSaving(true);
-    const rows = FIELDS.filter((f) => (values[f.key] ?? "").trim() !== "").map((f, i) => ({
-      page: "results",
-      section: "score_header",
-      key: f.key,
-      value: values[f.key],
-      value_type: "text",
-      label: f.label,
-      sort_order: i,
-    }));
-    const { error } = await supabase.from("site_content").upsert(rows, { onConflict: "page,section,key" });
-    setSaving(false);
+  const saveRows = async (
+    id: string,
+    rows: { page: string; section: string; key: string; value: string; value_type: string; label?: string; sort_order?: number }[],
+    pagesToInvalidate: string[],
+  ) => {
+    const clean = rows.filter((r) => (r.value ?? "").trim() !== "");
+    if (clean.length === 0) {
+      toast.error("Nothing to save yet");
+      return;
+    }
+    setSaving(id);
+    const { error } = await supabase.from("site_content").upsert(clean, { onConflict: "page,section,key" });
+    setSaving(null);
     if (error) {
       toast.error("Could not save");
       return;
     }
-    invalidatePage("results");
-    toast.success("Score header saved");
+    for (const p of pagesToInvalidate) invalidatePage(p);
+    toast.success("Saved");
   };
+
+  const saveScoreHeader = () =>
+    saveRows(
+      "score_header",
+      FIELDS.map((f, i) => ({
+        page: "results",
+        section: "score_header",
+        key: f.key,
+        value: values?.[`score_header.${f.key}`] ?? "",
+        value_type: "text",
+        label: f.label,
+        sort_order: i,
+      })),
+      ["results"],
+    );
+
+  const saveAdvisorCard = () =>
+    saveRows(
+      "advisor_card",
+      [
+        {
+          page: "results",
+          section: "advisor_card",
+          key: "name",
+          value: values?.["advisor_card.name"] ?? "",
+          value_type: "text",
+          label: "Advisor name",
+          sort_order: 0,
+        },
+      ],
+      ["results"],
+    );
+
+  const saveAdvisorSection = () =>
+    saveRows(
+      "advisor_section",
+      [
+        {
+          page: "results",
+          section: "advisor_section",
+          key: "heading",
+          value: values?.["advisor_section.heading"] ?? "",
+          value_type: "text",
+          label: "Section heading",
+          sort_order: 0,
+        },
+      ],
+      ["results"],
+    );
+
+  const saveCta = async () => {
+    const rows = [
+      {
+        page: "results",
+        section: "cta",
+        key: "primary",
+        value: values?.["cta.primary"] ?? "",
+        value_type: "text",
+        label: "Button wording",
+        sort_order: 0,
+      },
+      ...(["low", "mid", "high"] as const).map((tier, i) => ({
+        page: "global",
+        section: "urgency",
+        key: `results_${tier}`,
+        value: globals?.[`results_${tier}`] ?? "",
+        value_type: "text",
+        label: `Urgency line (${tier})`,
+        sort_order: i,
+      })),
+    ];
+    await saveRows("cta", rows, ["results", "global"]);
+  };
+
+  const loading = !values || !globals;
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
@@ -102,7 +232,7 @@ const AdminResultsPage = () => {
             Results Page Editor
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            One place to reach everything on the results page, plus the score heading at the top.
+            Every block on the results page, in the order it appears.
           </p>
         </div>
         <PreviewButton href="/results/high" />
@@ -114,89 +244,214 @@ const AdminResultsPage = () => {
           <CardDescription>Each one opens the screen that owns that copy.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2">
-          {LINKED_EDITORS.map((e) => (
-            <Link
-              key={e.url}
-              to={e.url}
-              className="flex items-start justify-between gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
-            >
-              <div>
-                <div className="font-medium">{e.title}</div>
-                <div className="text-sm text-muted-foreground mt-0.5">{e.description}</div>
-              </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground mt-1" />
-            </Link>
-          ))}
+          {BLOCKS.map((b) =>
+            b.kind === "link" ? (
+              <Link
+                key={b.title}
+                to={b.url}
+                className="flex items-start justify-between gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
+              >
+                <div>
+                  <div className="font-medium">{b.title}</div>
+                  <div className="text-sm text-muted-foreground mt-0.5">{b.description}</div>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground mt-1" />
+              </Link>
+            ) : (
+              <a
+                key={b.id}
+                href={`#${b.id}`}
+                className="flex items-start justify-between gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
+              >
+                <div>
+                  <div className="font-medium">{b.title}</div>
+                  <div className="text-sm text-muted-foreground mt-0.5">{b.description}</div>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground mt-1" />
+              </a>
+            ),
+          )}
         </CardContent>
       </Card>
 
-      {!values ? (
+      {loading ? (
         <div className="flex items-center justify-center py-8 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <CardTitle className="text-lg">Score header</CardTitle>
-                <CardDescription>The heading and line of text above the score dial.</CardDescription>
+        <>
+          <Card id="score_header">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Score header</CardTitle>
+                  <CardDescription>The heading and line of text above the score dial.</CardDescription>
+                </div>
+                <Button onClick={saveScoreHeader} disabled={saving === "score_header"}>
+                  {saving === "score_header" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
               </div>
-              <Button onClick={save} disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="space-y-1.5">
-              <Label>Heading</Label>
-              <Input
-                value={values.heading ?? ""}
-                placeholder="Your Lead Generation Score"
-                onChange={(e) => set("heading", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Heading size</Label>
-              <Select value={values.heading_size ?? "small"} onValueChange={(v) => set("heading_size", v)}>
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {SIZES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Subheading</Label>
-              <Textarea
-                rows={2}
-                value={values.subheading ?? ""}
-                placeholder="Get a clear set of findings, then a recommended strategy."
-                onChange={(e) => set("subheading", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Subheading size</Label>
-              <Select value={values.subheading_size ?? "medium"} onValueChange={(v) => set("subheading_size", v)}>
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {SIZES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-1.5">
+                <Label>Heading</Label>
+                <Input
+                  value={values["score_header.heading"] ?? ""}
+                  placeholder="Your Lead Generation Score"
+                  onChange={(e) => set("score_header.heading", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Heading size</Label>
+                <Select
+                  value={values["score_header.heading_size"] ?? "small"}
+                  onValueChange={(v) => set("score_header.heading_size", v)}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SIZES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Subheading</Label>
+                <Textarea
+                  rows={2}
+                  value={values["score_header.subheading"] ?? ""}
+                  placeholder="Get a clear set of findings, then a recommended strategy."
+                  onChange={(e) => set("score_header.subheading", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Subheading size</Label>
+                <Select
+                  value={values["score_header.subheading_size"] ?? "medium"}
+                  onValueChange={(v) => set("score_header.subheading_size", v)}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SIZES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card id="advisor_card">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Advisor card</CardTitle>
+                  <CardDescription>
+                    The name shown above the written message. The message itself lives on Lead Gen Quiz Responses.
+                  </CardDescription>
+                </div>
+                <Button onClick={saveAdvisorCard} disabled={saving === "advisor_card"}>
+                  {saving === "advisor_card" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-1.5">
+                <Label>Name</Label>
+                <Input
+                  value={values["advisor_card.name"] ?? ""}
+                  placeholder="Johnny B"
+                  onChange={(e) => set("advisor_card.name", e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card id="cta">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Join button and urgency line</CardTitle>
+                  <CardDescription>
+                    Use {"{day}"} in an urgency line to drop in the finishing day name.
+                  </CardDescription>
+                </div>
+                <Button onClick={saveCta} disabled={saving === "cta"}>
+                  {saving === "cta" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-1.5">
+                <Label>Button wording</Label>
+                <Input
+                  value={values["cta.primary"] ?? ""}
+                  placeholder="Join the 3-Day Challenge"
+                  onChange={(e) => set("cta.primary", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Urgency line, lower scores</Label>
+                <Textarea
+                  rows={2}
+                  value={globals["results_low"] ?? ""}
+                  placeholder="Your first real win is 3 days away. Start now and have this in place by {day}."
+                  onChange={(e) => setGlobal("results_low", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Urgency line, middle scores</Label>
+                <Textarea
+                  rows={2}
+                  value={globals["results_mid"] ?? ""}
+                  placeholder="Start now and have this in place by {day}."
+                  onChange={(e) => setGlobal("results_mid", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Urgency line, higher scores</Label>
+                <Textarea
+                  rows={2}
+                  value={globals["results_high"] ?? ""}
+                  placeholder="The next group starts in days, not weeks. Start now and have this in place by {day}."
+                  onChange={(e) => setGlobal("results_high", e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card id="advisor_section">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Final advisor section</CardTitle>
+                  <CardDescription>The heading above the suggested questions at the foot of the page.</CardDescription>
+                </div>
+                <Button onClick={saveAdvisorSection} disabled={saving === "advisor_section"}>
+                  {saving === "advisor_section" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-1.5">
+                <Label>Heading</Label>
+                <Input
+                  value={values["advisor_section.heading"] ?? ""}
+                  placeholder="See what the 3-Day Challenge can do for you"
+                  onChange={(e) => set("advisor_section.heading", e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );

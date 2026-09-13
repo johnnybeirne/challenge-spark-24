@@ -495,11 +495,12 @@ const Results = () => {
         </section>
 
         {sequenceComplete && (
-          <section className="mb-10 animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <section ref={breakdownRef} className="mb-10">
             {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
                 left-to-right order and colours as the score ring. Advice text
                 varies by score band per category; copy lives in site_content
-                (page "results", section "breakdown"). */}
+                (page "results", section "breakdown"). Columns flip in one at
+                a time once scrolled into view (see flippedCount above). */}
             <div className="grid gap-4 md:grid-cols-3">
               {categoryScores.map((cs, i) => {
                 const missing = !categoryHasAnswers[i];

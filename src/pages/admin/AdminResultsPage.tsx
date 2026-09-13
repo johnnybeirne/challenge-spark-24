@@ -25,6 +25,14 @@ const FIELDS = [
   { key: "subheading_size", label: "Subheading size" },
 ];
 
+// Nine advice texts for the three-column breakdown: one per category per band.
+const BREAKDOWN_FIELDS = (["system", "audience", "conversion"] as const).flatMap((cat) =>
+  (["low", "mid", "high"] as const).map((band) => ({
+    key: `${cat}_${band}`,
+    label: `${cat[0].toUpperCase()}${cat.slice(1)}, ${band} scores`,
+  })),
+);
+
 type LinkCard = { kind: "link"; title: string; description: string; url: string };
 type InlineCard = { kind: "inline"; id: string; title: string; description: string };
 type BlockCard = LinkCard | InlineCard;
@@ -183,6 +191,21 @@ const AdminResultsPage = () => {
           sort_order: 0,
         },
       ],
+      ["results"],
+    );
+
+  const saveBreakdown = () =>
+    saveRows(
+      "breakdown",
+      BREAKDOWN_FIELDS.map((f, i) => ({
+        page: "results",
+        section: "breakdown",
+        key: f.key,
+        value: values?.[`breakdown.${f.key}`] ?? "",
+        value_type: "text",
+        label: f.label,
+        sort_order: i,
+      })),
       ["results"],
     );
 

@@ -23,6 +23,37 @@ import { useAuth } from "@/hooks/useAuth";
 
 
 
+const SCROLL_HINT_THRESHOLD = 120; // px — roughly one viewport's worth or less
+
+const ScrollDownHint = () => {
+  const [visible, setVisible] = useState(true);
+  const reducedMotion = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const onScroll = () => {
+      if (window.scrollY > SCROLL_HINT_THRESHOLD) {
+        setVisible(false);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Respect reduced-motion: omit the indicator entirely for those users.
+  if (reducedMotion.current === true) return null;
+  if (!visible) return null;
+
+  return (
+    <div
+      className="pointer-events-none fixed bottom-6 left-1/2 z-30 -translate-x-1/2 transition-opacity duration-300"
+      aria-hidden="true"
+    >
+      <ChevronDown className="h-7 w-7 text-muted-foreground/70 animate-scroll-hint-bounce" />
+    </div>
+  );
+};
+
 const TYPING_SPEED_MS = 18;
 const THINKING_MS = 900;
 const BETWEEN_MESSAGES_MS = 500;

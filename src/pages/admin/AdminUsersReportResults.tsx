@@ -114,12 +114,12 @@ const AdminUsersReportResults = () => {
                 {f.textarea ? (
                   <Textarea
                     rows={2}
-                    value={values[f.key] ?? ""}
+                    value={values[f.key] ?? f.placeholder}
                     onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
                   />
                 ) : (
                   <Input
-                    value={values[f.key] ?? ""}
+                    value={values[f.key] ?? f.placeholder}
                     onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
                   />
                 )}

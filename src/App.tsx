@@ -323,6 +323,7 @@ const App = () => (
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
                 <Route path="results-optin-card" element={<AdminResultsOptinCard />} />
+                <Route path="results-page" element={<AdminResultsPage />} />
                 <Route path="auth-email" element={<AdminAuthEmail />} />
                 <Route path="users-report-results" element={<AdminUsersReportResults />} />
                 <Route path="typography" element={<AdminTypography />} />

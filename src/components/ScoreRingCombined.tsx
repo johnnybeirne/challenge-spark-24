@@ -1,12 +1,16 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 /**
- * ScoreRingCombined — one circular ring split into three equal-arc segments in
- * the app's System / Audience / Conversion brand colours, in fixed clockwise
- * order System -> Audience -> Conversion.
+ * ScoreRingCombined — one circular ring split into three proportional-arc
+ * segments in the app's System / Audience / Conversion brand colours, in fixed
+ * clockwise order System -> Audience -> Conversion.
+ *
+ * Each segment's sweep angle is proportional to its percentage relative to the
+ * sum of all three, so a category at 76% occupies a noticeably larger share of
+ * the ring than one at 28%.
  *
  * Each segment gets a small pill label floating just outside its arc showing
- * the category name and its percentage. The centre shows the overall score, a
+ * only the category name (no number). The centre shows the overall score, a
  * thin divider, and "OUT OF 100" in small-caps tracked style.
  *
  * Two modes:
@@ -40,14 +44,9 @@ interface ScoreRingCombinedProps {
 // Ring geometry (SVG viewBox 200x200, radius 80).
 const R = 80;
 const CIRCUMFERENCE = 2 * Math.PI * R;
-const ARC_DEG = 110; // 110deg arc + 10deg gap per segment
-const ARC_LEN = (ARC_DEG / 360) * CIRCUMFERENCE;
-// Segment start angles (SVG degrees, 0 = 3 o'clock, clockwise from top area).
-const SEGMENT_STARTS = [-85, 35, 155];
-// Pill label positions (0deg = straight up, clockwise), aligned with each
-// segment's centre angle, radius as % of the outer box.
-const PILL_ANGLES = [60, 180, 300];
-const PILL_RADIUS = 42;
+// Gap between adjacent segments, in degrees.
+const GAP_DEG = 6;
+const TOTAL_ARC_DEG = 360 - 3 * GAP_DEG;
 
 const ScoreRingCombined = ({
   segments,
@@ -61,6 +60,26 @@ const ScoreRingCombined = ({
   const [displayScore, setDisplayScore] = useState(animated ? 0 : clampedOverall);
   const [swept, setSwept] = useState(!animated);
   const rafRef = useRef<number>();
+
+  // Proportional arc sizing: each segment's sweep is its pct relative to the
+  // sum of all three, spread across the available arc (360 - gaps).
+  const sumPct = Math.max(
+    1,
+    segments.reduce((s, seg) => s + Math.max(0, seg.pct), 0),
+  );
+  const arcDegs = segments.map((seg) => (Math.max(0, seg.pct) / sumPct) * TOTAL_ARC_DEG);
+  const arcLens = arcDegs.map((deg) => (deg / 360) * CIRCUMFERENCE);
+
+  // SVG start angles (0 = 3 o'clock, clockwise positive). Segment 0 starts at
+  // the top (-90deg). Each subsequent segment follows the previous arc + gap.
+  const startSvgs: number[] = [];
+  let cursor = -90;
+  arcDegs.forEach((deg, i) => {
+    startSvgs[i] = cursor;
+    cursor += deg + GAP_DEG;
+  });
+  // Centre angle of each segment, in "degrees from top, clockwise" (for pills).
+  const pillAngles = arcDegs.map((deg, i) => startSvgs[i] + deg / 2 + 90);
 
   useEffect(() => {
     if (!animated) {
@@ -100,19 +119,19 @@ const ScoreRingCombined = ({
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      {/* Pill labels floating just outside each arc */}
+      {/* Pill labels floating just outside each arc — name only, no number */}
       {segments.map((seg, i) => {
-        const rad = (PILL_ANGLES[i] * Math.PI) / 180;
+        const rad = (pillAngles[i] * Math.PI) / 180;
         return (
           <span
             key={seg.label}
             className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
             style={{
-              left: `${50 + PILL_RADIUS * Math.sin(rad)}%`,
-              top: `${50 - PILL_RADIUS * Math.cos(rad)}%`,
+              left: `${50 + 42 * Math.sin(rad)}%`,
+              top: `${50 - 42 * Math.cos(rad)}%`,
             }}
           >
-            {seg.label} {Math.round(seg.pct)}%
+            {seg.label}
           </span>
         );
       })}
@@ -129,9 +148,9 @@ const ScoreRingCombined = ({
               stroke={seg.color}
               strokeWidth="14"
               strokeLinecap="round"
-              strokeDasharray={`${ARC_LEN} ${CIRCUMFERENCE - ARC_LEN}`}
-              strokeDashoffset={swept ? 0 : ARC_LEN}
-              transform={`rotate(${SEGMENT_STARTS[i]} 100 100)`}
+              strokeDasharray={`${arcLens[i]} ${CIRCUMFERENCE - arcLens[i]}`}
+              strokeDashoffset={swept ? 0 : arcLens[i]}
+              transform={`rotate(${startSvgs[i]} 100 100)`}
               style={{
                 transition: animated
                   ? `stroke-dashoffset 0.9s cubic-bezier(0.33, 1, 0.68, 1) ${i * 0.18}s`

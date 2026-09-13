@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
-import ScoreRing from "@/components/ScoreRing";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
@@ -243,7 +243,7 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 
 const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "score");
-  const bandColor = (pct: number) => pct <= 33 ? "#f43f5e" : pct <= 74 ? "#f59e0b" : "#10b981";
+  
   const scoreValue = (key: string, fallback: number) => {
     const raw = t(key, String(fallback)).replace(/[^0-9]/g, "");
     return Math.max(0, Math.min(100, Number(raw) || fallback));
@@ -259,40 +259,17 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">{t("score.eyebrow", "Your result")}</p>
         <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear set of findings, then a recommended strategy.")}</h2>
-        <div className="relative mx-auto mt-7 aspect-square w-full max-w-[340px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
-          {[
-            { label: scores[0].label, angle: 314.4 },
-            { label: scores[1].label, angle: 89.4 },
-            { label: scores[2].label, angle: 222.6 },
-          ].map((lbl) => {
-            const rad = (lbl.angle * Math.PI) / 180;
-            const r = 43;
-            return (
-              <span
-                key={lbl.label}
-                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
-                style={{ left: `${50 + r * Math.sin(rad)}%`, top: `${50 - r * Math.cos(rad)}%` }}
-              >
-                {lbl.label}
-              </span>
-            );
-          })}
-          <div className="flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9" style={{ background: "conic-gradient(from -87deg, #f43f5e 0 23%, transparent 23% 26%, #10b981 26% 72%, transparent 72% 75%, #f59e0b 75% 100%)" }}>
-            <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">
-              <span className="text-7xl font-black leading-none text-foreground sm:text-8xl">{overall}</span>
-              <span className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">out of 100</span>
-              <div className="mt-5 h-px w-20 bg-border" />
-              <span className="mt-4 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10b981" }}>{t("score.archetype", "Architect")}</span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {scores.map((score) => (
-            <div key={score.label} className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{score.label}</span>
-              <ScoreRing pct={score.pct} color={bandColor(score.pct)} maxSize={170} ariaLabel={`${score.label} score`} />
-            </div>
-          ))}
+        <div className="mt-7">
+          <ScoreRingCombined
+            overall={overall}
+            segments={[
+              { label: scores[0].label, pct: scores[0].pct, color: "#f43f5e" },
+              { label: scores[1].label, pct: scores[1].pct, color: "#10b981" },
+              { label: scores[2].label, pct: scores[2].pct, color: "#f59e0b" },
+            ]}
+            maxSize={340}
+            ariaLabel="Illustrative score preview"
+          />
         </div>
         <div className="mx-auto mt-8 grid max-w-3xl gap-4 text-center sm:grid-cols-3">
           {items.map((item, i) => (

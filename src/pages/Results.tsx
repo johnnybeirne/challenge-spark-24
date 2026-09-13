@@ -13,20 +13,13 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 import { qaArchetypeTier } from "@/lib/qaPreview";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
-import ScoreRing from "@/components/ScoreRing";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 import ResultsReportOptIn from "@/components/ResultsReportOptIn";
 import ReportVerifyBanner from "@/components/ReportVerifyBanner";
 import { useReportPreview } from "@/lib/reportPreview";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
 import { useAuth } from "@/hooks/useAuth";
 
-// Per-category traffic-light banding, driven by each category's own percent.
-// 0-33 red, 34-74 amber, 75-100 green.
-const ringColorFor = (pct: number): string => {
-  if (pct >= 75) return "#10b981"; // green
-  if (pct >= 34) return "#f59e0b"; // amber
-  return "#f43f5e"; // red
-};
 
 
 
@@ -131,7 +124,7 @@ const Results = () => {
     () => calculateCategoryScores((assessment?.answers as Record<string, string>) ?? {}),
     [assessment],
   );
-  const [animatedScore, setAnimatedScore] = useState(0);
+  
 
   const [rows, setRows] = useState<DiagnosticRow[] | null>(null);
 
@@ -246,19 +239,6 @@ const Results = () => {
     }
   };
 
-  useEffect(() => {
-    const duration = 1100;
-    const start = performance.now();
-    let frameId: number;
-    const tick = (timestamp: number) => {
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setAnimatedScore(Math.round(percentageScore * eased));
-      if (progress < 1) frameId = requestAnimationFrame(tick);
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [percentageScore]);
 
   if (!hasResult) {
     return (
@@ -339,44 +319,24 @@ const Results = () => {
             Get a clear set of findings, then a recommended strategy.
           </p>
 
-          <div className="relative mx-auto aspect-square w-full max-w-[360px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
-            {[
-              { label: categoryScores[0].label, angle: 314.4 },
-              { label: categoryScores[1].label, angle: 89.4 },
-              { label: categoryScores[2].label, angle: 222.6 },
-            ].map((lbl) => {
-              const rad = (lbl.angle * Math.PI) / 180;
-              const r = 43;
-              return (
-                <span
-                  key={lbl.label}
-                  className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
-                  style={{ left: `${50 + r * Math.sin(rad)}%`, top: `${50 - r * Math.cos(rad)}%` }}
-                >
-                  {lbl.label}
-                </span>
-              );
-            })}
-            <div
-              className="relative flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9"
-              style={{
-                background: "conic-gradient(from -87deg, #f43f5e 0 23%, transparent 23% 26%, #10b981 26% 72%, transparent 72% 75%, #f59e0b 75% 100%)",
-              }}
-            >
-              <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">
-                <div className="text-7xl font-black leading-none text-foreground sm:text-8xl">
-                  {animatedScore}
-                </div>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                  out of 100
-                </p>
-                <div className="mt-5 h-px w-20 bg-border" />
-                <span className="mt-4 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10b981" }}>
-                  {archetypeLabel}
-                </span>
-              </div>
-            </div>
-          </div>
+          <ScoreRingCombined
+            animated
+            overall={percentageScore}
+            segments={[
+              { label: categoryScores[0].label, pct: categoryScores[0].percent, color: "#f43f5e" },
+              { label: categoryScores[1].label, pct: categoryScores[1].percent, color: "#10b981" },
+              { label: categoryScores[2].label, pct: categoryScores[2].percent, color: "#f59e0b" },
+            ]}
+            centerExtra={
+              <span
+                className="mt-4 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em]"
+                style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10b981" }}
+              >
+                {archetypeLabel}
+              </span>
+            }
+            ariaLabel="Your overall lead generation score"
+          />
 
           <div className="mt-9">
             <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
@@ -388,26 +348,6 @@ const Results = () => {
             <p className="mt-3 text-[var(--body-size)] text-muted-foreground sm:text-[var(--h2-size)]">
               {archetypeTagline}
             </p>
-          </div>
-
-          {/* CATEGORY BREAKDOWN — additive, does not affect the archetype above */}
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {categoryScores.map((c) => (
-              <div
-                key={c.category}
-                className="flex min-w-0 flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-center shadow-sm"
-              >
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {c.label}
-                </span>
-                <ScoreRing
-                  pct={c.percent}
-                  color={ringColorFor(c.percent)}
-                  maxSize={170}
-                  ariaLabel={`${c.label} score`}
-                />
-              </div>
-            ))}
           </div>
         </section>
 

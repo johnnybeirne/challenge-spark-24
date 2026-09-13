@@ -161,6 +161,24 @@ const ScoreRingCombined = ({
               }}
             />
           ))}
+          {/* White ball at each seam where two segment colours meet, sitting on
+              the ring's centreline in the middle of each gap. */}
+          {segments.map((seg, i) => {
+            const seamDeg = startSvgs[i] - GAP_DEG / 2;
+            const rad = (seamDeg * Math.PI) / 180;
+            return (
+              <circle
+                key={`seam-${seg.label}`}
+                cx={100 + R * Math.cos(rad)}
+                cy={100 + R * Math.sin(rad)}
+                r="9"
+                fill="#ffffff"
+                stroke={seg.color}
+                strokeWidth="2"
+                style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.2))" }}
+              />
+            );
+          })}
         </svg>
         <div className="absolute inset-[13%] flex flex-col items-center justify-center rounded-full bg-background text-center shadow-inner">
           <div className="text-6xl font-black leading-none text-foreground sm:text-7xl">

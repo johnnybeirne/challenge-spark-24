@@ -143,6 +143,7 @@ export default {
         "fade-in": "fade-in 400ms ease-out both",
         "scale-in": "scale-in 200ms ease-out both",
         "sonar-pulse": "sonar-pulse 1.8s ease-out infinite",
+        "flip-in": "flip-in 550ms cubic-bezier(0.34, 1.3, 0.64, 1) both",
       },
     },
   },

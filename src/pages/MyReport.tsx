@@ -73,7 +73,7 @@ const MyReport = () => {
   }, [user, state.user?.name, state.assessment]);
 
   const score = Number((assessment as { diagnosticScore?: number } | null)?.diagnosticScore ?? 0);
-  const percentageScore = Math.min(92, Math.round((score / questions.length) * 100));
+  const percentageScore = Math.max(9, Math.min(92, Math.round((score / questions.length) * 100)));
 
   const paragraphs = useMemo<string[]>(() => {
     const match = rows.find((r) => percentageScore >= r.min_percent && percentageScore <= r.max_percent) ?? rows[0];

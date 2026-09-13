@@ -458,7 +458,7 @@ const Results = () => {
             {/* ADVISOR — preview of challenge guidance for takers still deciding */}
           <ResultsAdvisor
             archetypeTier={urgencyTier}
-            heading="See what the 3-Day Challenge can do for you"
+            heading={tContent("advisor_section.heading", "See what the 3-Day Challenge can do for you")}
             onJoinCtaClick={cta.onClick}
           />
           </section>

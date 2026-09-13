@@ -258,6 +258,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "score")}>
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">{t("score.eyebrow", "Your result")}</p>
+        <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear set of findings, then a recommended strategy.")}</h2>
         <div className="relative mx-auto mt-7 aspect-square w-full max-w-[340px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
           {[
             { label: scores[0].label, angle: 314.4 },
@@ -285,7 +286,6 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
             </div>
           </div>
         </div>
-        <h2 className="mt-8 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear diagnosis, then a recommended strategy")}</h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {scores.map((score) => (
             <div key={score.label} className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">

@@ -265,7 +265,7 @@ const Results = () => {
       io.disconnect();
       timers.forEach((t) => window.clearTimeout(t));
     };
-  }, []);
+  }, [hasResult]);
   const revealTimerRef = useRef<number | null>(null);
   const skipTypingRef = useRef(skipTyping);
   // The advisor stream waits until all three breakdown cards have flipped in.

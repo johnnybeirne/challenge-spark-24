@@ -272,20 +272,20 @@ const AdminContent = () => {
   const updateRow = (id: string, patch: Partial<Draft>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch, _dirty: true } : r)));
 
-  const updateSectionBackground = (section: string, value: string) => {
-    const existing = rows.find((r) => r.section === section && r.key === "background_color");
+  const updateSectionSetting = (section: string, key: "background_color" | "top_spacing" | "bottom_spacing", value: string) => {
+    const existing = rows.find((r) => r.section === section && r.key === key);
     if (existing) {
       updateRow(existing.id, { value });
       return;
     }
     const next: Draft = {
-      id: `new-background-${section}-${Date.now()}`,
+      id: `new-section-setting-${section}-${key}-${Date.now()}`,
       page: activePage,
       section,
-      key: "background_color",
+      key,
       value,
-      value_type: "color",
-      label: "Background colour",
+      value_type: key === "background_color" ? "color" : "number",
+      label: key === "background_color" ? "Background colour" : key === "top_spacing" ? "Space above" : "Space below",
       sort_order: -1,
       column_slot: "full",
       _dirty: true,
@@ -566,11 +566,17 @@ const AdminContent = () => {
                                 {activePage === "landing" && (
                                   <SectionBackgroundControl
                                     value={items.find((row) => row.key === "background_color")?.value ?? ""}
-                                    onChange={(value) => updateSectionBackground(section, value)}
+                                    onChange={(value) => updateSectionSetting(section, "background_color", value)}
+                                  />
+                                  <SectionSpacingControl
+                                    top={items.find((row) => row.key === "top_spacing")?.value ?? ""}
+                                    bottom={items.find((row) => row.key === "bottom_spacing")?.value ?? ""}
+                                    onTopChange={(value) => updateSectionSetting(section, "top_spacing", value)}
+                                    onBottomChange={(value) => updateSectionSetting(section, "bottom_spacing", value)}
                                   />
                                 )}
                                 <SectionFieldsGrid
-                                  items={items.filter((row) => row.key !== "background_color")}
+                                  items={items.filter((row) => !["background_color", "top_spacing", "bottom_spacing"].includes(row.key))}
                                   onUpdate={(id, p) => updateRow(id, p)}
                                   onRemove={(row) => removeRow(row)}
                                 />
@@ -824,6 +830,30 @@ function SectionBackgroundControl({ value, onChange }: { value: string; onChange
             Reset
           </Button>
         )}
+      </div>
+    </div>
+  );
+}
+
+function SectionSpacingControl({ top, bottom, onTopChange, onBottomChange }: {
+  top: string;
+  bottom: string;
+  onTopChange: (value: string) => void;
+  onBottomChange: (value: string) => void;
+}) {
+  return (
+    <div className="rounded-md border bg-background p-3">
+      <p className="text-xs font-medium text-foreground">Section spacing</p>
+      <p className="mb-3 text-xs text-muted-foreground">Set the space above and below this section in pixels.</p>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="space-y-1 text-xs text-muted-foreground">
+          <span>Space above</span>
+          <Input type="number" min="0" max="240" placeholder="Default" value={top} onChange={(event) => onTopChange(event.target.value)} />
+        </label>
+        <label className="space-y-1 text-xs text-muted-foreground">
+          <span>Space below</span>
+          <Input type="number" min="0" max="240" placeholder="Default" value={bottom} onChange={(event) => onBottomChange(event.target.value)} />
+        </label>
       </div>
     </div>
   );

@@ -438,6 +438,7 @@ const Results = () => {
               { label: categoryScores[1].label, pct: categoryScores[1].percent, color: "#10b981" },
               { label: categoryScores[2].label, pct: categoryScores[2].percent, color: "#f59e0b" },
             ]}
+            pillOffsets={[{}, {}, { dx: -3, dy: 2 }]}
             centerExtra={
               <span
                 className="mt-4 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em]"

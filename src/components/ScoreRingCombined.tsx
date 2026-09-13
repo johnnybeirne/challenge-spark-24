@@ -36,6 +36,10 @@ interface ScoreRingCombinedProps {
   /** Extra centre content under "OUT OF 100" (e.g. the archetype pill on the
    *  results page). Archetypes are never passed in on the landing page. */
   centerExtra?: ReactNode;
+  /** Per-segment nudge applied to each pill's resting position, in percent
+   *  of the ring container. Useful for fine-tuning pill placement per page
+   *  without touching the geometric maths. */
+  pillOffsets?: { dx?: number; dy?: number }[];
   /** Maximum ring size in px on desktop. Defaults to 360. */
   maxSize?: number;
   ariaLabel?: string;
@@ -53,6 +57,7 @@ const ScoreRingCombined = ({
   overall,
   animated = false,
   centerExtra,
+  pillOffsets,
   maxSize = 360,
   ariaLabel,
 }: ScoreRingCombinedProps) => {
@@ -122,13 +127,14 @@ const ScoreRingCombined = ({
       {/* Pill labels floating just outside each arc — name + percentage */}
       {segments.map((seg, i) => {
         const rad = (pillAngles[i] * Math.PI) / 180;
+        const off = pillOffsets?.[i] ?? {};
         return (
           <span
             key={seg.label}
             className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm"
             style={{
-              left: `${50 + 42 * Math.sin(rad)}%`,
-              top: `${50 - 42 * Math.cos(rad)}%`,
+              left: `${50 + 42 * Math.sin(rad) + (off.dx ?? 0)}%`,
+              top: `${50 - 42 * Math.cos(rad) + (off.dy ?? 0)}%`,
               borderColor: seg.color,
               borderWidth: "1.5px",
               borderStyle: "solid",

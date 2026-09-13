@@ -281,7 +281,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
               <span className="text-7xl font-black leading-none text-foreground sm:text-8xl">{overall}</span>
               <span className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">out of 100</span>
               <div className="mt-5 h-px w-20 bg-border" />
-              <span className="mt-4 rounded-full bg-success/10 px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-success">{t("score.archetype", "Architect")}</span>
+              <span className="mt-4 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10b981" }}>{t("score.archetype", "Architect")}</span>
             </div>
           </div>
         </div>

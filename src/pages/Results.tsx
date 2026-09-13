@@ -430,7 +430,7 @@ const Results = () => {
           </div>
         </section>
 
-        {sequenceComplete && (
+        {(
           <section ref={breakdownRef} className="mb-10">
             {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
                 left-to-right order and colours as the score ring. Advice text

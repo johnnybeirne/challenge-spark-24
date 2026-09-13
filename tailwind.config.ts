@@ -130,6 +130,10 @@ export default {
           "0%, 100%": { boxShadow: "0 8px 20px -8px hsl(21 90% 48% / 0.30)" },
           "50%": { boxShadow: "0 12px 28px -6px hsl(21 90% 48% / 0.50)" },
         },
+        "scroll-hint-bounce": {
+          "0%, 100%": { transform: "translateY(0)", opacity: "0.7" },
+          "50%": { transform: "translateY(6px)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

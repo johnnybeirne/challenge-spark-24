@@ -429,6 +429,45 @@ const Results = () => {
         </section>
 
         {sequenceComplete && (
+          <section className="mb-10 animate-fade-in" style={{ animationDelay: "100ms" }}>
+            {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
+                left-to-right order and colours as the score ring. Advice text
+                varies by score band per category; copy lives in site_content
+                (page "results", section "breakdown"). */}
+            <div className="grid gap-4 md:grid-cols-3">
+              {categoryScores.map((cs, i) => {
+                const band: "low" | "mid" | "high" =
+                  cs.percent >= 67 ? "high" : cs.percent >= 34 ? "mid" : "low";
+                const color = ["#f43f5e", "#10b981", "#f59e0b"][i];
+                const advice = tContent(
+                  `breakdown.${cs.category}_${band}`,
+                  breakdownDefaults[cs.category][band],
+                );
+                return (
+                  <div
+                    key={cs.category}
+                    className="h-full rounded-xl border border-border bg-background p-6 shadow-sm"
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-[0.2em]"
+                      style={{ color }}
+                    >
+                      {cs.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-black leading-none text-foreground">
+                      {cs.percent}%
+                    </p>
+                    <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                      {advice}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {sequenceComplete && (
           <section className="mb-10 space-y-4 pt-4 animate-fade-in">
             <Button
               size="lg"

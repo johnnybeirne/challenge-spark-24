@@ -95,7 +95,7 @@ const ScoreRingCombined = ({
     // Start the arc sweep on the next frame so the transition plays.
     const start = requestAnimationFrame(() => setSwept(true));
     const t0 = performance.now();
-    const duration = 1400;
+    const duration = 3200;
     const tick = (now: number) => {
       const p = Math.min(1, (now - t0) / duration);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -153,7 +153,7 @@ const ScoreRingCombined = ({
               transform={`rotate(${startSvgs[i]} 100 100)`}
               style={{
                 transition: animated
-                  ? `stroke-dashoffset 0.9s cubic-bezier(0.33, 1, 0.68, 1) ${i * 0.18}s`
+                  ? `stroke-dashoffset 2.6s cubic-bezier(0.33, 1, 0.68, 1) ${i * 0.5}s`
                   : undefined,
               }}
             />

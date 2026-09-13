@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import ResultsAdvisor from "@/components/ResultsAdvisor";
 import { getDiagnosticResult, calculateCategoryScores, buildPreviewAnswers, categoryQuestions, type AssessmentResult } from "@/lib/assessmentData";
@@ -22,6 +22,37 @@ import { useAuth } from "@/hooks/useAuth";
 
 
 
+
+const SCROLL_HINT_THRESHOLD = 120; // px — roughly one viewport's worth or less
+
+const ScrollDownHint = () => {
+  const [visible, setVisible] = useState(true);
+  const reducedMotion = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const onScroll = () => {
+      if (window.scrollY > SCROLL_HINT_THRESHOLD) {
+        setVisible(false);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Respect reduced-motion: omit the indicator entirely for those users.
+  if (reducedMotion.current === true) return null;
+  if (!visible) return null;
+
+  return (
+    <div
+      className="pointer-events-none fixed bottom-6 left-1/2 z-30 -translate-x-1/2 transition-opacity duration-300"
+      aria-hidden="true"
+    >
+      <ChevronDown className="h-7 w-7 text-muted-foreground/70 animate-scroll-hint-bounce" />
+    </div>
+  );
+};
 
 const TYPING_SPEED_MS = 18;
 const THINKING_MS = 900;
@@ -373,6 +404,7 @@ const Results = () => {
 
   return (
     <>
+      <ScrollDownHint />
       <SEO title="Your Lead Generation Score" description="Your personalised lead generation score and next step from Johnny B." canonical="/results" />
       {showPreviewIdentity && (
         <div className="fixed right-4 top-4 z-40 flex items-center gap-2 rounded-full border border-border bg-card/90 py-1.5 pl-1.5 pr-4 shadow-sm backdrop-blur">

@@ -235,6 +235,36 @@ const Results = () => {
   const [thinking, setThinking] = useState(true);
   const [skipTyping, setSkipTyping] = useState(false);
   const [sequenceComplete, setSequenceComplete] = useState(false);
+  // Three-column breakdown flip-in: columns flip one at a time, left to
+  // right, only after the section scrolls into view.
+  const breakdownRef = useRef<HTMLElement | null>(null);
+  const [flippedCount, setFlippedCount] = useState(0);
+  useEffect(() => {
+    if (!sequenceComplete) return;
+    const el = breakdownRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setFlippedCount(3);
+      return;
+    }
+    let timers: number[] = [];
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        // Each column starts only after the previous flip (550ms) finishes.
+        timers = [0, 1, 2].map((i) =>
+          window.setTimeout(() => setFlippedCount(i + 1), i * 550),
+        );
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -50% 0px" },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [sequenceComplete]);
   const revealTimerRef = useRef<number | null>(null);
   const skipTypingRef = useRef(skipTyping);
 

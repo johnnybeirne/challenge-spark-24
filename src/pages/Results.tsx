@@ -472,7 +472,7 @@ const Results = () => {
                 (page "results", section "breakdown"). */}
             <div className="grid gap-4 md:grid-cols-3">
               {categoryScores.map((cs, i) => {
-                const missing = !Number.isFinite(cs.percent) || cs.percent <= 0;
+                const missing = !categoryHasAnswers[i];
                 const band: "low" | "mid" | "high" =
                   cs.percent >= 67 ? "high" : cs.percent >= 34 ? "mid" : "low";
                 const color = ["#f43f5e", "#10b981", "#f59e0b"][i];

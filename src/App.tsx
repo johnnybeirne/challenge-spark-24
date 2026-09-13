@@ -90,6 +90,8 @@ import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminResultsOptinCard from "@/pages/admin/AdminResultsOptinCard";
 import AdminAuthEmail from "@/pages/admin/AdminAuthEmail";
+import AdminUsersReportResults from "@/pages/admin/AdminUsersReportResults";
+import MyReport from "@/pages/MyReport";
 import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
@@ -226,6 +228,7 @@ const App = () => (
                 <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
                 <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
+                <Route path="/my-report" element={<AuthGuard><MyReport /></AuthGuard>} />
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
@@ -320,6 +323,7 @@ const App = () => (
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
                 <Route path="results-optin-card" element={<AdminResultsOptinCard />} />
                 <Route path="auth-email" element={<AdminAuthEmail />} />
+                <Route path="users-report-results" element={<AdminUsersReportResults />} />
                 <Route path="typography" element={<AdminTypography />} />
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />

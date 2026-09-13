@@ -179,7 +179,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
           width={1280}
           height={960}
           fetchPriority="high"
-          className="aspect-[4/3] w-full rounded-2xl border border-border bg-card object-cover shadow-xl shadow-foreground/10 lg:aspect-[5/6]"
+          className="aspect-[4/3] w-full object-contain lg:aspect-[5/6]"
         />
       </div>
     </div>

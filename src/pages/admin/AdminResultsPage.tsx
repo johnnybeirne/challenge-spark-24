@@ -25,6 +25,14 @@ const FIELDS = [
   { key: "subheading_size", label: "Subheading size" },
 ];
 
+// Nine advice texts for the three-column breakdown: one per category per band.
+const BREAKDOWN_FIELDS = (["system", "audience", "conversion"] as const).flatMap((cat) =>
+  (["low", "mid", "high"] as const).map((band) => ({
+    key: `${cat}_${band}`,
+    label: `${cat[0].toUpperCase()}${cat.slice(1)}, ${band} scores`,
+  })),
+);
+
 type LinkCard = { kind: "link"; title: string; description: string; url: string };
 type InlineCard = { kind: "inline"; id: string; title: string; description: string };
 type BlockCard = LinkCard | InlineCard;
@@ -57,20 +65,26 @@ const BLOCKS: BlockCard[] = [
   },
   {
     kind: "inline",
+    id: "breakdown",
+    title: "5. System, Audience, Conversion breakdown",
+    description: "The three-column score breakdown. One advice text per category per score band.",
+  },
+  {
+    kind: "inline",
     id: "cta",
-    title: "5. Join button and urgency line",
+    title: "6. Join button and urgency line",
     description: "The button wording and the line of text under it for each score band.",
   },
   {
     kind: "link",
-    title: "6. Report opt-in card",
+    title: "7. Report opt-in card",
     description: "The get your report by email card and its code bar.",
     url: "/owner-console/results-optin-card",
   },
   {
     kind: "inline",
     id: "advisor_section",
-    title: "7. See what the 3-Day Challenge can do for you",
+    title: "8. See what the 3-Day Challenge can do for you",
     description: "The heading of the final advisor section. Its suggested questions have their own screen.",
   },
   {
@@ -97,7 +111,7 @@ const AdminResultsPage = () => {
       .from("site_content")
       .select("section,key,value")
       .eq("page", "results")
-      .in("section", ["score_header", "advisor_card", "cta", "advisor_section"])
+      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section"])
       .then(({ data, error }) => {
         if (error) {
           toast.error("Could not load the results page copy");
@@ -177,6 +191,21 @@ const AdminResultsPage = () => {
           sort_order: 0,
         },
       ],
+      ["results"],
+    );
+
+  const saveBreakdown = () =>
+    saveRows(
+      "breakdown",
+      BREAKDOWN_FIELDS.map((f, i) => ({
+        page: "results",
+        section: "breakdown",
+        key: f.key,
+        value: values?.[`breakdown.${f.key}`] ?? "",
+        value_type: "text",
+        label: f.label,
+        sort_order: i,
+      })),
       ["results"],
     );
 
@@ -372,6 +401,34 @@ const AdminResultsPage = () => {
                   onChange={(e) => set("advisor_card.name", e.target.value)}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card id="breakdown">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">System, Audience, Conversion breakdown</CardTitle>
+                  <CardDescription>
+                    One advice text per category per score band. Each person's own percentages decide which text shows.
+                  </CardDescription>
+                </div>
+                <Button onClick={saveBreakdown} disabled={saving === "breakdown"}>
+                  {saving === "breakdown" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-5 md:grid-cols-3">
+              {BREAKDOWN_FIELDS.map((f) => (
+                <div key={f.key} className="space-y-1.5">
+                  <Label>{f.label}</Label>
+                  <Textarea
+                    rows={3}
+                    value={values[`breakdown.${f.key}`] ?? ""}
+                    onChange={(e) => set(`breakdown.${f.key}`, e.target.value)}
+                  />
+                </div>
+              ))}
             </CardContent>
           </Card>
 

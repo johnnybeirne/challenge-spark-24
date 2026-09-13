@@ -15,7 +15,8 @@ export type SiteContentRow = {
 export type SiteContentMap = Record<string, string>; // "section.key" -> value
 
 const cache = new Map<string, SiteContentMap>();
-const listeners = new Map<string, Set<(m: SiteContentMap) => void>>();
+const rowsCache = new Map<string, SiteContentRow[]>();
+const listeners = new Map<string, Set<(m: SiteContentMap, rows: SiteContentRow[]) => void>>();
 
 export async function fetchPageContent(page: string): Promise<SiteContentRow[]> {
   const { data, error } = await supabase
@@ -36,21 +37,26 @@ function rowsToMap(rows: SiteContentRow[]): SiteContentMap {
 
 export function useSiteContent(page: string) {
   const [map, setMap] = useState<SiteContentMap>(() => cache.get(page) ?? {});
+  const [rows, setRows] = useState<SiteContentRow[]>(() => rowsCache.get(page) ?? []);
   const [loaded, setLoaded] = useState<boolean>(cache.has(page));
 
   useEffect(() => {
     let cancelled = false;
     if (!listeners.has(page)) listeners.set(page, new Set());
-    const setter = (m: SiteContentMap) => {
-      if (!cancelled) setMap(m);
+    const setter = (m: SiteContentMap, r: SiteContentRow[]) => {
+      if (!cancelled) {
+        setMap(m);
+        setRows(r);
+      }
     };
     listeners.get(page)!.add(setter);
 
     fetchPageContent(page)
-      .then((rows) => {
-        const m = rowsToMap(rows);
+      .then((fetched) => {
+        const m = rowsToMap(fetched);
         cache.set(page, m);
-        listeners.get(page)?.forEach((l) => l(m));
+        rowsCache.set(page, fetched);
+        listeners.get(page)?.forEach((l) => l(m, fetched));
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -64,14 +70,16 @@ export function useSiteContent(page: string) {
   const t = (sectionDotKey: string, fallback = "") =>
     map[sectionDotKey] ?? fallback;
 
-  return { t, map, loaded };
+  return { t, map, rows, loaded };
 }
 
 export function invalidatePage(page: string) {
   cache.delete(page);
-  fetchPageContent(page).then((rows) => {
-    const m = rowsToMap(rows);
+  rowsCache.delete(page);
+  fetchPageContent(page).then((fetched) => {
+    const m = rowsToMap(fetched);
     cache.set(page, m);
-    listeners.get(page)?.forEach((l) => l(m));
+    rowsCache.set(page, fetched);
+    listeners.get(page)?.forEach((l) => l(m, fetched));
   });
 }

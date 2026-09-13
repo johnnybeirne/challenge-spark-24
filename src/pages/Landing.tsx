@@ -7,7 +7,7 @@ import ScoreRingCombined from "@/components/ScoreRingCombined";
 import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
-import { useSiteContent, type SiteContentMap } from "@/hooks/useSiteContent";
+import { useSiteContent, type SiteContentMap, type SiteContentRow } from "@/hooks/useSiteContent";
 import {
   Accordion,
   AccordionContent,
@@ -52,6 +52,56 @@ const SectionHeader = ({ eyebrow, title, body }: { eyebrow: string; title: strin
   </div>
 );
 
+type HeaderKind = "eyebrow" | "title" | "body";
+
+/**
+ * Renders a section's eyebrow/title/body in the exact order set in the admin
+ * editor (ascending sort_order), so reordering fields in admin is reflected
+ * on the live page.
+ */
+const OrderedHeader = ({
+  rows,
+  section,
+  fallbacks,
+  centered = true,
+  eyebrowClass = "text-sm font-black text-primary",
+  titleClass = "text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl",
+  bodyClass = "text-lg leading-8 text-muted-foreground",
+}: {
+  rows: SiteContentRow[];
+  section: string;
+  fallbacks: { eyebrow?: string; title: string; body?: string };
+  centered?: boolean;
+  eyebrowClass?: string;
+  titleClass?: string;
+  bodyClass?: string;
+}) => {
+  const defaultSort: Record<HeaderKind, number> = { eyebrow: 10, title: 20, body: 30 };
+  const fields: Array<{ kind: HeaderKind; sort: number; text: string }> = [];
+  (Object.keys(fallbacks) as HeaderKind[]).forEach((kind) => {
+    const fb = fallbacks[kind];
+    if (fb === undefined) return;
+    const row = rows.find((r) => r.section === section && r.key === kind);
+    const text = (row?.value ?? fb).trim();
+    if (!text) return;
+    fields.push({ kind, sort: row?.sort_order ?? defaultSort[kind], text });
+  });
+  fields.sort((a, b) => a.sort - b.sort);
+  return (
+    <div className={`${centered ? "mx-auto max-w-3xl text-center " : ""}space-y-4`}>
+      {fields.map((f) =>
+        f.kind === "eyebrow" ? (
+          <p key="eyebrow" className={eyebrowClass}>{f.text}</p>
+        ) : f.kind === "title" ? (
+          <h2 key="title" className={titleClass}>{f.text}</h2>
+        ) : (
+          <p key="body" className={bodyClass}>{f.text}</p>
+        ),
+      )}
+    </div>
+  );
+};
+
 /** Collect ordered values for keys matching `section.item_N` (sorted by N). */
 function collectItems(map: SiteContentMap, section: string): string[] {
   const prefix = `${section}.item_`;
@@ -68,7 +118,7 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
-  const { t, map, loaded } = useSiteContent("landing");
+  const { t, map, rows, loaded } = useSiteContent("landing");
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
@@ -106,10 +156,10 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
 
   const sections: Record<string, ReactNode> = {
     hero: <Reveal key="hero"><HeroSection t={t} onStart={() => startQuiz("hero")} /></Reveal>,
-    problem: <Reveal key="problem"><ProblemSection t={t} map={map} /></Reveal>,
-    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} /></Reveal>,
-    score: <Reveal key="score"><ScorePreview t={t} map={map} /></Reveal>,
-    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} /></Reveal>,
+    problem: <Reveal key="problem"><ProblemSection t={t} map={map} rows={rows} /></Reveal>,
+    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} rows={rows} /></Reveal>,
+    score: <Reveal key="score"><ScorePreview t={t} map={map} rows={rows} /></Reveal>,
+    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} rows={rows} /></Reveal>,
     authority: <Reveal key="authority"><AuthoritySection t={t} /></Reveal>,
     faq: <Reveal key="faq"><FaqSection t={t} map={map} /></Reveal>,
     cta: <Reveal key="cta"><CTASection t={t} onStart={() => startQuiz("bottom")} /></Reveal>,
@@ -194,14 +244,18 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   </section>
 );
 
-const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const ProblemSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "problem");
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "problem")}>
-      <SectionHeader
-        eyebrow={t("problem.eyebrow", "The problem")}
-        title={t("problem.title", "Lead flow should not feel like guesswork")}
-        body={t("problem.body", "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.")}
+      <OrderedHeader
+        rows={rows}
+        section="problem"
+        fallbacks={{
+          eyebrow: "The problem",
+          title: "Lead flow should not feel like guesswork",
+          body: "When leads are inconsistent, most people try to do more. The better move is to diagnose what is actually missing.",
+        }}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {items.map((problem, i) => (
@@ -217,15 +271,21 @@ const ProblemSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   );
 };
 
-const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const RevealSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "reveal");
   return (
     <PageSection style={sectionStyle(t, "reveal")}>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-        <div>
-          <p className="text-sm font-black text-primary">{t("reveal.eyebrow", "What the quiz reveals")}</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("reveal.title", "Your inconsistency usually has one primary cause")}</h2>
-        </div>
+        <OrderedHeader
+          rows={rows}
+          section="reveal"
+          centered={false}
+          titleClass="text-3xl font-black leading-tight text-foreground sm:text-4xl"
+          fallbacks={{
+            eyebrow: "What the quiz reveals",
+            title: "Your inconsistency usually has one primary cause",
+          }}
+        />
         <div className="grid gap-3 sm:grid-cols-2">
           {items.map((item, i) => (
             <Reveal key={item} delay={i * 0.12}>
@@ -241,9 +301,9 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   );
 };
 
-const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const ScorePreview = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "score");
-  
+
   const scoreValue = (key: string, fallback: number) => {
     const raw = t(key, String(fallback)).replace(/[^0-9]/g, "");
     return Math.max(0, Math.min(100, Number(raw) || fallback));
@@ -257,8 +317,16 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "score")}>
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">{t("score.eyebrow", "Your result")}</p>
-        <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">{t("score.title", "Get a clear set of findings, then a recommended strategy.")}</h2>
+        <OrderedHeader
+          rows={rows}
+          section="score"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground"
+          titleClass="text-3xl font-black leading-tight text-foreground sm:text-4xl"
+          fallbacks={{
+            eyebrow: "Your result",
+            title: "Get a clear set of findings, then a recommended strategy.",
+          }}
+        />
         <div className="mt-7">
           <ScoreRingCombined
             overall={overall}
@@ -286,13 +354,17 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   );
 };
 
-const BenefitsSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
+const BenefitsSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "benefits");
   return (
     <PageSection className="border-y border-border bg-card/55" style={sectionStyle(t, "benefits")}>
-      <SectionHeader
-        eyebrow={t("benefits.eyebrow", "Why take it")}
-        title={t("benefits.title", "Know what to fix before you spend more effort")}
+      <OrderedHeader
+        rows={rows}
+        section="benefits"
+        fallbacks={{
+          eyebrow: "Why take it",
+          title: "Know what to fix before you spend more effort",
+        }}
       />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((benefit, i) => (

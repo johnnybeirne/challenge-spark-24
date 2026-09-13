@@ -121,6 +121,11 @@ export default {
           "0%": { transform: "scale(1)", opacity: "0.55" },
           "100%": { transform: "scale(1.9)", opacity: "0" },
         },
+        "flip-in": {
+          "0%": { opacity: "0", transform: "perspective(900px) rotateX(-70deg)" },
+          "60%": { opacity: "1", transform: "perspective(900px) rotateX(12deg)" },
+          "100%": { opacity: "1", transform: "perspective(900px) rotateX(0deg)" },
+        },
         "pulse-glow-orange": {
           "0%, 100%": { boxShadow: "0 8px 20px -8px hsl(21 90% 48% / 0.30)" },
           "50%": { boxShadow: "0 12px 28px -6px hsl(21 90% 48% / 0.50)" },

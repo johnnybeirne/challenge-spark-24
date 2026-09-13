@@ -514,7 +514,10 @@ const Results = () => {
                 return (
                   <div
                     key={cs.category}
-                    className="h-full rounded-xl border border-border bg-background p-6 shadow-sm"
+                    className={`h-full rounded-xl border border-border bg-background p-6 shadow-sm ${
+                      i < flippedCount ? "animate-flip-in" : "opacity-0"
+                    }`}
+                    aria-hidden={i >= flippedCount}
                   >
                     <p
                       className="text-xs font-semibold uppercase tracking-[0.2em]"

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
-import ScoreRing from "@/components/ScoreRing";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
@@ -243,7 +243,7 @@ const RevealSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
 
 const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = collectItems(map, "score");
-  const bandColor = (pct: number) => pct <= 33 ? "#f43f5e" : pct <= 74 ? "#f59e0b" : "#10b981";
+  
   const scoreValue = (key: string, fallback: number) => {
     const raw = t(key, String(fallback)).replace(/[^0-9]/g, "");
     return Math.max(0, Math.min(100, Number(raw) || fallback));

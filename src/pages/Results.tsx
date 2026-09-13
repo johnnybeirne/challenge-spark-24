@@ -282,7 +282,7 @@ const Results = () => {
     return () => {
       if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current);
     };
-  }, [paragraphs.length]);
+  }, [paragraphs.length, flippedCount]);
 
   skipTypingRef.current = skipTyping;
 

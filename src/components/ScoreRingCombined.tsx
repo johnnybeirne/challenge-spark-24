@@ -153,7 +153,7 @@ const ScoreRingCombined = ({
               transform={`rotate(${startSvgs[i]} 100 100)`}
               style={{
                 transition: animated
-                  ? `stroke-dashoffset 2.6s cubic-bezier(0.33, 1, 0.68, 1) ${i * 0.5}s`
+                  ? `stroke-dashoffset 4.5s cubic-bezier(0.33, 1, 0.68, 1) ${i * 0.8}s`
                   : undefined,
               }}
             />

@@ -89,6 +89,26 @@ type DiagnosticRow = {
   messages: string[];
 };
 
+// Fallback advice for the three-column breakdown, per category per score band.
+// Owner-editable via the Results Page Editor (site_content results/breakdown).
+const breakdownDefaults: Record<string, Record<"low" | "mid" | "high", string>> = {
+  system: {
+    low: "Your lead flow depends on your own effort. Build a simple repeatable system and growth stops stalling when you do.",
+    mid: "You have pieces of a system, but they do not connect. Tighten the steps and the results get more predictable.",
+    high: "Your system is producing. The next step is structure that lets it scale without more of your time.",
+  },
+  audience: {
+    low: "You are not reaching enough of the right people. Get clear on exactly who you help and where they already are.",
+    mid: "Some of the right people are finding you. Sharpen the message so more of them recognise themselves in it.",
+    high: "Your audience knows who you are. Keep showing up with a message that speaks to their exact problem.",
+  },
+  conversion: {
+    low: "People show interest but do not take the next step. Give them one clear, low-pressure way to say yes.",
+    mid: "Some leads convert, but too many stall. A structured follow-up turns maybes into paying clients.",
+    high: "Your conversion works. A challenge-style experience can multiply it by letting results sell for you.",
+  },
+};
+
 
 const Results = () => {
   const navigate = useNavigate();

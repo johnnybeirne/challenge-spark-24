@@ -7,7 +7,7 @@ import ScoreRingCombined from "@/components/ScoreRingCombined";
 import { Reveal } from "@/components/premium/cinematic";
 import { trackEvent } from "@/lib/analytics";
 import { setEntryIntent, type EntryIntent } from "@/lib/entryIntent";
-import { useSiteContent, type SiteContentMap } from "@/hooks/useSiteContent";
+import { useSiteContent, type SiteContentMap, type SiteContentRow } from "@/hooks/useSiteContent";
 import {
   Accordion,
   AccordionContent,
@@ -68,7 +68,7 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
-  const { t, map, loaded } = useSiteContent("landing");
+  const { t, map, rows, loaded } = useSiteContent("landing");
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 

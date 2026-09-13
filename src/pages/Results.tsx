@@ -337,6 +337,23 @@ const Results = () => {
           </p>
 
           <div className="relative mx-auto aspect-square w-full max-w-[360px] rounded-full bg-muted/60 p-4 shadow-[0_18px_60px_-25px_hsl(var(--foreground)/0.25)] sm:p-5">
+            {[
+              { label: categoryScores[0].label, angle: 314.4 },
+              { label: categoryScores[1].label, angle: 89.4 },
+              { label: categoryScores[2].label, angle: 222.6 },
+            ].map((lbl) => {
+              const rad = (lbl.angle * Math.PI) / 180;
+              const r = 43;
+              return (
+                <span
+                  key={lbl.label}
+                  className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/95 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
+                  style={{ left: `${50 + r * Math.sin(rad)}%`, top: `${50 - r * Math.cos(rad)}%` }}
+                >
+                  {lbl.label}
+                </span>
+              );
+            })}
             <div
               className="relative flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9"
               style={{

@@ -78,7 +78,7 @@ const AdminResultsOptinCard = () => {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Mail className="h-6 w-6 text-primary" />
-            Results opt-in card
+            Report opt-in card
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Edit the "get your report by email" card shown under the main button on the Results page.

@@ -203,7 +203,7 @@ const CategoryCard = ({ cat, isLast, onLastCountDone }: CategoryCardProps) => {
   const [visible, setVisible] = useState(false);
   const [play, setPlay] = useState(false);
   const accent = ACCENT[cat.tier];
-  const pct = Math.min(92, Math.round((cat.score / 15) * 100));
+  const pct = Math.max(9, Math.min(92, Math.round((cat.score / 15) * 100)));
   const animated = useCountUp(pct, play, COUNT_MS, isLast ? onLastCountDone : undefined);
 
   useEffect(() => {

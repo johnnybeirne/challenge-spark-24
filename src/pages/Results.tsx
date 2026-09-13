@@ -340,7 +340,7 @@ const Results = () => {
             <div
               className="relative flex h-full w-full items-center justify-center rounded-full p-7 sm:p-9"
               style={{
-                background: "conic-gradient(from -87deg, hsl(var(--destructive)) 0 23%, transparent 23% 26%, hsl(var(--success)) 26% 72%, transparent 72% 75%, hsl(var(--warning,38_92%_50%)) 75% 97%, transparent 97% 100%)",
+                background: "conic-gradient(from -87deg, hsl(var(--destructive)) 0 23%, transparent 23% 26%, hsl(var(--success)) 26% 72%, transparent 72% 75%, hsl(var(--warning)) 75% 97%, transparent 97% 100%)",
               }}
             >
               <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background shadow-inner">

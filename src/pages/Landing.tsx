@@ -156,10 +156,10 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
 
   const sections: Record<string, ReactNode> = {
     hero: <Reveal key="hero"><HeroSection t={t} onStart={() => startQuiz("hero")} /></Reveal>,
-    problem: <Reveal key="problem"><ProblemSection t={t} map={map} /></Reveal>,
-    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} /></Reveal>,
-    score: <Reveal key="score"><ScorePreview t={t} map={map} /></Reveal>,
-    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} /></Reveal>,
+    problem: <Reveal key="problem"><ProblemSection t={t} map={map} rows={rows} /></Reveal>,
+    reveal: <Reveal key="reveal"><RevealSection t={t} map={map} rows={rows} /></Reveal>,
+    score: <Reveal key="score"><ScorePreview t={t} map={map} rows={rows} /></Reveal>,
+    benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} rows={rows} /></Reveal>,
     authority: <Reveal key="authority"><AuthoritySection t={t} /></Reveal>,
     faq: <Reveal key="faq"><FaqSection t={t} map={map} /></Reveal>,
     cta: <Reveal key="cta"><CTASection t={t} onStart={() => startQuiz("bottom")} /></Reveal>,

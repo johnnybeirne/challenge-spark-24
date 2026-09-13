@@ -283,19 +283,61 @@ function scoreQuestion(id: string, answer: string | undefined): number {
   return 0;
 }
 
+const SCORE_FLOOR = 9;
+const SCORE_CEILING = 92;
+
+function clampPercent(value: number): number {
+  return Math.max(SCORE_FLOOR, Math.min(SCORE_CEILING, value));
+}
+
+/**
+ * Guarantees no two categories ever display the same percentage.
+ * When scores collide, the later category is nudged by 3% (preferring
+ * downward, then upward) until all three are distinct. Clamped to the
+ * 9%–92% display range.
+ */
+function ensureDistinctPercents(percents: number[]): number[] {
+  const result: number[] = [];
+  for (const percent of percents) {
+    let adjusted = percent;
+    if (result.includes(adjusted)) {
+      for (let step = 1; step <= 30; step++) {
+        const down = clampPercent(percent - 3 * step);
+        if (!result.includes(down)) {
+          adjusted = down;
+          break;
+        }
+        const up = clampPercent(percent + 3 * step);
+        if (!result.includes(up)) {
+          adjusted = up;
+          break;
+        }
+      }
+    }
+    result.push(adjusted);
+  }
+  return result;
+}
+
 export function calculateCategoryScores(
   answers: Record<string, string>,
 ): { category: QuizCategory; label: string; raw: number; percent: number }[] {
-  return (Object.keys(categoryQuestions) as QuizCategory[]).map((category) => {
+  const categories = Object.keys(categoryQuestions) as QuizCategory[];
+  const basePercents = categories.map((category) => {
     const ids = categoryQuestions[category];
     const raw = ids.reduce((total, id) => total + scoreQuestion(id, answers?.[id]), 0);
-    return {
-      category,
-      label: CATEGORY_LABELS[category],
-      raw,
-      percent: Math.max(9, Math.min(92, Math.round((raw / ids.length) * 100))),
-    };
+    return clampPercent(Math.round((raw / ids.length) * 100));
   });
+  const percents = ensureDistinctPercents(basePercents);
+  return categories.map((category, index) => ({
+    category,
+    label: CATEGORY_LABELS[category],
+    raw: categoryQuestions[category].reduce(
+      (total, id) => total + scoreQuestion(id, answers?.[id]),
+      0,
+    ),
+    percent: percents[index],
+  }));
 }
 
 /**

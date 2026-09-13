@@ -81,7 +81,7 @@ const AdminUsersReportResults = () => {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" />
-            Users Report Results
+            User Challenge Signup Results Page
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Edit the page report-only accounts land on at /my-report, both the locked and unlocked states.

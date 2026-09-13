@@ -265,7 +265,6 @@ const Results = () => {
       timers.forEach((t) => window.clearTimeout(t));
     };
   }, []);
-...
   // The advisor stream waits until all three breakdown cards have flipped in.
   useEffect(() => {
     if (paragraphs.length === 0 || flippedCount < 3) return;

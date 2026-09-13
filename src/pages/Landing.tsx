@@ -269,7 +269,7 @@ const ScorePreview = ({ t, map }: { t: T; map: SiteContentMap }) => {
             return (
               <span
                 key={lbl.label}
-                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/95 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
+                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/70 shadow-sm ring-1 ring-border/40"
                 style={{ left: `${50 + r * Math.sin(rad)}%`, top: `${50 - r * Math.cos(rad)}%` }}
               >
                 {lbl.label}

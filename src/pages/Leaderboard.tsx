@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Trophy, Users, Crown, Award, Star, Linkedin, Facebook, Instagram, Youtube, Globe } from "lucide-react";
+import { Trophy, Users, Crown, Award, Star, Flame, Linkedin, Facebook, Instagram, Youtube, Globe } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 interface ProfileBio {

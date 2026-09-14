@@ -155,6 +155,7 @@ const ReportContent = ({
   const archetype = archetypeDefaults[archetypeTier];
   const archetypeName = tContent(`archetypes.${archetypeTier}_name`, archetype.name);
   const archetypeTagline = tContent(`archetypes.${archetypeTier}_tagline`, archetype.tagline);
+  const archetypeImage = tContent(`archetypes.${archetypeTier}_image`, "").trim();
 
   // Their actual answers inside a category, used to build the advisor prompt.
   const answerSummary = (category: QuizCategory) =>
@@ -207,6 +208,14 @@ const ReportContent = ({
               {archetypeName}
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{archetypeTagline}</p>
+            {archetypeImage ? (
+              <img
+                src={archetypeImage}
+                alt={archetypeName}
+                loading="lazy"
+                className="mt-4 w-full rounded-xl object-cover"
+              />
+            ) : null}
             <div className="mt-4 flex items-baseline gap-2 border-t border-border pt-4">
               <span className={`text-3xl font-black leading-none ${accent}`}>{percentageScore}%</span>
               <span className="text-xs text-muted-foreground">your pipeline score</span>

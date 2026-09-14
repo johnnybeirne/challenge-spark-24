@@ -272,6 +272,44 @@ const Leaderboard = () => {
 
   const openBio = (e: ProfileBio & { name: string; score: number; isUser?: boolean }) => setSelected(e);
 
+  const renderRows = (list: LeaderboardEntry[]) => {
+    if (list.length === 0) {
+      return <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>;
+    }
+    return list.map((entry, i) => {
+      const rank = i + 1;
+      const badge = getRankBadge(rank);
+      const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
+      return (
+        <button
+          type="button"
+          key={entry.invite_code}
+          ref={isFocus && !focusRef.current ? focusRef : undefined}
+          onClick={() => openBio(entry)}
+          className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
+            i < list.length - 1 ? "border-b border-border" : ""
+          } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
+        >
+          <span className="text-xs font-bold text-muted-foreground w-6 text-right">
+            {badge ? <badge.icon className={`h-4 w-4 ${badge.color} inline`} /> : rank}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+            {entry.avatar_url ? (
+              <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              (entry.name || "?").slice(0, 2).toUpperCase()
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
+              {entry.name} {entry.isUser && "(You)"}
+            </p>
+          </div>
+        </button>
+      );
+    });
+  };
+
   if (loading) return <div className="flex items-center justify-center min-h-screen"><Spinner /></div>;
 
   return (

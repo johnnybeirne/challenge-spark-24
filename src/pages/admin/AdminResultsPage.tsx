@@ -33,43 +33,6 @@ const BREAKDOWN_FIELDS = (["system", "audience", "conversion"] as const).flatMap
   })),
 );
 
-// The emailed report page (/r/:token) copy.
-const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
-  { key: "tease_heading", label: "Teaser heading", placeholder: "What the 3-Day Challenge does about this" },
-  {
-    key: "tease_day1",
-    label: "Teaser line 1",
-    placeholder: "Step one: shape a promise your audience recognises, so the right people lean in.",
-    multiline: true,
-  },
-  {
-    key: "tease_day2",
-    label: "Teaser line 2",
-    placeholder: "Step two: turn that promise into a simple quiz that brings you leads while you sleep.",
-    multiline: true,
-  },
-  {
-    key: "tease_day3",
-    label: "Teaser line 3",
-    placeholder: "Step three: put a follow-up sequence behind it so interest turns into paying clients.",
-    multiline: true,
-  },
-  { key: "cta_heading", label: "Closing heading", placeholder: "Ready to fix it for good?" },
-  {
-    key: "cta_body",
-    label: "Closing body",
-    placeholder: "Join the free 3-day challenge and build the system your report points to, step by step.",
-    multiline: true,
-  },
-  { key: "cta_button", label: "Button label", placeholder: "Join the 3-Day Challenge" },
-  { key: "error_heading", label: "Report not available, heading", placeholder: "Report not available" },
-  {
-    key: "error_body",
-    label: "Report not available, body",
-    placeholder: "We could not find a report for this link. It may be incomplete or no longer valid.",
-    multiline: true,
-  },
-];
 
 type LinkCard = { kind: "link"; title: string; description: string; url: string };
 type InlineCard = { kind: "inline"; id: string; title: string; description: string };
@@ -155,7 +118,7 @@ const AdminResultsPage = () => {
       .from("site_content")
       .select("section,key,value")
       .eq("page", "results")
-      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section", "report_page"])
+      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section"])
       .then(({ data, error }) => {
         if (error) {
           toast.error("Could not load the results page copy");
@@ -278,21 +241,6 @@ const AdminResultsPage = () => {
           sort_order: 0,
         },
       ],
-      ["results"],
-    );
-
-  const saveReportPage = () =>
-    saveRows(
-      "report_page",
-      REPORT_PAGE_FIELDS.map((f, i) => ({
-        page: "results",
-        section: "report_page",
-        key: f.key,
-        value: values?.[`report_page.${f.key}`] ?? "",
-        value_type: "text",
-        label: f.label,
-        sort_order: i,
-      })),
       ["results"],
     );
 

@@ -286,65 +286,41 @@ const Leaderboard = () => {
         </p>
 
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="w-full grid grid-cols-2 mb-4 h-11 p-1 bg-muted border border-border">
+          <TabsList className="w-full grid grid-cols-3 mb-4 h-11 p-1 bg-muted border border-border">
             <TabsTrigger
-              value="participants"
-              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+              value="referrals"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
             >
-              <Users className="h-4 w-4" /> Participants
+              <Users className="h-4 w-4" /> Referrals
+            </TabsTrigger>
+            <TabsTrigger
+              value="challengers"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+            >
+              <Flame className="h-4 w-4" /> Challengers
             </TabsTrigger>
             <TabsTrigger
               value="promoters"
-              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
             >
               <Crown className="h-4 w-4" /> Promoters
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="participants">
+          <TabsContent value="referrals">
+            <h2 className="sr-only">Referral leaderboard</h2>
             <Card>
-              <CardContent className="p-0">
-                {entries.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>
-                )}
-                {entries.map((entry, i) => {
-                  const rank = i + 1;
-                  const badge = getRankBadge(rank);
-                  const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
-                  return (
-                    <button
-                      type="button"
-                      key={entry.invite_code}
-                      ref={isFocus && !focusRef.current ? focusRef : undefined}
-                      onClick={() => openBio(entry)}
-                      className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
-                        i < entries.length - 1 ? "border-b border-border" : ""
-                      } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
-                    >
-                      <span className="text-xs font-bold text-muted-foreground w-6 text-right">
-                        {badge ? (
-                          <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
-                        ) : rank}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
-                        {entry.avatar_url ? (
-                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          (entry.name || "?").slice(0, 2).toUpperCase()
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
-                          {entry.name} {entry.isUser && "(You)"}
-                        </p>
-
-                      </div>
-                    </button>
-                  );
-                })}
-              </CardContent>
+              <CardContent className="p-0">{renderRows(entries)}</CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="challengers">
+            <h2 className="sr-only">Active challengers</h2>
+            <Card>
+              <CardContent className="p-0">{renderRows(challengers)}</CardContent>
+            </Card>
+          </TabsContent>
+
 
           <TabsContent value="promoters">
             <Card className="overflow-hidden border-0 shadow-none">

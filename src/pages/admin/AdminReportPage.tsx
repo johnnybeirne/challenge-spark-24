@@ -186,7 +186,8 @@ const AdminReportPage = () => {
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
-        <Card>
+        <>
+          <Card>
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -221,9 +222,9 @@ const AdminReportPage = () => {
               </div>
             ))}
           </CardContent>
-        </Card>
+          </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -258,7 +259,8 @@ const AdminReportPage = () => {
               </div>
             ))}
           </CardContent>
-        </Card>
+          </Card>
+        </>
       )}
     </div>
   );

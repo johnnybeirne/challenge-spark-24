@@ -64,8 +64,7 @@ const ReportAdvisor = ({
       const match = scoped.find((i) => i.question === question);
       const body = match
         ? {
-            question: `My ${match.category} score is ${match.score}%. ${question}`,
-            context: match.grounding,
+            question: `My ${match.category} score is ${match.score}%. ${question} For background, my report says: ${match.grounding}`,
           }
         : { question };
       const { data, error } = await supabase.functions.invoke("results-advisor", { body });

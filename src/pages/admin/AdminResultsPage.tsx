@@ -591,6 +591,47 @@ const AdminResultsPage = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card id="report_page">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Report page (emailed link)</CardTitle>
+                  <CardDescription>
+                    The page a lead opens from the link we email them. Teaser, join button and the message shown when a
+                    link no longer works.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <PreviewButton href="/r/sample" />
+                  <Button onClick={saveReportPage} disabled={saving === "report_page"}>
+                    {saving === "report_page" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {REPORT_PAGE_FIELDS.map((f) => (
+                <div key={f.key} className="space-y-1.5">
+                  <Label>{f.label}</Label>
+                  {f.multiline ? (
+                    <Textarea
+                      rows={2}
+                      value={values[`report_page.${f.key}`] ?? ""}
+                      placeholder={f.placeholder}
+                      onChange={(e) => set(`report_page.${f.key}`, e.target.value)}
+                    />
+                  ) : (
+                    <Input
+                      value={values[`report_page.${f.key}`] ?? ""}
+                      placeholder={f.placeholder}
+                      onChange={(e) => set(`report_page.${f.key}`, e.target.value)}
+                    />
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

@@ -89,6 +89,16 @@ const ReportContent = ({
   const navigate = useNavigate();
   const { t: tContent } = useSiteContent("results");
 
+  // Scroll cue fades once the person starts scrolling, so the hint is
+  // obvious on load and gets out of the way once they engage.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 120);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const score = assessment?.diagnosticScore ?? 0;
   const percentageScore = Math.max(9, Math.min(92, Math.round((score / 9) * 100)));
 

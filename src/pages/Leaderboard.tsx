@@ -27,15 +27,56 @@ interface LeaderboardEntry extends ProfileBio {
   indirect_referral_count: number;
   score: number;
   isUser?: boolean;
+  /** true only for padding rows that exist to fill the board out to five. */
+  isPlaceholder?: boolean;
+  /** Active challengers only. */
+  daysCompleted?: number;
+  completionSeconds?: number | null;
 }
+
+/**
+ * Plausible-sounding padding names. These are never mixed into the real data
+ * set: every padded row carries isPlaceholder true and is appended after all
+ * real rows, so real entries always outrank them on the real metric.
+ */
+const PLACEHOLDER_NAMES = [
+  "Emma Walsh",
+  "James Kelly",
+  "Sarah Thompson",
+  "Michael O'Brien",
+  "Charlotte Hughes",
+  "Daniel Murphy",
+  "Olivia Bennett",
+  "Liam Gallagher",
+  "Grace Sullivan",
+  "Thomas Whitfield",
+  "Aoife Doyle",
+  "Ruth Carmichael",
+];
+
+const shuffled = <T,>(arr: T[]) => {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
+
+const shortName = (full: string) => {
+  const parts = String(full || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
+  return parts[0] || "Builder";
+};
 
 const Leaderboard = () => {
   const { state, authUser } = useAppState();
   const { isAdmin } = useUserRole();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [challengers, setChallengers] = useState<LeaderboardEntry[]>([]);
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("participants");
+  const [tab, setTab] = useState("referrals");
   const [searchParams] = useSearchParams();
   const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
   const focusRef = useRef<HTMLButtonElement | null>(null);

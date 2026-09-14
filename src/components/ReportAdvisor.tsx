@@ -60,9 +60,15 @@ const ReportAdvisor = ({
 
   const ask = async (question: string): Promise<string> => {
     try {
-      const { data, error } = await supabase.functions.invoke("results-advisor", {
-        body: { question },
-      });
+      // Ground the answer in the owner-written copy for that area and band.
+      const match = scoped.find((i) => i.question === question);
+      const body = match
+        ? {
+            question: `My ${match.category} score is ${match.score}%. ${question}`,
+            context: match.grounding,
+          }
+        : { question };
+      const { data, error } = await supabase.functions.invoke("results-advisor", { body });
       if (error) throw error;
       const answer = (data as { answer?: string; error?: string } | null)?.answer;
       if (typeof answer === "string" && answer.trim().length > 0) {

@@ -4,15 +4,21 @@ import { useEffect, useRef, useState } from "react";
  * Reveal an element only when it scrolls into view. Respects
  * prefers-reduced-motion by reporting in-view immediately so content
  * shows with no transform/animation.
+ *
+ * `enabled` (default true) gates the observer: while false the element
+ * stays hidden even if it is already on screen, so content can be held
+ * back until the person has started scrolling.
  */
 export function useInView<T extends HTMLElement = HTMLDivElement>(
-  options?: IntersectionObserverInit,
+  options?: IntersectionObserverInit & { enabled?: boolean },
   once = true,
 ) {
+  const enabled = options?.enabled ?? true;
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     const el = ref.current;
     if (!el) return;
     if (
@@ -35,7 +41,7 @@ export function useInView<T extends HTMLElement = HTMLDivElement>(
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [once]);
+  }, [enabled, once]);
 
   return { ref, inView } as const;
 }

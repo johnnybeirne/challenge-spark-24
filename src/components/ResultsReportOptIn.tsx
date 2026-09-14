@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/analytics";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { setReportPreview } from "@/lib/reportPreview";
+import { supabase } from "@/integrations/supabase/client";
+import { useAppState } from "@/context/AppContext";
 
 const schema = z.object({
   name: z.string().trim().min(1, { message: "Please add your name" }).max(80, { message: "Name is too long" }),
@@ -23,6 +25,7 @@ const ResultsReportOptIn = () => {
   const navigate = useNavigate();
   const { sendEmailCode } = useAuth();
   const { t } = useSiteContent("results");
+  const { state } = useAppState();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [nameError, setNameError] = useState<string | null>(null);
@@ -61,11 +64,28 @@ const ResultsReportOptIn = () => {
       return;
     }
     trackEvent("results_report_optin" as any, {});
-    // Client-side preview only — not a session. Lets the results page show a
+    // Client-side preview only - not a session. Lets the results page show a
     // logged-in-looking view until they enter the code from their email.
     setReportPreview(parsed.data.name, parsed.data.email);
     setSent(true);
-    // Their report lives on its own page now.
+
+    // Save this submission against a unique, non-guessable token and email the
+    // link, so they can reopen this exact report later from any device.
+    const { data, error: saveError } = await supabase.functions.invoke("quiz-report", {
+      body: {
+        action: "create",
+        name: parsed.data.name,
+        email: parsed.data.email,
+        assessment: state.assessment ?? {},
+        origin: window.location.origin,
+      },
+    });
+    const token = (data as { token?: string } | null)?.token;
+    if (!saveError && token) {
+      navigate(`/r/${token}`);
+      return;
+    }
+    // Fall back to the device-local report page if the link could not be made.
     navigate("/report");
   };
 

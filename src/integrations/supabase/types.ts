@@ -2220,6 +2220,39 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_reports: {
+        Row: {
+          assessment: Json
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          last_viewed_at: string | null
+          name: string
+          token: string
+        }
+        Insert: {
+          assessment?: Json
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          name: string
+          token: string
+        }
+        Update: {
+          assessment?: Json
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          name?: string
+          token?: string
+        }
+        Relationships: []
+      }
       referral_attributions: {
         Row: {
           bound_at: string

@@ -117,9 +117,14 @@ const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; mul
 
 const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...REPORT_PAGE_FIELDS];
 
+type PromptRow = { id: string; prompt: string; position: number };
+
 const AdminReportPage = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [prompts, setPrompts] = useState<PromptRow[] | null>(null);
+  const [savingPrompts, setSavingPrompts] = useState(false);
+  const [removedPromptIds, setRemovedPromptIds] = useState<string[]>([]);
 
   useEffect(() => {
     supabase
@@ -137,6 +142,101 @@ const AdminReportPage = () => {
         setValues(v);
       });
   }, []);
+
+  useEffect(() => {
+    supabase
+      .from("report_advisor_prompts")
+      .select("id,prompt,position")
+      .order("position", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error("Could not load the suggested questions");
+          setPrompts([]);
+          return;
+        }
+        setPrompts((data ?? []).map((r) => ({ id: r.id, prompt: r.prompt, position: r.position })));
+      });
+  }, []);
+
+  const setPromptText = (id: string, prompt: string) =>
+    setPrompts((prev) => (prev ? prev.map((p) => (p.id === id ? { ...p, prompt } : p)) : prev));
+
+  const movePrompt = (index: number, delta: number) =>
+    setPrompts((prev) => {
+      if (!prev) return prev;
+      const next = [...prev];
+      const target = index + delta;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+
+  const addPrompt = () =>
+    setPrompts((prev) => [
+      ...(prev ?? []),
+      { id: `new-${crypto.randomUUID()}`, prompt: "", position: (prev?.length ?? 0) },
+    ]);
+
+  const removePrompt = (id: string) => {
+    if (!id.startsWith("new-")) setRemovedPromptIds((prev) => [...prev, id]);
+    setPrompts((prev) => (prev ? prev.filter((p) => p.id !== id) : prev));
+  };
+
+  const savePrompts = async () => {
+    if (!prompts) return;
+    setSavingPrompts(true);
+    const cleaned = prompts
+      .map((p) => ({ ...p, prompt: p.prompt.trim() }))
+      .filter((p) => p.prompt.length > 0)
+      .map((p, i) => ({ ...p, position: i }));
+
+    if (removedPromptIds.length > 0) {
+      const { error } = await supabase
+        .from("report_advisor_prompts")
+        .delete()
+        .in("id", removedPromptIds);
+      if (error) {
+        setSavingPrompts(false);
+        toast.error("Could not remove a question");
+        return;
+      }
+      setRemovedPromptIds([]);
+    }
+
+    const inserts = cleaned
+      .filter((p) => p.id.startsWith("new-"))
+      .map((p) => ({ prompt: p.prompt, position: p.position }));
+    const updates = cleaned.filter((p) => !p.id.startsWith("new-"));
+
+    for (const u of updates) {
+      const { error } = await supabase
+        .from("report_advisor_prompts")
+        .update({ prompt: u.prompt, position: u.position })
+        .eq("id", u.id);
+      if (error) {
+        setSavingPrompts(false);
+        toast.error("Could not save the questions");
+        return;
+      }
+    }
+    if (inserts.length > 0) {
+      const { error } = await supabase.from("report_advisor_prompts").insert(inserts);
+      if (error) {
+        setSavingPrompts(false);
+        toast.error("Could not save the new questions");
+        return;
+      }
+    }
+
+    const { data } = await supabase
+      .from("report_advisor_prompts")
+      .select("id,prompt,position")
+      .order("position", { ascending: true });
+    setPrompts((data ?? []).map((r) => ({ id: r.id, prompt: r.prompt, position: r.position })));
+    setSavingPrompts(false);
+    toast.success("Saved");
+  };
+
 
   const set = (key: string, value: string) => setValues((prev) => ({ ...(prev ?? {}), [key]: value }));
 

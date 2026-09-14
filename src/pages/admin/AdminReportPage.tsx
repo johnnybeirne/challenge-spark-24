@@ -454,7 +454,44 @@ const AdminReportPage = () => {
             </CardContent>
           </Card>
 
-
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Category cards</CardTitle>
+                  <CardDescription>
+                    The three cards for System, Audience and Conversion. Lower order numbers show first.
+                    In the advisor question you can use {"{category}"}, {"{score}"} and {"{answers}"} to
+                    pull in their own quiz answers.
+                  </CardDescription>
+                </div>
+                <Button onClick={save} disabled={saving}>
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {CATEGORY_CARD_FIELDS.map((f) => (
+                <div key={f.key} className="space-y-1.5">
+                  <Label>{f.label}</Label>
+                  {f.multiline ? (
+                    <Textarea
+                      rows={3}
+                      value={values[f.key] ?? ""}
+                      placeholder={f.placeholder}
+                      onChange={(e) => set(f.key, e.target.value)}
+                    />
+                  ) : (
+                    <Input
+                      value={values[f.key] ?? ""}
+                      placeholder={f.placeholder}
+                      onChange={(e) => set(f.key, e.target.value)}
+                    />
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
 
           <Card>
           <CardHeader>

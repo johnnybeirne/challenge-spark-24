@@ -20,6 +20,7 @@ const schema = z.object({
  * sign-in link so the person can read their report inside their own area.
  */
 const ResultsReportOptIn = () => {
+  const navigate = useNavigate();
   const { sendEmailCode } = useAuth();
   const { t } = useSiteContent("results");
   const [name, setName] = useState("");
@@ -64,6 +65,8 @@ const ResultsReportOptIn = () => {
     // logged-in-looking view until they enter the code from their email.
     setReportPreview(parsed.data.name, parsed.data.email);
     setSent(true);
+    // Their report lives on its own page now.
+    navigate("/report");
   };
 
 

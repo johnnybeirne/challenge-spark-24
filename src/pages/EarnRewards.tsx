@@ -22,7 +22,7 @@ import { shareOrCopy } from "@/lib/share";
 import { memoryShareText } from "@/lib/personalisation";
 import { getReferralUrl, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/progress";
+import { Progress } from "@/components/ui/progress";
 import Spinner from "@/components/Spinner";
 import { getNextReward, pointRewards } from "@/lib/points";
 import ReferralMilestoneCard from "@/components/ReferralMilestoneCard";

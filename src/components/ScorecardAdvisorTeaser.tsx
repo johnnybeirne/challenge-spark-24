@@ -336,6 +336,12 @@ const ScorecardAdvisorTeaser = ({ categories, overallTier, onStreamComplete }: P
                   {p}
                 </p>
               ))}
+              <a
+                href="/challenge/join"
+                className="inline-block text-sm font-semibold text-primary underline underline-offset-4 transition-colors hover:text-primary/80 motion-reduce:transition-none"
+              >
+                Save my place in the 3-Day Challenge
+              </a>
             </div>
           )}
 

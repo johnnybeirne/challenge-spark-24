@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Copy, Check, Lock } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useAppState } from "@/context/AppContext";
 import { getReferralUrl } from "@/lib/utils";

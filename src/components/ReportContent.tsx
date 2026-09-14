@@ -354,6 +354,7 @@ const ReportContent = ({
                     tieIn={tieIn}
                     chipLabel={chipLabel}
                     prompt={prompt}
+                    onJoin={() => navigate("/challenge/join")}
                     entranceDelayMs={index * 160}
                   />
                 );

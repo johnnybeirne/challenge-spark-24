@@ -16,6 +16,7 @@ const ReportCategoryCard = ({
   tieIn,
   chipLabel,
   prompt,
+  onJoin,
   entranceDelayMs = 0,
 }: {
   label: string;
@@ -24,6 +25,7 @@ const ReportCategoryCard = ({
   tieIn?: string;
   chipLabel: string;
   prompt: string;
+  onJoin?: () => void;
   entranceDelayMs?: number;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -135,6 +137,15 @@ const ReportCategoryCard = ({
                   </p>
                 ))
             )}
+            {answer && onJoin ? (
+              <button
+                type="button"
+                onClick={onJoin}
+                className="text-sm font-semibold text-success underline underline-offset-4 transition-colors hover:text-success/80 motion-reduce:transition-none"
+              >
+                Save my place in the 3-Day Challenge
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

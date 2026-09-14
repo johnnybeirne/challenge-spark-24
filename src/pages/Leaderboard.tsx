@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Trophy, Users, Crown, Award, Star, Linkedin, Facebook, Instagram, Youtube, Globe } from "lucide-react";
+import { Trophy, Users, Crown, Award, Star, Flame, Linkedin, Facebook, Instagram, Youtube, Globe } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 interface ProfileBio {
@@ -27,15 +27,56 @@ interface LeaderboardEntry extends ProfileBio {
   indirect_referral_count: number;
   score: number;
   isUser?: boolean;
+  /** true only for padding rows that exist to fill the board out to five. */
+  isPlaceholder?: boolean;
+  /** Active challengers only. */
+  daysCompleted?: number;
+  completionSeconds?: number | null;
 }
+
+/**
+ * Plausible-sounding padding names. These are never mixed into the real data
+ * set: every padded row carries isPlaceholder true and is appended after all
+ * real rows, so real entries always outrank them on the real metric.
+ */
+const PLACEHOLDER_NAMES = [
+  "Emma Walsh",
+  "James Kelly",
+  "Sarah Thompson",
+  "Michael O'Brien",
+  "Charlotte Hughes",
+  "Daniel Murphy",
+  "Olivia Bennett",
+  "Liam Gallagher",
+  "Grace Sullivan",
+  "Thomas Whitfield",
+  "Aoife Doyle",
+  "Ruth Carmichael",
+];
+
+const shuffled = <T,>(arr: T[]) => {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
+
+const shortName = (full: string) => {
+  const parts = String(full || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
+  return parts[0] || "Builder";
+};
 
 const Leaderboard = () => {
   const { state, authUser } = useAppState();
   const { isAdmin } = useUserRole();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [challengers, setChallengers] = useState<LeaderboardEntry[]>([]);
   const [promoterEntries, setPromoterEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("participants");
+  const [tab, setTab] = useState("referrals");
   const [searchParams] = useSearchParams();
   const focus = searchParams.get("focus")?.trim().toLowerCase() || "";
   const focusRef = useRef<HTMLButtonElement | null>(null);
@@ -54,83 +95,69 @@ const Leaderboard = () => {
   const loadLeaderboard = async () => {
     setLoading(true);
     try {
-      // Participant leaderboard — sourced from waitlist_signups (canonical referral activity).
-      const { data: signups } = await supabase
-        .from("waitlist_signups")
-        .select("name, first_name, surname, email, referral_code, confirmed_invites, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
-        .gt("confirmed_invites", 0)
-        .order("confirmed_invites", { ascending: false })
+      // Referral leaderboard — profiles.direct_referral_count, the same metric
+      // that drives invite_badges, so rank and badge tier can never disagree.
+      const { data: refRows } = await (supabase.from("public_profiles" as any) as any)
+        .select("user_id, name, first_name, surname, invite_code, direct_referral_count, indirect_referral_count, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+        .gt("direct_referral_count", 0)
+        .order("direct_referral_count", { ascending: false })
         .order("created_at", { ascending: true })
         .limit(50);
 
-      if (signups) {
-        // Resolve bios via profiles (email match — waitlist has no FK to profiles).
-        const emails = (signups as any[]).map((s) => (s.email || "").toLowerCase()).filter(Boolean);
-        // Profile enrichment now happens server-side inside public_waitlist_leaderboard view;
-        // we skip the client-side email join (email is no longer publicly readable).
-        const profileRows: any[] = [];
-        const profileMap = new Map<string, ProfileBio>(
-          (profileRows || []).map((p: any) => [String(p.email || "").toLowerCase(), p])
-        );
+      const nameOf = (p: any) =>
+        p.first_name && p.surname && p.first_name !== p.surname
+          ? `${p.first_name} ${p.surname.charAt(0).toUpperCase()}.`
+          : shortName(p.name || p.first_name || "Builder");
 
-        const userCode = state.user?.inviteCode;
-        const mapped: LeaderboardEntry[] = (signups as any[]).map((s: any) => {
-          const lastInitial = (last: string) => `${last.charAt(0).toUpperCase()}.`;
-          let display: string;
-          if (s.first_name && s.surname && s.first_name !== s.surname) {
-            display = `${s.first_name} ${lastInitial(s.surname)}`;
-          } else if (s.name) {
-            const parts = String(s.name).trim().split(/\s+/);
-            display = parts.length >= 2 ? `${parts[0]} ${lastInitial(parts[parts.length - 1])}` : parts[0];
-          } else {
-            display = s.first_name || "Builder";
-          }
-          const direct = s.confirmed_invites ?? 0;
-          const prof = profileMap.get(String(s.email || "").toLowerCase()) || {};
-          // Prefer profile values; fall back to waitlist columns.
-          const pick = (a: any, b: any) => (a ?? null) || (b ?? null) || null;
-          return {
-            name: display,
-            invite_code: s.referral_code,
-            direct_referral_count: direct,
-            indirect_referral_count: 0,
-            score: direct,
-            isUser: !!userCode && s.referral_code === userCode,
-            bio: pick((prof as any).bio, s.bio),
-            avatar_url: pick((prof as any).avatar_url, s.avatar_url),
-            linkedin_url: pick((prof as any).linkedin_url, s.linkedin_url),
-            facebook_url: pick((prof as any).facebook_url, s.facebook_url),
-            instagram_url: pick((prof as any).instagram_url, s.instagram_url),
-            youtube_url: pick((prof as any).youtube_url, s.youtube_url),
-            website_url: pick((prof as any).website_url, s.website_url),
-          };
-        });
-        // Pad to 5 with random fake builders (not on the waitlist).
-        const FAKES = [
-          { name: "Alex R." },
-          { name: "Priya S." },
-          { name: "Marcus T." },
-          { name: "Niamh O." },
-          { name: "Diego F." },
-          { name: "Hannah K." },
-        ];
-        const realNames = new Set(mapped.map((m) => m.name.toLowerCase()));
-        const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
-        const needed = Math.max(0, 5 - mapped.length);
-        const padded: LeaderboardEntry[] = [...mapped];
-        for (let k = 0; k < needed && k < pool.length; k++) {
-          const f = pool[k];
-          padded.push({
-            name: f.name,
-            invite_code: `fake-${k}`,
-            direct_referral_count: 0,
-            indirect_referral_count: 0,
-            score: 0,
-          });
+      const refMapped: LeaderboardEntry[] = ((refRows || []) as any[]).map((p: any) => ({
+        name: nameOf(p),
+        invite_code: p.invite_code || p.user_id,
+        direct_referral_count: p.direct_referral_count ?? 0,
+        indirect_referral_count: p.indirect_referral_count ?? 0,
+        score: p.direct_referral_count ?? 0,
+        isUser: !!authUser?.id && p.user_id === authUser.id,
+        bio: p.bio,
+        avatar_url: p.avatar_url,
+        linkedin_url: p.linkedin_url,
+        facebook_url: p.facebook_url,
+        instagram_url: p.instagram_url,
+        youtube_url: p.youtube_url,
+        website_url: p.website_url,
+      }));
+      setEntries(padEntries(refMapped, "referral"));
 
-        }
-        setEntries(padded);
-      }
+      // Active challengers — days completed from challenge_progress.day_completed_at,
+      // the same record the dashboard reads, resolved through a security-definer RPC.
+      const { data: challengerRows } = await (supabase.rpc as any)("get_active_challengers", { p_limit: 50 });
+      const challengerIds = ((challengerRows || []) as any[]).map((r: any) => r.user_id);
+      const { data: challengerProfiles } = challengerIds.length
+        ? await (supabase.from("public_profiles" as any) as any)
+            .select("user_id, name, first_name, surname, invite_code, direct_referral_count, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+            .in("user_id", challengerIds)
+        : { data: [] as any[] };
+      const profByUser = new Map(((challengerProfiles || []) as any[]).map((p: any) => [p.user_id, p]));
+
+      const chMapped: LeaderboardEntry[] = ((challengerRows || []) as any[]).map((r: any) => {
+        const p: any = profByUser.get(r.user_id) || {};
+        return {
+          name: nameOf(p),
+          invite_code: p.invite_code || r.user_id,
+          direct_referral_count: p.direct_referral_count ?? 0,
+          indirect_referral_count: 0,
+          score: r.days_completed ?? 0,
+          daysCompleted: r.days_completed ?? 0,
+          completionSeconds: r.completion_seconds != null ? Number(r.completion_seconds) : null,
+          isUser: !!authUser?.id && r.user_id === authUser.id,
+          bio: p.bio,
+          avatar_url: p.avatar_url,
+          linkedin_url: p.linkedin_url,
+          facebook_url: p.facebook_url,
+          instagram_url: p.instagram_url,
+          youtube_url: p.youtube_url,
+          website_url: p.website_url,
+        };
+      });
+      setChallengers(padEntries(chMapped, "challenger"));
 
 
       // Load partner leaderboard from canonical view (attributed signups + manual adjustment)
@@ -182,7 +209,33 @@ const Leaderboard = () => {
     setLoading(false);
   };
 
+  /**
+   * Append padding rows until the board shows five. Padding rows are flagged
+   * isPlaceholder and always sit after every real row, so the real metric
+   * ordering is never disturbed and real entries stay unambiguous in the data.
+   */
+  const padEntries = (real: LeaderboardEntry[], key: string): LeaderboardEntry[] => {
+    const realNames = new Set(real.map((r) => r.name.toLowerCase()));
+    const pool = shuffled(PLACEHOLDER_NAMES).filter((n) => !realNames.has(shortName(n).toLowerCase()));
+    const needed = Math.max(0, 5 - real.length);
+    const out = [...real];
+    for (let k = 0; k < needed && k < pool.length; k++) {
+      out.push({
+        name: shortName(pool[k]),
+        invite_code: `placeholder-${key}-${k}`,
+        direct_referral_count: 0,
+        indirect_referral_count: 0,
+        score: 0,
+        daysCompleted: 0,
+        completionSeconds: null,
+        isPlaceholder: true,
+      });
+    }
+    return out;
+  };
+
   // Pad promoter list to 5 with fake promoters not already on the list.
+
   const padPromoters = (real: any[]) => {
     const FAKES = [
       { name: "Sarah L." },
@@ -219,6 +272,44 @@ const Leaderboard = () => {
 
   const openBio = (e: ProfileBio & { name: string; score: number; isUser?: boolean }) => setSelected(e);
 
+  const renderRows = (list: LeaderboardEntry[]) => {
+    if (list.length === 0) {
+      return <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>;
+    }
+    return list.map((entry, i) => {
+      const rank = i + 1;
+      const badge = getRankBadge(rank);
+      const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
+      return (
+        <button
+          type="button"
+          key={entry.invite_code}
+          ref={isFocus && !focusRef.current ? focusRef : undefined}
+          onClick={() => openBio(entry)}
+          className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
+            i < list.length - 1 ? "border-b border-border" : ""
+          } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
+        >
+          <span className="text-xs font-bold text-muted-foreground w-6 text-right">
+            {badge ? <badge.icon className={`h-4 w-4 ${badge.color} inline`} /> : rank}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+            {entry.avatar_url ? (
+              <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              (entry.name || "?").slice(0, 2).toUpperCase()
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
+              {entry.name} {entry.isUser && "(You)"}
+            </p>
+          </div>
+        </button>
+      );
+    });
+  };
+
   if (loading) return <div className="flex items-center justify-center min-h-screen"><Spinner /></div>;
 
   return (
@@ -233,65 +324,41 @@ const Leaderboard = () => {
         </p>
 
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="w-full grid grid-cols-2 mb-4 h-11 p-1 bg-muted border border-border">
+          <TabsList className="w-full grid grid-cols-3 mb-4 h-11 p-1 bg-muted border border-border">
             <TabsTrigger
-              value="participants"
-              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+              value="referrals"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
             >
-              <Users className="h-4 w-4" /> Participants
+              <Users className="h-4 w-4" /> Referrals
+            </TabsTrigger>
+            <TabsTrigger
+              value="challengers"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+            >
+              <Flame className="h-4 w-4" /> Challengers
             </TabsTrigger>
             <TabsTrigger
               value="promoters"
-              className="text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
+              className="text-xs sm:text-sm gap-1.5 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=inactive]:text-muted-foreground"
             >
               <Crown className="h-4 w-4" /> Promoters
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="participants">
+          <TabsContent value="referrals">
+            <h2 className="sr-only">Referral leaderboard</h2>
             <Card>
-              <CardContent className="p-0">
-                {entries.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>
-                )}
-                {entries.map((entry, i) => {
-                  const rank = i + 1;
-                  const badge = getRankBadge(rank);
-                  const isFocus = !!focus && (entry.name || "").toLowerCase().includes(focus);
-                  return (
-                    <button
-                      type="button"
-                      key={entry.invite_code}
-                      ref={isFocus && !focusRef.current ? focusRef : undefined}
-                      onClick={() => openBio(entry)}
-                      className={`w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${
-                        i < entries.length - 1 ? "border-b border-border" : ""
-                      } ${entry.isUser ? "bg-primary/5" : ""} ${isFocus ? "ring-2 ring-primary rounded-md bg-primary/10" : ""}`}
-                    >
-                      <span className="text-xs font-bold text-muted-foreground w-6 text-right">
-                        {badge ? (
-                          <badge.icon className={`h-4 w-4 ${badge.color} inline`} />
-                        ) : rank}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
-                        {entry.avatar_url ? (
-                          <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          (entry.name || "?").slice(0, 2).toUpperCase()
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${entry.isUser ? "text-primary" : "text-foreground"}`}>
-                          {entry.name} {entry.isUser && "(You)"}
-                        </p>
-
-                      </div>
-                    </button>
-                  );
-                })}
-              </CardContent>
+              <CardContent className="p-0">{renderRows(entries)}</CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="challengers">
+            <h2 className="sr-only">Active challengers</h2>
+            <Card>
+              <CardContent className="p-0">{renderRows(challengers)}</CardContent>
+            </Card>
+          </TabsContent>
+
 
           <TabsContent value="promoters">
             <Card className="overflow-hidden border-0 shadow-none">

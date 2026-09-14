@@ -244,6 +244,20 @@ const ReportContent = ({
             )}
             </h1>
 
+          {/* Scroll cue: very obvious on load, fades once they scroll */}
+          <div
+            className={`flex flex-col items-center gap-2 py-4 transition-opacity duration-500 motion-reduce:opacity-100 ${
+              scrolled ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+            aria-hidden={scrolled}
+          >
+            <span className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Scroll to see what is holding your score back
+            </span>
+            <ChevronDown className="h-7 w-7 animate-bounce text-primary motion-reduce:animate-none" />
+          </div>
+
+          <Reveal>
           <section>
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}
@@ -282,14 +296,16 @@ const ReportContent = ({
                     tieIn={tieIn}
                     chipLabel={chipLabel}
                     prompt={prompt}
-                    entranceDelayMs={index * 220}
+                    entranceDelayMs={index * 160}
                   />
                 );
               })}
             </div>
           </section>
+          </Reveal>
 
 
+          <Reveal>
           <ReportAdvisor
             heading={tContent("report_page.advisor_heading", "Ask about your result")}
             subline={tContent(
@@ -298,6 +314,7 @@ const ReportContent = ({
             )}
             onJoinCtaClick={() => navigate("/challenge/join")}
           />
+          </Reveal>
         </div>
       </div>
 

@@ -97,7 +97,9 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const showGraceBanner = accessGateApplies && !access.loading && access.hasAccess && access.gracePeriod;
   const isEmbedded = typeof window !== "undefined" && window.self !== window.top;
   const showSimulatorLaunch =
-    pathname !== "/admin/simulator" && !isEmbedded && (isAdmin || isPreviewHost());
+    pathname !== "/admin/simulator" && !isEmbedded &&
+    !pathname.startsWith("/r/") && pathname !== "/report" &&
+    (isAdmin || isPreviewHost());
 
   if (showLockedScreen) {
     return <AccessLockedScreen pointsTotal={access.pointsTotal} pointsNeeded={access.pointsNeeded} onRefresh={() => void access.refresh()} />;

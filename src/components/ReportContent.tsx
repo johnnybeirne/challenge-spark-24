@@ -209,23 +209,46 @@ const ReportContent = ({
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}
             </h2>
-            <div className="mt-5 divide-y divide-border border-y border-border">
-              {selectedInsights.map((insight) => (
-                <article key={insight.category} className="grid gap-3 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
-                  <div className="flex items-center gap-2 self-start text-primary">
-                    <ArrowDownRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.18em]">{insight.label} blocker</h3>
-                  </div>
-                  <p className="text-[var(--body-size)] leading-relaxed text-foreground">
-                    {tContent(
-                      `report_page.insight_${archetypeTier}_${insight.category}`,
-                      insightDefaults[archetypeTier][insight.category],
-                    )}
-                  </p>
-                </article>
-              ))}
+            <div className="mt-5 space-y-5">
+              {orderedCards.map((card) => {
+                const insight = tContent(
+                  `report_page.insight_${archetypeTier}_${card.category}`,
+                  insightDefaults[archetypeTier][card.category],
+                );
+                const tieIn = tContent(
+                  `report_page.tie_${card.category}`,
+                  dayTieDefaults[card.category],
+                );
+                const chipLabel = tContent(
+                  `report_page.chip_label_${card.category}`,
+                  "Get deeper advice",
+                );
+                const promptTemplate = tContent(
+                  `report_page.chip_prompt_${card.category}`,
+                  chipPromptDefaults[card.category],
+                );
+                const prompt = promptTemplate
+                  .replace("{category}", card.label)
+                  .replace("{score}", `${card.percent}%`)
+                  .replace(
+                    "{answers}",
+                    card.hasAnswers ? answerSummary(card.category) : "(no answers recorded)",
+                  );
+                return (
+                  <ReportCategoryCard
+                    key={card.category}
+                    label={card.label}
+                    percent={card.percent}
+                    insight={insight}
+                    tieIn={tieIn}
+                    chipLabel={chipLabel}
+                    prompt={prompt}
+                  />
+                );
+              })}
             </div>
           </section>
+
 
           <ReportAdvisor
             heading={tContent("report_page.advisor_heading", "Ask about your result")}

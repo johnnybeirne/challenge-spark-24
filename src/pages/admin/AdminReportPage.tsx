@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Mail, ArrowUp, ArrowDown, Plus, Trash2 } from "lucide-react";
+import { Loader2, Mail, ArrowUp, ArrowDown, Plus, Trash2, Camera } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 
 const DEEPER_DIAGNOSIS_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
@@ -179,6 +179,75 @@ const CATEGORY_CARD_FIELDS: { key: string; label: string; placeholder: string; m
 const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...CATEGORY_CARD_FIELDS, ...REPORT_PAGE_FIELDS];
 
 type PromptRow = { id: string; prompt: string; position: number };
+
+const ARCHETYPE_IMAGE_FIELDS = [
+  { key: "low_image", label: "Pioneer character image" },
+  { key: "mid_image", label: "Architect character image" },
+  { key: "high_image", label: "Authority character image" },
+];
+
+const ArchetypeImageUploader = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    if (!/^image\/(jpe?g|png|webp|gif)$/i.test(file.type)) {
+      toast.error("Use a JPG, PNG, WEBP or GIF image.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `archetypes/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("site-images")
+        .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+      onChange(data.publicUrl);
+      toast.success("Image uploaded. Save to publish it.");
+    } catch {
+      toast.error("Upload failed. Try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <Label>{label}</Label>
+      {value && (
+        <div className="flex flex-col items-start gap-2">
+          <img src={value} alt={label} className="max-h-48 w-full max-w-xs rounded-lg border object-cover" />
+          <button
+            type="button"
+            className="text-sm text-red-500/80 underline hover:text-red-500"
+            onClick={() => onChange("")}
+          >
+            Remove image
+          </button>
+        </div>
+      )}
+      <label
+        className={`flex items-center gap-3 rounded-md border border-dashed px-4 py-4 text-sm ${
+          uploading ? "pointer-events-none opacity-60" : "cursor-pointer hover:bg-muted/50"
+        }`}
+      >
+        {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5 text-muted-foreground" />}
+        <span>{uploading ? "Uploading…" : value ? "Replace image" : "Upload an image"}</span>
+        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+      </label>
+    </div>
+  );
+};
 
 const AdminReportPage = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);

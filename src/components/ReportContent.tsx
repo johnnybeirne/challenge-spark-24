@@ -56,6 +56,23 @@ const insightDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
   },
 };
 
+// Day 1 sets the audience and promise, Day 2 builds the asset, Day 3 ships
+// the follow-up that turns interest into clients.
+const dayTieDefaults: Record<QuizCategory, string> = {
+  audience: "This is exactly what Day 1 fixes, when you lock the audience and the promise.",
+  system: "This is exactly what Day 2 fixes, when you build the asset that works without you.",
+  conversion: "This is exactly what Day 3 fixes, when you ship the follow-up that turns interest into clients.",
+};
+
+const chipPromptDefaults: Record<QuizCategory, string> = {
+  system:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is the single biggest thing holding my lead system back, and what should I do about it first?",
+  audience:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is weakest about how I reach and position for my audience, and what should I change first?",
+  conversion:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, where am I losing people between interest and commitment, and what should I fix first?",
+};
+
 /**
  * Shared second-stage report body used by the device-local and token-based
  * reports. It builds on the score reveal with archetype-specific blockers.

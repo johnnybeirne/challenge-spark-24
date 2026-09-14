@@ -15,6 +15,7 @@ const ReportCategoryCard = ({
   tieIn,
   chipLabel,
   prompt,
+  entranceDelayMs = 0,
 }: {
   label: string;
   percent: number;
@@ -22,6 +23,7 @@ const ReportCategoryCard = ({
   tieIn?: string;
   chipLabel: string;
   prompt: string;
+  entranceDelayMs?: number;
 }) => {
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -31,6 +33,10 @@ const ReportCategoryCard = ({
   // Typewriter reveal, matching the other advisor surfaces.
   useEffect(() => {
     if (answer == null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(answer);
+      return;
+    }
     setShown("");
     let i = 0;
     timer.current = window.setInterval(() => {
@@ -76,9 +82,13 @@ const ReportCategoryCard = ({
   };
 
   const accent = percent >= 67 ? "text-success" : percent >= 34 ? "text-primary" : "text-accent";
+  const answerOpen = loading || answer != null;
 
   return (
-    <article className="animate-fade-in rounded-2xl border border-border bg-background p-6">
+    <article
+      className="animate-fade-in rounded-2xl border border-border bg-background p-6 motion-reduce:animate-none"
+      style={{ animationDelay: `${entranceDelayMs}ms` }}
+    >
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           {label}
@@ -103,22 +113,29 @@ const ReportCategoryCard = ({
         {chipLabel}
       </Button>
 
-      {(loading || answer) && (
-        <div className="mt-4 space-y-3 rounded-xl border border-border bg-muted/30 p-4">
-          {loading && !answer ? (
-            <p className="text-sm text-muted-foreground">Thinking about your answers…</p>
-          ) : (
-            shown
-              .split("\n\n")
-              .filter(Boolean)
-              .map((line, i) => (
-                <p key={i} className="text-[var(--body-size)] leading-relaxed text-foreground">
-                  {line}
-                </p>
-              ))
-          )}
+      <div
+        aria-hidden={!answerOpen}
+        className={`grid transition-[grid-template-rows,opacity] duration-500 ease-out motion-reduce:transition-none ${
+          answerOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="mt-4 space-y-3 rounded-xl border border-border bg-muted/30 p-4">
+            {loading && !answer ? (
+              <p className="text-sm text-muted-foreground">Thinking about your answers…</p>
+            ) : (
+              shown
+                .split("\n\n")
+                .filter(Boolean)
+                .map((line, i) => (
+                  <p key={i} className="text-[var(--body-size)] leading-relaxed text-foreground">
+                    {line}
+                  </p>
+                ))
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </article>
   );
 };

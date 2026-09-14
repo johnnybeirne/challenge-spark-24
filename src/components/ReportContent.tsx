@@ -204,9 +204,9 @@ const ReportContent = ({
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
               Your archetype
             </p>
-            <h1 className="mt-2 text-[var(--h2-size)] font-bold leading-tight text-foreground">
+            <h2 className="mt-2 text-[var(--h2-size)] font-bold leading-tight text-foreground">
               {archetypeName}
-            </h1>
+            </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{archetypeTagline}</p>
             {archetypeImage ? (
               <img
@@ -225,19 +225,19 @@ const ReportContent = ({
 
         {/* Right: the deeper diagnosis and the advisor */}
         <div className="min-w-0 space-y-8">
-          <p className="text-sm font-semibold text-primary sm:text-base">
+            <h1 className="text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
             {tContent("report_page.deep_intro", "{name}, you've seen the score. Now let's go deeper.").replace(
               "{name}",
               firstName || "There",
             )}
-          </p>
+            </h1>
 
           <section>
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}
             </h2>
             <div className="mt-5 space-y-5">
-              {orderedCards.map((card) => {
+              {orderedCards.map((card, index) => {
                 const insight = tContent(
                   `report_page.insight_${archetypeTier}_${card.category}`,
                   insightDefaults[archetypeTier][card.category],
@@ -270,6 +270,7 @@ const ReportContent = ({
                     tieIn={tieIn}
                     chipLabel={chipLabel}
                     prompt={prompt}
+                    entranceDelayMs={index * 220}
                   />
                 );
               })}

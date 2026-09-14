@@ -275,7 +275,7 @@ const AdminReportPage = () => {
   const [savingPrompts, setSavingPrompts] = useState(false);
   const [removedPromptIds, setRemovedPromptIds] = useState<string[]>([]);
   const [images, setImages] = useState<Record<string, string>>({});
-  const [savingImages, setSavingImages] = useState(false);
+  
 
   useEffect(() => {
     supabase

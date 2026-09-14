@@ -58,7 +58,7 @@ const items: NavItem[] = [
   { title: "Locked day messages", url: "/owner-console/unlocks", icon: Lock, external: true, keywords: ["unlock", "gate", "day 2", "day 3", "locked", "free window", "passed", "invite", "buy", "message"] },
   { title: "Lead gen quiz", url: "/owner-console/lead-gen-quiz", icon: ListChecks, external: true, keywords: ["quiz", "questions", "diagnostic", "scoring", "lead gen"] },
   { title: "Results Page Editor", url: "/owner-console/results-page", icon: FileEdit, external: true, keywords: ["results", "score", "heading", "hub", "results page", "editor"] },
-  { title: "Report page (emailed link)", url: "/owner-console/report-page", icon: Mail, external: true, keywords: ["report", "emailed link", "teaser", "token", "lead report", "not available", "join button"] },
+  { title: "Results Page Editor - Non-signup", url: "/owner-console/report-page", icon: Mail, external: true, keywords: ["report", "emailed link", "teaser", "token", "lead report", "not available", "join button", "non-signup"] },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true, keywords: ["results", "advisor", "ai", "prompts"] },
   { title: "Report opt-in card", url: "/owner-console/results-optin-card", icon: Mail, external: true, keywords: ["results", "report", "opt-in", "email", "card", "magic link"] },

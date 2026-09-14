@@ -4,17 +4,22 @@ import { useInView } from "@/hooks/useInView";
 /**
  * Fades + slides its children in only when scrolled into view. With
  * prefers-reduced-motion the content is shown immediately with no motion.
+ *
+ * `enabled` (default true) holds the content hidden until it flips true,
+ * so deeper content can be held back until the person has scrolled.
  */
 const Reveal = ({
   children,
   className = "",
   delay = 0,
+  enabled = true,
 }: {
   children: ReactNode;
   className?: string;
   delay?: number;
+  enabled?: boolean;
 }) => {
-  const { ref, inView } = useInView<HTMLDivElement>();
+  const { ref, inView } = useInView<HTMLDivElement>({ enabled });
   return (
     <div
       ref={ref}

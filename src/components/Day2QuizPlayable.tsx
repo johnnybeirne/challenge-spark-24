@@ -136,7 +136,7 @@ const Frame = ({ children }: { children: ReactNode }) => (
   <div className="relative w-full min-h-full bg-background">
     <SampleQuizBanner />
     <div className="relative min-h-[calc(100vh-40px)] w-full flex items-center justify-center p-4 md:p-6">
-      <div className="relative w-[80vw] max-w-[80vw] flex flex-col items-center">
+      <div className="relative w-[50%] max-w-[1400px] mx-auto flex flex-col items-center">
         {children}
       </div>
     </div>

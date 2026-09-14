@@ -28,6 +28,8 @@ import { getNextReward, pointRewards } from "@/lib/points";
 import ReferralMilestoneCard from "@/components/ReferralMilestoneCard";
 import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { useReferralStats } from "@/hooks/useReferralStats";
+import ReferralBadges from "@/components/ReferralBadges";
 
 interface PartnerAsset {
   id: string;
@@ -84,6 +86,8 @@ const EarnRewards = () => {
 
   const completedDay = state.challenge.completed ? 3 : Math.max(0, state.challenge.currentDay - 1);
   const unlockedPartnerCount = direct >= 10 ? assets.length : direct >= 5 ? 5 : direct >= 3 ? 3 : Math.min(1, assets.length);
+
+  const { badges } = useReferralStats();
 
 
   useEffect(() => { trackEvent("reward_accessed"); }, []);
@@ -377,6 +381,11 @@ const EarnRewards = () => {
             </section>
           );
         })()}
+
+        {/* 2b. YOUR BADGES */}
+        <section className="mb-8">
+          <ReferralBadges badges={badges} />
+        </section>
 
         {/* 3. REWARD LADDER — canonical rungs from SiteConfigContext */}
         <section className="mb-8">

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import ReportContent from "@/components/ReportContent";
 import { supabase } from "@/integrations/supabase/client";
 import { getInitials, formatFirstNameSurnameInitial } from "@/lib/formatName";
-import type { AssessmentResult } from "@/lib/assessmentData";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { generateResult, buildPreviewAnswers, type AssessmentResult } from "@/lib/assessmentData";
 import { Loader2 } from "lucide-react";
 
 type State =
@@ -21,6 +22,7 @@ type State =
 const SharedReport = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const { t: tContent } = useSiteContent("results");
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
@@ -28,7 +30,16 @@ const SharedReport = () => {
     let cancelled = false;
     (async () => {
       if (!token) {
-        setState({ status: "error", message: "This report link is missing its code." });
+        setState({ status: "error", message: "" });
+        return;
+      }
+      // Owner preview link: renders the page with sample data, no record needed.
+      if (token === "sample") {
+        setState({
+          status: "ok",
+          name: "Sample Lead",
+          assessment: generateResult(buildPreviewAnswers("mid")),
+        });
         return;
       }
       const { data, error } = await supabase.functions.invoke("quiz-report", {
@@ -37,14 +48,7 @@ const SharedReport = () => {
       if (cancelled) return;
       const payload = data as { name?: string; assessment?: unknown; error?: string } | null;
       if (error || !payload || payload.error || !payload.name) {
-        const kind = payload?.error;
-        setState({
-          status: "error",
-          message:
-            kind === "expired"
-              ? "This report link has expired. Take the quiz again and we will send you a fresh one."
-              : "We could not find a report for this link. It may be incomplete or no longer valid.",
-        });
+        setState({ status: "error", message: "" });
         return;
       }
       setState({
@@ -74,8 +78,15 @@ const SharedReport = () => {
       <>
         <SEO title="Report not available" description="Your personalised lead generation report." canonical="/r" />
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-          <h1 className="text-[var(--h1-size)] font-semibold text-foreground">Report not available</h1>
-          <p className="max-w-md text-[var(--body-size)] text-muted-foreground">{state.message}</p>
+          <h1 className="text-[var(--h1-size)] font-semibold text-foreground">
+            {tContent("report_page.error_heading", "Report not available")}
+          </h1>
+          <p className="max-w-md text-[var(--body-size)] text-muted-foreground">
+            {tContent(
+              "report_page.error_body",
+              "We could not find a report for this link. It may be incomplete or no longer valid.",
+            )}
+          </p>
           <Button onClick={() => navigate("/assessment")} className="font-semibold">
             Take the quiz
           </Button>

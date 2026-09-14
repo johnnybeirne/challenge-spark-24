@@ -171,7 +171,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           <Outlet />
         </div>
         <footer className="py-6 text-center text-sm text-muted-foreground mb-16">
-          © {new Date().getFullYear()} LeadTree. All rights reserved.
+          © {new Date().getFullYear()} All rights reserved.
         </footer>
         {showNav && authenticated && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />

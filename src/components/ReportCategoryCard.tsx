@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useInView } from "@/hooks/useInView";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 /**
  * One category card on the emailed report page: the score, a static
@@ -107,15 +107,11 @@ const ReportCategoryCard = ({
       <Button
         variant="outline"
         size="sm"
-        className="mt-4 font-medium"
+        className="mt-4 font-medium hover:bg-success hover:text-success-foreground hover:border-success active:scale-[0.97]"
         onClick={ask}
         disabled={loading}
       >
-        {loading ? (
-          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-        ) : (
-          <Sparkles className="mr-1 h-4 w-4" />
-        )}
+        {loading ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : null}
         {chipLabel}
       </Button>
 

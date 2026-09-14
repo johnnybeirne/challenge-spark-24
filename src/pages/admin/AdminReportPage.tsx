@@ -255,6 +255,42 @@ const AdminReportPage = () => {
   const [prompts, setPrompts] = useState<PromptRow[] | null>(null);
   const [savingPrompts, setSavingPrompts] = useState(false);
   const [removedPromptIds, setRemovedPromptIds] = useState<string[]>([]);
+  const [images, setImages] = useState<Record<string, string>>({});
+  const [savingImages, setSavingImages] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("site_content")
+      .select("key,value")
+      .eq("page", "results")
+      .eq("section", "archetypes")
+      .then(({ data }) => {
+        const v: Record<string, string> = {};
+        for (const r of data ?? []) v[r.key] = r.value;
+        setImages(v);
+      });
+  }, []);
+
+  const saveImages = async () => {
+    setSavingImages(true);
+    const rows = ARCHETYPE_IMAGE_FIELDS.map((f, i) => ({
+      page: "results",
+      section: "archetypes",
+      key: f.key,
+      value: images[f.key] ?? "",
+      value_type: "text",
+      label: f.label,
+      sort_order: 100 + i,
+    }));
+    const { error } = await supabase.from("site_content").upsert(rows, { onConflict: "page,section,key" });
+    setSavingImages(false);
+    if (error) {
+      toast.error("Could not save the images");
+      return;
+    }
+    invalidatePage("results");
+    toast.success("Saved");
+  };
 
   useEffect(() => {
     supabase

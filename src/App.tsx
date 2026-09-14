@@ -186,7 +186,8 @@ const App = () => (
                 <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint/join" />} />
                 <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium" />} />
                 <Route path="/links" element={<Links />} />
-                <Route path="/results" element={<Results />} />
+<Route path="/results" element={<Results />} />
+                <Route path="/report" element={<Report />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />
                 <Route path="/results/high" element={<Results />} />

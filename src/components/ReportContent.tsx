@@ -14,6 +14,7 @@ import {
 import ReportAdvisor from "@/components/ReportAdvisor";
 import ReportCategoryCard from "@/components/ReportCategoryCard";
 import Reveal from "@/components/Reveal";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 
 type DiagnosticRow = {
   tier: string;
@@ -275,9 +276,18 @@ const ReportContent = ({
                 className="mt-4 w-full rounded-xl object-cover"
               />
             ) : null}
-            <div className="mt-4 flex items-baseline gap-2 border-t border-border pt-4">
-              <span className={`text-3xl font-black leading-none ${accent}`}>{percentageScore}%</span>
-              <span className="text-xs text-muted-foreground">your pipeline score</span>
+            <div className="mt-4 border-t border-border pt-4">
+              <ScoreRingCombined
+                overall={percentageScore}
+                maxSize={200}
+                ariaLabel={`Your pipeline score is ${percentageScore} percent`}
+                segments={[
+                  { label: categoryScores[0].label, pct: categoryScores[0].percent, color: "#f43f5e" },
+                  { label: categoryScores[1].label, pct: categoryScores[1].percent, color: "#10b981" },
+                  { label: categoryScores[2].label, pct: categoryScores[2].percent, color: "#f59e0b" },
+                ]}
+              />
+              <p className="mt-3 text-center text-xs text-muted-foreground">your pipeline score</p>
             </div>
           </div>
         </aside>

@@ -257,7 +257,7 @@ const ReportContent = ({
             <ChevronDown className="h-7 w-7 animate-bounce text-primary motion-reduce:animate-none" />
           </div>
 
-          <Reveal>
+          <Reveal enabled={scrolled}>
           <section>
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}

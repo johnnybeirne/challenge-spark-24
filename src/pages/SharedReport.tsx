@@ -78,8 +78,15 @@ const SharedReport = () => {
       <>
         <SEO title="Report not available" description="Your personalised lead generation report." canonical="/r" />
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-          <h1 className="text-[var(--h1-size)] font-semibold text-foreground">Report not available</h1>
-          <p className="max-w-md text-[var(--body-size)] text-muted-foreground">{state.message}</p>
+          <h1 className="text-[var(--h1-size)] font-semibold text-foreground">
+            {tContent("report_page.error_heading", "Report not available")}
+          </h1>
+          <p className="max-w-md text-[var(--body-size)] text-muted-foreground">
+            {tContent(
+              "report_page.error_body",
+              "We could not find a report for this link. It may be incomplete or no longer valid.",
+            )}
+          </p>
           <Button onClick={() => navigate("/assessment")} className="font-semibold">
             Take the quiz
           </Button>

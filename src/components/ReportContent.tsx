@@ -360,6 +360,7 @@ const ReportContent = ({
               "report_page.advisor_subline",
               "Pick a question and get an answer built around what your report shows.",
             )}
+            items={advisorItems}
             onJoinCtaClick={() => navigate("/challenge/join")}
           />
           </Reveal>

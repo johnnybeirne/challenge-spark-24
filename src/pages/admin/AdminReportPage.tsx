@@ -190,15 +190,32 @@ const ARCHETYPE_IMAGE_FIELDS = [
 ];
 
 const ArchetypeImageUploader = ({
+  fieldKey,
   label,
   value,
   onChange,
 }: {
+  fieldKey: string;
   label: string;
   value: string;
   onChange: (url: string) => void;
 }) => {
   const [uploading, setUploading] = useState(false);
+
+  // Persist a single image field immediately so no separate Save step is needed.
+  const persist = async (url: string) => {
+    onChange(url);
+    const { error } = await supabase.from("site_content").upsert(
+      { page: "results", section: "archetypes", key: fieldKey, value: url, value_type: "text", label },
+      { onConflict: "page,section,key" },
+    );
+    if (error) {
+      toast.error("Could not save the image. Try again.");
+      return;
+    }
+    invalidatePage("results");
+    toast.success(url ? "Image saved." : "Image removed.");
+  };
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -215,8 +232,7 @@ const ArchetypeImageUploader = ({
         .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
       if (error) throw error;
       const { data } = supabase.storage.from("site-images").getPublicUrl(path);
-      onChange(data.publicUrl);
-      toast.success("Image uploaded. Save to publish it.");
+      await persist(data.publicUrl);
     } catch {
       toast.error("Upload failed. Try again.");
     } finally {
@@ -233,7 +249,7 @@ const ArchetypeImageUploader = ({
           <button
             type="button"
             className="text-sm text-red-500/80 underline hover:text-red-500"
-            onClick={() => onChange("")}
+            onClick={() => persist("")}
           >
             Remove image
           </button>
@@ -259,7 +275,7 @@ const AdminReportPage = () => {
   const [savingPrompts, setSavingPrompts] = useState(false);
   const [removedPromptIds, setRemovedPromptIds] = useState<string[]>([]);
   const [images, setImages] = useState<Record<string, string>>({});
-  const [savingImages, setSavingImages] = useState(false);
+  
 
   useEffect(() => {
     supabase
@@ -274,26 +290,6 @@ const AdminReportPage = () => {
       });
   }, []);
 
-  const saveImages = async () => {
-    setSavingImages(true);
-    const rows = ARCHETYPE_IMAGE_FIELDS.map((f, i) => ({
-      page: "results",
-      section: "archetypes",
-      key: f.key,
-      value: images[f.key] ?? "",
-      value_type: "text",
-      label: f.label,
-      sort_order: 100 + i,
-    }));
-    const { error } = await supabase.from("site_content").upsert(rows, { onConflict: "page,section,key" });
-    setSavingImages(false);
-    if (error) {
-      toast.error("Could not save the images");
-      return;
-    }
-    invalidatePage("results");
-    toast.success("Saved");
-  };
 
   useEffect(() => {
     supabase
@@ -458,22 +454,16 @@ const AdminReportPage = () => {
         <>
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <CardTitle className="text-lg">Archetype images</CardTitle>
-                  <CardDescription>
-                    One picture per archetype, shown above the score on the emailed report page. Leave blank for none.
-                  </CardDescription>
-                </div>
-                <Button onClick={saveImages} disabled={savingImages}>
-                  {savingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
-                </Button>
-              </div>
+              <CardTitle className="text-lg">Archetype images</CardTitle>
+              <CardDescription>
+                One picture per archetype, shown above the score on the emailed report page. Saves as soon as the upload finishes. Leave blank for none.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {ARCHETYPE_IMAGE_FIELDS.map((f) => (
                 <ArchetypeImageUploader
                   key={f.key}
+                  fieldKey={f.key}
                   label={f.label}
                   value={images[f.key] ?? ""}
                   onChange={(url) => setImages((prev) => ({ ...prev, [f.key]: url }))}

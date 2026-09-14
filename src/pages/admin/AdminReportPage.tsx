@@ -190,15 +190,32 @@ const ARCHETYPE_IMAGE_FIELDS = [
 ];
 
 const ArchetypeImageUploader = ({
+  fieldKey,
   label,
   value,
   onChange,
 }: {
+  fieldKey: string;
   label: string;
   value: string;
   onChange: (url: string) => void;
 }) => {
   const [uploading, setUploading] = useState(false);
+
+  // Persist a single image field immediately so no separate Save step is needed.
+  const persist = async (url: string) => {
+    onChange(url);
+    const { error } = await supabase.from("site_content").upsert(
+      { page: "results", section: "archetypes", key: fieldKey, value: url, value_type: "text", label },
+      { onConflict: "page,section,key" },
+    );
+    if (error) {
+      toast.error("Could not save the image. Try again.");
+      return;
+    }
+    invalidatePage("results");
+    toast.success(url ? "Image saved." : "Image removed.");
+  };
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -215,8 +232,7 @@ const ArchetypeImageUploader = ({
         .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
       if (error) throw error;
       const { data } = supabase.storage.from("site-images").getPublicUrl(path);
-      onChange(data.publicUrl);
-      toast.success("Image uploaded. Save to publish it.");
+      await persist(data.publicUrl);
     } catch {
       toast.error("Upload failed. Try again.");
     } finally {
@@ -233,7 +249,7 @@ const ArchetypeImageUploader = ({
           <button
             type="button"
             className="text-sm text-red-500/80 underline hover:text-red-500"
-            onClick={() => onChange("")}
+            onClick={() => persist("")}
           >
             Remove image
           </button>

@@ -94,6 +94,12 @@ const BLOCKS: BlockCard[] = [
     url: "/owner-console/results-advisor-prompts",
   },
   {
+    kind: "inline",
+    id: "report_page",
+    title: "9. Report page (emailed link)",
+    description: "The teaser, join button and not-available messages on the report page sent to leads.",
+  },
+  {
     kind: "link",
     title: "Section blocks (Quiz LP Editor)",
     description: "Eyebrow, section title and body blocks for the Results page.",
@@ -111,7 +117,7 @@ const AdminResultsPage = () => {
       .from("site_content")
       .select("section,key,value")
       .eq("page", "results")
-      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section"])
+      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section", "report_page"])
       .then(({ data, error }) => {
         if (error) {
           toast.error("Could not load the results page copy");

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { supabase } from "@/integrations/supabase/client";
+import { ChevronDown } from "lucide-react";
 import {
   calculateCategoryScores,
   categoryQuestions,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/assessmentData";
 import ReportAdvisor from "@/components/ReportAdvisor";
 import ReportCategoryCard from "@/components/ReportCategoryCard";
+import Reveal from "@/components/Reveal";
 
 type DiagnosticRow = {
   tier: string;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Copy,
@@ -11,6 +11,8 @@ import {
   Trophy,
   ExternalLink,
   ChevronRight,
+  Check,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,12 +20,14 @@ import { useAppState } from "@/context/AppContext";
 import { trackEvent } from "@/lib/analytics";
 import { shareOrCopy } from "@/lib/share";
 import { memoryShareText } from "@/lib/personalisation";
-import { getReferralUrl } from "@/lib/utils";
+import { getReferralUrl, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/progress";
 import Spinner from "@/components/Spinner";
 import { getNextReward, pointRewards } from "@/lib/points";
 import ReferralMilestoneCard from "@/components/ReferralMilestoneCard";
+import { useSiteConfig, type LadderRung } from "@/context/SiteConfigContext";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 
 interface PartnerAsset {
   id: string;
@@ -34,25 +38,6 @@ interface PartnerAsset {
   user_id: string;
   partner_name?: string;
 }
-
-// Reward ladder — points-based milestones.
-// `major: true` marks headline rewards used for "next major" emphasis.
-interface Rung {
-  points: number;
-  title: string;
-  desc?: string;
-  major?: boolean;
-}
-const ladder: Rung[] = [
-  { points: 100, title: "Starter Resource Kit" },
-  { points: 200, title: "Advanced Challenge Training" },
-  { points: 300, title: "VIP Implementation Workshop" },
-  { points: 400, title: "Private Community Access" },
-  { points: 500, title: "Challenge Promotion Spotlight", desc: "We'll help showcase and promote your challenge to the LEADTREE audience and ecosystem.", major: true },
-  { points: 600, title: "Partner Bonus Training" },
-  { points: 750, title: "Inner Circle Session" },
-  { points: 1000, title: "Featured Challenge Opportunity", desc: "Top challenge creators may receive visibility, featured placement, or collaboration opportunities inside the LEADTREE network.", major: true },
-];
 
 // Partner bonuses — placeholder data (safe defaults until real partners are wired).
 interface PartnerBonus {
@@ -138,6 +123,100 @@ const EarnRewards = () => {
       );
     })();
     return () => { cancelled = true; };
+  }, []);
+
+  // ── Canonical reward ladder (same source as /rewards) ──
+  const { config } = useSiteConfig();
+  const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
+  const ladderUserPoints = state.points?.total ?? 0;
+  const { rungs } = config.rewards.ladder;
+  const ordered = useMemo(
+    () =>
+      [...rungs]
+        .map((r, i) => ({ ...r, position: typeof r.position === "number" ? r.position : i + 1 }))
+        .sort((a, b) => a.position - b.position),
+    [rungs],
+  );
+
+  // Paid rungs are fulfilled server-side into `unlock_grants` by gate key.
+  const [purchasedKeys, setPurchasedKeys] = useState<Set<string>>(new Set());
+  const gateKeys = useMemo(
+    () => ordered.map((r) => r.gateKey).filter(Boolean) as string[],
+    [ordered],
+  );
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      if (!gateKeys.length) return;
+      const { data } = await supabase
+        .from("unlock_grants")
+        .select("gate_key")
+        .in("gate_key", gateKeys);
+      if (!active) return;
+      setPurchasedKeys(new Set((data ?? []).map((r) => r.gate_key as string)));
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [gateKeys.join("|")]);
+
+  // Inline rung checkout accordion: at most one rung's checkout open at a time.
+  const [hostKey, setHostKey] = useState<string | null>(null);
+  const [openRungKey, setOpenRungKey] = useState<string | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
+
+  const rungKey = (rung: LadderRung) => rung.priceId || String(rung.position);
+
+  const openRungCheckout = (rung: LadderRung) => {
+    if (!rung.gateKey) {
+      toast.error("This reward is not ready to buy yet. Please try again shortly.");
+      return;
+    }
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setHostKey(rungKey(rung));
+    setOpenRungKey(null);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => setOpenRungKey(rungKey(rung)));
+    openCheckout({
+      priceId: rung.priceId,
+      gateKey: rung.gateKey,
+      quantity: 1,
+      customerEmail: state.user?.email,
+      userId: state.user?.id || "",
+      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+    });
+  };
+
+  const closeRungCheckout = () => {
+    setOpenRungKey(null);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(() => {
+      setHostKey(null);
+      closeCheckout();
+      closeTimerRef.current = null;
+    }, 320);
+  };
+
+  const handleBuyClick = (rung: LadderRung) => {
+    const key = rungKey(rung);
+    if (openRungKey === key) {
+      closeRungCheckout();
+      return;
+    }
+    openRungCheckout(rung);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
   }, []);
 
   const copyLink = async (which: "quiz" | "challenge", url: string) => {
@@ -299,88 +378,128 @@ const EarnRewards = () => {
           );
         })()}
 
-        {/* 3. REWARD LADDER */}
-        {(() => {
-          const points = state.points?.total ?? 0;
-          const unlockedRungs = ladder.filter((r) => points >= r.points);
-          const lockedRungs = ladder.filter((r) => points < r.points);
-          const justUnlocked = unlockedRungs[unlockedRungs.length - 1];
-          const nextUp = lockedRungs[0];
-          const nextMajor = lockedRungs.find((r) => r.major && r !== nextUp);
-          const featuredKeys = new Set(
-            [justUnlocked, nextUp, nextMajor].filter(Boolean).map((r) => r!.points),
-          );
-          const otherLocked = lockedRungs.filter((r) => !featuredKeys.has(r.points));
+        {/* 3. REWARD LADDER — canonical rungs from SiteConfigContext */}
+        <section className="mb-8">
+          <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Reward ladder</h2>
+          <p className="mb-4 text-xs text-[#6B7280]">
+            Two ways to get every reward: climb by earning points, or buy any reward outright.
+          </p>
+          <div className="space-y-3">
+            {ordered.map((rung) => {
+              const earned = ladderUserPoints >= rung.points;
+              const bought = !!rung.gateKey && purchasedKeys.has(rung.gateKey);
+              const reached = earned || bought;
+              const away = Math.max(0, rung.points - ladderUserPoints);
+              const pct = Math.min(100, Math.round((ladderUserPoints / Math.max(rung.points, 1)) * 100));
+              const isGold = rung.doubleUnlock;
 
-          const FeaturedCard = ({
-            rung, kind,
-          }: { rung: Rung; kind: "unlocked" | "next" | "major" }) => {
-            const label =
-              kind === "unlocked" ? "Just unlocked" :
-              kind === "next" ? "Next unlock" : "Next major reward";
-            const pillCls =
-              kind === "next"
-                ? "bg-primary text-white"
-                : kind === "unlocked"
-                  ? "bg-[#10B981] text-white"
-                  : "bg-[#F7F8FA] text-[#6B7280]";
-            return (
-              <div className="rounded-[16px] bg-white p-6 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${pillCls}`}>
-                    {label}
-                  </span>
-                  <span className="text-xs font-medium text-[#6B7280] tabular-nums">
-                    {rung.points} pts
-                  </span>
+              return (
+                <div
+                  key={rung.priceId || rung.position}
+                  className={cn(
+                    "rounded-xl border p-4 transition-all",
+                    isGold
+                      ? "border-amber-400/60 bg-gradient-to-r from-amber-50/80 to-yellow-50/40 dark:from-amber-950/30 dark:to-yellow-950/20"
+                      : "bg-white",
+                    reached && "ring-1 ring-emerald-500/40",
+                  )}
+                >
+                  {/* Reward name + value */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {reached ? (
+                      <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                    ) : (
+                      <Lock className="h-4 w-4 shrink-0 text-[#6B7280]" />
+                    )}
+                    <p className="text-base font-bold tracking-tight text-[#1F2937]">{rung.name}</p>
+                    {isGold && (
+                      <span className="inline-flex shrink-0 items-center rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                        <Sparkles className="mr-0.5 inline h-2 w-2" />
+                        2×
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Two paths, equal weight */}
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {/* EARN */}
+                    <div className="rounded-lg border bg-[#F7F8FA] p-3">
+                      <p className="text-sm font-semibold text-[#1F2937]">
+                        {reached ? "Unlocked" : `Access at ${rung.points} pts`}
+                      </p>
+                      <Progress value={pct} className="mt-2 h-1.5" />
+                      <p className="mt-1.5 text-xs text-[#6B7280]">
+                        {bought ? "Yours — purchased." : reached ? "Yours." : `${away} more to go`}
+                      </p>
+                    </div>
+
+                    {/* BUY */}
+                    <div className="rounded-lg border bg-[#F7F8FA] p-3">
+                      {reached ? (
+                        <Button
+                          size="sm"
+                          className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white"
+                          onClick={() => navigate(`/rewards/${rung.gateKey}`)}
+                          disabled={!rung.gateKey}
+                        >
+                          Unlocked — Open
+                        </Button>
+                      ) : rung.buyPrice > 0 ? (
+                        <>
+                          <Button
+                            size="sm"
+                            className="h-9 w-full bg-primary text-sm font-semibold text-white hover:brightness-90 hover:text-white focus-visible:text-white disabled:text-white"
+                            onClick={() => handleBuyClick(rung)}
+                          >
+                            {openRungKey === rungKey(rung)
+                              ? `Close — $${rung.buyPrice}`
+                              : `Buy it now — $${rung.buyPrice}`}
+                          </Button>
+                          <p className="mt-1.5 text-center text-xs text-[#6B7280]">
+                            Skip the wait — get it instantly.
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-[#6B7280]">
+                          Earn-only reward — not available to buy.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Inline checkout accordion — only the hosting rung mounts it,
+                      expanding directly beneath its Buy button. One open at a time. */}
+                  {hostKey === rungKey(rung) && (
+                    <div
+                      className={cn(
+                        "grid overflow-hidden transition-all duration-300 ease-in-out",
+                        openRungKey === rungKey(rung)
+                          ? "mt-3 grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0",
+                      )}
+                    >
+                      <div className="min-h-0 overflow-hidden rounded-lg border bg-[#F7F8FA] p-3">
+                        <div className="mb-2 flex items-center justify-between">
+                          <p className="text-xs font-medium text-[#6B7280]">
+                            Secure checkout — {rung.name}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={closeRungCheckout}
+                            className="rounded-md px-2 py-1 text-xs font-medium text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+                          >
+                            Close
+                          </button>
+                        </div>
+                        <div className="overflow-x-hidden">{checkoutElement}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <p className="text-base font-semibold text-[#1F2937]">{rung.title}</p>
-                {rung.desc && (
-                  <p className="mt-1.5 text-sm leading-relaxed text-[#6B7280]">{rung.desc}</p>
-                )}
-                {kind === "next" && (
-                  <p className="mt-3 text-xs text-[#6B7280] tabular-nums">
-                    {Math.max(0, rung.points - points)} points to go
-                  </p>
-                )}
-              </div>
-            );
-          };
-
-          return (
-            <section className="mb-8">
-              <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Reward ladder</h2>
-              <p className="mb-4 text-xs text-[#6B7280]">
-                Some rewards include visibility and promotion opportunities.
-              </p>
-
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {justUnlocked && <FeaturedCard rung={justUnlocked} kind="unlocked" />}
-                {nextUp && <FeaturedCard rung={nextUp} kind="next" />}
-                {nextMajor && <FeaturedCard rung={nextMajor} kind="major" />}
-              </div>
-
-              {otherLocked.length > 0 && (
-                <div className="mt-4 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
-                  <ol>
-                    {otherLocked.map((rung, i) => (
-                      <li
-                        key={rung.points}
-                        className={`flex items-center gap-4 px-6 py-4 ${i > 0 ? "border-t border-[#E5E7EB]" : ""}`}
-                      >
-                        <span className="w-12 shrink-0 text-xs font-semibold text-[#6B7280] tabular-nums">
-                          {rung.points}
-                        </span>
-                        <span className="flex-1 truncate text-sm text-[#1F2937]">{rung.title}</span>
-                        <Lock className="h-3.5 w-3.5 text-[#6B7280]" />
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-            </section>
-          );
-        })()}
+              );
+            })}
+          </div>
+        </section>
 
         {/* 4. PARTNER BONUSES */}
         {(() => {

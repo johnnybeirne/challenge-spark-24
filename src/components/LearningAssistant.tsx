@@ -105,10 +105,10 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
                     key={p}
                     onClick={() => setOpenPill(active ? null : p)}
                     className={cn(
-                      "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition",
+                      "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 hover:text-primary active:scale-[0.97] active:border-primary active:bg-primary/15 motion-reduce:transform-none motion-reduce:transition-none",
                       active
                         ? "border-primary bg-primary/10 text-primary"
-                        : "border-border bg-background text-foreground hover:border-primary/50"
+                        : "border-border bg-background text-foreground"
                     )}
                   >
                     <Sparkles className="h-3.5 w-3.5" />

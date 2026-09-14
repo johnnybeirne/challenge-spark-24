@@ -95,83 +95,69 @@ const Leaderboard = () => {
   const loadLeaderboard = async () => {
     setLoading(true);
     try {
-      // Participant leaderboard — sourced from waitlist_signups (canonical referral activity).
-      const { data: signups } = await supabase
-        .from("waitlist_signups")
-        .select("name, first_name, surname, email, referral_code, confirmed_invites, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
-        .gt("confirmed_invites", 0)
-        .order("confirmed_invites", { ascending: false })
+      // Referral leaderboard — profiles.direct_referral_count, the same metric
+      // that drives invite_badges, so rank and badge tier can never disagree.
+      const { data: refRows } = await (supabase.from("public_profiles" as any) as any)
+        .select("user_id, name, first_name, surname, invite_code, direct_referral_count, indirect_referral_count, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+        .gt("direct_referral_count", 0)
+        .order("direct_referral_count", { ascending: false })
         .order("created_at", { ascending: true })
         .limit(50);
 
-      if (signups) {
-        // Resolve bios via profiles (email match — waitlist has no FK to profiles).
-        const emails = (signups as any[]).map((s) => (s.email || "").toLowerCase()).filter(Boolean);
-        // Profile enrichment now happens server-side inside public_waitlist_leaderboard view;
-        // we skip the client-side email join (email is no longer publicly readable).
-        const profileRows: any[] = [];
-        const profileMap = new Map<string, ProfileBio>(
-          (profileRows || []).map((p: any) => [String(p.email || "").toLowerCase(), p])
-        );
+      const nameOf = (p: any) =>
+        p.first_name && p.surname && p.first_name !== p.surname
+          ? `${p.first_name} ${p.surname.charAt(0).toUpperCase()}.`
+          : shortName(p.name || p.first_name || "Builder");
 
-        const userCode = state.user?.inviteCode;
-        const mapped: LeaderboardEntry[] = (signups as any[]).map((s: any) => {
-          const lastInitial = (last: string) => `${last.charAt(0).toUpperCase()}.`;
-          let display: string;
-          if (s.first_name && s.surname && s.first_name !== s.surname) {
-            display = `${s.first_name} ${lastInitial(s.surname)}`;
-          } else if (s.name) {
-            const parts = String(s.name).trim().split(/\s+/);
-            display = parts.length >= 2 ? `${parts[0]} ${lastInitial(parts[parts.length - 1])}` : parts[0];
-          } else {
-            display = s.first_name || "Builder";
-          }
-          const direct = s.confirmed_invites ?? 0;
-          const prof = profileMap.get(String(s.email || "").toLowerCase()) || {};
-          // Prefer profile values; fall back to waitlist columns.
-          const pick = (a: any, b: any) => (a ?? null) || (b ?? null) || null;
-          return {
-            name: display,
-            invite_code: s.referral_code,
-            direct_referral_count: direct,
-            indirect_referral_count: 0,
-            score: direct,
-            isUser: !!userCode && s.referral_code === userCode,
-            bio: pick((prof as any).bio, s.bio),
-            avatar_url: pick((prof as any).avatar_url, s.avatar_url),
-            linkedin_url: pick((prof as any).linkedin_url, s.linkedin_url),
-            facebook_url: pick((prof as any).facebook_url, s.facebook_url),
-            instagram_url: pick((prof as any).instagram_url, s.instagram_url),
-            youtube_url: pick((prof as any).youtube_url, s.youtube_url),
-            website_url: pick((prof as any).website_url, s.website_url),
-          };
-        });
-        // Pad to 5 with random fake builders (not on the waitlist).
-        const FAKES = [
-          { name: "Alex R." },
-          { name: "Priya S." },
-          { name: "Marcus T." },
-          { name: "Niamh O." },
-          { name: "Diego F." },
-          { name: "Hannah K." },
-        ];
-        const realNames = new Set(mapped.map((m) => m.name.toLowerCase()));
-        const pool = FAKES.filter((f) => !realNames.has(f.name.toLowerCase()));
-        const needed = Math.max(0, 5 - mapped.length);
-        const padded: LeaderboardEntry[] = [...mapped];
-        for (let k = 0; k < needed && k < pool.length; k++) {
-          const f = pool[k];
-          padded.push({
-            name: f.name,
-            invite_code: `fake-${k}`,
-            direct_referral_count: 0,
-            indirect_referral_count: 0,
-            score: 0,
-          });
+      const refMapped: LeaderboardEntry[] = ((refRows || []) as any[]).map((p: any) => ({
+        name: nameOf(p),
+        invite_code: p.invite_code || p.user_id,
+        direct_referral_count: p.direct_referral_count ?? 0,
+        indirect_referral_count: p.indirect_referral_count ?? 0,
+        score: p.direct_referral_count ?? 0,
+        isUser: !!authUser?.id && p.user_id === authUser.id,
+        bio: p.bio,
+        avatar_url: p.avatar_url,
+        linkedin_url: p.linkedin_url,
+        facebook_url: p.facebook_url,
+        instagram_url: p.instagram_url,
+        youtube_url: p.youtube_url,
+        website_url: p.website_url,
+      }));
+      setEntries(padEntries(refMapped, "referral"));
 
-        }
-        setEntries(padded);
-      }
+      // Active challengers — days completed from challenge_progress.day_completed_at,
+      // the same record the dashboard reads, resolved through a security-definer RPC.
+      const { data: challengerRows } = await (supabase.rpc as any)("get_active_challengers", { p_limit: 50 });
+      const challengerIds = ((challengerRows || []) as any[]).map((r: any) => r.user_id);
+      const { data: challengerProfiles } = challengerIds.length
+        ? await (supabase.from("public_profiles" as any) as any)
+            .select("user_id, name, first_name, surname, invite_code, direct_referral_count, bio, avatar_url, linkedin_url, facebook_url, instagram_url, youtube_url, website_url")
+            .in("user_id", challengerIds)
+        : { data: [] as any[] };
+      const profByUser = new Map(((challengerProfiles || []) as any[]).map((p: any) => [p.user_id, p]));
+
+      const chMapped: LeaderboardEntry[] = ((challengerRows || []) as any[]).map((r: any) => {
+        const p: any = profByUser.get(r.user_id) || {};
+        return {
+          name: nameOf(p),
+          invite_code: p.invite_code || r.user_id,
+          direct_referral_count: p.direct_referral_count ?? 0,
+          indirect_referral_count: 0,
+          score: r.days_completed ?? 0,
+          daysCompleted: r.days_completed ?? 0,
+          completionSeconds: r.completion_seconds != null ? Number(r.completion_seconds) : null,
+          isUser: !!authUser?.id && r.user_id === authUser.id,
+          bio: p.bio,
+          avatar_url: p.avatar_url,
+          linkedin_url: p.linkedin_url,
+          facebook_url: p.facebook_url,
+          instagram_url: p.instagram_url,
+          youtube_url: p.youtube_url,
+          website_url: p.website_url,
+        };
+      });
+      setChallengers(padEntries(chMapped, "challenger"));
 
 
       // Load partner leaderboard from canonical view (attributed signups + manual adjustment)

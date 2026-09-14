@@ -19,6 +19,7 @@ import Landing from "@/pages/Landing";
 import ChallengeLanding from "@/pages/ChallengeLanding";
 import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
+import Report from "@/pages/Report";
 import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
 import ResetPassword from "@/pages/ResetPassword";
@@ -186,7 +187,8 @@ const App = () => (
                 <Route path="/free-training/enrol" element={<RedirectKeepingQuery to="/blueprint/join" />} />
                 <Route path="/premium/enrol" element={<RedirectKeepingQuery to="/premium" />} />
                 <Route path="/links" element={<Links />} />
-                <Route path="/results" element={<Results />} />
+<Route path="/results" element={<Results />} />
+                <Route path="/report" element={<Report />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />
                 <Route path="/results/high" element={<Results />} />

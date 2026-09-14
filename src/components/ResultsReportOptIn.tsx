@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ const schema = z.object({
  * sign-in link so the person can read their report inside their own area.
  */
 const ResultsReportOptIn = () => {
+  const navigate = useNavigate();
   const { sendEmailCode } = useAuth();
   const { t } = useSiteContent("results");
   const [name, setName] = useState("");
@@ -63,6 +65,8 @@ const ResultsReportOptIn = () => {
     // logged-in-looking view until they enter the code from their email.
     setReportPreview(parsed.data.name, parsed.data.email);
     setSent(true);
+    // Their report lives on its own page now.
+    navigate("/report");
   };
 
 

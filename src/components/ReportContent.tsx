@@ -320,6 +320,7 @@ const ReportContent = ({
 
 
       {/* Challenge tease */}
+      <Reveal>
       <section className="mb-2 rounded-2xl border border-border bg-background p-8">
         <h2 className="text-[var(--h2-size)] font-semibold text-foreground">
           {tContent("report_page.tease_heading", "What the 3-Day Challenge does about this")}
@@ -345,8 +346,10 @@ const ReportContent = ({
           </li>
         </ul>
       </section>
+      </Reveal>
 
       {/* Join CTA */}
+      <Reveal>
       <section className="p-8 text-center">
         <h2 className="text-[var(--h2-size)] font-semibold text-foreground">
           {tContent("report_page.cta_heading", "Ready to fix it for good?")}
@@ -361,6 +364,7 @@ const ReportContent = ({
           {tContent("report_page.cta_button", "Join the 3-Day Challenge")}
         </Button>
       </section>
+      </Reveal>
     </>
   );
 };

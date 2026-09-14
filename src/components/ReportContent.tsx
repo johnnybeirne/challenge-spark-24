@@ -311,9 +311,10 @@ const ReportContent = ({
             </h2>
             <div className="mt-5 space-y-5">
               {orderedCards.map((card, index) => {
+                const cardBand = bandOf(card.percent);
                 const insight = tContent(
-                  `report_page.insight_${archetypeTier}_${card.category}`,
-                  insightDefaults[archetypeTier][card.category],
+                  `report_page.insight_${cardBand}_${card.category}`,
+                  insightDefaults[cardBand][card.category],
                 );
                 const tieIn = tContent(
                   `report_page.tie_${card.category}`,

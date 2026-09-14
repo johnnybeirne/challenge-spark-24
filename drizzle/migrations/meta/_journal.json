@@ -15,6 +15,13 @@
       "when": 1789372707345,
       "tag": "0001_enforce_safe_defaults_on_partner_promoter_self_insert",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789373645629,
+      "tag": "0002_create_quiz_reports",
+      "breakpoints": true
     }
   ]
 }

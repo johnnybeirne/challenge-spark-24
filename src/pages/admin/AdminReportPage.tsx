@@ -32,61 +32,50 @@ const DEEPER_DIAGNOSIS_FIELDS: { key: string; label: string; placeholder: string
     placeholder: "Pick a question and get an answer built around what your report shows.",
     multiline: true,
   },
-  {
-    key: "insight_low_system",
-    label: "Pioneer — System blocker",
-    placeholder: "Your lead flow has no dependable hand-off from attention to action yet, so every result still asks for fresh effort from you.",
-    multiline: true,
-  },
-  {
-    key: "insight_low_audience",
-    label: "Pioneer — Audience blocker",
-    placeholder: "Your message is still broad enough that the right people may not immediately recognise that it is meant for them.",
-    multiline: true,
-  },
-  {
-    key: "insight_low_conversion",
-    label: "Pioneer — Conversion blocker",
-    placeholder: "Interested people are being left to decide their own next step, which creates hesitation before trust can become action.",
-    multiline: true,
-  },
-  {
-    key: "insight_mid_system",
-    label: "Architect — System blocker",
-    placeholder: "You have useful pieces in place, but they are operating separately. The gap is the sequence that turns them into a repeatable path.",
-    multiline: true,
-  },
-  {
-    key: "insight_mid_audience",
-    label: "Architect — Audience blocker",
-    placeholder: "You are attracting some of the right people, but the promise is not yet specific enough to filter and focus that attention.",
-    multiline: true,
-  },
-  {
-    key: "insight_mid_conversion",
-    label: "Architect — Conversion blocker",
-    placeholder: "Your leads can see the value, but there is friction between interest and commitment. A guided next step would close that gap.",
-    multiline: true,
-  },
-  {
-    key: "insight_high_system",
-    label: "Authority — System blocker",
-    placeholder: "Your system works, but it still relies on you at key moments. The next constraint is removing those manual points without losing trust.",
-    multiline: true,
-  },
-  {
-    key: "insight_high_audience",
-    label: "Authority — Audience blocker",
-    placeholder: "You have earned attention. The missed opportunity is turning that reach into an experience people naturally share with others.",
-    multiline: true,
-  },
-  {
-    key: "insight_high_conversion",
-    label: "Authority — Conversion blocker",
-    placeholder: "Your conversion path is producing, but it is not yet compounding. Results need to create the proof and referrals that feed the next cycle.",
-    multiline: true,
-  },
 ];
+
+// The 9-cell grid: category x score band. Each cell holds the suggested
+// question shown as a chip, plus the grounding answer copy behind it.
+const BANDS = [
+  { key: "low", label: "0 to 33%" },
+  { key: "mid", label: "34 to 75%" },
+  { key: "high", label: "76 to 92%" },
+] as const;
+
+const CATEGORIES = [
+  { key: "system", label: "System" },
+  { key: "audience", label: "Audience" },
+  { key: "conversion", label: "Conversion" },
+] as const;
+
+const QUESTION_PLACEHOLDERS: Record<string, string> = {
+  low_system: "Why is my system score so low and what do I build first?",
+  mid_system: "My system half works. What is the missing piece?",
+  high_system: "My system is strong. How do I take myself out of it?",
+  low_audience: "Why is my audience score low and who should I focus on?",
+  mid_audience: "How do I make my message land with the right people?",
+  high_audience: "How do I turn my reach into something people share?",
+  low_conversion: "Why is my conversion score low and where am I losing people?",
+  mid_conversion: "What is stopping interested people from committing?",
+  high_conversion: "How do I make my conversions compound?",
+};
+
+const GROUNDING_PLACEHOLDERS: Record<string, string> = {
+  low_system: "Your lead flow has no dependable hand-off from attention to action yet, so every result still asks for fresh effort from you.",
+  low_audience: "Your message is still broad enough that the right people may not immediately recognise that it is meant for them.",
+  low_conversion: "Interested people are being left to decide their own next step, which creates hesitation before trust can become action.",
+  mid_system: "You have useful pieces in place, but they are operating separately. The gap is the sequence that turns them into a repeatable path.",
+  mid_audience: "You are attracting some of the right people, but the promise is not yet specific enough to filter and focus that attention.",
+  mid_conversion: "Your leads can see the value, but there is friction between interest and commitment. A guided next step would close that gap.",
+  high_system: "Your system works, but it still relies on you at key moments. The next constraint is removing those manual points without losing trust.",
+  high_audience: "You have earned attention. The missed opportunity is turning that reach into an experience people naturally share with others.",
+  high_conversion: "Your conversion path is producing, but it is not yet compounding. Results need to create the proof and referrals that feed the next cycle.",
+};
+
+const GRID_KEYS: string[] = BANDS.flatMap((b) =>
+  CATEGORIES.flatMap((c) => [`question_${b.key}_${c.key}`, `insight_${b.key}_${c.key}`]),
+);
+
 
 // The emailed report page (/r/:token) copy.
 const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
@@ -176,7 +165,21 @@ const CATEGORY_CARD_FIELDS: { key: string; label: string; placeholder: string; m
   },
 ];
 
-const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...CATEGORY_CARD_FIELDS, ...REPORT_PAGE_FIELDS];
+const GRID_FIELDS = GRID_KEYS.map((key) => ({
+  key,
+  label: key,
+  placeholder: key.startsWith("question_")
+    ? (QUESTION_PLACEHOLDERS[key.replace("question_", "")] ?? "")
+    : (GROUNDING_PLACEHOLDERS[key.replace("insight_", "")] ?? ""),
+  multiline: key.startsWith("insight_"),
+}));
+
+const ALL_FIELDS = [
+  ...DEEPER_DIAGNOSIS_FIELDS,
+  ...GRID_FIELDS,
+  ...CATEGORY_CARD_FIELDS,
+  ...REPORT_PAGE_FIELDS,
+];
 
 type PromptRow = { id: string; prompt: string; position: number };
 
@@ -515,6 +518,62 @@ const AdminReportPage = () => {
             ))}
           </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Questions and answers by score</CardTitle>
+                  <CardDescription>
+                    One box for each area and score range. The suggested question is the wording the
+                    person sees on their chip. The grounding answer is the copy the advisor answers from.
+                  </CardDescription>
+                </div>
+                <Button onClick={save} disabled={saving}>
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {BANDS.map((b) => (
+                <div key={b.key} className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Score {b.label}
+                  </h3>
+                  <div className="grid gap-4 lg:grid-cols-3">
+                    {CATEGORIES.map((c) => {
+                      const qKey = `question_${b.key}_${c.key}`;
+                      const aKey = `insight_${b.key}_${c.key}`;
+                      return (
+                        <div key={c.key} className="space-y-3 rounded-lg border border-border p-4">
+                          <p className="text-sm font-semibold text-foreground">{c.label}</p>
+                          <div className="space-y-1.5">
+                            <Label>Suggested question</Label>
+                            <Input
+                              value={values[qKey] ?? ""}
+                              placeholder={QUESTION_PLACEHOLDERS[`${b.key}_${c.key}`]}
+                              onChange={(e) => set(qKey, e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label>Grounding answer</Label>
+                            <Textarea
+                              rows={4}
+                              value={values[aKey] ?? ""}
+                              placeholder={GROUNDING_PLACEHOLDERS[`${b.key}_${c.key}`]}
+                              onChange={(e) => set(aKey, e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+
 
           <Card>
             <CardHeader>

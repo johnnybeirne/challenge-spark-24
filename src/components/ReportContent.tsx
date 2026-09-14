@@ -58,6 +58,30 @@ const insightDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
   },
 };
 
+// The chip wording a person at that score, in that area, would realistically ask.
+const questionDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
+  low: {
+    system: "Why is my system score so low and what do I build first?",
+    audience: "Why is my audience score low and who should I focus on?",
+    conversion: "Why is my conversion score low and where am I losing people?",
+  },
+  mid: {
+    system: "My system half works. What is the missing piece?",
+    audience: "How do I make my message land with the right people?",
+    conversion: "What is stopping interested people from committing?",
+  },
+  high: {
+    system: "My system is strong. How do I take myself out of it?",
+    audience: "How do I turn my reach into something people share?",
+    conversion: "How do I make my conversions compound?",
+  },
+};
+
+// Score bands used by the admin grid: 0-33, 34-75, 76-92.
+const bandOf = (percent: number): ArchetypeTier =>
+  percent >= 76 ? "high" : percent >= 34 ? "mid" : "low";
+
+
 // Day 1 sets the audience and promise, Day 2 builds the asset, Day 3 ships
 // the follow-up that turns interest into clients.
 const dayTieDefaults: Record<QuizCategory, string> = {
@@ -193,6 +217,29 @@ const ReportContent = ({
       .sort((a, b) => a.position - b.position);
   }, [categoryScores, categoryHasAnswers, tContent]);
 
+  // Suggested chips: one per area, using this person's real band in that area.
+  const advisorItems = useMemo(
+    () =>
+      orderedCards.map((card) => {
+        const band = bandOf(card.percent);
+        return {
+          question: tContent(
+            `report_page.question_${band}_${card.category}`,
+            questionDefaults[band][card.category],
+          ),
+          grounding: tContent(
+            `report_page.insight_${band}_${card.category}`,
+            insightDefaults[band][card.category],
+          ),
+          category: card.label,
+          score: card.percent,
+        };
+      }),
+    [orderedCards, tContent],
+  );
+
+
+
 
   const accent =
     archetypeTier === "high"
@@ -264,9 +311,10 @@ const ReportContent = ({
             </h2>
             <div className="mt-5 space-y-5">
               {orderedCards.map((card, index) => {
+                const cardBand = bandOf(card.percent);
                 const insight = tContent(
-                  `report_page.insight_${archetypeTier}_${card.category}`,
-                  insightDefaults[archetypeTier][card.category],
+                  `report_page.insight_${cardBand}_${card.category}`,
+                  insightDefaults[cardBand][card.category],
                 );
                 const tieIn = tContent(
                   `report_page.tie_${card.category}`,
@@ -312,6 +360,7 @@ const ReportContent = ({
               "report_page.advisor_subline",
               "Pick a question and get an answer built around what your report shows.",
             )}
+            items={advisorItems}
             onJoinCtaClick={() => navigate("/challenge/join")}
           />
           </Reveal>

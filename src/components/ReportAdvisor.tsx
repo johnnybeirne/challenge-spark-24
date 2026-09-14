@@ -7,18 +7,33 @@ import LearningAssistant from "@/components/LearningAssistant";
  * results-advisor endpoint and assistant surface as the main results page,
  * with its own owner-editable, position-ordered prompt list.
  */
+type AdvisorItem = {
+  question: string;
+  grounding: string;
+  category: string;
+  score: number;
+};
+
 const ReportAdvisor = ({
   heading,
   subline,
+  items,
   onJoinCtaClick,
 }: {
   heading?: string;
   subline?: string;
+  items?: AdvisorItem[];
   onJoinCtaClick?: () => void;
 }) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
+  const scoped = (items ?? []).filter((i) => i.question.trim().length > 0);
+
   useEffect(() => {
+    if (scoped.length > 0) {
+      setPrompts(scoped.map((i) => i.question));
+      return;
+    }
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
@@ -39,13 +54,20 @@ const ReportAdvisor = ({
     return () => {
       cancelled = true;
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoped.map((i) => i.question).join("|")]);
+
 
   const ask = async (question: string): Promise<string> => {
     try {
-      const { data, error } = await supabase.functions.invoke("results-advisor", {
-        body: { question },
-      });
+      // Ground the answer in the owner-written copy for that area and band.
+      const match = scoped.find((i) => i.question === question);
+      const body = match
+        ? {
+            question: `My ${match.category} score is ${match.score}%. ${question} For background, my report says: ${match.grounding}`,
+          }
+        : { question };
+      const { data, error } = await supabase.functions.invoke("results-advisor", { body });
       if (error) throw error;
       const answer = (data as { answer?: string; error?: string } | null)?.answer;
       if (typeof answer === "string" && answer.trim().length > 0) {

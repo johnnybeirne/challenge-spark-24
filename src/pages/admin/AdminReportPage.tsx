@@ -454,6 +454,32 @@ const AdminReportPage = () => {
       ) : (
         <>
           <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Archetype images</CardTitle>
+                  <CardDescription>
+                    One picture per archetype, shown above the score on the emailed report page. Leave blank for none.
+                  </CardDescription>
+                </div>
+                <Button onClick={saveImages} disabled={savingImages}>
+                  {savingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {ARCHETYPE_IMAGE_FIELDS.map((f) => (
+                <ArchetypeImageUploader
+                  key={f.key}
+                  label={f.label}
+                  value={images[f.key] ?? ""}
+                  onChange={(url) => setImages((prev) => ({ ...prev, [f.key]: url }))}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>

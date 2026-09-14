@@ -126,7 +126,57 @@ const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; mul
   },
 ];
 
-const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...REPORT_PAGE_FIELDS];
+// The three category cards (System, Audience, Conversion) on the report page.
+const CATEGORY_CARD_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
+  { key: "card_position_system", label: "System card, order number", placeholder: "0" },
+  {
+    key: "tie_system",
+    label: "System card, challenge day line",
+    placeholder: "This is exactly what Day 2 fixes, when you build the asset that works without you.",
+    multiline: true,
+  },
+  { key: "chip_label_system", label: "System card, button label", placeholder: "Get deeper advice" },
+  {
+    key: "chip_prompt_system",
+    label: "System card, question sent to the advisor",
+    placeholder:
+      "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is the single biggest thing holding my lead system back, and what should I do about it first?",
+    multiline: true,
+  },
+  { key: "card_position_audience", label: "Audience card, order number", placeholder: "1" },
+  {
+    key: "tie_audience",
+    label: "Audience card, challenge day line",
+    placeholder: "This is exactly what Day 1 fixes, when you lock the audience and the promise.",
+    multiline: true,
+  },
+  { key: "chip_label_audience", label: "Audience card, button label", placeholder: "Get deeper advice" },
+  {
+    key: "chip_prompt_audience",
+    label: "Audience card, question sent to the advisor",
+    placeholder:
+      "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is weakest about how I reach and position for my audience, and what should I change first?",
+    multiline: true,
+  },
+  { key: "card_position_conversion", label: "Conversion card, order number", placeholder: "2" },
+  {
+    key: "tie_conversion",
+    label: "Conversion card, challenge day line",
+    placeholder:
+      "This is exactly what Day 3 fixes, when you ship the follow-up that turns interest into clients.",
+    multiline: true,
+  },
+  { key: "chip_label_conversion", label: "Conversion card, button label", placeholder: "Get deeper advice" },
+  {
+    key: "chip_prompt_conversion",
+    label: "Conversion card, question sent to the advisor",
+    placeholder:
+      "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, where am I losing people between interest and commitment, and what should I fix first?",
+    multiline: true,
+  },
+];
+
+const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...CATEGORY_CARD_FIELDS, ...REPORT_PAGE_FIELDS];
 
 type PromptRow = { id: string; prompt: string; position: number };
 

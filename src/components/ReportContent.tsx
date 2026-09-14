@@ -10,6 +10,7 @@ import {
   type QuizCategory,
 } from "@/lib/assessmentData";
 import { ArrowDownRight } from "lucide-react";
+import ReportAdvisor from "@/components/ReportAdvisor";
 
 type DiagnosticRow = {
   tier: string;
@@ -161,47 +162,81 @@ const ReportContent = ({
     return selected.slice(0, 3);
   }, [categoryHasAnswers, categoryScores]);
 
+  const accent =
+    archetypeTier === "high"
+      ? "text-success"
+      : archetypeTier === "mid"
+        ? "text-primary"
+        : "text-accent";
+  const accentRing =
+    archetypeTier === "high"
+      ? "border-success/40"
+      : archetypeTier === "mid"
+        ? "border-primary/40"
+        : "border-accent/40";
+
   return (
     <>
-      <section className="mb-2 rounded-2xl bg-muted/40 p-8 text-center animate-fade-in">
-        <p className="text-sm font-semibold text-primary sm:text-base">
-          {tContent("report_page.deep_intro", "{name}, you've seen the score. Now let's go deeper.").replace(
-            "{name}",
-            firstName || "There",
-          )}
-        </p>
-        <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-          Your archetype
-        </p>
-        <h1 className="mt-3 text-[var(--h1-size)] font-black leading-tight text-foreground">
-          {archetypeName}
-        </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-[var(--h2-size)] leading-relaxed text-muted-foreground">
-          {archetypeTagline}
-        </p>
-      </section>
+      <div className="mb-2 grid gap-6 p-8 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] lg:gap-10">
+        {/* Left: condensed recap of what they already saw */}
+        <aside className="animate-fade-in lg:sticky lg:top-8 lg:self-start">
+          <div className={`rounded-2xl border ${accentRing} bg-muted/30 p-5`}>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Your archetype
+            </p>
+            <h1 className="mt-2 text-[var(--h2-size)] font-bold leading-tight text-foreground">
+              {archetypeName}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{archetypeTagline}</p>
+            <div className="mt-4 flex items-baseline gap-2 border-t border-border pt-4">
+              <span className={`text-3xl font-black leading-none ${accent}`}>{percentageScore}%</span>
+              <span className="text-xs text-muted-foreground">your pipeline score</span>
+            </div>
+          </div>
+        </aside>
 
-      <section className="mb-2 p-8">
-        <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
-          {tContent("report_page.insights_heading", "The gaps underneath your result")}
-        </h2>
-        <div className="mt-5 divide-y divide-border border-y border-border">
-          {selectedInsights.map((insight) => (
-            <article key={insight.category} className="grid gap-3 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
-              <div className="flex items-center gap-2 self-start text-primary">
-                <ArrowDownRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <h3 className="text-xs font-semibold uppercase tracking-[0.18em]">{insight.label} blocker</h3>
-              </div>
-              <p className="text-[var(--body-size)] leading-relaxed text-foreground">
-                {tContent(
-                  `report_page.insight_${archetypeTier}_${insight.category}`,
-                  insightDefaults[archetypeTier][insight.category],
-                )}
-              </p>
-            </article>
-          ))}
+        {/* Right: the deeper diagnosis and the advisor */}
+        <div className="min-w-0 space-y-8">
+          <p className="text-sm font-semibold text-primary sm:text-base">
+            {tContent("report_page.deep_intro", "{name}, you've seen the score. Now let's go deeper.").replace(
+              "{name}",
+              firstName || "There",
+            )}
+          </p>
+
+          <section>
+            <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
+              {tContent("report_page.insights_heading", "The gaps underneath your result")}
+            </h2>
+            <div className="mt-5 divide-y divide-border border-y border-border">
+              {selectedInsights.map((insight) => (
+                <article key={insight.category} className="grid gap-3 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
+                  <div className="flex items-center gap-2 self-start text-primary">
+                    <ArrowDownRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <h3 className="text-xs font-semibold uppercase tracking-[0.18em]">{insight.label} blocker</h3>
+                  </div>
+                  <p className="text-[var(--body-size)] leading-relaxed text-foreground">
+                    {tContent(
+                      `report_page.insight_${archetypeTier}_${insight.category}`,
+                      insightDefaults[archetypeTier][insight.category],
+                    )}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <ReportAdvisor
+            heading={tContent("report_page.advisor_heading", "Ask about your result")}
+            subline={tContent(
+              "report_page.advisor_subline",
+              "Pick a question and get an answer built around what your report shows.",
+            )}
+            onJoinCtaClick={() => navigate("/challenge/join")}
+          />
         </div>
-      </section>
+      </div>
+
 
       {/* Challenge tease */}
       <section className="mb-2 rounded-2xl border border-border bg-background p-8">

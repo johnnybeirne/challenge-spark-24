@@ -2372,6 +2372,30 @@ export type Database = {
         }
         Relationships: []
       }
+      report_advisor_prompts: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          prompt: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          prompt: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          prompt?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       results_advisor_prompts: {
         Row: {
           id: string

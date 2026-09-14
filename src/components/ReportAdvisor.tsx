@@ -7,18 +7,33 @@ import LearningAssistant from "@/components/LearningAssistant";
  * results-advisor endpoint and assistant surface as the main results page,
  * with its own owner-editable, position-ordered prompt list.
  */
+type AdvisorItem = {
+  question: string;
+  grounding: string;
+  category: string;
+  score: number;
+};
+
 const ReportAdvisor = ({
   heading,
   subline,
+  items,
   onJoinCtaClick,
 }: {
   heading?: string;
   subline?: string;
+  items?: AdvisorItem[];
   onJoinCtaClick?: () => void;
 }) => {
   const [prompts, setPrompts] = useState<string[] | null>(null);
 
+  const scoped = (items ?? []).filter((i) => i.question.trim().length > 0);
+
   useEffect(() => {
+    if (scoped.length > 0) {
+      setPrompts(scoped.map((i) => i.question));
+      return;
+    }
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
@@ -39,7 +54,9 @@ const ReportAdvisor = ({
     return () => {
       cancelled = true;
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoped.map((i) => i.question).join("|")]);
+
 
   const ask = async (question: string): Promise<string> => {
     try {

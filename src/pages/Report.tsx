@@ -170,7 +170,7 @@ const Report = () => {
       )}
 
       <div
-        className={`mx-auto flex min-h-screen w-[80%] max-w-[1400px] flex-col px-6 pt-12 sm:px-6 lg:px-8 ${
+        className={`mx-auto flex min-h-screen w-[50%] max-w-[1400px] flex-col px-6 pt-12 sm:px-6 lg:px-8 ${
           showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"
         }`}
       >

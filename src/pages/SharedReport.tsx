@@ -107,7 +107,7 @@ const SharedReport = () => {
         </span>
       </div>
 
-      <div className="mx-auto flex min-h-screen w-[50%] max-w-[1400px] flex-col px-6 pb-16 pt-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1400px] flex-col px-6 pb-16 pt-24 sm:px-6 md:w-[50%] md:pt-12 lg:px-8">
         <ReportContent name={state.name} assessment={state.assessment} />
       </div>
     </>

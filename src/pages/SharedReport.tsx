@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import ReportContent from "@/components/ReportContent";
 import { supabase } from "@/integrations/supabase/client";
 import { getInitials, formatFirstNameSurnameInitial } from "@/lib/formatName";
-import type { AssessmentResult } from "@/lib/assessmentData";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { generateResult, buildPreviewAnswers, type AssessmentResult } from "@/lib/assessmentData";
 import { Loader2 } from "lucide-react";
 
 type State =

@@ -58,6 +58,30 @@ const insightDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
   },
 };
 
+// The chip wording a person at that score, in that area, would realistically ask.
+const questionDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
+  low: {
+    system: "Why is my system score so low and what do I build first?",
+    audience: "Why is my audience score low and who should I focus on?",
+    conversion: "Why is my conversion score low and where am I losing people?",
+  },
+  mid: {
+    system: "My system half works. What is the missing piece?",
+    audience: "How do I make my message land with the right people?",
+    conversion: "What is stopping interested people from committing?",
+  },
+  high: {
+    system: "My system is strong. How do I take myself out of it?",
+    audience: "How do I turn my reach into something people share?",
+    conversion: "How do I make my conversions compound?",
+  },
+};
+
+// Score bands used by the admin grid: 0-33, 34-75, 76-92.
+const bandOf = (percent: number): ArchetypeTier =>
+  percent >= 76 ? "high" : percent >= 34 ? "mid" : "low";
+
+
 // Day 1 sets the audience and promise, Day 2 builds the asset, Day 3 ships
 // the follow-up that turns interest into clients.
 const dayTieDefaults: Record<QuizCategory, string> = {

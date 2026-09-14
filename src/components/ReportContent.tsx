@@ -305,7 +305,7 @@ const ReportContent = ({
           </Reveal>
 
 
-          <Reveal>
+          <Reveal enabled={scrolled}>
           <ReportAdvisor
             heading={tContent("report_page.advisor_heading", "Ask about your result")}
             subline={tContent(

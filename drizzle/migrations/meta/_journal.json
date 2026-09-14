@@ -8,6 +8,13 @@
       "when": 1789205130494,
       "tag": "0000_report_only_accounts_no_clock",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789372707345,
+      "tag": "0001_enforce_safe_defaults_on_partner_promoter_self_insert",
+      "breakpoints": true
     }
   ]
 }

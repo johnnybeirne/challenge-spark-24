@@ -6,11 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   calculateCategoryScores,
   categoryQuestions,
+  questions,
   type AssessmentResult,
   type QuizCategory,
 } from "@/lib/assessmentData";
-import { ArrowDownRight } from "lucide-react";
 import ReportAdvisor from "@/components/ReportAdvisor";
+import ReportCategoryCard from "@/components/ReportCategoryCard";
 
 type DiagnosticRow = {
   tier: string;

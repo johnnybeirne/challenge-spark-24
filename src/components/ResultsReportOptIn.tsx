@@ -134,7 +134,7 @@ const ResultsReportOptIn = () => {
 
         {error && <p className="text-[var(--body-size)] text-destructive">{error}</p>}
 
-        <Button type="submit" className="h-12 w-full font-semibold bg-[#399238] text-white hover:bg-[#2d7d2d]" disabled={sending}>
+        <Button type="submit" className="h-12 w-full font-semibold bg-[#F57C00] text-white hover:bg-white hover:text-[#F57C00] hover:border hover:border-[#F57C00]" disabled={sending}>
           {sending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" /> {t("report_optin.sending_label", "Sending your link")}

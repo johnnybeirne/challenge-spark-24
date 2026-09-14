@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { supabase } from "@/integrations/supabase/client";
+import { ChevronDown } from "lucide-react";
 import {
   calculateCategoryScores,
   categoryQuestions,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/assessmentData";
 import ReportAdvisor from "@/components/ReportAdvisor";
 import ReportCategoryCard from "@/components/ReportCategoryCard";
+import Reveal from "@/components/Reveal";
 
 type DiagnosticRow = {
   tier: string;
@@ -86,6 +88,16 @@ const ReportContent = ({
 }) => {
   const navigate = useNavigate();
   const { t: tContent } = useSiteContent("results");
+
+  // Scroll cue fades once the person starts scrolling, so the hint is
+  // obvious on load and gets out of the way once they engage.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 120);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const score = assessment?.diagnosticScore ?? 0;
   const percentageScore = Math.max(9, Math.min(92, Math.round((score / 9) * 100)));
@@ -232,6 +244,20 @@ const ReportContent = ({
             )}
             </h1>
 
+          {/* Scroll cue: very obvious on load, fades once they scroll */}
+          <div
+            className={`flex flex-col items-center gap-2 py-4 transition-opacity duration-500 motion-reduce:opacity-100 ${
+              scrolled ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+            aria-hidden={scrolled}
+          >
+            <span className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Scroll to see what is holding your score back
+            </span>
+            <ChevronDown className="h-7 w-7 animate-bounce text-primary motion-reduce:animate-none" />
+          </div>
+
+          <Reveal enabled={scrolled}>
           <section>
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}
@@ -270,14 +296,16 @@ const ReportContent = ({
                     tieIn={tieIn}
                     chipLabel={chipLabel}
                     prompt={prompt}
-                    entranceDelayMs={index * 220}
+                    entranceDelayMs={index * 160}
                   />
                 );
               })}
             </div>
           </section>
+          </Reveal>
 
 
+          <Reveal enabled={scrolled}>
           <ReportAdvisor
             heading={tContent("report_page.advisor_heading", "Ask about your result")}
             subline={tContent(
@@ -286,11 +314,13 @@ const ReportContent = ({
             )}
             onJoinCtaClick={() => navigate("/challenge/join")}
           />
+          </Reveal>
         </div>
       </div>
 
 
       {/* Challenge tease */}
+      <Reveal>
       <section className="mb-2 rounded-2xl border border-border bg-background p-8">
         <h2 className="text-[var(--h2-size)] font-semibold text-foreground">
           {tContent("report_page.tease_heading", "What the 3-Day Challenge does about this")}
@@ -316,8 +346,10 @@ const ReportContent = ({
           </li>
         </ul>
       </section>
+      </Reveal>
 
       {/* Join CTA */}
+      <Reveal>
       <section className="p-8 text-center">
         <h2 className="text-[var(--h2-size)] font-semibold text-foreground">
           {tContent("report_page.cta_heading", "Ready to fix it for good?")}
@@ -332,6 +364,7 @@ const ReportContent = ({
           {tContent("report_page.cta_button", "Join the 3-Day Challenge")}
         </Button>
       </section>
+      </Reveal>
     </>
   );
 };

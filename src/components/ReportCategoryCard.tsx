@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useInView } from "@/hooks/useInView";
 import { Loader2, Sparkles } from "lucide-react";
 
 /**
@@ -84,10 +85,15 @@ const ReportCategoryCard = ({
   const accent = percent >= 67 ? "text-success" : percent >= 34 ? "text-primary" : "text-accent";
   const answerOpen = loading || answer != null;
 
+  const { ref, inView } = useInView<HTMLElement>();
+
   return (
     <article
-      className="animate-fade-in rounded-2xl border border-border bg-background p-6 motion-reduce:animate-none"
-      style={{ animationDelay: `${entranceDelayMs}ms` }}
+      ref={ref}
+      className={`rounded-2xl border border-border bg-background p-6 transition-all duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
+        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+      style={{ transitionDelay: inView ? `${entranceDelayMs}ms` : "0ms" }}
     >
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

@@ -523,6 +523,62 @@ const AdminReportPage = () => {
             <CardHeader>
               <div className="flex items-center justify-between gap-4">
                 <div>
+                  <CardTitle className="text-lg">Questions and answers by score</CardTitle>
+                  <CardDescription>
+                    One box for each area and score range. The suggested question is the wording the
+                    person sees on their chip. The grounding answer is the copy the advisor answers from.
+                  </CardDescription>
+                </div>
+                <Button onClick={save} disabled={saving}>
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {BANDS.map((b) => (
+                <div key={b.key} className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Score {b.label}
+                  </h3>
+                  <div className="grid gap-4 lg:grid-cols-3">
+                    {CATEGORIES.map((c) => {
+                      const qKey = `question_${b.key}_${c.key}`;
+                      const aKey = `insight_${b.key}_${c.key}`;
+                      return (
+                        <div key={c.key} className="space-y-3 rounded-lg border border-border p-4">
+                          <p className="text-sm font-semibold text-foreground">{c.label}</p>
+                          <div className="space-y-1.5">
+                            <Label>Suggested question</Label>
+                            <Input
+                              value={values[qKey] ?? ""}
+                              placeholder={QUESTION_PLACEHOLDERS[`${b.key}_${c.key}`]}
+                              onChange={(e) => set(qKey, e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label>Grounding answer</Label>
+                            <Textarea
+                              rows={4}
+                              value={values[aKey] ?? ""}
+                              placeholder={GROUNDING_PLACEHOLDERS[`${b.key}_${c.key}`]}
+                              onChange={(e) => set(aKey, e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
                   <CardTitle className="text-lg">Suggested questions</CardTitle>
                   <CardDescription>
                     The clickable questions shown under the deeper diagnosis. They appear in the order below, top first.

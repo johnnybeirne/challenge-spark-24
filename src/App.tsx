@@ -19,6 +19,7 @@ import Landing from "@/pages/Landing";
 import ChallengeLanding from "@/pages/ChallengeLanding";
 import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
+import Report from "@/pages/Report";
 import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
 import ResetPassword from "@/pages/ResetPassword";

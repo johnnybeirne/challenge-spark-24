@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2, Mail, ArrowUp, ArrowDown, Plus, Trash2 } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 
 const DEEPER_DIAGNOSIS_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
@@ -20,6 +20,17 @@ const DEEPER_DIAGNOSIS_FIELDS: { key: string; label: string; placeholder: string
     key: "insights_heading",
     label: "Deeper insight heading",
     placeholder: "The gaps underneath your result",
+  },
+  {
+    key: "advisor_heading",
+    label: "Suggested questions heading",
+    placeholder: "Ask about your result",
+  },
+  {
+    key: "advisor_subline",
+    label: "Suggested questions intro line",
+    placeholder: "Pick a question and get an answer built around what your report shows.",
+    multiline: true,
   },
   {
     key: "insight_low_system",
@@ -323,6 +334,77 @@ const AdminReportPage = () => {
             ))}
           </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Suggested questions</CardTitle>
+                  <CardDescription>
+                    The clickable questions shown under the deeper diagnosis. They appear in the order below, top first.
+                  </CardDescription>
+                </div>
+                <Button onClick={savePrompts} disabled={savingPrompts || !prompts}>
+                  {savingPrompts ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {!prompts ? (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+                </div>
+              ) : (
+                <>
+                  {prompts.map((p, i) => (
+                    <div key={p.id} className="flex items-start gap-2">
+                      <div className="flex flex-col">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => movePrompt(i, -1)}
+                          disabled={i === 0}
+                          aria-label="Move up"
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => movePrompt(i, 1)}
+                          disabled={i === prompts.length - 1}
+                          aria-label="Move down"
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Input
+                        value={p.prompt}
+                        placeholder={`Question ${i + 1}`}
+                        onChange={(e) => setPromptText(p.id, e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removePrompt(p.id)}
+                        aria-label="Remove question"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={addPrompt}>
+                    <Plus className="h-4 w-4 mr-1" /> Add question
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+
 
           <Card>
           <CardHeader>

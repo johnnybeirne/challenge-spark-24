@@ -1,9 +1,20 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { fbPageView } from "@/lib/fbPixel";
 
 const RedirectKeepingQuery = ({ to }: { to: string }) => {
   const { search } = useLocation();
   return <Navigate to={`${to}${search}`} replace />;
+};
+
+/** Fires a Facebook Pixel PageView on every SPA route change. */
+const RouteTracker = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    fbPageView();
+  }, [pathname]);
+  return null;
 };
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -148,6 +159,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <RouteTracker />
+           
             <ScrollToTop />
             <SimulatorBridge />
             <AttributionCapture />

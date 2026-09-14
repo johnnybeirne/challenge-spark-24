@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fbTrack, fbTrackCustom } from "@/lib/fbPixel";
 
 export type AnalyticsEvent =
   | "assessment_started"
@@ -85,6 +86,17 @@ export type AnalyticsEvent =
   | "referral_day3_credited";
 
 
+// Map internal analytics events to Meta Pixel standard/custom events so every
+// existing trackEvent call automatically mirrors to Facebook.
+const FB_EVENT_MAP: Partial<Record<AnalyticsEvent, { event: string; params?: Record<string, unknown>; custom?: boolean }>> = {
+  assessment_completed: { event: "Lead", params: { content_name: "Quiz Assessment" } },
+  signup_completed: { event: "CompleteRegistration", params: { content_name: "Challenge Signup" } },
+  challenge_completed: { event: "ChallengeCompleted", custom: true },
+  referral_converted: { event: "Lead", params: { content_name: "Referral Converted" } },
+  partner_application_submitted: { event: "Lead", params: { content_name: "Partner Application" } },
+  landing_cta_clicked: { event: "InitiateCheckout", params: { content_name: "Landing CTA" } },
+};
+
 export async function trackEvent(
   event: AnalyticsEvent,
   metadata?: Record<string, unknown>
@@ -96,5 +108,12 @@ export async function trackEvent(
     });
   } catch {
     // Fire-and-forget — never block UI
+  }
+
+  // Mirror to Facebook Pixel (no-op if the snippet hasn't loaded)
+  const fb = FB_EVENT_MAP[event];
+  if (fb) {
+    if (fb.custom) fbTrackCustom(fb.event, fb.params);
+    else fbTrack(fb.event, fb.params);
   }
 }

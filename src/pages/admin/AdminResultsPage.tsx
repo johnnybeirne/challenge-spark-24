@@ -96,7 +96,7 @@ const BLOCKS: BlockCard[] = [
   },
   {
     kind: "link",
-    title: "9. Report page (emailed link)",
+    title: "9. Results Page Editor - Non-signup",
     description: "The teaser, join button and not-available messages on the report page sent to leads.",
     url: "/owner-console/report-page",
   },

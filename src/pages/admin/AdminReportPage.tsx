@@ -103,7 +103,7 @@ const AdminReportPage = () => {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Mail className="h-6 w-6 text-primary" />
-            Report page (emailed link)
+            Results Page Editor - Non-signup
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             The page a lead opens from the link we email them.

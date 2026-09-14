@@ -6,11 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   calculateCategoryScores,
   categoryQuestions,
+  questions,
   type AssessmentResult,
   type QuizCategory,
 } from "@/lib/assessmentData";
-import { ArrowDownRight } from "lucide-react";
 import ReportAdvisor from "@/components/ReportAdvisor";
+import ReportCategoryCard from "@/components/ReportCategoryCard";
 
 type DiagnosticRow = {
   tier: string;
@@ -53,6 +54,23 @@ const insightDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
     audience: "You have earned attention. The missed opportunity is turning that reach into an experience people naturally share with others.",
     conversion: "Your conversion path is producing, but it is not yet compounding. Results need to create the proof and referrals that feed the next cycle.",
   },
+};
+
+// Day 1 sets the audience and promise, Day 2 builds the asset, Day 3 ships
+// the follow-up that turns interest into clients.
+const dayTieDefaults: Record<QuizCategory, string> = {
+  audience: "This is exactly what Day 1 fixes, when you lock the audience and the promise.",
+  system: "This is exactly what Day 2 fixes, when you build the asset that works without you.",
+  conversion: "This is exactly what Day 3 fixes, when you ship the follow-up that turns interest into clients.",
+};
+
+const chipPromptDefaults: Record<QuizCategory, string> = {
+  system:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is the single biggest thing holding my lead system back, and what should I do about it first?",
+  audience:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, what is weakest about how I reach and position for my audience, and what should I change first?",
+  conversion:
+    "My {category} score is {score}. Here is what I answered in that area: {answers} Based on those answers, where am I losing people between interest and commitment, and what should I fix first?",
 };
 
 /**
@@ -138,29 +156,30 @@ const ReportContent = ({
   const archetypeName = tContent(`archetypes.${archetypeTier}_name`, archetype.name);
   const archetypeTagline = tContent(`archetypes.${archetypeTier}_tagline`, archetype.tagline);
 
-  const selectedInsights = useMemo(() => {
-    const ranked = categoryScores
-      .map((categoryScore, index) => ({
-        ...categoryScore,
+  // Their actual answers inside a category, used to build the advisor prompt.
+  const answerSummary = (category: QuizCategory) =>
+    categoryQuestions[category]
+      .map((id) => {
+        const q = questions.find((item) => item.id === id);
+        const given = categoryAnswers[id];
+        if (!q || given == null) return null;
+        const chosen = q.options.find((o) => o.value === given)?.label ?? given;
+        return `${q.text} Answer: ${chosen}.`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+  // Cards appear in the owner-set order, ascending, never creation order.
+  const orderedCards = useMemo(() => {
+    return categoryScores
+      .map((cs, index) => ({
+        ...cs,
         hasAnswers: categoryHasAnswers[index],
+        position: Number(tContent(`report_page.card_position_${cs.category}`, String(index))) || 0,
       }))
-      .filter((categoryScore) => categoryScore.hasAnswers)
-      .sort((a, b) => a.percent - b.percent);
-    const belowHigh = ranked.filter((categoryScore) => categoryScore.percent < 67);
-    const selected = belowHigh.slice(0, 3);
-    for (const categoryScore of ranked) {
-      if (selected.length >= 2) break;
-      if (!selected.some((item) => item.category === categoryScore.category)) selected.push(categoryScore);
-    }
-    const fallbackCategories: QuizCategory[] = ["system", "audience"];
-    if (selected.length === 0) {
-      return fallbackCategories.map((category) => ({
-        category,
-        label: category === "system" ? "System" : "Audience",
-      }));
-    }
-    return selected.slice(0, 3);
-  }, [categoryHasAnswers, categoryScores]);
+      .sort((a, b) => a.position - b.position);
+  }, [categoryScores, categoryHasAnswers, tContent]);
+
 
   const accent =
     archetypeTier === "high"
@@ -208,23 +227,46 @@ const ReportContent = ({
             <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
               {tContent("report_page.insights_heading", "The gaps underneath your result")}
             </h2>
-            <div className="mt-5 divide-y divide-border border-y border-border">
-              {selectedInsights.map((insight) => (
-                <article key={insight.category} className="grid gap-3 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
-                  <div className="flex items-center gap-2 self-start text-primary">
-                    <ArrowDownRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.18em]">{insight.label} blocker</h3>
-                  </div>
-                  <p className="text-[var(--body-size)] leading-relaxed text-foreground">
-                    {tContent(
-                      `report_page.insight_${archetypeTier}_${insight.category}`,
-                      insightDefaults[archetypeTier][insight.category],
-                    )}
-                  </p>
-                </article>
-              ))}
+            <div className="mt-5 space-y-5">
+              {orderedCards.map((card) => {
+                const insight = tContent(
+                  `report_page.insight_${archetypeTier}_${card.category}`,
+                  insightDefaults[archetypeTier][card.category],
+                );
+                const tieIn = tContent(
+                  `report_page.tie_${card.category}`,
+                  dayTieDefaults[card.category],
+                );
+                const chipLabel = tContent(
+                  `report_page.chip_label_${card.category}`,
+                  "Get deeper advice",
+                );
+                const promptTemplate = tContent(
+                  `report_page.chip_prompt_${card.category}`,
+                  chipPromptDefaults[card.category],
+                );
+                const prompt = promptTemplate
+                  .replace("{category}", card.label)
+                  .replace("{score}", `${card.percent}%`)
+                  .replace(
+                    "{answers}",
+                    card.hasAnswers ? answerSummary(card.category) : "(no answers recorded)",
+                  );
+                return (
+                  <ReportCategoryCard
+                    key={card.category}
+                    label={card.label}
+                    percent={card.percent}
+                    insight={insight}
+                    tieIn={tieIn}
+                    chipLabel={chipLabel}
+                    prompt={prompt}
+                  />
+                );
+              })}
             </div>
           </section>
+
 
           <ReportAdvisor
             heading={tContent("report_page.advisor_heading", "Ask about your result")}

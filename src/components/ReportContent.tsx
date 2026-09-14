@@ -217,6 +217,29 @@ const ReportContent = ({
       .sort((a, b) => a.position - b.position);
   }, [categoryScores, categoryHasAnswers, tContent]);
 
+  // Suggested chips: one per area, using this person's real band in that area.
+  const advisorItems = useMemo(
+    () =>
+      orderedCards.map((card) => {
+        const band = bandOf(card.percent);
+        return {
+          question: tContent(
+            `report_page.question_${band}_${card.category}`,
+            questionDefaults[band][card.category],
+          ),
+          grounding: tContent(
+            `report_page.insight_${band}_${card.category}`,
+            insightDefaults[band][card.category],
+          ),
+          category: card.label,
+          score: card.percent,
+        };
+      }),
+    [orderedCards, tContent],
+  );
+
+
+
 
   const accent =
     archetypeTier === "high"

@@ -14,6 +14,7 @@ import {
 import ReportAdvisor from "@/components/ReportAdvisor";
 import ReportCategoryCard from "@/components/ReportCategoryCard";
 import Reveal from "@/components/Reveal";
+import ScoreRingCombined from "@/components/ScoreRingCombined";
 
 type DiagnosticRow = {
   tier: string;

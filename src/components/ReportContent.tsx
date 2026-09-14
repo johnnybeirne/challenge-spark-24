@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import ScoreRingCombined from "@/components/ScoreRingCombined";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  getDiagnosticResult,
   calculateCategoryScores,
   categoryQuestions,
   type AssessmentResult,
+  type QuizCategory,
 } from "@/lib/assessmentData";
+import { ArrowDownRight } from "lucide-react";
 
 type DiagnosticRow = {
   tier: string;
@@ -19,30 +19,44 @@ type DiagnosticRow = {
   messages: string[];
 };
 
-// Same fallback advice as the results page breakdown; owner-editable via the
-// Results Page Editor (site_content results/breakdown).
-const breakdownDefaults: Record<string, Record<"low" | "mid" | "high", string>> = {
-  system: {
-    low: "Your lead flow depends on your own effort. Build a simple repeatable system and growth stops stalling when you do.",
-    mid: "You have pieces of a system, but they do not connect. Tighten the steps and the results get more predictable.",
-    high: "Your system is producing. The next step is structure that lets it scale without more of your time.",
+type ArchetypeTier = "low" | "mid" | "high";
+
+const archetypeDefaults: Record<ArchetypeTier, { name: string; tagline: string }> = {
+  low: {
+    name: "You're a Pioneer",
+    tagline: "You're building the foundation. Let's make it solid.",
   },
-  audience: {
-    low: "You are not reaching enough of the right people. Get clear on exactly who you help and where they already are.",
-    mid: "Some of the right people are finding you. Sharpen the message so more of them recognise themselves in it.",
-    high: "Your audience knows who you are. Keep showing up with a message that speaks to their exact problem.",
+  mid: {
+    name: "You're an Architect",
+    tagline: "You have the pieces. Now let's connect them.",
   },
-  conversion: {
-    low: "People show interest but do not take the next step. Give them one clear, low-pressure way to say yes.",
-    mid: "Some leads convert, but too many stall. A structured follow-up turns maybes into paying clients.",
-    high: "Your conversion works. A challenge-style experience can multiply it by letting results sell for you.",
+  high: {
+    name: "You're an Authority",
+    tagline: "You've built something real. Now let's make it grow.",
+  },
+};
+
+const insightDefaults: Record<ArchetypeTier, Record<QuizCategory, string>> = {
+  low: {
+    system: "Your lead flow has no dependable hand-off from attention to action yet, so every result still asks for fresh effort from you.",
+    audience: "Your message is still broad enough that the right people may not immediately recognise that it is meant for them.",
+    conversion: "Interested people are being left to decide their own next step, which creates hesitation before trust can become action.",
+  },
+  mid: {
+    system: "You have useful pieces in place, but they are operating separately. The gap is the sequence that turns them into a repeatable path.",
+    audience: "You are attracting some of the right people, but the promise is not yet specific enough to filter and focus that attention.",
+    conversion: "Your leads can see the value, but there is friction between interest and commitment. A guided next step would close that gap.",
+  },
+  high: {
+    system: "Your system works, but it still relies on you at key moments. The next constraint is removing those manual points without losing trust.",
+    audience: "You have earned attention. The missed opportunity is turning that reach into an experience people naturally share with others.",
+    conversion: "Your conversion path is producing, but it is not yet compounding. Results need to create the proof and referrals that feed the next cycle.",
   },
 };
 
 /**
- * Shared report body: score ring, System/Audience/Conversion breakdown,
- * diagnosis, a short 3-Day Challenge tease and the join CTA. Used by the
- * device-local report page and by the token-based shareable report page.
+ * Shared second-stage report body used by the device-local and token-based
+ * reports. It builds on the score reveal with archetype-specific blockers.
  */
 const ReportContent = ({
   name,
@@ -105,104 +119,89 @@ const ReportContent = ({
     return rows.find((r) => percentageScore >= r.min_percent && percentageScore <= r.max_percent) ?? rows[0];
   }, [rows, percentageScore]);
 
-  const paragraphs = useMemo<string[]>(() => {
-    if (rows === null) return [];
-    if (tierData) {
-      return [tierData.title, ...tierData.messages].filter((s): s is string => !!s && s.trim().length > 0);
-    }
-    if (assessment?.diagnosticTitle) {
-      return [assessment.diagnosticTitle, assessment.diagnosticMessage ?? ""].filter(
-        (s) => s && s.trim().length > 0,
-      );
-    }
-    const fallback = getDiagnosticResult(score);
-    return [fallback.title, fallback.message].filter((s) => s && s.trim().length > 0);
-  }, [rows, tierData, assessment, score]);
-
   const firstName = (name ?? "").split(" ")[0];
+  const archetypeTier: ArchetypeTier =
+    tierData?.tier === "low" || tierData?.tier === "mid" || tierData?.tier === "high"
+      ? tierData.tier
+      : assessment?.diagnosticLevel === "low" ||
+          assessment?.diagnosticLevel === "mid" ||
+          assessment?.diagnosticLevel === "high"
+        ? assessment.diagnosticLevel
+        : percentageScore >= 67
+          ? "high"
+          : percentageScore >= 34
+            ? "mid"
+            : "low";
+
+  const archetype = archetypeDefaults[archetypeTier];
+  const archetypeName = tContent(`archetypes.${archetypeTier}_name`, archetype.name);
+  const archetypeTagline = tContent(`archetypes.${archetypeTier}_tagline`, archetype.tagline);
+
+  const selectedInsights = useMemo(() => {
+    const ranked = categoryScores
+      .map((categoryScore, index) => ({
+        ...categoryScore,
+        hasAnswers: categoryHasAnswers[index],
+      }))
+      .filter((categoryScore) => categoryScore.hasAnswers)
+      .sort((a, b) => a.percent - b.percent);
+    const belowHigh = ranked.filter((categoryScore) => categoryScore.percent < 67);
+    const selected = belowHigh.slice(0, 3);
+    for (const categoryScore of ranked) {
+      if (selected.length >= 2) break;
+      if (!selected.some((item) => item.category === categoryScore.category)) selected.push(categoryScore);
+    }
+    const fallbackCategories: QuizCategory[] = ["system", "audience"];
+    if (selected.length === 0) {
+      return fallbackCategories.map((category) => ({
+        category,
+        label: category === "system" ? "System" : "Audience",
+      }));
+    }
+    return selected.slice(0, 3);
+  }, [categoryHasAnswers, categoryScores]);
 
   return (
     <>
-      {/* Score */}
       <section className="mb-2 rounded-2xl bg-muted/40 p-8 text-center animate-fade-in">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-          {tContent("score_header.heading", "Your Lead Generation Score")}
+        <p className="text-sm font-semibold text-primary sm:text-base">
+          {tContent("report_page.deep_intro", "{name}, you've seen the score. Now let's go deeper.").replace(
+            "{name}",
+            firstName || "There",
+          )}
         </p>
-        {firstName && (
-          <p className="mb-7 text-sm font-medium text-muted-foreground sm:text-base">
-            {tContent("report_page.prepared_for", "Prepared for {name}").replace("{name}", firstName)}
-          </p>
-        )}
-        <ScoreRingCombined
-          animated
-          overall={percentageScore}
-          segments={[
-            { label: categoryScores[0].label, pct: categoryScores[0].percent, color: "#f43f5e" },
-            { label: categoryScores[1].label, pct: categoryScores[1].percent, color: "#10b981" },
-            { label: categoryScores[2].label, pct: categoryScores[2].percent, color: "#f59e0b" },
-          ]}
-          pillOffsets={[{}, {}, { dx: -3, dy: 2 }]}
-          ariaLabel="Your overall lead generation score"
-        />
+        <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Your archetype
+        </p>
+        <h1 className="mt-3 text-[var(--h1-size)] font-black leading-tight text-foreground">
+          {archetypeName}
+        </h1>
+        <p className="mx-auto mt-3 max-w-2xl text-[var(--h2-size)] leading-relaxed text-muted-foreground">
+          {archetypeTagline}
+        </p>
       </section>
 
-      {/* Breakdown rows with progress bars */}
       <section className="mb-2 p-8">
-        <div className="space-y-4">
-          {categoryScores.map((cs, i) => {
-            const missing = !categoryHasAnswers[i];
-            const band: "low" | "mid" | "high" =
-              cs.percent >= 67 ? "high" : cs.percent >= 34 ? "mid" : "low";
-            const color = ["#f43f5e", "#10b981", "#f59e0b"][i];
-            const advice = tContent(`breakdown.${cs.category}_${band}`, breakdownDefaults[cs.category][band]);
-            return (
-              <div key={cs.category} className="rounded-xl border border-border bg-background p-6 shadow-sm">
-                <div className="flex items-baseline justify-between gap-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color }}>
-                    {cs.label}
-                  </p>
-                  {!missing && (
-                    <p className="text-2xl font-black leading-none text-foreground">{cs.percent}%</p>
-                  )}
-                </div>
-                {missing ? (
-                  <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
-                    {tContent("breakdown.empty_state", "Not enough answers yet to score this area.")}
-                  </p>
-                ) : (
-                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full transition-[width] duration-700"
-                      style={{ width: `${cs.percent}%`, backgroundColor: color }}
-                    />
-                  </div>
-                )}
-                <p className="mt-3 text-[var(--body-size)] leading-relaxed text-muted-foreground">{advice}</p>
+        <h2 className="text-[var(--h2-size)] font-semibold leading-tight text-foreground">
+          {tContent("report_page.insights_heading", "The gaps underneath your result")}
+        </h2>
+        <div className="mt-5 divide-y divide-border border-y border-border">
+          {selectedInsights.map((insight) => (
+            <article key={insight.category} className="grid gap-3 py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
+              <div className="flex items-center gap-2 self-start text-primary">
+                <ArrowDownRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <h3 className="text-xs font-semibold uppercase tracking-[0.18em]">{insight.label} blocker</h3>
               </div>
-            );
-          })}
+              <p className="text-[var(--body-size)] leading-relaxed text-foreground">
+                {tContent(
+                  `report_page.insight_${archetypeTier}_${insight.category}`,
+                  insightDefaults[archetypeTier][insight.category],
+                )}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
-
-      {/* Diagnosis */}
-      {paragraphs.length > 0 && (
-        <section className="mb-2 rounded-2xl bg-muted/40 p-8">
-          <div className="space-y-6">
-            {paragraphs.map((text, i) => (
-              <p
-                key={i}
-                className={`whitespace-pre-line ${
-                  i === 0
-                    ? "text-[var(--h1-size)] font-semibold leading-[1.25] tracking-tight"
-                    : "text-[var(--h2-size)] leading-[1.6]"
-                }`}
-              >
-                {text}
-              </p>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Challenge tease */}
       <section className="mb-2 rounded-2xl border border-border bg-background p-8">

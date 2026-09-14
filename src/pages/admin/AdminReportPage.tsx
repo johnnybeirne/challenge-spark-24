@@ -10,6 +10,73 @@ import { toast } from "sonner";
 import { Loader2, Mail } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 
+const DEEPER_DIAGNOSIS_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
+  {
+    key: "deep_intro",
+    label: "Personalised opening line",
+    placeholder: "{name}, you've seen the score. Now let's go deeper.",
+  },
+  {
+    key: "insights_heading",
+    label: "Deeper insight heading",
+    placeholder: "The gaps underneath your result",
+  },
+  {
+    key: "insight_low_system",
+    label: "Pioneer — System blocker",
+    placeholder: "Your lead flow has no dependable hand-off from attention to action yet, so every result still asks for fresh effort from you.",
+    multiline: true,
+  },
+  {
+    key: "insight_low_audience",
+    label: "Pioneer — Audience blocker",
+    placeholder: "Your message is still broad enough that the right people may not immediately recognise that it is meant for them.",
+    multiline: true,
+  },
+  {
+    key: "insight_low_conversion",
+    label: "Pioneer — Conversion blocker",
+    placeholder: "Interested people are being left to decide their own next step, which creates hesitation before trust can become action.",
+    multiline: true,
+  },
+  {
+    key: "insight_mid_system",
+    label: "Architect — System blocker",
+    placeholder: "You have useful pieces in place, but they are operating separately. The gap is the sequence that turns them into a repeatable path.",
+    multiline: true,
+  },
+  {
+    key: "insight_mid_audience",
+    label: "Architect — Audience blocker",
+    placeholder: "You are attracting some of the right people, but the promise is not yet specific enough to filter and focus that attention.",
+    multiline: true,
+  },
+  {
+    key: "insight_mid_conversion",
+    label: "Architect — Conversion blocker",
+    placeholder: "Your leads can see the value, but there is friction between interest and commitment. A guided next step would close that gap.",
+    multiline: true,
+  },
+  {
+    key: "insight_high_system",
+    label: "Authority — System blocker",
+    placeholder: "Your system works, but it still relies on you at key moments. The next constraint is removing those manual points without losing trust.",
+    multiline: true,
+  },
+  {
+    key: "insight_high_audience",
+    label: "Authority — Audience blocker",
+    placeholder: "You have earned attention. The missed opportunity is turning that reach into an experience people naturally share with others.",
+    multiline: true,
+  },
+  {
+    key: "insight_high_conversion",
+    label: "Authority — Conversion blocker",
+    placeholder: "Your conversion path is producing, but it is not yet compounding. Results need to create the proof and referrals that feed the next cycle.",
+    multiline: true,
+  },
+];
+
 // The emailed report page (/r/:token) copy.
 const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
   { key: "tease_heading", label: "Teaser heading", placeholder: "What the 3-Day Challenge does about this" },
@@ -48,6 +115,8 @@ const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; mul
   },
 ];
 
+const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...REPORT_PAGE_FIELDS];
+
 const AdminReportPage = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -72,7 +141,7 @@ const AdminReportPage = () => {
   const set = (key: string, value: string) => setValues((prev) => ({ ...(prev ?? {}), [key]: value }));
 
   const save = async () => {
-    const rows = REPORT_PAGE_FIELDS.map((f, i) => ({
+    const rows = ALL_FIELDS.map((f, i) => ({
       page: "results",
       section: "report_page",
       key: f.key,
@@ -121,9 +190,46 @@ const AdminReportPage = () => {
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
+                <CardTitle className="text-lg">Deeper diagnosis</CardTitle>
+                <CardDescription>
+                  Opening and blocker insights shown after the lead has already seen their score. Use {"{name}"} to insert their first name.
+                </CardDescription>
+              </div>
+              <Button onClick={save} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {DEEPER_DIAGNOSIS_FIELDS.map((f) => (
+              <div key={f.key} className="space-y-1.5">
+                <Label>{f.label}</Label>
+                {f.multiline ? (
+                  <Textarea
+                    rows={3}
+                    value={values[f.key] ?? ""}
+                    placeholder={f.placeholder}
+                    onChange={(e) => set(f.key, e.target.value)}
+                  />
+                ) : (
+                  <Input
+                    value={values[f.key] ?? ""}
+                    placeholder={f.placeholder}
+                    onChange={(e) => set(f.key, e.target.value)}
+                  />
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-4">
+              <div>
                 <CardTitle className="text-lg">Page wording</CardTitle>
                 <CardDescription>
-                  Teaser, join button and the message shown when a link no longer works.
+                  Challenge teaser, join button and the message shown when a link no longer works.
                 </CardDescription>
               </div>
               <Button onClick={save} disabled={saving}>

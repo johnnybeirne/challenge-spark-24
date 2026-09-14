@@ -165,7 +165,21 @@ const CATEGORY_CARD_FIELDS: { key: string; label: string; placeholder: string; m
   },
 ];
 
-const ALL_FIELDS = [...DEEPER_DIAGNOSIS_FIELDS, ...CATEGORY_CARD_FIELDS, ...REPORT_PAGE_FIELDS];
+const GRID_FIELDS = GRID_KEYS.map((key) => ({
+  key,
+  label: key,
+  placeholder: key.startsWith("question_")
+    ? (QUESTION_PLACEHOLDERS[key.replace("question_", "")] ?? "")
+    : (GROUNDING_PLACEHOLDERS[key.replace("insight_", "")] ?? ""),
+  multiline: key.startsWith("insight_"),
+}));
+
+const ALL_FIELDS = [
+  ...DEEPER_DIAGNOSIS_FIELDS,
+  ...GRID_FIELDS,
+  ...CATEGORY_CARD_FIELDS,
+  ...REPORT_PAGE_FIELDS,
+];
 
 type PromptRow = { id: string; prompt: string; position: number };
 

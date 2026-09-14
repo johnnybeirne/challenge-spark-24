@@ -290,26 +290,6 @@ const AdminReportPage = () => {
       });
   }, []);
 
-  const saveImages = async () => {
-    setSavingImages(true);
-    const rows = ARCHETYPE_IMAGE_FIELDS.map((f, i) => ({
-      page: "results",
-      section: "archetypes",
-      key: f.key,
-      value: images[f.key] ?? "",
-      value_type: "text",
-      label: f.label,
-      sort_order: 100 + i,
-    }));
-    const { error } = await supabase.from("site_content").upsert(rows, { onConflict: "page,section,key" });
-    setSavingImages(false);
-    if (error) {
-      toast.error("Could not save the images");
-      return;
-    }
-    invalidatePage("results");
-    toast.success("Saved");
-  };
 
   useEffect(() => {
     supabase

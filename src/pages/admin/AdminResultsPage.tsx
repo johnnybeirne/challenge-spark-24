@@ -276,7 +276,7 @@ const AdminResultsPage = () => {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <LayoutList className="h-6 w-6 text-primary" />
-            Results Page Editor
+            Main Results Page Editor
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Every block on the results page, in the order it appears.

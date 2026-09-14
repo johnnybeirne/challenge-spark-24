@@ -138,29 +138,30 @@ const ReportContent = ({
   const archetypeName = tContent(`archetypes.${archetypeTier}_name`, archetype.name);
   const archetypeTagline = tContent(`archetypes.${archetypeTier}_tagline`, archetype.tagline);
 
-  const selectedInsights = useMemo(() => {
-    const ranked = categoryScores
-      .map((categoryScore, index) => ({
-        ...categoryScore,
+  // Their actual answers inside a category, used to build the advisor prompt.
+  const answerSummary = (category: QuizCategory) =>
+    categoryQuestions[category]
+      .map((id) => {
+        const q = questions.find((item) => item.id === id);
+        const given = categoryAnswers[id];
+        if (!q || given == null) return null;
+        const chosen = q.options.find((o) => o.value === given)?.label ?? given;
+        return `${q.text} Answer: ${chosen}.`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+  // Cards appear in the owner-set order, ascending, never creation order.
+  const orderedCards = useMemo(() => {
+    return categoryScores
+      .map((cs, index) => ({
+        ...cs,
         hasAnswers: categoryHasAnswers[index],
+        position: Number(tContent(`report_page.card_position_${cs.category}`, String(index))) || 0,
       }))
-      .filter((categoryScore) => categoryScore.hasAnswers)
-      .sort((a, b) => a.percent - b.percent);
-    const belowHigh = ranked.filter((categoryScore) => categoryScore.percent < 67);
-    const selected = belowHigh.slice(0, 3);
-    for (const categoryScore of ranked) {
-      if (selected.length >= 2) break;
-      if (!selected.some((item) => item.category === categoryScore.category)) selected.push(categoryScore);
-    }
-    const fallbackCategories: QuizCategory[] = ["system", "audience"];
-    if (selected.length === 0) {
-      return fallbackCategories.map((category) => ({
-        category,
-        label: category === "system" ? "System" : "Audience",
-      }));
-    }
-    return selected.slice(0, 3);
-  }, [categoryHasAnswers, categoryScores]);
+      .sort((a, b) => a.position - b.position);
+  }, [categoryScores, categoryHasAnswers, tContent]);
+
 
   const accent =
     archetypeTier === "high"

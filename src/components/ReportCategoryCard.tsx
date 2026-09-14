@@ -16,6 +16,7 @@ const ReportCategoryCard = ({
   tieIn,
   chipLabel,
   prompt,
+  onJoin,
   entranceDelayMs = 0,
 }: {
   label: string;

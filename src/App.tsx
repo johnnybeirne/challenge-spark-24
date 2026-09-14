@@ -20,6 +20,7 @@ import ChallengeLanding from "@/pages/ChallengeLanding";
 import Assessment from "@/pages/Assessment";
 import Results from "@/pages/Results";
 import Report from "@/pages/Report";
+import SharedReport from "@/pages/SharedReport";
 import ChallengeSignup from "@/pages/ChallengeSignup";
 import BlueprintSignup from "@/pages/BlueprintSignup";
 import ResetPassword from "@/pages/ResetPassword";
@@ -189,6 +190,7 @@ const App = () => (
                 <Route path="/links" element={<Links />} />
 <Route path="/results" element={<Results />} />
                 <Route path="/report" element={<Report />} />
+                <Route path="/r/:token" element={<SharedReport />} />
                 <Route path="/results/low" element={<Results />} />
                 <Route path="/results/med" element={<Results />} />
                 <Route path="/results/high" element={<Results />} />

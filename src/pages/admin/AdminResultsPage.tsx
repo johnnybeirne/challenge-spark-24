@@ -33,43 +33,6 @@ const BREAKDOWN_FIELDS = (["system", "audience", "conversion"] as const).flatMap
   })),
 );
 
-// The emailed report page (/r/:token) copy.
-const REPORT_PAGE_FIELDS: { key: string; label: string; placeholder: string; multiline?: boolean }[] = [
-  { key: "tease_heading", label: "Teaser heading", placeholder: "What the 3-Day Challenge does about this" },
-  {
-    key: "tease_day1",
-    label: "Teaser line 1",
-    placeholder: "Step one: shape a promise your audience recognises, so the right people lean in.",
-    multiline: true,
-  },
-  {
-    key: "tease_day2",
-    label: "Teaser line 2",
-    placeholder: "Step two: turn that promise into a simple quiz that brings you leads while you sleep.",
-    multiline: true,
-  },
-  {
-    key: "tease_day3",
-    label: "Teaser line 3",
-    placeholder: "Step three: put a follow-up sequence behind it so interest turns into paying clients.",
-    multiline: true,
-  },
-  { key: "cta_heading", label: "Closing heading", placeholder: "Ready to fix it for good?" },
-  {
-    key: "cta_body",
-    label: "Closing body",
-    placeholder: "Join the free 3-day challenge and build the system your report points to, step by step.",
-    multiline: true,
-  },
-  { key: "cta_button", label: "Button label", placeholder: "Join the 3-Day Challenge" },
-  { key: "error_heading", label: "Report not available, heading", placeholder: "Report not available" },
-  {
-    key: "error_body",
-    label: "Report not available, body",
-    placeholder: "We could not find a report for this link. It may be incomplete or no longer valid.",
-    multiline: true,
-  },
-];
 
 type LinkCard = { kind: "link"; title: string; description: string; url: string };
 type InlineCard = { kind: "inline"; id: string; title: string; description: string };
@@ -132,10 +95,10 @@ const BLOCKS: BlockCard[] = [
     url: "/owner-console/results-advisor-prompts",
   },
   {
-    kind: "inline",
-    id: "report_page",
+    kind: "link",
     title: "9. Report page (emailed link)",
     description: "The teaser, join button and not-available messages on the report page sent to leads.",
+    url: "/owner-console/report-page",
   },
   {
     kind: "link",
@@ -155,7 +118,7 @@ const AdminResultsPage = () => {
       .from("site_content")
       .select("section,key,value")
       .eq("page", "results")
-      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section", "report_page"])
+      .in("section", ["score_header", "advisor_card", "breakdown", "cta", "advisor_section"])
       .then(({ data, error }) => {
         if (error) {
           toast.error("Could not load the results page copy");
@@ -278,21 +241,6 @@ const AdminResultsPage = () => {
           sort_order: 0,
         },
       ],
-      ["results"],
-    );
-
-  const saveReportPage = () =>
-    saveRows(
-      "report_page",
-      REPORT_PAGE_FIELDS.map((f, i) => ({
-        page: "results",
-        section: "report_page",
-        key: f.key,
-        value: values?.[`report_page.${f.key}`] ?? "",
-        value_type: "text",
-        label: f.label,
-        sort_order: i,
-      })),
       ["results"],
     );
 
@@ -592,46 +540,6 @@ const AdminResultsPage = () => {
             </CardContent>
           </Card>
 
-          <Card id="report_page">
-            <CardHeader>
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <CardTitle className="text-lg">Report page (emailed link)</CardTitle>
-                  <CardDescription>
-                    The page a lead opens from the link we email them. Teaser, join button and the message shown when a
-                    link no longer works.
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <PreviewButton href="/r/sample" />
-                  <Button onClick={saveReportPage} disabled={saving === "report_page"}>
-                    {saving === "report_page" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              {REPORT_PAGE_FIELDS.map((f) => (
-                <div key={f.key} className="space-y-1.5">
-                  <Label>{f.label}</Label>
-                  {f.multiline ? (
-                    <Textarea
-                      rows={2}
-                      value={values[`report_page.${f.key}`] ?? ""}
-                      placeholder={f.placeholder}
-                      onChange={(e) => set(`report_page.${f.key}`, e.target.value)}
-                    />
-                  ) : (
-                    <Input
-                      value={values[`report_page.${f.key}`] ?? ""}
-                      placeholder={f.placeholder}
-                      onChange={(e) => set(`report_page.${f.key}`, e.target.value)}
-                    />
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
         </>
       )}
     </div>

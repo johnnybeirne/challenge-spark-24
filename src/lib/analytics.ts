@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fbTrack, fbTrackCustom } from "@/lib/fbPixel";
 
 export type AnalyticsEvent =
   | "assessment_started"

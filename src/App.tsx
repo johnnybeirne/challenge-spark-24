@@ -159,6 +159,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <RouteTracker />
+           
             <ScrollToTop />
             <SimulatorBridge />
             <AttributionCapture />

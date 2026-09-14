@@ -465,12 +465,12 @@ const Results = () => {
 
         {(
           <section ref={breakdownRef} className="mb-2 p-8">
-            {/* THREE-COLUMN BREAKDOWN — System / Audience / Conversion, same
-                left-to-right order and colours as the score ring. Advice text
-                varies by score band per category; copy lives in site_content
-                (page "results", section "breakdown"). Columns flip in one at
-                a time once scrolled into view (see flippedCount above). */}
-            <div className="grid gap-4 md:grid-cols-3">
+            {/* BREAKDOWN ROWS — System / Audience / Conversion as three stacked
+                rows with progress bars, same colours as the score ring. Advice
+                text varies by score band per category; copy lives in
+                site_content (page "results", section "breakdown"). Rows flip
+                in one at a time once scrolled into view. */}
+            <div className="space-y-4">
               {categoryScores.map((cs, i) => {
                 const missing = !categoryHasAnswers[i];
                 const band: "low" | "mid" | "high" =
@@ -483,39 +483,42 @@ const Results = () => {
                 return (
                   <div
                     key={cs.category}
-                    className={`h-full rounded-xl border border-border bg-background p-6 shadow-sm ${
+                    className={`rounded-xl border border-border bg-background p-6 shadow-sm ${
                       i < flippedCount ? "animate-flip-in" : "opacity-0"
                     }`}
                     aria-hidden={i >= flippedCount}
                   >
-                    <p
-                      className="text-xs font-semibold uppercase tracking-[0.2em]"
-                      style={{ color }}
-                    >
-                      {cs.label}
-                    </p>
-                    {missing ? (
-                      <>
-                        <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
-                          {tContent(
-                            "breakdown.empty_state",
-                            "Not enough answers yet to score this area.",
-                          )}
-                        </p>
-                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
-                          {advice}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-2 text-3xl font-black leading-none text-foreground">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <p
+                        className="text-xs font-semibold uppercase tracking-[0.2em]"
+                        style={{ color }}
+                      >
+                        {cs.label}
+                      </p>
+                      {!missing && (
+                        <p className="text-2xl font-black leading-none text-foreground">
                           {cs.percent}%
                         </p>
-                        <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">
-                          {advice}
-                        </p>
-                      </>
+                      )}
+                    </div>
+                    {missing ? (
+                      <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
+                        {tContent(
+                          "breakdown.empty_state",
+                          "Not enough answers yet to score this area.",
+                        )}
+                      </p>
+                    ) : (
+                      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full transition-[width] duration-700"
+                          style={{ width: `${cs.percent}%`, backgroundColor: color }}
+                        />
+                      </div>
                     )}
+                    <p className="mt-3 text-[var(--body-size)] leading-relaxed text-muted-foreground">
+                      {advice}
+                    </p>
                   </div>
                 );
               })}

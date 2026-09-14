@@ -146,9 +146,9 @@ const ReportContent = ({
         />
       </section>
 
-      {/* Three-column breakdown */}
+      {/* Breakdown rows with progress bars */}
       <section className="mb-2 p-8">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="space-y-4">
           {categoryScores.map((cs, i) => {
             const missing = !categoryHasAnswers[i];
             const band: "low" | "mid" | "high" =
@@ -156,23 +156,28 @@ const ReportContent = ({
             const color = ["#f43f5e", "#10b981", "#f59e0b"][i];
             const advice = tContent(`breakdown.${cs.category}_${band}`, breakdownDefaults[cs.category][band]);
             return (
-              <div key={cs.category} className="h-full rounded-xl border border-border bg-background p-6 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color }}>
-                  {cs.label}
-                </p>
+              <div key={cs.category} className="rounded-xl border border-border bg-background p-6 shadow-sm">
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color }}>
+                    {cs.label}
+                  </p>
+                  {!missing && (
+                    <p className="text-2xl font-black leading-none text-foreground">{cs.percent}%</p>
+                  )}
+                </div>
                 {missing ? (
-                  <>
-                    <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
-                      {tContent("breakdown.empty_state", "Not enough answers yet to score this area.")}
-                    </p>
-                    <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">{advice}</p>
-                  </>
+                  <p className="mt-2 text-sm font-semibold leading-snug text-muted-foreground">
+                    {tContent("breakdown.empty_state", "Not enough answers yet to score this area.")}
+                  </p>
                 ) : (
-                  <>
-                    <p className="mt-2 text-3xl font-black leading-none text-foreground">{cs.percent}%</p>
-                    <p className="mt-4 text-[var(--body-size)] leading-relaxed text-muted-foreground">{advice}</p>
-                  </>
+                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full transition-[width] duration-700"
+                      style={{ width: `${cs.percent}%`, backgroundColor: color }}
+                    />
+                  </div>
                 )}
+                <p className="mt-3 text-[var(--body-size)] leading-relaxed text-muted-foreground">{advice}</p>
               </div>
             );
           })}

@@ -29,6 +29,13 @@
       "when": 1789377351428,
       "tag": "0003_create_report_advisor_prompts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789391386798,
+      "tag": "0004_get_active_challengers",
+      "breakpoints": true
     }
   ]
 }

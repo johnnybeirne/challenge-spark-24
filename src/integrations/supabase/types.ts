@@ -3134,6 +3134,14 @@ export type Database = {
       check_guest_pass: { Args: { _token: string }; Returns: Json }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
       claim_unlock: { Args: { p_unlock_id: string }; Returns: boolean }
+      get_active_challengers: {
+        Args: { p_limit?: number }
+        Returns: {
+          completion_seconds: number
+          days_completed: number
+          user_id: string
+        }[]
+      }
       get_my_referred_people: {
         Args: never
         Returns: {

@@ -132,10 +132,10 @@ const BLOCKS: BlockCard[] = [
     url: "/owner-console/results-advisor-prompts",
   },
   {
-    kind: "inline",
-    id: "report_page",
+    kind: "link",
     title: "9. Report page (emailed link)",
     description: "The teaser, join button and not-available messages on the report page sent to leads.",
+    url: "/owner-console/report-page",
   },
   {
     kind: "link",

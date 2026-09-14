@@ -94,8 +94,6 @@ import AdminResultsOptinCard from "@/pages/admin/AdminResultsOptinCard";
 import AdminResultsPage from "@/pages/admin/AdminResultsPage";
 import AdminReportPage from "@/pages/admin/AdminReportPage";
 import AdminAuthEmail from "@/pages/admin/AdminAuthEmail";
-import AdminUsersReportResults from "@/pages/admin/AdminUsersReportResults";
-import MyReport from "@/pages/MyReport";
 import AdminTypography from "@/pages/admin/AdminTypography";
 import AdminLandingPreview from "@/pages/AdminLandingPreview";
 import AdminPremiumUpsell from "@/pages/AdminPremiumUpsell";
@@ -234,7 +232,7 @@ const App = () => (
                 <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
                 <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
-                <Route path="/my-report" element={<AuthGuard><MyReport /></AuthGuard>} />
+                
 
                 <Route path="/user-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
@@ -331,7 +329,7 @@ const App = () => (
                 <Route path="results-page" element={<AdminResultsPage />} />
                 <Route path="report-page" element={<AdminReportPage />} />
                 <Route path="auth-email" element={<AdminAuthEmail />} />
-                <Route path="users-report-results" element={<AdminUsersReportResults />} />
+                
                 <Route path="typography" element={<AdminTypography />} />
                 <Route path="premium-upsell" element={<AdminPremiumUpsell />} />
                 <Route path="premium-page" element={<AdminPremiumPage />} />
@@ -374,8 +372,6 @@ const App = () => (
 
               {/* Legacy /admin alias removed — owner console lives at /owner-console. */}
 
-              {/* Short alias for the owner console report editor */}
-              <Route path="/users-report-results" element={<Navigate to="/owner-console/users-report-results" replace />} />
 
 
               <Route path="*" element={<NotFound />} />

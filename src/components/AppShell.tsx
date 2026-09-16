@@ -130,6 +130,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
             {showGraceBanner && <AccessGraceBanner pointsNeeded={access.pointsNeeded} />}
             <BackButton />
             <Outlet />
+            <PoweredByFooter />
           </div>
         </main>
 

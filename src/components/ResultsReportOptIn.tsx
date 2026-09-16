@@ -48,6 +48,20 @@ const ResultsReportOptIn = () => {
       return;
     }
     setSending(true);
+    // Journey stages: append "got report" to the array the quiz completion
+    // step wrote, keep it in session storage for later stages, and pass the
+    // joined string to the account so the profile can record the path taken.
+    let journeyStages: string[] = [];
+    try {
+      const raw = sessionStorage.getItem("journey_stages");
+      const parsedStages = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(parsedStages)) journeyStages = parsedStages.filter((s) => typeof s === "string");
+    } catch {
+      journeyStages = [];
+    }
+    if (!journeyStages.includes("got report")) journeyStages.push("got report");
+    sessionStorage.setItem("journey_stages", JSON.stringify(journeyStages));
+    const journeyTag = journeyStages.join(", ");
     // Same Supabase auth system as the challenge join flow (one auth.users
     // account, one profiles row). The report_only markers tell the signup
     // trigger to skip the challenge progress row, so no clock starts and no
@@ -57,6 +71,7 @@ const ResultsReportOptIn = () => {
       first_name: parsed.data.name.split(" ")[0],
       signup_product: "report",
       entry_intent: "report",
+      journey_tag: journeyTag,
     });
     setSending(false);
     if (authError) {

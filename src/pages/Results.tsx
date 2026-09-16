@@ -609,7 +609,20 @@ const Results = () => {
             <p className="text-center text-[var(--body-size)] sm:text-[var(--h2-size)] font-medium text-muted-foreground">
               {pendingCoupon && entryIntent === "premium_course"
                 ? `Coupon ${pendingCoupon} will be applied at checkout.`
-                : urgencyLine}
+                : (() => {
+                    if (!completionDayName) return urgencyLine;
+                    const parts = urgencyLine.split(completionDayName);
+                    return parts.map((part, i) => (
+                      <span key={i}>
+                        {part}
+                        {i < parts.length - 1 && (
+                          <span className="font-bold text-primary underline decoration-2 underline-offset-4 decoration-primary">
+                            {completionDayName}
+                          </span>
+                        )}
+                      </span>
+                    ));
+                  })()}
             </p>
           </section>
         )}

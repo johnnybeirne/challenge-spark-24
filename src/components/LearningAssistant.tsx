@@ -96,7 +96,7 @@ const LearningAssistant = ({ topic = "Your challenge", prompts, ask, autoOpen = 
         {/* Pills */}
         {(!limitToOneQuestion || !hasAnswered) && (
           <div>
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-3">SUGGESTED PROMPTS</p>
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground mb-3">PICK A PROMPT</p>
             <div className="flex flex-wrap gap-2">
               {prompts.map((p) => {
                 const active = openPill === p;

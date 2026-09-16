@@ -123,11 +123,22 @@ const AdminPoweredBy = () => {
         label: f.label,
         sort_order: gi * 100 + i,
       })),
-    ).filter((r) => r.value.trim() !== "");
+    );
+    const filled = rows.filter((r) => r.value.trim() !== "");
+    const emptied = rows.filter((r) => r.value.trim() === "");
+
+    for (const r of emptied) {
+      await supabase
+        .from("site_content")
+        .delete()
+        .eq("page", POWERED_BY_PAGE)
+        .eq("section", r.section)
+        .eq("key", r.key);
+    }
 
     const { error } = await supabase
       .from("site_content")
-      .upsert(rows, { onConflict: "page,section,key" });
+      .upsert(filled, { onConflict: "page,section,key" });
     setSaving(false);
     if (error) {
       toast.error("Could not save");

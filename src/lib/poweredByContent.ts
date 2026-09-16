@@ -5,6 +5,7 @@
 export const POWERED_BY_PAGE = "powered_by";
 
 export const POWERED_BY_DEFAULTS: Record<string, string> = {
+  "hero.logo_url": "",
   "hero.eyebrow": "Free 3-day builder challenge",
   "hero.title": "Turn trust into a lead engine",
   "hero.title_highlight": "that grows itself.",

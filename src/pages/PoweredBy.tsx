@@ -424,15 +424,7 @@ export default function PoweredBy() {
           <Reveal delay={200}>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-base">
-                <Link to="/">{d("cta.primary_label")}</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="h-14 border-primary-foreground/40 bg-transparent px-8 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-              >
-                <Link to="/assessment">{d("cta.secondary_label")}</Link>
+                <Link to="/assessment">{d("cta.primary_label")}</Link>
               </Button>
             </div>
           </Reveal>

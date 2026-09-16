@@ -1932,6 +1932,7 @@ export type Database = {
           instagram_url: string | null
           invite_code: string
           is_premium: boolean
+          journey_tag: string | null
           linkedin_url: string | null
           name: string | null
           nav_tour_completed_at: string | null
@@ -1971,6 +1972,7 @@ export type Database = {
           instagram_url?: string | null
           invite_code: string
           is_premium?: boolean
+          journey_tag?: string | null
           linkedin_url?: string | null
           name?: string | null
           nav_tour_completed_at?: string | null
@@ -2010,6 +2012,7 @@ export type Database = {
           instagram_url?: string | null
           invite_code?: string
           is_premium?: boolean
+          journey_tag?: string | null
           linkedin_url?: string | null
           name?: string | null
           nav_tour_completed_at?: string | null

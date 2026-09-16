@@ -10,6 +10,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import TopNavigation from "./leadtree/TopNavigation";
 import LeftSidebar from "./leadtree/LeftSidebar";
 import RightSidebar from "./leadtree/RightSidebar";
+import PoweredByFooter from "./leadtree/PoweredByFooter";
 import ChallengeCountdownBar from "./ChallengeCountdownBar";
 
 import BackButton from "./BackButton";

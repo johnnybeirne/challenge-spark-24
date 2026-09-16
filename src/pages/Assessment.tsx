@@ -165,6 +165,10 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
       } else {
         // Complete — show loading then navigate
         setLoading(true);
+        try {
+          sessionStorage.setItem("journey_stages", JSON.stringify(["took quiz"]));
+        } catch {}
+
         const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
         const result = generateResult(updated);
 

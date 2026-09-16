@@ -10,7 +10,7 @@ import { Loader2, ExternalLink } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
 
-type Field = { key: string; label: string; textarea?: boolean };
+type Field = { key: string; label: string; textarea?: boolean; image?: boolean };
 
 const GROUPS: { section: string; title: string; description: string; fields: Field[] }[] = [
   {

@@ -34,34 +34,6 @@ interface LeaderboardEntry extends ProfileBio {
   completionSeconds?: number | null;
 }
 
-/**
- * Plausible-sounding padding names. These are never mixed into the real data
- * set: every padded row carries isPlaceholder true and is appended after all
- * real rows, so real entries always outrank them on the real metric.
- */
-const PLACEHOLDER_NAMES = [
-  "Emma Walsh",
-  "James Kelly",
-  "Sarah Thompson",
-  "Michael O'Brien",
-  "Charlotte Hughes",
-  "Daniel Murphy",
-  "Olivia Bennett",
-  "Liam Gallagher",
-  "Grace Sullivan",
-  "Thomas Whitfield",
-  "Aoife Doyle",
-  "Ruth Carmichael",
-];
-
-const shuffled = <T,>(arr: T[]) => {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-};
 
 const shortName = (full: string) => {
   const parts = String(full || "").trim().split(/\s+/).filter(Boolean);

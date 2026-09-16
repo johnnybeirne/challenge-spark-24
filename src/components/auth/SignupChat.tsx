@@ -192,11 +192,28 @@ const SignupChat = ({
     } catch {}
     let entryIntent: string | null = null;
     try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
+    // Journey stages (case A, brand new account): only when the person
+    // already has a recorded journey (quiz, and possibly report). A cold
+    // direct join writes nothing, so the column stays null.
+    let journeyTag: string | null = null;
+    if (product === "challenge") {
+      try {
+        const raw = sessionStorage.getItem("journey_stages");
+        const parsedStages = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(parsedStages)) {
+          const stages = parsedStages.filter((s) => typeof s === "string");
+          if (!stages.includes("joined challenge")) stages.push("joined challenge");
+          sessionStorage.setItem("journey_stages", JSON.stringify(stages));
+          journeyTag = stages.join(", ");
+        }
+      } catch {}
+    }
     const { error } = await signUp(signupEmail.trim().toLowerCase(), signupPassword, {
       name: name.trim(),
       signup_product: product,
       ...(entryIntent ? { entry_intent: entryIntent } : {}),
       ...(referredBy ? { referred_by: referredBy } : {}),
+      ...(journeyTag ? { journey_tag: journeyTag } : {}),
     });
     setLoading(false);
     if (error) {
@@ -267,6 +284,27 @@ const SignupChat = ({
       // Existing account (including a report-only one) joining the challenge:
       // recognise it, anchor the clock, never create a duplicate.
       try { await (supabase.rpc as any)("start_challenge_for_current_user"); } catch {}
+      // Journey stages (case B, existing account): extend the tag already on
+      // their own profile row. A null tag means they joined cold, so it stays
+      // null rather than being invented here.
+      try {
+        const { data: sess } = await supabase.auth.getUser();
+        const uid = sess?.user?.id;
+        if (uid) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("journey_tag")
+            .eq("user_id", uid)
+            .maybeSingle();
+          const current = (prof as any)?.journey_tag as string | null | undefined;
+          if (current && !current.includes("joined challenge")) {
+            await supabase
+              .from("profiles")
+              .update({ journey_tag: `${current}, joined challenge` } as any)
+              .eq("user_id", uid);
+          }
+        }
+      } catch {}
     }
     navigate(redirectAfterAuth);
   };

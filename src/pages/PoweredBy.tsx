@@ -6,6 +6,9 @@ import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import ReferralGrowthNetworkHorizontal from "@/components/ReferralGrowthNetworkHorizontal";
 import { GraduationCap, Briefcase, Monitor, Mic, Hammer, Filter, Share2 } from "lucide-react";
 import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
+import stepsImg from "@/assets/powered-by-steps.jpg";
+import audienceImg from "@/assets/powered-by-audience.jpg";
+import pointsImg from "@/assets/powered-by-points.jpg";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
 
@@ -226,6 +229,16 @@ export default function PoweredBy() {
               {d("steps.heading")}
             </h2>
           </Reveal>
+          <Reveal delay={150} className="mx-auto mb-16 max-w-3xl">
+            <img
+              src={stepsImg}
+              alt="A person building a three-step challenge staircase toward a flag"
+              loading="lazy"
+              width={1344}
+              height={768}
+              className="w-full rounded-3xl border border-primary/10 shadow-sm"
+            />
+          </Reveal>
           <div className="grid gap-6 md:grid-cols-3">
             {stepCards.map((s, i) => (
               <Reveal
@@ -282,6 +295,16 @@ export default function PoweredBy() {
               {d("audience.heading")}
             </h2>
           </Reveal>
+          <Reveal delay={150} className="mx-auto mb-16 max-w-3xl">
+            <img
+              src={audienceImg}
+              alt="Coaches, consultants, course creators, and podcasters standing together"
+              loading="lazy"
+              width={1344}
+              height={768}
+              className="w-full rounded-3xl border border-primary/10 shadow-sm"
+            />
+          </Reveal>
           <div className="grid gap-6 md:grid-cols-2">
             {audience.map((a, i) => (
               <Reveal
@@ -317,6 +340,16 @@ export default function PoweredBy() {
             <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-neutral-700">
               {d("points.body")}
             </p>
+          </Reveal>
+          <Reveal delay={150} className="mx-auto mt-14 max-w-2xl">
+            <img
+              src={pointsImg}
+              alt="Participants climbing a three-tier reward ladder and sharing star points with friends"
+              loading="lazy"
+              width={1344}
+              height={768}
+              className="w-full rounded-3xl border border-primary/10 shadow-sm"
+            />
           </Reveal>
 
           <div className="relative mt-16">

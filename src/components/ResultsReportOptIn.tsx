@@ -178,6 +178,10 @@ const ResultsReportOptIn = () => {
             t("report_optin.button_label", "Send me my report")
           )}
         </Button>
+        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+          <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+          Your details are one hundred percent secure. We do not spam.
+        </p>
       </form>
     </div>
   );

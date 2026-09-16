@@ -46,10 +46,14 @@ const ScrollDownHint = () => {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-6 left-1/2 z-30 -translate-x-1/2 transition-opacity duration-300"
+      className="pointer-events-none fixed bottom-6 left-1/2 z-30 -translate-x-1/2 flex flex-col items-center gap-1 transition-opacity duration-300"
       aria-hidden="true"
     >
-      <ChevronDown className="h-7 w-7 text-muted-foreground/70 animate-scroll-hint-bounce" />
+      {/* Animated mouse outline with a scrolling wheel dot */}
+      <div className="relative h-9 w-6 rounded-full border-2 border-muted-foreground/55">
+        <span className="absolute left-1/2 top-1.5 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-muted-foreground/70 animate-scroll-hint-bounce" />
+      </div>
+      <ChevronDown className="h-5 w-5 text-muted-foreground/60 animate-scroll-hint-bounce" />
     </div>
   );
 };

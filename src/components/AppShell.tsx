@@ -10,6 +10,7 @@ import AiCopilotChat from "./AiCopilotChat";
 import TopNavigation from "./leadtree/TopNavigation";
 import LeftSidebar from "./leadtree/LeftSidebar";
 import RightSidebar from "./leadtree/RightSidebar";
+import PoweredByFooter from "./leadtree/PoweredByFooter";
 import ChallengeCountdownBar from "./ChallengeCountdownBar";
 
 import BackButton from "./BackButton";
@@ -129,6 +130,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
             {showGraceBanner && <AccessGraceBanner pointsNeeded={access.pointsNeeded} />}
             <BackButton />
             <Outlet />
+            <PoweredByFooter />
           </div>
         </main>
 
@@ -172,9 +174,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           {showNav && authenticated && <BackButton />}
           <Outlet />
         </div>
-        <footer className="py-6 text-center text-sm text-muted-foreground mb-16">
-          © {new Date().getFullYear()} All rights reserved.
-        </footer>
+        <PoweredByFooter />
         {showNav && authenticated && (
           experience === "partner" ? <PromoterNav /> : <ConsumerNav />
         )}

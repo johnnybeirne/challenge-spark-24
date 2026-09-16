@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Loader2, ExternalLink } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
+import defaultLogo from "@/assets/leadtree-logo.png.asset.json";
 
 type Field = { key: string; label: string; textarea?: boolean; image?: boolean };
 
@@ -93,6 +94,7 @@ const GROUPS: { section: string; title: string; description: string; fields: Fie
 const AdminPoweredBy = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     supabase

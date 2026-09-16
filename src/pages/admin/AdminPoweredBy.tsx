@@ -18,6 +18,7 @@ const GROUPS: { section: string; title: string; description: string; fields: Fie
     title: "Top of the page",
     description: "The first thing people see.",
     fields: [
+      { key: "logo_url", label: "Logo at the top of the page", image: true },
       { key: "eyebrow", label: "Small line above the headline" },
       { key: "title", label: "Headline" },
       { key: "title_highlight", label: "Headline (highlighted part)" },

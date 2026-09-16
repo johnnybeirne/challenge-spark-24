@@ -187,7 +187,59 @@ const AdminPoweredBy = () => {
                 return (
                   <div key={k} className="space-y-1.5">
                     <Label>{f.label}</Label>
-                    {f.textarea ? (
+                    {f.image ? (
+                      <div className="space-y-2">
+                        <img
+                          src={values[k] || defaultLogo.url}
+                          alt="Logo"
+                          className="h-20 w-auto rounded-md border bg-white p-2"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className="max-w-xs"
+                            disabled={uploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              e.target.value = "";
+                              if (!file) return;
+                              setUploading(true);
+                              try {
+                                const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+                                const path = `powered-by/${Date.now()}-${Math.random()
+                                  .toString(36)
+                                  .slice(2, 8)}.${ext}`;
+                                const { error: upErr } = await supabase.storage
+                                  .from("site-images")
+                                  .upload(path, file, { cacheControl: "3600", contentType: file.type });
+                                if (upErr) throw upErr;
+                                const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+                                setValues((prev) => ({ ...(prev ?? {}), [k]: data.publicUrl }));
+                                toast.success("Logo uploaded. Press Save to publish it.");
+                              } catch {
+                                toast.error("Upload failed. Try again.");
+                              } finally {
+                                setUploading(false);
+                              }
+                            }}
+                          />
+                          {values[k] ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setValues({ ...values, [k]: "" })}
+                            >
+                              Use the default logo
+                            </Button>
+                          ) : null}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          PNG with a transparent background works best.
+                        </p>
+                      </div>
+                    ) : f.textarea ? (
                       <Textarea
                         rows={3}
                         value={values[k] ?? ""}

@@ -192,11 +192,28 @@ const SignupChat = ({
     } catch {}
     let entryIntent: string | null = null;
     try { entryIntent = sessionStorage.getItem("leadio_entry_intent"); } catch {}
+    // Journey stages (case A, brand new account): only when the person
+    // already has a recorded journey (quiz, and possibly report). A cold
+    // direct join writes nothing, so the column stays null.
+    let journeyTag: string | null = null;
+    if (product === "challenge") {
+      try {
+        const raw = sessionStorage.getItem("journey_stages");
+        const parsedStages = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(parsedStages)) {
+          const stages = parsedStages.filter((s) => typeof s === "string");
+          if (!stages.includes("joined challenge")) stages.push("joined challenge");
+          sessionStorage.setItem("journey_stages", JSON.stringify(stages));
+          journeyTag = stages.join(", ");
+        }
+      } catch {}
+    }
     const { error } = await signUp(signupEmail.trim().toLowerCase(), signupPassword, {
       name: name.trim(),
       signup_product: product,
       ...(entryIntent ? { entry_intent: entryIntent } : {}),
       ...(referredBy ? { referred_by: referredBy } : {}),
+      ...(journeyTag ? { journey_tag: journeyTag } : {}),
     });
     setLoading(false);
     if (error) {

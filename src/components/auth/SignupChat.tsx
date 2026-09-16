@@ -284,6 +284,27 @@ const SignupChat = ({
       // Existing account (including a report-only one) joining the challenge:
       // recognise it, anchor the clock, never create a duplicate.
       try { await (supabase.rpc as any)("start_challenge_for_current_user"); } catch {}
+      // Journey stages (case B, existing account): extend the tag already on
+      // their own profile row. A null tag means they joined cold, so it stays
+      // null rather than being invented here.
+      try {
+        const { data: sess } = await supabase.auth.getUser();
+        const uid = sess?.user?.id;
+        if (uid) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("journey_tag")
+            .eq("user_id", uid)
+            .maybeSingle();
+          const current = (prof as any)?.journey_tag as string | null | undefined;
+          if (current && !current.includes("joined challenge")) {
+            await supabase
+              .from("profiles")
+              .update({ journey_tag: `${current}, joined challenge` } as any)
+              .eq("user_id", uid);
+          }
+        }
+      } catch {}
     }
     navigate(redirectAfterAuth);
   };

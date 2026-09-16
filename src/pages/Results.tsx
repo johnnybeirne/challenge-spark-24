@@ -616,7 +616,7 @@ const Results = () => {
                       <span key={i}>
                         {part}
                         {i < parts.length - 1 && (
-                          <span className="font-bold text-primary underline decoration-2 underline-offset-4 decoration-primary">
+                          <span className="font-bold text-success underline decoration-2 underline-offset-4 decoration-success">
                             {completionDayName}
                           </span>
                         )}

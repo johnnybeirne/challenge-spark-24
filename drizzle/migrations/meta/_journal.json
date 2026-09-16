@@ -43,6 +43,13 @@
       "when": 1789543585729,
       "tag": "0005_add_journey_tag_to_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789569992755,
+      "tag": "0006_seed_landing_about_section",
+      "breakpoints": true
     }
   ]
 }

@@ -74,6 +74,7 @@ const SECTION_META: Record<string, Record<string, { label: string; hint: string;
     score: { label: "Score preview", hint: "Donut chart + result list.", anchor: "score" },
     benefits: { label: "Benefits", hint: "Four-up benefits grid.", anchor: "benefits" },
     authority: { label: "Authority card", hint: "“Built for people who need leads…” centered card.", anchor: "authority" },
+    about: { label: "About me", hint: "Photo and bio block on the quiz landing page.", anchor: "about" },
     faq: { label: "FAQ", hint: "Accordion of questions and answers.", anchor: "faq" },
     cta: { label: "Final CTA", hint: "Bottom call-to-action band.", anchor: "cta" },
     sticky: { label: "Sticky bottom bar", hint: "Persistent bar pinned to the bottom of the page.", anchor: "cta" },

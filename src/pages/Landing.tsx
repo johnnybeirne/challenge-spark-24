@@ -15,6 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import frustratedEntrepreneurLeads from "@/assets/frustrated-entrepreneur-leads.jpg";
+import johnnyPortrait from "@/assets/johnny-beirne.png";
 
 
 export type LandingVariant = "default" | "free_training";
@@ -123,7 +124,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const funnel = variant === "free_training" ? "free_training" : "default";
 
   const sectionOrder = useMemo(() => {
-    const fallback = ["hero", "problem", "reveal", "score", "benefits", "authority", "faq", "cta"];
+    const fallback = ["hero", "problem", "reveal", "score", "benefits", "authority", "about", "faq", "cta"];
     try {
       const saved = JSON.parse(map["_meta.section_order"] ?? "[]");
       if (!Array.isArray(saved)) return fallback;
@@ -161,6 +162,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     score: <Reveal key="score"><ScorePreview t={t} map={map} rows={rows} /></Reveal>,
     benefits: <Reveal key="benefits"><BenefitsSection t={t} map={map} rows={rows} /></Reveal>,
     authority: <Reveal key="authority"><AuthoritySection t={t} /></Reveal>,
+    about: <Reveal key="about"><AboutSection t={t} /></Reveal>,
     faq: <Reveal key="faq"><FaqSection t={t} map={map} /></Reveal>,
     cta: <Reveal key="cta"><CTASection t={t} onStart={() => startQuiz("bottom")} /></Reveal>,
   };
@@ -389,6 +391,39 @@ const AuthoritySection = ({ t }: { t: T }) => (
     </div>
   </PageSection>
 );
+
+const AboutSection = ({ t }: { t: T }) => {
+  const title = t("about.title", "About Johnny Beirne");
+  const paragraphs = [
+    t("about.paragraph_1", "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."),
+    t("about.paragraph_2", "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do."),
+    t("about.paragraph_3", ""),
+  ].filter((p) => p.trim());
+
+  return (
+    <PageSection style={sectionStyle(t, "about")}>
+      <div className="mx-auto grid max-w-4xl gap-8 rounded-2xl border border-border bg-card p-7 shadow-sm sm:grid-cols-[auto_1fr] sm:items-start md:p-10">
+        <img
+          src={t("about.image") || johnnyPortrait}
+          alt={t("about.image_alt", "Johnny Beirne")}
+          loading="lazy"
+          className="mx-auto block aspect-[4/5] w-44 rounded-xl border border-border object-cover sm:mx-0 sm:w-52"
+        />
+        <div className="text-center sm:text-left">
+          <p className="text-xs font-black uppercase tracking-widest text-primary">
+            {t("about.eyebrow", "Who is behind the quiz")}
+          </p>
+          <h2 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">{title}</h2>
+          <div className="mt-4 space-y-4 text-base leading-7 text-muted-foreground">
+            {paragraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </PageSection>
+  );
+};
 
 const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <PageSection className="border-t border-border" style={sectionStyle(t, "cta")}>

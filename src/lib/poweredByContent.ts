@@ -37,5 +37,5 @@ export const POWERED_BY_DEFAULTS: Record<string, string> = {
   "footer.rights_text": "All rights reserved.",
   "footer.powered_prefix": "Powered by",
   "footer.brand_label": "LeadTree",
-  "footer.brand_url": "https://leadtree.johnnybeirne.com",
+  "footer.brand_url": "/powered-by",
 };

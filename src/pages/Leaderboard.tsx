@@ -34,34 +34,6 @@ interface LeaderboardEntry extends ProfileBio {
   completionSeconds?: number | null;
 }
 
-/**
- * Plausible-sounding padding names. These are never mixed into the real data
- * set: every padded row carries isPlaceholder true and is appended after all
- * real rows, so real entries always outrank them on the real metric.
- */
-const PLACEHOLDER_NAMES = [
-  "Emma Walsh",
-  "James Kelly",
-  "Sarah Thompson",
-  "Michael O'Brien",
-  "Charlotte Hughes",
-  "Daniel Murphy",
-  "Olivia Bennett",
-  "Liam Gallagher",
-  "Grace Sullivan",
-  "Thomas Whitfield",
-  "Aoife Doyle",
-  "Ruth Carmichael",
-];
-
-const shuffled = <T,>(arr: T[]) => {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-};
 
 const shortName = (full: string) => {
   const parts = String(full || "").trim().split(/\s+/).filter(Boolean);
@@ -124,7 +96,7 @@ const Leaderboard = () => {
         youtube_url: p.youtube_url,
         website_url: p.website_url,
       }));
-      setEntries(padEntries(refMapped, "referral"));
+      setEntries(refMapped);
 
       // Active challengers — days completed from challenge_progress.day_completed_at,
       // the same record the dashboard reads, resolved through a security-definer RPC.
@@ -157,7 +129,7 @@ const Leaderboard = () => {
           website_url: p.website_url,
         };
       });
-      setChallengers(padEntries(chMapped, "challenger"));
+      setChallengers(chMapped);
 
 
       // Load partner leaderboard from canonical view (attributed signups + manual adjustment)
@@ -209,30 +181,6 @@ const Leaderboard = () => {
     setLoading(false);
   };
 
-  /**
-   * Append padding rows until the board shows five. Padding rows are flagged
-   * isPlaceholder and always sit after every real row, so the real metric
-   * ordering is never disturbed and real entries stay unambiguous in the data.
-   */
-  const padEntries = (real: LeaderboardEntry[], key: string): LeaderboardEntry[] => {
-    const realNames = new Set(real.map((r) => r.name.toLowerCase()));
-    const pool = shuffled(PLACEHOLDER_NAMES).filter((n) => !realNames.has(shortName(n).toLowerCase()));
-    const needed = Math.max(0, 5 - real.length);
-    const out = [...real];
-    for (let k = 0; k < needed && k < pool.length; k++) {
-      out.push({
-        name: shortName(pool[k]),
-        invite_code: `placeholder-${key}-${k}`,
-        direct_referral_count: 0,
-        indirect_referral_count: 0,
-        score: 0,
-        daysCompleted: 0,
-        completionSeconds: null,
-        isPlaceholder: true,
-      });
-    }
-    return out;
-  };
 
   // Pad promoter list to 5 with fake promoters not already on the list.
 

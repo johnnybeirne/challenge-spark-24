@@ -148,15 +148,38 @@ export async function saveChallengeProgress(
     // start_challenge_for_current_user when a report-only account joins later.
     // A background save must never create it, or the clock would start for a
     // report-only account just by visiting a page.
+    const payload = {
+      current_day: challenge.currentDay,
+      day_completed_at: challenge.dayCompletedAt ?? {},
+      tasks: challenge.tasks,
+      ai_outputs: challenge.aiOutputs,
+      launch_url: challenge.launchUrl,
+      completed: challenge.completed,
+    };
+
+    const { data } = await (supabase.from("challenge_progress") as any)
+      .update(payload)
+      .eq("user_id", userId)
+      .select("user_id");
+
+    if (data && data.length > 0) return;
+
+    // No row exists (report-only account). Only start the challenge, and with
+    // it the clock, when the person has actually done something in it; simply
+    // viewing a page must never create the row.
+    const hasRealProgress =
+      challenge.completed ||
+      (challenge.currentDay ?? 1) > 1 ||
+      Object.keys(challenge.dayCompletedAt ?? {}).length > 0 ||
+      Object.keys(challenge.tasks ?? {}).length > 0 ||
+      Object.keys(challenge.aiOutputs ?? {}).length > 0 ||
+      !!challenge.launchUrl;
+
+    if (!hasRealProgress) return;
+
+    await (supabase.rpc as any)("start_challenge_for_current_user");
     await (supabase.from("challenge_progress") as any)
-      .update({
-        current_day: challenge.currentDay,
-        day_completed_at: challenge.dayCompletedAt ?? {},
-        tasks: challenge.tasks,
-        ai_outputs: challenge.aiOutputs,
-        launch_url: challenge.launchUrl,
-        completed: challenge.completed,
-      })
+      .update(payload)
       .eq("user_id", userId);
   } catch {}
 }

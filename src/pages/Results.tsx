@@ -421,7 +421,7 @@ const Results = () => {
           </span>
         </div>
       )}
-      <div className={`flex min-h-screen flex-col px-6 pt-12 w-full md:w-[80%] lg:w-[50%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
+      <div className={`flex min-h-screen flex-col px-6 pt-12 w-full md:w-[60%] max-w-[1400px] mx-auto sm:px-6 lg:px-8 ${showPreviewIdentity ? "pb-[190px]" : "pb-[74px]"}`}>
         {/* SCORE REVEAL */}
         <section className="mb-2 rounded-2xl p-8 text-center animate-fade-in bg-muted/40">
           <p
@@ -616,7 +616,7 @@ const Results = () => {
                       <span key={i}>
                         {part}
                         {i < parts.length - 1 && (
-                          <span className="font-bold text-primary underline decoration-2 underline-offset-4 decoration-primary">
+                          <span className="font-bold text-success underline decoration-2 underline-offset-4 decoration-success">
                             {completionDayName}
                           </span>
                         )}

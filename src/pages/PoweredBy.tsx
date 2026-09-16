@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import ReferralGrowthNetworkHorizontal from "@/components/ReferralGrowthNetworkHorizontal";
-import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
+import { GraduationCap, Briefcase, Monitor, Mic, Hammer, Filter, Share2 } from "lucide-react";
 import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
@@ -59,23 +59,21 @@ function Reveal({
 const growthEngineOverlays = [
   {
     range: "0–25%",
+    icon: Hammer,
     title: "You build your 3-day challenge.",
     body: "Define your audience, your result, and your experience. LeadTree guides every step.",
   },
   {
     range: "25–50%",
+    icon: Filter,
     title: "A quiz funnel brings people in.",
     body: "A personalised quiz attracts the right people and converts them into participants before they even start.",
   },
   {
     range: "50–75%",
+    icon: Share2,
     title: "Your challenge excites them to invite others.",
     body: "Participants who love your challenge share it. Every invite is powered by genuine enthusiasm.",
-  },
-  {
-    range: "75–100%",
-    title: "Their invites bring in more.",
-    body: "Second and third level referrals compound automatically. Your challenge grows itself.",
   },
 ];
 
@@ -202,13 +200,16 @@ export default function PoweredBy() {
               {d("growth.heading")}
             </h2>
           </Reveal>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-3">
             {growthEngineOverlays.map((o, i) => (
               <Reveal
                 key={o.range}
                 delay={i * 100}
                 className="relative overflow-hidden rounded-2xl border border-primary/10 bg-white p-8"
               >
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <o.icon className="h-6 w-6" strokeWidth={1.75} />
+                </div>
                 <h3 className="mb-3 text-xl font-semibold leading-snug">{o.title}</h3>
                 <p className="text-neutral-600 leading-relaxed">{o.body}</p>
               </Reveal>

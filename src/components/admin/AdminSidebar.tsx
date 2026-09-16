@@ -61,6 +61,7 @@ const items: NavItem[] = [
   { title: "Results Page Editor - Non-signup", url: "/owner-console/report-page", icon: Mail, external: true, keywords: ["report", "emailed link", "teaser", "token", "lead report", "not available", "join button", "non-signup"] },
   { title: "Lead gen quiz responses", url: "/owner-console/diagnostic-responses", icon: MessageCircle, external: true, keywords: ["responses", "answers", "results", "submissions", "scores"] },
   { title: "Results advisor prompts", url: "/owner-console/results-advisor-prompts", icon: Sparkles, external: true, keywords: ["results", "advisor", "ai", "prompts"] },
+  { title: "LeadTree page + footer", url: "/owner-console/powered-by", icon: FileEdit, external: true, keywords: ["powered by", "leadtree", "footer", "brand", "public page", "powered-by"] },
   { title: "Report opt-in card", url: "/owner-console/results-optin-card", icon: Mail, external: true, keywords: ["results", "report", "opt-in", "email", "card", "magic link"] },
   
   { title: "Sign-in code email", url: "/owner-console/auth-email", icon: Mail, external: true, keywords: ["auth", "email", "otp", "code", "sign in", "login", "magic link"] },

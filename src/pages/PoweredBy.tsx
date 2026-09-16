@@ -6,6 +6,8 @@ import ReferralGrowthNetwork from "@/components/ReferralGrowthNetwork";
 import ReferralGrowthNetworkHorizontal from "@/components/ReferralGrowthNetworkHorizontal";
 import { GraduationCap, Briefcase, Monitor, Mic } from "lucide-react";
 import leadtreeLogo from "@/assets/leadtree-logo.png.asset.json";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
 
 /** Fade-up on scroll via IntersectionObserver. */
 function Reveal({
@@ -111,6 +113,9 @@ const tiers = [
 ];
 
 export default function PoweredBy() {
+  const { t } = useSiteContent(POWERED_BY_PAGE);
+  const d = (k: string) => t(k, POWERED_BY_DEFAULTS[k] ?? "");
+
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-neutral-900 antialiased selection:bg-primary/40">
       <SEO
@@ -165,21 +170,20 @@ export default function PoweredBy() {
           </Reveal>
           <Reveal delay={50}>
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-primary">
-              Free 3-day builder challenge
+              {d("hero.eyebrow")}
             </p>
           </Reveal>
           <Reveal delay={100}>
             <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-              Turn trust into a lead engine{" "}
+              {d("hero.title")}{" "}
               <span className="text-primary">
-                that grows itself.
+                {d("hero.title_highlight")}
               </span>
             </h1>
           </Reveal>
           <Reveal delay={200}>
             <p className="mx-auto mt-8 max-w-2xl text-lg text-neutral-700 md:text-xl whitespace-pre-wrap">
-              Build a challenge in 3 days where people get a real result, and feel excited to
-              invite others along the way.{"\n\n"}
+              {d("hero.subtitle")}{"\n\n"}
             </p>
           </Reveal>
         </div>
@@ -190,12 +194,12 @@ export default function PoweredBy() {
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <p className="mb-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-primary">
-              The LeadTree growth engine
+              {d("growth.eyebrow")}
             </p>
           </Reveal>
           <Reveal delay={100}>
             <h2 className="mb-16 text-center text-3xl font-semibold tracking-tight md:text-5xl">
-              How your challenge grows itself.
+              {d("growth.heading")}
             </h2>
           </Reveal>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -218,7 +222,7 @@ export default function PoweredBy() {
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <h2 className="mb-16 text-center text-3xl font-semibold tracking-tight md:text-5xl">
-              How it works
+              {d("steps.heading")}
             </h2>
           </Reveal>
           <div className="grid gap-6 md:grid-cols-3">
@@ -246,18 +250,17 @@ export default function PoweredBy() {
           <div>
             <Reveal>
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.25em] text-primary">
-                Why it works
+                {d("why.eyebrow")}
               </p>
             </Reveal>
             <Reveal delay={100}>
               <h2 className="text-3xl font-semibold tracking-tight md:text-5xl">
-                People do not just consume content. They participate.
+                {d("why.heading")}
               </h2>
             </Reveal>
             <Reveal delay={200}>
               <p className="mt-6 text-lg text-neutral-700 leading-relaxed">
-                The challenge gives your audience a clear next step, captures intent, and
-                encourages sharing as part of the experience.
+                {d("why.body")}
               </p>
             </Reveal>
           </div>
@@ -275,7 +278,7 @@ export default function PoweredBy() {
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <h2 className="mb-16 text-center text-3xl font-semibold tracking-tight md:text-5xl">
-              Built for experts who want leads, not admin.
+              {d("audience.heading")}
             </h2>
           </Reveal>
           <div className="grid gap-6 md:grid-cols-2">
@@ -301,19 +304,17 @@ export default function PoweredBy() {
         <div className="mx-auto max-w-3xl">
           <Reveal>
             <p className="mb-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-primary">
-              Built-in motivation
+              {d("points.eyebrow")}
             </p>
           </Reveal>
           <Reveal delay={50}>
             <h2 className="text-center text-3xl font-semibold tracking-tight md:text-5xl">
-              Participants earn. You grow.
+              {d("points.heading")}
             </h2>
           </Reveal>
           <Reveal delay={100}>
             <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-neutral-700">
-              LeadTree challenges come with a built-in points system. Participants earn points
-              for completing tasks and inviting others. The more engaged they are, the more
-              they share.
+              {d("points.body")}
             </p>
           </Reveal>
 
@@ -378,19 +379,18 @@ export default function PoweredBy() {
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <Reveal>
             <h2 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Start building your challenge
+              {d("cta.heading")}
             </h2>
           </Reveal>
           <Reveal delay={100}>
             <p className="mt-6 text-lg text-primary-foreground/85 md:text-xl">
-              Join the 3-day builder challenge, or take the quiz first if you want a
-              recommended strategy.
+              {d("cta.body")}
             </p>
           </Reveal>
           <Reveal delay={200}>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-base">
-                <Link to="/">Join the challenge</Link>
+                <Link to="/">{d("cta.primary_label")}</Link>
               </Button>
               <Button
                 asChild
@@ -398,7 +398,7 @@ export default function PoweredBy() {
                 variant="outline"
                 className="h-14 border-primary-foreground/40 bg-transparent px-8 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
-                <Link to="/assessment">Take the quiz</Link>
+                <Link to="/assessment">{d("cta.secondary_label")}</Link>
               </Button>
             </div>
           </Reveal>

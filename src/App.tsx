@@ -102,6 +102,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import AdminResourceLibrary from "@/pages/admin/AdminResourceLibrary";
 import AdminResultsAdvisorPrompts from "@/pages/admin/AdminResultsAdvisorPrompts";
 import AdminResultsOptinCard from "@/pages/admin/AdminResultsOptinCard";
+import AdminPoweredBy from "@/pages/admin/AdminPoweredBy";
 import AdminResultsPage from "@/pages/admin/AdminResultsPage";
 import AdminReportPage from "@/pages/admin/AdminReportPage";
 import AdminAuthEmail from "@/pages/admin/AdminAuthEmail";
@@ -339,6 +340,8 @@ const App = () => (
                 <Route path="resources" element={<AdminResourceLibrary />} />
                 <Route path="results-advisor-prompts" element={<AdminResultsAdvisorPrompts />} />
                 <Route path="results-optin-card" element={<AdminResultsOptinCard />} />
+                <Route path="powered-by" element={<AdminPoweredBy />} />
+                <Route path="powered-by-editor" element={<Navigate to="/owner-console/powered-by" replace />} />
                 <Route path="results-page" element={<AdminResultsPage />} />
                 <Route path="report-page" element={<AdminReportPage />} />
                 <Route path="auth-email" element={<AdminAuthEmail />} />

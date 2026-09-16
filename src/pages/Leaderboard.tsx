@@ -181,30 +181,6 @@ const Leaderboard = () => {
     setLoading(false);
   };
 
-  /**
-   * Append padding rows until the board shows five. Padding rows are flagged
-   * isPlaceholder and always sit after every real row, so the real metric
-   * ordering is never disturbed and real entries stay unambiguous in the data.
-   */
-  const padEntries = (real: LeaderboardEntry[], key: string): LeaderboardEntry[] => {
-    const realNames = new Set(real.map((r) => r.name.toLowerCase()));
-    const pool = shuffled(PLACEHOLDER_NAMES).filter((n) => !realNames.has(shortName(n).toLowerCase()));
-    const needed = Math.max(0, 5 - real.length);
-    const out = [...real];
-    for (let k = 0; k < needed && k < pool.length; k++) {
-      out.push({
-        name: shortName(pool[k]),
-        invite_code: `placeholder-${key}-${k}`,
-        direct_referral_count: 0,
-        indirect_referral_count: 0,
-        score: 0,
-        daysCompleted: 0,
-        completionSeconds: null,
-        isPlaceholder: true,
-      });
-    }
-    return out;
-  };
 
   // Pad promoter list to 5 with fake promoters not already on the list.
 

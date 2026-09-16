@@ -29,11 +29,10 @@ export const POWERED_BY_DEFAULTS: Record<string, string> = {
   "points.body":
     "LeadTree challenges come with a built-in points system. Participants earn points for completing tasks and inviting others. The more engaged they are, the more they share.",
 
-  "cta.heading": "Start building your challenge",
+  "cta.heading": "Start by taking the quiz",
   "cta.body":
-    "Join the 3-day builder challenge, or take the quiz first if you want a recommended strategy.",
-  "cta.primary_label": "Join the challenge",
-  "cta.secondary_label": "Take the quiz",
+    "Answer a few quick questions and get a recommended strategy for building your own 3-day challenge.",
+  "cta.primary_label": "Start by taking the quiz",
 
   "footer.rights_text": "All rights reserved.",
   "footer.powered_prefix": "Powered by",

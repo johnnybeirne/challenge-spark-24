@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import { Loader2, ExternalLink } from "lucide-react";
 import { invalidatePage } from "@/hooks/useSiteContent";
 import { POWERED_BY_PAGE, POWERED_BY_DEFAULTS } from "@/lib/poweredByContent";
+import defaultLogo from "@/assets/leadtree-logo.png.asset.json";
 
-type Field = { key: string; label: string; textarea?: boolean };
+type Field = { key: string; label: string; textarea?: boolean; image?: boolean };
 
 const GROUPS: { section: string; title: string; description: string; fields: Field[] }[] = [
   {
@@ -18,6 +19,7 @@ const GROUPS: { section: string; title: string; description: string; fields: Fie
     title: "Top of the page",
     description: "The first thing people see.",
     fields: [
+      { key: "logo_url", label: "Logo at the top of the page", image: true },
       { key: "eyebrow", label: "Small line above the headline" },
       { key: "title", label: "Headline" },
       { key: "title_highlight", label: "Headline (highlighted part)" },
@@ -92,6 +94,7 @@ const GROUPS: { section: string; title: string; description: string; fields: Fie
 const AdminPoweredBy = () => {
   const [values, setValues] = useState<Record<string, string> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     supabase
@@ -122,11 +125,22 @@ const AdminPoweredBy = () => {
         label: f.label,
         sort_order: gi * 100 + i,
       })),
-    ).filter((r) => r.value.trim() !== "");
+    );
+    const filled = rows.filter((r) => r.value.trim() !== "");
+    const emptied = rows.filter((r) => r.value.trim() === "");
+
+    for (const r of emptied) {
+      await supabase
+        .from("site_content")
+        .delete()
+        .eq("page", POWERED_BY_PAGE)
+        .eq("section", r.section)
+        .eq("key", r.key);
+    }
 
     const { error } = await supabase
       .from("site_content")
-      .upsert(rows, { onConflict: "page,section,key" });
+      .upsert(filled, { onConflict: "page,section,key" });
     setSaving(false);
     if (error) {
       toast.error("Could not save");
@@ -175,7 +189,59 @@ const AdminPoweredBy = () => {
                 return (
                   <div key={k} className="space-y-1.5">
                     <Label>{f.label}</Label>
-                    {f.textarea ? (
+                    {f.image ? (
+                      <div className="space-y-2">
+                        <img
+                          src={values[k] || defaultLogo.url}
+                          alt="Logo"
+                          className="h-20 w-auto rounded-md border bg-white p-2"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className="max-w-xs"
+                            disabled={uploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              e.target.value = "";
+                              if (!file) return;
+                              setUploading(true);
+                              try {
+                                const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+                                const path = `powered-by/${Date.now()}-${Math.random()
+                                  .toString(36)
+                                  .slice(2, 8)}.${ext}`;
+                                const { error: upErr } = await supabase.storage
+                                  .from("site-images")
+                                  .upload(path, file, { cacheControl: "3600", contentType: file.type });
+                                if (upErr) throw upErr;
+                                const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+                                setValues((prev) => ({ ...(prev ?? {}), [k]: data.publicUrl }));
+                                toast.success("Logo uploaded. Press Save to publish it.");
+                              } catch {
+                                toast.error("Upload failed. Try again.");
+                              } finally {
+                                setUploading(false);
+                              }
+                            }}
+                          />
+                          {values[k] ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setValues({ ...values, [k]: "" })}
+                            >
+                              Use the default logo
+                            </Button>
+                          ) : null}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          PNG with a transparent background works best.
+                        </p>
+                      </div>
+                    ) : f.textarea ? (
                       <Textarea
                         rows={3}
                         value={values[k] ?? ""}

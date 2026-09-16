@@ -96,7 +96,7 @@ const Leaderboard = () => {
         youtube_url: p.youtube_url,
         website_url: p.website_url,
       }));
-      setEntries(padEntries(refMapped, "referral"));
+      setEntries(refMapped);
 
       // Active challengers — days completed from challenge_progress.day_completed_at,
       // the same record the dashboard reads, resolved through a security-definer RPC.
@@ -129,7 +129,7 @@ const Leaderboard = () => {
           website_url: p.website_url,
         };
       });
-      setChallengers(padEntries(chMapped, "challenger"));
+      setChallengers(chMapped);
 
 
       // Load partner leaderboard from canonical view (attributed signups + manual adjustment)

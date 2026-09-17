@@ -68,13 +68,29 @@ Deno.serve(async (req) => {
       siteUrl = match.siteUrl;
     }
 
+    // Only report traffic to leadtree.johnnybeirne.com (the verified property
+    // covers the whole domain, so scope every query by page URL prefix).
+    const pageFilter = {
+      dimensionFilterGroups: [
+        {
+          filters: [
+            {
+              dimension: "page",
+              operator: "includingRegex",
+              expression: "^https://leadtree\\.johnnybeirne\\.com/",
+            },
+          ],
+        },
+      ],
+    };
+
     const query = async (dimensions: string[], rowLimit: number) => {
       const res = await fetch(
         `${GATEWAY}/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
         {
           method: "POST",
           headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({ startDate, endDate, dimensions, rowLimit }),
+          body: JSON.stringify({ startDate, endDate, dimensions, rowLimit, ...pageFilter }),
         },
       );
       if (!res.ok) {

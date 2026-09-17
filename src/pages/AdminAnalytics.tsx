@@ -160,6 +160,7 @@ const AdminAnalytics = () => {
   const [dropoffStep, setDropoffStep] = useState("all");
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
+  const [showSignupList, setShowSignupList] = useState(false);
 
   const loadData = async () => {
     setLoading(true);

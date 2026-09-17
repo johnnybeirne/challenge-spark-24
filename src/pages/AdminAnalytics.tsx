@@ -701,6 +701,7 @@ const AdminAnalytics = () => {
                           <th className="text-left p-3 font-semibold">Person</th>
                           <th className="text-left p-3 font-semibold">First seen</th>
                           <th className="text-left p-3 font-semibold">Last seen</th>
+                          <th className="text-left p-3 font-semibold">Duration</th>
                           <th className="text-left p-3 font-semibold">Dropped at</th>
                           <th className="text-left p-3 font-semibold">Progress</th>
                         </tr>

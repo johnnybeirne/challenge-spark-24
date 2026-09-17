@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
+import GoogleSearchStats from "@/components/admin/GoogleSearchStats";
 
 interface UserRow {
   user_id: string;
@@ -555,12 +556,17 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-4">
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
             <TabsTrigger value="dropoffs">Drop-offs ({dropoffRows.length})</TabsTrigger>
             <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
+            <TabsTrigger value="google">Google Search</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="google">
+            <GoogleSearchStats fromDate={fromDate || undefined} toDate={toDate || undefined} />
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
             {/* Funnel */}

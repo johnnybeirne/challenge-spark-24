@@ -580,6 +580,36 @@ const AdminAnalytics = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Sort by
+                </label>
+                <Select value={dropoffSort} onValueChange={setDropoffSort}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lastSeen_desc">Last seen: newest first</SelectItem>
+                    <SelectItem value="lastSeen_asc">Last seen: oldest first</SelectItem>
+                    <SelectItem value="firstSeen_desc">First seen: newest first</SelectItem>
+                    <SelectItem value="firstSeen_asc">First seen: oldest first</SelectItem>
+                    <SelectItem value="progress_desc">Progress: furthest first</SelectItem>
+                    <SelectItem value="progress_asc">Progress: least first</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Search
+                </label>
+                <Input
+                  value={dropoffQuery}
+                  onChange={(event) => setDropoffQuery(event.target.value)}
+                  placeholder="Name, email or step"
+                />
+              </div>
             </div>
 
             <div>
@@ -635,7 +665,7 @@ const AdminAnalytics = () => {
 
             <div>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Filtered drop-offs ({filteredDropoffs.length})
+                Filtered drop-offs ({sortedFilteredDropoffs.length})
               </h2>
               <Card>
                 <CardContent className="p-0">

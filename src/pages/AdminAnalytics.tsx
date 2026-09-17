@@ -219,11 +219,103 @@ const AdminAnalytics = () => {
     ...serverSessions,
     ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
   ].sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
-  const quizTotal = quizSessions[0]?.total ?? 9;
+  const quizTotal = Math.max(9, ...quizSessions.map((s) => s.total));
   const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
     quizSessions.filter((s) => s.lastQuestion >= i + 1).length
   );
   const quizStarts = quizSessions.length;
+
+  const challengeProgress = data?.challenge_progress ?? [];
+  const usersById = new Map(users.map((u) => [u.user_id, u]));
+
+  const quizDropoffs: DropoffRow[] = quizSessions
+    .filter((s) => !s.completed)
+    .map((s) => ({
+      key: `quiz-${s.key}`,
+      area: "quiz",
+      areaLabel: "Quiz",
+      step: `quiz-${s.lastQuestion}`,
+      stepLabel:
+        s.lastQuestion === 0 ? "Before question 1" : `Question ${s.lastQuestion} of ${s.total}`,
+      name: "Anonymous quiz taker",
+      email: null,
+      firstSeenAt: s.firstSeenAt,
+      lastSeenAt: s.lastSeenAt,
+      progress: `${s.lastQuestion} of ${s.total} questions`,
+    }));
+
+  const challengeDropoffs: DropoffRow[] = challengeProgress
+    .filter((row) => !row.completed)
+    .map((row) => {
+      const day = getChallengeDropoffDay(row);
+      const completedDays = Object.keys(row.day_completed_at ?? {}).filter((key) =>
+        ["day1", "day2", "day3"].includes(key)
+      ).length;
+      const user = usersById.get(row.user_id);
+
+      return {
+        key: `challenge-${row.user_id}`,
+        area: "challenge" as const,
+        areaLabel: "Challenge",
+        step: `day-${day}`,
+        stepLabel: `Day ${day}`,
+        name: user?.name || user?.email || "Challenge participant",
+        email: user?.email ?? null,
+        firstSeenAt: row.started_at,
+        lastSeenAt: row.updated_at,
+        progress: `${completedDays} of 3 days`,
+      };
+    });
+
+  const dropoffRows = [...quizDropoffs, ...challengeDropoffs].sort(
+    (a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime()
+  );
+  const areaFilteredDropoffs = dropoffRows.filter(
+    (row) => dropoffArea === "all" || row.area === dropoffArea
+  );
+  const filteredDropoffs = areaFilteredDropoffs.filter(
+    (row) => dropoffStep === "all" || row.step === dropoffStep
+  );
+
+  const dropoffSummary = Array.from(
+    areaFilteredDropoffs.reduce((map, row) => {
+      const existing = map.get(row.step);
+      map.set(row.step, {
+        step: row.step,
+        label: row.stepLabel,
+        areaLabel: row.areaLabel,
+        count: (existing?.count ?? 0) + 1,
+        latestAt:
+          existing && new Date(existing.latestAt) > new Date(row.lastSeenAt)
+            ? existing.latestAt
+            : row.lastSeenAt,
+      });
+      return map;
+    }, new Map<string, { step: string; label: string; areaLabel: string; count: number; latestAt: string }>())
+  )
+    .map(([, value]) => value)
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        new Date(b.latestAt).getTime() - new Date(a.latestAt).getTime()
+    );
+  const maxDropoffCount = Math.max(1, ...dropoffSummary.map((row) => row.count));
+
+  const dropoffStepOptions = [
+    { value: "all", label: "All steps and days" },
+    ...(dropoffArea !== "challenge"
+      ? [
+          { value: "quiz-0", label: "Quiz: Before question 1" },
+          ...Array.from({ length: quizTotal }, (_, i) => ({
+            value: `quiz-${i + 1}`,
+            label: `Quiz: Question ${i + 1}`,
+          })),
+        ]
+      : []),
+    ...(dropoffArea !== "quiz"
+      ? [1, 2, 3].map((day) => ({ value: `day-${day}`, label: `Challenge: Day ${day}` }))
+      : []),
+  ];
 
   return (
     <div className="min-h-screen bg-background">

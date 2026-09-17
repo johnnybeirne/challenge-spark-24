@@ -353,9 +353,10 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full mb-4">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
+            <TabsTrigger value="dropoffs">Drop-offs ({dropoffRows.length})</TabsTrigger>
             <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
           </TabsList>
 
@@ -485,6 +486,163 @@ const AdminAnalytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="dropoffs" className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Journey
+                </label>
+                <Select
+                  value={dropoffArea}
+                  onValueChange={(value) => {
+                    setDropoffArea(value as DropoffArea);
+                    setDropoffStep("all");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Quiz and challenge</SelectItem>
+                    <SelectItem value="quiz">Quiz only</SelectItem>
+                    <SelectItem value="challenge">Challenge only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Step or day
+                </label>
+                <Select value={dropoffStep} onValueChange={setDropoffStep}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dropoffStepOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Biggest drop-off points
+              </h2>
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  {dropoffSummary.map((row) => {
+                    const pct = (row.count / maxDropoffCount) * 100;
+                    const share = areaFilteredDropoffs.length
+                      ? Math.round((row.count / areaFilteredDropoffs.length) * 100)
+                      : 0;
+
+                    return (
+                      <button
+                        key={row.step}
+                        type="button"
+                        onClick={() => setDropoffStep(row.step)}
+                        className="w-full text-left rounded-md p-2 -m-2 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-3 mb-1">
+                          <div>
+                            <span className="text-sm font-medium text-foreground">
+                              {row.areaLabel}: {row.label}
+                            </span>
+                            <p className="text-xs text-muted-foreground">
+                              Last seen {fmt(row.latestAt)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-sm font-bold text-foreground">{row.count}</span>
+                            <p className="text-xs text-muted-foreground">{share}% of drop-offs</p>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max(pct, 3)}%` }}
+                          />
+                        </div>
+                      </button>
+                    );
+                  })}
+                  {dropoffSummary.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No incomplete quiz or challenge journeys match these filters
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Filtered drop-offs ({filteredDropoffs.length})
+              </h2>
+              <Card>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50 border-b border-border">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Journey</th>
+                          <th className="text-left p-3 font-semibold">Person</th>
+                          <th className="text-left p-3 font-semibold">First seen</th>
+                          <th className="text-left p-3 font-semibold">Last seen</th>
+                          <th className="text-left p-3 font-semibold">Dropped at</th>
+                          <th className="text-left p-3 font-semibold">Progress</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredDropoffs.slice(0, 200).map((row) => (
+                          <tr
+                            key={row.key}
+                            className="border-b border-border last:border-0 hover:bg-muted/30"
+                          >
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
+                                {row.areaLabel}
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              <div className="font-medium">{row.name}</div>
+                              {row.email && (
+                                <div className="text-xs text-muted-foreground">{row.email}</div>
+                              )}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {fmt(row.firstSeenAt)}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {fmt(row.lastSeenAt)}
+                            </td>
+                            <td className="p-3 whitespace-nowrap font-medium">{row.stepLabel}</td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {row.progress}
+                            </td>
+                          </tr>
+                        ))}
+                        {filteredDropoffs.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                              No drop-offs match these filters
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           <TabsContent value="quiz" className="space-y-6">
             <div>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">

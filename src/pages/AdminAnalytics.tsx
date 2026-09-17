@@ -303,6 +303,24 @@ const AdminAnalytics = () => {
     return 0;
   };
 
+  const getDropoffDurationSecs = (row: DropoffRow): number =>
+    Math.max(
+      0,
+      Math.round(
+        (new Date(row.lastSeenAt).getTime() - new Date(row.firstSeenAt).getTime()) / 1000
+      )
+    );
+
+  const formatDuration = (secs: number): string => {
+    if (secs < 60) return `${secs}s`;
+    const minutes = Math.floor(secs / 60);
+    const seconds = secs % 60;
+    if (minutes < 60) return `${minutes}m ${seconds}s`;
+    const hours = Math.floor(minutes / 60);
+    const remMinutes = minutes % 60;
+    return `${hours}h ${remMinutes}m`;
+  };
+
   const query = dropoffQuery.trim().toLowerCase();
   const sortedFilteredDropoffs = filteredDropoffs
     .filter(
@@ -324,6 +342,10 @@ const AdminAnalytics = () => {
           return getDropoffProgressPct(b.progress) - getDropoffProgressPct(a.progress);
         case "progress_asc":
           return getDropoffProgressPct(a.progress) - getDropoffProgressPct(b.progress);
+        case "duration_desc":
+          return getDropoffDurationSecs(b) - getDropoffDurationSecs(a);
+        case "duration_asc":
+          return getDropoffDurationSecs(a) - getDropoffDurationSecs(b);
         default:
           return new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
       }
@@ -596,6 +618,8 @@ const AdminAnalytics = () => {
                     <SelectItem value="firstSeen_asc">First seen: oldest first</SelectItem>
                     <SelectItem value="progress_desc">Progress: furthest first</SelectItem>
                     <SelectItem value="progress_asc">Progress: least first</SelectItem>
+                    <SelectItem value="duration_desc">Duration: longest first</SelectItem>
+                    <SelectItem value="duration_asc">Duration: shortest first</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -677,6 +701,7 @@ const AdminAnalytics = () => {
                           <th className="text-left p-3 font-semibold">Person</th>
                           <th className="text-left p-3 font-semibold">First seen</th>
                           <th className="text-left p-3 font-semibold">Last seen</th>
+                          <th className="text-left p-3 font-semibold">Duration</th>
                           <th className="text-left p-3 font-semibold">Dropped at</th>
                           <th className="text-left p-3 font-semibold">Progress</th>
                         </tr>
@@ -704,6 +729,9 @@ const AdminAnalytics = () => {
                             <td className="p-3 whitespace-nowrap text-muted-foreground">
                               {fmt(row.lastSeenAt)}
                             </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {formatDuration(getDropoffDurationSecs(row))}
+                            </td>
                             <td className="p-3 whitespace-nowrap font-medium">{row.stepLabel}</td>
                             <td className="p-3 whitespace-nowrap text-muted-foreground">
                               {row.progress}
@@ -712,7 +740,7 @@ const AdminAnalytics = () => {
                         ))}
                         {sortedFilteredDropoffs.length === 0 && (
                           <tr>
-                            <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                            <td colSpan={7} className="p-6 text-center text-muted-foreground">
                               No drop-offs match these filters
                             </td>
                           </tr>

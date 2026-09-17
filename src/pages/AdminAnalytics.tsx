@@ -161,6 +161,35 @@ const AdminAnalytics = () => {
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
   const [showSignupList, setShowSignupList] = useState(false);
+  const [rangePreset, setRangePreset] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
+
+  const applyPreset = (value: string) => {
+    setRangePreset(value);
+    if (value === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    if (value === "custom") return;
+    const days = Number(value);
+    const end = new Date();
+    const start = new Date(end.getTime() - (days - 1) * 24 * 60 * 60 * 1000);
+    setFromDate(toDayKey(start));
+    setToDate(toDayKey(end));
+  };
+
+  const fromTs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY;
+  const toTs = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
+  const inRange = (iso?: string | null) => {
+    if (!iso) return true;
+    const ts = new Date(iso).getTime();
+    return ts >= fromTs && ts <= toTs;
+  };
+  const rangeActive = !!fromDate || !!toDate;
 
   const loadData = async () => {
     setLoading(true);

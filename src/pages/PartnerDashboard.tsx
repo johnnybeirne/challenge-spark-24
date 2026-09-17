@@ -255,6 +255,41 @@ const PartnerDashboard = () => {
           </CardContent>
         </Card>
 
+        {/* COMMISSION RATES (read-only) */}
+        {partner && (
+          <Card className="border-border mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Wallet className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Your commission rates</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-base font-bold text-foreground">
+                    {partner.default_commission_type === "percent"
+                      ? `${partner.default_commission_value}%`
+                      : `€${partner.default_commission_value}`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Your rate on direct referrals</p>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-base font-bold text-foreground">
+                    {partner.default_l2_commission_type === "percent"
+                      ? `${partner.default_l2_commission_value}%`
+                      : `€${partner.default_l2_commission_value}`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Rate paid to your sub-partners</p>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Rates are set by the team. Contact us if you need a change.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+
+
         {/* SUB-PARTNERS */}
         {subPartners.length > 0 && (
           <Card className="border-border mb-6">

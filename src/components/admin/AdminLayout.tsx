@@ -41,6 +41,8 @@ const AdminLayout = ({ bare = false }: { bare?: boolean }) => {
         if (error) throw error;
         if (data) {
           setIsAdmin(true);
+          // Flag this browser so the owner's own visits stay out of the stats.
+          markInternalVisitor();
           setCheckingRole(false);
           return;
         }

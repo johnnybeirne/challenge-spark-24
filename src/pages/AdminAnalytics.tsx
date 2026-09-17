@@ -303,6 +303,24 @@ const AdminAnalytics = () => {
     return 0;
   };
 
+  const getDropoffDurationSecs = (row: DropoffRow): number =>
+    Math.max(
+      0,
+      Math.round(
+        (new Date(row.lastSeenAt).getTime() - new Date(row.firstSeenAt).getTime()) / 1000
+      )
+    );
+
+  const formatDuration = (secs: number): string => {
+    if (secs < 60) return `${secs}s`;
+    const minutes = Math.floor(secs / 60);
+    const seconds = secs % 60;
+    if (minutes < 60) return `${minutes}m ${seconds}s`;
+    const hours = Math.floor(minutes / 60);
+    const remMinutes = minutes % 60;
+    return `${hours}h ${remMinutes}m`;
+  };
+
   const query = dropoffQuery.trim().toLowerCase();
   const sortedFilteredDropoffs = filteredDropoffs
     .filter(
@@ -324,6 +342,10 @@ const AdminAnalytics = () => {
           return getDropoffProgressPct(b.progress) - getDropoffProgressPct(a.progress);
         case "progress_asc":
           return getDropoffProgressPct(a.progress) - getDropoffProgressPct(b.progress);
+        case "duration_desc":
+          return getDropoffDurationSecs(b) - getDropoffDurationSecs(a);
+        case "duration_asc":
+          return getDropoffDurationSecs(a) - getDropoffDurationSecs(b);
         default:
           return new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
       }

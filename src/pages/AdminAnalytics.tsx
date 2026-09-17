@@ -149,6 +149,12 @@ const AdminAnalytics = () => {
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
 
   const users = data?.users ?? [];
+  const quizSessions = buildQuizSessions(data?.quiz_events ?? []);
+  const quizTotal = quizSessions[0]?.total ?? 9;
+  const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
+    quizSessions.filter((s) => s.lastQuestion >= i + 1).length
+  );
+  const quizStarts = quizSessions.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -186,9 +192,10 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-2 w-full mb-4">
+          <TabsList className="grid grid-cols-3 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
+            <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -316,6 +323,110 @@ const AdminAnalytics = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="quiz" className="space-y-6">
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Where people stop
+              </h2>
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  {reachedCounts.map((count, i) => {
+                    const pct = quizStarts > 0 ? (count / quizStarts) * 100 : 0;
+                    const dropped =
+                      i < reachedCounts.length - 1 ? count - reachedCounts[i + 1] : 0;
+                    return (
+                      <div key={i}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-foreground">
+                            Question {i + 1}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-foreground">{count}</span>
+                            {dropped > 0 && (
+                              <span className="text-xs text-muted-foreground">
+                                -{dropped} left here
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max(pct, 2)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {quizStarts === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No quiz activity recorded yet
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Recent quiz attempts
+              </h2>
+              <Card>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50 border-b border-border">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Started</th>
+                          <th className="text-left p-3 font-semibold">Last activity</th>
+                          <th className="text-left p-3 font-semibold">Time on quiz</th>
+                          <th className="text-left p-3 font-semibold">Stopped at</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {quizSessions.slice(0, 200).map((s) => {
+                          const secs = Math.max(
+                            0,
+                            Math.round(
+                              (new Date(s.lastAt).getTime() - new Date(s.startedAt).getTime()) / 1000
+                            )
+                          );
+                          return (
+                            <tr
+                              key={s.key}
+                              className="border-b border-border last:border-0 hover:bg-muted/30"
+                            >
+                              <td className="p-3 whitespace-nowrap">{fmt(s.startedAt)}</td>
+                              <td className="p-3 whitespace-nowrap text-muted-foreground">
+                                {fmt(s.lastAt)}
+                              </td>
+                              <td className="p-3 text-muted-foreground whitespace-nowrap">
+                                {Math.floor(secs / 60)}m {secs % 60}s
+                              </td>
+                              <td className="p-3 whitespace-nowrap font-medium">
+                                {s.completed
+                                  ? "Finished"
+                                  : s.lastQuestion === 0
+                                    ? "Left before question 1"
+                                    : `Question ${s.lastQuestion} of ${s.total}`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {quizSessions.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="p-6 text-center text-muted-foreground">
+                              No quiz attempts recorded yet
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

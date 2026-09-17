@@ -184,6 +184,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
     // Track
     trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer, sessionId: quizSessionId.current, total: TOTAL_QUESTIONS });
+    recordQuizSession({ event: "answer", questionIndex: current, questionId: q.id, answer });
 
     const advance = () => {
       setAnswers(updated);

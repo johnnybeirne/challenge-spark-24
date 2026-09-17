@@ -191,7 +191,10 @@ const AdminAnalytics = () => {
   };
 
   const counts = data?.counts ?? {};
-  const totalUsers = counts["signup_completed"] ?? 0;
+  const users = data?.users ?? [];
+  // Signups are counted from real accounts, not raw events (events can fire
+  // twice for one person and carry no name or email).
+  const totalUsers = users.length;
   const totalReferrals = counts["referral_sent"] ?? 0;
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
@@ -199,11 +202,9 @@ const AdminAnalytics = () => {
   // Funnel data
   const funnelData = FUNNEL_STEPS.map((step) => ({
     ...step,
-    count: counts[step.event] ?? 0,
+    count: step.event === "signup_completed" ? totalUsers : counts[step.event] ?? 0,
   }));
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
-
-  const users = data?.users ?? [];
   // Server-recorded sessions are authoritative; older attempts are reconstructed
   // from raw events so nothing already captured disappears.
   const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({

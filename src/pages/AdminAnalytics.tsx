@@ -543,6 +543,35 @@ const AdminAnalytics = () => {
           </p>
         )}
 
+        {/* Visitors versus quiz takers */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+              Visitors vs quiz takers
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{landingViews}</p>
+                <p className="text-xs text-muted-foreground mt-1">Quiz page visits</p>
+              </div>
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>
+                <p className="text-xs text-muted-foreground mt-1">Started the quiz</p>
+                <p className="text-xs font-medium text-primary mt-1">
+                  {visitorToStartRate}% of visitors
+                </p>
+              </div>
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{quizFinishEvents}</p>
+                <p className="text-xs text-muted-foreground mt-1">Finished the quiz</p>
+                <p className="text-xs font-medium text-primary mt-1">
+                  {startToFinishRate}% of starters · {visitorToFinishRate}% of visitors
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Totals */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           <Card>
@@ -569,17 +598,14 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full mb-4">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
             <TabsTrigger value="dropoffs">Drop-offs ({dropoffRows.length})</TabsTrigger>
             <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
-            <TabsTrigger value="google">Google Search</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="google">
-            <GoogleSearchStats fromDate={fromDate || undefined} toDate={toDate || undefined} />
-          </TabsContent>
+
 
           <TabsContent value="overview" className="space-y-6">
             {/* Funnel */}

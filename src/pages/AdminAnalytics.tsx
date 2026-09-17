@@ -409,6 +409,7 @@ const AdminAnalytics = () => {
                           <th className="text-left p-3 font-semibold">Started</th>
                           <th className="text-left p-3 font-semibold">Last activity</th>
                           <th className="text-left p-3 font-semibold">Time on quiz</th>
+                          <th className="text-left p-3 font-semibold w-[180px]">Progress</th>
                           <th className="text-left p-3 font-semibold">Stopped at</th>
                         </tr>
                       </thead>

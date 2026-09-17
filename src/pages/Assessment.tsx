@@ -69,12 +69,26 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
+  // Identifies one person's run through the quiz so drop-off can be traced.
+  const quizSessionId = useRef<string>(
+    (() => {
+      try {
+        const existing = sessionStorage.getItem("quiz_session_id");
+        if (existing) return existing;
+        const id = `qs_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+        sessionStorage.setItem("quiz_session_id", id);
+        return id;
+      } catch {
+        return `qs_${Date.now().toString(36)}`;
+      }
+    })(),
+  );
 
   useEffect(() => {
     if (started && !trackedStart.current) {
       trackedStart.current = true;
       startTime.current = Date.now();
-      trackEvent("assessment_started");
+      trackEvent("assessment_started", { sessionId: quizSessionId.current });
     }
   }, [started]);
 
@@ -155,7 +169,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     const updated = { ...answers, [q.id]: answer };
 
     // Track
-    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
+    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer, sessionId: quizSessionId.current, total: TOTAL_QUESTIONS });
 
     const advance = () => {
       setAnswers(updated);
@@ -176,6 +190,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           score: result.diagnosticScore,
           level: result.diagnosticLevel,
           timeTaken,
+          sessionId: quizSessionId.current,
         });
         trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
         trackEvent("assessment_time_taken" as any, { seconds: timeTaken });

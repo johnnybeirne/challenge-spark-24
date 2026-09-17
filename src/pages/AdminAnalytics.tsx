@@ -71,6 +71,8 @@ type DropoffArea = "all" | "quiz" | "challenge";
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
+  counts_unique?: Record<string, number>;
+  daily_unique?: Record<string, Record<string, number>>;
   total_events: number;
   users?: UserRow[];
   quiz_events?: QuizEventRow[];

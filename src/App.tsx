@@ -8,11 +8,14 @@ const RedirectKeepingQuery = ({ to }: { to: string }) => {
   return <Navigate to={`${to}${search}`} replace />;
 };
 
-/** Fires a Facebook Pixel PageView on every SPA route change. */
+/** Fires Facebook Pixel + GA4 PageView on every SPA route change. */
 const RouteTracker = () => {
   const { pathname } = useLocation();
   useEffect(() => {
     fbPageView();
+    if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+      (window as any).gtag("event", "page_view", { page_path: pathname });
+    }
   }, [pathname]);
   return null;
 };

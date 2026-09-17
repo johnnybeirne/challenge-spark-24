@@ -454,6 +454,60 @@ const AdminAnalytics = () => {
           </Button>
         </div>
 
+        {/* Date range */}
+        <Card className="mb-6">
+          <CardContent className="p-4 flex flex-col md:flex-row md:items-end gap-3">
+            <div className="flex-1 min-w-[160px]">
+              <label className="text-xs text-muted-foreground mb-1 block">Date range</label>
+              <Select value={rangePreset} onValueChange={applyPreset}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                  <SelectItem value="90">Last 90 days</SelectItem>
+                  <SelectItem value="custom">Custom range</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 min-w-[140px]">
+              <label className="text-xs text-muted-foreground mb-1 block">From</label>
+              <Input
+                type="date"
+                value={fromDate}
+                max={toDate || undefined}
+                onChange={(e) => {
+                  setFromDate(e.target.value);
+                  setRangePreset("custom");
+                }}
+              />
+            </div>
+            <div className="flex-1 min-w-[140px]">
+              <label className="text-xs text-muted-foreground mb-1 block">To</label>
+              <Input
+                type="date"
+                value={toDate}
+                min={fromDate || undefined}
+                onChange={(e) => {
+                  setToDate(e.target.value);
+                  setRangePreset("custom");
+                }}
+              />
+            </div>
+            <Button variant="outline" onClick={() => applyPreset("all")} disabled={!rangeActive}>
+              Clear
+            </Button>
+          </CardContent>
+        </Card>
+        {rangeActive && (
+          <p className="text-xs text-muted-foreground mb-4">
+            Showing {fromDate || "the beginning"} to {toDate || "today"}. Every tab below is
+            filtered to this range.
+          </p>
+        )}
+
         {/* Totals */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           <Card>

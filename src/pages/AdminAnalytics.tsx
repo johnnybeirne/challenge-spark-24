@@ -682,7 +682,7 @@ const AdminAnalytics = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredDropoffs.slice(0, 200).map((row) => (
+                        {sortedFilteredDropoffs.slice(0, 200).map((row) => (
                           <tr
                             key={row.key}
                             className="border-b border-border last:border-0 hover:bg-muted/30"
@@ -710,7 +710,7 @@ const AdminAnalytics = () => {
                             </td>
                           </tr>
                         ))}
-                        {filteredDropoffs.length === 0 && (
+                        {sortedFilteredDropoffs.length === 0 && (
                           <tr>
                             <td colSpan={6} className="p-6 text-center text-muted-foreground">
                               No drop-offs match these filters

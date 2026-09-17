@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
@@ -157,6 +158,8 @@ const AdminAnalytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dropoffArea, setDropoffArea] = useState<DropoffArea>("all");
   const [dropoffStep, setDropoffStep] = useState("all");
+  const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
+  const [dropoffQuery, setDropoffQuery] = useState("");
 
   const loadData = async () => {
     setLoading(true);

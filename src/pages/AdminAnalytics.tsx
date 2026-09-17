@@ -161,10 +161,10 @@ const AdminAnalytics = () => {
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
   const [showSignupList, setShowSignupList] = useState(false);
-  const [rangePreset, setRangePreset] = useState("all");
+  const [rangePreset, setRangePreset] = useState("24h");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [last24h, setLast24h] = useState(false);
+  const [last24h, setLast24h] = useState(true);
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 

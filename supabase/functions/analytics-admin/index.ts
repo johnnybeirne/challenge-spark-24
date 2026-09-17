@@ -37,26 +37,59 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get all events
-    const { data: events, error } = await sb
+    // Get all events. The owner's own browsing is flagged internal and excluded.
+    const { data: rawEvents, error } = await sb
       .from("analytics_events")
-      .select("event_name, created_at")
+      .select("event_name, created_at, metadata")
       .order("created_at", { ascending: true });
 
     if (error) throw error;
 
+    const events = (rawEvents ?? []).filter(
+      (e: any) => e?.metadata?.internal !== true,
+    );
+
     // Count by event
     const counts: Record<string, number> = {};
-    for (const e of events ?? []) {
+    for (const e of events) {
       counts[e.event_name] = (counts[e.event_name] || 0) + 1;
     }
 
-    // Daily breakdown (last 30 days)
+    // Daily breakdown
     const daily: Record<string, Record<string, number>> = {};
-    for (const e of events ?? []) {
+    for (const e of events) {
       const day = e.created_at.slice(0, 10);
       if (!daily[day]) daily[day] = {};
       daily[day][e.event_name] = (daily[day][e.event_name] || 0) + 1;
+    }
+
+    // Unique-visitor breakdown: one browser counts once per day per event.
+    // Older rows carry no visitor id, so they fall back to counting the row.
+    const dailyVisitorSets: Record<string, Record<string, Set<string>>> = {};
+    for (const e of events) {
+      const day = e.created_at.slice(0, 10);
+      const visitor = (e as any)?.metadata?.visitor_id;
+      const key = typeof visitor === "string" && visitor
+        ? visitor
+        : `row:${day}:${e.event_name}:${Math.random()}`;
+      dailyVisitorSets[day] = dailyVisitorSets[day] ?? {};
+      dailyVisitorSets[day][e.event_name] =
+        dailyVisitorSets[day][e.event_name] ?? new Set<string>();
+      dailyVisitorSets[day][e.event_name].add(key);
+    }
+    const dailyUnique: Record<string, Record<string, number>> = {};
+    const countsUnique: Record<string, number> = {};
+    const allVisitorSets: Record<string, Set<string>> = {};
+    for (const [day, byEvent] of Object.entries(dailyVisitorSets)) {
+      dailyUnique[day] = {};
+      for (const [event, set] of Object.entries(byEvent)) {
+        dailyUnique[day][event] = set.size;
+        allVisitorSets[event] = allVisitorSets[event] ?? new Set<string>();
+        for (const v of set) allVisitorSets[event].add(v);
+      }
+    }
+    for (const [event, set] of Object.entries(allVisitorSets)) {
+      countsUnique[event] = set.size;
     }
 
     // Recent quiz activity, with timestamps, for drop-off tracing
@@ -97,7 +130,9 @@ Deno.serve(async (req) => {
       JSON.stringify({
         counts,
         daily,
-        total_events: events?.length ?? 0,
+        counts_unique: countsUnique,
+        daily_unique: dailyUnique,
+        total_events: events.length,
         users: users ?? [],
         quiz_events: quizEvents ?? [],
         quiz_sessions: quizSessions ?? [],

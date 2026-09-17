@@ -71,6 +71,8 @@ type DropoffArea = "all" | "quiz" | "challenge";
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
+  counts_unique?: Record<string, number>;
+  daily_unique?: Record<string, Record<string, number>>;
   total_events: number;
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
@@ -265,10 +267,30 @@ const AdminAnalytics = () => {
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
 
+  // Unique-visitor counts: one browser counts once per day, and the owner's
+  // own browsing is already excluded server-side.
+  const dailyUniqueAll = data?.daily_unique ?? {};
+  const rangedUnique: Record<string, number> = {};
+  Object.entries(dailyUniqueAll)
+    .filter(([day]) => {
+      if (last24h) {
+        const todayKey = toDayKey(new Date());
+        const yKey = toDayKey(new Date(now - 24 * 60 * 60 * 1000));
+        return day >= yKey && day <= todayKey;
+      }
+      return (!fromDate || day >= fromDate) && (!toDate || day <= toDate);
+    })
+    .forEach(([, dayCounts]) => {
+      Object.entries(dayCounts ?? {}).forEach(([event, n]) => {
+        rangedUnique[event] = (rangedUnique[event] ?? 0) + (n as number);
+      });
+    });
+  const uniqueCounts = rangeActive ? rangedUnique : data?.counts_unique ?? {};
+
   // Visitors to the quiz page versus people who actually take the quiz.
-  const landingViews = counts["landing_viewed"] ?? 0;
-  const quizStartEvents = counts["assessment_started"] ?? 0;
-  const quizFinishEvents = counts["assessment_completed"] ?? 0;
+  const landingViews = uniqueCounts["landing_viewed"] ?? 0;
+  const quizStartEvents = uniqueCounts["assessment_started"] ?? 0;
+  const quizFinishEvents = uniqueCounts["assessment_completed"] ?? 0;
   const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
   const visitorToStartRate = pct(quizStartEvents, landingViews);
   const startToFinishRate = pct(quizFinishEvents, quizStartEvents);
@@ -551,7 +573,10 @@ const AdminAnalytics = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{landingViews}</p>
-                <p className="text-xs text-muted-foreground mt-1">Quiz page visits</p>
+                <p className="text-xs text-muted-foreground mt-1">Quiz page visitors</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Unique people, your own visits excluded
+                </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>

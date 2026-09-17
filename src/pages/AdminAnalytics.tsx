@@ -220,8 +220,24 @@ const AdminAnalytics = () => {
     loadData();
   };
 
-  const counts = data?.counts ?? {};
-  const users = data?.users ?? [];
+  // Counts are recomputed from the daily breakdown when a date range is chosen.
+  const dailyAll = data?.daily ?? {};
+  const dailyInRange = Object.fromEntries(
+    Object.entries(dailyAll).filter(
+      ([day]) => (!fromDate || day >= fromDate) && (!toDate || day <= toDate)
+    )
+  );
+  const rangedCounts: Record<string, number> = {};
+  Object.values(dailyInRange).forEach((dayCounts) => {
+    Object.entries(dayCounts ?? {}).forEach(([event, n]) => {
+      rangedCounts[event] = (rangedCounts[event] ?? 0) + (n as number);
+    });
+  });
+  const counts = rangeActive ? rangedCounts : data?.counts ?? {};
+  const totalEvents = rangeActive
+    ? Object.values(rangedCounts).reduce((sum, n) => sum + n, 0)
+    : data?.total_events ?? 0;
+  const users = (data?.users ?? []).filter((u) => inRange(u.created_at));
   // Signups are counted from real accounts, not raw events (events can fire
   // twice for one person and carry no name or email).
   const totalUsers = users.length;

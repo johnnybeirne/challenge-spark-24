@@ -130,7 +130,9 @@ Deno.serve(async (req) => {
       JSON.stringify({
         counts,
         daily,
-        total_events: events?.length ?? 0,
+        counts_unique: countsUnique,
+        daily_unique: dailyUnique,
+        total_events: events.length,
         users: users ?? [],
         quiz_events: quizEvents ?? [],
         quiz_sessions: quizSessions ?? [],

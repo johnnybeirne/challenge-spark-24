@@ -161,6 +161,35 @@ const AdminAnalytics = () => {
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
   const [showSignupList, setShowSignupList] = useState(false);
+  const [rangePreset, setRangePreset] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
+
+  const applyPreset = (value: string) => {
+    setRangePreset(value);
+    if (value === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    if (value === "custom") return;
+    const days = Number(value);
+    const end = new Date();
+    const start = new Date(end.getTime() - (days - 1) * 24 * 60 * 60 * 1000);
+    setFromDate(toDayKey(start));
+    setToDate(toDayKey(end));
+  };
+
+  const fromTs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY;
+  const toTs = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
+  const inRange = (iso?: string | null) => {
+    if (!iso) return true;
+    const ts = new Date(iso).getTime();
+    return ts >= fromTs && ts <= toTs;
+  };
+  const rangeActive = !!fromDate || !!toDate;
 
   const loadData = async () => {
     setLoading(true);
@@ -191,8 +220,24 @@ const AdminAnalytics = () => {
     loadData();
   };
 
-  const counts = data?.counts ?? {};
-  const users = data?.users ?? [];
+  // Counts are recomputed from the daily breakdown when a date range is chosen.
+  const dailyAll = data?.daily ?? {};
+  const dailyInRange = Object.fromEntries(
+    Object.entries(dailyAll).filter(
+      ([day]) => (!fromDate || day >= fromDate) && (!toDate || day <= toDate)
+    )
+  );
+  const rangedCounts: Record<string, number> = {};
+  Object.values(dailyInRange).forEach((dayCounts) => {
+    Object.entries(dayCounts ?? {}).forEach(([event, n]) => {
+      rangedCounts[event] = (rangedCounts[event] ?? 0) + (n as number);
+    });
+  });
+  const counts = rangeActive ? rangedCounts : data?.counts ?? {};
+  const totalEvents = rangeActive
+    ? Object.values(rangedCounts).reduce((sum, n) => sum + n, 0)
+    : data?.total_events ?? 0;
+  const users = (data?.users ?? []).filter((u) => inRange(u.created_at));
   // Signups are counted from real accounts, not raw events (events can fire
   // twice for one person and carry no name or email).
   const totalUsers = users.length;
@@ -208,7 +253,9 @@ const AdminAnalytics = () => {
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
   // Server-recorded sessions are authoritative; older attempts are reconstructed
   // from raw events so nothing already captured disappears.
-  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
+  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? [])
+    .filter((s) => inRange(s.started_at))
+    .map((s) => ({
     key: s.session_key,
     firstSeenAt: s.started_at,
     lastSeenAt: s.completed_at ?? s.last_answered_at ?? s.started_at,
@@ -222,7 +269,9 @@ const AdminAnalytics = () => {
   const serverKeys = new Set(serverSessions.map((s) => s.key));
   const quizSessions = [
     ...serverSessions,
-    ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
+    ...buildQuizSessions((data?.quiz_events ?? []).filter((e) => inRange(e.created_at))).filter(
+      (s) => !serverKeys.has(s.key)
+    ),
   ].sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
   const quizTotal = Math.max(9, ...quizSessions.map((s) => s.total));
   const latestOf = (list: QuizSession[]) =>
@@ -245,8 +294,10 @@ const AdminAnalytics = () => {
   const reachedCounts = questionStats.map((q) => q.count);
   const quizStarts = quizSessions.length;
 
-  const challengeProgress = data?.challenge_progress ?? [];
-  const usersById = new Map(users.map((u) => [u.user_id, u]));
+  const challengeProgress = (data?.challenge_progress ?? []).filter(
+    (row) => inRange(row.started_at) || inRange(row.updated_at)
+  );
+  const usersById = new Map((data?.users ?? []).map((u) => [u.user_id, u]));
 
   const quizDropoffs: DropoffRow[] = quizSessions
     .filter((s) => !s.completed)
@@ -403,6 +454,60 @@ const AdminAnalytics = () => {
           </Button>
         </div>
 
+        {/* Date range */}
+        <Card className="mb-6">
+          <CardContent className="p-4 flex flex-col md:flex-row md:items-end gap-3">
+            <div className="flex-1 min-w-[160px]">
+              <label className="text-xs text-muted-foreground mb-1 block">Date range</label>
+              <Select value={rangePreset} onValueChange={applyPreset}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                  <SelectItem value="90">Last 90 days</SelectItem>
+                  <SelectItem value="custom">Custom range</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 min-w-[140px]">
+              <label className="text-xs text-muted-foreground mb-1 block">From</label>
+              <Input
+                type="date"
+                value={fromDate}
+                max={toDate || undefined}
+                onChange={(e) => {
+                  setFromDate(e.target.value);
+                  setRangePreset("custom");
+                }}
+              />
+            </div>
+            <div className="flex-1 min-w-[140px]">
+              <label className="text-xs text-muted-foreground mb-1 block">To</label>
+              <Input
+                type="date"
+                value={toDate}
+                min={fromDate || undefined}
+                onChange={(e) => {
+                  setToDate(e.target.value);
+                  setRangePreset("custom");
+                }}
+              />
+            </div>
+            <Button variant="outline" onClick={() => applyPreset("all")} disabled={!rangeActive}>
+              Clear
+            </Button>
+          </CardContent>
+        </Card>
+        {rangeActive && (
+          <p className="text-xs text-muted-foreground mb-4">
+            Showing {fromDate || "the beginning"} to {toDate || "today"}. Every tab below is
+            filtered to this range.
+          </p>
+        )}
+
         {/* Totals */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           <Card>
@@ -555,7 +660,7 @@ const AdminAnalytics = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              Total events: {data?.total_events ?? 0}
+              Total events: {totalEvents}
             </p>
           </TabsContent>
 

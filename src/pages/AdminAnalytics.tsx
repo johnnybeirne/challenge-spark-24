@@ -164,12 +164,20 @@ const AdminAnalytics = () => {
   const [rangePreset, setRangePreset] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [last24h, setLast24h] = useState(false);
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 
   const applyPreset = (value: string) => {
     setRangePreset(value);
+    setLast24h(false);
     if (value === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    if (value === "24h") {
+      setLast24h(true);
       setFromDate("");
       setToDate("");
       return;
@@ -182,14 +190,19 @@ const AdminAnalytics = () => {
     setToDate(toDayKey(end));
   };
 
-  const fromTs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY;
-  const toTs = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
+  const now = Date.now();
+  const fromTs = last24h
+    ? now - 24 * 60 * 60 * 1000
+    : fromDate
+      ? new Date(`${fromDate}T00:00:00`).getTime()
+      : Number.NEGATIVE_INFINITY;
+  const toTs = last24h ? now : toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
   const inRange = (iso?: string | null) => {
     if (!iso) return true;
     const ts = new Date(iso).getTime();
     return ts >= fromTs && ts <= toTs;
   };
-  const rangeActive = !!fromDate || !!toDate;
+  const rangeActive = !!fromDate || !!toDate || last24h;
 
   const loadData = async () => {
     setLoading(true);

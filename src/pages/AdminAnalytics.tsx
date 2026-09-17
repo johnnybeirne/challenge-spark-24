@@ -522,8 +522,10 @@ const AdminAnalytics = () => {
         </Card>
         {rangeActive && (
           <p className="text-xs text-muted-foreground mb-4">
-            Showing {fromDate || "the beginning"} to {toDate || "today"}. Every tab below is
-            filtered to this range.
+            {last24h
+              ? "Showing the last 24 hours."
+              : `Showing ${fromDate || "the beginning"} to ${toDate || "today"}.`}{" "}
+            Every tab below is filtered to this range.
           </p>
         )}
 

@@ -665,7 +665,8 @@ const AdminAnalytics = () => {
               </h2>
               <Card>
                 <CardContent className="p-4 space-y-3">
-                  {reachedCounts.map((count, i) => {
+                  {questionStats.map((stat, i) => {
+                    const count = stat.count;
                     const pct = quizStarts > 0 ? (count / quizStarts) * 100 : 0;
                     const dropped =
                       i < reachedCounts.length - 1 ? count - reachedCounts[i + 1] : 0;
@@ -689,6 +690,12 @@ const AdminAnalytics = () => {
                             className="h-full bg-primary rounded-full transition-all duration-500"
                             style={{ width: `${Math.max(pct, 2)}%` }}
                           />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
+                          <span>
+                            Last reached: {stat.lastReachedAt ? fmt(stat.lastReachedAt) : "never"}
+                          </span>
+                          {stat.lastDropAt && <span>Last stopped here: {fmt(stat.lastDropAt)}</span>}
                         </div>
                       </div>
                     );

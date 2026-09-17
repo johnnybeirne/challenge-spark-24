@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
-import GoogleSearchStats from "@/components/admin/GoogleSearchStats";
 
 interface UserRow {
   user_id: string;
@@ -135,12 +134,14 @@ function buildQuizSessions(events: QuizEventRow[]): QuizSession[] {
 }
 
 const FUNNEL_STEPS = [
+  { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
   { event: "signup_completed", label: "Signup" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
 ];
+
 
 function getChallengeDropoffDay(row: ChallengeProgressRow): number {
   const completedDays = row.day_completed_at ?? {};
@@ -263,6 +264,17 @@ const AdminAnalytics = () => {
   const totalReferrals = counts["referral_sent"] ?? 0;
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
+
+  // Visitors to the quiz page versus people who actually take the quiz.
+  const landingViews = counts["landing_viewed"] ?? 0;
+  const quizStartEvents = counts["assessment_started"] ?? 0;
+  const quizFinishEvents = counts["assessment_completed"] ?? 0;
+  const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
+  const visitorToStartRate = pct(quizStartEvents, landingViews);
+  const startToFinishRate = pct(quizFinishEvents, quizStartEvents);
+  const visitorToFinishRate = pct(quizFinishEvents, landingViews);
+
+
 
   // Funnel data
   const funnelData = FUNNEL_STEPS.map((step) => ({
@@ -530,6 +542,35 @@ const AdminAnalytics = () => {
           </p>
         )}
 
+        {/* Visitors versus quiz takers */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+              Visitors vs quiz takers
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{landingViews}</p>
+                <p className="text-xs text-muted-foreground mt-1">Quiz page visits</p>
+              </div>
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>
+                <p className="text-xs text-muted-foreground mt-1">Started the quiz</p>
+                <p className="text-xs font-medium text-primary mt-1">
+                  {visitorToStartRate}% of visitors
+                </p>
+              </div>
+              <div className="rounded-lg border border-border p-4 text-center">
+                <p className="text-3xl font-bold text-foreground">{quizFinishEvents}</p>
+                <p className="text-xs text-muted-foreground mt-1">Finished the quiz</p>
+                <p className="text-xs font-medium text-primary mt-1">
+                  {startToFinishRate}% of starters · {visitorToFinishRate}% of visitors
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Totals */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           <Card>
@@ -556,17 +597,14 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full mb-4">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
             <TabsTrigger value="dropoffs">Drop-offs ({dropoffRows.length})</TabsTrigger>
             <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
-            <TabsTrigger value="google">Google Search</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="google">
-            <GoogleSearchStats fromDate={fromDate || undefined} toDate={toDate || undefined} />
-          </TabsContent>
+
 
           <TabsContent value="overview" className="space-y-6">
             {/* Funnel */}

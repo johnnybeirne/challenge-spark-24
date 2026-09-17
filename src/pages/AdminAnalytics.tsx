@@ -294,8 +294,10 @@ const AdminAnalytics = () => {
   const reachedCounts = questionStats.map((q) => q.count);
   const quizStarts = quizSessions.length;
 
-  const challengeProgress = data?.challenge_progress ?? [];
-  const usersById = new Map(users.map((u) => [u.user_id, u]));
+  const challengeProgress = (data?.challenge_progress ?? []).filter(
+    (row) => inRange(row.started_at) || inRange(row.updated_at)
+  );
+  const usersById = new Map((data?.users ?? []).map((u) => [u.user_id, u]));
 
   const quizDropoffs: DropoffRow[] = quizSessions
     .filter((s) => !s.completed)

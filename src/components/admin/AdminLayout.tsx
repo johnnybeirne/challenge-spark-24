@@ -7,6 +7,7 @@ import { Shield } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { markInternalVisitor } from "@/lib/analytics";
 
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY = 600;

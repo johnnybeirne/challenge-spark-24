@@ -618,6 +618,8 @@ const AdminAnalytics = () => {
                     <SelectItem value="firstSeen_asc">First seen: oldest first</SelectItem>
                     <SelectItem value="progress_desc">Progress: furthest first</SelectItem>
                     <SelectItem value="progress_asc">Progress: least first</SelectItem>
+                    <SelectItem value="duration_desc">Duration: longest first</SelectItem>
+                    <SelectItem value="duration_asc">Duration: shortest first</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

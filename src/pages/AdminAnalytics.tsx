@@ -164,12 +164,20 @@ const AdminAnalytics = () => {
   const [rangePreset, setRangePreset] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [last24h, setLast24h] = useState(false);
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 
   const applyPreset = (value: string) => {
     setRangePreset(value);
+    setLast24h(false);
     if (value === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    if (value === "24h") {
+      setLast24h(true);
       setFromDate("");
       setToDate("");
       return;
@@ -182,14 +190,19 @@ const AdminAnalytics = () => {
     setToDate(toDayKey(end));
   };
 
-  const fromTs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY;
-  const toTs = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
+  const now = Date.now();
+  const fromTs = last24h
+    ? now - 24 * 60 * 60 * 1000
+    : fromDate
+      ? new Date(`${fromDate}T00:00:00`).getTime()
+      : Number.NEGATIVE_INFINITY;
+  const toTs = last24h ? now : toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
   const inRange = (iso?: string | null) => {
     if (!iso) return true;
     const ts = new Date(iso).getTime();
     return ts >= fromTs && ts <= toTs;
   };
-  const rangeActive = !!fromDate || !!toDate;
+  const rangeActive = !!fromDate || !!toDate || last24h;
 
   const loadData = async () => {
     setLoading(true);
@@ -223,9 +236,14 @@ const AdminAnalytics = () => {
   // Counts are recomputed from the daily breakdown when a date range is chosen.
   const dailyAll = data?.daily ?? {};
   const dailyInRange = Object.fromEntries(
-    Object.entries(dailyAll).filter(
-      ([day]) => (!fromDate || day >= fromDate) && (!toDate || day <= toDate)
-    )
+    Object.entries(dailyAll).filter(([day]) => {
+      if (last24h) {
+        const todayKey = toDayKey(new Date());
+        const yKey = toDayKey(new Date(now - 24 * 60 * 60 * 1000));
+        return day >= yKey && day <= todayKey;
+      }
+      return (!fromDate || day >= fromDate) && (!toDate || day <= toDate);
+    })
   );
   const rangedCounts: Record<string, number> = {};
   Object.values(dailyInRange).forEach((dayCounts) => {
@@ -465,6 +483,7 @@ const AdminAnalytics = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="24h">Last 24 hours</SelectItem>
                   <SelectItem value="7">Last 7 days</SelectItem>
                   <SelectItem value="30">Last 30 days</SelectItem>
                   <SelectItem value="90">Last 90 days</SelectItem>
@@ -503,8 +522,10 @@ const AdminAnalytics = () => {
         </Card>
         {rangeActive && (
           <p className="text-xs text-muted-foreground mb-4">
-            Showing {fromDate || "the beginning"} to {toDate || "today"}. Every tab below is
-            filtered to this range.
+            {last24h
+              ? "Showing the last 24 hours."
+              : `Showing ${fromDate || "the beginning"} to ${toDate || "today"}.`}{" "}
+            Every tab below is filtered to this range.
           </p>
         )}
 

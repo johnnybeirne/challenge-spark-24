@@ -59,6 +59,18 @@ Deno.serve(async (req) => {
       daily[day][e.event_name] = (daily[day][e.event_name] || 0) + 1;
     }
 
+    // Recent quiz activity, with timestamps, for drop-off tracing
+    const { data: quizEvents } = await sb
+      .from("analytics_events")
+      .select("event_name, metadata, created_at")
+      .in("event_name", [
+        "assessment_started",
+        "assessment_question_answered",
+        "assessment_completed",
+      ])
+      .order("created_at", { ascending: false })
+      .limit(3000);
+
     // User list with referral data
     const { data: users } = await sb
       .from("profiles")

@@ -160,6 +160,7 @@ const AdminAnalytics = () => {
   const [dropoffStep, setDropoffStep] = useState("all");
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
+  const [showSignupList, setShowSignupList] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -191,7 +192,10 @@ const AdminAnalytics = () => {
   };
 
   const counts = data?.counts ?? {};
-  const totalUsers = counts["signup_completed"] ?? 0;
+  const users = data?.users ?? [];
+  // Signups are counted from real accounts, not raw events (events can fire
+  // twice for one person and carry no name or email).
+  const totalUsers = users.length;
   const totalReferrals = counts["referral_sent"] ?? 0;
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
@@ -199,11 +203,9 @@ const AdminAnalytics = () => {
   // Funnel data
   const funnelData = FUNNEL_STEPS.map((step) => ({
     ...step,
-    count: counts[step.event] ?? 0,
+    count: step.event === "signup_completed" ? totalUsers : counts[step.event] ?? 0,
   }));
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
-
-  const users = data?.users ?? [];
   // Server-recorded sessions are authoritative; older attempts are reconstructed
   // from raw events so nothing already captured disappears.
   const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
@@ -450,12 +452,24 @@ const AdminAnalytics = () => {
                         ? Math.round((step.count / prevCount) * 100)
                         : null;
 
+                    const isSignup = step.event === "signup_completed";
+
                     return (
                       <div key={step.event}>
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
                             {i > 0 && <ArrowRight className="h-3 w-3 text-muted-foreground" />}
-                            <span className="text-sm font-medium text-foreground">{step.label}</span>
+                            {isSignup ? (
+                              <button
+                                type="button"
+                                onClick={() => setShowSignupList((v) => !v)}
+                                className="text-sm font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                              >
+                                {step.label}
+                              </button>
+                            ) : (
+                              <span className="text-sm font-medium text-foreground">{step.label}</span>
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-foreground">{step.count}</span>
@@ -470,6 +484,40 @@ const AdminAnalytics = () => {
                             style={{ width: `${Math.max(pct, 2)}%` }}
                           />
                         </div>
+                        {isSignup && showSignupList && (
+                          <div className="mt-2 rounded-md border border-border bg-muted/30 p-3">
+                            <p className="text-xs text-muted-foreground mb-2">
+                              Real accounts created ({users.length})
+                            </p>
+                            {users.length === 0 ? (
+                              <p className="text-sm text-muted-foreground">No accounts yet.</p>
+                            ) : (
+                              <ul className="space-y-1.5 max-h-72 overflow-y-auto">
+                                {users.map((u) => (
+                                  <li
+                                    key={u.user_id}
+                                    className="flex flex-wrap items-baseline justify-between gap-2 text-sm"
+                                  >
+                                    <span className="text-foreground">
+                                      {u.name || u.email || "Unnamed"}
+                                      {u.name && u.email && (
+                                        <span className="text-muted-foreground"> · {u.email}</span>
+                                      )}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {new Date(u.created_at).toLocaleString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}

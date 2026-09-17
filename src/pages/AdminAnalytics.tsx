@@ -253,7 +253,9 @@ const AdminAnalytics = () => {
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
   // Server-recorded sessions are authoritative; older attempts are reconstructed
   // from raw events so nothing already captured disappears.
-  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
+  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? [])
+    .filter((s) => inRange(s.started_at))
+    .map((s) => ({
     key: s.session_key,
     firstSeenAt: s.started_at,
     lastSeenAt: s.completed_at ?? s.last_answered_at ?? s.started_at,

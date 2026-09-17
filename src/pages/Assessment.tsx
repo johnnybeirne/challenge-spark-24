@@ -207,6 +207,11 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           timeTaken,
           sessionId: quizSessionId.current,
         });
+        recordQuizSession({
+          event: "complete",
+          score: result.diagnosticScore,
+          level: result.diagnosticLevel,
+        });
         trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
         trackEvent("assessment_time_taken" as any, { seconds: timeTaken });
 

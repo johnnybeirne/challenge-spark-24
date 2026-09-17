@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 
 interface UserRow {
+  user_id: string;
   name: string | null;
   email: string | null;
   invite_code: string;
@@ -41,6 +43,30 @@ interface ServerQuizSession {
   total_questions: number | null;
 }
 
+interface ChallengeProgressRow {
+  user_id: string;
+  current_day: number | null;
+  day_completed_at: Record<string, string> | null;
+  completed: boolean;
+  started_at: string;
+  updated_at: string;
+}
+
+interface DropoffRow {
+  key: string;
+  area: "quiz" | "challenge";
+  areaLabel: string;
+  step: string;
+  stepLabel: string;
+  name: string;
+  email: string | null;
+  firstSeenAt: string;
+  lastSeenAt: string;
+  progress: string;
+}
+
+type DropoffArea = "all" | "quiz" | "challenge";
+
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
@@ -48,6 +74,7 @@ interface AnalyticsData {
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
   quiz_sessions?: ServerQuizSession[];
+  challenge_progress?: ChallengeProgressRow[];
 }
 
 const fmt = (iso: string) =>
@@ -113,10 +140,23 @@ const FUNNEL_STEPS = [
   { event: "challenge_completed", label: "Challenge Complete" },
 ];
 
+function getChallengeDropoffDay(row: ChallengeProgressRow): number {
+  const completedDays = row.day_completed_at ?? {};
+  const currentDay = Math.min(Math.max(row.current_day ?? 1, 1), 3);
+
+  for (let day = 1; day <= 3; day += 1) {
+    if (!completedDays[`day${day}`]) return Math.max(day, currentDay);
+  }
+
+  return 3;
+}
+
 const AdminAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [dropoffArea, setDropoffArea] = useState<DropoffArea>("all");
+  const [dropoffStep, setDropoffStep] = useState("all");
 
   const loadData = async () => {
     setLoading(true);

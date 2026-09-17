@@ -2,7 +2,7 @@ import { writeFileSync } from "fs";
 import { resolve } from "path";
 import { HIDDEN_PATHS } from "./seo-config";
 
-const BASE_URL = "https://leadio.johnnybeirne.com";
+const BASE_URL = "https://leadtree.johnnybeirne.com";
 
 const lines = [
   "User-agent: Googlebot",

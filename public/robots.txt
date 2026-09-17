@@ -46,4 +46,4 @@ Disallow: /partner/
 Disallow: /p/
 Disallow: /invite/
 Disallow: /premium/
-Sitemap: https://leadio.johnnybeirne.com/sitemap.xml
+Sitemap: https://leadtree.johnnybeirne.com/sitemap.xml

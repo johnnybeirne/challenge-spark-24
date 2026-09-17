@@ -2,7 +2,7 @@ import { writeFileSync } from "fs";
 import { resolve } from "path";
 import { PUBLIC_ENTRIES, HIDDEN_PATHS } from "./seo-config";
 
-const BASE_URL = "https://leadio.johnnybeirne.com";
+const BASE_URL = "https://leadtree.johnnybeirne.com";
 
 function isHidden(path: string): boolean {
   return HIDDEN_PATHS.some((hidden) => {

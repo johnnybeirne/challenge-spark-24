@@ -729,6 +729,9 @@ const AdminAnalytics = () => {
                             <td className="p-3 whitespace-nowrap text-muted-foreground">
                               {fmt(row.lastSeenAt)}
                             </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {formatDuration(getDropoffDurationSecs(row))}
+                            </td>
                             <td className="p-3 whitespace-nowrap font-medium">{row.stepLabel}</td>
                             <td className="p-3 whitespace-nowrap text-muted-foreground">
                               {row.progress}

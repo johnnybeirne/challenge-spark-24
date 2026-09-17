@@ -269,7 +269,9 @@ const AdminAnalytics = () => {
   const serverKeys = new Set(serverSessions.map((s) => s.key));
   const quizSessions = [
     ...serverSessions,
-    ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
+    ...buildQuizSessions((data?.quiz_events ?? []).filter((e) => inRange(e.created_at))).filter(
+      (s) => !serverKeys.has(s.key)
+    ),
   ].sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
   const quizTotal = Math.max(9, ...quizSessions.map((s) => s.total));
   const latestOf = (list: QuizSession[]) =>

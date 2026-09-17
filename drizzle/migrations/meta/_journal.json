@@ -50,6 +50,13 @@
       "when": 1789569992755,
       "tag": "0006_seed_landing_about_section",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789638823851,
+      "tag": "0007_create_quiz_sessions",
+      "breakpoints": true
     }
   ]
 }

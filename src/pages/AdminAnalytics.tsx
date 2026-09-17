@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 
 interface UserRow {
+  user_id: string;
   name: string | null;
   email: string | null;
   invite_code: string;
@@ -41,6 +43,30 @@ interface ServerQuizSession {
   total_questions: number | null;
 }
 
+interface ChallengeProgressRow {
+  user_id: string;
+  current_day: number | null;
+  day_completed_at: Record<string, string> | null;
+  completed: boolean;
+  started_at: string;
+  updated_at: string;
+}
+
+interface DropoffRow {
+  key: string;
+  area: "quiz" | "challenge";
+  areaLabel: string;
+  step: string;
+  stepLabel: string;
+  name: string;
+  email: string | null;
+  firstSeenAt: string;
+  lastSeenAt: string;
+  progress: string;
+}
+
+type DropoffArea = "all" | "quiz" | "challenge";
+
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
@@ -48,6 +74,7 @@ interface AnalyticsData {
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
   quiz_sessions?: ServerQuizSession[];
+  challenge_progress?: ChallengeProgressRow[];
 }
 
 const fmt = (iso: string) =>
@@ -113,10 +140,23 @@ const FUNNEL_STEPS = [
   { event: "challenge_completed", label: "Challenge Complete" },
 ];
 
+function getChallengeDropoffDay(row: ChallengeProgressRow): number {
+  const completedDays = row.day_completed_at ?? {};
+  const currentDay = Math.min(Math.max(row.current_day ?? 1, 1), 3);
+
+  for (let day = 1; day <= 3; day += 1) {
+    if (!completedDays[`day${day}`]) return Math.max(day, currentDay);
+  }
+
+  return 3;
+}
+
 const AdminAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [dropoffArea, setDropoffArea] = useState<DropoffArea>("all");
+  const [dropoffStep, setDropoffStep] = useState("all");
 
   const loadData = async () => {
     setLoading(true);
@@ -179,11 +219,103 @@ const AdminAnalytics = () => {
     ...serverSessions,
     ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
   ].sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
-  const quizTotal = quizSessions[0]?.total ?? 9;
+  const quizTotal = Math.max(9, ...quizSessions.map((s) => s.total));
   const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
     quizSessions.filter((s) => s.lastQuestion >= i + 1).length
   );
   const quizStarts = quizSessions.length;
+
+  const challengeProgress = data?.challenge_progress ?? [];
+  const usersById = new Map(users.map((u) => [u.user_id, u]));
+
+  const quizDropoffs: DropoffRow[] = quizSessions
+    .filter((s) => !s.completed)
+    .map((s) => ({
+      key: `quiz-${s.key}`,
+      area: "quiz",
+      areaLabel: "Quiz",
+      step: `quiz-${s.lastQuestion}`,
+      stepLabel:
+        s.lastQuestion === 0 ? "Before question 1" : `Question ${s.lastQuestion} of ${s.total}`,
+      name: "Anonymous quiz taker",
+      email: null,
+      firstSeenAt: s.firstSeenAt,
+      lastSeenAt: s.lastSeenAt,
+      progress: `${s.lastQuestion} of ${s.total} questions`,
+    }));
+
+  const challengeDropoffs: DropoffRow[] = challengeProgress
+    .filter((row) => !row.completed)
+    .map((row) => {
+      const day = getChallengeDropoffDay(row);
+      const completedDays = Object.keys(row.day_completed_at ?? {}).filter((key) =>
+        ["day1", "day2", "day3"].includes(key)
+      ).length;
+      const user = usersById.get(row.user_id);
+
+      return {
+        key: `challenge-${row.user_id}`,
+        area: "challenge" as const,
+        areaLabel: "Challenge",
+        step: `day-${day}`,
+        stepLabel: `Day ${day}`,
+        name: user?.name || user?.email || "Challenge participant",
+        email: user?.email ?? null,
+        firstSeenAt: row.started_at,
+        lastSeenAt: row.updated_at,
+        progress: `${completedDays} of 3 days`,
+      };
+    });
+
+  const dropoffRows = [...quizDropoffs, ...challengeDropoffs].sort(
+    (a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime()
+  );
+  const areaFilteredDropoffs = dropoffRows.filter(
+    (row) => dropoffArea === "all" || row.area === dropoffArea
+  );
+  const filteredDropoffs = areaFilteredDropoffs.filter(
+    (row) => dropoffStep === "all" || row.step === dropoffStep
+  );
+
+  const dropoffSummary = Array.from(
+    areaFilteredDropoffs.reduce((map, row) => {
+      const existing = map.get(row.step);
+      map.set(row.step, {
+        step: row.step,
+        label: row.stepLabel,
+        areaLabel: row.areaLabel,
+        count: (existing?.count ?? 0) + 1,
+        latestAt:
+          existing && new Date(existing.latestAt) > new Date(row.lastSeenAt)
+            ? existing.latestAt
+            : row.lastSeenAt,
+      });
+      return map;
+    }, new Map<string, { step: string; label: string; areaLabel: string; count: number; latestAt: string }>())
+  )
+    .map(([, value]) => value)
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        new Date(b.latestAt).getTime() - new Date(a.latestAt).getTime()
+    );
+  const maxDropoffCount = Math.max(1, ...dropoffSummary.map((row) => row.count));
+
+  const dropoffStepOptions = [
+    { value: "all", label: "All steps and days" },
+    ...(dropoffArea !== "challenge"
+      ? [
+          { value: "quiz-0", label: "Quiz: Before question 1" },
+          ...Array.from({ length: quizTotal }, (_, i) => ({
+            value: `quiz-${i + 1}`,
+            label: `Quiz: Question ${i + 1}`,
+          })),
+        ]
+      : []),
+    ...(dropoffArea !== "quiz"
+      ? [1, 2, 3].map((day) => ({ value: `day-${day}`, label: `Challenge: Day ${day}` }))
+      : []),
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -221,9 +353,10 @@ const AdminAnalytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full mb-4">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
+            <TabsTrigger value="dropoffs">Drop-offs ({dropoffRows.length})</TabsTrigger>
             <TabsTrigger value="quiz">Quiz drop-off ({quizStarts})</TabsTrigger>
           </TabsList>
 
@@ -353,6 +486,163 @@ const AdminAnalytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="dropoffs" className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Journey
+                </label>
+                <Select
+                  value={dropoffArea}
+                  onValueChange={(value) => {
+                    setDropoffArea(value as DropoffArea);
+                    setDropoffStep("all");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Quiz and challenge</SelectItem>
+                    <SelectItem value="quiz">Quiz only</SelectItem>
+                    <SelectItem value="challenge">Challenge only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Step or day
+                </label>
+                <Select value={dropoffStep} onValueChange={setDropoffStep}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dropoffStepOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Biggest drop-off points
+              </h2>
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  {dropoffSummary.map((row) => {
+                    const pct = (row.count / maxDropoffCount) * 100;
+                    const share = areaFilteredDropoffs.length
+                      ? Math.round((row.count / areaFilteredDropoffs.length) * 100)
+                      : 0;
+
+                    return (
+                      <button
+                        key={row.step}
+                        type="button"
+                        onClick={() => setDropoffStep(row.step)}
+                        className="w-full text-left rounded-md p-2 -m-2 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-3 mb-1">
+                          <div>
+                            <span className="text-sm font-medium text-foreground">
+                              {row.areaLabel}: {row.label}
+                            </span>
+                            <p className="text-xs text-muted-foreground">
+                              Last seen {fmt(row.latestAt)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-sm font-bold text-foreground">{row.count}</span>
+                            <p className="text-xs text-muted-foreground">{share}% of drop-offs</p>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max(pct, 3)}%` }}
+                          />
+                        </div>
+                      </button>
+                    );
+                  })}
+                  {dropoffSummary.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No incomplete quiz or challenge journeys match these filters
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Filtered drop-offs ({filteredDropoffs.length})
+              </h2>
+              <Card>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50 border-b border-border">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Journey</th>
+                          <th className="text-left p-3 font-semibold">Person</th>
+                          <th className="text-left p-3 font-semibold">First seen</th>
+                          <th className="text-left p-3 font-semibold">Last seen</th>
+                          <th className="text-left p-3 font-semibold">Dropped at</th>
+                          <th className="text-left p-3 font-semibold">Progress</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredDropoffs.slice(0, 200).map((row) => (
+                          <tr
+                            key={row.key}
+                            className="border-b border-border last:border-0 hover:bg-muted/30"
+                          >
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">
+                                {row.areaLabel}
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              <div className="font-medium">{row.name}</div>
+                              {row.email && (
+                                <div className="text-xs text-muted-foreground">{row.email}</div>
+                              )}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {fmt(row.firstSeenAt)}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {fmt(row.lastSeenAt)}
+                            </td>
+                            <td className="p-3 whitespace-nowrap font-medium">{row.stepLabel}</td>
+                            <td className="p-3 whitespace-nowrap text-muted-foreground">
+                              {row.progress}
+                            </td>
+                          </tr>
+                        ))}
+                        {filteredDropoffs.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                              No drop-offs match these filters
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           <TabsContent value="quiz" className="space-y-6">
             <div>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">

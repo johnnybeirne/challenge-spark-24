@@ -80,10 +80,17 @@ Deno.serve(async (req) => {
       .order("started_at", { ascending: false })
       .limit(500);
 
+    // Challenge participants: current day and completed-day timestamps
+    const { data: challengeProgress } = await sb
+      .from("challenge_progress")
+      .select("user_id, current_day, day_completed_at, completed, started_at, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(1000);
+
     // User list with referral data
     const { data: users } = await sb
       .from("profiles")
-      .select("name, email, invite_code, referred_by, direct_referral_count, indirect_referral_count, created_at")
+      .select("user_id, name, email, invite_code, referred_by, direct_referral_count, indirect_referral_count, created_at")
       .order("created_at", { ascending: false });
 
     return new Response(
@@ -94,6 +101,7 @@ Deno.serve(async (req) => {
         users: users ?? [],
         quiz_events: quizEvents ?? [],
         quiz_sessions: quizSessions ?? [],
+        challenge_progress: challengeProgress ?? [],
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

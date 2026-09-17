@@ -135,12 +135,14 @@ function buildQuizSessions(events: QuizEventRow[]): QuizSession[] {
 }
 
 const FUNNEL_STEPS = [
+  { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
   { event: "signup_completed", label: "Signup" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
 ];
+
 
 function getChallengeDropoffDay(row: ChallengeProgressRow): number {
   const completedDays = row.day_completed_at ?? {};

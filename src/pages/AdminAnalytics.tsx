@@ -160,7 +160,24 @@ const AdminAnalytics = () => {
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
 
   const users = data?.users ?? [];
-  const quizSessions = buildQuizSessions(data?.quiz_events ?? []);
+  // Server-recorded sessions are authoritative; older attempts are reconstructed
+  // from raw events so nothing already captured disappears.
+  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
+    key: s.session_key,
+    startedAt: s.started_at,
+    lastAt: s.completed_at ?? s.last_answered_at ?? s.started_at,
+    lastQuestion:
+      s.last_question_index !== null && s.last_question_index !== undefined
+        ? s.last_question_index + 1
+        : (s.answered_count ?? 0),
+    total: s.total_questions ?? 9,
+    completed: !!s.completed_at,
+  }));
+  const serverKeys = new Set(serverSessions.map((s) => s.key));
+  const quizSessions = [
+    ...serverSessions,
+    ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
+  ].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
   const quizTotal = quizSessions[0]?.total ?? 9;
   const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
     quizSessions.filter((s) => s.lastQuestion >= i + 1).length

@@ -164,7 +164,7 @@ const AdminAnalytics = () => {
   const [rangePreset, setRangePreset] = useState("24h");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [last24h, setLast24h] = useState(false);
+  const [last24h, setLast24h] = useState(true);
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 

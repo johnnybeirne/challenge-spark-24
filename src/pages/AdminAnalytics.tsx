@@ -16,11 +16,81 @@ interface UserRow {
   created_at: string;
 }
 
+interface QuizEventRow {
+  event_name: string;
+  metadata: Record<string, any> | null;
+  created_at: string;
+}
+
+interface QuizSession {
+  key: string;
+  startedAt: string;
+  lastAt: string;
+  lastQuestion: number; // 1-based, 0 = started but never answered
+  total: number;
+  completed: boolean;
+}
+
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
   total_events: number;
   users?: UserRow[];
+  quiz_events?: QuizEventRow[];
+}
+
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+/** Groups raw quiz events into one row per person's run through the quiz. */
+function buildQuizSessions(events: QuizEventRow[]): QuizSession[] {
+  const asc = [...events].sort(
+    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+  const sessions = new Map<string, QuizSession>();
+  let legacyKey = "";
+  let legacyLast = 0;
+
+  for (const e of asc) {
+    const meta = e.metadata ?? {};
+    const ts = new Date(e.created_at).getTime();
+    let key = meta.sessionId as string | undefined;
+    if (!key) {
+      const gapped = !legacyKey || ts - legacyLast > 30 * 60 * 1000;
+      if (e.event_name === "assessment_started" || gapped) {
+        legacyKey = `legacy_${e.created_at}`;
+      }
+      legacyLast = ts;
+      key = legacyKey;
+    }
+
+    const existing = sessions.get(key);
+    const session: QuizSession = existing ?? {
+      key,
+      startedAt: e.created_at,
+      lastAt: e.created_at,
+      lastQuestion: 0,
+      total: Number(meta.total) || 9,
+      completed: false,
+    };
+    session.lastAt = e.created_at;
+    if (Number(meta.total)) session.total = Number(meta.total);
+    if (e.event_name === "assessment_question_answered") {
+      session.lastQuestion = Math.max(session.lastQuestion, Number(meta.index ?? 0) + 1);
+    }
+    if (e.event_name === "assessment_completed") session.completed = true;
+    sessions.set(key, session);
+  }
+
+  return Array.from(sessions.values()).sort(
+    (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
+  );
 }
 
 const FUNNEL_STEPS = [

@@ -660,7 +660,7 @@ const AdminAnalytics = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              Total events: {data?.total_events ?? 0}
+              Total events: {totalEvents}
             </p>
           </TabsContent>
 

@@ -295,6 +295,40 @@ const AdminAnalytics = () => {
     (row) => dropoffStep === "all" || row.step === dropoffStep
   );
 
+  const getDropoffProgressPct = (progress: string): number => {
+    const percent = progress.match(/\((\d+)%\)/);
+    if (percent) return Number(percent[1]);
+    const parts = progress.match(/^(\d+) of (\d+)/);
+    if (parts) return Math.round((Number(parts[1]) / Math.max(1, Number(parts[2]))) * 100);
+    return 0;
+  };
+
+  const query = dropoffQuery.trim().toLowerCase();
+  const sortedFilteredDropoffs = filteredDropoffs
+    .filter(
+      (row) =>
+        !query ||
+        row.name.toLowerCase().includes(query) ||
+        (row.email ?? "").toLowerCase().includes(query) ||
+        row.stepLabel.toLowerCase().includes(query)
+    )
+    .sort((a, b) => {
+      switch (dropoffSort) {
+        case "lastSeen_asc":
+          return new Date(a.lastSeenAt).getTime() - new Date(b.lastSeenAt).getTime();
+        case "firstSeen_desc":
+          return new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime();
+        case "firstSeen_asc":
+          return new Date(a.firstSeenAt).getTime() - new Date(b.firstSeenAt).getTime();
+        case "progress_desc":
+          return getDropoffProgressPct(b.progress) - getDropoffProgressPct(a.progress);
+        case "progress_asc":
+          return getDropoffProgressPct(a.progress) - getDropoffProgressPct(b.progress);
+        default:
+          return new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
+      }
+    });
+
   const dropoffSummary = Array.from(
     areaFilteredDropoffs.reduce((map, row) => {
       const existing = map.get(row.step);
@@ -506,7 +540,7 @@ const AdminAnalytics = () => {
           </TabsContent>
 
           <TabsContent value="dropoffs" className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
                   Journey

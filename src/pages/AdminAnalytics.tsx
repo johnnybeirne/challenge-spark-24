@@ -433,6 +433,27 @@ const AdminAnalytics = () => {
                               <td className="p-3 text-muted-foreground whitespace-nowrap">
                                 {Math.floor(secs / 60)}m {secs % 60}s
                               </td>
+                              <td className="p-3">
+                                {(() => {
+                                  const reached = s.completed ? s.total : s.lastQuestion;
+                                  const pct = s.total > 0 ? (reached / s.total) * 100 : 0;
+                                  return (
+                                    <div className="min-w-[150px]">
+                                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                        <div
+                                          className={`h-full rounded-full transition-all duration-500 ${
+                                            s.completed ? "bg-primary" : "bg-amber-500"
+                                          }`}
+                                          style={{ width: `${Math.max(pct, 3)}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-xs text-muted-foreground">
+                                        {reached} of {s.total} ({Math.round(pct)}%)
+                                      </span>
+                                    </div>
+                                  );
+                                })()}
+                              </td>
                               <td className="p-3 whitespace-nowrap font-medium">
                                 {s.completed
                                   ? "Finished"

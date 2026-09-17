@@ -236,9 +236,14 @@ const AdminAnalytics = () => {
   // Counts are recomputed from the daily breakdown when a date range is chosen.
   const dailyAll = data?.daily ?? {};
   const dailyInRange = Object.fromEntries(
-    Object.entries(dailyAll).filter(
-      ([day]) => (!fromDate || day >= fromDate) && (!toDate || day <= toDate)
-    )
+    Object.entries(dailyAll).filter(([day]) => {
+      if (last24h) {
+        const todayKey = toDayKey(new Date());
+        const yKey = toDayKey(new Date(now - 24 * 60 * 60 * 1000));
+        return day >= yKey && day <= todayKey;
+      }
+      return (!fromDate || day >= fromDate) && (!toDate || day <= toDate);
+    })
   );
   const rangedCounts: Record<string, number> = {};
   Object.values(dailyInRange).forEach((dayCounts) => {

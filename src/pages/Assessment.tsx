@@ -69,12 +69,26 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
   const trackedStart = useRef(false);
+  // Identifies one person's run through the quiz so drop-off can be traced.
+  const quizSessionId = useRef<string>(
+    (() => {
+      try {
+        const existing = sessionStorage.getItem("quiz_session_id");
+        if (existing) return existing;
+        const id = `qs_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+        sessionStorage.setItem("quiz_session_id", id);
+        return id;
+      } catch {
+        return `qs_${Date.now().toString(36)}`;
+      }
+    })(),
+  );
 
   useEffect(() => {
     if (started && !trackedStart.current) {
       trackedStart.current = true;
       startTime.current = Date.now();
-      trackEvent("assessment_started");
+      trackEvent("assessment_started", { sessionId: quizSessionId.current });
     }
   }, [started]);
 

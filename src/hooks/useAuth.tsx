@@ -117,13 +117,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Emails a 6-digit code (no magic link): omitting emailRedirectTo keeps the
-  // flow token-based. The Supabase email template must include {{ .Token }}.
+  // Emails a one-time login link. Lovable Cloud's built-in auth mailer sends
+  // its own magic-link template for this (not a typed code, despite the
+  // function name) — emailRedirectTo controls where that link lands.
   const sendEmailCode = async (email: string, metadata?: Record<string, string>) => {
     try {
       const { error } = await withAuthTimeout(supabase.auth.signInWithOtp({
         email,
-        options: { data: metadata, shouldCreateUser: true },
+        options: {
+          data: metadata,
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/challenger-dashboard`,
+        },
       }));
       return { error };
     } catch (error) {

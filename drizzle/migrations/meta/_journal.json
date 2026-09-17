@@ -64,6 +64,13 @@
       "when": 1789643526072,
       "tag": "0008_tighten_security_definer_execute",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789643593640,
+      "tag": "0009_analytics_events_no_user_spoofing",
+      "breakpoints": true
     }
   ]
 }

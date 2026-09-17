@@ -740,7 +740,7 @@ const AdminAnalytics = () => {
                         ))}
                         {sortedFilteredDropoffs.length === 0 && (
                           <tr>
-                            <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                            <td colSpan={7} className="p-6 text-center text-muted-foreground">
                               No drop-offs match these filters
                             </td>
                           </tr>

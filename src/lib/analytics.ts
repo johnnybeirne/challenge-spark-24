@@ -97,6 +97,40 @@ const FB_EVENT_MAP: Partial<Record<AnalyticsEvent, { event: string; params?: Rec
   landing_cta_clicked: { event: "InitiateCheckout", params: { content_name: "Landing CTA" } },
 };
 
+// A stable per-browser id so repeat page loads count as one visitor,
+// plus a flag that marks the owner's own browsing as internal.
+const VISITOR_KEY = "lt_visitor_id";
+export const INTERNAL_KEY = "lt_internal_visitor";
+
+function getVisitorId(): string | null {
+  try {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!id) {
+      id = `v_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
+export function markInternalVisitor(): void {
+  try {
+    localStorage.setItem(INTERNAL_KEY, "1");
+  } catch {
+    // ignore
+  }
+}
+
+function isInternalVisitor(): boolean {
+  try {
+    return localStorage.getItem(INTERNAL_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export async function trackEvent(
   event: AnalyticsEvent,
   metadata?: Record<string, unknown>
@@ -104,7 +138,11 @@ export async function trackEvent(
   try {
     await (supabase.from("analytics_events") as any).insert({
       event_name: event,
-      metadata: metadata ?? {},
+      metadata: {
+        ...(metadata ?? {}),
+        visitor_id: getVisitorId(),
+        internal: isInternalVisitor(),
+      },
     });
   } catch {
     // Fire-and-forget — never block UI

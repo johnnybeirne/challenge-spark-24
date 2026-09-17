@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
@@ -157,6 +158,8 @@ const AdminAnalytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dropoffArea, setDropoffArea] = useState<DropoffArea>("all");
   const [dropoffStep, setDropoffStep] = useState("all");
+  const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
+  const [dropoffQuery, setDropoffQuery] = useState("");
 
   const loadData = async () => {
     setLoading(true);
@@ -291,6 +294,40 @@ const AdminAnalytics = () => {
   const filteredDropoffs = areaFilteredDropoffs.filter(
     (row) => dropoffStep === "all" || row.step === dropoffStep
   );
+
+  const getDropoffProgressPct = (progress: string): number => {
+    const percent = progress.match(/\((\d+)%\)/);
+    if (percent) return Number(percent[1]);
+    const parts = progress.match(/^(\d+) of (\d+)/);
+    if (parts) return Math.round((Number(parts[1]) / Math.max(1, Number(parts[2]))) * 100);
+    return 0;
+  };
+
+  const query = dropoffQuery.trim().toLowerCase();
+  const sortedFilteredDropoffs = filteredDropoffs
+    .filter(
+      (row) =>
+        !query ||
+        row.name.toLowerCase().includes(query) ||
+        (row.email ?? "").toLowerCase().includes(query) ||
+        row.stepLabel.toLowerCase().includes(query)
+    )
+    .sort((a, b) => {
+      switch (dropoffSort) {
+        case "lastSeen_asc":
+          return new Date(a.lastSeenAt).getTime() - new Date(b.lastSeenAt).getTime();
+        case "firstSeen_desc":
+          return new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime();
+        case "firstSeen_asc":
+          return new Date(a.firstSeenAt).getTime() - new Date(b.firstSeenAt).getTime();
+        case "progress_desc":
+          return getDropoffProgressPct(b.progress) - getDropoffProgressPct(a.progress);
+        case "progress_asc":
+          return getDropoffProgressPct(a.progress) - getDropoffProgressPct(b.progress);
+        default:
+          return new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
+      }
+    });
 
   const dropoffSummary = Array.from(
     areaFilteredDropoffs.reduce((map, row) => {
@@ -503,7 +540,7 @@ const AdminAnalytics = () => {
           </TabsContent>
 
           <TabsContent value="dropoffs" className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
                   Journey
@@ -542,6 +579,36 @@ const AdminAnalytics = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Sort by
+                </label>
+                <Select value={dropoffSort} onValueChange={setDropoffSort}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lastSeen_desc">Last seen: newest first</SelectItem>
+                    <SelectItem value="lastSeen_asc">Last seen: oldest first</SelectItem>
+                    <SelectItem value="firstSeen_desc">First seen: newest first</SelectItem>
+                    <SelectItem value="firstSeen_asc">First seen: oldest first</SelectItem>
+                    <SelectItem value="progress_desc">Progress: furthest first</SelectItem>
+                    <SelectItem value="progress_asc">Progress: least first</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Search
+                </label>
+                <Input
+                  value={dropoffQuery}
+                  onChange={(event) => setDropoffQuery(event.target.value)}
+                  placeholder="Name, email or step"
+                />
               </div>
             </div>
 
@@ -598,7 +665,7 @@ const AdminAnalytics = () => {
 
             <div>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Filtered drop-offs ({filteredDropoffs.length})
+                Filtered drop-offs ({sortedFilteredDropoffs.length})
               </h2>
               <Card>
                 <CardContent className="p-0">
@@ -615,7 +682,7 @@ const AdminAnalytics = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredDropoffs.slice(0, 200).map((row) => (
+                        {sortedFilteredDropoffs.slice(0, 200).map((row) => (
                           <tr
                             key={row.key}
                             className="border-b border-border last:border-0 hover:bg-muted/30"
@@ -643,7 +710,7 @@ const AdminAnalytics = () => {
                             </td>
                           </tr>
                         ))}
-                        {filteredDropoffs.length === 0 && (
+                        {sortedFilteredDropoffs.length === 0 && (
                           <tr>
                             <td colSpan={6} className="p-6 text-center text-muted-foreground">
                               No drop-offs match these filters

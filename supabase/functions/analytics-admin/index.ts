@@ -83,6 +83,7 @@ Deno.serve(async (req) => {
         daily,
         total_events: events?.length ?? 0,
         users: users ?? [],
+        quiz_events: quizEvents ?? [],
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

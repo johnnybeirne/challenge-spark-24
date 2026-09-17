@@ -169,7 +169,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     const updated = { ...answers, [q.id]: answer };
 
     // Track
-    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer });
+    trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer, sessionId: quizSessionId.current, total: TOTAL_QUESTIONS });
 
     const advance = () => {
       setAnswers(updated);
@@ -190,6 +190,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           score: result.diagnosticScore,
           level: result.diagnosticLevel,
           timeTaken,
+          sessionId: quizSessionId.current,
         });
         trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
         trackEvent("assessment_time_taken" as any, { seconds: timeTaken });

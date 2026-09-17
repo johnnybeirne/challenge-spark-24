@@ -84,11 +84,25 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     })(),
   );
 
+  // Records quiz progress server-side so abandoned attempts still show how far
+  // the person got. Best effort: never blocks or breaks the quiz.
+  const recordQuizSession = (payload: Record<string, unknown>) => {
+    try {
+      supabase.functions
+        .invoke("quiz-session", {
+          body: { sessionKey: quizSessionId.current, totalQuestions: TOTAL_QUESTIONS, ...payload },
+        })
+        .then(() => {})
+        .catch(() => {});
+    } catch {}
+  };
+
   useEffect(() => {
     if (started && !trackedStart.current) {
       trackedStart.current = true;
       startTime.current = Date.now();
       trackEvent("assessment_started", { sessionId: quizSessionId.current });
+      recordQuizSession({ event: "start" });
     }
   }, [started]);
 

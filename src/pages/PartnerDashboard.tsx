@@ -278,13 +278,6 @@ const PartnerDashboard = () => {
           </Card>
         )}
 
-        {/* COMMISSION RATES */}
-        {partner && (
-          <CommissionRatesCard
-            partner={partner}
-            onSaved={refresh}
-          />
-        )}
 
         {/* COUPONS */}
         {coupons.length > 0 && (

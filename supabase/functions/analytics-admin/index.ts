@@ -71,6 +71,15 @@ Deno.serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(3000);
 
+    // Server-side quiz sessions: start time, last question reached, completion
+    const { data: quizSessions } = await sb
+      .from("quiz_sessions")
+      .select(
+        "session_key, user_id, started_at, last_answered_at, completed_at, last_question_index, last_question_id, answered_count, total_questions, score, level",
+      )
+      .order("started_at", { ascending: false })
+      .limit(500);
+
     // User list with referral data
     const { data: users } = await sb
       .from("profiles")
@@ -84,6 +93,7 @@ Deno.serve(async (req) => {
         total_events: events?.length ?? 0,
         users: users ?? [],
         quiz_events: quizEvents ?? [],
+        quiz_sessions: quizSessions ?? [],
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

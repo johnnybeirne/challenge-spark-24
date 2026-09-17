@@ -31,12 +31,23 @@ interface QuizSession {
   completed: boolean;
 }
 
+interface ServerQuizSession {
+  session_key: string;
+  started_at: string;
+  last_answered_at: string | null;
+  completed_at: string | null;
+  last_question_index: number | null;
+  answered_count: number | null;
+  total_questions: number | null;
+}
+
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
   total_events: number;
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
+  quiz_sessions?: ServerQuizSession[];
 }
 
 const fmt = (iso: string) =>
@@ -149,7 +160,24 @@ const AdminAnalytics = () => {
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
 
   const users = data?.users ?? [];
-  const quizSessions = buildQuizSessions(data?.quiz_events ?? []);
+  // Server-recorded sessions are authoritative; older attempts are reconstructed
+  // from raw events so nothing already captured disappears.
+  const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
+    key: s.session_key,
+    startedAt: s.started_at,
+    lastAt: s.completed_at ?? s.last_answered_at ?? s.started_at,
+    lastQuestion:
+      s.last_question_index !== null && s.last_question_index !== undefined
+        ? s.last_question_index + 1
+        : (s.answered_count ?? 0),
+    total: s.total_questions ?? 9,
+    completed: !!s.completed_at,
+  }));
+  const serverKeys = new Set(serverSessions.map((s) => s.key));
+  const quizSessions = [
+    ...serverSessions,
+    ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
+  ].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
   const quizTotal = quizSessions[0]?.total ?? 9;
   const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
     quizSessions.filter((s) => s.lastQuestion >= i + 1).length
@@ -381,6 +409,7 @@ const AdminAnalytics = () => {
                           <th className="text-left p-3 font-semibold">Started</th>
                           <th className="text-left p-3 font-semibold">Last activity</th>
                           <th className="text-left p-3 font-semibold">Time on quiz</th>
+                          <th className="text-left p-3 font-semibold w-[180px]">Progress</th>
                           <th className="text-left p-3 font-semibold">Stopped at</th>
                         </tr>
                       </thead>
@@ -404,6 +433,27 @@ const AdminAnalytics = () => {
                               <td className="p-3 text-muted-foreground whitespace-nowrap">
                                 {Math.floor(secs / 60)}m {secs % 60}s
                               </td>
+                              <td className="p-3">
+                                {(() => {
+                                  const reached = s.completed ? s.total : s.lastQuestion;
+                                  const pct = s.total > 0 ? (reached / s.total) * 100 : 0;
+                                  return (
+                                    <div className="min-w-[150px]">
+                                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                        <div
+                                          className={`h-full rounded-full transition-all duration-500 ${
+                                            s.completed ? "bg-primary" : "bg-amber-500"
+                                          }`}
+                                          style={{ width: `${Math.max(pct, 3)}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-xs text-muted-foreground">
+                                        {reached} of {s.total} ({Math.round(pct)}%)
+                                      </span>
+                                    </div>
+                                  );
+                                })()}
+                              </td>
                               <td className="p-3 whitespace-nowrap font-medium">
                                 {s.completed
                                   ? "Finished"
@@ -416,7 +466,7 @@ const AdminAnalytics = () => {
                         })}
                         {quizSessions.length === 0 && (
                           <tr>
-                            <td colSpan={4} className="p-6 text-center text-muted-foreground">
+                            <td colSpan={5} className="p-6 text-center text-muted-foreground">
                               No quiz attempts recorded yet
                             </td>
                           </tr>

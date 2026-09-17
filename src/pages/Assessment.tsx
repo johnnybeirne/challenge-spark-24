@@ -84,11 +84,25 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
     })(),
   );
 
+  // Records quiz progress server-side so abandoned attempts still show how far
+  // the person got. Best effort: never blocks or breaks the quiz.
+  const recordQuizSession = (payload: Record<string, unknown>) => {
+    try {
+      supabase.functions
+        .invoke("quiz-session", {
+          body: { sessionKey: quizSessionId.current, totalQuestions: TOTAL_QUESTIONS, ...payload },
+        })
+        .then(() => {})
+        .catch(() => {});
+    } catch {}
+  };
+
   useEffect(() => {
     if (started && !trackedStart.current) {
       trackedStart.current = true;
       startTime.current = Date.now();
       trackEvent("assessment_started", { sessionId: quizSessionId.current });
+      recordQuizSession({ event: "start" });
     }
   }, [started]);
 
@@ -170,6 +184,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
     // Track
     trackEvent("assessment_question_answered" as any, { index: current, questionId: q.id, answer, sessionId: quizSessionId.current, total: TOTAL_QUESTIONS });
+    recordQuizSession({ event: "answer", questionIndex: current, questionId: q.id, answer });
 
     const advance = () => {
       setAnswers(updated);
@@ -191,6 +206,11 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           level: result.diagnosticLevel,
           timeTaken,
           sessionId: quizSessionId.current,
+        });
+        recordQuizSession({
+          event: "complete",
+          score: result.diagnosticScore,
+          level: result.diagnosticLevel,
         });
         trackEvent(`assessment_result_${result.diagnosticLevel}` as any);
         trackEvent("assessment_time_taken" as any, { seconds: timeTaken });

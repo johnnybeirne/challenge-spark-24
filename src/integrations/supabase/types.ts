@@ -2256,6 +2256,57 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_sessions: {
+        Row: {
+          answered_count: number
+          answers: Json
+          completed_at: string | null
+          id: string
+          last_answered_at: string | null
+          last_question_id: string | null
+          last_question_index: number | null
+          level: string | null
+          score: number | null
+          session_key: string
+          started_at: string
+          total_questions: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          answered_count?: number
+          answers?: Json
+          completed_at?: string | null
+          id?: string
+          last_answered_at?: string | null
+          last_question_id?: string | null
+          last_question_index?: number | null
+          level?: string | null
+          score?: number | null
+          session_key: string
+          started_at?: string
+          total_questions?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          answered_count?: number
+          answers?: Json
+          completed_at?: string | null
+          id?: string
+          last_answered_at?: string | null
+          last_question_id?: string | null
+          last_question_index?: number | null
+          level?: string | null
+          score?: number | null
+          session_key?: string
+          started_at?: string
+          total_questions?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       referral_attributions: {
         Row: {
           bound_at: string

@@ -24,8 +24,8 @@ interface QuizEventRow {
 
 interface QuizSession {
   key: string;
-  startedAt: string;
-  lastAt: string;
+  firstSeenAt: string;
+  lastSeenAt: string;
   lastQuestion: number; // 1-based, 0 = started but never answered
   total: number;
   completed: boolean;
@@ -84,13 +84,14 @@ function buildQuizSessions(events: QuizEventRow[]): QuizSession[] {
     const existing = sessions.get(key);
     const session: QuizSession = existing ?? {
       key,
-      startedAt: e.created_at,
-      lastAt: e.created_at,
+      firstSeenAt: e.created_at,
+      lastSeenAt: e.created_at,
       lastQuestion: 0,
       total: Number(meta.total) || 9,
       completed: false,
     };
-    session.lastAt = e.created_at;
+    if (ts < new Date(session.firstSeenAt).getTime()) session.firstSeenAt = e.created_at;
+    if (ts > new Date(session.lastSeenAt).getTime()) session.lastSeenAt = e.created_at;
     if (Number(meta.total)) session.total = Number(meta.total);
     if (e.event_name === "assessment_question_answered") {
       session.lastQuestion = Math.max(session.lastQuestion, Number(meta.index ?? 0) + 1);
@@ -100,7 +101,7 @@ function buildQuizSessions(events: QuizEventRow[]): QuizSession[] {
   }
 
   return Array.from(sessions.values()).sort(
-    (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
+    (a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime()
   );
 }
 
@@ -164,8 +165,8 @@ const AdminAnalytics = () => {
   // from raw events so nothing already captured disappears.
   const serverSessions: QuizSession[] = (data?.quiz_sessions ?? []).map((s) => ({
     key: s.session_key,
-    startedAt: s.started_at,
-    lastAt: s.completed_at ?? s.last_answered_at ?? s.started_at,
+    firstSeenAt: s.started_at,
+    lastSeenAt: s.completed_at ?? s.last_answered_at ?? s.started_at,
     lastQuestion:
       s.last_question_index !== null && s.last_question_index !== undefined
         ? s.last_question_index + 1
@@ -177,7 +178,7 @@ const AdminAnalytics = () => {
   const quizSessions = [
     ...serverSessions,
     ...buildQuizSessions(data?.quiz_events ?? []).filter((s) => !serverKeys.has(s.key)),
-  ].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+  ].sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
   const quizTotal = quizSessions[0]?.total ?? 9;
   const reachedCounts = Array.from({ length: quizTotal }, (_, i) =>
     quizSessions.filter((s) => s.lastQuestion >= i + 1).length
@@ -406,8 +407,8 @@ const AdminAnalytics = () => {
                     <table className="w-full text-sm">
                       <thead className="bg-muted/50 border-b border-border">
                         <tr>
-                          <th className="text-left p-3 font-semibold">Started</th>
-                          <th className="text-left p-3 font-semibold">Last activity</th>
+                          <th className="text-left p-3 font-semibold">First seen</th>
+                          <th className="text-left p-3 font-semibold">Last seen</th>
                           <th className="text-left p-3 font-semibold">Time on quiz</th>
                           <th className="text-left p-3 font-semibold w-[180px]">Progress</th>
                           <th className="text-left p-3 font-semibold">Stopped at</th>
@@ -418,7 +419,7 @@ const AdminAnalytics = () => {
                           const secs = Math.max(
                             0,
                             Math.round(
-                              (new Date(s.lastAt).getTime() - new Date(s.startedAt).getTime()) / 1000
+                              (new Date(s.lastSeenAt).getTime() - new Date(s.firstSeenAt).getTime()) / 1000
                             )
                           );
                           return (
@@ -426,9 +427,9 @@ const AdminAnalytics = () => {
                               key={s.key}
                               className="border-b border-border last:border-0 hover:bg-muted/30"
                             >
-                              <td className="p-3 whitespace-nowrap">{fmt(s.startedAt)}</td>
+                              <td className="p-3 whitespace-nowrap">{fmt(s.firstSeenAt)}</td>
                               <td className="p-3 whitespace-nowrap text-muted-foreground">
-                                {fmt(s.lastAt)}
+                                {fmt(s.lastSeenAt)}
                               </td>
                               <td className="p-3 text-muted-foreground whitespace-nowrap">
                                 {Math.floor(secs / 60)}m {secs % 60}s

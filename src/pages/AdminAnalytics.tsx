@@ -573,7 +573,10 @@ const AdminAnalytics = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{landingViews}</p>
-                <p className="text-xs text-muted-foreground mt-1">Quiz page visits</p>
+                <p className="text-xs text-muted-foreground mt-1">Quiz page visitors</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Unique people, your own visits excluded
+                </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>

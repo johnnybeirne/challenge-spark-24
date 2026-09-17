@@ -51,7 +51,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const authenticated = !!authUser || !!state.user;
   const experience = getExperience(state.user?.role);
   const useLeadtreeShell = showNav && authenticated && experience !== "partner";
-  const hideCopilotRoutes = ["/assess", "/assessment"];
+  const hideCopilotRoutes = ["/assess", "/assessment", "/"];
   const showCopilotChat = authenticated && !isAuthEntryRoute && !isOwnerConsoleRoute && !hideCopilotRoutes.includes(pathname);
   const mode = getExperienceFromPath(pathname);
 

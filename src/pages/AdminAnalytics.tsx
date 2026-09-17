@@ -31,12 +31,23 @@ interface QuizSession {
   completed: boolean;
 }
 
+interface ServerQuizSession {
+  session_key: string;
+  started_at: string;
+  last_answered_at: string | null;
+  completed_at: string | null;
+  last_question_index: number | null;
+  answered_count: number | null;
+  total_questions: number | null;
+}
+
 interface AnalyticsData {
   counts: Record<string, number>;
   daily: Record<string, Record<string, number>>;
   total_events: number;
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
+  quiz_sessions?: ServerQuizSession[];
 }
 
 const fmt = (iso: string) =>

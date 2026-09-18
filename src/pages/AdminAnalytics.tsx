@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, BarChart3, ArrowRight, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 
@@ -140,7 +140,7 @@ const FUNNEL_STEPS = [
   { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
-  { event: "signup_completed", label: "Signup" },
+  { event: "signup_completed", label: "Challenge Sign Up" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
 ];

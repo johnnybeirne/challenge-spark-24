@@ -626,12 +626,22 @@ const AdminAnalytics = () => {
         </Card>
 
         {/* Totals */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
               <Users className="h-5 w-5 text-primary mx-auto mb-1" />
               <p className="text-2xl font-bold text-foreground">{users.length || totalUsers}</p>
-              <p className="text-xs text-muted-foreground">Users</p>
+              <p className="text-xs text-muted-foreground">Challenge Sign Up</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <FileText className="h-5 w-5 text-primary mx-auto mb-1" />
+              <p className="text-2xl font-bold text-foreground">{reportOnlyCount}</p>
+              <p className="text-xs text-muted-foreground">Report only</p>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {reportsInRange.length} report requests
+              </p>
             </CardContent>
           </Card>
           <Card>

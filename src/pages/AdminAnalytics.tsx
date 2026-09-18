@@ -277,6 +277,14 @@ const AdminAnalytics = () => {
   // twice for one person and carry no name or email).
   const totalUsers = users.length;
   const totalReferrals = counts["referral_sent"] ?? 0;
+  // Report opt-ins in range, and how many of those never created an account.
+  const reportsInRange = (data?.quiz_reports ?? []).filter((r) => inRange(r.created_at));
+  const accountEmails = new Set(
+    (data?.users ?? []).map((u) => (u.email ?? "").toLowerCase()).filter(Boolean)
+  );
+  const reportOnlyCount = reportsInRange.filter(
+    (r) => !accountEmails.has((r.email ?? "").toLowerCase())
+  ).length;
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
 

@@ -154,6 +154,7 @@ Deno.serve(async (req) => {
         users: users ?? [],
         quiz_events: quizEvents ?? [],
         quiz_sessions: quizSessions ?? [],
+        quiz_reports: quizReports ?? [],
         challenge_progress: challengeProgress ?? [],
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

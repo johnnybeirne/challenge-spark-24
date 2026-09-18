@@ -299,14 +299,14 @@ const AdminAnalytics = () => {
     });
   const uniqueCounts = rangeActive ? rangedUnique : data?.counts_unique ?? {};
 
-  // Visitors to the quiz page versus people who actually take the quiz.
-  const landingViews = uniqueCounts["landing_viewed"] ?? 0;
+  // Visitors come from GA4 (entered by the owner); quiz starts and finishes
+  // come from our own tracking.
   const quizStartEvents = uniqueCounts["assessment_started"] ?? 0;
   const quizFinishEvents = uniqueCounts["assessment_completed"] ?? 0;
   const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
-  const visitorToStartRate = pct(quizStartEvents, landingViews);
+  const visitorToStartRate = pct(quizStartEvents, gaVisitors);
   const startToFinishRate = pct(quizFinishEvents, quizStartEvents);
-  const visitorToFinishRate = pct(quizFinishEvents, landingViews);
+  const visitorToFinishRate = pct(quizFinishEvents, gaVisitors);
 
 
 

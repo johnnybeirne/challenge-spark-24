@@ -169,6 +169,18 @@ const AdminAnalytics = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [last24h, setLast24h] = useState(true);
+  // GA4 "Users (last 7 days)" entered manually by the owner from Google Analytics.
+  const [ga7dVisitors, setGa7dVisitors] = useState<number | "">(() => {
+    const stored = localStorage.getItem("lt_ga7d_visitors");
+    return stored ? Number(stored) : "";
+  });
+  const updateGa7dVisitors = (v: string) => {
+    const n = v === "" ? "" : Math.max(0, Number(v) || 0);
+    setGa7dVisitors(n as number | "");
+    if (n === "") localStorage.removeItem("lt_ga7d_visitors");
+    else localStorage.setItem("lt_ga7d_visitors", String(n));
+  };
+  const gaVisitors = typeof ga7dVisitors === "number" ? ga7dVisitors : 0;
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 

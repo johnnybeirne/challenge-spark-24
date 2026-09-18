@@ -37,15 +37,26 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get all events. The owner's own browsing is flagged internal and excluded.
-    const { data: rawEvents, error } = await sb
-      .from("analytics_events")
-      .select("event_name, created_at, metadata")
-      .order("created_at", { ascending: true });
+    // Get events from the last 180 days. PostgREST caps a single response at
+    // 1000 rows, so page through until everything in the window is loaded.
+    const sinceIso = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
+    const rawEvents: any[] = [];
+    const PAGE = 1000;
+    for (let page = 0; page < 60; page++) {
+      const { data: chunk, error } = await sb
+        .from("analytics_events")
+        .select("event_name, created_at, metadata")
+        .gte("created_at", sinceIso)
+        .order("created_at", { ascending: false })
+        .range(page * PAGE, page * PAGE + PAGE - 1);
+      if (error) throw error;
+      if (!chunk || chunk.length === 0) break;
+      rawEvents.push(...chunk);
+      if (chunk.length < PAGE) break;
+    }
 
-    if (error) throw error;
-
-    const events = (rawEvents ?? []).filter(
+    // The owner's own browsing is flagged internal and excluded.
+    const events = rawEvents.filter(
       (e: any) => e?.metadata?.internal !== true,
     );
 

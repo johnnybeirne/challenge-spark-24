@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, BarChart3, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, BarChart3, ArrowRight, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 
@@ -77,6 +77,7 @@ interface AnalyticsData {
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
   quiz_sessions?: ServerQuizSession[];
+  quiz_reports?: { id: string; email: string; name: string | null; created_at: string }[];
   challenge_progress?: ChallengeProgressRow[];
 }
 
@@ -139,7 +140,7 @@ const FUNNEL_STEPS = [
   { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
-  { event: "signup_completed", label: "Signup" },
+  { event: "signup_completed", label: "Challenge Sign Up" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
 ];
@@ -276,6 +277,14 @@ const AdminAnalytics = () => {
   // twice for one person and carry no name or email).
   const totalUsers = users.length;
   const totalReferrals = counts["referral_sent"] ?? 0;
+  // Report opt-ins in range, and how many of those never created an account.
+  const reportsInRange = (data?.quiz_reports ?? []).filter((r) => inRange(r.created_at));
+  const accountEmails = new Set(
+    (data?.users ?? []).map((u) => (u.email ?? "").toLowerCase()).filter(Boolean)
+  );
+  const reportOnlyCount = reportsInRange.filter(
+    (r) => !accountEmails.has((r.email ?? "").toLowerCase())
+  ).length;
   const completions = counts["challenge_completed"] ?? 0;
   const completionRate = totalUsers > 0 ? Math.round((completions / totalUsers) * 100) : 0;
 
@@ -617,12 +626,22 @@ const AdminAnalytics = () => {
         </Card>
 
         {/* Totals */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
               <Users className="h-5 w-5 text-primary mx-auto mb-1" />
               <p className="text-2xl font-bold text-foreground">{users.length || totalUsers}</p>
-              <p className="text-xs text-muted-foreground">Users</p>
+              <p className="text-xs text-muted-foreground">Challenge Sign Up</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <FileText className="h-5 w-5 text-primary mx-auto mb-1" />
+              <p className="text-2xl font-bold text-foreground">{reportOnlyCount}</p>
+              <p className="text-xs text-muted-foreground">Report only</p>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {reportsInRange.length} report requests
+              </p>
             </CardContent>
           </Card>
           <Card>

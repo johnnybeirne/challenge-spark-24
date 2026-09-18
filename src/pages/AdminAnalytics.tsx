@@ -77,6 +77,7 @@ interface AnalyticsData {
   users?: UserRow[];
   quiz_events?: QuizEventRow[];
   quiz_sessions?: ServerQuizSession[];
+  quiz_reports?: { id: string; email: string; name: string | null; created_at: string }[];
   challenge_progress?: ChallengeProgressRow[];
 }
 

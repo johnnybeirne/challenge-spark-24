@@ -584,24 +584,32 @@ const AdminAnalytics = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-border p-4 text-center">
-                <p className="text-3xl font-bold text-foreground">{landingViews}</p>
+                <Input
+                  type="number"
+                  value={ga7dVisitors}
+                  onChange={(e) => updateGa7dVisitors(e.target.value)}
+                  placeholder="—"
+                  className="text-3xl font-bold text-center border-0 p-0 h-auto focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none"
+                />
                 <p className="text-xs text-muted-foreground mt-1">Quiz page visitors</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Unique people, your own visits excluded
+                  From Google Analytics (last 7 days)
                 </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>
                 <p className="text-xs text-muted-foreground mt-1">Started the quiz</p>
                 <p className="text-xs font-medium text-primary mt-1">
-                  {visitorToStartRate}% of visitors
+                  {gaVisitors > 0 ? `${visitorToStartRate}% of visitors` : "—"}
                 </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizFinishEvents}</p>
                 <p className="text-xs text-muted-foreground mt-1">Finished the quiz</p>
                 <p className="text-xs font-medium text-primary mt-1">
-                  {startToFinishRate}% of starters · {visitorToFinishRate}% of visitors
+                  {gaVisitors > 0
+                    ? `${startToFinishRate}% of starters · ${visitorToFinishRate}% of visitors`
+                    : `${startToFinishRate}% of starters`}
                 </p>
               </div>
             </div>

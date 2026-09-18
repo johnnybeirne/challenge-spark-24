@@ -640,7 +640,7 @@ const AdminAnalytics = () => {
               <p className="text-2xl font-bold text-foreground">{reportOnlyCount}</p>
               <p className="text-xs text-muted-foreground">Report only</p>
               <p className="text-[11px] text-muted-foreground mt-1">
-                {reportsInRange.length} report request{reportsInRange.length === 1 ? "" : "s"}
+                of {reportsInRange.length} report request{reportsInRange.length === 1 ? "" : "s"}
               </p>
             </CardContent>
           </Card>

@@ -169,6 +169,18 @@ const AdminAnalytics = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [last24h, setLast24h] = useState(true);
+  // GA4 "Users (last 7 days)" entered manually by the owner from Google Analytics.
+  const [ga7dVisitors, setGa7dVisitors] = useState<number | "">(() => {
+    const stored = localStorage.getItem("lt_ga7d_visitors");
+    return stored ? Number(stored) : "";
+  });
+  const updateGa7dVisitors = (v: string) => {
+    const n = v === "" ? "" : Math.max(0, Number(v) || 0);
+    setGa7dVisitors(n as number | "");
+    if (n === "") localStorage.removeItem("lt_ga7d_visitors");
+    else localStorage.setItem("lt_ga7d_visitors", String(n));
+  };
+  const gaVisitors = typeof ga7dVisitors === "number" ? ga7dVisitors : 0;
 
   const toDayKey = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -287,14 +299,14 @@ const AdminAnalytics = () => {
     });
   const uniqueCounts = rangeActive ? rangedUnique : data?.counts_unique ?? {};
 
-  // Visitors to the quiz page versus people who actually take the quiz.
-  const landingViews = uniqueCounts["landing_viewed"] ?? 0;
+  // Visitors come from GA4 (entered by the owner); quiz starts and finishes
+  // come from our own tracking.
   const quizStartEvents = uniqueCounts["assessment_started"] ?? 0;
   const quizFinishEvents = uniqueCounts["assessment_completed"] ?? 0;
   const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
-  const visitorToStartRate = pct(quizStartEvents, landingViews);
+  const visitorToStartRate = pct(quizStartEvents, gaVisitors);
   const startToFinishRate = pct(quizFinishEvents, quizStartEvents);
-  const visitorToFinishRate = pct(quizFinishEvents, landingViews);
+  const visitorToFinishRate = pct(quizFinishEvents, gaVisitors);
 
 
 
@@ -572,24 +584,32 @@ const AdminAnalytics = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-border p-4 text-center">
-                <p className="text-3xl font-bold text-foreground">{landingViews}</p>
+                <Input
+                  type="number"
+                  value={ga7dVisitors}
+                  onChange={(e) => updateGa7dVisitors(e.target.value)}
+                  placeholder="—"
+                  className="text-3xl font-bold text-center border-0 p-0 h-auto focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none"
+                />
                 <p className="text-xs text-muted-foreground mt-1">Quiz page visitors</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Unique people, your own visits excluded
+                  From Google Analytics (last 7 days)
                 </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizStartEvents}</p>
                 <p className="text-xs text-muted-foreground mt-1">Started the quiz</p>
                 <p className="text-xs font-medium text-primary mt-1">
-                  {visitorToStartRate}% of visitors
+                  {gaVisitors > 0 ? `${visitorToStartRate}% of visitors` : "—"}
                 </p>
               </div>
               <div className="rounded-lg border border-border p-4 text-center">
                 <p className="text-3xl font-bold text-foreground">{quizFinishEvents}</p>
                 <p className="text-xs text-muted-foreground mt-1">Finished the quiz</p>
                 <p className="text-xs font-medium text-primary mt-1">
-                  {startToFinishRate}% of starters · {visitorToFinishRate}% of visitors
+                  {gaVisitors > 0
+                    ? `${startToFinishRate}% of starters · ${visitorToFinishRate}% of visitors`
+                    : `${startToFinishRate}% of starters`}
                 </p>
               </div>
             </div>

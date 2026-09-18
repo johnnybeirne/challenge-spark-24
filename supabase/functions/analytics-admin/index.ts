@@ -131,6 +131,13 @@ Deno.serve(async (req) => {
       .order("updated_at", { ascending: false })
       .limit(1000);
 
+    // Report opt-ins: people who asked for the emailed report
+    const { data: quizReports } = await sb
+      .from("quiz_reports")
+      .select("id, email, name, created_at")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+
     // User list with referral data
     const { data: users } = await sb
       .from("profiles")

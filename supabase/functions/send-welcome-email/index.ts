@@ -12,7 +12,8 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const FROM = "Johnny Beirne <johnny@johnnybeirne.com>";
 const DEFAULT_APP_BASE_URL = "https://leadtree.johnnybeirne.com";
 
-async function getAppBaseUrl(admin: ReturnType<typeof createClient>): Promise<string> {
+// deno-lint-ignore no-explicit-any
+async function getAppBaseUrl(admin: any): Promise<string> {
   try {
     const { data } = await admin.from("newsletter_settings").select("app_base_url").eq("id", 1).maybeSingle();
     const v = (data?.app_base_url ?? "").toString().trim().replace(/\/+$/, "");

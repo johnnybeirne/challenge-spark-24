@@ -272,33 +272,19 @@ const Results = () => {
   const [thinking, setThinking] = useState(true);
   const [skipTyping, setSkipTyping] = useState(false);
   const [sequenceComplete, setSequenceComplete] = useState(false);
-  // Three-column breakdown flip-in: columns flip one at a time, left to
-  // right, only after the section scrolls into view.
-  const breakdownRef = useRef<HTMLElement | null>(null);
+  // Reveal the breakdown in reading order automatically. It must not depend
+  // on scrolling because the advisor sequence waits for all three rows.
   const [flippedCount, setFlippedCount] = useState(0);
   useEffect(() => {
     if (!hasResult) return;
-    const el = breakdownRef.current;
-    if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setFlippedCount(3);
       return;
     }
-    let timers: number[] = [];
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0].isIntersecting) return;
-        io.disconnect();
-        // Each column starts only after the previous flip (550ms) finishes.
-        timers = [0, 1, 2].map((i) =>
-          window.setTimeout(() => setFlippedCount(i + 1), i * 550),
-        );
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -50% 0px" },
+    const timers = [0, 1, 2].map((i) =>
+      window.setTimeout(() => setFlippedCount(i + 1), 500 + i * 550),
     );
-    io.observe(el);
     return () => {
-      io.disconnect();
       timers.forEach((t) => window.clearTimeout(t));
     };
   }, [hasResult]);
@@ -469,12 +455,12 @@ const Results = () => {
         </section>
 
         {(
-          <section ref={breakdownRef} className="mb-2 p-8">
+          <section className="mb-2 p-8">
             {/* BREAKDOWN ROWS — System / Audience / Conversion as three stacked
                 rows with progress bars, same colours as the score ring. Advice
                 text varies by score band per category; copy lives in
                 site_content (page "results", section "breakdown"). Rows flip
-                in one at a time once scrolled into view. */}
+                in one at a time in reading order. */}
             <div className="space-y-4">
               {categoryScores.map((cs, i) => {
                 const missing = !categoryHasAnswers[i];

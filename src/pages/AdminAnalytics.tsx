@@ -765,6 +765,40 @@ const AdminAnalytics = () => {
                             )}
                           </div>
                         )}
+                        {isReport && showReportList && (
+                          <div className="mt-2 rounded-md border border-border bg-muted/30 p-3">
+                            <p className="text-xs text-muted-foreground mb-2">
+                              Report requests ({reportsInRange.length})
+                            </p>
+                            {reportsInRange.length === 0 ? (
+                              <p className="text-sm text-muted-foreground">No report requests yet.</p>
+                            ) : (
+                              <ul className="space-y-1.5 max-h-72 overflow-y-auto">
+                                {reportsInRange.map((r) => (
+                                  <li
+                                    key={r.id}
+                                    className="flex flex-wrap items-baseline justify-between gap-2 text-sm"
+                                  >
+                                    <span className="text-foreground">
+                                      {r.name || r.email || "Unnamed"}
+                                      {r.name && r.email && (
+                                        <span className="text-muted-foreground"> · {r.email}</span>
+                                      )}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {new Date(r.created_at).toLocaleString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}

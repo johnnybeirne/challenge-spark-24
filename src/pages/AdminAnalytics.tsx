@@ -167,6 +167,7 @@ const AdminAnalytics = () => {
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
   const [showSignupList, setShowSignupList] = useState(false);
+  const [showReportList, setShowReportList] = useState(false);
   const [rangePreset, setRangePreset] = useState("24h");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -690,6 +691,7 @@ const AdminAnalytics = () => {
                         : null;
 
                     const isSignup = step.event === "signup_completed";
+                    const isReport = step.event === "report_requested";
 
                     return (
                       <div key={step.event}>

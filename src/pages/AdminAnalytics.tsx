@@ -706,6 +706,14 @@ const AdminAnalytics = () => {
                               >
                                 {step.label}
                               </button>
+                            ) : isReport ? (
+                              <button
+                                type="button"
+                                onClick={() => setShowReportList((v) => !v)}
+                                className="text-sm font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                              >
+                                {step.label}
+                              </button>
                             ) : (
                               <span className="text-sm font-medium text-foreground">{step.label}</span>
                             )}

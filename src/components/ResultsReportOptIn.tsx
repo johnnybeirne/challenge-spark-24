@@ -48,6 +48,10 @@ const ResultsReportOptIn = () => {
       return;
     }
     setSending(true);
+    // Record that this person asked for their report the moment the form is
+    // submitted, before anything that can fail. The analytics event is fired
+    // first so the opt-in is always counted even if every later step errors.
+    trackEvent("results_report_optin" as any, {});
     // Journey stages: append "got report" to the array the quiz completion
     // step wrote, keep it in session storage for later stages, and pass the
     // joined string to the account so the profile can record the path taken.
@@ -62,30 +66,9 @@ const ResultsReportOptIn = () => {
     if (!journeyStages.includes("got report")) journeyStages.push("got report");
     sessionStorage.setItem("journey_stages", JSON.stringify(journeyStages));
     const journeyTag = journeyStages.join(", ");
-    // Same Supabase auth system as the challenge join flow (one auth.users
-    // account, one profiles row). The report_only markers tell the signup
-    // trigger to skip the challenge progress row, so no clock starts and no
-    // day is unlocked until the person actually joins the challenge.
-    const { error: authError } = await sendEmailCode(parsed.data.email, {
-      name: parsed.data.name,
-      first_name: parsed.data.name.split(" ")[0],
-      signup_product: "report",
-      entry_intent: "report",
-      journey_tag: journeyTag,
-    });
-    setSending(false);
-    if (authError) {
-      setError(authError.message ?? "We could not send the link. Please try again.");
-      return;
-    }
-    trackEvent("results_report_optin" as any, {});
-    // Client-side preview only - not a session. Lets the results page show a
-    // logged-in-looking view until they enter the code from their email.
-    setReportPreview(parsed.data.name, parsed.data.email);
-    setSent(true);
-
-    // Save this submission against a unique, non-guessable token and email the
-    // link, so they can reopen this exact report later from any device.
+    // Capture first: save the name + email against a unique, non-guessable
+    // token so we always have a record that this person requested their
+    // report, even if the sign-in email or report link email fail to send.
     const { data, error: saveError } = await supabase.functions.invoke("quiz-report", {
       body: {
         action: "create",
@@ -96,6 +79,25 @@ const ResultsReportOptIn = () => {
       },
     });
     const token = (data as { token?: string } | null)?.token;
+    // Best-effort: send the sign-in code (same Supabase auth system as the
+    // challenge join flow). If this fails the report is already captured above
+    // and the report link email already went out, so we do not block the
+    // person from reading their report.
+    const { error: authError } = await sendEmailCode(parsed.data.email, {
+      name: parsed.data.name,
+      first_name: parsed.data.name.split(" ")[0],
+      signup_product: "report",
+      entry_intent: "report",
+      journey_tag: journeyTag,
+    });
+    if (authError) {
+      console.warn("report opt-in auth code failed", authError.message);
+    }
+    // Client-side preview only - not a session. Lets the results page show a
+    // logged-in-looking view until they enter the code from their email.
+    setReportPreview(parsed.data.name, parsed.data.email);
+    setSent(true);
+    setSending(false);
     if (!saveError && token) {
       navigate(`/r/${token}`);
       return;

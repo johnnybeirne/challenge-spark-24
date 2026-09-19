@@ -272,8 +272,9 @@ const Results = () => {
   const [thinking, setThinking] = useState(true);
   const [skipTyping, setSkipTyping] = useState(false);
   const [sequenceComplete, setSequenceComplete] = useState(false);
-  // Reveal the breakdown in reading order automatically. It must not depend
-  // on scrolling because the advisor sequence waits for all three rows.
+  // Reveal the breakdown rows one at a time, but only after the person
+  // starts scrolling the results page into view — no auto-advance on load.
+  const breakdownRef = useRef<HTMLDivElement | null>(null);
   const [flippedCount, setFlippedCount] = useState(0);
   useEffect(() => {
     if (!hasResult) return;
@@ -281,12 +282,26 @@ const Results = () => {
       setFlippedCount(3);
       return;
     }
-    const timers = [0, 1, 2].map((i) =>
-      window.setTimeout(() => setFlippedCount(i + 1), 500 + i * 550),
-    );
-    return () => {
-      timers.forEach((t) => window.clearTimeout(t));
+    const el = breakdownRef.current;
+    if (!el) return;
+    let started = false;
+    const revealNext = (i: number) => {
+      if (i > 2) return;
+      setFlippedCount(i + 1);
+      window.setTimeout(() => revealNext(i + 1), 550);
     };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !started) {
+          started = true;
+          window.setTimeout(() => revealNext(0), 300);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, [hasResult]);
   const revealTimerRef = useRef<number | null>(null);
   const skipTypingRef = useRef(skipTyping);

@@ -140,6 +140,7 @@ const FUNNEL_STEPS = [
   { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
+  { event: "report_requested", label: "Report Requested" },
   { event: "signup_completed", label: "Challenge Sign Up" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
@@ -166,6 +167,7 @@ const AdminAnalytics = () => {
   const [dropoffSort, setDropoffSort] = useState("lastSeen_desc");
   const [dropoffQuery, setDropoffQuery] = useState("");
   const [showSignupList, setShowSignupList] = useState(false);
+  const [showReportList, setShowReportList] = useState(false);
   const [rangePreset, setRangePreset] = useState("24h");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -322,7 +324,12 @@ const AdminAnalytics = () => {
   // Funnel data
   const funnelData = FUNNEL_STEPS.map((step) => ({
     ...step,
-    count: step.event === "signup_completed" ? totalUsers : counts[step.event] ?? 0,
+    count:
+      step.event === "signup_completed"
+        ? totalUsers
+        : step.event === "report_requested"
+          ? reportsInRange.length
+          : counts[step.event] ?? 0,
   }));
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
   // Server-recorded sessions are authoritative; older attempts are reconstructed
@@ -684,6 +691,7 @@ const AdminAnalytics = () => {
                         : null;
 
                     const isSignup = step.event === "signup_completed";
+                    const isReport = step.event === "report_requested";
 
                     return (
                       <div key={step.event}>
@@ -694,6 +702,14 @@ const AdminAnalytics = () => {
                               <button
                                 type="button"
                                 onClick={() => setShowSignupList((v) => !v)}
+                                className="text-sm font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                              >
+                                {step.label}
+                              </button>
+                            ) : isReport ? (
+                              <button
+                                type="button"
+                                onClick={() => setShowReportList((v) => !v)}
                                 className="text-sm font-medium text-foreground underline underline-offset-4 hover:text-primary"
                               >
                                 {step.label}
@@ -737,6 +753,40 @@ const AdminAnalytics = () => {
                                     </span>
                                     <span className="text-xs text-muted-foreground">
                                       {new Date(u.created_at).toLocaleString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
+                        {isReport && showReportList && (
+                          <div className="mt-2 rounded-md border border-border bg-muted/30 p-3">
+                            <p className="text-xs text-muted-foreground mb-2">
+                              Report requests ({reportsInRange.length})
+                            </p>
+                            {reportsInRange.length === 0 ? (
+                              <p className="text-sm text-muted-foreground">No report requests yet.</p>
+                            ) : (
+                              <ul className="space-y-1.5 max-h-72 overflow-y-auto">
+                                {reportsInRange.map((r) => (
+                                  <li
+                                    key={r.id}
+                                    className="flex flex-wrap items-baseline justify-between gap-2 text-sm"
+                                  >
+                                    <span className="text-foreground">
+                                      {r.name || r.email || "Unnamed"}
+                                      {r.name && r.email && (
+                                        <span className="text-muted-foreground"> · {r.email}</span>
+                                      )}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {new Date(r.created_at).toLocaleString("en-US", {
                                         month: "short",
                                         day: "numeric",
                                         hour: "2-digit",

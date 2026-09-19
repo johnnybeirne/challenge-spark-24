@@ -140,6 +140,7 @@ const FUNNEL_STEPS = [
   { event: "landing_viewed", label: "Visited Quiz Page" },
   { event: "assessment_started", label: "Assessment Started" },
   { event: "assessment_completed", label: "Assessment Completed" },
+  { event: "report_requested", label: "Report Requested" },
   { event: "signup_completed", label: "Challenge Sign Up" },
   { event: "day_completed", label: "Day 1+" },
   { event: "challenge_completed", label: "Challenge Complete" },
@@ -322,7 +323,12 @@ const AdminAnalytics = () => {
   // Funnel data
   const funnelData = FUNNEL_STEPS.map((step) => ({
     ...step,
-    count: step.event === "signup_completed" ? totalUsers : counts[step.event] ?? 0,
+    count:
+      step.event === "signup_completed"
+        ? totalUsers
+        : step.event === "report_requested"
+          ? reportsInRange.length
+          : counts[step.event] ?? 0,
   }));
   const maxFunnel = Math.max(...funnelData.map((f) => f.count), 1);
   // Server-recorded sessions are authoritative; older attempts are reconstructed

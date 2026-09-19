@@ -476,7 +476,7 @@ const Results = () => {
                 text varies by score band per category; copy lives in
                 site_content (page "results", section "breakdown"). Rows flip
                 in one at a time in reading order. */}
-            <div className="space-y-4">
+            <div ref={breakdownRef} className="space-y-4">
               {categoryScores.map((cs, i) => {
                 const missing = !categoryHasAnswers[i];
                 const band: "low" | "mid" | "high" =

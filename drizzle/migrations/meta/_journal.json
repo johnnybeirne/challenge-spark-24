@@ -78,6 +78,13 @@
       "when": 1790244973649,
       "tag": "0010_tighten_public_content_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790246160096,
+      "tag": "0011_site_content_mobile_only",
+      "breakpoints": true
     }
   ]
 }

@@ -2478,6 +2478,7 @@ export type Database = {
           id: string
           key: string
           label: string | null
+          mobile_only: boolean
           page: string
           section: string
           sort_order: number
@@ -2491,6 +2492,7 @@ export type Database = {
           id?: string
           key: string
           label?: string | null
+          mobile_only?: boolean
           page: string
           section?: string
           sort_order?: number
@@ -2504,6 +2506,7 @@ export type Database = {
           id?: string
           key?: string
           label?: string | null
+          mobile_only?: boolean
           page?: string
           section?: string
           sort_order?: number

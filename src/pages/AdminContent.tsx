@@ -106,7 +106,7 @@ const friendlyLabel = (row: Draft) => {
 const isVisiblePageField = (row: Draft) => {
   if (row.page !== "landing") return true;
   if (row.section !== "hero") return true;
-  return ["eyebrow", "headline", "subhead", "cta_label", "image", "image_alt", "background_color"].includes(row.key);
+  return ["eyebrow", "headline", "subhead", "cta_label", "cta_note", "image", "image_alt", "background_color"].includes(row.key);
 };
 
 const AdminContent = () => {

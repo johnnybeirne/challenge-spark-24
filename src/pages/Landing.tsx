@@ -230,7 +230,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
           </Button>
         </div>
         <p className="mt-3 text-center text-sm text-muted-foreground lg:text-left">
-          No signup needed. Your result shows up when you're done.
+          {t("hero.cta_note", "No signup needed. Your result shows up when you're done.")}
         </p>
       </div>
 

@@ -175,7 +175,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
       <MobileOnlyContext.Provider value={mobileOnly}>
-      <main className="min-h-screen bg-background pb-44 text-foreground sm:pb-24">
+      <main className="min-h-screen bg-background pb-44 text-foreground sm:pb-28">
         {!loaded ? (
           <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true" aria-label="Loading page content">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -223,7 +223,7 @@ const useMo = () => {
   return (key: string) => (set.has(key) ? " md:hidden" : "");
 };
 
-// Phones only: the sticky bar slides in once the hero button has scrolled
+// The sticky bar slides in once the hero button has scrolled
 // out of view, and hides while the hero button or the final call section
 // is on screen, so two buttons are never visible together.
 // "#sticky" or "?preview=sticky" in the address forces it on for previews.
@@ -256,14 +256,14 @@ const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => {
   return (
   <div
     aria-hidden={!visible}
-    className={`fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out motion-reduce:transition-none sm:hidden ${visible ? "translate-y-0" : "pointer-events-none translate-y-full"} border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6`}
+    className={`fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out motion-reduce:transition-none ${visible ? "translate-y-0" : "pointer-events-none translate-y-full"} border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6`}
     style={sectionStyle(t, "sticky")}
   >
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
       <p className={`text-center text-sm font-semibold text-muted-foreground sm:text-left${mo("sticky.tagline")}`}>
         {t("sticky.tagline", "Ready to find where you're losing leads?")}
       </p>
-      <Button className="h-auto min-h-12 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-3 text-center text-sm font-black leading-snug shadow-lg shadow-primary/20 sm:h-12 sm:max-w-xs sm:w-auto sm:shrink-0 sm:whitespace-nowrap sm:px-7 sm:py-2" onClick={onStart}>
+      <Button className="h-auto min-h-12 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-3 text-center text-sm font-black leading-snug shadow-lg shadow-primary/20 sm:h-12 sm:max-w-none sm:w-auto sm:shrink-0 sm:whitespace-nowrap sm:px-7 sm:py-2" onClick={onStart}>
         <ArrowLabel text={t("sticky.button", "Start the quiz")} />
       </Button>
     </div>

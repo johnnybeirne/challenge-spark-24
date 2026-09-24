@@ -1058,6 +1058,59 @@ function FieldRow({
           onChange={(v) => onUpdate({ value: v })}
         />
       )}
+      {(row.value_type === "text" || row.value_type === "textarea") && row.value.trim() && (
+        <CaseButtons value={row.value} onChange={(v) => onUpdate({ value: v })} />
+      )}
+    </div>
+  );
+}
+
+const SMALL_WORDS = new Set(["a","an","and","as","at","but","by","for","in","nor","of","on","or","the","to","up","vs","via","with"]);
+
+function toTitleCase(s: string) {
+  let first = true;
+  return s.toLowerCase().replace(/[A-Za-z][A-Za-z'’]*/g, (w, offset: number) => {
+    const isFirst = first;
+    first = false;
+    const prev = s.slice(0, offset).trimEnd();
+    const afterBreak = /[:.!?]$/.test(prev);
+    if (!isFirst && !afterBreak && SMALL_WORDS.has(w)) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  });
+}
+
+function toSentenceCase(s: string) {
+  return s
+    .toLowerCase()
+    .replace(/(^\s*|[.!?]\s+)([a-z])/g, (_m, p: string, c: string) => p + c.toUpperCase())
+    .replace(/\bi\b/g, "I");
+}
+
+function CaseButtons({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const opts: { label: string; fn: (s: string) => string }[] = [
+    { label: "Title Case", fn: toTitleCase },
+    { label: "Sentence case", fn: toSentenceCase },
+    { label: "UPPERCASE", fn: (s) => s.toUpperCase() },
+  ];
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      <span className="text-xs text-muted-foreground">Case:</span>
+      {opts.map((o) => {
+        const next = o.fn(value);
+        const active = next === value;
+        return (
+          <Button
+            key={o.label}
+            type="button"
+            size="sm"
+            variant={active ? "secondary" : "outline"}
+            className="h-7 px-2 text-xs"
+            onClick={() => onChange(next)}
+          >
+            {o.label}
+          </Button>
+        );
+      })}
     </div>
   );
 }

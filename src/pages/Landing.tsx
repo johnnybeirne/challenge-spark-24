@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -175,7 +175,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
       <MobileOnlyContext.Provider value={mobileOnly}>
-      <main className="min-h-screen bg-background pb-24 text-foreground">
+      <main className="min-h-screen bg-background pb-44 text-foreground sm:pb-24">
         {!loaded ? (
           <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true" aria-label="Loading page content">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -223,11 +223,40 @@ const useMo = () => {
   return (key: string) => (set.has(key) ? " md:hidden" : "");
 };
 
+// Phones only: the sticky bar slides in once the hero button has scrolled
+// out of view, and hides while the hero button or the final call section
+// is on screen, so two buttons are never visible together.
+// "#sticky" or "?preview=sticky" in the address forces it on for previews.
+const useStickyVisibility = () => {
+  const forced =
+    typeof window !== "undefined" &&
+    (window.location.hash === "#sticky" || new URLSearchParams(window.location.search).get("preview") === "sticky");
+  const [heroVisible, setHeroVisible] = useState(true);
+  const [ctaVisible, setCtaVisible] = useState(false);
+  useEffect(() => {
+    const hero = document.getElementById("hero-cta");
+    const cta = document.getElementById("cta");
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.target === hero) setHeroVisible(e.isIntersecting);
+        if (e.target === cta) setCtaVisible(e.isIntersecting);
+      }
+    });
+    if (hero) io.observe(hero);
+    else setHeroVisible(false);
+    if (cta) io.observe(cta);
+    return () => io.disconnect();
+  }, []);
+  return forced || (!heroVisible && !ctaVisible);
+};
+
 const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => {
   const mo = useMo();
+  const visible = useStickyVisibility();
   return (
   <div
-    className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6"
+    aria-hidden={!visible}
+    className={`fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out motion-reduce:transition-none sm:hidden ${visible ? "translate-y-0" : "pointer-events-none translate-y-full"} border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6`}
     style={sectionStyle(t, "sticky")}
   >
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
@@ -257,7 +286,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => {
         <p className={`mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0${mo("hero.subhead")}`}>
           {t("hero.subhead", "Answer nine quick questions and get a recommended strategy based on your answers. Instantly")}
         </p>
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+        <div id="hero-cta" className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
           <Button className="h-auto min-h-14 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-4 text-center text-base font-black leading-snug shadow-lg shadow-primary/20 sm:h-14 sm:max-w-sm sm:w-auto sm:whitespace-nowrap sm:px-8 sm:py-2" onClick={onStart}>
             <ArrowLabel text={t("hero.cta_label", "Start the quiz")} />
           </Button>

@@ -1,0 +1,1 @@
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS mobile_only boolean NOT NULL DEFAULT false;

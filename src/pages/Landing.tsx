@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,10 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
   const { t, map, rows, loaded } = useSiteContent("landing");
+  const mobileOnly = useMemo(
+    () => new Set(rows.filter((r) => r.mobile_only).map((r) => `${r.section}.${r.key}`)),
+    [rows],
+  );
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
@@ -170,6 +174,7 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   return (
     <>
       <SEO title="AI Challenge for More Leads" description="Answer 9 quick questions and get a personalised lead flow diagnosis with a recommended next step." canonical="/" />
+      <MobileOnlyContext.Provider value={mobileOnly}>
       <main className="min-h-screen bg-background pb-24 text-foreground">
         {!loaded ? (
           <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true" aria-label="Loading page content">
@@ -186,20 +191,29 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
           </>
         )}
       </main>
+      </MobileOnlyContext.Provider>
     </>
-
   );
 };
 
 type T = (sectionDotKey: string, fallback?: string) => string;
 
-const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
+// Keys the owner marked "Show on mobile only" in the landing editor.
+const MobileOnlyContext = createContext<Set<string>>(new Set());
+const useMo = () => {
+  const set = useContext(MobileOnlyContext);
+  return (key: string) => (set.has(key) ? " md:hidden" : "");
+};
+
+const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => {
+  const mo = useMo();
+  return (
   <div
     className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-5 py-3 shadow-[0_-10px_30px_hsl(var(--foreground)/0.06)] backdrop-blur sm:px-6"
     style={sectionStyle(t, "sticky")}
   >
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
-      <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
+      <p className={`text-center text-sm font-semibold text-muted-foreground sm:text-left${mo("sticky.tagline")}`}>
         {t("sticky.tagline", "Ready to find the gap in your lead flow?")}
       </p>
       <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
@@ -208,19 +222,22 @@ const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
       </Button>
     </div>
   </div>
-);
+  );
+};
 
-const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
+const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => {
+  const mo = useMo();
+  return (
   <section className="px-5 pt-8 pb-0 sm:px-6 md:pt-12 lg:px-8" style={sectionStyle(t, "hero")}>
     <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
       <div className="text-center lg:text-left">
-        <p className="mx-auto max-w-2xl text-base font-black leading-6 text-primary lg:mx-0">
+        <p className={`mx-auto max-w-2xl text-base font-black leading-6 text-primary lg:mx-0${mo("hero.eyebrow")}`}>
           {t("hero.eyebrow", "Built for coaches, consultants, and authors who want more leads")}
         </p>
-        <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0">
+        <h1 className={`mx-auto mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-foreground sm:text-5xl md:text-6xl lg:mx-0${mo("hero.headline")}`}>
           {t("hero.headline", "Find out why your leads are inconsistent")}
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0">
+        <p className={`mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl lg:mx-0${mo("hero.subhead")}`}>
           {t("hero.subhead", "Answer nine quick questions and get a recommended strategy based on your answers. Instantly")}
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
@@ -229,7 +246,7 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-3 text-center text-sm text-muted-foreground lg:text-left">
+        <p className={`mt-3 text-center text-sm text-muted-foreground lg:text-left${mo("hero.cta_note")}`}>
           {t("hero.cta_note", "No signup needed. Your result shows up when you're done.")}
         </p>
       </div>
@@ -246,7 +263,8 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 const ProblemSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteContentRow[] }) => {
   const items = collectItems(map, "problem");
@@ -384,23 +402,32 @@ const BenefitsSection = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: Si
   );
 };
 
-const AuthoritySection = ({ t }: { t: T }) => (
+const AuthoritySection = ({ t }: { t: T }) => {
+  const mo = useMo();
+  return (
   <PageSection style={sectionStyle(t, "authority")}>
     <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 text-center shadow-sm md:p-10">
       <Eye className="mx-auto h-8 w-8 text-primary" />
-      <h2 className="mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl">{t("authority.title", "Built for people who need leads, not another theory")}</h2>
-      <p className="mt-4 text-lg leading-8 text-muted-foreground">{t("authority.body", "The quiz is designed for creators, consultants, business owners, and experts who want to understand what is making their lead flow unpredictable.")}</p>
+      <h2 className={`mt-5 text-2xl font-black leading-tight text-foreground sm:text-3xl${mo("authority.title")}`}>{t("authority.title", "Built for people who need leads, not another theory")}</h2>
+      <p className={`mt-4 text-lg leading-8 text-muted-foreground${mo("authority.body")}`}>{t("authority.body", "The quiz is designed for creators, consultants, business owners, and experts who want to understand what is making their lead flow unpredictable.")}</p>
     </div>
   </PageSection>
-);
+  );
+};
 
 const AboutSection = ({ t }: { t: T }) => {
+  const mo = useMo();
   const title = t("about.title", "About Johnny Beirne");
-  const paragraphs = [
-    t("about.paragraph_1", "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."),
-    t("about.paragraph_2", "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do."),
-    t("about.paragraph_3", ""),
-  ].filter((p) => p.trim());
+  const paragraphs = [1, 2, 3]
+    .map((n) => ({
+      key: `about.paragraph_${n}`,
+      text: t(`about.paragraph_${n}`, n === 1
+        ? "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."
+        : n === 2
+          ? "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do."
+          : ""),
+    }))
+    .filter((p) => p.text.trim());
 
   return (
     <PageSection style={sectionStyle(t, "about")}>
@@ -412,13 +439,13 @@ const AboutSection = ({ t }: { t: T }) => {
           className="mx-auto block aspect-[4/5] w-44 rounded-xl border border-border object-cover sm:mx-0 sm:w-52"
         />
         <div className="text-center sm:text-left">
-          <p className="text-xs font-black uppercase tracking-widest text-primary">
+          <p className={`text-xs font-black uppercase tracking-widest text-primary${mo("about.eyebrow")}`}>
             {t("about.eyebrow", "Who is behind the quiz")}
           </p>
-          <h2 className="mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl">{title}</h2>
+          <h2 className={`mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl${mo("about.title")}`}>{title}</h2>
           <div className="mt-4 space-y-4 text-base leading-7 text-muted-foreground">
-            {paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
+            {paragraphs.map((p) => (
+              <p key={p.key} className={mo(p.key).trim() || undefined}>{p.text}</p>
             ))}
           </div>
         </div>
@@ -427,19 +454,22 @@ const AboutSection = ({ t }: { t: T }) => {
   );
 };
 
-const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => (
+const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => {
+  const mo = useMo();
+  return (
   <PageSection className="border-t border-border" style={sectionStyle(t, "cta")}>
     <div className="mx-auto max-w-3xl text-center">
       <TrendingUp className="mx-auto h-9 w-9 text-primary" />
-      <h2 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl">{t("cta.title", "Find the gap in your lead flow")}</h2>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("cta.body", "Start with the quiz, get your diagnosis, then move into the next step with clarity.")}</p>
+      <h2 className={`mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl${mo("cta.title")}`}>{t("cta.title", "Find the gap in your lead flow")}</h2>
+      <p className={`mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground${mo("cta.body")}`}>{t("cta.body", "Start with the quiz, get your diagnosis, then move into the next step with clarity.")}</p>
       <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20" onClick={onStart}>
         {t("cta.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
   </PageSection>
-);
+  );
+};
 
 const FaqSection = ({ t, map }: { t: T; map: SiteContentMap }) => {
   const items = useMemo(() => {

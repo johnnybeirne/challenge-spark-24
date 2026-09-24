@@ -196,6 +196,24 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
   );
 };
 
+// Button text with the arrow glued to the last word so it never wraps alone.
+// Strips any typed ">" since the icon already shows the arrow.
+const ArrowLabel = ({ text }: { text: string }) => {
+  const clean = text.replace(/\s*[>›→]+\s*$/, "").trim();
+  const i = clean.lastIndexOf(" ");
+  const head = i >= 0 ? clean.slice(0, i + 1) : "";
+  const last = i >= 0 ? clean.slice(i + 1) : clean;
+  return (
+    <span>
+      {head}
+      <span className="whitespace-nowrap">
+        {last}
+        <ArrowRight className="ml-2 inline h-4 w-4 align-[-2px]" />
+      </span>
+    </span>
+  );
+};
+
 type T = (sectionDotKey: string, fallback?: string) => string;
 
 // Keys the owner marked "Show on mobile only" in the landing editor.
@@ -214,11 +232,10 @@ const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => {
   >
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
       <p className={`text-center text-sm font-semibold text-muted-foreground sm:text-left${mo("sticky.tagline")}`}>
-        {t("sticky.tagline", "Ready to find the gap in your lead flow?")}
+        {t("sticky.tagline", "Ready to find where you're losing leads?")}
       </p>
-      <Button className="h-12 w-full max-w-xs gap-2 rounded-xl px-7 text-sm font-black shadow-lg shadow-primary/20 sm:w-auto sm:shrink-0" onClick={onStart}>
-        {t("sticky.button", "Start the quiz")}
-        <ArrowRight className="h-4 w-4" />
+      <Button className="h-auto min-h-12 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-3 text-center text-sm font-black leading-snug shadow-lg shadow-primary/20 sm:h-12 sm:max-w-xs sm:w-auto sm:shrink-0 sm:whitespace-nowrap sm:px-7 sm:py-2" onClick={onStart}>
+        <ArrowLabel text={t("sticky.button", "Start the quiz")} />
       </Button>
     </div>
   </div>
@@ -241,12 +258,11 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => {
           {t("hero.subhead", "Answer nine quick questions and get a recommended strategy based on your answers. Instantly")}
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-          <Button className="h-14 w-full max-w-sm gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20 sm:w-auto" onClick={onStart}>
-            {t("hero.cta_label", "Start the quiz")}
-            <ArrowRight className="h-4 w-4" />
+          <Button className="h-auto min-h-14 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-4 text-center text-base font-black leading-snug shadow-lg shadow-primary/20 sm:h-14 sm:max-w-sm sm:w-auto sm:whitespace-nowrap sm:px-8 sm:py-2" onClick={onStart}>
+            <ArrowLabel text={t("hero.cta_label", "Start the quiz")} />
           </Button>
         </div>
-        <p className={`mt-3 text-center text-sm text-muted-foreground lg:text-left${mo("hero.cta_note")}`}>
+        <p className={`mt-3 max-w-full break-words text-center text-sm text-muted-foreground lg:text-left${mo("hero.cta_note")}`}>
           {t("hero.cta_note", "No signup needed. Your result shows up when you're done.")}
         </p>
       </div>

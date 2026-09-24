@@ -1103,7 +1103,7 @@ function CaseButtons({ value, onChange }: { value: string; onChange: (v: string)
             key={o.label}
             type="button"
             size="sm"
-            variant={active ? "secondary" : "outline"}
+            variant={active ? "default" : "outline"}
             className="h-7 px-2 text-xs"
             onClick={() => onChange(next)}
           >

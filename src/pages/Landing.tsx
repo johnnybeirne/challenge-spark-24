@@ -228,8 +228,10 @@ const HeroSection = ({ t, onStart }: { t: T; onStart: () => void }) => (
             {t("hero.cta_label", "Start the quiz")}
             <ArrowRight className="h-4 w-4" />
           </Button>
-          
         </div>
+        <p className="mt-3 text-center text-sm text-muted-foreground lg:text-left">
+          No signup needed. Your result shows up when you're done.
+        </p>
       </div>
 
       <div className="relative">

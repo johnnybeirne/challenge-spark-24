@@ -1,0 +1,2 @@
+UPDATE public.site_content SET value = regexp_replace(value, '\s*>\s*$', '') WHERE id IN ('961b5697-2945-4fcc-8196-7c4ee364b52f','225f3565-3982-4783-9f9a-c15e0db4c5c9');
+UPDATE public.site_content SET value = 'Ready to find where you''re losing leads?' WHERE id = '4300706c-e9ca-4936-b7de-f425386879e7';

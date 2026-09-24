@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Eye, HelpCircle, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,10 @@ function collectItems(map: SiteContentMap, section: string): string[] {
 const Landing = ({ variant = "default", onStart }: LandingProps) => {
   const navigate = useNavigate();
   const { t, map, rows, loaded } = useSiteContent("landing");
+  const mobileOnly = useMemo(
+    () => new Set(rows.filter((r) => r.mobile_only).map((r) => `${r.section}.${r.key}`)),
+    [rows],
+  );
   const entryIntent: EntryIntent | null = variant === "free_training" ? "free_training" : null;
   const funnel = variant === "free_training" ? "free_training" : "default";
 
@@ -192,6 +196,13 @@ const Landing = ({ variant = "default", onStart }: LandingProps) => {
 };
 
 type T = (sectionDotKey: string, fallback?: string) => string;
+
+// Keys the owner marked "Show on mobile only" in the landing editor.
+const MobileOnlyContext = createContext<Set<string>>(new Set());
+const useMo = () => {
+  const set = useContext(MobileOnlyContext);
+  return (key: string) => (set.has(key) ? " md:hidden" : "");
+};
 
 const StickyQuizButton = ({ t, onStart }: { t: T; onStart: () => void }) => (
   <div

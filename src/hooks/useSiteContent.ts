@@ -10,6 +10,7 @@ export type SiteContentRow = {
   value_type: string;
   label: string | null;
   sort_order: number;
+  mobile_only?: boolean;
 };
 
 export type SiteContentMap = Record<string, string>; // "section.key" -> value

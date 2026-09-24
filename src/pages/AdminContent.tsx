@@ -1061,6 +1061,15 @@ function FieldRow({
       {(row.value_type === "text" || row.value_type === "textarea") && row.value.trim() && (
         <CaseButtons value={row.value} onChange={(v) => onUpdate({ value: v })} />
       )}
+      <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={!!row.mobile_only}
+          onChange={(e) => onUpdate({ mobile_only: e.target.checked })}
+          className="h-3.5 w-3.5 accent-primary"
+        />
+        Show on mobile only
+      </label>
     </div>
   );
 }

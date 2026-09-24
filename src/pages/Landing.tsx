@@ -418,11 +418,16 @@ const AuthoritySection = ({ t }: { t: T }) => {
 const AboutSection = ({ t }: { t: T }) => {
   const mo = useMo();
   const title = t("about.title", "About Johnny Beirne");
-  const paragraphs = [
-    [t("about.paragraph_1", "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."),
-    t("about.paragraph_2", "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do."),
-    t("about.paragraph_3", ""),
-  ].filter((p) => p.trim());
+  const paragraphs = [1, 2, 3]
+    .map((n) => ({
+      key: `about.paragraph_${n}`,
+      text: t(`about.paragraph_${n}`, n === 1
+        ? "Johnny Beirne is the founder of the Digital Business Institute and a fractional AI advisor. His focus is the practical, everyday use of AI."
+        : n === 2
+          ? "Working alongside clients across three continents, he turns their hard-won expertise into AI-powered tools that work the way they do."
+          : ""),
+    }))
+    .filter((p) => p.text.trim());
 
   return (
     <PageSection style={sectionStyle(t, "about")}>
@@ -439,8 +444,8 @@ const AboutSection = ({ t }: { t: T }) => {
           </p>
           <h2 className={`mt-2 text-2xl font-black leading-tight text-foreground sm:text-3xl${mo("about.title")}`}>{title}</h2>
           <div className="mt-4 space-y-4 text-base leading-7 text-muted-foreground">
-            {paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
+            {paragraphs.map((p) => (
+              <p key={p.key} className={mo(p.key).trim() || undefined}>{p.text}</p>
             ))}
           </div>
         </div>

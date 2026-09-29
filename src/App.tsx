@@ -29,6 +29,8 @@ import AppShell from "@/components/AppShell";
 import SimulatorBridge from "@/components/SimulatorBridge";
 import ExperienceShell from "@/components/ExperienceShell";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
+import QuizGate from "@/components/QuizGate";
+import InAppQuizResult from "@/pages/InAppQuizResult";
 import Landing from "@/pages/Landing";
 import ChallengeLanding from "@/pages/ChallengeLanding";
 import Assessment from "@/pages/Assessment";
@@ -195,6 +197,9 @@ const App = () => (
               <Route element={<AppShell />}>
                 {/* Canonical assessment route */}
                 <Route path="/assessment" element={<Assessment mode="challenge" />} />
+                {/* In-app quiz gate for logged-in users (before Day 1) */}
+                <Route path="/challenge/quiz" element={<AuthGuard><Assessment mode="challenge" inApp /></AuthGuard>} />
+                <Route path="/challenge/quiz/result" element={<AuthGuard><InAppQuizResult /></AuthGuard>} />
                 {/* Legacy alias */}
                 <Route path="/assess" element={<RedirectKeepingQuery to="/assessment" />} />
                 {/* Mode-specific assessment entries (different post-result destination) */}
@@ -245,7 +250,7 @@ const App = () => (
               {/* Authenticated routes — consumer + shared */}
               <Route element={<AppShell showNav />}>
                 <Route path="/let-me-in" element={<AdminViewAsUserAutoLaunch redirectTo="/challenger-dashboard" />} />
-                <Route path="/challenger-dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/challenger-dashboard" element={<AuthGuard><QuizGate><Dashboard /></QuizGate></AuthGuard>} />
                 <Route path="/your-dashboard" element={<RedirectKeepingQuery to="/challenger-dashboard" />} />
                 <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
                 <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
@@ -255,7 +260,7 @@ const App = () => (
                 {/* Training hub — separate from Day 1. Pre-challenge + per-day videos. */}
                 <Route path="/training" element={<AuthGuard><AccessPageTemplate pageKey="training" /></AuthGuard>} />
                 {/* Day 1 — canonical route. Day1Setup (assessment + AI builder). */}
-                <Route path="/challenge/day-1" element={<AuthGuard><Day1 /></AuthGuard>} />
+                <Route path="/challenge/day-1" element={<AuthGuard><QuizGate><Day1 /></QuizGate></AuthGuard>} />
                 <Route path="/challenge/day/1" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
                 <Route path="/day/1" element={<RedirectKeepingQuery to="/challenge/day-1" />} />
                 {/* Canonical day route (slash form) — handles Day 2 & 3 */}

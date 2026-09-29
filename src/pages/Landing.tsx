@@ -507,7 +507,7 @@ const CTASection = ({ t, onStart }: { t: T; onStart: () => void }) => {
       <TrendingUp className="mx-auto h-9 w-9 text-primary" />
       <h2 className={`mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl md:text-5xl${mo("cta.title")}`}>{t("cta.title", "Find the gap in your lead flow")}</h2>
       <p className={`mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground${mo("cta.body")}`}>{t("cta.body", "Start with the quiz, get your diagnosis, then move into the next step with clarity.")}</p>
-      <Button className="mt-8 h-14 gap-2 rounded-xl px-8 text-base font-black shadow-lg shadow-primary/20" onClick={onStart}>
+      <Button className="mt-8 h-auto min-h-14 w-full max-w-full whitespace-normal gap-2 rounded-xl px-6 py-4 text-center text-base font-black leading-snug shadow-lg shadow-primary/20 sm:h-14 sm:w-auto sm:whitespace-nowrap sm:px-8 sm:py-2" onClick={onStart}>
         {t("cta.button", "Start the quiz")}
         <ArrowRight className="h-4 w-4" />
       </Button>

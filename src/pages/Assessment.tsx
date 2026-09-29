@@ -293,7 +293,8 @@ const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
           key={q.id}
           className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
         >
-          {/* Back link (inside card) */}
+          {/* Back link (inside card). In-app first question has no way out. */}
+          {!(inApp && current === 0) && (
           <button
             onClick={() => {
               if (current > 0) {
@@ -307,6 +308,7 @@ const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back
           </button>
+          )}
 
           {/* Identity header */}
           <div className="flex flex-col items-center mb-10 md:mb-12">

@@ -1,18 +1,33 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAppState } from "@/context/AppContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
+import { questions as quizQuestions } from "@/lib/assessmentData";
 
-/** A logged-in user has a quiz result if one is in app state, waiting in
- *  localStorage to sync, or saved in ai_user_context.assessment. */
+/** Where the in-app quiz sends the person when they finish. */
+export const QUIZ_GATE_NEXT_KEY = "quiz_gate_next";
+
+/** A result counts only if generateResult() scored a fully answered quiz:
+ *  every question answered yes/no, plus a numeric score and a level.
+ *  Empty, partial, unscored and blank-answer baseline results do not count. */
+export function isRealQuizResult(a: unknown): boolean {
+  if (!a || typeof a !== "object") return false;
+  const r = a as Record<string, any>;
+  if (typeof r.diagnosticScore !== "number" || Number.isNaN(r.diagnosticScore)) return false;
+  if (typeof r.diagnosticLevel !== "string" || !r.diagnosticLevel) return false;
+  const answers = r.answers;
+  if (!answers || typeof answers !== "object") return false;
+  return quizQuestions.every((q) => answers[q.id] === "yes" || answers[q.id] === "no");
+}
+
 function hasLocalResult(stateAssessment: unknown): boolean {
-  if (stateAssessment && typeof stateAssessment === "object") return true;
+  if (isRealQuizResult(stateAssessment)) return true;
   try {
     const raw = localStorage.getItem("challengeos_assessment");
-    if (raw && raw !== "null") return true;
+    if (raw && raw !== "null" && isRealQuizResult(JSON.parse(raw))) return true;
   } catch {}
   return false;
 }
@@ -20,6 +35,7 @@ function hasLocalResult(stateAssessment: unknown): boolean {
 const QuizGate = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAppState();
   const { user } = useAuth();
+  const location = useLocation();
   const local = hasLocalResult(state.assessment);
   const isDemo = (() => { try { return sessionStorage.getItem(DEMO_USER_KEY) === "1"; } catch { return false; } })();
   const [remote, setRemote] = useState<"unknown" | "yes" | "no">("unknown");
@@ -34,14 +50,17 @@ const QuizGate = ({ children }: { children: React.ReactNode }) => {
         .maybeSingle();
       if (cancelled) return;
       const a = (data as { assessment?: unknown } | null)?.assessment;
-      setRemote(a && typeof a === "object" ? "yes" : "no");
+      setRemote(isRealQuizResult(a) ? "yes" : "no");
     })();
     return () => { cancelled = true; };
   }, [local, isDemo, user]);
 
   if (local || isDemo || !user) return <>{children}</>;
   if (remote === "unknown") return <Spinner />;
-  if (remote === "no") return <Navigate to="/challenge/quiz" replace />;
+  if (remote === "no") {
+    try { sessionStorage.setItem(QUIZ_GATE_NEXT_KEY, location.pathname + location.search); } catch {}
+    return <Navigate to="/challenge/quiz" replace />;
+  }
   return <>{children}</>;
 };
 

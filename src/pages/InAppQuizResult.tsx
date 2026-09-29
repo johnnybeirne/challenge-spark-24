@@ -5,12 +5,27 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { getDiagnosticResult } from "@/lib/assessmentData";
 import aiAvatar from "@/assets/ai-avatar.png";
+import { QUIZ_GATE_NEXT_KEY } from "@/components/QuizGate";
+
+function readNext(): { to: string; label: string } {
+  let to = "/challenge/day-1";
+  try {
+    const v = sessionStorage.getItem(QUIZ_GATE_NEXT_KEY);
+    if (v && v.startsWith("/") && !v.startsWith("//")) to = v;
+  } catch {}
+  const path = to.split("?")[0];
+  const day = path.match(/^\/(?:challenge\/)?day[/-](\d)$/);
+  if (day) return { to, label: `Continue to Day ${day[1]}` };
+  if (/dashboard/.test(path)) return { to, label: "Continue to your dashboard" };
+  return { to, label: "Continue to Day 1" };
+}
 
 /** Result screen for logged-in users who took the quiz inside the app.
- *  One action only: continue to Day 1. */
+ *  One action only: continue to the page they were trying to open. */
 const InAppQuizResult = () => {
   const navigate = useNavigate();
   const { state } = useAppState();
+  const next = readNext();
   const a = state.assessment as Record<string, any> | null;
   if (!a) return <Navigate to="/challenge/quiz" replace />;
 
@@ -32,9 +47,12 @@ const InAppQuizResult = () => {
           <Button
             size="lg"
             className="h-auto min-h-14 w-full max-w-full whitespace-normal px-6 py-4 leading-snug sm:w-auto sm:px-8"
-            onClick={() => navigate("/challenge/day-1", { replace: true })}
+            onClick={() => {
+              try { sessionStorage.removeItem(QUIZ_GATE_NEXT_KEY); } catch {}
+              navigate(next.to, { replace: true });
+            }}
           >
-            Continue to Day 1 <ArrowRight className="ml-2 h-5 w-5 inline" />
+            {next.label} <ArrowRight className="ml-2 h-5 w-5 inline" />
           </Button>
         </div>
       </div>

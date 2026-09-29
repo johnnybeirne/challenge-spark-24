@@ -49,9 +49,11 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 
 interface AssessmentProps {
   mode?: EntryIntent;
+  /** Logged-in in-app gate: starts immediately, no way out, ends on the in-app result screen. */
+  inApp?: boolean;
 }
 
-const Assessment = ({ mode }: AssessmentProps = {}) => {
+const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
   const navigate = useNavigate();
   const { setState } = useAppState();
   const { config } = useSiteConfig();
@@ -62,7 +64,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
   // Arriving from a landing CTA (?start=1) begins the quiz immediately so the
   // visitor does not have to press "Start the quiz" a second time.
-  const [started, setStarted] = useState(() => searchParams.get("start") === "1");
+  const [started, setStarted] = useState(() => inApp || searchParams.get("start") === "1");
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<string | null>(null);
@@ -253,7 +255,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                   await writeOnce();
                 } catch (secondErr) {
                   console.error("assessment save failed after retry", secondErr);
-                  toast.error("We had trouble saving your result — please check your connection.");
+                  toast.error("We had trouble saving your result. Please check your connection.");
                 }
               }
 
@@ -266,14 +268,14 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
             }
           } catch (e) {
             console.warn("assessment save path failed", e);
-            toast.error("We had trouble saving your result — please check your connection.");
+            toast.error("We had trouble saving your result. Please check your connection.");
           }
         })();
 
 
 
         setTimeout(() => {
-          navigate("/results");
+          navigate(inApp ? "/challenge/quiz/result" : "/results", inApp ? { replace: true } : undefined);
         }, 4000);
       }
     };

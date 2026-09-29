@@ -49,9 +49,11 @@ import { useQaPreview } from "@/hooks/useQaPreview";
 
 interface AssessmentProps {
   mode?: EntryIntent;
+  /** Logged-in in-app gate: starts immediately, no way out, ends on the in-app result screen. */
+  inApp?: boolean;
 }
 
-const Assessment = ({ mode }: AssessmentProps = {}) => {
+const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
   const navigate = useNavigate();
   const { setState } = useAppState();
   const { config } = useSiteConfig();
@@ -62,7 +64,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
 
   // Arriving from a landing CTA (?start=1) begins the quiz immediately so the
   // visitor does not have to press "Start the quiz" a second time.
-  const [started, setStarted] = useState(() => searchParams.get("start") === "1");
+  const [started, setStarted] = useState(() => inApp || searchParams.get("start") === "1");
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<string | null>(null);
@@ -253,7 +255,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
                   await writeOnce();
                 } catch (secondErr) {
                   console.error("assessment save failed after retry", secondErr);
-                  toast.error("We had trouble saving your result — please check your connection.");
+                  toast.error("We had trouble saving your result. Please check your connection.");
                 }
               }
 
@@ -266,14 +268,14 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
             }
           } catch (e) {
             console.warn("assessment save path failed", e);
-            toast.error("We had trouble saving your result — please check your connection.");
+            toast.error("We had trouble saving your result. Please check your connection.");
           }
         })();
 
 
 
         setTimeout(() => {
-          navigate("/results");
+          navigate(inApp ? "/challenge/quiz/result" : "/results", inApp ? { replace: true } : undefined);
         }, 4000);
       }
     };
@@ -291,7 +293,8 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
           key={q.id}
           className="relative w-full bg-card border border-border rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_hsl(var(--foreground)/0.04)] animate-fade-in"
         >
-          {/* Back link (inside card) */}
+          {/* Back link (inside card). In-app first question has no way out. */}
+          {!(inApp && current === 0) && (
           <button
             onClick={() => {
               if (current > 0) {
@@ -305,6 +308,7 @@ const Assessment = ({ mode }: AssessmentProps = {}) => {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back
           </button>
+          )}
 
           {/* Identity header */}
           <div className="flex flex-col items-center mb-10 md:mb-12">

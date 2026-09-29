@@ -394,7 +394,7 @@ const ScorePreview = ({ t, map, rows }: { t: T; map: SiteContentMap; rows: SiteC
             title: "Get a clear set of findings, then a recommended strategy.",
           }}
         />
-        <div className="mt-7">
+        <div className="mt-7 px-8 sm:px-0">
           <ScoreRingCombined
             overall={overall}
             segments={[

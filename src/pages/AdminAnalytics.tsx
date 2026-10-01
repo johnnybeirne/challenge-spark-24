@@ -315,9 +315,20 @@ const AdminAnalytics = () => {
   const quizStartEvents = uniqueCounts["assessment_started"] ?? 0;
   const quizFinishEvents = uniqueCounts["assessment_completed"] ?? 0;
   const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
-  const visitorToStartRate = pct(quizStartEvents, gaVisitors);
+  // The GA figure is always a 7-day number, so "% of visitors" uses the
+  // last 7 days of starts and finishes regardless of the chosen range.
+  const sevenDayFromKey = toDayKey(new Date(now - 6 * 24 * 60 * 60 * 1000));
+  const unique7d: Record<string, number> = {};
+  Object.entries(dailyUniqueAll)
+    .filter(([day]) => day >= sevenDayFromKey)
+    .forEach(([, dayCounts]) => {
+      Object.entries(dayCounts ?? {}).forEach(([event, n]) => {
+        unique7d[event] = (unique7d[event] ?? 0) + (n as number);
+      });
+    });
+  const visitorToStartRate = pct(unique7d["assessment_started"] ?? 0, gaVisitors);
   const startToFinishRate = pct(quizFinishEvents, quizStartEvents);
-  const visitorToFinishRate = pct(quizFinishEvents, gaVisitors);
+  const visitorToFinishRate = pct(unique7d["assessment_completed"] ?? 0, gaVisitors);
 
 
 
@@ -684,7 +695,11 @@ const AdminAnalytics = () => {
                 <CardContent className="p-4 space-y-3">
                   {funnelData.map((step, i) => {
                     const pct = maxFunnel > 0 ? (step.count / maxFunnel) * 100 : 0;
-                    const prevCount = i > 0 ? funnelData[i - 1].count : null;
+                    // Report requests are a side branch: compare each step to the
+                    // previous main-funnel step, skipping the report row.
+                    let prevIdx = i - 1;
+                    if (prevIdx >= 0 && funnelData[prevIdx].event === "report_requested") prevIdx -= 1;
+                    const prevCount = prevIdx >= 0 ? funnelData[prevIdx].count : null;
                     const dropoff =
                       prevCount && prevCount > 0
                         ? Math.round((step.count / prevCount) * 100)

@@ -2468,6 +2468,27 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_signup_credits: {
+        Row: {
+          decided_at: string
+          referred_user_id: string
+          source: string
+          status: string
+        }
+        Insert: {
+          decided_at?: string
+          referred_user_id: string
+          source?: string
+          status: string
+        }
+        Update: {
+          decided_at?: string
+          referred_user_id?: string
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
       report_advisor_prompts: {
         Row: {
           created_at: string
@@ -3227,8 +3248,13 @@ export type Database = {
         Args: { p_signup_id: string }
         Returns: undefined
       }
+      award_pending_signup_referrals: { Args: never; Returns: number }
       award_referral_day_credit: { Args: { p_day: number }; Returns: Json }
       award_referral_quiz_credit: { Args: never; Returns: Json }
+      award_signup_referral: {
+        Args: { p_flagged: boolean; p_source?: string; p_user: string }
+        Returns: string
+      }
       backfill_day_completion_points: { Args: never; Returns: number }
       calculate_waitlist_tier: {
         Args: { invite_count: number }

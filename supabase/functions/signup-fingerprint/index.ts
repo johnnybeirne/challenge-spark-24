@@ -114,9 +114,16 @@ Deno.serve(async (req) => {
       })
       .eq("user_id", user.id);
 
-    if (sameNetwork) {
-      const { error: flagErr } = await admin.rpc("flag_same_network_referral", { p_user: user.id });
-      if (flagErr) console.error("flag_same_network_referral failed", flagErr);
+    // Referral credit is decided here, after the network check, exactly one
+    // time per sign-up. Flagged: nothing awarded, saved for review.
+    // Not flagged: normal credit. Never subtracts anything.
+    if (me?.referred_by) {
+      const { error: awardErr } = await admin.rpc("award_signup_referral", {
+        p_user: user.id,
+        p_flagged: sameNetwork,
+        p_source: "fingerprint",
+      });
+      if (awardErr) console.error("award_signup_referral failed", awardErr);
     }
 
     return new Response(JSON.stringify({ ok: true, blocked: false, recorded: true }), {

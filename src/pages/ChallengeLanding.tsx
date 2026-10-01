@@ -1,239 +1,211 @@
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowRight, Calendar, Compass, Magnet, Repeat, Rocket, Share2, Target, TrendingUp, Users, Zap } from "lucide-react";
+import { type ReactNode, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowRight, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SEO } from "@/components/SEO";
-import ActivityFeed from "@/components/ActivityFeed";
 import { trackEvent } from "@/lib/analytics";
-import { getCompletionDayName } from "@/lib/utils";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import {
+  CHALLENGE_SALES_KEY,
+  CHALLENGE_SALES_PAGE,
+  CHALLENGE_SALES_SECTION,
+  byPosition,
+  parseChallengeSales,
+  renderDay,
+} from "@/lib/challengeSalesContent";
 
 const Section = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <section className={`px-5 py-16 sm:px-6 md:py-24 lg:px-8 ${className}`}>
-    <div className="mx-auto w-full max-w-6xl">{children}</div>
+  <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`}>
+    <div className="mx-auto w-full max-w-5xl">{children}</div>
   </section>
 );
 
-const flowSteps = [
-  {
-    icon: Rocket,
-    day: "Day 1",
-    title: "Lock in your audience",
-    body: "Define who you help and the problem your challenge solves.",
-  },
-  {
-    icon: Users,
-    day: "Day 2",
-    title: "Build the experience",
-    body: "Create the quiz and challenge flow that captures leads.",
-  },
-  {
-    icon: TrendingUp,
-    day: "Day 3",
-    title: "Launch and grow",
-    body: "Share it with referral mechanics that help it spread.",
-  },
-];
-
-const WordTypewriter = ({ text, active, delay = 0 }: { text: string; active: boolean; delay?: number }) => {
-  const [visibleChars, setVisibleChars] = useState(0);
-
-  useEffect(() => {
-    if (!active) return;
-
-    setVisibleChars(0);
-    let interval: number | undefined;
-    const timeout = window.setTimeout(() => {
-      interval = window.setInterval(() => {
-        setVisibleChars((current) => {
-          if (current >= text.length) {
-            if (interval) window.clearInterval(interval);
-            return current;
-          }
-
-          return current + 1;
-        });
-      }, 45);
-    }, delay);
-
-    return () => {
-      window.clearTimeout(timeout);
-      if (interval) window.clearInterval(interval);
-    };
-  }, [active, delay, text.length]);
-
-  if (!active) return <span className="opacity-0">{text}</span>;
-
-  return (
-    <span>
-      {text.slice(0, visibleChars)}
-      {visibleChars < text.length && <span className="ml-0.5 inline-block h-[1em] w-0.5 translate-y-0.5 animate-pulse bg-primary" />}
-    </span>
-  );
-};
-
-const AnimatedDayCards = () => {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.28 },
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={sectionRef} className="relative space-y-4">
-      <div className="absolute left-11 top-16 hidden h-[calc(100%-8rem)] w-0.5 overflow-hidden rounded-full bg-border sm:block">
-        <div
-          className="w-full rounded-full bg-primary shadow-[0_0_18px_hsl(var(--primary)/0.35)] transition-[height] duration-[2100ms] ease-out"
-          style={{ height: isVisible ? "100%" : "0%", transitionDelay: isVisible ? "650ms" : "0ms" }}
-        />
-      </div>
-
-      {flowSteps.map((step, index) => {
-        const cardDelay = [0, 3200, 6100][index];
-        const textDelay = index === 0 ? 200 : index === 2 ? 220 : 0;
-        const isFinal = index === 2;
-
-        return (
-          <article
-            key={step.title}
-            className={`relative z-10 rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-lg ${
-              isVisible ? "translate-y-0 scale-100 opacity-100" : `${isFinal ? "scale-95" : "translate-y-5"} opacity-0`
-            }`}
-            style={{ transitionDelay: isVisible ? `${cardDelay}ms` : "0ms" }}
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <step.icon className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-xs font-black uppercase text-primary">{step.day}</p>
-                <h2
-                  className={`mt-1 text-[var(--h2-size)] font-black text-foreground transition-opacity duration-500 ${isVisible ? "opacity-100" : "opacity-0"}`}
-                  style={{ transitionDelay: isVisible ? `${cardDelay + textDelay}ms` : "0ms" }}
-                >
-                  {step.title}
-                </h2>
-                <p
-                  className={`mt-2 min-h-[3.5rem] leading-7 text-muted-foreground transition-opacity duration-500 sm:min-h-0 ${isVisible ? "opacity-100" : "opacity-0"}`}
-                  style={{ transitionDelay: isVisible ? `${cardDelay + textDelay + 120}ms` : "0ms" }}
-                >
-                  <WordTypewriter text={step.body} active={isVisible} delay={cardDelay + textDelay + 120} />
-                </p>
-              </div>
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  );
-};
+const H2 = ({ children }: { children: ReactNode }) => (
+  <h2 className="text-[var(--h1-size)] font-black leading-tight text-foreground">{children}</h2>
+);
 
 const ChallengeLanding = () => {
   const navigate = useNavigate();
-  const completionDayName = getCompletionDayName();
+  const { search } = useLocation();
+  const { map, loaded } = useSiteContent(CHALLENGE_SALES_PAGE);
+  const c = useMemo(
+    () => parseChallengeSales(map[`${CHALLENGE_SALES_SECTION}.${CHALLENGE_SALES_KEY}`]),
+    [map],
+  );
 
-  const joinChallenge = (section: string) => {
+  const join = (section: string) => {
     trackEvent("landing_cta_clicked", { section });
-    navigate("/assessment");
+    navigate(`/challenge/join${search}`);
   };
 
-  const startQuiz = () => {
-    trackEvent("landing_cta_clicked", { section: "challenge_assessment" });
-    navigate("/assessment");
-  };
+  const Cta = ({ label, under, section }: { label: string; under: string; section: string }) => (
+    <div className="flex flex-col items-center gap-3">
+      <Button
+        className="h-auto min-h-14 w-full max-w-full gap-2 whitespace-normal rounded-xl px-6 py-4 text-center text-[var(--body-size)] font-black uppercase leading-snug shadow-lg shadow-primary/20 sm:w-auto sm:px-8"
+        onClick={() => join(section)}
+      >
+        <span>
+          {label}
+          <ArrowRight className="ml-2 inline h-4 w-4 align-[-2px]" />
+        </span>
+      </Button>
+      {under && <p className="text-center text-[var(--body-size)] text-muted-foreground">{renderDay(under)}</p>}
+    </div>
+  );
+
+  if (!loaded) return <main className="min-h-screen bg-background" />;
+
+  const testimonials = byPosition(c.testimonials.items).filter((t) => t.quote.trim());
 
   return (
     <>
-      <SEO title="3-Day Builder Challenge" description="Build a challenge in 3 days where people get a real result and feel excited to invite others." canonical="/challenge" />
-      <main className="min-h-screen bg-background text-foreground">
-      <section className="px-5 py-10 sm:px-6 md:py-16 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="text-center lg:text-left">
-            <p className="mx-auto inline-flex rounded-full border border-border bg-card px-4 py-2 text-[var(--body-size)] font-black uppercase text-primary shadow-sm lg:mx-0">
-              Free 3-day builder challenge
-            </p>
-            <h1 className="mx-auto mt-6 max-w-4xl text-[var(--h1-size)] font-black leading-[1.02] tracking-normal text-foreground sm:text-[var(--h1-size)] md:text-[var(--h1-size)] lg:mx-0">
-              Turn trust into a lead engine that grows itself
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-[var(--h2-size)] leading-8 text-muted-foreground sm:text-[var(--h2-size)] lg:mx-0">
-              Build a challenge in 3 days where people get a real result, and feel excited to invite others along the way.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <Button className="h-14 gap-2 rounded-xl px-8 text-[var(--body-size)] font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_hero")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
+      <SEO title="Free 3-Day Challenge" description={c.hero.subheadline} canonical="/challenge" />
+      <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
+        {c.hero.show && (
+          <Section className="pt-12 md:pt-20">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-black uppercase tracking-wide text-primary">{c.hero.kicker}</p>
+              <h1 className="mt-5 text-[var(--h1-size)] font-black leading-[1.05] text-foreground">{c.hero.headline}</h1>
+              <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.hero.subheadline}</p>
+              <div className="mt-8"><Cta label={c.hero.button} under={c.hero.underButton} section="challenge_hero" /></div>
             </div>
-            <p className="mt-3 text-center text-[var(--body-size)] text-muted-foreground lg:text-left">
-              Start today and have this in place by {completionDayName}.
-            </p>
-            <ActivityFeed title="Live builder activity" className="mx-auto mt-8 max-w-md text-left lg:mx-0" />
-          </div>
+          </Section>
+        )}
 
-          <AnimatedDayCards />
-        </div>
-      </section>
-
-      <Section className="border-y border-border bg-card/55">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-[var(--body-size)] font-black uppercase text-primary">Why it works</p>
-          <h2 className="mt-3 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)] md:text-[var(--h1-size)]">People do not just consume content. They participate.</h2>
-          <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">The challenge gives your audience a clear next step, captures intent, and encourages sharing as part of the experience.</p>
-        </div>
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {[
-            { icon: Target, title: "Attracts the right people", body: "Built around a real problem your audience already wants solved." },
-            { icon: Magnet, title: "Captures leads immediately", body: "Every signup is a lead with clear context attached." },
-            { icon: Share2, title: "Grows through sharing", body: "Participants invite others, so reach can compound." },
-          ].map((item) => (
-            <div key={item.title} className="rounded-xl border border-border bg-background p-6 shadow-sm">
-              <item.icon className="h-6 w-6 text-primary" />
-              <h3 className="mt-5 text-[var(--h2-size)] font-black text-foreground">{item.title}</h3>
-              <p className="mt-3 leading-7 text-muted-foreground">{item.body}</p>
+        {c.problem.show && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.problem.heading}</H2>
+              <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.problem.body}</p>
             </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { icon: Zap, title: "A live lead-building challenge", body: "Not a theory or worksheet — a real app people can join." },
-            { icon: Compass, title: "A guided path for participants", body: "Each day moves people closer to the outcome they want." },
-            { icon: Repeat, title: "A built-in growth loop", body: "Referral prompts help your challenge keep spreading." },
-          ].map((item) => (
-            <div key={item.title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
-              <item.icon className="h-6 w-6 text-primary" />
-              <h2 className="mt-5 text-[var(--h2-size)] font-black text-foreground">{item.title}</h2>
-              <p className="mt-3 leading-7 text-muted-foreground">{item.body}</p>
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              {byPosition(c.problem.cards).map((card) => (
+                <div key={card.id} className="rounded-xl border border-border bg-background p-6 shadow-sm">
+                  <h3 className="text-[var(--h2-size)] font-black text-foreground">{card.title}</h3>
+                  <p className="mt-3 leading-7 text-muted-foreground">{card.body}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Section>
+          </Section>
+        )}
 
-      <Section className="border-t border-border">
-        <div className="mx-auto max-w-3xl text-center">
-          <Calendar className="mx-auto h-9 w-9 text-primary" />
-          <h2 className="mt-5 text-[var(--h1-size)] font-black leading-tight text-foreground sm:text-[var(--h1-size)] md:text-[var(--h1-size)]">Start building your challenge</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[var(--h2-size)] leading-8 text-muted-foreground">Join the 3-day builder challenge, or take the quiz first if you want a recommended strategy.</p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button className="h-14 gap-2 rounded-xl px-8 text-[var(--body-size)] font-black uppercase shadow-lg shadow-primary/20" onClick={() => joinChallenge("challenge_bottom")}>Join the challenge<ArrowRight className="h-4 w-4" /></Button>
-            <Button variant="outline" className="h-14 rounded-xl px-8 text-[var(--body-size)] font-black uppercase" onClick={startQuiz}>Take the quiz</Button>
-          </div>
-        </div>
-      </Section>
-    </main>
+        {c.fix.show && (
+          <Section>
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.fix.heading}</H2>
+              <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.fix.body}</p>
+            </div>
+          </Section>
+        )}
+
+        {c.days.show && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="text-center"><H2>{c.days.heading}</H2></div>
+            <div className="mt-10 space-y-4">
+              {byPosition(c.days.items).map((d, i) => (
+                <article key={d.id} className="flex items-start gap-4 rounded-xl border border-border bg-background p-5 shadow-sm">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-black text-primary">{i + 1}</div>
+                  <div>
+                    <h3 className="text-[var(--h2-size)] font-black text-foreground">{d.title}</h3>
+                    <p className="mt-2 leading-7 text-muted-foreground">{d.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </Section>
+        )}
+
+        {c.walkAway.show && (
+          <Section>
+            <div className="mx-auto max-w-2xl">
+              <div className="text-center"><H2>{c.walkAway.heading}</H2></div>
+              <ul className="mt-8 space-y-3">
+                {byPosition(c.walkAway.items).map((it) => (
+                  <li key={it.id} className="flex items-start gap-3 text-[var(--h2-size)] leading-8">
+                    <Check className="mt-1.5 h-5 w-5 shrink-0 text-primary" />
+                    <span>{it.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Section>
+        )}
+
+        {c.whoFor.show && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="rounded-xl border border-border bg-background p-6">
+                <h3 className="text-[var(--h2-size)] font-black">{c.whoFor.forHeading}</h3>
+                <ul className="mt-4 space-y-3">
+                  {byPosition(c.whoFor.forItems).map((it) => (
+                    <li key={it.id} className="flex gap-3 leading-7"><Check className="mt-1 h-5 w-5 shrink-0 text-primary" />{it.text}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-border bg-background p-6">
+                <h3 className="text-[var(--h2-size)] font-black">{c.whoFor.notForHeading}</h3>
+                <ul className="mt-4 space-y-3">
+                  {byPosition(c.whoFor.notForItems).map((it) => (
+                    <li key={it.id} className="flex gap-3 leading-7 text-muted-foreground"><X className="mt-1 h-5 w-5 shrink-0" />{it.text}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {c.guide.show && (
+          <Section>
+            <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:flex-row md:text-left">
+              {c.guide.photoUrl && <img src={c.guide.photoUrl} alt={c.guide.heading} className="h-32 w-32 shrink-0 rounded-full object-cover" />}
+              <div>
+                <H2>{c.guide.heading}</H2>
+                <p className="mt-4 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.guide.body}</p>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {c.testimonials.show && testimonials.length > 0 && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="text-center"><H2>{c.testimonials.heading}</H2></div>
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              {testimonials.map((t) => (
+                <figure key={t.id} className="rounded-xl border border-border bg-background p-6">
+                  <blockquote className="leading-7">"{t.quote}"</blockquote>
+                  <figcaption className="mt-4 text-sm font-bold">{t.name}{t.role && <span className="font-normal text-muted-foreground">, {t.role}</span>}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </Section>
+        )}
+
+        {c.faq.show && c.faq.items.length > 0 && (
+          <Section>
+            <div className="mx-auto max-w-2xl">
+              <div className="text-center"><H2>{c.faq.heading}</H2></div>
+              <Accordion type="single" collapsible className="mt-8">
+                {byPosition(c.faq.items).map((f) => (
+                  <AccordionItem key={f.id} value={f.id}>
+                    <AccordionTrigger className="text-left text-[var(--body-size)] font-bold">{f.question}</AccordionTrigger>
+                    <AccordionContent className="leading-7 text-muted-foreground">{f.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </Section>
+        )}
+
+        {c.finalCall.show && (
+          <Section className="border-t border-border">
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.finalCall.heading}</H2>
+              <div className="mt-8"><Cta label={c.finalCall.button} under={c.finalCall.underButton} section="challenge_bottom" /></div>
+            </div>
+          </Section>
+        )}
+      </main>
     </>
   );
 };

@@ -71,32 +71,37 @@ Deno.serve(async (req) => {
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-    // Look for any other profile with the same hash within the last 24h.
-    const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { data: dups } = await admin
+    // Never delete, block or sign out an account for sharing a network.
+    // Instead, if this signup came through a referral and shares a network
+    // with the referrer (or with another signup from the same referrer in
+    // the last 24h), withhold the referral credit and flag it for review.
+    const { data: me } = await admin
       .from("profiles")
-      .select("user_id, email, signup_ip_hashed_at")
-      .eq("signup_ip_hash", hash)
-      .gte("signup_ip_hashed_at", sinceIso)
-      .neq("user_id", user.id)
-      .limit(1);
+      .select("referred_by")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    const duplicate = (dups?.length ?? 0) > 0;
-
-    if (duplicate) {
-      // Delete the just-created auth user so the email can be reused
-      // (no half-baked accounts left behind) and so they can't slip
-      // through with a refresh token from the client.
-      await admin.auth.admin.deleteUser(user.id);
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          blocked: true,
-          reason: "duplicate_ip_24h",
-          message: "Another account from this network was created in the last 24 hours.",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    let sameNetwork = false;
+    if (me?.referred_by) {
+      const { data: inviter } = await admin
+        .from("profiles")
+        .select("signup_ip_hash")
+        .eq("invite_code", me.referred_by)
+        .maybeSingle();
+      if (inviter?.signup_ip_hash && inviter.signup_ip_hash === hash) {
+        sameNetwork = true;
+      } else {
+        const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { data: siblings } = await admin
+          .from("profiles")
+          .select("user_id")
+          .eq("referred_by", me.referred_by)
+          .eq("signup_ip_hash", hash)
+          .gte("signup_ip_hashed_at", sinceIso)
+          .neq("user_id", user.id)
+          .limit(1);
+        sameNetwork = (siblings?.length ?? 0) > 0;
+      }
     }
 
     // Record the fingerprint on the user's profile.
@@ -105,9 +110,14 @@ Deno.serve(async (req) => {
       .update({
         signup_ip_hash: hash,
         signup_ip_hashed_at: new Date().toISOString(),
-        suspected_signup_dup_ip: false,
+        suspected_signup_dup_ip: sameNetwork,
       })
       .eq("user_id", user.id);
+
+    if (sameNetwork) {
+      const { error: flagErr } = await admin.rpc("flag_same_network_referral", { p_user: user.id });
+      if (flagErr) console.error("flag_same_network_referral failed", flagErr);
+    }
 
     return new Response(JSON.stringify({ ok: true, blocked: false, recorded: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

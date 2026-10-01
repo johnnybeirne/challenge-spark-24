@@ -95,6 +95,7 @@ import AdminPayouts from "@/pages/AdminPayouts";
 import AdminPartnerOps from "@/pages/AdminPartnerOps";
 import AdminJvPartners from "@/pages/AdminJvPartners";
 import AdminSignups from "@/pages/AdminSignups";
+import AdminFlaggedReferrals from "@/pages/AdminFlaggedReferrals";
 import AdminWaitlistEmail from "@/pages/AdminWaitlistEmail";
 import AdminNewsletter from "@/pages/AdminNewsletter";
 import AdminMilestoneEmails from "@/pages/AdminMilestoneEmails";
@@ -318,6 +319,7 @@ const App = () => (
                 
                 <Route path="promoters" element={<AdminPromoters />} />
                 <Route path="signups" element={<AdminSignups />} />
+                <Route path="flagged-referrals" element={<AdminFlaggedReferrals />} />
                 
                 <Route path="waitlist-email" element={<AdminWaitlistEmail />} />
                 <Route path="newsletter" element={<AdminNewsletter />} />

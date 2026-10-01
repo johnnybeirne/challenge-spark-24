@@ -81,6 +81,7 @@ import AdminTraining from "@/pages/AdminTraining";
 import AdminDay1 from "@/pages/AdminDay1";
 import AdminDay3 from "@/pages/AdminDay3";
 import AdminPipelineScorecard from "@/pages/AdminPipelineScorecard";
+import AdminChallengeSales from "@/pages/admin/AdminChallengeSales";
 import AdminDay2 from "@/pages/AdminDay2";
 
 import AdminQuizPreviewTips from "@/pages/AdminQuizPreviewTips";
@@ -334,6 +335,7 @@ const App = () => (
                 <Route path="day3" element={<AdminDay3 />} />
                 <Route path="day3-content" element={<Navigate to="/owner-console/day3" replace />} />
                 <Route path="pipeline-scorecard" element={<AdminPipelineScorecard />} />
+                <Route path="challenge-sales" element={<AdminChallengeSales />} />
 
                 <Route path="quiz-preview-tips" element={<AdminQuizPreviewTips />} />
                 <Route path="view-as-user" element={<AdminViewAsUser />} />

@@ -32,6 +32,7 @@ const items: NavItem[] = [
   { title: "Quiz preview tips", url: "/owner-console/quiz-preview-tips", icon: HelpCircle, external: true, keywords: ["quiz", "tips", "tooltip", "help"] },
   { title: "Product overview", url: "/owner-console/overview", icon: FileText, external: true, keywords: ["overview", "docs", "summary"] },
   { title: "Registrants", url: "/owner-console/bios", icon: IdCard, external: true, keywords: ["users", "participants", "signups", "bios", "members", "referral link"] },
+  { title: "Flagged referrals", url: "/owner-console/flagged-referrals", icon: Shield, external: true, keywords: ["referral", "fraud", "network", "ip", "flagged", "review"] },
   { title: "JV partners", url: "/owner-console/jv-partners", icon: Handshake, external: true, keywords: ["partners", "affiliates", "jv"] },
   { title: "Console home", url: "/owner-console", icon: LayoutDashboard, end: true, external: true, keywords: ["home", "dashboard", "admin"] },
   { title: "Quiz LP Editor", url: "/owner-console/content", icon: FileEdit, external: true, keywords: ["landing page", "copy", "headline", "quiz page", "content"] },

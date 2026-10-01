@@ -814,6 +814,45 @@ export type Database = {
         }
         Relationships: []
       }
+      flagged_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          invite_code: string | null
+          reason: string
+          referred_email: string | null
+          referred_user_id: string
+          referrer_email: string | null
+          referrer_user_id: string | null
+          resolved_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_code?: string | null
+          reason?: string
+          referred_email?: string | null
+          referred_user_id: string
+          referrer_email?: string | null
+          referrer_user_id?: string | null
+          resolved_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_code?: string | null
+          reason?: string
+          referred_email?: string | null
+          referred_user_id?: string
+          referrer_email?: string | null
+          referrer_user_id?: string | null
+          resolved_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       founding_config: {
         Row: {
           created_at: string
@@ -1941,6 +1980,7 @@ export type Database = {
           referral_day1_complete_count: number
           referral_day2_complete_count: number
           referral_day3_complete_count: number
+          referral_flagged: boolean
           referral_quiz_complete_count: number
           referred_by: string | null
           referred_by_parent: string | null
@@ -1981,6 +2021,7 @@ export type Database = {
           referral_day1_complete_count?: number
           referral_day2_complete_count?: number
           referral_day3_complete_count?: number
+          referral_flagged?: boolean
           referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
@@ -2021,6 +2062,7 @@ export type Database = {
           referral_day1_complete_count?: number
           referral_day2_complete_count?: number
           referral_day3_complete_count?: number
+          referral_flagged?: boolean
           referral_quiz_complete_count?: number
           referred_by?: string | null
           referred_by_parent?: string | null
@@ -3172,6 +3214,10 @@ export type Database = {
         Args: { p_new_partner_slug: string; p_user_id: string }
         Returns: undefined
       }
+      admin_resolve_flagged_referral: {
+        Args: { p_approve: boolean; p_id: string }
+        Returns: string
+      }
       admin_revoke_commission: {
         Args: { p_commission_id: string; p_reason?: string }
         Returns: undefined
@@ -3191,6 +3237,7 @@ export type Database = {
       check_guest_pass: { Args: { _token: string }; Returns: Json }
       claim_invite_unlock: { Args: { p_gate_key: string }; Returns: boolean }
       claim_unlock: { Args: { p_unlock_id: string }; Returns: boolean }
+      flag_same_network_referral: { Args: { p_user: string }; Returns: boolean }
       get_active_challengers: {
         Args: { p_limit?: number }
         Returns: {

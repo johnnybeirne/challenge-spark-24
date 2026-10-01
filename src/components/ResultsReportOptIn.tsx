@@ -89,7 +89,7 @@ const ResultsReportOptIn = () => {
       signup_product: "report",
       entry_intent: "report",
       journey_tag: journeyTag,
-    });
+    }, !saveError && token ? `/r/${token}` : "/report");
     if (authError) {
       console.warn("report opt-in auth code failed", authError.message);
     }

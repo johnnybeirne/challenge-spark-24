@@ -7,7 +7,7 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  sendEmailCode: (email: string, metadata?: Record<string, string>) => Promise<{ error: any }>;
+  sendEmailCode: (email: string, metadata?: Record<string, string>, redirectPath?: string) => Promise<{ error: any }>;
   verifyEmailCode: (email: string, token: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ data: any; error: any }>;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
@@ -120,14 +120,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Emails a one-time login link. Lovable Cloud's built-in auth mailer sends
   // its own magic-link template for this (not a typed code, despite the
   // function name) — emailRedirectTo controls where that link lands.
-  const sendEmailCode = async (email: string, metadata?: Record<string, string>) => {
+  const sendEmailCode = async (email: string, metadata?: Record<string, string>, redirectPath?: string) => {
     try {
       const { error } = await withAuthTimeout(supabase.auth.signInWithOtp({
         email,
         options: {
           data: metadata,
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/challenger-dashboard`,
+          emailRedirectTo: `${window.location.origin}${redirectPath ?? "/challenger-dashboard"}`,
         },
       }));
       return { error };

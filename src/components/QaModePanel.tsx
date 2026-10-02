@@ -1,6 +1,5 @@
 import { previewBarVisible } from "@/components/PreviewTopBar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { previewBarVisible } from "@/components/PreviewTopBar";
 import { useNavigate } from "react-router-dom";
 import { Beaker, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";

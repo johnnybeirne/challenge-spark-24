@@ -22,6 +22,7 @@ export type ChallengeSalesContent = {
   testimonials: { show: boolean; heading: string; items: Testimonial[] };
   faq: { show: boolean; heading: string; items: FaqItem[] };
   finalCall: { show: boolean; heading: string; button: string; underButton: string };
+  join: { kicker: string; headline: string; subheadline: string; button: string; underButton: string; showDays: boolean; daysHeading: string };
 };
 
 let n = 0;
@@ -106,6 +107,15 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
     heading: "Your audience is already there. Let's turn them into leads.",
     button: "Join the free challenge",
     underButton: "Start today. Have yours ready by {day}.",
+  },
+  join: {
+    kicker: "FREE 3-DAY CHALLENGE",
+    headline: "Stop losing the leads you already have.",
+    subheadline: "Create your free account and start Day 1 today. You'll build a challenge of your own that turns followers into leads.",
+    button: "Join the free challenge",
+    underButton: "Free. Have yours ready by {day}.",
+    showDays: true,
+    daysHeading: "What you'll build, day by day",
   },
 };
 

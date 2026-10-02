@@ -19,7 +19,7 @@ const BAR_H = 32;
 // Public page -> editor
 const EDIT_MAP: { test: (p: string) => boolean; href: string }[] = [
   { test: (p) => p === "/", href: "/owner-console/content" },
-  { test: (p) => p.startsWith("/challenge/join") || p === "/join", href: "/owner-console/content" },
+  { test: (p) => p.startsWith("/challenge/join") || p === "/join", href: "/owner-console/challenge-sales" },
   { test: (p) => p === "/challenge", href: "/owner-console/challenge-sales" },
   { test: (p) => p.startsWith("/results"), href: "/owner-console/results-page" },
   { test: (p) => p === "/report" || p.startsWith("/r/"), href: "/owner-console/report-page" },

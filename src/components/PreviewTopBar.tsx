@@ -122,6 +122,13 @@ export default function PreviewTopBar() {
           <ExternalLink className="h-3.5 w-3.5" /> Preview page
         </a>
       )}
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new CustomEvent("leadio:toggle-qa-panel"))}
+        className={linkCls}
+      >
+        <Eye className="h-3.5 w-3.5" /> QA mode
+      </button>
       {qa.active && (
         <span className="ml-auto inline-flex shrink-0 items-center gap-2 rounded bg-amber-500 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-950">
           <Eye className="h-3.5 w-3.5" />

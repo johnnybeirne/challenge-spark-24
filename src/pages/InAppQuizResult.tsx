@@ -7,7 +7,7 @@ import { getDiagnosticResult } from "@/lib/assessmentData";
 import aiAvatar from "@/assets/ai-avatar.png";
 import { QUIZ_GATE_NEXT_KEY } from "@/components/QuizGate";
 
-function readNext(): { to: string; label: string } {
+export function readNext(): { to: string; label: string } {
   let to = "/challenge/day-1";
   try {
     const v = sessionStorage.getItem(QUIZ_GATE_NEXT_KEY);

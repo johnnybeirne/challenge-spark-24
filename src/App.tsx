@@ -204,7 +204,7 @@ const App = () => (
                 <Route path="/assessment" element={<Assessment mode="challenge" />} />
                 {/* In-app quiz gate for logged-in users (before Day 1) */}
                 <Route path="/challenge/quiz" element={<AuthGuard><Assessment mode="challenge" inApp /></AuthGuard>} />
-                <Route path="/challenge/quiz/result" element={<AuthGuard><InAppQuizResult /></AuthGuard>} />
+                <Route path="/challenge/quiz/result" element={<AuthGuard><Results inApp /></AuthGuard>} />
                 {/* Legacy alias */}
                 <Route path="/assess" element={<RedirectKeepingQuery to="/assessment" />} />
                 {/* Mode-specific assessment entries (different post-result destination) */}

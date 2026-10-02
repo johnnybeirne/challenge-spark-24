@@ -22,6 +22,11 @@ export type ChallengeSalesContent = {
   testimonials: { show: boolean; heading: string; items: Testimonial[] };
   faq: { show: boolean; heading: string; items: FaqItem[] };
   finalCall: { show: boolean; heading: string; button: string; underButton: string };
+  joinProblem: { show: boolean; eyebrow: string; heading: string; body: string; cards: CardItem[] };
+  joinBenefits: { show: boolean; eyebrow: string; heading: string; items: TextItem[] };
+  joinAbout: { show: boolean; photoUrl: string; eyebrow: string; heading: string; body: string };
+  joinTestimonials: { show: boolean; eyebrow: string; heading: string; items: Testimonial[] };
+  joinFinal: { show: boolean; heading: string; body: string; button: string };
   join: { kicker: string; headline: string; subheadline: string; button: string; underButton: string; showDays: boolean; daysHeading: string };
 };
 
@@ -107,6 +112,42 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
     heading: "Your audience is already there. Let's turn them into leads.",
     button: "Join the free challenge",
     underButton: "Start today. Have yours ready by {day}.",
+  },
+  joinProblem: {
+    show: true,
+    eyebrow: "Why a challenge",
+    heading: "Your followers like you. They just don't do anything about it.",
+    body: "More posts, more freebies and more ads all ask people to watch. A challenge asks them to take part, and people who take part become leads.",
+    cards: c([
+      ["Followers who never raise a hand", "Day 1 gives them a reason to step forward and join."],
+      ["Leads who download and disappear", "Daily wins keep them coming back for three days in a row."],
+      ["Fans who never bring a friend", "Built-in invites turn every participant into a referral."],
+    ]),
+  },
+  joinBenefits: {
+    show: true,
+    eyebrow: "By the end of Day 3",
+    heading: "You walk away with a challenge that's ready to launch",
+    items: t([
+      "A clear promise your audience wants",
+      "A quiz that shows people the problem you solve",
+      "A landing page and emails ready to go",
+      "A referral loop so people bring their friends",
+    ]),
+  },
+  joinAbout: {
+    show: true,
+    photoUrl: "",
+    eyebrow: "Who's guiding you",
+    heading: "About Johnny Beirne",
+    body: "Johnny Beirne has spent over 30 years building online businesses. He co-wrote Rethink Remoting and builds challenge funnels for coaches, consultants and authors.\n\nIn this challenge he walks you through every step, one day at a time.",
+  },
+  joinTestimonials: { show: true, eyebrow: "What people say", heading: "From people who took part", items: [] },
+  joinFinal: {
+    show: true,
+    heading: "Start Day 1 today",
+    body: "It's free, it takes about an hour a day, and you'll have yours ready by {day}.",
+    button: "Join the free challenge",
   },
   join: {
     kicker: "FREE 3-DAY CHALLENGE",

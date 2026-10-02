@@ -1,4 +1,8 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Eye } from "lucide-react";
+import { useQaPreview } from "@/hooks/useQaPreview";
+import { clearQaState } from "@/lib/qaPreview";
 import { useLocation } from "react-router-dom";
 import { Play, LayoutDashboard, Pencil, ExternalLink } from "lucide-react";
 import { isPreviewHost } from "@/lib/utils";
@@ -53,8 +57,22 @@ const PREVIEW_MAP: Record<string, string> = {
 const linkCls =
   "inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-xs font-semibold text-background/90 hover:bg-background/15 hover:text-background";
 
+export function previewBarVisible(): boolean {
+  if (typeof window === "undefined") return false;
+  let inSimulator = false;
+  try {
+    inSimulator = window.self !== window.top && window.parent.location.pathname.startsWith("/admin/simulator");
+  } catch {
+    inSimulator = false;
+  }
+  const host = window.location.hostname;
+  const onPreview = isPreviewHost() || host.endsWith(".lovableproject.com") || host.startsWith("preview--");
+  return onPreview && !inSimulator;
+}
+
 export default function PreviewTopBar() {
   const { pathname } = useLocation();
+  const qa = useQaPreview();
   // Hide only inside the simulator's own frame (same-origin parent).
   // The Lovable editor preview is also a frame, but a cross-origin one, so it still shows.
   let inSimulator = false;
@@ -79,10 +97,11 @@ export default function PreviewTopBar() {
   const editHref = !inConsole ? EDIT_MAP.find((m) => m.test(pathname))?.href : undefined;
   const previewHref = inConsole ? PREVIEW_MAP[pathname.replace(/\/$/, "")] : undefined;
 
-  return (
+  // Portal onto <html> so the body offset/transform can't misplace or block the bar.
+  return createPortal(
     <div
       className="preview-top-bar fixed inset-x-0 z-[200] flex items-center gap-1 overflow-x-auto bg-foreground px-3"
-      style={{ height: BAR_H, top: -BAR_H }}
+      style={{ height: BAR_H, top: 0 }}
     >
       <span className="mr-2 shrink-0 text-[10px] font-bold uppercase tracking-widest text-background/60">Preview</span>
       <a href="/admin/simulator" target="_blank" rel="noopener noreferrer" className={linkCls}>
@@ -103,6 +122,20 @@ export default function PreviewTopBar() {
           <ExternalLink className="h-3.5 w-3.5" /> Preview page
         </a>
       )}
-    </div>
+      {qa.active && (
+        <span className="ml-auto inline-flex shrink-0 items-center gap-2 rounded bg-amber-500 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-950">
+          <Eye className="h-3.5 w-3.5" />
+          QA Preview: {qa.tier} · {qa.entry.replace(/_/g, " ")}
+          <button
+            type="button"
+            onClick={() => clearQaState()}
+            className="rounded bg-amber-950/15 px-1.5 py-px text-[10px] font-black hover:bg-amber-950/25"
+          >
+            Exit
+          </button>
+        </span>
+      )}
+    </div>,
+    document.documentElement,
   );
 }

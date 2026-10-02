@@ -508,10 +508,15 @@ export function applyPersona(state: AppState, personaId: PersonaId): AppState {
   const progressDay = persona.dayProgress[3] >= 1 ? 3 : persona.dayProgress[2] >= 1 ? 3 : persona.dayProgress[1] >= 1 ? 2 : 1;
   const currentDay = Math.min(3, Math.max(timing.currentDay, progressDay));
 
-  const assessment = state.assessment ?? ({
-    ...generateResult(SAMPLE_ASSESSMENT_ANSWERS),
-    mode: "challenge",
-  } as AppState["assessment"]);
+  // Fresh signup starts with no quiz result so the quiz gate applies,
+  // until the in-app quiz is finished in this session.
+  const freshQuizDone = (() => { try { return sessionStorage.getItem("qa_fresh_quiz_done") === "1"; } catch { return false; } })();
+  const assessment = isEmptyPersona
+    ? (freshQuizDone ? state.assessment : null)
+    : state.assessment ?? ({
+        ...generateResult(SAMPLE_ASSESSMENT_ANSWERS),
+        mode: "challenge",
+      } as AppState["assessment"]);
 
   // 7. Apply explicit overrides (user/memory/aiOutputs) last so they win.
   const finalUser = { ...baseUser, ...(persona.userOverrides ?? {}), joinedAt: timing.joinedAtIso };

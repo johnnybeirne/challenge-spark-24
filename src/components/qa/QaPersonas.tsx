@@ -14,6 +14,7 @@ const QaPersonas = () => {
   const activeCharacter = qa.character ?? "";
 
   const selectPersona = (id: PersonaId | "") => {
+    try { sessionStorage.removeItem("qa_fresh_quiz_done"); } catch {}
     if (!id) {
       updateQaState({ persona: null });
       return;

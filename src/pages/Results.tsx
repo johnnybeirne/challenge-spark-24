@@ -15,6 +15,8 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { getCompletionDayName } from "@/lib/utils";
 import ScoreRingCombined from "@/components/ScoreRingCombined";
 import ResultsReportOptIn from "@/components/ResultsReportOptIn";
+import { readNext } from "@/pages/InAppQuizResult";
+import { QUIZ_GATE_NEXT_KEY } from "@/components/QuizGate";
 import ReportVerifyBanner from "@/components/ReportVerifyBanner";
 import { useReportPreview } from "@/lib/reportPreview";
 import { formatFirstNameSurnameInitial, getInitials } from "@/lib/formatName";
@@ -146,7 +148,7 @@ const breakdownDefaults: Record<string, Record<"low" | "mid" | "high", string>> 
 };
 
 
-const Results = () => {
+const Results = ({ inApp = false }: { inApp?: boolean } = {}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useAppState();
@@ -356,7 +358,7 @@ const Results = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
         <h1 className="text-[var(--h2-size)] font-bold text-foreground">No results yet</h1>
-        <Button onClick={() => navigate("/assessment")}>Take the quiz</Button>
+        <Button onClick={() => navigate(inApp ? "/challenge/quiz" : "/assessment")}>Take the quiz</Button>
       </div>
     );
   }
@@ -399,6 +401,10 @@ const Results = () => {
 
 
   const cta = (() => {
+    if (inApp) {
+      const next = readNext();
+      return { label: next.label, onClick: () => { try { sessionStorage.removeItem(QUIZ_GATE_NEXT_KEY); } catch {} navigate(next.to, { replace: true }); } };
+    }
     if (entryIntent === "premium_course") {
       const dest = pendingCoupon ? `/premium/enrol?coupon=${encodeURIComponent(pendingCoupon)}` : "/premium/enrol";
       return { label: joinLabel, onClick: () => navigate(dest) };
@@ -628,7 +634,7 @@ const Results = () => {
           </section>
         )}
 
-        {sequenceComplete && (
+        {sequenceComplete && !inApp && (
           <section className="mb-2 rounded-2xl p-8 animate-fade-in bg-muted/40" style={{ animationDelay: "200ms" }}>
             <ResultsReportOptIn />
           </section>

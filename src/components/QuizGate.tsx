@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Spinner from "@/components/Spinner";
 import { DEMO_USER_KEY } from "@/pages/AdminViewAsUser";
 import { questions as quizQuestions } from "@/lib/assessmentData";
+import { useQaPreview } from "@/hooks/useQaPreview";
 
 /** Where the in-app quiz sends the person when they finish. */
 export const QUIZ_GATE_NEXT_KEY = "quiz_gate_next";
@@ -36,6 +37,7 @@ const QuizGate = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAppState();
   const { user } = useAuth();
   const location = useLocation();
+  const qa = useQaPreview();
   const local = hasLocalResult(state.assessment);
   const isDemo = (() => { try { return sessionStorage.getItem(DEMO_USER_KEY) === "1"; } catch { return false; } })();
   const [remote, setRemote] = useState<"unknown" | "yes" | "no">("unknown");
@@ -55,6 +57,12 @@ const QuizGate = ({ children }: { children: React.ReactNode }) => {
     return () => { cancelled = true; };
   }, [local, isDemo, user]);
 
+  // Fresh signup preview: ignore the owner's own saved result, gate on the preview state only.
+  if (qa.active && qa.persona === "fresh" && user) {
+    if (local) return <>{children}</>;
+    try { sessionStorage.setItem(QUIZ_GATE_NEXT_KEY, location.pathname + location.search); } catch {}
+    return <Navigate to="/challenge/quiz" replace />;
+  }
   if (local || isDemo || !user) return <>{children}</>;
   if (remote === "unknown") return <Spinner />;
   if (remote === "no") {

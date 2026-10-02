@@ -274,6 +274,7 @@ const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
 
 
 
+        if (inApp) { try { sessionStorage.setItem("qa_fresh_quiz_done", "1"); } catch {} }
         setTimeout(() => {
           navigate(inApp ? "/challenge/quiz/result" : "/results", inApp ? { replace: true } : undefined);
         }, 4000);

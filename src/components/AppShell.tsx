@@ -15,6 +15,7 @@ import ChallengeCountdownBar from "./ChallengeCountdownBar";
 
 import BackButton from "./BackButton";
 import QaModePanel from "./QaModePanel";
+import { previewBarVisible } from "./PreviewTopBar";
 
 import { useAppState } from "@/context/AppContext";
 import { getExperience } from "@/lib/experience";
@@ -148,7 +149,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         <div className="lg:hidden">
           <ConsumerNav />
         </div>
-        <QaModePanel />
+        {!previewBarVisible() && <QaModePanel />}
       </div>
     );
   }
@@ -168,7 +169,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
         )}
       </div>
       {showCopilotChat && <AiCopilotChat />}
-      <QaModePanel />
+      {!previewBarVisible() && <QaModePanel />}
     </div>
   );
 };

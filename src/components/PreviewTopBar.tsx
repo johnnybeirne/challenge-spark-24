@@ -6,6 +6,7 @@ import { clearQaState } from "@/lib/qaPreview";
 import { useLocation } from "react-router-dom";
 import { Play, LayoutDashboard, Pencil, ExternalLink } from "lucide-react";
 import { isPreviewHost } from "@/lib/utils";
+import QaModePanel from "@/components/QaModePanel";
 
 /**
  * Owner-only utility bar pinned across the top of the preview host.
@@ -145,4 +146,10 @@ export default function PreviewTopBar() {
     </div>,
     document.documentElement,
   );
+}
+
+/** Single QA panel instance for every preview page, opened from the top bar. */
+export function PreviewQaPanel() {
+  if (!previewBarVisible()) return null;
+  return <QaModePanel />;
 }

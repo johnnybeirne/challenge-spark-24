@@ -309,3 +309,10 @@
 .experience-root[data-experience="challenge"] [data-mode-aside] { background-color: hsl(160 84% 39% / 0.07); }
 .experience-root[data-experience="paid"]      [data-mode-aside] { background-color: hsl(38 92% 50% / 0.08); }
 
+
+/* Preview-only owner bar: shift the whole page (including fixed bars) down 32px. */
+html.has-preview-bar body {
+  transform: translateZ(0);
+  margin-top: 32px;
+  min-height: calc(100vh - 32px);
+}

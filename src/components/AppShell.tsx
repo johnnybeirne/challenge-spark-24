@@ -100,7 +100,7 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
   const showSimulatorLaunch =
     pathname !== "/admin/simulator" && !isEmbedded &&
     !pathname.startsWith("/r/") && pathname !== "/report" &&
-    (isAdmin || isPreviewHost());
+    isAdmin && !isPreviewHost();
 
   if (showLockedScreen) {
     return <AccessLockedScreen pointsTotal={access.pointsTotal} pointsNeeded={access.pointsNeeded} onRefresh={() => void access.refresh()} />;
@@ -149,18 +149,6 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
           <ConsumerNav />
         </div>
         <QaModePanel />
-        {showSimulatorLaunch && (
-          <Button
-            asChild
-            size="lg"
-            className="fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            <a href="/admin/simulator" target="_blank" rel="noopener noreferrer">
-              <Play className="h-4 w-4 fill-current" />
-              Simulator
-            </a>
-          </Button>
-        )}
       </div>
     );
   }
@@ -181,18 +169,6 @@ const AppShellInner = ({ showNav = false, fullWidth = false }: { showNav?: boole
       </div>
       {showCopilotChat && <AiCopilotChat />}
       <QaModePanel />
-      {showSimulatorLaunch && (
-        <Button
-          asChild
-          size="lg"
-          className="fixed bottom-6 right-6 z-50 gap-2 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          <a href="/admin/simulator" target="_blank" rel="noopener noreferrer">
-            <Play className="h-4 w-4 fill-current" />
-            Simulator
-          </a>
-        </Button>
-      )}
     </div>
   );
 };

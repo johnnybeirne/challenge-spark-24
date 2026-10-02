@@ -325,6 +325,11 @@ const Assessment = ({ mode, inApp = false }: AssessmentProps = {}) => {
             <span className="text-[11px] tracking-[0.25em] font-bold text-primary uppercase">
               Johnny B AI
             </span>
+            {inApp && current === 0 && (
+              <p className="mt-4 max-w-md text-center text-sm text-muted-foreground">
+                Just before we start the challenge, we invite you to take part in this two-minute quiz.
+              </p>
+            )}
           </div>
 
           {/* Question */}

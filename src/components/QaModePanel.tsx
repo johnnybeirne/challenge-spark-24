@@ -1,5 +1,6 @@
 import { previewBarVisible } from "@/components/PreviewTopBar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { previewBarVisible } from "@/components/PreviewTopBar";
 import { useNavigate } from "react-router-dom";
 import { Beaker, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -399,6 +400,15 @@ const QaModePanel = () => {
   };
 
   useEffect(() => {
+    const toggle = () => {
+      setOpen((v) => !v);
+      setPos((p) => ({ x: p.x, y: Math.max(40, p.y) }));
+    };
+    window.addEventListener("leadio:toggle-qa-panel", toggle);
+    return () => window.removeEventListener("leadio:toggle-qa-panel", toggle);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     if (!user?.id) {
       setIsAdmin(false);
@@ -550,7 +560,7 @@ const QaModePanel = () => {
           </p>
         </div>
       )}
-      <DraggableQaButton open={open} setOpen={setOpen} active={qa.active} />
+      {!previewBarVisible() && <DraggableQaButton open={open} setOpen={setOpen} active={qa.active} />}
 
 
       {open && (

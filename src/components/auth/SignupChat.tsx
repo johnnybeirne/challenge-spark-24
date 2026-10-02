@@ -365,7 +365,7 @@ const SignupChat = ({
           </div>
 
         ) : mode === "signup" && isForm ? (
-          <div className={`grid gap-10 ${aside ? "md:grid-cols-2 md:items-start" : ""}`}>
+          <div className={`grid gap-10 pt-12 md:pt-16 ${aside ? "md:grid-cols-2 md:items-start" : ""}`}>
             <div>
               {kicker && <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-primary">{kicker}</p>}
               <h1 className="mb-3 text-3xl font-black leading-tight text-foreground md:text-4xl">{headline}</h1>

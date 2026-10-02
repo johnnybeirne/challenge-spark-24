@@ -55,8 +55,17 @@ const linkCls =
 
 export default function PreviewTopBar() {
   const { pathname } = useLocation();
-  const embedded = typeof window !== "undefined" && window.self !== window.top;
-  const show = isPreviewHost() && !embedded;
+  // Hide only inside the simulator's own frame (same-origin parent).
+  // The Lovable editor preview is also a frame, but a cross-origin one, so it still shows.
+  let inSimulator = false;
+  try {
+    inSimulator = window.self !== window.top && window.parent.location.pathname.startsWith("/admin/simulator");
+  } catch {
+    inSimulator = false;
+  }
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
+  const onPreview = isPreviewHost() || host.endsWith(".lovableproject.com") || host.startsWith("preview--");
+  const show = onPreview && !inSimulator;
 
   useEffect(() => {
     if (!show) return;

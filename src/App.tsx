@@ -27,7 +27,7 @@ import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
 import SimulatorBridge from "@/components/SimulatorBridge";
-import PreviewTopBar from "@/components/PreviewTopBar";
+import PreviewTopBar, { PreviewQaPanel } from "@/components/PreviewTopBar";
 import ExperienceShell from "@/components/ExperienceShell";
 import AuthGuard, { PartnerGuard } from "@/components/AuthGuard";
 import QuizGate from "@/components/QuizGate";
@@ -173,6 +173,7 @@ const App = () => (
             <ScrollToTop />
             <SimulatorBridge />
             <PreviewTopBar />
+            <PreviewQaPanel />
             <AttributionCapture />
             <TypographyLoader />
             {/* Free/Paid preview tier badge (separate system from the QA preview panel) */}

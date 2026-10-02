@@ -128,7 +128,7 @@ const AdminChallengeSales = () => {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Challenge Sales Page</h1>
-          <p className="text-sm text-muted-foreground">Every word on /challenge. Type {"{day}"} to show the day two days from today, for example Saturday.</p>
+          <p className="text-sm text-muted-foreground">Every word on /challenge and the sign-up page. Type {"{day}"} to show the day two days from today, for example Saturday.</p>
         </div>
         <Button variant="outline" onClick={() => window.open("/challenge", "_blank", "noopener")}>
           <ExternalLink className="mr-1 h-4 w-4" />Preview
@@ -225,6 +225,23 @@ const AdminChallengeSales = () => {
         <Field label="Button text" value={c.finalCall.button} onChange={(v) => set("finalCall", { button: v })} />
         <Field label="Line under the button" value={c.finalCall.underButton} onChange={(v) => set("finalCall", { underButton: v })} />
       </Section>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-lg">Sign-up page (/challenge/join)</CardTitle>
+          <Button variant="outline" size="sm" onClick={() => window.open("/challenge/join", "_blank", "noopener")}><ExternalLink className="mr-1 h-4 w-4" />Preview</Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Field label="Kicker" value={c.join.kicker} onChange={(v) => set("join", { kicker: v })} />
+          <Field label="Headline" value={c.join.headline} onChange={(v) => set("join", { headline: v })} />
+          <Field label="Subheadline" long value={c.join.subheadline} onChange={(v) => set("join", { subheadline: v })} />
+          <Field label="Button text" value={c.join.button} onChange={(v) => set("join", { button: v })} />
+          <Field label="Line under the button" value={c.join.underButton} onChange={(v) => set("join", { underButton: v })} />
+          <label className="flex items-center gap-2 text-sm">Show the day by day summary <Switch checked={c.join.showDays} onCheckedChange={(v) => set("join", { showDays: v })} /></label>
+          <Field label="Day by day heading" value={c.join.daysHeading} onChange={(v) => set("join", { daysHeading: v })} />
+          <p className="text-sm text-muted-foreground">The days themselves come from section 4 above.</p>
+        </CardContent>
+      </Card>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 backdrop-blur">
         <div className="mx-auto flex max-w-4xl justify-end gap-2">

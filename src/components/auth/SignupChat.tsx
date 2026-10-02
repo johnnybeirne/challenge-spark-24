@@ -33,6 +33,13 @@ export interface SignupChatProps {
     redirect: string;
     goToRedirect: () => void;
   }) => ReactNode;
+  /** "form" shows plain name, email and password boxes on one screen. */
+  variant?: "chat" | "form";
+  kicker?: string;
+  submitLabel?: string;
+  underButton?: string;
+  /** Extra content shown beside the form (form variant only). */
+  aside?: ReactNode;
 }
 
 const useTypewriter = (text: string, enabled: boolean, speed = 22) => {
@@ -118,7 +125,13 @@ const SignupChat = ({
   successSubcopy,
   defaultRedirect,
   renderSuccessActions,
+  variant = "chat",
+  kicker,
+  submitLabel = "Create my account",
+  underButton,
+  aside,
 }: SignupChatProps) => {
+  const isForm = variant === "form";
   const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -155,7 +168,7 @@ const SignupChat = ({
   const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
-    if (mode === "signup") {
+    if (mode === "signup" && !isForm) {
       const t = setTimeout(() => signupInputRef.current?.focus(), 600);
       return () => clearTimeout(t);
     }
@@ -167,6 +180,7 @@ const SignupChat = ({
   })();
 
   const canAdvanceSignup = (() => {
+    if (isForm) return firstName.trim().length > 0 && lastName.trim().length > 0 && signupEmail.trim().includes("@") && signupPassword.length >= 6;
     if (step === "name") return firstName.trim().length > 0 && lastName.trim().length > 0;
     if (step === "email") return signupEmail.trim().includes("@");
     return signupPassword.length >= 6;
@@ -175,8 +189,8 @@ const SignupChat = ({
   const handleSignupNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canAdvanceSignup || loading) return;
-    if (step === "name") return setStep("email");
-    if (step === "email") return setStep("password");
+    if (!isForm && step === "name") return setStep("email");
+    if (!isForm && step === "email") return setStep("password");
 
     try {
       const existing = JSON.parse(localStorage.getItem("challengeos_memory") || JSON.stringify(defaultMemory));
@@ -334,7 +348,7 @@ const SignupChat = ({
           Login
         </button>
       )}
-      <div className="w-full max-w-2xl">
+      <div className={`w-full ${isForm && mode === "signup" && !signupComplete ? "max-w-5xl" : "max-w-2xl"}`}>
         {signupComplete ? (
           <div>
             <JohnnySuccessMessage headline={successHeadline(firstName)} subcopy={successSubcopy} />
@@ -347,6 +361,43 @@ const SignupChat = ({
             </div>
           </div>
 
+        ) : mode === "signup" && isForm ? (
+          <div className={`grid gap-10 ${aside ? "md:grid-cols-2 md:items-start" : ""}`}>
+            <div>
+              {kicker && <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-primary">{kicker}</p>}
+              <h1 className="mb-3 text-3xl font-black leading-tight text-foreground md:text-4xl">{headline}</h1>
+              <p className="mb-8 text-base text-muted-foreground">{subcopy}</p>
+              <form onSubmit={handleSignupNext} className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="su-first">First name</Label>
+                    <Input id="su-first" value={firstName} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" maxLength={50} className="h-12 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="su-last">Last name</Label>
+                    <Input id="su-last" value={lastName} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" maxLength={50} className="h-12 rounded-xl" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="su-email">Email</Label>
+                  <Input id="su-email" type="email" placeholder="you@example.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} autoComplete="email" maxLength={255} className="h-12 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="su-pass">Password (6 or more characters)</Label>
+                  <Input id="su-pass" type="password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} autoComplete="new-password" minLength={6} className="h-12 rounded-xl" />
+                </div>
+                <Button type="submit" disabled={!canAdvanceSignup || loading} className="h-auto min-h-14 w-full whitespace-normal rounded-xl px-6 py-4 text-center text-base font-black uppercase leading-snug shadow-lg shadow-primary/20">
+                  <span>{loading ? "Creating your account..." : submitLabel}<ArrowRight className="ml-2 inline h-4 w-4 align-[-2px]" /></span>
+                </Button>
+                {underButton && <p className="text-center text-sm text-muted-foreground">{underButton}</p>}
+              </form>
+              <p className="mt-8 text-center text-sm text-muted-foreground">
+                Already have an account?{" "}
+                <button type="button" onClick={() => switchMode("login")} className="font-semibold text-primary hover:underline">Sign in instead</button>
+              </p>
+            </div>
+            {aside && <div>{aside}</div>}
+          </div>
         ) : mode === "signup" ? (
           <>
             <div className="flex flex-col items-center gap-3 mb-4">

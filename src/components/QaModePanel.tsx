@@ -1,3 +1,4 @@
+import { previewBarVisible } from "@/components/PreviewTopBar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Beaker, X, Eye } from "lucide-react";
@@ -529,7 +530,7 @@ const QaModePanel = () => {
     setOpen(false);
   };
 
-  const banner = qa.active && (
+  const banner = qa.active && !previewBarVisible() && (
     <DraggableQaBanner
       label={`QA Preview Active: ${qa.tier} · ${qa.entry.replace(/_/g, " ")}`}
       onExit={exit}

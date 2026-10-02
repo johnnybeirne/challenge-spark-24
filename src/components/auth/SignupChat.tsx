@@ -40,6 +40,8 @@ export interface SignupChatProps {
   underButton?: string;
   /** Extra content shown beside the form (form variant only). */
   aside?: ReactNode;
+  /** Extra sections shown under the form (form variant only). */
+  below?: ReactNode;
 }
 
 const useTypewriter = (text: string, enabled: boolean, speed = 22) => {
@@ -130,6 +132,7 @@ const SignupChat = ({
   submitLabel = "Create my account",
   underButton,
   aside,
+  below,
 }: SignupChatProps) => {
   const isForm = variant === "form";
   const { signUp, signIn, resetPassword } = useAuth();
@@ -567,6 +570,7 @@ const SignupChat = ({
           </>
         )}
       </div>
+      {isForm && mode === "signup" && !signupComplete && below && <div className="mt-16 w-[calc(100%+3rem)] -mx-6 -mb-6">{below}</div>}
     </div>
   );
 };

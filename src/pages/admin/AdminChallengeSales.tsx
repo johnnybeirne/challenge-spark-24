@@ -243,6 +243,67 @@ const AdminChallengeSales = () => {
         </CardContent>
       </Card>
 
+      <Section title="Sign-up page: why a challenge" show={c.joinProblem.show} onShow={(v) => set("joinProblem", { show: v })}>
+        <Field label="Small label" value={c.joinProblem.eyebrow} onChange={(v) => set("joinProblem", { eyebrow: v })} />
+        <Field label="Heading" value={c.joinProblem.heading} onChange={(v) => set("joinProblem", { heading: v })} />
+        <Field label="Body" long value={c.joinProblem.body} onChange={(v) => set("joinProblem", { body: v })} />
+        <ListEditor label="Cards" items={c.joinProblem.cards} onChange={(cards) => set("joinProblem", { cards })} blank={() => ({ title: "", body: "" })}
+          render={(it, s) => (<><Field label="Card title" value={it.title} onChange={(v) => s({ title: v })} /><Field label="Card text" long value={it.body} onChange={(v) => s({ body: v })} /></>)} />
+      </Section>
+
+      <Section title="Sign-up page: what you walk away with" show={c.joinBenefits.show} onShow={(v) => set("joinBenefits", { show: v })}>
+        <Field label="Small label" value={c.joinBenefits.eyebrow} onChange={(v) => set("joinBenefits", { eyebrow: v })} />
+        <Field label="Heading" value={c.joinBenefits.heading} onChange={(v) => set("joinBenefits", { heading: v })} />
+        <ListEditor label="Items" items={c.joinBenefits.items} onChange={(items) => set("joinBenefits", { items })} blank={() => ({ text: "" })}
+          render={(it, s) => <Field label="Text" value={it.text} onChange={(v) => s({ text: v })} />} />
+      </Section>
+
+      <Section title="Sign-up page: about me" show={c.joinAbout.show} onShow={(v) => set("joinAbout", { show: v })}>
+        <div className="space-y-1.5">
+          <Label>Photo (your quiz page photo is used until you upload one)</Label>
+          {c.joinAbout.photoUrl && <img src={c.joinAbout.photoUrl} alt="" className="h-28 w-24 rounded-lg object-cover" />}
+          <div className="flex flex-wrap items-center gap-2">
+            <Input type="file" accept="image/*" className="max-w-xs" disabled={uploading}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                setUploading(true);
+                try {
+                  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+                  const path = `challenge-join/${Date.now()}.${ext}`;
+                  const { error } = await supabase.storage.from("site-images").upload(path, file, { cacheControl: "3600", contentType: file.type });
+                  if (error) throw error;
+                  const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+                  set("joinAbout", { photoUrl: data.publicUrl });
+                  toast.success("Photo uploaded. Press Save to publish it.");
+                } catch {
+                  toast.error("Upload failed. Try again.");
+                } finally {
+                  setUploading(false);
+                }
+              }} />
+            {c.joinAbout.photoUrl && <Button variant="ghost" size="sm" onClick={() => set("joinAbout", { photoUrl: "" })}>Remove photo</Button>}
+          </div>
+        </div>
+        <Field label="Small label" value={c.joinAbout.eyebrow} onChange={(v) => set("joinAbout", { eyebrow: v })} />
+        <Field label="Heading" value={c.joinAbout.heading} onChange={(v) => set("joinAbout", { heading: v })} />
+        <Field label="About text (leave a blank line between paragraphs)" long value={c.joinAbout.body} onChange={(v) => set("joinAbout", { body: v })} />
+      </Section>
+
+      <Section title="Sign-up page: testimonials (hidden until you add one)" show={c.joinTestimonials.show} onShow={(v) => set("joinTestimonials", { show: v })}>
+        <Field label="Small label" value={c.joinTestimonials.eyebrow} onChange={(v) => set("joinTestimonials", { eyebrow: v })} />
+        <Field label="Heading" value={c.joinTestimonials.heading} onChange={(v) => set("joinTestimonials", { heading: v })} />
+        <ListEditor label="Testimonials" items={c.joinTestimonials.items} onChange={(items) => set("joinTestimonials", { items })} blank={() => ({ quote: "", name: "", role: "" })}
+          render={(it, s) => (<><Field label="Quote" long value={it.quote} onChange={(v) => s({ quote: v })} /><Field label="Name" value={it.name} onChange={(v) => s({ name: v })} /><Field label="Role or business (optional)" value={it.role} onChange={(v) => s({ role: v })} /></>)} />
+      </Section>
+
+      <Section title="Sign-up page: final call" show={c.joinFinal.show} onShow={(v) => set("joinFinal", { show: v })}>
+        <Field label="Heading" value={c.joinFinal.heading} onChange={(v) => set("joinFinal", { heading: v })} />
+        <Field label="Body" long value={c.joinFinal.body} onChange={(v) => set("joinFinal", { body: v })} />
+        <Field label="Button text (takes them back up to the form)" value={c.joinFinal.button} onChange={(v) => set("joinFinal", { button: v })} />
+      </Section>
+
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 backdrop-blur">
         <div className="mx-auto flex max-w-4xl justify-end gap-2">
           <Button variant="outline" onClick={() => window.open("/challenge", "_blank", "noopener")}>Preview</Button>

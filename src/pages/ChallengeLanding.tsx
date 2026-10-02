@@ -29,10 +29,19 @@ const ChallengeLanding = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const { map, loaded } = useSiteContent(CHALLENGE_SALES_PAGE);
-  const c = useMemo(
-    () => parseChallengeSales(map[`${CHALLENGE_SALES_SECTION}.${CHALLENGE_SALES_KEY}`]),
-    [map],
-  );
+  const c = useMemo(() => {
+    const parsed = parseChallengeSales(map[`${CHALLENGE_SALES_SECTION}.${CHALLENGE_SALES_KEY}`]);
+    // Replace {day} in every text field, not just the lines under the buttons.
+    const walk = (v: unknown): unknown =>
+      typeof v === "string"
+        ? renderDay(v)
+        : Array.isArray(v)
+          ? v.map(walk)
+          : v && typeof v === "object"
+            ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "id" || k === "photoUrl" ? x : walk(x)]))
+            : v;
+    return walk(parsed) as typeof parsed;
+  }, [map]);
 
   const join = (section: string) => {
     trackEvent("landing_cta_clicked", { section });

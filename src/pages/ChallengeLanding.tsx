@@ -296,9 +296,5 @@ const ChallengeLanding = () => {
     </>
   );
 };
-      </main>
-    </>
-  );
-};
 
 export default ChallengeLanding;

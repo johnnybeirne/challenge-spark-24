@@ -187,7 +187,7 @@ const App = () => (
                 {/* Canonical primary entry — assessment-first landing */}
                 <Route path="/" element={<Landing />} />
                 {/* Challenge: canonical /challenge marketing entry */}
-                <Route path="/challenge" element={<ChallengeLanding />} />
+                <Route path="/challenge" element={<RedirectKeepingQuery to="/challenge/join" />} />
                 {/* Blueprint: canonical /blueprint marketing entry */}
                 <Route path="/blueprint" element={<BlueprintLanding />} />
                 {/* Legacy alias kept for inbound links */}

@@ -159,7 +159,7 @@ const items: NavItem[] = [
 
 const siteItems: NavItem[] = [
   { title: "Quiz landing page", url: "/", icon: Home, external: true, keywords: ["home", "landing", "public site", "quiz"] },
-  { title: "Challenge landing page", url: "/challenge", icon: Home, external: true, keywords: ["challenge", "landing", "sales"] },
+  { title: "Challenge page", url: "/challenge/join", icon: Home, external: true, keywords: ["challenge", "landing", "sales"] },
   { title: "Waitlist thanks (preview)", url: "/waitlist/thanks?preview=1", icon: Eye, external: true, keywords: ["waitlist", "thanks", "confirmation"] },
   {
     title: "Course Sales Page",

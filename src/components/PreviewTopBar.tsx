@@ -38,7 +38,7 @@ const EDIT_MAP: { test: (p: string) => boolean; href: string }[] = [
 // Editor -> public page
 const PREVIEW_MAP: Record<string, string> = {
   "/owner-console/content": "/",
-  "/owner-console/challenge-sales": "/challenge",
+  "/owner-console/challenge-sales": "/challenge/join",
   "/owner-console/results-page": "/results",
   "/owner-console/report-page": "/report",
   "/owner-console/lead-gen-quiz": "/assessment",

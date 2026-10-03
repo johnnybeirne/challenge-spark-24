@@ -11,7 +11,12 @@ export type CardItem = { id: string; position: number; title: string; body: stri
 export type Testimonial = { id: string; position: number; quote: string; name: string; role: string };
 export type FaqItem = { id: string; position: number; question: string; answer: string };
 
+export const SECTION_KEYS = ["hero", "video", "liveObjection", "problem", "fix", "imagine", "days", "walkAway", "whoFor", "guide", "testimonials", "ifYouDont", "faq", "finalCall"] as const;
+export type SectionKey = (typeof SECTION_KEYS)[number];
+export type SectionOrderItem = { key: string; position: number };
+
 export type ChallengeSalesContent = {
+  sectionOrder: SectionOrderItem[];
   hero: { show: boolean; kicker: string; headline: string; subheadline: string; button: string; underButton: string };
   problem: { show: boolean; heading: string; body: string; cards: CardItem[] };
   fix: { show: boolean; heading: string; body: string; items: TextItem[] };
@@ -40,6 +45,7 @@ const t = (arr: string[]): TextItem[] => arr.map((text, i) => ({ id: `t${i}${tex
 const c = (arr: [string, string][]): CardItem[] => arr.map(([title, body], i) => ({ id: `c${i}${title.length}`, position: i, title, body }));
 
 export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
+  sectionOrder: SECTION_KEYS.map((key, position) => ({ key, position })),
   hero: {
     "show": true,
     "kicker": "For coaches, consultants and authors",
@@ -329,7 +335,10 @@ export function parseChallengeSales(raw?: string | null): ChallengeSalesContent 
   try {
     const s = JSON.parse(raw) ?? {};
     const out: any = {};
-    for (const k of Object.keys(d) as (keyof ChallengeSalesContent)[]) out[k] = { ...d[k], ...(s[k] ?? {}) };
+    for (const k of Object.keys(d) as (keyof ChallengeSalesContent)[]) {
+      if (k === "sectionOrder") out[k] = Array.isArray(s[k]) ? s[k] : structuredClone(d[k]);
+      else out[k] = { ...d[k], ...(s[k] ?? {}) };
+    }
     return out;
   } catch {
     return structuredClone(d);
@@ -344,4 +353,16 @@ export function renderDay(text: string): string {
   d.setDate(d.getDate() + 2);
   const day = d.toLocaleDateString(undefined, { weekday: "long" });
   return (text || "").replace(/\{day\}/g, day);
+}
+
+/** Safe section order: sorted by position, unknown keys and duplicates dropped, missing sections appended in default order. */
+export function resolveSectionOrder(order: SectionOrderItem[] | undefined): SectionKey[] {
+  const valid = new Set<string>(SECTION_KEYS);
+  const out: SectionKey[] = [];
+  const items = (Array.isArray(order) ? order : []).filter((o) => o && typeof o.key === "string");
+  for (const o of [...items].sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0))) {
+    if (valid.has(o.key) && !out.includes(o.key as SectionKey)) out.push(o.key as SectionKey);
+  }
+  for (const k of SECTION_KEYS) if (!out.includes(k)) out.push(k);
+  return out;
 }

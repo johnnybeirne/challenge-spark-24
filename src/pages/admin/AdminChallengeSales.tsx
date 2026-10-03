@@ -16,10 +16,13 @@ import {
   byPosition,
   newId,
   parseChallengeSales,
+  resolveSectionOrder,
   type ChallengeSalesContent,
 } from "@/lib/challengeSalesContent";
 
 type C = ChallengeSalesContent;
+
+const SECTION_NAMES: Record<string, string> = {"hero": "Hero", "video": "Video", "liveObjection": "The live objection", "problem": "The problem", "fix": "The fix", "imagine": "Imagine", "days": "Day by day", "walkAway": "What you walk away with", "whoFor": "Who it"s for", "guide": x guiding you", "testimonials": "Testimonials", "ifYouDont": "If you don"t", "faq": "FAQ", "finalCall": "Final call"};
 
 const Field = ({ label, value, onChange, long }: { label: string; value: string; onChange: (v: string) => void; long?: boolean }) => (
   <div className="space-y-1.5">

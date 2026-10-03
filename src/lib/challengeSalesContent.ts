@@ -14,14 +14,18 @@ export type FaqItem = { id: string; position: number; question: string; answer: 
 export type ChallengeSalesContent = {
   hero: { show: boolean; kicker: string; headline: string; subheadline: string; button: string; underButton: string };
   problem: { show: boolean; heading: string; body: string; cards: CardItem[] };
-  fix: { show: boolean; heading: string; body: string };
-  days: { show: boolean; heading: string; items: CardItem[] };
+  fix: { show: boolean; heading: string; body: string; items: TextItem[] };
+  days: { show: boolean; heading: string; body: string; items: CardItem[] };
   walkAway: { show: boolean; heading: string; items: TextItem[] };
   whoFor: { show: boolean; forHeading: string; forItems: TextItem[]; notForHeading: string; notForItems: TextItem[] };
   guide: { show: boolean; photoUrl: string; heading: string; body: string };
   testimonials: { show: boolean; heading: string; items: Testimonial[] };
   faq: { show: boolean; heading: string; items: FaqItem[] };
-  finalCall: { show: boolean; heading: string; button: string; underButton: string };
+  finalCall: { show: boolean; heading: string; body: string; button: string; underButton: string };
+  video: { show: boolean; heading: string; videoUrl: string };
+  liveObjection: { show: boolean; heading: string; body: string; items: CardItem[]; closing: string };
+  imagine: { show: boolean; heading: string; paragraphs: TextItem[] };
+  ifYouDont: { show: boolean; heading: string; paragraphs: TextItem[] };
   joinProblem: { show: boolean; eyebrow: string; heading: string; body: string; cards: CardItem[] };
   joinBenefits: { show: boolean; eyebrow: string; heading: string; items: TextItem[] };
   joinAbout: { show: boolean; photoUrl: string; eyebrow: string; heading: string; body: string };
@@ -78,11 +82,18 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
   fix: {
     "show": true,
     "heading": "The answer has been in front of you all along.",
-    "body": "Get a few people started. Give them a real result. Excite them to invite. The trust comes from people inviting people.\nSomeone takes your challenge and gets a real win.\nThey're excited, and they're rewarded for inviting people like them.\nTheir friend joins, because someone they trust said it was worth it.\nThat friend gets a win, and invites the next one."
+    "body": "Get a few people started. Give them a real result. Excite them to invite. The trust comes from people inviting people.",
+    "items": t([
+      "Someone takes your challenge and gets a real win.",
+      "They're excited, and they're rewarded for inviting people like them.",
+      "Their friend joins, because someone they trust said it was worth it.",
+      "That friend gets a win, and invites the next one.",
+    ])
   },
   days: {
     "show": true,
     "heading": "Roots, trunk, branches",
+    "body": "Three days. Three parts of one tree. Done with you, in a few minutes a day.",
     "items": [
       {
         "id": "d032",
@@ -226,8 +237,43 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
   finalCall: {
     "show": true,
     "heading": "Plant your lead tree.",
+    "body": "Roots, trunk, branches. Three days, a few minutes a day, done with you. Then watch it grow.",
     "button": "Join the free challenge",
     "underButton": "Start with Day 1. Have yours live by {day}."
+  },
+  video: { show: true, heading: "Watch this first", videoUrl: "" },
+  liveObjection: {
+    show: true,
+    heading: "\"If I'm not there live, why would anyone finish it?\"",
+    body: "Fair question. Take the host out of most challenges and they go flat. This one keeps the energy and loses the calendar.",
+    items: c([
+      ["Their own clock", "Each day is open for a limited window, then it locks. The deadline is real. It belongs to them, not to your calendar."],
+      ["A coach that answers back", "Your own named AI coach talks to each challenger by first name and works through their answers with them."],
+      ["Something built each day", "They finish every day holding something they made, not a page of notes."],
+      ["A reason to bring people", "Inviting others earns points and rewards."],
+    ]),
+    closing: "You get the urgency of a live challenge. You just don't have to be in it.",
+  },
+  imagine: {
+    show: true,
+    heading: "Imagine people doing your marketing for you.",
+    paragraphs: t([
+      "You didn't post. You didn't pay for an ad. You didn't run a live session.",
+      "Someone took your challenge, got a real result, and told a friend. That friend joined because someone they trust said it was worth it. They arrived already trusting you.",
+      "People who trust you, inviting people who trust them.",
+      "Now imagine that friend gets a result too, and invites the next one.",
+      "That is a lead tree.",
+      "This is not a new idea. In Nielsen's 2021 global study, 88% of people said the recommendations they trust most come from people they know.",
+    ]),
+  },
+  ifYouDont: {
+    show: true,
+    heading: "What happens if you leave this page and change nothing",
+    paragraphs: t([
+      "Nothing. That's the problem.",
+      "The ads still cost what they cost. The posts still scroll past. The next launch still ends and takes the leads with it.",
+      "Or you give this a few minutes a day for three days, done with you, and plant something that keeps growing.",
+    ]),
   },
   joinProblem: {
     show: true,

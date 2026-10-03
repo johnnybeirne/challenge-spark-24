@@ -14,6 +14,7 @@ import {
   parseChallengeSales,
   renderDay,
 } from "@/lib/challengeSalesContent";
+import { getEmbedUrl, isDirectVideo } from "@/lib/trainingContent";
 
 const Section = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <section className={`px-5 py-14 sm:px-6 md:py-20 lg:px-8 ${className}`}>
@@ -38,7 +39,7 @@ const ChallengeLanding = () => {
         : Array.isArray(v)
           ? v.map(walk)
           : v && typeof v === "object"
-            ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "id" || k === "photoUrl" ? x : walk(x)]))
+            ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "id" || k === "photoUrl" || k === "videoUrl" ? x : walk(x)]))
             : v;
     return walk(parsed) as typeof parsed;
   }, [map]);
@@ -65,6 +66,16 @@ const ChallengeLanding = () => {
 
   if (!loaded) return <main className="min-h-screen bg-background" />;
 
+  const videoUrl = c.video.videoUrl.trim();
+  const videoEmbed = videoUrl ? getEmbedUrl(videoUrl) : null;
+  const Paragraphs = ({ items }: { items: { id: string; position: number; text: string }[] }) => (
+    <div className="mt-5 space-y-4">
+      {byPosition(items).filter((p) => p.text.trim()).map((p) => (
+        <p key={p.id} className="text-[var(--h2-size)] leading-8 text-muted-foreground">{p.text}</p>
+      ))}
+    </div>
+  );
+
   const testimonials = byPosition(c.testimonials.items).filter((t) => t.quote.trim());
 
   return (
@@ -79,6 +90,41 @@ const ChallengeLanding = () => {
               <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.hero.subheadline}</p>
               <div className="mt-8"><Cta label={c.hero.button} under={c.hero.underButton} section="challenge_hero" /></div>
             </div>
+          </Section>
+        )}
+
+        {c.video.show && videoUrl && (
+          <Section>
+            <div className="mx-auto max-w-3xl">
+              {c.video.heading && <div className="text-center"><H2>{c.video.heading}</H2></div>}
+              <div className="mt-8 aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+                {isDirectVideo(videoUrl) ? (
+                  <video controls className="h-full w-full"><source src={videoUrl} /></video>
+                ) : videoEmbed ? (
+                  <iframe src={videoEmbed} title={c.video.heading || "Video"} className="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                ) : (
+                  <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="flex h-full items-center justify-center font-bold text-primary">Watch the video</a>
+                )}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {c.liveObjection.show && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.liveObjection.heading}</H2>
+              {c.liveObjection.body && <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.liveObjection.body}</p>}
+            </div>
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              {byPosition(c.liveObjection.items).map((card) => (
+                <div key={card.id} className="rounded-xl border border-border bg-background p-6 shadow-sm">
+                  <h3 className="text-[var(--h2-size)] font-black text-foreground">{card.title}</h3>
+                  <p className="mt-3 leading-7 text-muted-foreground">{card.body}</p>
+                </div>
+              ))}
+            </div>
+            {c.liveObjection.closing && <p className="mx-auto mt-10 max-w-3xl text-center text-[var(--h2-size)] font-bold leading-8 text-foreground">{c.liveObjection.closing}</p>}
           </Section>
         )}
 
@@ -105,12 +151,34 @@ const ChallengeLanding = () => {
               <H2>{c.fix.heading}</H2>
               <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.fix.body}</p>
             </div>
+            {c.fix.items.length > 0 && (
+              <ol className="mx-auto mt-8 max-w-2xl space-y-3">
+                {byPosition(c.fix.items).map((it, i) => (
+                  <li key={it.id} className="flex items-start gap-4 text-[var(--h2-size)] leading-8">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-black text-primary">{i + 1}</span>
+                    <span>{it.text}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </Section>
+        )}
+
+        {c.imagine.show && (
+          <Section>
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.imagine.heading}</H2>
+              <Paragraphs items={c.imagine.paragraphs} />
+            </div>
           </Section>
         )}
 
         {c.days.show && (
           <Section className="border-y border-border bg-card/55">
-            <div className="text-center"><H2>{c.days.heading}</H2></div>
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.days.heading}</H2>
+              {c.days.body && <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.days.body}</p>}
+            </div>
             <div className="mt-10 space-y-4">
               {byPosition(c.days.items).map((d, i) => (
                 <article key={d.id} className="flex items-start gap-4 rounded-xl border border-border bg-background p-5 shadow-sm">
@@ -190,6 +258,15 @@ const ChallengeLanding = () => {
           </Section>
         )}
 
+        {c.ifYouDont.show && (
+          <Section className="border-y border-border bg-card/55">
+            <div className="mx-auto max-w-3xl text-center">
+              <H2>{c.ifYouDont.heading}</H2>
+              <Paragraphs items={c.ifYouDont.paragraphs} />
+            </div>
+          </Section>
+        )}
+
         {c.faq.show && c.faq.items.length > 0 && (
           <Section>
             <div className="mx-auto max-w-2xl">
@@ -210,10 +287,15 @@ const ChallengeLanding = () => {
           <Section className="border-t border-border">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.finalCall.heading}</H2>
+              {c.finalCall.body && <p className="mt-5 text-[var(--h2-size)] leading-8 text-muted-foreground">{c.finalCall.body}</p>}
               <div className="mt-8"><Cta label={c.finalCall.button} under={c.finalCall.underButton} section="challenge_bottom" /></div>
             </div>
           </Section>
         )}
+      </main>
+    </>
+  );
+};
       </main>
     </>
   );

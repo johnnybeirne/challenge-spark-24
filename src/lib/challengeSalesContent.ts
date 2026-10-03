@@ -37,81 +37,197 @@ const c = (arr: [string, string][]): CardItem[] => arr.map(([title, body], i) =>
 
 export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
   hero: {
-    show: true,
-    kicker: "FOR COACHES, CONSULTANTS AND AUTHORS",
-    headline: "Stop losing the leads you already have.",
-    subheadline: "Join the free 3-day challenge. You'll build a challenge of your own that turns followers into leads, and leads into people who bring their friends.",
-    button: "Join the free challenge",
-    underButton: "Start today. Have yours ready by {day}.",
+    "show": true,
+    "kicker": "For coaches, consultants and authors",
+    "headline": "Get leads who already trust you, invited by people who know you.",
+    "subheadline": "Plant a lead tree in three days, and watch it grow. Done with you in a few minutes a day, not by yourself. No live sessions to host.",
+    "button": "Join the free challenge",
+    "underButton": "Start with Day 1. Have yours live by {day}."
   },
   problem: {
-    show: true,
-    heading: "Posting more won't fix this",
-    body: "Your audience already likes what you do. They read, they watch, they nod along. Then they scroll on, and you never hear from them.",
-    cards: c([
-      ["They see you, but never step forward.", "Nothing gives them a reason to raise their hand."],
-      ["They step forward, but don't stay.", "A freebie gets downloaded and forgotten."],
-      ["They stay, but nobody else hears about it.", "Your best people have no reason to bring a friend."],
-    ]),
+    "show": true,
+    "heading": "You already know what you're doing isn't working as well as it should.",
+    "body": "That's why you're here. Every one of these has the same flaw. The leads only come while you keep pushing.",
+    "cards": [
+      {
+        "id": "c03",
+        "position": 0,
+        "title": "Ads",
+        "body": "They cost more than the leads are worth."
+      },
+      {
+        "id": "c17",
+        "position": 1,
+        "title": "Posting",
+        "body": "Every day, to people who scroll past."
+      },
+      {
+        "id": "c28",
+        "position": 2,
+        "title": "Partners",
+        "body": "Chasing people to promote you."
+      },
+      {
+        "id": "c315",
+        "position": 3,
+        "title": "Live challenges",
+        "body": "They work, until you stop turning up. Then the leads stop too."
+      }
+    ]
   },
   fix: {
-    show: true,
-    heading: "A challenge fixes all three",
-    body: "People don't just read a challenge. They take part. Each day gives them a small win, so they keep coming back. And every win gives them a reason to invite someone.",
+    "show": true,
+    "heading": "The answer has been in front of you all along.",
+    "body": "Get a few people started. Give them a real result. Excite them to invite. The trust comes from people inviting people.\nSomeone takes your challenge and gets a real win.\nThey're excited, and they're rewarded for inviting people like them.\nTheir friend joins, because someone they trust said it was worth it.\nThat friend gets a win, and invites the next one."
   },
   days: {
-    show: true,
-    heading: "What you'll build, day by day",
-    items: c([
-      ["Day 1, Lock in your audience", "We'll shape who your challenge is for, the promise it makes, and the result people walk away with."],
-      ["Day 2, Build the experience", "We'll turn your idea into a ready quiz, landing page and email sequence."],
-      ["Day 3, Launch and grow", "We'll share your link, switch on referrals, and bring your challenge to your audience."],
-    ]),
+    "show": true,
+    "heading": "Roots, trunk, branches",
+    "items": [
+      {
+        "id": "d032",
+        "position": 0,
+        "title": "Day 1, the roots: your challenge",
+        "body": "Nobody sees the roots, but everything grows from them. A challenge gets someone one real win, so they feel what working with you is like before they ever pay you. You answer a few questions and Johnny B AI builds yours with you. You finish with your challenge mapped and a promise you can say in one sentence."
+      },
+      {
+        "id": "d127",
+        "position": 1,
+        "title": "Day 2, the trunk: your quiz",
+        "body": "The trunk is the one way up. Your quiz holds up a mirror, so your audience sees for themselves where they stand on the result you promise. You don't tell them they need you. They tell themselves. You finish with a quiz that gets people saying yes to themselves."
+      },
+      {
+        "id": "d242",
+        "position": 2,
+        "title": "Day 3, the branches: the people who invite",
+        "body": "Your challengers are the branches, and branches grow branches. Someone gets a result and invites a friend, who arrives already trusting you. It runs evergreen, so you host no live sessions. You finish with your challenge live, your link in your hand and your referrals switched on."
+      }
+    ]
   },
   walkAway: {
-    show: true,
-    heading: "What you'll have by the end",
-    items: t([
-      "A challenge with a clear promise your audience wants",
-      "A quiz that shows people the problem you solve",
-      "A landing page and email sequence ready to go",
-      "A referral loop so participants bring their friends",
-      "Your link live and shared",
-    ]),
+    "show": true,
+    "heading": "What you'll have by the end",
+    "items": [
+      {
+        "id": "t067",
+        "position": 0,
+        "text": "Your challenge, mapped, with a promise you can say in one sentence."
+      },
+      {
+        "id": "t141",
+        "position": 1,
+        "text": "Your quiz, written from your own answers."
+      },
+      {
+        "id": "t240",
+        "position": 2,
+        "text": "Your challenge live, with your own link."
+      },
+      {
+        "id": "t373",
+        "position": 3,
+        "text": "Your referrals switched on, so your challengers can invite the next ones."
+      }
+    ]
   },
   whoFor: {
-    show: true,
-    forHeading: "This is for you if",
-    forItems: t([
-      "You're a coach, consultant or author",
-      "You have an audience but not enough leads",
-      "You'd rather your people bring people than pay for every click",
-    ]),
-    notForHeading: "It's not for you if",
-    notForItems: t(["You want it done for you without taking part", "You don't have an offer to sell yet"]),
+    "show": true,
+    "forHeading": "This is for you if",
+    "forItems": [
+      {
+        "id": "t057",
+        "position": 0,
+        "text": "You're a coach, consultant or author with real expertise."
+      },
+      {
+        "id": "t160",
+        "position": 1,
+        "text": "You're tired of leads that only come while you keep pushing."
+      },
+      {
+        "id": "t244",
+        "position": 2,
+        "text": "You'd rather be recommended than advertised."
+      },
+      {
+        "id": "t351",
+        "position": 3,
+        "text": "You can give it a few minutes a day for three days."
+      }
+    ],
+    "notForHeading": "It's not for you if",
+    "notForItems": [
+      {
+        "id": "t057",
+        "position": 0,
+        "text": "You want leads without giving anyone a real result first."
+      },
+      {
+        "id": "t152",
+        "position": 1,
+        "text": "You want it all done for you. This is done with you."
+      },
+      {
+        "id": "t269",
+        "position": 2,
+        "text": "You're looking for a trick. This grows the way a tree does, steadily."
+      }
+    ]
   },
   guide: {
-    show: true,
-    photoUrl: "",
-    heading: "Who's guiding you",
-    body: "Johnny Beirne has spent over 30 years building online businesses. He co-wrote Rethink Remoting and builds challenge funnels for coaches, consultants and authors.",
+    "show": true,
+    "photoUrl": "",
+    "heading": "Let me be straight with you",
+    "body": "This is new. I don't have a wall of testimonials to show you yet, and I won't invent one. Here is what I do have. Thirty years in online business. I ran live challenges myself. They worked, and they wore me out. So I built the version that runs without me, and grows by people inviting people. And I have the challenge itself. You're about to go through the exact kind of challenge you'll build. If it works on you, you'll know it works."
   },
   testimonials: { show: true, heading: "What people say", items: [] },
   faq: {
-    show: true,
-    heading: "Questions",
-    items: [
-      ["Is it really free?", "Yes. Joining the challenge costs nothing."],
-      ["Do I need to be technical?", "No. Each day walks you through it step by step."],
-      ["What if I fall behind?", "Each day opens in turn. If you miss one, you can unlock it again by inviting friends or with a single payment."],
-      ["What do I need to bring?", "Your expertise and a clear idea of who you help."],
-    ].map(([question, answer], i) => ({ id: `f${i}`, position: i, question, answer })),
+    "show": true,
+    "heading": "Questions",
+    "items": [
+      {
+        "id": "f0",
+        "position": 0,
+        "question": "If I'm not there live, why would anyone finish it?",
+        "answer": "Each day is open for a limited window on the challenger's own clock, then it locks. A named AI coach answers them by first name. They build something each day. And inviting others earns points and rewards. You get the urgency of a live challenge without being in it."
+      },
+      {
+        "id": "f1",
+        "position": 1,
+        "question": "Will people really give me three days?",
+        "answer": "It's a few minutes a day, not three full days. And they choose it themselves, because your quiz shows them where they stand."
+      },
+      {
+        "id": "f2",
+        "position": 2,
+        "question": "Do I need a quiz, or can I send people straight to my challenge?",
+        "answer": "Cold audience, put the quiz in front. Warm audience, send them straight in, and the quiz sits inside your challenge."
+      },
+      {
+        "id": "f3",
+        "position": 3,
+        "question": "Do I have to build it all myself?",
+        "answer": "No. It's done with you. Each day you see one idea, answer a few questions, and Johnny B AI builds your version with you."
+      },
+      {
+        "id": "f4",
+        "position": 4,
+        "question": "Why would these leads trust me?",
+        "answer": "Because someone they trust invited them. The trust comes from people inviting people."
+      },
+      {
+        "id": "f5",
+        "position": 5,
+        "question": "What does it cost?",
+        "answer": "Joining is free. Each day is open for a limited window. If you miss one, you can unlock it by inviting people or by paying."
+      }
+    ]
   },
   finalCall: {
-    show: true,
-    heading: "Your audience is already there. Let's turn them into leads.",
-    button: "Join the free challenge",
-    underButton: "Start today. Have yours ready by {day}.",
+    "show": true,
+    "heading": "Plant your lead tree.",
+    "button": "Join the free challenge",
+    "underButton": "Start with Day 1. Have yours live by {day}."
   },
   joinProblem: {
     show: true,

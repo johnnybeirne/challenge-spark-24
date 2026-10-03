@@ -36,7 +36,7 @@ export type ChallengeSalesContent = {
   joinAbout: { show: boolean; photoUrl: string; eyebrow: string; heading: string; body: string };
   joinTestimonials: { show: boolean; eyebrow: string; heading: string; items: Testimonial[] };
   joinFinal: { show: boolean; heading: string; body: string; button: string };
-  join: { kicker: string; headline: string; subheadline: string; button: string; underButton: string; showDays: boolean; daysHeading: string };
+  join: { showLogo: boolean; logoUrl: string; kicker: string; headline: string; subheadline: string; button: string; underButton: string; showDays: boolean; daysHeading: string };
 };
 
 let n = 0;
@@ -318,6 +318,8 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
     button: "Join the free challenge",
   },
   join: {
+    showLogo: true,
+    logoUrl: "",
     kicker: "For coaches, consultants and authors",
     headline: "Get leads who already trust you, invited by people who know you.",
     subheadline: "Plant a lead tree in three days, and watch it grow. Done with you in a few minutes a day, not by yourself. No live sessions to host.",

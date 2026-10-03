@@ -36,6 +36,8 @@ export interface SignupChatProps {
   /** "form" shows plain name, email and password boxes on one screen. */
   variant?: "chat" | "form";
   kicker?: string;
+  /** Logo shown above the kicker (form variant only). */
+  logoSrc?: string;
   submitLabel?: string;
   underButton?: string;
   /** Extra content shown beside the form (form variant only). */
@@ -129,6 +131,7 @@ const SignupChat = ({
   renderSuccessActions,
   variant = "chat",
   kicker,
+  logoSrc,
   submitLabel = "Create my account",
   underButton,
   aside,
@@ -367,6 +370,7 @@ const SignupChat = ({
         ) : mode === "signup" && isForm ? (
           <div className={`grid gap-10 pt-12 md:pt-16 ${aside ? "md:grid-cols-2 md:items-start" : ""}`}>
             <div>
+              {logoSrc && <img src={logoSrc} alt="Logo" className="mb-5 h-12 w-auto md:h-14" />}
               {kicker && <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-primary">{kicker}</p>}
               <h1 className="mb-3 text-3xl font-black leading-tight text-foreground md:text-4xl">{headline}</h1>
               <p className="mb-8 text-base text-muted-foreground">{subcopy}</p>

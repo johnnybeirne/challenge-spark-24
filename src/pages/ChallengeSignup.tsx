@@ -57,6 +57,7 @@ const ChallengeSignup = () => {
       <SignupChat
         product="challenge"
         variant="form"
+        logoSrc={c.join.showLogo ? (c.join.logoUrl || "/leadtree-logo.png") : undefined}
         kicker={renderDay(c.join.kicker)}
         headline={renderDay(c.join.headline)}
         subcopy={renderDay(c.join.subheadline)}

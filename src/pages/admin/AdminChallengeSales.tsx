@@ -152,6 +152,34 @@ const AdminChallengeSales = () => {
         <CardHeader><CardTitle className="text-lg">Top of page: form header</CardTitle></CardHeader>
         <CardContent className="space-y-4">
 
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-sm">Show the logo at the top <Switch checked={c.join.showLogo} onCheckedChange={(v) => set("join", { showLogo: v })} /></label>
+            <Label>Logo (the LeadTree logo is used until you upload one)</Label>
+            <img src={c.join.logoUrl || "/leadtree-logo.png"} alt="" className="h-12 w-auto" />
+            <div className="flex flex-wrap items-center gap-2">
+              <Input type="file" accept="image/*" className="max-w-xs" disabled={uploading}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  setUploading(true);
+                  try {
+                    const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+                    const path = `challenge-join/logo-${Date.now()}.${ext}`;
+                    const { error } = await supabase.storage.from("site-images").upload(path, file, { cacheControl: "3600", contentType: file.type });
+                    if (error) throw error;
+                    const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+                    set("join", { logoUrl: data.publicUrl });
+                    toast.success("Logo uploaded. Press Save to publish it.");
+                  } catch {
+                    toast.error("Upload failed. Try again.");
+                  } finally {
+                    setUploading(false);
+                  }
+                }} />
+              {c.join.logoUrl && <Button variant="ghost" size="sm" onClick={() => set("join", { logoUrl: "" })}>Use the LeadTree logo</Button>}
+            </div>
+          </div>
           <Field label="Kicker" value={c.join.kicker} onChange={(v) => set("join", { kicker: v })} />
           <Field label="Headline" value={c.join.headline} onChange={(v) => set("join", { headline: v })} />
           <Field label="Subheadline" long value={c.join.subheadline} onChange={(v) => set("join", { subheadline: v })} />

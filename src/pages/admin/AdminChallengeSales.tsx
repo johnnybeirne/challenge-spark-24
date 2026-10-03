@@ -143,31 +143,53 @@ const AdminChallengeSales = () => {
         <Field label="Line under the button" value={c.hero.underButton} onChange={(v) => set("hero", { underButton: v })} />
       </Section>
 
-      <Section title="2. The problem" show={c.problem.show} onShow={(v) => set("problem", { show: v })}>
+      <Section title="2. Video (hidden until a link is added)" show={c.video.show} onShow={(v) => set("video", { show: v })}>
+        <Field label="Heading" value={c.video.heading} onChange={(v) => set("video", { heading: v })} />
+        <Field label="Video link (YouTube, Vimeo, or a direct .mp4, .webm or .ogg file)" value={c.video.videoUrl} onChange={(v) => set("video", { videoUrl: v })} />
+      </Section>
+
+      <Section title="3. The live objection" show={c.liveObjection.show} onShow={(v) => set("liveObjection", { show: v })}>
+        <Field label="Heading" value={c.liveObjection.heading} onChange={(v) => set("liveObjection", { heading: v })} />
+        <Field label="Body" long value={c.liveObjection.body} onChange={(v) => set("liveObjection", { body: v })} />
+        <ListEditor label="Points" items={c.liveObjection.items} onChange={(items) => set("liveObjection", { items })} blank={() => ({ title: "", body: "" })}
+          render={(it, s) => (<><Field label="Title" value={it.title} onChange={(v) => s({ title: v })} /><Field label="Text" long value={it.body} onChange={(v) => s({ body: v })} /></>)} />
+        <Field label="Closing line" long value={c.liveObjection.closing} onChange={(v) => set("liveObjection", { closing: v })} />
+      </Section>
+
+      <Section title="4. The problem" show={c.problem.show} onShow={(v) => set("problem", { show: v })}>
         <Field label="Heading" value={c.problem.heading} onChange={(v) => set("problem", { heading: v })} />
         <Field label="Body" long value={c.problem.body} onChange={(v) => set("problem", { body: v })} />
         <ListEditor label="Cards" items={c.problem.cards} onChange={(cards) => set("problem", { cards })} blank={() => ({ title: "", body: "" })}
           render={(it, s) => (<><Field label="Card title" value={it.title} onChange={(v) => s({ title: v })} /><Field label="Card text" long value={it.body} onChange={(v) => s({ body: v })} /></>)} />
       </Section>
 
-      <Section title="3. The fix" show={c.fix.show} onShow={(v) => set("fix", { show: v })}>
+      <Section title="5. The fix" show={c.fix.show} onShow={(v) => set("fix", { show: v })}>
         <Field label="Heading" value={c.fix.heading} onChange={(v) => set("fix", { heading: v })} />
         <Field label="Body" long value={c.fix.body} onChange={(v) => set("fix", { body: v })} />
+        <ListEditor label="Numbered steps" items={c.fix.items} onChange={(items) => set("fix", { items })} blank={() => ({ text: "" })}
+          render={(it, s) => <Field label="Text" long value={it.text} onChange={(v) => s({ text: v })} />} />
       </Section>
 
-      <Section title="4. Day by day" show={c.days.show} onShow={(v) => set("days", { show: v })}>
+      <Section title="6. Imagine" show={c.imagine.show} onShow={(v) => set("imagine", { show: v })}>
+        <Field label="Heading" value={c.imagine.heading} onChange={(v) => set("imagine", { heading: v })} />
+        <ListEditor label="Paragraphs" items={c.imagine.paragraphs} onChange={(paragraphs) => set("imagine", { paragraphs })} blank={() => ({ text: "" })}
+          render={(it, s) => <Field label="Text" long value={it.text} onChange={(v) => s({ text: v })} />} />
+      </Section>
+
+      <Section title="7. Day by day" show={c.days.show} onShow={(v) => set("days", { show: v })}>
         <Field label="Heading" value={c.days.heading} onChange={(v) => set("days", { heading: v })} />
+        <Field label="Body" long value={c.days.body} onChange={(v) => set("days", { body: v })} />
         <ListEditor label="Days" items={c.days.items} onChange={(items) => set("days", { items })} blank={() => ({ title: "", body: "" })}
           render={(it, s) => (<><Field label="Day title" value={it.title} onChange={(v) => s({ title: v })} /><Field label="Day text" long value={it.body} onChange={(v) => s({ body: v })} /></>)} />
       </Section>
 
-      <Section title="5. What you walk away with" show={c.walkAway.show} onShow={(v) => set("walkAway", { show: v })}>
+      <Section title="8. What you walk away with" show={c.walkAway.show} onShow={(v) => set("walkAway", { show: v })}>
         <Field label="Heading" value={c.walkAway.heading} onChange={(v) => set("walkAway", { heading: v })} />
         <ListEditor label="Items" items={c.walkAway.items} onChange={(items) => set("walkAway", { items })} blank={() => ({ text: "" })}
           render={(it, s) => <Field label="Text" value={it.text} onChange={(v) => s({ text: v })} />} />
       </Section>
 
-      <Section title="6. Who it's for" show={c.whoFor.show} onShow={(v) => set("whoFor", { show: v })}>
+      <Section title="9. Who it's for" show={c.whoFor.show} onShow={(v) => set("whoFor", { show: v })}>
         <Field label="Heading (for)" value={c.whoFor.forHeading} onChange={(v) => set("whoFor", { forHeading: v })} />
         <ListEditor label="This is for you if" items={c.whoFor.forItems} onChange={(forItems) => set("whoFor", { forItems })} blank={() => ({ text: "" })}
           render={(it, s) => <Field label="Text" value={it.text} onChange={(v) => s({ text: v })} />} />
@@ -176,7 +198,7 @@ const AdminChallengeSales = () => {
           render={(it, s) => <Field label="Text" value={it.text} onChange={(v) => s({ text: v })} />} />
       </Section>
 
-      <Section title="7. Who's guiding you" show={c.guide.show} onShow={(v) => set("guide", { show: v })}>
+      <Section title="10. Who's guiding you" show={c.guide.show} onShow={(v) => set("guide", { show: v })}>
         <div className="space-y-1.5">
           <Label>Photo (optional, hidden when empty)</Label>
           {c.guide.photoUrl && <img src={c.guide.photoUrl} alt="" className="h-24 w-24 rounded-full object-cover" />}
@@ -208,20 +230,27 @@ const AdminChallengeSales = () => {
         <Field label="Body" long value={c.guide.body} onChange={(v) => set("guide", { body: v })} />
       </Section>
 
-      <Section title="8. Testimonials (hidden until you add one)" show={c.testimonials.show} onShow={(v) => set("testimonials", { show: v })}>
+      <Section title="11. Testimonials (hidden until you add one)" show={c.testimonials.show} onShow={(v) => set("testimonials", { show: v })}>
         <Field label="Heading" value={c.testimonials.heading} onChange={(v) => set("testimonials", { heading: v })} />
         <ListEditor label="Testimonials" items={c.testimonials.items} onChange={(items) => set("testimonials", { items })} blank={() => ({ quote: "", name: "", role: "" })}
           render={(it, s) => (<><Field label="Quote" long value={it.quote} onChange={(v) => s({ quote: v })} /><Field label="Name" value={it.name} onChange={(v) => s({ name: v })} /><Field label="Role or business (optional)" value={it.role} onChange={(v) => s({ role: v })} /></>)} />
       </Section>
 
-      <Section title="9. FAQ" show={c.faq.show} onShow={(v) => set("faq", { show: v })}>
+      <Section title="12. If you don't" show={c.ifYouDont.show} onShow={(v) => set("ifYouDont", { show: v })}>
+        <Field label="Heading" value={c.ifYouDont.heading} onChange={(v) => set("ifYouDont", { heading: v })} />
+        <ListEditor label="Paragraphs" items={c.ifYouDont.paragraphs} onChange={(paragraphs) => set("ifYouDont", { paragraphs })} blank={() => ({ text: "" })}
+          render={(it, s) => <Field label="Text" long value={it.text} onChange={(v) => s({ text: v })} />} />
+      </Section>
+
+      <Section title="13. FAQ" show={c.faq.show} onShow={(v) => set("faq", { show: v })}>
         <Field label="Heading" value={c.faq.heading} onChange={(v) => set("faq", { heading: v })} />
         <ListEditor label="Questions" items={c.faq.items} onChange={(items) => set("faq", { items })} blank={() => ({ question: "", answer: "" })}
           render={(it, s) => (<><Field label="Question" value={it.question} onChange={(v) => s({ question: v })} /><Field label="Answer" long value={it.answer} onChange={(v) => s({ answer: v })} /></>)} />
       </Section>
 
-      <Section title="10. Final call" show={c.finalCall.show} onShow={(v) => set("finalCall", { show: v })}>
+      <Section title="14. Final call" show={c.finalCall.show} onShow={(v) => set("finalCall", { show: v })}>
         <Field label="Heading" value={c.finalCall.heading} onChange={(v) => set("finalCall", { heading: v })} />
+        <Field label="Body" long value={c.finalCall.body} onChange={(v) => set("finalCall", { body: v })} />
         <Field label="Button text" value={c.finalCall.button} onChange={(v) => set("finalCall", { button: v })} />
         <Field label="Line under the button" value={c.finalCall.underButton} onChange={(v) => set("finalCall", { underButton: v })} />
       </Section>
@@ -239,7 +268,7 @@ const AdminChallengeSales = () => {
           <Field label="Line under the button" value={c.join.underButton} onChange={(v) => set("join", { underButton: v })} />
           <label className="flex items-center gap-2 text-sm">Show the day by day summary <Switch checked={c.join.showDays} onCheckedChange={(v) => set("join", { showDays: v })} /></label>
           <Field label="Day by day heading" value={c.join.daysHeading} onChange={(v) => set("join", { daysHeading: v })} />
-          <p className="text-sm text-muted-foreground">The days themselves come from section 4 above.</p>
+          <p className="text-sm text-muted-foreground">The days themselves come from section 7 above.</p>
         </CardContent>
       </Card>
 

@@ -144,9 +144,9 @@ const AdminChallengeSales = () => {
         <CardContent className="space-y-3">
           <ListEditor
             label="Sections on /challenge, top to bottom"
-            items={resolveSectionOrder(c.sectionOrder).map((key, position) => ({ id: key, key, position }))}
+            items={resolveSectionOrder(c.sectionOrder).map((key, position) => ({ id: key as string, key: key as string, position }))}
             onChange={(items) => setC((p) => (p ? { ...p, sectionOrder: items.map(({ key, position }) => ({ key, position })) } : p))}
-            blank={() => ({ key: "" })}
+            blank={() => ({ key: "hero" as string })}
             fixed
             render={(it) => <p className="font-medium">{SECTION_NAMES[it.key] ?? it.key}</p>}
           />

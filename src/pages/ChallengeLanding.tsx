@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   byPosition,
   parseChallengeSales,
   renderDay,
+  resolveSectionOrder,
 } from "@/lib/challengeSalesContent";
 import { getEmbedUrl, isDirectVideo } from "@/lib/trainingContent";
 
@@ -39,7 +40,7 @@ const ChallengeLanding = () => {
         : Array.isArray(v)
           ? v.map(walk)
           : v && typeof v === "object"
-            ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "id" || k === "photoUrl" || k === "videoUrl" ? x : walk(x)]))
+            ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "id" || k === "key" || k === "photoUrl" || k === "videoUrl" ? x : walk(x)]))
             : v;
     return walk(parsed) as typeof parsed;
   }, [map]);
@@ -78,11 +79,8 @@ const ChallengeLanding = () => {
 
   const testimonials = byPosition(c.testimonials.items).filter((t) => t.quote.trim());
 
-  return (
-    <>
-      <SEO title="Free 3-Day Challenge" description={c.hero.subheadline} canonical="/challenge" />
-      <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
-        {c.hero.show && (
+  const blocks: Record<string, ReactNode> = {
+    hero: c.hero.show && (
           <Section className="pt-12 md:pt-20">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-black uppercase tracking-wide text-primary">{c.hero.kicker}</p>
@@ -91,9 +89,8 @@ const ChallengeLanding = () => {
               <div className="mt-8"><Cta label={c.hero.button} under={c.hero.underButton} section="challenge_hero" /></div>
             </div>
           </Section>
-        )}
-
-        {c.video.show && videoUrl && (
+        ),
+    video: c.video.show && videoUrl && (
           <Section>
             <div className="mx-auto max-w-3xl">
               {c.video.heading && <div className="text-center"><H2>{c.video.heading}</H2></div>}
@@ -108,9 +105,8 @@ const ChallengeLanding = () => {
               </div>
             </div>
           </Section>
-        )}
-
-        {c.liveObjection.show && (
+        ),
+    liveObjection: c.liveObjection.show && (
           <Section className="border-y border-border bg-card/55">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.liveObjection.heading}</H2>
@@ -126,9 +122,8 @@ const ChallengeLanding = () => {
             </div>
             {c.liveObjection.closing && <p className="mx-auto mt-10 max-w-3xl text-center text-[var(--h2-size)] font-bold leading-8 text-foreground">{c.liveObjection.closing}</p>}
           </Section>
-        )}
-
-        {c.problem.show && (
+        ),
+    problem: c.problem.show && (
           <Section className="border-y border-border bg-card/55">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.problem.heading}</H2>
@@ -143,9 +138,8 @@ const ChallengeLanding = () => {
               ))}
             </div>
           </Section>
-        )}
-
-        {c.fix.show && (
+        ),
+    fix: c.fix.show && (
           <Section>
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.fix.heading}</H2>
@@ -162,18 +156,16 @@ const ChallengeLanding = () => {
               </ol>
             )}
           </Section>
-        )}
-
-        {c.imagine.show && (
+        ),
+    imagine: c.imagine.show && (
           <Section>
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.imagine.heading}</H2>
               <Paragraphs items={c.imagine.paragraphs} />
             </div>
           </Section>
-        )}
-
-        {c.days.show && (
+        ),
+    days: c.days.show && (
           <Section className="border-y border-border bg-card/55">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.days.heading}</H2>
@@ -191,9 +183,8 @@ const ChallengeLanding = () => {
               ))}
             </div>
           </Section>
-        )}
-
-        {c.walkAway.show && (
+        ),
+    walkAway: c.walkAway.show && (
           <Section>
             <div className="mx-auto max-w-2xl">
               <div className="text-center"><H2>{c.walkAway.heading}</H2></div>
@@ -207,9 +198,8 @@ const ChallengeLanding = () => {
               </ul>
             </div>
           </Section>
-        )}
-
-        {c.whoFor.show && (
+        ),
+    whoFor: c.whoFor.show && (
           <Section className="border-y border-border bg-card/55">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="rounded-xl border border-border bg-background p-6">
@@ -230,9 +220,8 @@ const ChallengeLanding = () => {
               </div>
             </div>
           </Section>
-        )}
-
-        {c.guide.show && (
+        ),
+    guide: c.guide.show && (
           <Section>
             <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:flex-row md:text-left">
               {c.guide.photoUrl && <img src={c.guide.photoUrl} alt={c.guide.heading} className="h-32 w-32 shrink-0 rounded-full object-cover" />}
@@ -242,9 +231,8 @@ const ChallengeLanding = () => {
               </div>
             </div>
           </Section>
-        )}
-
-        {c.testimonials.show && testimonials.length > 0 && (
+        ),
+    testimonials: c.testimonials.show && testimonials.length > 0 && (
           <Section className="border-y border-border bg-card/55">
             <div className="text-center"><H2>{c.testimonials.heading}</H2></div>
             <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -256,18 +244,16 @@ const ChallengeLanding = () => {
               ))}
             </div>
           </Section>
-        )}
-
-        {c.ifYouDont.show && (
+        ),
+    ifYouDont: c.ifYouDont.show && (
           <Section className="border-y border-border bg-card/55">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.ifYouDont.heading}</H2>
               <Paragraphs items={c.ifYouDont.paragraphs} />
             </div>
           </Section>
-        )}
-
-        {c.faq.show && c.faq.items.length > 0 && (
+        ),
+    faq: c.faq.show && c.faq.items.length > 0 && (
           <Section>
             <div className="mx-auto max-w-2xl">
               <div className="text-center"><H2>{c.faq.heading}</H2></div>
@@ -281,9 +267,8 @@ const ChallengeLanding = () => {
               </Accordion>
             </div>
           </Section>
-        )}
-
-        {c.finalCall.show && (
+        ),
+    finalCall: c.finalCall.show && (
           <Section className="border-t border-border">
             <div className="mx-auto max-w-3xl text-center">
               <H2>{c.finalCall.heading}</H2>
@@ -291,7 +276,14 @@ const ChallengeLanding = () => {
               <div className="mt-8"><Cta label={c.finalCall.button} under={c.finalCall.underButton} section="challenge_bottom" /></div>
             </div>
           </Section>
-        )}
+        ),
+  };
+
+  return (
+    <>
+      <SEO title="Free 3-Day Challenge" description={c.hero.subheadline} canonical="/challenge" />
+      <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
+        {resolveSectionOrder(c.sectionOrder).map((k) => <Fragment key={k}>{blocks[k]}</Fragment>)}
       </main>
     </>
   );

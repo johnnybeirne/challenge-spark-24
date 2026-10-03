@@ -22,7 +22,7 @@ import {
 
 type C = ChallengeSalesContent;
 
-const SECTION_NAMES: Record<string, string> = {"hero": "Hero", "video": "Video", "liveObjection": "The live objection", "problem": "The problem", "fix": "The fix", "imagine": "Imagine", "days": "Day by day", "walkAway": "What you walk away with", "whoFor": "Who it"s for", "guide": x guiding you", "testimonials": "Testimonials", "ifYouDont": "If you don"t", "faq": "FAQ", "finalCall": "Final call"};
+const SECTION_NAMES: Record<string, string> = {"hero": "Hero", "video": "Video", "liveObjection": "The live objection", "problem": "The problem", "fix": "The fix", "imagine": "Imagine", "days": "Day by day", "walkAway": "What you walk away with", "whoFor": "Who it's for", "guide": "Who's guiding you", "testimonials": "Testimonials", "ifYouDont": "If you don't", "faq": "FAQ", "finalCall": "Final call"};
 
 const Field = ({ label, value, onChange, long }: { label: string; value: string; onChange: (v: string) => void; long?: boolean }) => (
   <div className="space-y-1.5">
@@ -32,8 +32,9 @@ const Field = ({ label, value, onChange, long }: { label: string; value: string;
 );
 
 function ListEditor<T extends { id: string; position: number }>({
-  label, items, onChange, blank, render,
+  label, items, onChange, blank, render, fixed,
 }: {
+  fixed?: boolean;
   label: string;
   items: T[];
   onChange: (items: T[]) => void;
@@ -59,15 +60,15 @@ function ListEditor<T extends { id: string; position: number }>({
             <div className="flex gap-1">
               <Button size="icon" variant="ghost" aria-label="Move up" onClick={() => move(i, -1)} disabled={i === 0}><ArrowUp className="h-4 w-4" /></Button>
               <Button size="icon" variant="ghost" aria-label="Move down" onClick={() => move(i, 1)} disabled={i === sorted.length - 1}><ArrowDown className="h-4 w-4" /></Button>
-              <Button size="icon" variant="ghost" aria-label="Remove" onClick={() => commit(sorted.filter((x) => x.id !== item.id))}><Trash2 className="h-4 w-4" /></Button>
+              {!fixed && <Button size="icon" variant="ghost" aria-label="Remove" onClick={() => commit(sorted.filter((x) => x.id !== item.id))}><Trash2 className="h-4 w-4" /></Button>}
             </div>
           </div>
           {render(item, (patch) => commit(sorted.map((x) => (x.id === item.id ? { ...x, ...patch } : x))))}
         </div>
       ))}
-      <Button variant="outline" size="sm" onClick={() => commit([...sorted, { ...(blank() as any), id: newId(), position: sorted.length }])}>
+      {!fixed && <Button variant="outline" size="sm" onClick={() => commit([...sorted, { ...(blank() as any), id: newId(), position: sorted.length }])}>
         <Plus className="mr-1 h-4 w-4" />Add
-      </Button>
+      </Button>}
     </div>
   );
 }
@@ -137,6 +138,21 @@ const AdminChallengeSales = () => {
           <ExternalLink className="mr-1 h-4 w-4" />Preview
         </Button>
       </div>
+
+      <Card>
+        <CardHeader><CardTitle className="text-lg">Section order</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <ListEditor
+            label="Sections on /challenge, top to bottom"
+            items={resolveSectionOrder(c.sectionOrder).map((key, position) => ({ id: key, key, position }))}
+            onChange={(items) => setC((p) => (p ? { ...p, sectionOrder: items.map(({ key, position }) => ({ key, position })) } : p))}
+            blank={() => ({ key: "" })}
+            fixed
+            render={(it) => <p className="font-medium">{SECTION_NAMES[it.key] ?? it.key}</p>}
+          />
+          <p className="text-sm text-muted-foreground">This list sets the order on the live page. The groups of fields below stay in a fixed order.</p>
+        </CardContent>
+      </Card>
 
       <Section title="1. Hero" show={c.hero.show} onShow={(v) => set("hero", { show: v })}>
         <Field label="Kicker" value={c.hero.kicker} onChange={(v) => set("hero", { kicker: v })} />

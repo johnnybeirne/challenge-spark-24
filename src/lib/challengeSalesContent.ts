@@ -318,13 +318,13 @@ export const DEFAULT_CHALLENGE_SALES: ChallengeSalesContent = {
     button: "Join the free challenge",
   },
   join: {
-    kicker: "FREE 3-DAY CHALLENGE",
-    headline: "Stop losing the leads you already have.",
-    subheadline: "Create your free account and start Day 1 today. You'll build a challenge of your own that turns followers into leads.",
+    kicker: "For coaches, consultants and authors",
+    headline: "Get leads who already trust you, invited by people who know you.",
+    subheadline: "Plant a lead tree in three days, and watch it grow. Done with you in a few minutes a day, not by yourself. No live sessions to host.",
     button: "Join the free challenge",
-    underButton: "Free. Have yours ready by {day}.",
+    underButton: "Start with Day 1. Have yours live by {day}.",
     showDays: true,
-    daysHeading: "What you'll build, day by day",
+    daysHeading: "Roots, trunk, branches",
   },
 };
 

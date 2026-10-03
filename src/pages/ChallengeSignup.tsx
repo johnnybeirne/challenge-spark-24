@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import SignupChat from "@/components/auth/SignupChat";
 import AddToCalendar from "@/components/AddToCalendar";
-import JoinSections from "@/components/challenge/JoinSections";
+import JoinChallengeSections from "@/components/challenge/JoinChallengeSections";
 import { getEntryIntent } from "@/lib/entryIntent";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import {
@@ -63,7 +63,7 @@ const ChallengeSignup = () => {
         submitLabel={renderDay(c.join.button)}
         underButton={renderDay(c.join.underButton)}
         aside={aside}
-        below={<JoinSections c={c} onJoin={() => {
+        below={<JoinChallengeSections c={c} onJoin={() => {
           window.scrollTo({ top: 0, behavior: "smooth" });
           setTimeout(() => document.getElementById("su-first")?.focus(), 500);
         }} />}

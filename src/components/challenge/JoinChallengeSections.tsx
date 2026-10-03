@@ -61,7 +61,7 @@ const JoinChallengeSections = ({ c, onJoin }: { c: ChallengeSalesContent; onJoin
       <PageSection className="border-y border-border bg-card/55">
         <div className="mx-auto max-w-3xl text-center">
           <Quote className="mx-auto h-7 w-7 text-primary" />
-          <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">"{renderDay(c.liveObjection.heading)}"</h2>
+          <h2 className="mt-4 text-3xl font-black leading-tight text-foreground sm:text-4xl">{renderDay(c.liveObjection.heading)}</h2>
           {c.liveObjection.body && <p className="mt-4 text-lg leading-8 text-muted-foreground">{renderDay(c.liveObjection.body)}</p>}
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
